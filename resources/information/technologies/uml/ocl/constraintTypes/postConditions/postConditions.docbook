@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>
+        Postconditions
+        <indexterm><primary>Object Constraint Language</primary><secondary>postconditions</secondary></indexterm>
+        <indexterm><primary>psotconditions</primary><secondary>in OCL</secondary></indexterm>
+    </title>
+    <para>
+        Postconditions are assigned to services. They specify those conditions which must hold after the service has been provided, 
+        <abbrev>i.e.</abbrev> after any success scenario for the service.
+    </para>
+    <para>
+        A post condition is specified using a <literal>post:</literal> prefix infront of the constraint expression. Postconditions
+        are assigned to services of classes and interfaces.
+    </para>
+    
+    <section>
+        <title>Accessing the return value of a service</title>
+        <para>
+            Consider a <literal>RootSolver</literal> which can be used to find a root of a function, <abbrev>i.e.</abbrev>
+            a value from its domain where the function value is zero. Assume you want to specify a postcondition 
+            which states that the return value of a rootSolver service should be such
+            that if the function value is evaluated at the returned approximation to the root, it is zero to within some eps.
+            This can be achieved with the following expression:
+            <programlisting><![CDATA[
+    context RootSolver.findRoot(f:Function, initialGuess:Real, eps:Real): Real
+        post:  f.value(result).abs() < eps
+            ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>The @pre postfix</title>
+        <para>
+            It is common to have to specify postconditions of a service which require the value of certain properties prior to the service
+            having been requested.  For example, if one would want to specify that the balance of an account after debiting should
+            be equal to the balance prior to debiting minus the withdrawel amount (<abbrev>i.e.</abbrev> that any transaction fees
+            must be raised in the context of a separate transaction), and that the number of transactions in the transaction history
+            must have increased by one, then one could use the following postcondition
+            <programlisting><![CDATA[
+context Account::debit(amount: Real) : TransactionConfirmation
+    post: balance = balance@pre - amount
+    post: self.transactions->size() = self.transactions@pre->size() + 1
+                ]]></programlisting>
+        </para>
+    </section>   
+    
+    <section>
+        <title>Specifying that a communication must have taken place</title>
+        <para>
+            One may want to specify, as postcondition, that a particular message (<abbrev>e.g.</abbrev>
+            a synchronous or asynchronous service request message) must have been sent within the
+            context of realizing a service request.
+        </para>
+        <para>
+            To this end, OCL supports a <emphasis>hasSent</emphasis> operator, <literal>^</literal>.
+            For example, if one wants to specify that within the context of processing a claim, <literal>Claims</literal>
+            must have requested the claim coverage from policies, we could add the following
+            postcondition:
+            <programlisting><![CDATA[
+context Claims::processClaim(claim : Claim): ClaimSettlementReport
+    post: self.policies^determineClaimCoverage(claim : Claim)
+        ]]></programlisting>
+            This example assumes that claims has an association to policies and that the claim will contain the information
+            about the policy against which the claim is made. It also specifies that the claim as received from the user is 
+            passed to policies when requesting the claim coverage.
+        </para>
+        <para>
+            At times we may want to just specify a constraint that a particular type of message was sent without constraining
+            the message parameters. In such cases one can use question marks for the free parameter values. For example,
+            if we want to specify that, in the context of processing a claim, a claim valuation request must have been sent
+            to an assessor without constraining the actual request parameter, then we could use the following OCL expression
+            <programlisting><![CDATA[
+context Claims::processClaim(claim : Claim): ClaimSettlementReport
+    post: self.assessor^assessLosses( ? : AssessmentRequest)
+        ]]></programlisting>
+        </para>
+    </section>    
+    
+    <section>
+        <title>OCL messages</title>
+        <para>
+            In order to specify constraints on OCL messages, OCL introduces the <literal>OclMessage</literal> type with a number of
+            properties and services. An OCL message encapsulates a specific message sent in the context of an interaction.
+        </para>
+        
+        <section>
+            <title>Services offered by OclMessage</title>
+            <para>
+                <literal>OclMessage</literal> provides the following operations:
+                <table>
+                    <title>Services provides by OclMessage</title>
+                    <tgroup cols="2">
+                        <thead>
+                            <row>
+                                <entry><para>Service</para></entry>
+                                <entry><para>return value</para></entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry><para><literal>isSignalSent()</literal></para></entry>
+                                <entry><para><literal>true</literal> if the message has been sent, <literal>false</literal> otherwise</para></entry>
+                            </row>    
+                            <row>
+                                <entry><para><literal>isOperationCall()</literal></para></entry>
+                                <entry><para><literal>true</literal> if the message is a synchronous request which has a return, <literal>false</literal> otherwise</para></entry>
+                            </row>    
+                            <row>
+                                <entry><para><literal>hasReturned()</literal></para></entry>
+                                <entry><para><literal>true</literal> if a return for an operational call has been received, <literal>false</literal> otherwise</para></entry>
+                            </row>    
+                            <row>
+                                <entry><para><literal>result()</literal></para></entry>
+                                <entry><para>provides a handle to the returned object</para></entry>
+                            </row>    
+                        </tbody>
+                    </tgroup>
+                </table>
+                
+            </para>
+        </section>    
+        
+        <section>
+            <title>Obtaining access to exchanged messages</title>
+            <para>
+                In order to obtain access to messages exchanged within an iteration, OCL introduces the <emphasis>message operator</emphasis>,
+                <literal>^^</literal>. In the case of referring to a specific interaction, the return value of this operator is either a single 
+                <literal>OclMessage</literal>. In the case where multiple messages satisfying the message operator may have been exchanged,
+                the operator returns a sequence of messages.
+            </para>
+            <para>
+                We can, for example, obtain access to the claim coverage request message and its associated return via
+                <programlisting><![CDATA[
+context Claims::processClaim(claim : Claim): ClaimSettlementReport
+    post: 
+        let 
+            message : OclMessage = self.policies^determineClaimCoverage(claim : Claim)
+        in
+            message.hasReturned()
+            and
+            message.result().claimId = claim.id
+        ]]></programlisting>
+                
+            </para>
+            <para>
+                or, in the case where multiple messages may have been sent
+                <programlisting><![CDATA[
+context Claims::processClaim(claim : Claim): ClaimSettlementReport
+    post: 
+        let 
+            messages : Sequence(OclMessage) = self.assessor^assessLosses( ? : AssessmentRequest)
+        in
+            messaged.forAll
+        ]]></programlisting>
+            </para>
+        </section>    
+
+        <section>
+             <title>Accessing message parameters</title>
+            <para>
+                The message parameters are directly accessed by their names in the formal service declaration.
+            </para>
+        </section>
+    </section>    
+</section>    

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.whereClause.whereClause"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title role="WHERE clause">Restricting the result collection via the WHERE clause</title>
+<para>
+  Analogous to SQL, EJB-QL uses a <literal>WHERE</literal> clause to
+  restrict the elements returned in the result collection.
+</para>
+<para>
+  For example, we can select only those courses to which one or more presenters have been
+  allocated via
+<programlisting><![CDATA[
+SELECT Object(c)
+   FROM Course c
+      WHERE c.presenters NOT EMPTY
+]]></programlisting>
+</para>
+
+  <section>
+    <title>Using Collection Variables in WHERE Clauses</title>
+    <para>
+      We often have to define collection variables for multi-valued path constraints in
+      <literal>WHERE</literal> clauses. For example
+<programlisting><![CDATA[
+SELECT Object(c)
+   FROM Course c
+      WHERE c.prerequisites.name = 'Programming in Java'
+]]></programlisting>
+        is invalid because of the match against a multi-valued path, while
+<programlisting><![CDATA[
+SELECT Object(c)
+   FROM Course c, IN(c.prerequisites) p
+      WHERE p.name = 'Programming in Java'
+]]></programlisting>
+       is valid.
+    </para>
+  </section>
+</section>

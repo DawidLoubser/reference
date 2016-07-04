@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.dependencyInjection.showAreInjectionsResolved">
+  <title>How are injection resources resolved?</title>
+  <para>
+      <itemizedlist>
+         <listitem>
+            <formalpara>
+               <title>Resolving by bean property or field type</title>
+               <para> 
+            The resource will be looked up by name via the default JNDI
+            name generated for that type (local or remote interface). For example,
+ <programlisting language="Java">
+@EJB
+public void setTaxCalculator(TaxCalculatorLocal taxCalculator)
+{
+  this.taxCalculator = taxCalculator;
+}  
+   </programlisting> 
+            will be looked up under the ejb-name,
+            <quote>TaxCalculatorLocal</quote>, within the default name space
+            for that resource type, <literal>java:comp/env/ejb</literal>.
+          </para>
+            </formalpara>
+         </listitem>
+         <listitem>
+            <formalpara>
+               <title>Resolving by variable name</title>
+               <para>
+                  <programlisting>
+@Resource
+public void setClientDB(DataSource clientDB)
+{
+  this.clientDB = clientDB;
+}  
+              </programlisting> 
+            The EJB specification requires that predefined web service references can also be
+            looked up, based on web service name. The default name space
+            searched when resolving web services is
+              <literal>java:comp/env/service</literal>. </para>
+            </formalpara>
+         </listitem>
+         <listitem>
+            <formalpara>
+               <title>Resolving by injector name</title>
+               <para>
+                  <programlisting>
+@EJB (name="vatCalculatorRSA" beanInterface="TaxCalculatorLocal")
+public void setTaxCalculator(TaxCalculator taxCalculator)
+{
+  this.taxCalculator = taxCalculator;
+}  
+              </programlisting>
+            The ejb-name is a logical name which may be mapped in a deployment descriptor via 
+            and <literal>&lt;ejb-ref&gt;</literal> tag onto an actual JND name. If this
+            mapping is not provided, the logical name will be used directly in a JNDI lookup.
+          </para>
+            </formalpara>
+         </listitem>
+      </itemizedlist>
+  </para>
+</section>

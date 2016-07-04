@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.xml.xsl-transform.templates.concepts.selectiveProcessing">
+    <title>Selective and Repeated Processing</title>
+    <para>
+        It is often desirable to suppress the processing of most child elements, but
+        to ensure that child elements of a specific type <emphasis>are</emphasis>
+        processed.
+    </para>
+    <para>
+        The <literal>select</literal> attribute is used to indicate which children
+        to process - as ever, selected by an XPath expression. The following example
+        ensures that only the employee's contact details are processed.
+        
+<programlisting><![CDATA[
+    <template match="employee">
+        <apply-templates select="contact-details"/>
+    </template>
+]]></programlisting>
+        
+        <note>
+            <para>
+                The select attribute only specify which descendants are <emphasis>eligible</emphasis>
+                to templatting: A suitable template still has to match (through its 'match' expression)
+                in order to be applied.
+            </para>
+        </note>
+    </para>
+    <para>
+        The <literal>apply-templates</literal> element can occur as many times as you like,
+        enabling you to control exactly which elements are allowed to be templatted, as well
+        as the order in which they are output:
+        
+<programlisting><![CDATA[
+    <template match="employee">
+        <apply-templates select="contact-details"/>
+        <apply-templates select="financial-details"/>
+        <apply-templates select="birthday"/>
+    </template>
+]]></programlisting>
+        
+        This is the first basic mechanism that enables the re-ordering of XML content.
+    </para>
+</section>

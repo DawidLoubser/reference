@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Writing NUnit tests</title>
+    
+    <para>
+        An NUnit test (called a <emphasis>test fixture</emphasis>) is a class which contains
+        one or more <emphasis>test methods</emphasis>. Each test method interacts with the
+        test subject, and makes <emphasis>assertions</emphasis> as to the externally
+        visible behaviour.
+    </para>
+    <para>
+        Consider the following class which provides the behaviour of a simple bank account:
+        <programlisting><![CDATA[
+namespace accounts
+{
+  public class Account
+  {
+    private double balance;
+    
+    public void credit( double amount )
+    {
+      balance+=amount;
+    }
+
+    public void debit( double amount )
+    {
+      balance-=amount;
+    }
+
+    public double Balance
+    {
+      get{ return balance;}
+    }
+  }
+}
+        ]]></programlisting>
+    </para>
+    <para>
+        Though a more realistic example would contain pre-conditions on
+        services such as <literal>debit(...)</literal>, we could, at least,
+        test the post-conditions on the services above. We do so by introducing
+        a test fixture class:
+        <programlisting><![CDATA[
+namespace accounts
+{
+    namespace tests
+    {
+        using NUnit.Framework;
+        
+        [TestFixture]
+        public class AccountTest
+        { 
+            [Test]
+            public void testCredit()
+            {
+                Account a = new Account();
+                double balanceBefore = a.Balance;
+                source.credit(200.0);
+                double balanceAfter = a.Balance;
+                Assert.IsTrue( balanceAfter - balanceBefore >= 200.0 );    	
+            }
+        }
+    }
+}
+        ]]></programlisting>
+    </para>
+    <para>
+        In the simplistic example we test the post-conditions of the credit amount having been added
+        to the balance. The precise interpretation of the post-conditions are very important in writing
+        successful unit tests: Recall that the post-conditions of a service may always be <emphasis>increased</emphasis>,
+        i.e. if on some special day the bank decides to, upon crediting an account, add an additional 5% of the credit amount
+        to the account, the unit test above should not fail if the balance was not exactly 200.0 (but 210.0 instead).
+    </para>
+    
+    <section>
+        <title>Assertions</title>
+        <para>
+            If an assertion made in the test turns out to be false, the test <emphasis>fails</emphasis>.
+        </para>
+        <para>
+            A large number of services are provided in the <literal>Assert</literal> class, to assert identity,
+            equality, boolean conditions, types, the state of collections or files, etc:
+            <programlisting><![CDATA[
+Assert.IsTrue( bool condition );
+Assert.AreEqual( object expected, object actual );
+Assert.AreNotEqual( object expected, object actual );
+Assert.IsTrue( bool condition );
+StringAssert.Contains( string expected, string actual );
+CollectionAssert.Contains( IEnumerable expected, object actual );
+FileAssert.AreEqual( FileInfo expected, FileInfo actual );
+...
+            ]]></programlisting>
+        </para>
+    </section>
+    
+</section>

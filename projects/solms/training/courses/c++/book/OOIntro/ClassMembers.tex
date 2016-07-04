@@ -1,0 +1,120 @@
+\section{Class Members}
+
+So far most of the members we added to our classes (methods and data fields)
+were instance members. For example, each instance of the account class had
+its own \verb+_balance+ and when we requested the \verb+debit(double)+, 
+\verb+credit(double)+ or the \verb+balance()+ query service, we sent the
+message to a specific instance (object):
+
+\noindent{\small\begin{verbatim}
+account1.credit(550);
+
+cout << account1.balance();
+\end{verbatim}}
+
+The only members which were class members thus far were the constructors.
+They had the name of the class and where implicitely class services. When
+we create an account we requested the service from the \verb+Account+ class 
+and not a specific instance of the class -- a particular account. 
+
+At times one wants to assign also other responsibilities to the class itself. For
+example, we may want to keep track of the number of instances of the account
+class. This responsibility does not fit naturally within a specific instance
+of the class. Instead, we might want to assign this responsibility to the
+class itself -- after all, the class is responsible for creating instances
+(if one uses a factory pattern, the responsibility is naturally hosted by
+the factory).
+
+In C++, as in Java, one uses the keyword \verb+static+ to specify that a
+specific element is a class member. For example, we may want to assign a
+datafield \verb+_numInstances+ to the class as well as a query service,
+\verb+numInstances()+. We would declare both these members \verb+static+,
+i.e.\ class members. Below we show the header file of a \verb+Client+
+class which keeps track of the number of instances of that class:
+
+\noindent{\small \input{OOIntro/Programs/Client.h}}
+
+Nte that the class itself hosts a data field, \verb+_numInstances+, which can 
+be accessed from within the class scope or from the within the scope of any
+particular instance of the \verb+Cient+ class.
+
+%-----------------------------------------------------------------------
+
+\subsection{Constructors are Class Services}
+
+One uses the keyword \verb+static+ to specify class services and datafields
+of the class. However, constructors themselves are also class services --
+one asks the \verb+Client+ class for an instance, not a particular
+account (there may not even be an account instance around yet).
+So constructors are implicitly static methods. 
+
+In our constructor we added a line which increments the instance counter:
+
+\noindent{\small\begin{verbatim}
+Client::Client(char* name)
+{
+  ++_numInstances;
+  _name = name;
+}
+\end{verbatim}}
+
+%-----------------------------------------------------------------------
+
+\subsection{Destructors are Instance Services}
+
+Destructors are not class services. Their resposibility is to provide some
+finalization code (e.g.\ clean-up code) when an object (a particular
+instance) is deleted. The message is sent to a specific \verb+Client+.
+Still, the instance counter should be decremented:
+
+\noindent{\small\begin{verbatim}
+Client::~Client()
+{
+  --_numInstances;
+}
+\end{verbatim}}
+
+Note that class members can be directly accessed from within instance members 
+(like the destructor), but not vice versa.
+
+%-----------------------------------------------------------------------
+
+\subsection{Specifying Implementation Details of Class Members}
+
+The body of a static method is defined in the same way as the body of an 
+instance method. Naturally, one cannot access instance members from a class
+service. After all the scope is the class itself -- which instance should
+it refer to. Below we show the trivial implementation of the 
+\verb+numInstances()+ query method:
+
+\noindent{\small\begin{verbatim}
+Client::numInstances()
+{
+  return _numInstances;
+}
+\end{verbatim}}
+We still have to initialize the class member, \verb+_numInstances+ to zero. But were 
+should we do that? We cannot initialize the data field in the constructor
+because then the field would be initialized every time an instance is created.
+We want to do once off initialization when the application is loaded. This 
+initializtion statement is done at global scope via:
+
+\noindent{\small\begin{verbatim}
+int Client::_numInstances = 0;
+\end{verbatim}}
+
+The full implementation file, \verb+Client.cpp+ is listed below:
+
+\noindent{\small \input{OOIntro/Programs/Client.cpp}}
+
+%-------------------------------------------------------------------------
+
+\subsection{Using Class Members}
+
+Off course, we have used some of them already -- the cnstructors. Below we
+show an example application which creates a few accounts, uses them and then 
+deletes them. In between we ask the class now and then to report the number
+of instances which currently exist for the class:
+
+\noindent{\small \input{OOIntro/Programs/ClientTest.cpp}}
+

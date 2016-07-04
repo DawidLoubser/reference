@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.interception.interceptors.classLevel.classLevel">
+  <title>Class level interceptors</title>
+  <para>
+    If an interceptor is assigned to a bean class, it will intercept all business services of the
+    bean.
+  </para>
+  <section>
+      <title>Applying class level interceptors via annotations</title>
+      <para>
+      To assign a single interceptor class to a bean, one can use the
+      <literal>@javax.interceptor.Interceptors</literal> annotation:
+        <programlisting language="Java">
+@Interceptors ({MyInterceptor.class})
+public class ShoppingBean implements Shopping
+{
+  ...
+}  
+</programlisting>        
+      </para>
+      <para>
+      Multiple interceptors are assigned simply by listing multiple classes:
+        <programlisting language="Java">
+@Interceptors({MyInterceptor.class, LoggingInterceptor.class})
+public class ShoppingBean implements Shopping
+{
+  ...
+}  
+</programlisting>        
+      </para>
+      <para>
+      If multiple interceptors have been specified for a bean, they will
+      intercept in the order in which they are declared.
+    </para>
+  </section>
+  
+  <section>
+      <title>Applying class level interceptors in the deployment descriptor of a bean</title>
+      <para>
+      Instead of applying a class-level interceptor in the source code of a bean via an annotation, we can
+      also apply the interceptor in a separate deployment descriptor. This is done in a
+      <literal>interceptor-bindings</literal> section of the <literal>assembly-descriptor</literal>
+      of the <literal>ejb-jar.xml</literal> deployment descriptor.
+    </para>
+      <para>
+      For example, below we specify that the <literal>RequestLogger</literal>
+      is applied as an interceptor
+      to all business services of the <literal>ProcessOrder</literal> session bean:
+        <programlisting language="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+    http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
+  version="3.0">
+
+  <!-- Declare it -->
+  <interceptors>
+    <interceptor>
+      <interceptor-class>
+        za.co.solms.logging.RequestLogger
+      </interceptor-class>
+    </interceptor>
+  </interceptors>
+
+  <!-- Map it -->
+  <assembly-descriptor>
+    <interceptor-binding>
+      <ejb-name>za.co.solms.retail.ProcessOrder</ejb-name>
+      <interceptor-class>
+        za.co.solms.logging.RequestLogger
+      </interceptor-class>
+    </interceptor-binding>
+  </assembly-descriptor>
+
+</ejb-jar>
+        ]]></programlisting>
+      <!-- OLD: programlisting>
+&lt;assembly-descriptor&gt;
+  ...
+  &lt;interceptor-binding&gt;
+     &lt;ejb-name&gt;za.co.solms.retail.ProcessOrder&lt;/ejb-name&gt;
+     &lt;interceptor-class&gt;
+        za.co.solms.logging.RequestLogger
+     &lt;/interceptor-class&gt;
+  &lt;/interceptor-binding&gt;
+&lt;/assembly-descriptor&gt;
+
+        </programlisting -->
+         <note>
+            <para>
+        An interceptor is configured as a class-level interceptor simply by omitting
+        any method declarations in the mapping in <literal>ejb-jar.xml</literal>.
+      </para>
+         </note>
+      </para>
+  </section>
+  
+</section>

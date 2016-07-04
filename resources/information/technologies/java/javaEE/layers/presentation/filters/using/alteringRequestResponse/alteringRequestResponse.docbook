@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Altering requests and responses</title>
+    <indexterm>
+        <primary>Filters</primary>
+        <secondary>altering requests</secondary>
+    </indexterm>
+    <para>
+        There are many ways for a filter to modify a request or response. For example, a 
+        filter can add an attribute to the request or can insert data in the response.
+    </para>
+    <para>
+        A filter that modifies a response must usually capture the response before it is 
+        returned to the client. To do this, you pass a stand-in stream to the servlet that 
+        generates the response. The stand-in stream prevents the servlet from closing the 
+        original response stream when it completes and allows the filter to modify the 
+        servlet’s response. 
+    </para>
+    <para>
+        To pass this stand-in stream to the servlet, the filter creates a response wrapper 
+        that overrides the <literal>getWriter</literal> or <literal>getOutputStream</literal> method to return this stand-in 
+        stream. The wrapper is passed to the <literal>doFilter</literal> method of the filter chain. 
+        Wrapper methods default to calling through to the wrapped request or response object, unless
+        overridden by the developer.
+    </para>
+    <para>
+        <indexterm>
+            <primary>decorator pattern</primary>
+        </indexterm>
+        This approach follows the well-known Wrapper or Decorator pattern described 
+        in Design Patterns, Elements of Reusable Object-Oriented Software, by Erich 
+        Gamma et al. (Addison-Wesley, 1995).
+    </para>
+        
+        
+</section>

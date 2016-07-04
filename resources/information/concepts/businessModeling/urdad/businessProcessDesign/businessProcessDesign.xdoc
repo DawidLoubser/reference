@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.concepts.businessModeling.urdad.businessProcessDesign.businessProcessDesign"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+ <title>Business process design</title>
+ <para>
+   Once we have a clear understanding of
+   <itemizedlist>
+     <listitem><para>
+       what value-offerings/use-cases the organization is going to
+       provide to its stake holders and
+     </para></listitem>
+     <listitem><para>
+       what the stakeholder experience should be around these value
+       offerings (<abbrev>i.e.</abbrev> how stake holders expect to
+       interact with th organization),
+     </para></listitem>
+   </itemizedlist>
+   then we can focus on designing/redesigning the business processes
+   which realize these use cases.
+ </para>
+ 
+ <section>
+   <title>Responsibility identification</title>
+   <para>
+       In URDAD the first step in the business process design phase is that
+       of identifying the core responsibilities which need to be addressed by the
+       business process when realizing the stakeholder use case.
+   </para>
+   <figure>
+     <title>Responsibility identification</title>
+     <graphic fileref="../..//examples/insurer/insurance/processClaim/responsibilityIdentification.jpg"/>
+   </figure>
+ </section>
+ 
+ <section>
+   <title>Responsibility allocation</title>
+   <para>
+     Once we have identified the core responsibilities, we assign them to core 
+     business units.
+   </para>
+   <figure>
+     <title>Responsibility allocation</title>
+     <graphic fileref="../../examples/insurer/insurance/processClaim/responsibilityAllocation.jpg"/>
+   </figure>
+ </section>
+ 
+ <section>
+   <title>How do the business units collaborate?</title>
+   <para>
+     Now we have identified the business units which collaborate to realize the
+     stakeholder/client use-case and the responsibilities these business units
+     have in the context of the collaboration. The next step in URDAD is to look
+     at how these business units collaborate to realize the use case -- 
+     <abbrev>i.e.</abbrev> looking at the dynamic aspects of the business 
+     process. 
+   </para>
+   <para>
+     Before looking at the business process in all its generality, it may
+     be helpful to look at one or two scenarios first. As before, we document
+     a scenario using UML sequence diagram. This time, however, the 
+     organization is no longer treated as a black box -- instead we show
+     how the business units of the organization collaborate to realize the
+     use case.
+   </para>
+   <figure>
+     <title>A scenario for the business process</title>
+     <graphic fileref="../../examples/insurer/insurance/processClaim/sequenceBusinessProcess.jpg"/>
+   </figure>
+   <para>
+      Having understood the typical scenario for a business process realizing a
+      stakeholder use-case, we now look at the business process in general,
+      using, once again, an activity diagram. This time, however, we use swim-lanes
+      to show what activities are performed by which business units.
+   </para>
+   <para>
+     Activity diagrams also provide a very intuitive notation for showing
+     concurrencies and synchronization points in a business process.
+     For example, once it has been established that the policy is active,
+     the policy department will go through the more elaborate process
+     of establishing the claim coverage of the policy whilst Valuations
+     assesses the value of the claim. There is no dependency between these
+     two processes and the organization can realize these steps concurrently
+     in order to provide a speedier realization of the client use case.
+   </para>
+   <para>
+     The process of preparing a settlement offer cannot, however, commence 
+     before both, the claim coverage and the valuation report have been
+     compiled. We thus define a synchronization point in the business process,
+     <abbrev>i.e.</abbrev> a point where the business process blocks until
+     all inbound activities have been completed.
+   </para>
+   <figure>
+     <title>Business unit collaboration within the business process realizing the client use case</title>
+     <graphic fileref="../../examples/insurer/insurance/processClaim/activityBusinessProcess.jpg"/>
+   </figure>
+   
+   <para>
+     Finally, URDAD employs optionally a UML communication diagram to facilitate
+     a smoother transition from the dynamics of the business process to the static
+     structure of the organization required by the business in the context of
+     realizing a stake holder use case. The communication diagram shows largely
+     the same information as the sequence diagram, highlighting the message
+     paths required between the organizational units.
+   </para>
+   <figure>
+     <title>Communication diagram for a scenario of the business process</title>
+     <graphic fileref="../../examples/insurer/insurance/processClaim/communicationBusinessProcess.jpg"/>
+   </figure>
+   
+ </section>
+ 
+ <section>
+   <title>The required organizational structure</title>
+   <para>
+     In URDAD the static context of the collaboration is used to extract the
+     static structure required for the business process realizing a stake holder
+     use case. It shows, at one level of granularity as fixed by the responsibility
+     identifications, the services which the business units must offer in order
+     to support the business process and the communication paths (associations)
+     required between these business units.
+   </para>
+   <figure>
+     <title>The static context of the collaboration</title>
+     <graphic fileref="../../examples/insurer/insurance/processClaim/collaborationContext.jpg"/>
+   </figure>
+   
+ </section>
+ 
+ <section>
+   <title>Going over to the next level of granularity</title>
+   <para>
+     Note that URDAD fixed the level of granularity by the core responsibilities identified
+     in the first step of the business process design. We assigned these responsibilities
+     to core business units and have refrained from introducing any lower level 
+     business units within that iteration. The end result was the static context
+     of the collaboration which specified the static structure, at that level of granularity,
+     which was required by the business process realizing the stakeholder/client
+     use case.
+   </para>
+   <para>
+     URDAD now goes over to the next lower level of granularity by selecting one
+     of the core business units from the previous level of granularity as the new context
+     with the other business units which integrated with it being now the actors.
+   </para>
+   <para>
+     From the previous level of granularity we know already what that business 
+     unit was used for, <abbrev>i.e.</abbrev> the service it offered to the
+     other business units. We even have the high-level (black box) dynamics
+     already. We can directly go to the design of the lower level business process
+     <note><para>
+       Note that at the previous level the business units themselves were treated
+       as black boxes in the sense that we did not specify how they realize their
+       services.
+     </para></note>
+   </para>
+
+   <section>
+     <title>
+       Example: The second level of granularity for the process claim use case
+     </title>
+     <para>
+       At the first level of granularity URDAD only exposed the services the business
+       units offered to each other, not how they realize these services. For 
+       example, we did not specify how the policies department determined
+       the claim coverage of the policy or how the legal department is going
+       to try to recuperate any losses incurred by the insurer in the context
+       of an insurance claim.
+     </para>
+     <para>
+       Now, at the second level of granularity we select one of the business units,
+       say the Legal department, as the new context. The claims department
+       becomes its client.
+       <note><para>
+         The higher level business units may also turn out to be a secondary
+         actor for a lower level business process. For example, the Policies
+         department could potentially consult the legal department when
+         determining the claim coverage of a policy.
+       </para></note>
+     </para>
+     <para>
+        We already know the use case the legal department is used for -- that 
+        of recuperating losses on a claim. We directly start the lower level business 
+        process design by identifying the responsibilities which need to be 
+        addressed in the process of trying to recuperate losses incurred on
+        an insurance claim, assign these responsibilities to either lower level
+        business units (components of the Legal department) or to external
+        service providers (external to the Legal department which may be
+        other business units of the organization or may be external service
+        providers, <abbrev>i.e.</abbrev> another organization).
+     </para>
+     <para>
+       As with the previous iteration we continue by looking how these
+       lower level business units collaborate to realize the lower level
+       use case using sequence diagrams and an activity diagram with
+       swim lanes. Next we either directly project out the context of this
+       lower level collaboration or use a communication diagram to make 
+       this step more intuitive.
+     </para>
+     <para>
+       Finally we end up with the context of this lower level collaboration
+       which shows the lower level business units, required for the
+       process claim use case, the services these lower level business units
+       provide and the message paths required within the organization in
+       the context of realizing ultimately the stakeholder/client use case.
+     </para>
+     <para>
+       This process is repeated for the other business units. Next we may
+       need to go to one or two further levels of granularity (one seldom
+       requires more than 4 levels) until we have the business process fully
+       specified. At this stage one may want deploy the use case within the
+       organization, even before the other business processes realizing
+       other use cases have been deployed. This provides feedback to the
+       business analysis team who may need to resolve some issues identified
+       during deployment.
+     </para>
+     <para>
+       Hence, business process design in URDAD is a double iterative process
+       with the first iteration over the different layers of granularity and the
+       second across the stakeholder/client use cases.
+     </para>
+   </section>
+   
+     
+ </section>
+ 
+</section>

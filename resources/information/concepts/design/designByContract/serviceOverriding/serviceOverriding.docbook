@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns0:section xmlns:ns0="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.design.designByContract.serviceOverriding.serviceOverriding">
+  <ns1:title xmlns:ns1="http://docbook.org/ns/docbook">Design by contract and specialization</ns1:title>
+    <ns2:para xmlns:ns2="http://docbook.org/ns/docbook">
+      Design by contract provides two simple rules one should keep in mind when
+      subclass replaces the realization of a service in a superclass with its
+      own implementation of that service. Both rules can be seen as a direct
+      consequence of the substitutability of subclassing:
+      <ns3:orderedlist xmlns:ns3="http://docbook.org/ns/docbook">
+        <ns4:listitem xmlns:ns4="http://docbook.org/ns/docbook"><ns5:formalpara xmlns:ns5="http://docbook.org/ns/docbook">
+          <ns6:title xmlns:ns6="http://docbook.org/ns/docbook">Pre-conditions may not be increased</ns6:title>
+          <ns7:para xmlns:ns7="http://docbook.org/ns/docbook">
+            The realization of the subclass service must be available under no
+            more stringent conditions than what the superclass service is. In 
+            otherwords, the set of pre-conditions for the sub-class implementation
+            of the service must be fully contained in the set of pre-conditions
+            which apply to the implementation of that service in the superclass.
+            Or put yet another way, the subclass service may not raise any exceptions
+            which are not potentially raised by the corresponding superclass
+            service.
+            <ns8:note xmlns:ns8="http://docbook.org/ns/docbook"><ns9:title xmlns:ns9="http://docbook.org/ns/docbook">Reason</ns9:title>
+              <ns10:para xmlns:ns10="http://docbook.org/ns/docbook">
+                A client may request an instance of the superclass. You may always 
+                give him an instance of one of the sub-classes instead. He/she
+                knows that the object provides a certain service as long as a specific
+                set of pre-conditions is met. If the subclass instance violates this,
+                substitutability is violated.
+              </ns10:para>
+            </ns8:note>
+          </ns7:para>
+        </ns5:formalpara></ns4:listitem>
+        <ns11:listitem xmlns:ns11="http://docbook.org/ns/docbook"><ns12:formalpara xmlns:ns12="http://docbook.org/ns/docbook">
+          <ns13:title xmlns:ns13="http://docbook.org/ns/docbook">Post-conditions may not be decreased</ns13:title>
+          <ns14:para xmlns:ns14="http://docbook.org/ns/docbook">
+            The realization of the subclass service must provide at least all 
+            those deliverables which the corresponding service of the superclass 
+            provides. It may, though, provide additional deliverables which are
+            not provided by the corresponding service of the superclass.
+            <ns15:note xmlns:ns15="http://docbook.org/ns/docbook"><ns16:title xmlns:ns16="http://docbook.org/ns/docbook">Reason</ns16:title>
+              <ns17:para xmlns:ns17="http://docbook.org/ns/docbook">
+                A client may request an instance of the superclass. You may always 
+                give him an instance of one of the sub-classes instead. He/she
+                knows that a service of the instance provides certain deliverables.
+                Substitutability would be violated if the sub-class service does
+                not provide at least the deliverables the superclass service
+                provides.
+              </ns17:para>
+            </ns15:note>
+          </ns14:para>
+        </ns12:formalpara></ns11:listitem>
+        <ns18:listitem xmlns:ns18="http://docbook.org/ns/docbook"><ns19:formalpara xmlns:ns19="http://docbook.org/ns/docbook">
+          <ns20:title xmlns:ns20="http://docbook.org/ns/docbook">Invariance constraints may only be increased during specialization</ns20:title>
+          <ns21:para xmlns:ns21="http://docbook.org/ns/docbook">
+            An instance of a subclass is still an instance of the superclass as well and
+            the invariance constraints applying to the superclass still apply to  the subclass too.
+            The subclass may, however, add further invariance constraints to those of the
+            superclass.
+          </ns21:para>
+        </ns19:formalpara>
+        </ns18:listitem>
+      </ns3:orderedlist>
+      These rules are graphically illustrated in 
+      <ns22:xref xmlns:ns22="http://docbook.org/ns/docbook" linkend="figUmlStaticModelDesignByContract"/>.
+    </ns2:para>  
+    
+    <ns23:figure xmlns:ns23="http://docbook.org/ns/docbook" xml:id="figUmlStaticModelDesignByContract">
+      <ns24:title xmlns:ns24="http://docbook.org/ns/docbook">
+        When overriding a method the pre-conditions may only be decreased and the
+        post-conditions may only be increased.
+      </ns24:title>
+      <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="designByContractGuidelines.jpg"/></imageobject></mediaobject>
+    </ns23:figure>
+    
+    <ns25:section xmlns:ns25="http://docbook.org/ns/docbook"><ns26:title xmlns:ns26="http://docbook.org/ns/docbook">Example: An account</ns26:title>
+      <ns27:para xmlns:ns27="http://docbook.org/ns/docbook">
+        Let us look at the above rules from the perspective of our accounts. 
+        The first rule states that if we say that accounts can be debited
+        as long as there are sufficient funds, then a specialized account 
+        (<ns28:abbrev xmlns:ns28="http://docbook.org/ns/docbook">e.g.</ns28:abbrev> a cheque account) may not refuse the service
+        for any other reasons that that of insufficient funds -- it may
+        not, for example, raise an exception because the debit service
+        was requested on a sunday.
+      </ns27:para>
+      <ns29:para xmlns:ns29="http://docbook.org/ns/docbook">
+        Furthermore, the debit service of <ns30:literal xmlns:ns30="http://docbook.org/ns/docbook">Account</ns30:literal> subtracts
+        the debit amount from the balance of the account. Cheque accounts must 
+        do at least this. They may, however, add the transaction to a transaction 
+        history and may additionally raise a cheque fee. 
+      </ns29:para>
+      <ns31:para xmlns:ns31="http://docbook.org/ns/docbook">
+        For the <ns32:literal xmlns:ns32="http://docbook.org/ns/docbook">Account</ns32:literal> class we have the invariance constraint that the sum of
+        all credit transactions minus the sum of all debit transactions must always add up to the
+        current balance. This invariance constraint must still apply to subclasses who may add
+        further invariance constraints around, for example, transaction fees. 
+      </ns31:para>
+    </ns25:section>
+  </ns0:section>

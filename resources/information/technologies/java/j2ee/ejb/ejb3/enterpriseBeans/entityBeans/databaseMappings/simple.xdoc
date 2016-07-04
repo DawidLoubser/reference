@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.entityBeans.databaseMappings.simple"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Simple database mappings</title>
+  <para>
+    The object-relational mapping functionality of the <emphasis>Java Persistence API</emphasis> (JPA),
+    which is used to manage entity beans, has a sensible default scheme of mapping your object
+    graph to a relational structure.
+  </para>
+  <para>
+    JPA provides standard annotations to allow the developer to customise the mapping, such
+    as specifying the database table which should be the
+    <emphasis>primary table</emphasis> for the entity bean. One may further specify
+    the column names for object properties.
+    <!-- TODO (multi-table mappings are discussed in
+    <xref
+      linkend="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.entityBeans.databaseMappings.multiTable"/>.
+    -->
+  </para>
+  
+  <section>
+    <title>Example</title>
+    <para>
+      <programlisting><![CDATA[
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class Account implements java.io.Serializable
+{
+  public Account() {}
+        
+  public long getAccountNo() {return accountNo;}
+          
+  public double getBalance() {return balance;}
+        
+  public void debit(double amount) throws InsufficientFunds
+  {
+    // Check preconditions
+    //...
+    
+    balance -= amount;
+  }      
+        
+  public void credit(double amount)
+  {
+    balance += amount;
+  }      
+       
+  public String toString() 
+  {
+    return accNo + ": balance = " + balance;
+  }      
+
+  @Id
+  private long accountNo;
+  private double balance;
+}                
+]]></programlisting>
+      could be customised as
+      <programlisting><![CDATA[
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.Table;
+
+@Entity @Table(name = "ACCOUNTS")       
+public class Account implements java.io.Serializable
+{
+  public Account() {}      
+     
+  public long getAccountNo() {return accountNo;}
+          
+  public double getBalance() {return balance;}
+        
+  public void debit(double amount) throws InsufficientFunds
+  {
+    // Check preconditions
+    //...
+    
+    balance -= amount;
+  }      
+        
+  public void credit(double amount)
+  {
+    balance += amount;
+  }      
+       
+  public String toString() 
+  {
+    return accNo + ": balance = " + balance;
+  }      
+
+  @Id @Column(name = "ACC_NO")
+  private long accountNo;
+  
+  @Column(name = "BAL")
+  private double balance;
+}                
+      ]]></programlisting>
+    </para>
+  </section>
+  
+</section>

@@ -1,0 +1,61 @@
+#getFunctionalRequirements($targetUseCase)    
+#set($functionalRequirements = $result)
+
+#set ($serviceProviderContracts = $array.createHashSet())
+#foreach($functionalRequirement in $functionalRequirements)
+  #getRelationshipsFor($functionalRequirement, $umlUsageRelationship)
+  #set ($umlUsageRelationships = $result)
+  
+  #foreach($umlUsageRelationship in $umlUsageRelationships)
+      #set ($dummy = $serviceProviderContracts.add($report.getSupplierElement($umlUsageRelationship)))
+  #end
+  
+#end
+
+<section>
+    <title>Services contracts for the required responsibility domains</title>
+    <para>
+        #if ($serviceProviderContracts.size() == 0)
+          <note>
+              <title>The functional requirements have not been assigned to any services contracts</title>
+              <para>
+                  URDAD requires that each functional requirement is assigned to a single services contract via a
+                  <emphasis>Usage</emphasis> relationship.
+              </para>
+          </note>
+        #else
+            The functional requirements for the $targetUseCase.name have been allocated to the following responsibility domains:
+            <itemizedlist>
+                #foreach($serviceProviderContract in $serviceProviderContracts)
+                    <listitem><formalpara>
+                        <title>$serviceProviderContract.name</title>
+                        <para>
+                            #if ($report.getComment($serviceProviderContract))
+                                $report.getComment($serviceProviderContract).body
+                            #end    
+                            The following functional requirements have been assigned to the $serviceProviderContract.name services contract:
+                            <itemizedlist>
+                                #foreach ($functionalRequirement in $functionalRequirements)
+                                  #getRelationshipsFor($functionalRequirement, $umlUsageRelationship)
+                                  #set ($umlUsageRelationships = $result)
+                                  #foreach ($umlUsageRelationship in $umlUsageRelationships)
+                                      #if ($report.getSupplierElement($umlUsageRelationship) == $serviceProviderContract)
+                                          <listitem><formalpara>
+                                              <title>$functionalRequirement.name</title>
+                                              <para>
+                                                  $report.getComment($functionalRequirement).body
+                                              </para>
+                                          </formalpara></listitem>    
+                                      #end
+                                   #end   
+                                #end  
+                            </itemizedlist>
+                        </para>
+                    </formalpara></listitem>
+                #end
+            </itemizedlist>
+        #end
+    </para>
+</section>
+
+

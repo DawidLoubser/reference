@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Sequence functions</title>
+    <para>
+        As of version 2.0, XPath supports sequences together with a range of sequence functions. Sequences are ordered
+        collections. The sequences in XPath are always flattened such that 
+        <programlisting><![CDATA[
+(a, (b, c), d, e)            
+]]></programlisting>
+        results in
+        <programlisting><![CDATA[
+(a, b, c, d, e)            
+            ]]></programlisting>
+    </para>
+    
+    <para>
+        Tee W3C has published a "XQuery 1.0 and XPath 2.0 Functions and Operators" specification
+        which defines an extensive set of functions for sequences. Assume for the following that you
+        have accumulated a result sequence in a variable as follows:
+        <programlisting><![CDATA[
+$s = ("A", "B", "C", "A", "B")            
+            ]]></programlisting>
+        <itemizedlist>
+            <listitem><formalpara>
+                <title>to</title>
+                <para>
+                    generates a sequence from a provided start parameter to a provided end parameter. Thus
+                    <programlisting><![CDATA[
+fn:to(3,7)
+
+fn:to(4,3)
+]]></programlisting>
+                    return the sequences
+                    <programlisting><![CDATA[
+(3, 4, 5, 6, 7)
+
+()
+                        ]]></programlisting>
+                </para>
+            </formalpara>
+            </listitem>
+            <listitem><formalpara>
+                <title>insert-before</title>
+                <para>
+                    which returns a new sequence with a specified value inserted into a specified sequence at a
+                    specified position. This
+                    <programlisting><![CDATA[
+fn:insert-before($s, 0, "x")                        
+]]></programlisting>
+                    returns
+                    <programlisting><![CDATA[
+("x", "A", "B", "C", "A", "B")            
+            ]]></programlisting>
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>index-of</title>
+                <para>
+                    which returns a sequence with the indeces of the elements which are equal to the provided search parameter.
+                    Thus
+                    <programlisting><![CDATA[
+fn:index-of($s, "A")                        
+]]></programlisting>
+                    returns the sequence
+                    <programlisting>
+(0, 3)                        
+                    </programlisting>
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>distinct-values</title>
+                <para>
+                    returns a sequence for which all duplicates are removed. Thus
+                    <programlisting><![CDATA[
+fn:distinct-values($s)                        
+]]></programlisting>
+                    returns
+                    <programlisting><![CDATA[
+("A", "B", "C")                        
+                        ]]></programlisting>
+                </para>
+            </formalpara>
+            </listitem>
+            <listitem><formalpara>
+                <title>empty</title>
+                <para>
+                    returns either <literal>true</literal> or <literal>false</literal> depending on whether the
+                    target sequence is empty or not. Thus
+                    <programlisting><![CDATA[
+fn:empty($s)                        
+                        ]]></programlisting>
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>concatenate</title>
+                <para>
+                    returns a flat result sequence which contains the elements of the second sequence concatenated to
+                    the elements of the first sequence.
+                    <programlisting><![CDATA[
+fn:concatenate($s, ("X", "Y", 'Z"))                        
+]]></programlisting>
+                    returns the sequence
+                    <programlisting><![CDATA[
+("x", "A", "B", "C", "A", "B", "X", "Y", Z")                                    
+                        ]]></programlisting>
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>
+                    remove
+                </title>    
+                <para>
+                    removes the elements at the specified index if the target sequence has an element at that position (otherwise
+                    the target sequence is returned un-altered). Thus
+                    <programlisting><![CDATA[
+fn:remove($s, 2)                        
+                        ]]></programlisting>
+                    returns
+                    <programlisting><![CDATA[
+ ("A", "B", "A", "B")                       
+                        ]]></programlisting>
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>reverse</title>
+                <para>
+                    returns a sequence whose element a reverse of those in the target sequence. Thus
+                    <programlisting><![CDATA[
+fn:reverse($s)                        
+]]></programlisting>
+                    returns
+                    <programlisting><![CDATA[
+("B", "A", "C", "B", "A")                        
+                        ]]></programlisting>
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>sub-sequence</title>
+                <para>
+                    returns a new sequence which is a sub-sequence of the target sequence starting from a starting location and either
+                    going to the end of the target sequence or including only a certain number of elements specified by an optional length
+                    parameter. Thus
+                    <programlisting><![CDATA[
+fn:subsequence($s, 2)
+
+fn:subsequence($s, 2, 2)
+]]></programlisting>
+                    will return
+                    <programlisting><![CDATA[
+ ("C", "A", "B")                       
+     
+("C", "A")     
+]]></programlisting>
+                    respectively.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>zero-or-one, one-or-more, exactly-one</title>
+                <para>
+                    These are cardinality checking functions which return <literal>true</literal> or <literal>false</literal> if the 
+                    target sequence contains the corresponding number of elements. Thus
+                    <programlisting><![CDATA[
+fn:zero-or-one($s)                        
+                        ]]></programlisting>
+                    returns <literal>false</literal> because the target sequence contains more than one element.
+                </para>
+            </formalpara></listitem>
+            
+            <listitem>
+                <formalpara>
+                    <title>deep-equals</title>
+                    <para>
+                        returns true if the two sequences have the same elements at the same position and false otherwise.
+                    </para>
+                </formalpara>
+                
+            </listitem>
+            
+            <listitem><formalpara>
+                <title>union, intersect, except</title>
+                <para>
+                    return the union, intersection and differences of two sequences, removing any duplicate elements.
+                    Thus
+                    <programlisting><![CDATA[
+fn:union($s, ("A", "X"))
+
+fn:intersection($s, ("A", "X"))
+
+fn:except($s, ("A", "X"))
+]]></programlisting>
+                    return
+                    <programlisting><![CDATA[
+("A", "B", "C", "X")
+
+("A")
+
+("X")
+]]></programlisting>
+                    respectively.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>count</title>
+                <para>
+                    returns the number of elements in the target sequence. Thus
+                    <programlisting><![CDATA[
+fn:count($s)                        
+]]></programlisting>
+                    returns 5.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>min, max, sum, avg</title>
+                <para>
+                    return the minimum, maximum, sum and average of the elements in a target sequence. These functions
+                    support a range of data types including the integral and floating data types as well as 
+                    dates, times, dateTimes, durations. Other data types are, as far as possible, converted to types which can 
+                    be computed. Characters are calculated on their code in the encoding table. Thus 
+                    <programlisting><![CDATA[
+fn:avg("A", "B", "C")                        
+]]></programlisting>
+                    will return <literal>("B")</literal>. Rounding is done where necessary.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>id, idref</title>
+                <para>
+                    The <literal>fn:id</literal> function returns a sequence of all element nodes in the XML document
+                    that have an <literal>ID</literal> which matches a specified <literal>IDREF</literal>. It is called via
+                    <programlisting><![CDATA[
+fn:id("myIdRef")                        
+]]></programlisting>
+                    Similarly, <literal>fn:idref</literal> returns a sequence of all element nodes which have an 
+                    <literal>IDREF</literal> which matches the specified <literal>ID</literal>.
+                </para>
+            </formalpara>
+            </listitem>
+        </itemizedlist>
+            
+        <programlisting><![CDATA[
+                15.1 General Functions and Operators on Sequences
+        15.1.1 fn:boolean
+        15.1.2 op:concatenate
+        15.1.5 fn:exists
+        15.1.6 fn:distinct-values
+        15.1.7 fn:insert-before
+        15.1.11 fn:unordered
+    15.5 Functions and Operators that Generate Sequences
+        15.5.1 op:to
+        15.5.2 fn:id
+        15.5.3 fn:idref
+        15.5.4 fn:doc
+        15.5.5 fn:doc-available
+        15.5.6 fn:collection
+            ]]></programlisting>
+    </para>
+</section>    

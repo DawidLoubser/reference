@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+    <title>Creating the datab, users and permissions</title>
+    <para>
+        You can create a database from the PostgreSql user interface, <literal>psql</literal>
+        via
+        <programlisting><![CDATA[
+CREATE DATABASE <appServerDB>
+            ]]></programlisting>
+    </para>
+    <para>
+        The psql interface should be run from the <literal>postgres</literal> user:
+        <programlisting><![CDATA[
+su - postgres
+psql
+            ]]></programlisting>
+    </para>
+
+    <section>
+        <title>Creating the system user</title>
+        <para>
+            Your application server will maintain a connection pool of connections established from the system.
+            To this end you want to create a system user. This is done on PostgreSQL via
+            <programlisting><![CDATA[
+CREATE USER <appServerUsername> ENCRYPTED PASSWORD '<appServerPassword>' NOCREATEDB NOCREATEUSER;
+]]></programlisting>
+            You can list the users via
+            <programlisting><![CDATA[
+select * from pg_shadow;            
+]]></programlisting>
+            and alter the user password via
+            <programlisting><![CDATA[
+alter user <appServerUsername> with password '[newPassword]';            
+            ]]></programlisting>
+        </para>
+        <para>
+            The sbss user was given full permission on the sbss database via
+            <programlisting><![CDATA[
+GRANT ALL PRIVILEGES ON DATABASE <applicationDB> to <appServerUsername>;
+            ]]></programlisting>
+        </para>
+        
+    </section>    
+    
+</section>    

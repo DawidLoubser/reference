@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>
+        Model navigation
+        <indexterm><primary>Object Constraint Language</primary><secondary>model navigation</secondary></indexterm>
+    </title>
+    <para>
+        One of the features of OCL is that it enables one to navigate an object model. The navigation
+        operator is a dot. 
+        <indexterm><primary>Object Constraint Language</primary><secondary>navigation operator</secondary></indexterm>
+        <indexterm><primary>navigation operator</primary>
+            <seealso>
+                <indexterm><primary>Object Constraint Language</primary><secondary>navigation operator</secondary></indexterm>
+            </seealso>
+        </indexterm>
+    </para>
+    
+    <figure xml:id="ocl.modelnavigation.simpleNavigationContext">
+        <title>For each policy we have an associated policyAccount.</title>
+        <mediaobject><imageobject>
+            <imagedata fileref="simpleNavigationContext.png"></imagedata>
+        </imageobject></mediaobject>
+    </figure>
+    
+    <para>
+        Consider, for example, the simple object graph depicted in the UML class diagram of <xref linkend="ocl.modelnavigation.simpleNavigationContext"/> 
+        If we would like to specify that the balance of any account which plays the role of a policy account must always be greater or equal to zero, then we
+        can do this with the following OCL constraint:
+        <programlisting><literal>
+context: Policy
+  inv: self.policyAccount.balance > 0
+        </literal></programlisting>
+        <note><para>
+            OCL also supports navigation across one-to-many and many-to-many associations using OCL collections.
+        </para></note>
+    </para>
+    
+    <section>
+        <title>Navigating to and from association classes</title>
+        <para>
+            <emphasis>The name of the association class converted to lower case</emphasis> 
+            is used to navigate, in OCL, from an associated object to the association class.
+            Consider, for example, the UML class diagram shown in
+        </para>
+        <figure xml:id="ocl.navigatingModel.associationClasses.associationClasses_fig">
+            <title>Jobs and ClientAccount as association classes</title>
+            <mediaobject><imageobject>
+                <imagedata fileref="associationClasses.png"/>
+            </imageobject></mediaobject>
+        </figure>
+        <para>
+            If we wanted to navigate from a person to his or her salary we could simply use the following OCL query
+            <programlisting><![CDATA[
+person.job.salary
+]]></programlisting>
+        </para>
+        <para>
+            If the association is a one-to-many or many-to-many association, then the result of the query may be a collection of objects.
+            For example, the following query will yield a collection of client accounts
+            <programlisting><![CDATA[
+person.clientAccount                
+                ]]></programlisting>
+        </para>
+    </section>  
+  
+  
+<!-- Not sure whether qualification are or are not supported in UML-2, MagicDraw does not seem to support them anymore  
+    <section>
+        <title>Navigating across qualitfications</title>
+        <para>
+            
+        </para>
+    </section>
+    
+-->    
+</section>    
+    

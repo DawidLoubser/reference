@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-03-10 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Mapping UML service declarations onto Java</title>
+
+    <para> Service declarations within a UML class diagram map onto Java method header declarations.
+        The method bodies are not provided by the information contained in class and object
+        diagrams. It is the dynamic model (sequence, activity, state, timing, ... diagrams) which
+        fill in the method bodies. </para>
+
+    <figure xml:id="technology.java.lang.umlMapping.classDiagram.service.account_fig">
+        <title>A service for an account class</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="400" fileref="./account.jpg"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+
+    <para> For example, the UML diagram for the account shown in <xref
+            linkend="technology.java.lang.umlMapping.classDiagram.service.account_fig"/> would map onto
+        the following Java code:
+        <programlisting language="Java">
+<xi:include parse="text" href="Account.java"/>        
+        </programlisting>
+    </para>
+
+    <section>
+        <title>Output and input/output parameters</title>
+        <para> Java nativly only supports input parameters. Output and input/output parameters are
+            implemented using a holder class which wraps the output or input/output parameter. </para>
+        <para> Consider, for example, a <literal>runningAverage</literal> service which iteratively
+            updates the running average across a sequence of readings, every time receiving the last
+            value of the running average, the new reading and the total number of readings as
+            parameters. In addition to this it also calcualtes the deviation of the last reading
+            from the average. Here <itemizedlist>
+                <listitem>
+                    <para> the number of readings and the last reading are <literal>in</literal>
+                        (input) parameters, </para>
+                </listitem>
+                <listitem>
+                    <para> the running average is an <literal>inout</literal> (input/output)
+                        parameter, </para>
+                </listitem>
+                <listitem>
+                    <para> and the deviation from the average is an <literal>out</literal> (output)
+                        parameter. </para>
+                </listitem>
+            </itemizedlist> The Java mapping would be something like the following:
+            <programlisting language="Java">
+<xi:include parse="text" href="RunningAverage.java"/>            
+            </programlisting>
+            where the holder class would be something like the following:
+            <programlisting language="Java">
+<xi:include parse="text" href="DoubleHolder.java"/>                
+            </programlisting>
+        </para>
+        <para>
+            <note>
+                <para> In many cases input/output parameters are simply handled by the client
+                    providing the service provider a reference to the object which is modified
+                    within a method. For example, in
+                    <programlisting language="Java">
+<xi:include parse="text" href="SubscriptionManager.java"/>                    
+                    </programlisting>
+                    the <literal>raiseSubscriptionFee</literal> service obtains a handle to the
+                    client account which is debited. </para>
+            </note>
+
+        </para>
+    </section>
+</section>

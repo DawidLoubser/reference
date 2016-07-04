@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Exclusions</title>
+    <para>
+        At times one would like to explicitly exclude particular library versions. The reason for that would be 
+        to resolve a conflict between two dependencies caused typically by a transitive dependency being on a different
+        version of a library than what is required by the project itself. This is typically caused by an unecessary locking into
+        a particular version, <abbrev>i.e.</abbrev> when a specific version is specified in a dependency but the
+        dependency should have really been a dependency range as later and/or earlier versions of that library would
+        be substitutable.
+    </para>
+    <para>
+        For example, the following POM excerpt specifies a dependency on a <emphasis>testLibrary</emphasis>, but
+        
+        <programlisting><![CDATA[
+<project>
+   ...
+   <dependencies>
+      <dependency>
+         <groupId>solms.co.za.mavenCourse</groupId>
+         <artifactId>testLibrary</artifactId>
+         <version>1.4.2</version>
+         <exclusions>
+            <exclusion>
+               <groupId>xerces</groupId>
+               <artifactId>xercesImpl</artifactId>
+            </exclusion>
+         </exclusions>   
+      </dependency>
+   </dependencies>
+   ...
+</project>
+]]></programlisting>
+    </para>
+</section>    

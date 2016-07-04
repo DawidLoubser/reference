@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section SYSTEM "file:/usr/share/sgml/db42xml/docbookx.dtd"--><ns2472:section xmlns:ns2472="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.kernel.architecture.processScheduler">
+
+  <ns2473:title xmlns:ns2473="http://docbook.org/ns/docbook">The process scheduler</ns2473:title>
+  <ns2474:para xmlns:ns2474="http://docbook.org/ns/docbook">
+    The process scheduler is the heart of the kernel. All other kernel systems are conceptually
+    and physically dependent on it.
+  </ns2474:para>
+  <ns2475:section xmlns:ns2475="http://docbook.org/ns/docbook">
+    <ns2476:title xmlns:ns2476="http://docbook.org/ns/docbook">Responsibilities of the process scheduler</ns2476:title>
+    <ns2477:para xmlns:ns2477="http://docbook.org/ns/docbook">
+      The process scheduler has the following responsibilities:
+      <ns2478:itemizedlist xmlns:ns2478="http://docbook.org/ns/docbook">
+        <ns2479:listitem xmlns:ns2479="http://docbook.org/ns/docbook"><ns2480:para xmlns:ns2480="http://docbook.org/ns/docbook">
+          provide and switch access of the processes to the CPU,
+        </ns2480:para></ns2479:listitem>
+        <ns2481:listitem xmlns:ns2481="http://docbook.org/ns/docbook"><ns2482:para xmlns:ns2482="http://docbook.org/ns/docbook">
+          allow processes to create new copies of themselves, spawning new processes,  
+        </ns2482:para></ns2481:listitem>
+        <ns2483:listitem xmlns:ns2483="http://docbook.org/ns/docbook"><ns2484:para xmlns:ns2484="http://docbook.org/ns/docbook">
+          clean-up process resouces when a process has terminated,  
+        </ns2484:para></ns2483:listitem>
+        <ns2485:listitem xmlns:ns2485="http://docbook.org/ns/docbook"><ns2486:para xmlns:ns2486="http://docbook.org/ns/docbook">
+          receive interrupts and route them to the appropriate  kernel sub-system,
+        </ns2486:para></ns2485:listitem>
+        <ns2487:listitem xmlns:ns2487="http://docbook.org/ns/docbook"><ns2488:para xmlns:ns2488="http://docbook.org/ns/docbook">
+            send signals to user processes,
+        </ns2488:para></ns2487:listitem>
+        <ns2489:listitem xmlns:ns2489="http://docbook.org/ns/docbook"><ns2490:para xmlns:ns2490="http://docbook.org/ns/docbook">
+           manage the timer hardware and
+        </ns2490:para></ns2489:listitem>
+        <ns2491:listitem xmlns:ns2491="http://docbook.org/ns/docbook"><ns2492:para xmlns:ns2492="http://docbook.org/ns/docbook">
+          to provide a mechanism to dynamically extend and removing kernel functionalities.
+        </ns2492:para></ns2491:listitem>
+      </ns2478:itemizedlist>
+    </ns2477:para>
+  </ns2475:section>
+
+  <ns2493:section xmlns:ns2493="http://docbook.org/ns/docbook">
+    <ns2494:title xmlns:ns2494="http://docbook.org/ns/docbook">The interface to the process scheduler</ns2494:title>
+    <ns2495:para xmlns:ns2495="http://docbook.org/ns/docbook">
+      The process scheduler sub-system publishes a very compact interface.
+    </ns2495:para>
+    
+    <ns2496:section xmlns:ns2496="http://docbook.org/ns/docbook">
+      <ns2497:title xmlns:ns2497="http://docbook.org/ns/docbook">Creating and terminating processes</ns2497:title>
+      <ns2498:para xmlns:ns2498="http://docbook.org/ns/docbook">
+        After the kernel is booted there is only one running process, <ns2499:command xmlns:ns2499="http://docbook.org/ns/docbook">init</ns2499:command>.
+        This process then spawns further processes which then can themselves spawn copies 
+        of themselves. The kernel services used in this process are
+        <ns2500:itemizedlist xmlns:ns2500="http://docbook.org/ns/docbook">
+          <ns2501:listitem xmlns:ns2501="http://docbook.org/ns/docbook"><ns2502:formalpara xmlns:ns2502="http://docbook.org/ns/docbook">
+            <ns2503:title xmlns:ns2503="http://docbook.org/ns/docbook">fork()</ns2503:title>
+            <ns2504:para xmlns:ns2504="http://docbook.org/ns/docbook">
+              which generates a <ns2505:emphasis xmlns:ns2505="http://docbook.org/ns/docbook">child process</ns2505:emphasis> which is a copy of
+              the parent process, and
+            </ns2504:para>
+          </ns2502:formalpara></ns2501:listitem>
+          <ns2506:listitem xmlns:ns2506="http://docbook.org/ns/docbook"><ns2507:formalpara xmlns:ns2507="http://docbook.org/ns/docbook">
+            <ns2508:title xmlns:ns2508="http://docbook.org/ns/docbook">_exit()</ns2508:title>
+            <ns2509:para xmlns:ns2509="http://docbook.org/ns/docbook">
+              which is called either explicitly or implicitly upon process termination.
+            </ns2509:para>
+          </ns2507:formalpara></ns2506:listitem>
+        </ns2500:itemizedlist>
+      </ns2498:para>
+    </ns2496:section>
+    
+    <ns2510:section xmlns:ns2510="http://docbook.org/ns/docbook">
+      <ns2511:title xmlns:ns2511="http://docbook.org/ns/docbook">Loading, initializing and removing modules</ns2511:title>
+      <ns2512:para xmlns:ns2512="http://docbook.org/ns/docbook">
+        Linux provides a mechanism for dynamically adding and removing functionalities
+        by loading or deleting <ns2513:emphasis xmlns:ns2513="http://docbook.org/ns/docbook">kernel modules</ns2513:emphasis>.
+        The module-related services offered by the kernel are
+        <ns2514:itemizedlist xmlns:ns2514="http://docbook.org/ns/docbook">
+          <ns2515:listitem xmlns:ns2515="http://docbook.org/ns/docbook"><ns2516:formalpara xmlns:ns2516="http://docbook.org/ns/docbook">
+            <ns2517:title xmlns:ns2517="http://docbook.org/ns/docbook">create_module()</ns2517:title>
+            <ns2518:para xmlns:ns2518="http://docbook.org/ns/docbook">
+              which 
+              <ns2519:itemizedlist xmlns:ns2519="http://docbook.org/ns/docbook">
+                <ns2520:listitem xmlns:ns2520="http://docbook.org/ns/docbook"><ns2521:para xmlns:ns2521="http://docbook.org/ns/docbook">
+                  allocates sufficient memory for the module and 
+                </ns2521:para></ns2520:listitem>
+                <ns2522:listitem xmlns:ns2522="http://docbook.org/ns/docbook"><ns2523:para xmlns:ns2523="http://docbook.org/ns/docbook">
+                  initializes the module structure which will be populated with
+                  <ns2524:itemizedlist xmlns:ns2524="http://docbook.org/ns/docbook">
+                    <ns2525:listitem xmlns:ns2525="http://docbook.org/ns/docbook"><ns2526:para xmlns:ns2526="http://docbook.org/ns/docbook">
+                      a pointer to the module's symbol table, and
+                    </ns2526:para></ns2525:listitem>
+                    <ns2527:listitem xmlns:ns2527="http://docbook.org/ns/docbook"><ns2528:para xmlns:ns2528="http://docbook.org/ns/docbook">
+                      a field for the module name.  
+                    </ns2528:para></ns2527:listitem>
+                  </ns2524:itemizedlist>
+                </ns2523:para></ns2522:listitem>
+              </ns2519:itemizedlist>
+            </ns2518:para>
+          </ns2516:formalpara></ns2515:listitem>
+          <ns2529:listitem xmlns:ns2529="http://docbook.org/ns/docbook"><ns2530:formalpara xmlns:ns2530="http://docbook.org/ns/docbook">
+            <ns2531:title xmlns:ns2531="http://docbook.org/ns/docbook">init_module()</ns2531:title>
+            <ns2532:para xmlns:ns2532="http://docbook.org/ns/docbook">loads the module from disk and activates it, and</ns2532:para>
+          </ns2530:formalpara></ns2529:listitem>
+          <ns2533:listitem xmlns:ns2533="http://docbook.org/ns/docbook"><ns2534:formalpara xmlns:ns2534="http://docbook.org/ns/docbook">
+            <ns2535:title xmlns:ns2535="http://docbook.org/ns/docbook">delete_module()</ns2535:title>
+            <ns2536:para xmlns:ns2536="http://docbook.org/ns/docbook">unloads a module, <ns2537:abbrev xmlns:ns2537="http://docbook.org/ns/docbook">i.e.</ns2537:abbrev> removes the module from the kernel.</ns2536:para>
+          </ns2534:formalpara></ns2533:listitem>
+        </ns2514:itemizedlist>
+      </ns2512:para>
+    </ns2510:section>
+    
+    <ns2538:section xmlns:ns2538="http://docbook.org/ns/docbook">
+      <ns2539:title xmlns:ns2539="http://docbook.org/ns/docbook">Signals</ns2539:title>
+      <ns2540:para xmlns:ns2540="http://docbook.org/ns/docbook">
+        Signals provide a way for inter-procecss communication. The
+        <ns2541:command xmlns:ns2541="http://docbook.org/ns/docbook">signal()</ns2541:command> service allows a user process to register
+        a function handler with a signal, <ns2542:abbrev xmlns:ns2542="http://docbook.org/ns/docbook">i.e.</ns2542:abbrev> the function handler
+        will be called if such a signal is sent to the user process.
+        <ns2543:note xmlns:ns2543="http://docbook.org/ns/docbook">
+          <ns2544:para xmlns:ns2544="http://docbook.org/ns/docbook">
+            Signals are covered in more detail in the inter-process communication sub-system.
+          </ns2544:para>
+        </ns2543:note>
+      </ns2540:para>
+    </ns2538:section>
+    
+    
+    <ns2545:section xmlns:ns2545="http://docbook.org/ns/docbook">
+      <ns2546:title xmlns:ns2546="http://docbook.org/ns/docbook">Timer management</ns2546:title>
+      <ns2547:para xmlns:ns2547="http://docbook.org/ns/docbook">
+        The kernel provides
+        <ns2548:itemizedlist xmlns:ns2548="http://docbook.org/ns/docbook">
+          <ns2549:listitem xmlns:ns2549="http://docbook.org/ns/docbook"><ns2550:formalpara xmlns:ns2550="http://docbook.org/ns/docbook">
+            <ns2551:title xmlns:ns2551="http://docbook.org/ns/docbook">setitimer()</ns2551:title>
+            <ns2552:para xmlns:ns2552="http://docbook.org/ns/docbook">to set a particular timer, and</ns2552:para>
+          </ns2550:formalpara></ns2549:listitem>
+          <ns2553:listitem xmlns:ns2553="http://docbook.org/ns/docbook"><ns2554:formalpara xmlns:ns2554="http://docbook.org/ns/docbook">
+            <ns2555:title xmlns:ns2555="http://docbook.org/ns/docbook">getitimer()</ns2555:title>
+            <ns2556:para xmlns:ns2556="http://docbook.org/ns/docbook">to retrieve the current value of a timer.</ns2556:para>
+          </ns2554:formalpara></ns2553:listitem>
+        </ns2548:itemizedlist>
+      </ns2547:para>
+    </ns2545:section>
+  </ns2493:section>
+  
+  <ns2557:section xmlns:ns2557="http://docbook.org/ns/docbook">
+    <ns2558:title xmlns:ns2558="http://docbook.org/ns/docbook">The scheduling algorithm</ns2558:title>
+    <ns2559:para xmlns:ns2559="http://docbook.org/ns/docbook">
+      The schedule algorithm re-assigns CPU access to potentially another process. It is
+      called
+      <ns2560:itemizedlist xmlns:ns2560="http://docbook.org/ns/docbook">
+        <ns2561:listitem xmlns:ns2561="http://docbook.org/ns/docbook"><ns2562:para xmlns:ns2562="http://docbook.org/ns/docbook">
+          after every system call,          
+        </ns2562:para></ns2561:listitem>
+        <ns2563:listitem xmlns:ns2563="http://docbook.org/ns/docbook"><ns2564:para xmlns:ns2564="http://docbook.org/ns/docbook">
+          after every <ns2565:emphasis xmlns:ns2565="http://docbook.org/ns/docbook">slow interrupt</ns2565:emphasis>,
+        </ns2564:para></ns2563:listitem>
+        <ns2566:listitem xmlns:ns2566="http://docbook.org/ns/docbook"><ns2567:para xmlns:ns2567="http://docbook.org/ns/docbook">
+          and if <ns2568:command xmlns:ns2568="http://docbook.org/ns/docbook">sleep()</ns2568:command> is called for a process.
+        </ns2567:para></ns2566:listitem>
+      </ns2560:itemizedlist>
+      <ns2569:note xmlns:ns2569="http://docbook.org/ns/docbook">
+        <ns2570:para xmlns:ns2570="http://docbook.org/ns/docbook">
+          Linux uses a timer interrupt every 10 milliseconds and hence the process
+          scheduler is called at least once every 10 milliseconds.
+        </ns2570:para>
+      </ns2569:note>
+    </ns2559:para>
+  </ns2557:section>
+  
+  
+  <ns2571:section xmlns:ns2571="http://docbook.org/ns/docbook">
+    <ns2572:title xmlns:ns2572="http://docbook.org/ns/docbook">Interrupts</ns2572:title>
+    <ns2573:para xmlns:ns2573="http://docbook.org/ns/docbook">
+      Linux distinguishes between <ns2574:emphasis xmlns:ns2574="http://docbook.org/ns/docbook">fast interrupts</ns2574:emphasis> and
+      <ns2575:emphasis xmlns:ns2575="http://docbook.org/ns/docbook">slow interrupts</ns2575:emphasis>.
+    </ns2573:para>
+    <ns2576:section xmlns:ns2576="http://docbook.org/ns/docbook">
+      <ns2577:title xmlns:ns2577="http://docbook.org/ns/docbook">Slow interrupts</ns2577:title>
+      <ns2578:para xmlns:ns2578="http://docbook.org/ns/docbook">
+        this is the normal interrupt during which
+        <ns2579:itemizedlist xmlns:ns2579="http://docbook.org/ns/docbook">
+          <ns2580:listitem xmlns:ns2580="http://docbook.org/ns/docbook"><ns2581:para xmlns:ns2581="http://docbook.org/ns/docbook">
+            further interrupts can be processed, and  
+          </ns2581:para></ns2580:listitem>
+          <ns2582:listitem xmlns:ns2582="http://docbook.org/ns/docbook"><ns2583:para xmlns:ns2583="http://docbook.org/ns/docbook">
+            the process scheduler functional as normal, scheduling between the various
+            <ns2584:quote xmlns:ns2584="http://docbook.org/ns/docbook"><ns2585:emphasis xmlns:ns2585="http://docbook.org/ns/docbook">slow</ns2585:emphasis></ns2584:quote> interrupt handlers and
+            the other processes.
+          </ns2583:para></ns2582:listitem>
+        </ns2579:itemizedlist>
+      </ns2578:para>
+    </ns2576:section>
+
+    <ns2586:section xmlns:ns2586="http://docbook.org/ns/docbook">
+      <ns2587:title xmlns:ns2587="http://docbook.org/ns/docbook">Fast interrupts</ns2587:title>
+      <ns2588:para xmlns:ns2588="http://docbook.org/ns/docbook">
+        A fast interrupt disables other interrupts (except if it explicitly re-enables them).
+        It is used for simple and important interrupt handling,like processing keyboard
+        signals.
+      </ns2588:para>
+    </ns2586:section>
+  </ns2571:section>
+  
+</ns2472:section>

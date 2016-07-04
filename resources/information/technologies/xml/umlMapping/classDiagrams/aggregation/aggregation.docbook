@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-01-16 --><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"><title>Mapping UML aggregation relationships onto XML</title>
+	
+	
+	
+	<para>
+		Aggregation is implemented in XML just like association. 
+		<note><para>
+			One should not include any derived attributes in an XML schema definition as this
+			would be non-validatable by an XML parser and introduces the risk of data integrity.
+		</para></note>
+	</para>
+	<figure>
+		<title>Stock items have a product via aggregation</title>
+		<mediaobject><imageobject><imagedata fileref="stockItems.jpg"/></imageobject></mediaobject>
+	</figure>
+	<para>
+		For example, we may have a number of retail outlets which carry stock. Each stock item
+	   represents stock of a particular quantity of a particular product. We may want to use
+	   aggregation between stock item and product as a change in the product price should affect
+	   the stock items across all stores.
+	</para>
+	<para>
+		This design would map onto the following XML schema:
+	    <programlisting><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.solms.co.za/retail/stockReport"
+    xmlns:sr="http://www.solms.co.za/retail/stockReport"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+  
+  <xs:element name="stockReport" type="sr:StockReport">
+
+    <xs:keyref refer="sr:ProductKey" name="ProductRef">
+      <xs:selector 
+        xpath="./sr:retailOutlets/sr:retailOutlet/sr:stockItems/sr:stockItem"/>
+      <xs:field xpath="sr:product"/>
+    </xs:keyref>
+            
+    <xs:key name="ProductKey">
+      <xs:selector xpath="./sr:products/sr:product"/>
+      <xs:field xpath="@code"/>
+    </xs:key>    
+
+  </xs:element>
+  
+    <xs:complexType name="StockReport">
+        <xs:sequence>
+            <xs:element name="retailOutlets" type="sr:RetailOutlets"/>
+            <xs:element name="products" type="sr:Products"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="RetailOutlets">
+        <xs:sequence>
+            <xs:element name="retailOutlet" type="sr:RetailOutlet" 
+            	maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="RetailOutlet">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="address" type="xs:string"/>
+            <xs:element name="stockItems" type="sr:StockItems"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+    
+    <xs:complexType name="StockItems">
+        <xs:sequence>
+            <xs:element name="stockItem" type="sr:StockItem" 
+            	maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="StockItem">
+        <xs:sequence>
+            <xs:element name="product" type="xs:string"/>
+            <xs:element name="quantity" type="xs:nonNegativeInteger"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Products">
+        <xs:sequence>
+            <xs:element name="product" type="sr:Product" 
+            	maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Product">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="price" type="xs:decimal"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+    </xs:complexType>
+  
+</xs:schema>			
+			]]></programlisting>
+	</para>
+	<para>
+		An SML instance document complying to this schema is shown below:
+	    <programlisting><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<stockReport xmlns="http://www.solms.co.za/retail/stockReport"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.solms.co.za/retail/stockReport 
+    ./stockReport.xsd">
+    <retailOutlets>
+
+        <retailOutlet id="A!">
+            <name>Albania Carpets</name>
+            <address>12 Albany Rd, Tirana</address>
+            <stockItems>
+                <stockItem>
+                    <product>C1</product>
+                    <quantity>22</quantity>
+                </stockItem>
+                <stockItem>
+                    <product>C2</product>
+                    <quantity>6</quantity>
+                </stockItem>
+                <stockItem>
+                    <product>C3</product>
+                    <quantity>41</quantity>
+                </stockItem>
+            </stockItems>
+        </retailOutlet>
+        
+        <retailOutlet id="A2">
+            <name>Damascus Carpets</name>
+            <address>12 Damsa Rd, Damascus</address>
+            <stockItems>
+                <stockItem>
+                    <product>C1</product>
+                    <quantity>92</quantity>
+                </stockItem>
+                <stockItem>
+                    <product>C2</product>
+                    <quantity>56</quantity>
+                </stockItem>
+            </stockItems>
+        </retailOutlet>
+        
+    </retailOutlets>
+    
+    <products>
+        <product code="C1">
+            <name>Royal Blue</name>
+            <price>2345.67</price>
+        </product>
+        
+        <product code="C2">
+            <name>Tranquil Green</name>
+            <price>7654.32</price>
+        </product>
+        
+        <product code="C3">
+            <name>Might Black</name>
+            <price>2367.45</price>
+        </product>
+    </products>
+</stockReport>
+			
+			]]></programlisting>
+	</para>
+</section>

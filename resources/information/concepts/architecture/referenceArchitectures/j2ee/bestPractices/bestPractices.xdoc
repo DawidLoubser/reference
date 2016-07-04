@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.architecture.referenceArchitectures.j2ee.bestPractices.bestPractices"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>J2EE best practices</title>
+  <para>
+    Even though the architecture is to a large extend prescribed with the J2EE reference architecture,
+    there is still ample room for developing applications which do not perform well or which are
+    not modifiable, reliable or secure.  
+    <note><para>
+      Many of these practices are equally applicable for other distributed
+      systems like CORBA or web-services based systems.
+    </para></note>
+  </para>
+  
+  
+<!--  <section>
+    <title>Best practices addressing performance issues</title>  -->
+    <para>
+      <itemizedlist>
+        <listitem><para>
+           If network bandwidth is a problem, consider <emphasis>compressing the data</emphasis> 
+           which is  transferred.
+        </para></listitem>
+        <listitem><para>
+          <emphasis>Minimize the number of network roundtrips</emphasis> required by the application. 
+        </para></listitem>
+        <listitem><para>
+          <emphasis>Work object-oriented within the application server and services oriented outside.</emphasis>
+          Thus, publish high-level user services in a <emphasis>services facade</emphasis> (<abbrev>e.g.</abbrev>
+          a session or web-services facade) from which your entity and other domain objects are accessed.
+          <note><title>Simple example</title><para>
+            Instead of clients executing a transfer between accounts by interacting with the account objects
+            directly via <literal>acc1.debit(x)</literal> and <literal>acc2.credit(x)</literal>, we rather 
+            publish a higher-level <literal>transfer service</literal> receiving the two account numbers and
+            the transfer amount as arguments.
+          </para></note>
+        </para></listitem>
+        <listitem><para>
+          <emphasis>Cache data</emphasis> to minimize lookup time.
+        </para></listitem>
+        <listitem><para>
+          Ensure the <emphasis>development environment mimics the production environment</emphasis>,
+          at least as close as is feasible.
+        </para></listitem>
+        <listitem><para>
+          Reduce overheads incurred when looking up the bean home interface from the naming
+          repository by <emphasis>caching home interface references</emphasis>.
+        </para></listitem>
+        <listitem><para>
+          Use <emphasis>local interfaces</emphasis> for local calls, particularly when accessing
+          entity beans.
+          <note><para>
+            It is quite common that entity beans only publish local interfaces and hence are always
+            accessed through a session bean.
+          </para></note>
+        </para></listitem>
+        <listitem><para>
+          In stateful session beans, reduce the serialization overhead by declaring working data
+          which does not need to maintain state as <emphasis>transient</emphasis>.
+        </para></listitem>
+        <listitem><para>
+          Declare non-transactional methods with either <emphasis>Never</emphasis> or 
+          <emphasis>NotSupported</emphasis> transactional attribute. 
+        </para></listitem>
+      </itemizedlist>
+      
+    </para>
+<!--  </section>  -->
+  
+</section>

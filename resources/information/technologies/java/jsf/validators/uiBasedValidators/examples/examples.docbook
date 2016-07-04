@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Simple validation example</title>
+    <para>
+        Consider a simple credit card capture form which validates that
+        <itemizedlist>
+            <listitem><para>
+                both, the name and credit card number are provided,                
+            </para></listitem>
+            <listitem><para>
+                that the name is between 2 and 20 characters long.
+            </para></listitem>
+            <listitem><para>
+                that the credit card number is 10 digits long, and
+            </para></listitem>
+            <listitem><para>
+                that the sum of the first 8 digits add up to the number contained in
+                digits 9 and 10.
+            </para></listitem>
+        </itemizedlist>        
+    </para>
+    <programlisting language="xml">
+<xi:include parse="text" href="../../../examples/standardCustomValidators/src/main/webapp/faces/finance/captureCreditCard.xhtml"/>        
+    </programlisting>
+    <para>
+        All except the last validation are done using standard validators. The validators throw
+        validation exceptions which automatically push the associated messages onto the message
+        queue in order to be shown in the page-wide and component specific message tags.
+    </para>
+    
+    <figure>
+        <title>Standard validators doing their job</title>
+        <mediaobject><imageobject>
+            <imagedata fileref="standardValidators.png"/>
+        </imageobject></mediaobject>
+    </figure>
+    
+    <section>
+        <title>Simple check-sum validator</title>
+        <para>
+            Check sums are used on things like credit card numbers, passport or identity document
+            numbers and so on. The use of check-sums reduces the probability that an incorrect 
+            number is typed in.
+        </para>
+        <para>
+            Assume we have a particularly 10 digit code with the last 2 digits being a very simple check-sum
+            which must be equal to the sum of the first 8 digits. We can write a custom check-sum
+            validator which validates that the first 8 digits add up to the number contained in the
+            last 2 digits.
+        </para>
+        <para>
+            Our custom <literal>CheckSumValidator</literal> is shown below:
+            <programlisting language="java">
+<xi:include parse="text" href="../../../examples/standardCustomValidators/src/main/java/za/co/solms/finance/ui/web/CheckSumValidator.java"/>                
+            </programlisting>
+        </para>
+        
+        <figure>
+            <title>Failed check-sum validation</title>
+            <mediaobject><imageobject>
+                <imagedata fileref="checkSumValidator.png"/>
+            </imageobject></mediaobject>
+        </figure>
+        
+        <para>
+            It fails the user input if the first eight digits do not add up to the number
+            contained in digits 9 and 10. On the other hand, if the check sum validation passes,
+            we receive the notification that the credit card has been saved.
+        </para>
+        
+        <figure>
+            <title>Passed with check sum satisfied</title>
+            <mediaobject><imageobject>
+                <imagedata fileref="checkSumValidatorPassed.png"/>
+            </imageobject></mediaobject>
+        </figure>
+        
+    </section>
+    
+</section>    
+    

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+	id="resources.information.platforms.jboss.configuration.persistence.persistenceConfiguration"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+	xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Persistence configuration for JBoss</title>	
+  <para>
+  	By default JBoss persists to an embedded Hypersonic database. Usually you
+    would want to change the default persistence and often you would want to
+    support persistence to several persistence storage technologies.
+ </para>
+  
+	<section>
+		<title>Publishing a database to JBoss</title>
+		<para>
+			To publish a database as a data source to JBoss one needs to 
+			<itemizedlist>
+				<listitem><para>
+					copy an appropriate database driver into the lib directory of the
+					configuration you are running, and
+				</para></listitem>
+				<listitem><para>
+					write a deployment descriptor which publishes the database URL, driver
+					class, username and password to JBoss.
+				</para></listitem>
+			</itemizedlist>
+      The latter is copied into the deploy directory and can be done without
+			bringing down JBoss. However, if a suitable database driver is not available
+			in the lib directory of your configuration, it needs to be copied there and
+			for this you need to restart JBoss.			
+		</para>
+		<section>
+			<title>Datasource deployment descriptor</title>
+			<para>
+				Below we show a typical database deployment descriptor (for Postgres in our
+				case):
+        <programlisting><![CDATA[
+	
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--  postgres-ds.xml (to be copied into the deploy directory -->
+
+<datasources>
+	<local-tx-datasource>
+		<jndi-name>PostgresDS</jndi-name>
+		<connection-url>jdbc:postgresql://localhost:5432/jboss</connection-url>
+		<driver-class>org.postgresql.Driver</driver-class>
+		<user-name>jboss</user-name>
+		<password>boss007</password>
+	</local-tx-datasource>
+</datasources>
+        	]]></programlisting>				
+			</para>
+		</section>
+	</section>
+	
+	<section>
+		<title>Configuring the object-relational mapper</title>
+		<para>
+			JBoss uses Hibernate for the object relational mapper. In order to specify
+			the datasource which hibernate uses, you will need to edit the
+			<literal>hibernate.properties</literal> file located in the
+			<literal>ejb3.deployer/META-INF</literal> directory. In order to use the postgres
+			database configured aboe, the properties file would look something like:
+			<programlisting><![CDATA[
+<!-- hibernate.properties found in the ejb3.deployer/META-INF directory -->
+
+hibernate.transaction.manager_lookup_class=org.hibernate.transaction.JBossTransactionManagerLookup
+hibernate.query.factory_class=org.hibernate.hql.ast.ASTQueryTranslatorFactory
+hibernate.hbm2ddl.auto=create
+#hibernate.hbm2ddl.auto=create-drop
+hibernate.cache.provider_class=org.hibernate.cache.HashtableCacheProvider
+# Clustered cache with TreeCache
+#hibernate.cache.provider_class=org.jboss.ejb3.entity.TreeCacheProviderHook
+#hibernate.treecache.mbean.object_name=jboss.cache:service=EJB3EntityTreeCache
+hibernate.connection.datasource=java:/PostgresDS
+hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+				]]></programlisting>
+		</para>
+	</section>
+	
+	<section>
+		<title>Creating the database and database user</title>
+		<para>
+			This will be database specific. With postgres you create a database user via
+			the <literal>createuser</literal> command. To create a database you would use
+			<literal>createdb</literal>. You can use the following on Linux:
+			<programlisting><![CDATA[
+useradd jboss         % creating a system user
+passwd jboss boss007  % setting the password for the system user
+				
+createuser jboss  % creating a database user, jboss
+create db jboss   % creating a jboss database
+				]]></programlisting>
+		</para>
+	</section>
+</section>

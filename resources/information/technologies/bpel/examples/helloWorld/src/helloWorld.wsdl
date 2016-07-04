@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="helloWorld"
+     targetNamespace="http://www.solms.co.za/wsdl/helloWorld"
+     xmlns:tns="http://www.solms.co.za/wsdl/helloWorld"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"                          
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://www.solms.co.za/bpel/helloWorld">
+            <xsd:element name="textItem">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element type="xsd:string" name="text"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="hello">
+        <wsdl:part name="msg" element="tns:textItem"/>
+    </wsdl:message>
+
+    <wsdl:message name="helloResponse">
+        <wsdl:part name="orgMessage" element="tns:textItem"/>
+        <wsdl:part name="response" element="tns:textItem"/>
+    </wsdl:message>
+
+    <wsdl:portType name="HelloWorldPortType">
+        <wsdl:operation name="helloWorld">
+            <wsdl:input message="tns:hello"/>
+            <wsdl:output message="tns:helloResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <binding name="HelloWorldSoapBinding" type="tns:HelloWorldPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="helloWorld">
+            <soap:operation soapAction="helloWorld"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+
+    <wsdl:service name="helloWorldService">
+        <wsdl:port name="helloWorldPort" binding="tns:HelloWorldSoapBinding">
+            <soap:address location="http://localhost:12321/helloWorld"/>
+        </wsdl:port>
+    </wsdl:service>
+
+    <plnk:partnerLinkType name="HelloWorldPartnerLinkType" 
+              xmlns:plnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+        <plnk:role name="helloWorldProvider" portType="tns:HelloWorldPortType"/>
+    </plnk:partnerLinkType>
+
+</wsdl:definitions>
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.interception.interceptors.defining.interceptorMethods.interceptorMethods"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Interceptor methods</title>
+    <para>
+      Interceptor methods can be defined directly in the bean class itself. This provides switchable
+      additional functionality around the core bean service. They must have the following signature:
+      <programlisting><![CDATA[
+@javax.interception.AroundInvoke
+public Object someMethodName(InvocationContext ctx) 
+{
+  // Here the interception logic
+  ...
+  //
+  
+  // delegate control to next object in chain of interceptors:
+  return ctx.proceed();  
+}  
+]]></programlisting>      
+    </para>
+  <para>
+    An interceptor method, irrespective of whether it is defined within a bean class or in a separate
+    interceptor class, will thus obtain an invocation context as parameter and must return
+    <literal>invocationContext.proceed()</literal>.
+  </para>
+  <para>
+    Calling <literal>proceed</literal> on the invocation context passes control to the next interceptor (if there is one) or
+    alternatively to the business service being intercepted.
+  </para>
+  
+  <section>
+    <title>Aborting an interception</title>
+    <para>
+      An interceptor method can choose to abort the service request being intercepted by simply not
+      returning <literal>invocationContext.proceed()</literal>, but directly returning the return
+      value for the service it is intercepting (without the service which is intercepted actually
+      being called).
+    </para>
+  </section>
+  
+</section>
+  

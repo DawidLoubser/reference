@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.concepts.design.patterns.classical.creational.builder.implementationGuidelines"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Implementation guidelines</title>
+  <para>
+    The implementation of the builder pattern is for object-oriented languages a straight-forward 
+    mapping of the UML diagrams onto code. 
+    <itemizedlist>
+      <listitem><formalpara>
+        <title>Should Builder be an interface or an abstract class?</title>
+        <para>
+          In most cases the concrete product realizations have very little in common with one another
+          and the associated builders even less so. This may lead one to use an interface instead of
+          an abstract class. However, often different realizations only care about cecrtain specific
+          parts and not about others. For example, some UML domain generators like those for 
+          generating code would construct implementations for methods (operations or services).
+          However, an XML schema generator would not care about the operations. To allow
+          concrete builders to provide implementations for only those parts they care about we
+          can use an abstract class with concrete methods with an empty body for all the
+          part construction services.
+        </para>
+      </formalpara></listitem>
+      <listitem><formalpara>
+        <title>The builder interface is determined by the source domain</title>
+        <para>
+          It is important that the <literal>Builder</literal> interface design is not
+          driven by the requirements of a particular builder constructing a specific realization of
+          a product. Instead the <literal>Builder</literal> should specify services as
+          required by the source domain, <abbrev>i.e.</abbrev> as required by the 
+          <literal>Director</literal>.
+        </para>
+      </formalpara></listitem>
+      <listitem><formalpara>
+        <title>Products may have little in common</title>
+        <para>
+          The different products produced by different builders may, from a user perspective, have
+          have at times only very little in common and as such the product interface may specify very 
+          few functionalities, perhaps even only the ability to obtain a streamable byte representation
+          of the product.
+        </para>
+      </formalpara></listitem>
+    </itemizedlist>
+  </para>
+</section>

@@ -1,0 +1,68 @@
+\section{Splitting Headers and Implementation}
+
+Naturally one does not want to define all code (classes and functions) within a
+single source file. Furthermore, one does not want to recompile the entire
+source if one makes a modification to a specific area of the source.
+
+To this end C++ enables you to define the header of a class which contains the
+method headers and the data fields of a class separate from the implementation
+code of these methods. For example, we can define the header of the verb+Account+
+class in a file \verb+Account.h+ and its method implementations in a file called
+\verb+Account.cpp+.
+
+%-------------------------------------------------------------------------------
+
+\subsection{The Header File}
+
+The header file defines the method headers without the method bodies. Below we
+list a C++ header file for our account class:
+
+\noindent{\small \input{OOIntro/Programs/Account.h}}
+
+Note that macros are used to avoid duplicate inclusion of the header file. A macro
+variable, \verb+ACCOUNT_H+ is defined the first time the file is read. The contents 
+of the header file is only included if the variable has not yet been defined within
+the compilation process. 
+
+%-------------------------------------------------------------------------------
+
+\subsection{The Implementation File}
+
+The implementation file defines the method bodies of the methods whose header is 
+specified in the header file. Since header and implementation files may contain 
+multiple classes, the scope of the function must be specified. For example
+
+\noindent{\small\begin{verbatim}
+Account::debit(double amount) {_balance -= amount;}
+\end{verbatim}}
+
+\noindent
+defines the body of the \verb+debit+ method of the \verb+Account+ class. Similarly,
+
+\noindent{\small\begin{verbatim}
+Account::Account(): _balance(50) {}
+\end{verbatim}}
+
+\noindent
+defines the implementation of the default constructor. The complete implementation
+file is listed below:
+
+\noindent{\small \input{OOIntro/Programs/Account.cpp}}
+
+%-------------------------------------------------------------------------------
+
+\subsection{Including Header Files}
+
+C++ supports tw notations for including header files -- they may be either specified
+within tag delimiters or within quotes. The former refers to header files which can 
+be located along the system path while the latter notation is used for files which
+are located relative to the current directory (using relative paths) or at specified
+locations (using absolute paths). 
+
+Our main program includes the \verb+Account.h+ header file as well as some system
+header files:
+
+
+\noindent{\small \input{OOIntro/Programs/Account5.cpp}}
+
+%-------------------------------------------------------------------------------

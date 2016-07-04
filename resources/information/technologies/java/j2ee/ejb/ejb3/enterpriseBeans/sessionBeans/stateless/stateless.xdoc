@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.stateless.stateless"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Stateless session beans</title>
+  <para>
+    Stateless session beans provide users a services (functional) interface without
+    maintaining state across service requests.
+  </para>
+  <para>
+    Stateless session beans exist for the duration of a user
+    session (that is the conceptual/virtual user object --
+    the physical bean object continues existing in the
+    object pool). 
+  </para>
+  
+  <section>
+    <title>Stateless session beans as a services facade</title>
+    <para>
+      Since stateless session beans maintain no state, they do not as such
+      manage a workflow. Instead they are usually used to provide a higher-level
+      services facade onto an underlying object-oriented system.
+    </para>
+  </section>
+  
+  <section>
+    <title>Life cycle of a stateless session bean</title>
+    <para>
+      Stateless session beans do not maintain state across
+      service requests. That makes it possible to use a very
+      simple mapping between the user and the physical object
+      from the bean pool. 
+    </para>
+    
+    <para>
+      For every service request the application server
+      activates any bean from the bean pool by binding 
+      the bean instance to the user session bean object.
+      After having applied the enterprise services, the
+      application server delegates the realisation of that
+      request to the bean instance. 
+    </para>
+    
+    <para>
+      Upon completion the bean instance is committed back to the
+      method ready pool. The next request made on the
+      virtual user object will be, once again, be delegated to
+      any available physical object from the pool. This
+      process is particularly light-weight as no state needs
+      to be maintained across service requests.
+    </para>
+    
+    <figure
+      id="resources.information.technologies.java.j2ee.ejb.stateless.lifeCycle_fig">
+      <title>Life cycle of a stateless session bean</title>
+      <graphic fileref="lifeCycle.jpg"/>
+    </figure>
+    
+    <para>
+      <xref linkend="resources.information.technologies.java.j2ee.ejb.stateless.lifeCycle_fig"/>
+      illustrates the life cycle of a stateless session bean including the
+      binding and unbinding of the bean instance to/from the
+      user's virtual session bean, <abbrev>i.e.</abbrev> the usage of few
+      physical objects for many conceptual objects.
+    </para>
+  </section>
+  
+  <section>
+    <title>Writing the business interfaces</title>
+    <para>
+      We shall write a simple average calculating bean which
+      receives a collection of floating point numbers as
+      parameter. Since the parameter is only an input
+      parameter which is not modified within the bean body,
+      we can safely provide both, local and remote
+      interfaces. These will extend a plain Java interface
+      which encapsulates the commonalities across the local
+      and remote interfaces.
+    </para>
+    
+    <section>
+      <title>Average.java</title>
+      <para>
+        <programlisting>
+<xi:include parse="text"
+  href="../../../examples/average/src/common/java/za/co/solms/average/Average.java"/>      
+        </programlisting>
+      </para>
+    </section>
+
+    <section>
+      <title>AverageRemote.java</title>
+      <para>
+        The remote interface is packaged within the 
+        <literal>common</literal> source directory because 
+        it must be available for both, client
+        and server. It simply extends the plain Java
+        interface and adds the
+        <literal><![CDATA[@Remote]]></literal> annotation:
+        <programlisting>
+<xi:include parse="text"
+  href="../../../examples/average/src/common/java/za/co/solms/average/AverageRemote.java"/>
+          
+        </programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>AverageLocal.java</title>
+      <para>
+        In order to enable servlets running in the embedded
+        web container to access the enterprise bean
+        through the local interface, we package the local
+        interface in the <literal>server/common</literal> directory. 
+        As with the remote interface, the local interface also simply 
+        extends the plain Java interface and adds the
+        <literal><![CDATA[@Local]]></literal> annotation:
+        <programlisting>
+<xi:include parse="text"
+  href="../../../examples/average/src/server/common/java/za/co/solms/average/AverageLocal.java"/>
+        </programlisting>
+      </para>
+    </section>    
+    
+    <section>
+      <title>AverageBean.java</title>
+      <para>
+        The bean implementation class is a very simple class which contains only
+        the business logic. Otherwise it is annotated as a stateless session
+        bean and implements a local and a remote interface. 
+        <programlisting>
+<xi:include parse="text"
+  href="../../../examples/average/src/server/businessLogic/java/za/co/solms/average/AverageBean.java"/>      
+        </programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>Building and deploying the bean</title>
+      <para>
+        To build and deploy the bean you only need to run the ant-task,
+        <literal>deploy.server.businessLogic</literal>. This will compile the
+        common code, the server-side common code, the business logic layer code,
+        create the Java archive, <literal>Average.jar</literal> and copy it to
+        the JBoss deployment directory. For this to work you will need to have
+        the <literal>JBOSS_HOME</literal> environment variable set.
+      </para>
+    </section>
+  </section>
+</section>

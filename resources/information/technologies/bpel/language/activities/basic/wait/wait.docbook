@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Delayed execution via wait</title>
+    <para>
+        At times one wants to delay an activity within a sequence, <abbrev>i.e.</abbrev> to wait
+        for a certain period or until some specified time instant. As BPEL is meant to support long
+        living business processes, the wait periods may, at time, be substantial (<abbrev>e.g.</abbrev> 
+        to wait to the end of the month).
+    </para>
+    
+    <section>
+        <title>Waiting for a specified duration</title>
+        <para>
+            The <literal><![CDATA[<wait for="duration-expression"/>]]></literal> element is used
+            to specify for some specific period. The duration is specified as a standard XML schema
+            duration type.
+        </para>
+        <para>
+            For example, should you wish to wait (for reasons beyond me) for 3 months
+            2 days 6 hours 12 minutes and 65 seconds before the next activity in the current sequence
+            of activities is to be performed, then you can specify this ass follows:
+            <programlisting><![CDATA[
+<wait for="P3M2D6H12M65S"/>                
+            ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Waiting until some point in tme</title>
+        <para>
+            To wait until some point in time, one uses the 
+            <literal><![CDATA[<wait until="deadline-expression"]]></literal>. The
+            deadline is specified as either a XML date or a dateTime as defined in the XML schema
+            data types.
+        </para>
+        <para>
+            For example, should one wish to wait until 23h00, then one can specify this via
+            <programlisting><![CDATA[
+<wait until="23:00:00:Z"                
+                ]]></programlisting>
+        </para>
+    </section>
+</section>    

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"-->
+<section id="resources.information.platforms.linux.security.fileOwnership"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Changing file ownership via <command>chown</command></title>
+  <para>
+    Any file in Linux belongs to a user and to a group.  If a user creates a file without
+    specifying the file ownership, the file will be owned by the user, and the
+    group is set to a generic <emphasis>users</emphasis> group.
+  </para>
+  <para>
+    To change the ownership of a file, one uses the <command>chown</command>
+    command, which takes a user and a group name as argument separated
+    by a colon. For example, the following line changes the ownership of all files
+    in the current directory to the user <emphasis>donald</emphasis> and the
+    group <emphasis>ducks:</emphasis>
+    <cmdsynopsis>
+<command>chown donald:ducks *</command>      
+    </cmdsynopsis>
+  </para>
+  <para>
+    Very often you will have to be the superuser to change file permissions to what you
+    want.
+    User and/or group ids can be used instead of user and group names. Also, one
+    of the two can be omitted, changing only either the owner user or the owner group.
+    For example
+    <cmdsynopsis><command>
+chown donald duckMenu.txt        
+    </command></cmdsynopsis>
+    changes the user owner for the file <filename>duckMenu.txt</filename> and
+    <cmdsynopsis><command>
+chown :501 docs/*
+    </command></cmdsynopsis>
+    changes the owner group of all files in the <filename>docs</filename> subdirectory
+    of the current directory to the group with group id 501.
+  </para>
+  <para>
+    <command>chown</command> takes a number of command-line arguments. These
+    are explained in table <xref linkend="resources.information.platforms.linux.security.fileOwnership.chownArgs"/>
+    <table id="resources.information.platforms.linux.security.fileOwnership.chownArgs">
+      <title>Command line flags for <command>chown</command></title>
+      <tgroup cols="2">
+        <thead>
+          <row><entry>flag</entry><entry>description</entry></row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>-R, --recursive</entry>
+            <entry>
+              Apply the ownership changes recursively across the directory hierarchy.
+            </entry>
+          </row>
+          <row>
+            <entry>--from=CURRENT_OWNER:CURRENT_GROUP</entry>
+            <entry>
+              This flag requests the ownership of only those files which are currently owned 
+              by a specified user and/or group is changed.
+            </entry>
+          </row>
+          <row>
+            <entry>--reference=REFERENCE_FILE</entry>
+            <entry>
+              Change the ownership of the target files to that of a specified reference file,
+              <abbrev>i.e.</abbrev> both the user and the group owner of the target files
+              will be the same as that of the reference file after the command has completed.
+            </entry>
+          </row>          
+          <row>
+            <entry>--dereference</entry>
+            <entry>
+              In the case where the file is a symbolic link to another file, change the permission
+              of the file the link refers to, instead of the symbolic link itself.
+            </entry>
+          </row>
+          <row>
+            <entry>-h, --no-dereference</entry>
+            <entry>
+              In the case where the file is a symbolic link to another file, change the permission
+              of the symbolic link itself, and not that of the file the link refers to.
+            </entry>
+          </row>          
+          <row>
+            <entry>-v, --verbose</entry>
+            <entry>
+              Output for each file what has been done (ownership changed or retained).
+            </entry>
+          </row>
+          <row>
+            <entry>-c, --changes</entry>
+            <entry>
+              A version of verbose which reports only on the changes made by 
+              <command>chown</command>.
+            </entry>
+          </row>
+          <row>
+            <entry>-f, --silent, --quiet</entry>          
+            <entry>
+              Suppress most error messages.
+            </entry>
+          </row>          
+        </tbody>
+      </tgroup>
+    </table>
+  </para>
+
+  <section>
+    <title>Changing the group owner of a file via <command>chgrp</command></title>
+    <para>
+      One can also use <command>chgrp</command> to change the group ownership only.
+      It works in the same way as <command>chown</command> except that it only takes 
+      a group name (no user name) and changes only the group ownership of the target files.
+    </para>
+    <para>
+      For example
+    <cmdsynopsis><command>
+chgrp -R ducks docs/*
+    </command></cmdsynopsis>
+    changes recursively the group owner of all files in the <filename>docs</filename> 
+    subdirectory of the current directory to the group with name<emphasis>ducks</emphasis>.
+    </para>
+  </section>
+
+</section>
+

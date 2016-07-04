@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions  
+  targetNamespace="http://example.co.za/clock/concrete/"
+  xmlns:concrete="http://example.co.za/clock/concrete/"
+  xmlns:clock="http://example.co.za/clock/"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xsi:schemaLocation="http://schemas.xmlsoap.org/wsdl/ 
+                      http://schemas.xmlsoap.org/wsdl/wsdl.xsd">
+  
+  <wsdl:documentation>
+    A concrete contract for a clock, accessible via SOAP/HTTP
+  </wsdl:documentation>
+
+
+  <!-- Import all elements from the abstract contract -->
+  <wsdl:import namespace="http://example.co.za/clock/" location="abstractContract.wsdl"/>
+  
+  
+  <!-- Here we specify a SOAP/HTTP binding -->
+  <wsdl:binding name="ClockSOAP" type="clock:Clock">
+    
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" 
+      style="document"/>
+      
+    <wsdl:operation name="getCurrentTime">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    
+  </wsdl:binding>
+  
+  <!-- Physical service endpoint(s) -->
+  <wsdl:service name="ClockServiceSOAP">
+    <wsdl:port name="Clock" binding="concrete:ClockSOAP">
+      <soap:address location="http://www.clock.com/services/clock" />
+    </wsdl:port>
+  </wsdl:service>
+  
+</wsdl:definitions>

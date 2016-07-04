@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns7250:section xmlns:ns7250="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.lang.wrapperClasses.autoBoxing.autoBoxing">
+    
+    <ns7251:title xmlns:ns7251="http://docbook.org/ns/docbook">Autobox and Unbox</ns7251:title>
+    <ns7252:para xmlns:ns7252="http://docbook.org/ns/docbook">The j2se features, autobox and unbox, are simply wrapper classes that allow primitive values to be accessed as 
+        objects and vice versa, e.g. retrieving the primitive int from an Integer. Autoboxing and unboxing now provides 
+        a means to write simpler code and wraps the conversion between the object and the primitive.
+    </ns7252:para>
+    <ns7253:para xmlns:ns7253="http://docbook.org/ns/docbook">
+        Before autoboxing was available a developer would typically convert from a primitive to the required object by 
+        creating an instance of the object and passing the primitive as a parameter in the constructor for instance. In order 
+        to gain access to a primitive from a particular object, a method is invoked on the object. Take note of the example 
+        where an Integer object is created from the int primitive. The int value is then accessed by calling the intValue() method
+        from the Integer class.
+        <ns7254:programlisting xmlns:ns7254="http://docbook.org/ns/docbook"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="src/BeforeAutoBox.java"/></ns7254:programlisting>
+    </ns7253:para>
+    <ns7255:para xmlns:ns7255="http://docbook.org/ns/docbook">
+        The following listing illustrates a simple example of autoboxing. Essentially autoboxing wraps how one would previously 
+        convert between a primitive and an object. Take note that the Integer object is <ns7256:emphasis xmlns:ns7256="http://docbook.org/ns/docbook">directly</ns7256:emphasis> assigned 
+        to the primitive int value. This is completely legal and simplifies the code, i.e the primitive value is 'autoboxed' into the object.
+        <ns7257:programlisting xmlns:ns7257="http://docbook.org/ns/docbook"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="src/AutoBoxInt.java"/></ns7257:programlisting>        
+    </ns7255:para>
+    <ns7258:para xmlns:ns7258="http://docbook.org/ns/docbook">
+        The following listing illustrates an example of unboxing. Take note that the Double object is directly accessed. 
+        There is no need to call the doubleValue() method on the Double object because the object is 'unboxed' into the
+        primitive double value.
+        <ns7259:programlisting xmlns:ns7259="http://docbook.org/ns/docbook"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="src/UnboxDouble.java"/></ns7259:programlisting>      
+    </ns7258:para>
+    <ns7260:para xmlns:ns7260="http://docbook.org/ns/docbook">Autoboxing and unboxing must, however, be used with care. Do not assume that objects can be compared as 
+        primitive types such as indicated below. The rules for comparing objects still remains, i.e use the equals() method to 
+        compare objects and not the == operator.
+        <ns7261:programlisting xmlns:ns7261="http://docbook.org/ns/docbook"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="src/WatchOut.java"/></ns7261:programlisting>
+    </ns7260:para>
+    <ns7262:para xmlns:ns7262="http://docbook.org/ns/docbook">
+        Method overloading must also be considered carefully when autoboxing. If 2 methods exist as 
+        listed below then which one is called when an <ns7263:emphasis xmlns:ns7263="http://docbook.org/ns/docbook">int</ns7263:emphasis> parameter is passed? 
+        <ns7264:programlisting xmlns:ns7264="http://docbook.org/ns/docbook"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="src/OverloadedMethods.java"/></ns7264:programlisting>
+         The results reveal that the int parameter is promoted to a long and the first method is called. 
+        This supports backward compatibility to earlier versions of java. 
+    </ns7262:para>   
+</ns7250:section>

@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE chapter SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<chapter id="resources.information.technologies.c.largerProjects.largerProjects"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Managing larger <emphasis>C</emphasis> projects</title>
+
+  <section><title>Splitting you application into multiple source files</title>
+    <para>
+      So far we have had our application all within a single source file. Particularly
+      for large projects, this is not sustainable.
+    </para>
+    <section><title>Advantages of localizing functions in separate source files</title>
+      <para>
+        There are several advantages in separating the program source into separate
+        source files including
+        <itemizedlist>
+          <listitem><para>
+            Reuse of functionality across applications and projects.
+          </para></listitem>
+          <listitem><para>
+            Simpler and localized maintenance.
+          </para></listitem>
+          <listitem><para>
+            Several developers can work simultaneously on a project or application,
+            each busy with a different file.
+          </para></listitem>
+          <listitem><para>
+            Component-based or even object-oriented development with each object
+            and component having its own data and functionalities.
+          </para></listitem>
+          <listitem><para>
+            Separation of the interface (which are part of the requirements) and
+            the implementation leads to a more contract/requirements-centered
+            software development approach.
+          </para></listitem>
+          <listitem><para>
+            More efficient recompilation of the application where only the files 
+            which have been modified need to be recompiled.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    <section><title>Basic separate-file compilation</title>
+      <para>
+        In <emphasis>C</emphasis> any language element must be declared before it is used.
+        To this end <emphasis>C</emphasis> introduces function prototypes which we
+        discussed in <xref linkend="secPrototyping"/>. 
+      </para>
+      <para>
+        These functions prototypes are all that is needed to compile code which makes
+        use of these functions. As such one can 
+        <itemizedlist>
+          <listitem><para>
+            define an implementation of a function, say <function>someFunc</function>
+            in one file,    
+          </para></listitem>
+          <listitem><para>
+            compile that file separately,    
+          </para></listitem>
+          <listitem><para>
+            insert the function prototype for <function>someFunc</function> into the top 
+            of the file which has code making use of <function>someFunc</function>,   
+          </para></listitem>
+          <listitem><para>
+            compile that one too and  
+          </para></listitem>
+          <listitem><para>
+            finally link the different compiled code elements (object files) together.
+          </para></listitem>  
+        </itemizedlist>
+      </para>
+    </section>
+    <section><title>Header files</title>
+      <para>
+        In the above approach the developer of the client code (which makes use of a
+        function defined in a separate file) has to still look at the source file
+        of the function. This may or may not be available and is as such anyway not
+        desirable.
+      </para>
+      <para>
+        To this end <emphasis>C</emphasis> introduces the concept of a header file
+        which provides the prototypes of the elements which are to be exported
+        in order to be used in other files. A typical header file is shown below:
+        <programlisting id="resources.information.technologies.c.largerProjects.integrationRoutines_h">
+          <xi:include href="integrationRoutines.h" parse="text"/>
+        </programlisting>
+        <note>
+          <para>
+            We make certain that each header file is read only once by defining a
+            pre-compiler variable (a macro constant) the first time and including
+            the file only if that variable has not yet been defined. This prevents
+            multiple declarations of the same elements due to multiple include 
+            statements.
+          </para>
+        </note>
+      </para>
+    </section>
+    <section><title>The implementation file</title>
+      <para>
+        The implementation file looks in many ways no different to what it looked
+        previously. We would typically want to include the header file so that the
+        compiler validates that there are no conflicts between the interface (the
+        contract) and the implementation. We also have the benefit of having then
+        forward declarations of the prototypes.
+      </para>
+      <para>
+        Below we show the implementation file:
+        <programlisting id="resources.information.technologies.c.largerProjects.integrationRoutines_c">
+          <xi:include href="integrationRoutines.c" parse="text"/>
+        </programlisting>
+      </para>
+    </section>
+    <section><title>Client-side files</title>
+      <para>
+        The client files will include the header file. It can be compiled independently
+        from the server-side implementation file (even before the latter exists).
+        <programlisting id="resources.information.technologies.c.largerProjects.integrationRoutinesTest_c">
+          <xi:include href="integrationRoutinesTest.c" parse="text"/>
+        </programlisting>
+      </para>
+    </section>
+    <section><title>Building an application using multiple source files</title>
+      <para>
+        To compile multiple source files depends to some extend on the compiler
+        you use. Many Unix targeting compiler use the same command-line
+        arguments as the GNU C compiler. For example
+        <programlisting>
+cc -ansi -Wall -lm -o integrationRoutinesTest integrationRoutines.c integrationRoutinesTest.c
+        </programlisting>
+        will compile and link the two source files into an executable 
+        <filename>integrationRoutinesTest</filename>.
+      </para>
+    </section>
+    <section><title>Compiling and linking separately</title>
+      <para>
+        In the previous section we still compiled all source files in a single step. We
+        could have compiled them separately, and once all application components have been
+        compiled we would link them. This could be done by the following sequence of commands:
+        <programlisting>
+cc -c -ansi -Wall -o integrationRoutines.c
+        </programlisting>
+        This produces a compiled object file, <filename>integrationRoutines.o</filename>.
+      </para>
+    </section>
+    <section><title>Linking the compiled object files</title>
+      <para>
+       We can now link the compiled object files via cc which will simply call the linker, <command>ld</command>,
+       under the hood:
+       <programlisting>
+cc -lm -o integrationRoutinesTest integrationRoutinesTest.o integrationRoutines.o 
+       </programlisting>
+      </para>
+    </section>
+  </section>
+  
+  <section><title>Specifying external resources via <command>extern</command></title>
+    <para>
+      When splitting source code up into multiple files certain variables
+      may need to be accessed across different files, <abbrev>i.e.</abbrev> certain variables
+      or structures defined in one file may need to be accessed from 
+      another. To inform the compiler that the variable will exists
+      and will be available at link time, we use the <command>extern</command> 
+      keyword.
+    </para>
+    
+    <example><title>Simple external variables example</title>
+      <para>
+        In the following example we define a string array for the month
+        names in one compilation unit and use it in another. The file
+        <filename>monthNames.c</filename> looks as follows:
+        <programlisting lang="c">
+          <xi:include href="monthNames.c" parse="text"/>
+        </programlisting>
+      </para>
+      <para>
+        We publish the publicly available elements in a header file,
+        <filename>monthNames.h</filename>,
+        declaring, to any <emphasis>C</emphasis> source code file
+        which includes this header, that <varname>monthNames</varname>
+        is an externally defined array of character pointers which
+        will be available at link time:
+        <programlisting lang="c">
+          <xi:include href="monthNames.h" parse="text"/>
+        </programlisting>
+      </para>
+      <para>
+        Finally, the code which makes use of the month names includes
+        the header:
+        <programlisting lang="c">
+          <xi:include href="monthNamesTest.c" parse="text"/>
+        </programlisting>
+      </para>      
+      <para>
+      We can compile the files individually via
+      <programlisting>cc -c -ansi monthNamesTest.c</programlisting>
+      and
+      <programlisting>cc -c -ansi monthNames.c</programlisting>
+      (<abbrev>i.e.</abbrev> we can compile <filename>monthNamesTest.c</filename>
+      even before the implementation file, <filename>monthNames.c</filename>
+      has been written) and we link the resources via
+      <programlisting>cc -o monthNamesTest monthNames.o monthNamesTest.o</programlisting>
+      </para>
+    </example>
+    </section>  
+  
+  <section><title>Restricting the scope of variables and functions via <command>static</command></title>
+    <para>
+      In the previous section we showed how to publish variables so that they can be used from outside the
+      file in which they are declared. At other times one wants to do the converse, <abbrev>i.e.</abbrev> to restrict access to
+      certain variables or functions to within the file in which they are declared.
+    </para>
+    <para>
+      To this end <emphasis>C</emphasis> supplies the <command>static</command> keyword. Recall
+      that we used <command>static</command> previously to define local function variables whose value
+      had to survive across function calls. The option of being able to declare functions local to the file in
+      which they are declared via <command>static</command> will be important once we get to object-oriented
+      software development in ANSI-C where it will represent the backbone around which encapsulation is
+      ensured.
+    </para>
+    <example id="integrationRoutinesStaticFunction.c">
+      <title>integrationRoutinesStaticFunction.c</title>
+      <para>
+        In the example below we have modified our Simpson integration routine to make use of a 
+        <emphasis>&quot;private&quot;</emphasis> function which can be used only from within the
+        file in which it is declared.
+      <programlisting>
+        <xi:include href="integrationRoutinesStaticFunction.c" parse="text"/>
+        </programlisting>
+         <note><title>Implementation hiding</title>
+           <para>
+             Note that the above implementation implements the same header file and hence the same interface or
+             contract. The client code does not have to be modified at all and the <function>simpsonResult</function>
+             is totally hidden and no dependencies can be built onto that function except from within that particular
+             file.
+           </para>
+         </note> 
+      </para>
+    </example>
+  </section>
+  <!--
+  <section><title>Creating libraries</title>
+    <para>
+      The process of creating libraries is unfortunately typically compiler and operating system dependent.
+      We shall focus here on Unix based systems like Linux. The reason for this is that on Unix-based systems
+      the process of and tools require for generating libraries is reasonably standardized. 
+    </para>
+  </section>
+  -->
+<!--
+  <section><title>Using make files</title>
+    <para>
+      Make files assist in making certain that all elements of a build
+      are up-to-date. Make files are conceptually very similar to the 
+      <emphasis>Ant</emphasis> build used in the Java community though
+      you could use <emphasis>Ant</emphasis> also for C builds. Ant is
+      XML based and being developed in <emphasis>Java</emphasis>
+      itself, <emphasis>Ant</emphasis> is platform independent.
+    </para>
+    <para>
+      The concepts are quite straight forward:
+      <itemizedlist>
+        <listitem><para>
+            One defines one or more targets for a build.
+        </para></listitem>
+        <listitem><para>
+          For each target one specifies
+          <itemizedlist>
+            <listitem><para>
+              the dependencies, <abbrev>i.e.</abbrev> which other targets this target
+              depends on and
+            </para></listitem>
+            <listitem><para>
+              the commands which have to be executed to build that
+              target.
+            </para></listitem>
+          </itemizedlist>
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    
+    <section><title>The syntax of a make file</title>
+      <para>
+        The structure of a make file is as follows:
+        <programlisting>
+target_A : dependency_A1 dependency_A2 ... dependency_Am
+&lt;TAB&gt; command_A1
+...
+&lt;TAB&gt; command_An
+  
+target_B : dependency_B1 ... dependency_BM
+&lt;TAB&gt; command_B1
+...  
+        </programlisting>
+      </para>
+      <para>
+        Consider a more everyday example. Say you wanted to specify
+        in a make file how to bake a cake. The make file would look 
+        something like the following:
+        <programlisting>
+bakeCake: makeDough heatOven getCakeTin
+&lt;TAB&gt; putDoughIntoTin
+&lt;TAB&gt; putTinIntoOven
+&lt;TAB&gt; bakeForOneHour
+&lt;TAB&gt; removeTinFromOven
+
+makeDough: getFlourWithBakingPowder getButter getSugar getEggs getMilk
+&lt;TAB&gt; beatButterCreamy
+&lt;TAB&gt; addSugar
+&lt;TAB&gt; addEggs
+&lt;TAB&gt; addFlour
+&lt;TAB&gt; addMilk
+&lt;TAB&gt; mixUntilTired
+
+...
+        </programlisting>
+        We are specifying that the <command>bakeCake</command> target
+        is dependent on the targets
+        <itemizedlist>
+          <listitem><para>makeDough,</para></listitem>
+          <listitem><para>heatOven and</para></listitem>
+          <listitem><para>getCakeTin</para></listitem>
+        </itemizedlist>
+      </para>
+      <para>
+        The make utility will ensure that the dependencies are
+        met before the this target is built, <abbrev>i.e.</abbrev> it will build
+        the dependency targets if necessary.
+        In our case, the make utility will ensure that the dough
+        is prepared before the cake is baked.
+      </para>
+      <para>
+        One thus does not specify the order in which the targets
+        are built. Instead, the make utility will try and determine
+        a sequence which ensures that all dependencies are met (if
+        that is possible).
+      </para>
+    </section>
+    <section><title>An example make file.</title>
+      <para></para>
+    </section>
+  </section>
+-->  
+  <section><title>Using the C Precompiler</title>
+    <para>
+      The compilation of a <emphasis>C</emphasis> program first goes through
+      a precompilation step. This enables one to provide pre-compiler
+      directives for a number of useful features including
+      <itemizedlist>
+        <listitem><para>
+          Inclusion of header files and libraries.          
+        </para></listitem>
+        <listitem><para>
+          Conditional compilation including, conditionally, debug information or different
+          blocks of code for different compilation targets
+        </para></listitem>
+        <listitem><para>
+          Definition of constants.
+        </para></listitem>
+        <listitem><para>
+          Definition of in-line functions. 
+        </para></listitem>
+      </itemizedlist>
+      As  we shall explain below, the latter two should be used with caution.
+    </para>
+    <section id="secMacros"><title>Macros</title>
+      <para>
+        Macros are segments of code which are to be expanded by the precompiler
+        inline within the code every time a macro reference is encountered. They
+        are used define
+        <itemizedlist>
+          <listitem><para>
+            constants and            
+          </para></listitem>
+          <listitem><para>
+            inline functions
+          </para></listitem>
+        </itemizedlist>
+      </para>
+      <para>
+        The general syntax for a macro is
+        <programlisting>
+#define &lt;macro&gt; &lt;replacement text&gt;        
+        </programlisting>
+      </para>
+      <section><title>Using macros for constants</title>
+        <para>
+          In this case the constant name becomes the macro name  and the
+          constant value becomes the replacement text:
+          <programlisting>
+#define FALSE 0
+#define TRUE !FALSE
+
+#define PI 3.1415926
+
+#define eps 1e-8
+          </programlisting>
+        </para>
+        <para>
+          Every time a macro is encountered by the precompiler it literally substitutes
+          it with the replacement text. The disadvantage of using macros for constants
+          is that the constants are never entered into the symbol table and hence no
+          debugger will know about them by name, only by value.
+        </para>
+        <para>
+          Instead of using macros for constants we could just use constants directly.
+          They will not be replaced by the precompiler and hence will be entered into the
+          symbol table. Furthermore, we can scope our constants to within methods,
+          structures or files.
+        </para>
+      </section>
+      <section><title>Macros for inline functions</title>
+        <para>
+          Macros are not great for constants but they can be outright dangerous for inline
+          functions. Consider, for example, the following commonly used macro
+          <programlisting>
+#define SQR(x) x*x
+#define MAX(x,y) ((x) &gt; (y) ? (x) : (y))
+          </programlisting>
+          One needs the parenthesis around <varname>x</varname> and <varname>y</varname>
+          in order to allow the user to use the macro with expressions. The macros look 
+          harmless enough. Consider, however, the following pitfalls:
+          <programlisting>
+y = SQR(1+2);     // result: 5 instead of 9
+z = MAX(x++,y);
+          </programlisting>
+          In the first case the macro expansion results in 
+          <programlisting>
+y = 1+2 * 1+2;
+          </programlisting>
+          which evaluates to 5 (since multiplication has higher precedence than addition).
+          In the second case <varname>x</varname> will be incremented either once or twice, 
+          depending on whether <constant>x+1</constant> is greater than <varname>y</varname>.
+          or not. It should be clear that macros like the above are not only bad style but 
+          also very dangerous. 
+        </para>
+      </section>
+      <section><title>Inline functions</title>
+        <para>
+          Inline template functions are a very elegant alternative to macros in
+          <emphasis>C++</emphasis>. In <emphasis>C</emphasis> we can still get the
+          performance benefit of in-lining, but the generics is more difficult
+          to achieve. 
+        </para>
+        <example><title>Inline functions</title>
+          <para>
+            The ANSI-<emphasis>C</emphasis> standard does not define a <command>inline</command>
+            keyword. Inline functions are, however, supported by most <emphasis>C</emphasis>
+            compilers. The body of an inline function is expanded inline every time the
+            function is called and hence the overheads of a function call are avoided at the
+            cost of a potentially larger  executable.
+          </para>
+          <para>
+            Whether a function is to BB expanded in-line or not is really an optimization
+            issue and one may feel that this should be left to the optimization algorithm
+            of compilers.
+          </para>
+          <para>
+            Whether a function is declared <command>inline</command> or not is an
+            implementation details and is thus not published in the header file:
+            <programlisting>
+              <xi:include href="inlineFunctions.h" parse="text"/>
+            </programlisting>
+          </para>
+          <para>
+            The implementation now specifies that the function should be expanded
+            in-line. 
+            <programlisting>
+              <xi:include href="inlineFunctions.c" parse="text"/>
+            </programlisting>
+          </para>
+        </example>
+        <note><para>
+          The <command>inline</command> keyword is, however, solely a
+          compiler request and a compiler can, for whatever reasons, decide to 
+          ignore the request.
+        </para></note>
+      </section>
+    </section>  
+  </section>
+  
+  <section><title>Exercises</title>
+    <orderedlist>
+      <listitem><para>
+        Define a 
+        <programlisting>
+swap(T, x, y)        
+        </programlisting>
+        preprocessor macro which will swap two arguments, <varname>x</varname> and
+        <varname>y</varname> of a data type <type>T</type>.
+      </para></listitem>
+    </orderedlist>
+  </section>  
+  
+</chapter>

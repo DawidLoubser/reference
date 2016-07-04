@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>javaBasedServiceProviderExample</artifactId>
+    <groupId>za.co.solms.examples</groupId>
+    <version>0.1</version>
+  </parent>
+  
+  <groupId>za.co.solms.examples</groupId>
+  <artifactId>motor-value-estimator</artifactId>
+  <version>0.1</version>
+  <packaging>jbi-service-unit</packaging>
+  
+  <name>A Motor Value Estimator (Java-based)</name>
+  
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.servicemix.tooling</groupId>
+        <artifactId>jbi-maven-plugin</artifactId>
+        <version>${servicemix-version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <type>service-unit</type>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jaxws-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>wsimport</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <target>2.1</target>
+          <wsdlUrls>
+            <!--  Our contract -->
+            <wsdlUrl>${basedir}/src/main/resources/motor-value-estimator-soap.wsdl</wsdlUrl>
+          </wsdlUrls>
+          <sourceDestDir>target/generated-sources</sourceDestDir>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-tools</artifactId>
+            <version>2.1.1</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <dependencies>
+    <!-- We will deploy to CXF Service Engine -->
+    <dependency>
+      <groupId>org.apache.servicemix</groupId>
+      <artifactId>servicemix-cxf-se</artifactId>
+      <version>${servicemix-version}</version>
+    </dependency>
+    <!-- Unit Testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>[4.1,]</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
+  <repositories>
+    <repository>
+      <id>java.net2</id>
+      <url>http://download.java.net/maven/2/</url>
+    </repository>
+  </repositories>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>java.net2</id>
+      <url>http://download.java.net/maven/2/</url>
+    </pluginRepository>
+  </pluginRepositories>
+  
+</project>

@@ -1,0 +1,159 @@
+\section{Assessing the qualities of an URDAD PIM}
+\label{sec:assessment}
+In this section we assess the extent to which an URDAD PIM satisfies the stakeholder quality requirements. We thus go through the list of stake holder quality requirements in order to qualitatively assess to what extend and through which mechanisms an URDAD generated PIM realizes them.
+
+
+
+%================================
+
+\subsection{Completeness}
+
+Completeness is one of the core quality requirements needed for a model which is to be transformed to code and for to be used for generating tests. It is measured by the extent to which the model contains all required elements. Most authors
+\cite{lange_2004:anEmpiricalAssessmentOfCompletenessInUmlDesign, lange_2005:managingModelQuality, hussain_2007:applyingFuzzyLogicToMeasureCompleteness,
+cardei:ModelBasedRequirementsSpecificationAndValidationForComponentArchitectures}
+assess completeness by assessing whether all dependencies within a model are defined---that is by assessing whether the model is internally complete. In a similar way
+\cite{zowghi_2003:completenessConsistencyCorrectnessOfRequirements}
+define a set of requirements as complete if all dependencies within the requirements are defined.
+
+Lange et al.\
+\cite{lange_2004:anEmpiricalAssessmentOfCompletenessInUmlDesign}
+point out that, in addition to internal model completeness, one needs to consider completeness from a client's perspective, i.e.\ the extent to which the client requirements
+are fulfilled. They note that this aspect of completeness is generally verified through client acceptance tests. They also include under completeness the notions of consistency and well-formedness. In this paper we treat consistency separately, while some aspects of well-formedness are included under the {\em correctness} quality.
+
+Here we look at four aspects of completeness: completeness from a requirements perspective; internal completeness of both the analysis and the design; completeness from a model usage perspective; and completeness from a meta-model perspective. In each case, we discuss ways in which these can be verified if the PIM has been derived by an URDAD process.
+
+%-----------------------------------
+
+\subsubsection{Completeness from a requirements perspective}
+
+This is a measure of the extent to which the stakeholder requirements are addressed within a design model. Even though it is true that this aspect of completeness is generally assessed using acceptance testing \cite{lange_2004:anEmpiricalAssessmentOfCompletenessInUmlDesign}, some aspects can be automated within an URDAD validation suite. In particular, URDAD requires that each pre- and post-condition is linked to at least one functional requirement and that the funtional requirement must be realized by a service defined in a services contract. This ensures that each pre- and post-condition is addressed within the URDAD PIM.
+
+%-----------------------------------
+
+\subsubsection{Completeness from a model utility perspective}
+
+This aspect of completeness refers to the extent to which all model elements required for different model usages like model transformation (including code, test and documentation generation) are provided.  \cite{solms_2009:generatingMdasPimUsingUrdad}  identifies the PIM elements 
+required for implementation mapping, under the understanding that the {\em Platform Model} (PM) needs to be provided with the PIM in order to facilitate the model transformation to the {\em Platform Specific Model} (PSM). It is argued that URDAD provides a sufficient, yet minimal set of model elements from a utility perspective.
+
+In particular, it is argued that one requires: 
+\begin{itemize}
+\item the full specification of the inputs and outputs of the business process;
+\item formal specification (using the {\em Object Constraint Language}, OCL) of the pre- and post-conditions and quality requirements for each service;
+\item the business process showing how a service is assembled across lower level services, the decision and merge points in the business process, any concurrency and synchronization points in the business process;
+\item and recursively, for each lower level service requested in the business process,
+	\begin{itemize}
+				\item how the request objects are constructed from the information available at that point in the business process,
+				\item for lower level composite services the business process showing how the service is assembled across lower level services, as well as how the requests and outputs are constructucted from the available information.
+				\item for leaf services, how the result is to be constructed from the available information as well as any changes which must have been made to the environment within which the service is executed (in the form of formally specified post-conditions), and
+				\item for services which are outsourced to external systems/service providers, the complete services contract with inputs, outputs, pre- and post-conditions and quality requirements.
+	\end{itemize}
+\end{itemize}
+
+Of course there is a model boundary. In URDAD the model boundary is represented by those contracts for which no implementing service providers (with corresponding process design) have been specified. Such services need to be sourced from the environment as either low level system services, services sourced from existing or off-the-shelf systems which are not part of the model domain or from other external service providers.
+
+%-----------------------------------
+
+\subsubsection{Internal completeness of both analysis and design}
+
+Internal completeness refers to the extent to which all dependencies of the requirements and design are defined. The normal completeness tests as referred to in
+\cite{lange_2004:anEmpiricalAssessmentOfCompletenessInUmlDesign} 
+
+%-----------------------------------
+
+\subsubsection{Completeness with respect to meta-model}
+
+This refers to the extent to which a model has all elements as required by the meta-model for that type of model. Even though an URDAD PIM is in the form of a UML model, it must comply to the URDAD meta-model which specifies a list of required model elements and relationships between them. This aspect of completeness can thus be readily assessed for an URDAD model.
+
+%================================
+
+\subsection{Consistency}
+
+Consistency is an essential PIM quality,  particularly needed for transformability and maintainability.
+Even though a UML model assists with being able to enforce consistency across diagrams, UML neither enforces consistency nor provides a way to verify model consistency \cite{usman_2008:surveyOfUmlConsistencyCheckingTechniques}. A range of UML model consistency verification techniques have been proposed \cite{usman_2008:surveyOfUmlConsistencyCheckingTechniques, shinkawa_2006:interModelConsistency}.
+
+URDAD itself provides a design process which aims to enforce consistency, specifying the required diagram elements and model links between these. These are assessed with the URDAD correctness validation suite. In addition standard UML consistency checks can be applied to an URDAD model.
+
+%================================
+
+\subsection{Simplicity and understandability}
+
+Simplicity is an inverse measure of complexity. It is generally accepted \cite{booch_2008:measuringArchitecturalComplexity,alsharif_2004:complexityOfSoftwareArchitectures} that design simplicity and understandability are improved by hierarchical decomposition of functionality, enforcing the single responsibility principle and decoupling. These three design aspects are enforced within an URDAD PIM. There is, however, a point where the overheads of further decomposition exceed the complexity reduction otherwise obtained from the decomposition\cite{alsharif_2004:complexityOfSoftwareArchitectures}. URDAD does not provide any guidance on when a service should be treated as atomic and leaves this to the disgression of the designer.
+
+Alsharif et al.\ \cite{alsharif_2004:complexityOfSoftwareArchitectures} use a modified full function point analysis approach to assess complexity. Their approach finds that complexity can generally be reduced by hierarchical decomposition of functionality. In addition they assess complexity of four design architectures including a shared data architecture which uses globally accessible storage to exchange information between functional components, an abstract data type architecture which groups processes and the data they operate on within abstract data types, an implicit invocation architecture which has a global event space and units of functionality reacting to events on the shared space, and a pipes and filters based architecture which decomposes the functionality into stateless services from which a higher level process is assembled. The latter design architecture which represents the design architecture of an URDAD PIM achieves the lowest complexity value based on responsibility localization, decoupling and stateless services.
+
+One aspect of simplicity is parsomony which is a measure of the extent to which all model elements are required \cite{mohagheghi_2008:overviewOfQualityFrameworks}. Even though URDAD claims to provide a minimal, complete set of design elements, this has yet to be formally proven.
+
+%============================
+
+\subsection{Modifiability}
+
+Modifiability has been shown to be strongly related to decoupling
+\cite{reynoso_2005:impactOfCouplingOnUnderstandabilityAndModifiability,reynoso_2006:effectOfCouplingOnOclExpressions}, model complexity
+\cite{genero_2004:earlyIndicatorsOfUnderstandabilityAndModifiability}, and model consistency. It is also impacted by the level of abstraction of used in the model elements
+\cite{verelst_2005:abstractionAndEvolvibility}, though abstraction and particular deep inheritance hierarchies may increase dependency of model elements and impede modifiability
+\cite{poels_2001:inheritenceAndModifiability}.
+
+URDAD enforces:
+\begin{itemize}
+  \item decoupling of clients/users from service providers through enforced client-specified services contracts and the expectation of the use of service provider adapters; and
+  \item  decoupling of value objects from domain objects (including service request and result objects whose reuse across services is forbidden).
+\end{itemize}
+
+On the other hand, URDAD does not facilitate the use of inheritance except in the case of value objects. This prevents rigidity caused by the excessive use of inheritance hierarchies, but also prevents any modifiability benefits which may be gained through using abstraction in processes. URDAD instead uses composability of processes through service reuse.
+
+
+%================================
+
+\subsection{Reusability}
+Reusability is a measure of the proportion of elements in a design which can be reused and the inverse of the cost associated with the reuse of design elements. [I DON'T UNDERSTAND THE ``and the inverse...'' PART OF THIS SENTENCE]
+
+In general we want to reuse
+\begin{itemize}
+\item services,
+\item services contracts,
+\item value objects, and
+\item domain entities.
+\end{itemize}
+
+Reuse in URDAD is focused on the reuse of services and services contracts.
+URDAD enforces modularity and statelessness of services across levels of granularity, the decoupling and formal service specification through services contracts and recursive assembly of services from lower level services, all of which promote service reuse \cite{feuerlicht_2007:determinantsOfServiceReusability, choi_2008:qualityModelForEvaluatingReusabilityOfServices}.
+
+High level request and result objects are prevented from being reused in URDAD, whilst lower level components of these as well as domain entities are commonly reused, though nothing within URDAD specifically promotes the reuse of either. 
+
+Reusability through inheritance \cite{marinescu_1999:measurementOfReuseByInheritance} is generally not promoted within URDAD and is structurally confined to value object.
+
+
+%=========================
+
+\subsection{Testability}
+
+Since URDAD is based on a design by contract \cite{meyer_1992:designByContract} approach, testability revolves around testing all services contracts \cite{nebut_2006:automaticTestGeneration, Zheng_2008:testByContract} across levels of granularity. The URDAD completeness tests assess whether there are any services for which there is not a services contract specified.
+
+The enforced levels of granularity reduce model and test complexity at any particular level of granularity \cite{wang_2008:componentOrientedDevelopmentApproachToEbusinessApplications}.
+
+
+In contract-based design approaches, the generation of tests can be auto-generated from the services contracts \cite{nebut_2003:requirementsByContractsAutomateTests,nebut_2006:automaticTestGeneration,hakim_2008:automatedTests}. This further enhances testability.
+
+
+%================================
+
+\subsection{Traceability}
+
+Traceability is measured by the extent to which the impact of requirements changes on the design across various levels can be assessed. It is also measured by the extent to which any activity performed at any level of granularity can be linked back to a functional requirement of some stake holder. Traceability is usually achieved either (1) within development tools which add the linkage between requirements artifacts and UML model elements \cite{dick_2005:designTraceability}, (2) by adding rationale semantics to a UML model using a separate ontology \cite{noll_2007:traceabilityUsingOntologies} or (3) by extending UML using a profile which adds concepts that illustrate the design decisions \cite{zhu_2007:umlProfileForDesignDecisions}. URDAD follows the latter path, adding, within the URDAD profile, a \verb+<<requires>>+ dependency which is inserted between
+\begin{itemize}
+  \item stake holders and pre- and post-conditions, and
+  \item pre-/post-conditions and the functional requirements (which are semantically interpreted as requirements for functions/services).
+\end{itemize}
+
+Additionally URDAD uses a standard UML realization relationship between a functional requirement and a service in a services contract (the services formalizes the requirements around the functional requirement in the form of service inputs and outputs, pre- and post-conditions and quality requirements) as well as an interface realization between the contract and the service providers which realize the services contract through concrete (business) processes.
+
+These relationships facilitate traceability of pre- and post-conditions to functional requirements  (specifying the services required to address the pre- and post-conditions), through to services contracts which formalize the requirements for those services through to implementation classes and  processes through which the services are realized. From the processes one can navigate through to the lower level services from which the processes are assembled.
+
+Similarly URDAD facilitates traceability in the reverse direction by tracing from any process step to the service within which it is used to the recursively higher level services which make use of those services to a functional requirement and the pre- and post-conditions for which the functionality is required to the stake-holder who requires that pre- or post-condition. The traceability process could also start from a value or domain object leading to the processes within which these are required and then up the route dependency route as discussed in the previous sentence.
+
+%================================
+
+\subsection{Cohesion}
+
+Cohesiveness \cite{counsell_2006:cohesionMetrics} is addressed in URDAD by guiding designers to apply the single responsibility principle. This encourages the outward projection of  lower level responsibilities onto lower level services defined in different services contracts. Both of these are manual processes which are neither enforced by the process nor validated through the URDAD validation suite.
+

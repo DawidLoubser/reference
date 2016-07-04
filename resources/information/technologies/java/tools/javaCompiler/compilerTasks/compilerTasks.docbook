@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Submitting compilation tasks</title>
+    <para>
+        The more general way of using the <literal>JavaCompiler</literal> is not via the generic <literal>run</literal>
+        service available for all tools, but by creating a compilation task.
+    </para>
+    
+    <section>
+        <title>Typical usage</title>
+        <para>
+            <programlisting><![CDATA[
+compiler = ToolProvider.getSystemJavaCompiler();
+
+optionList = new ArrayList<String>();
+    optionList.addAll(Arrays.asList(
+        "-classpath","/mylib/*.jar"
+        "-deprecation")
+    );
+
+File[] files = new File[1];
+files[0] = new File(pathToSourceFile);
+
+StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+
+CompilationTask compilationTask 
+        = compiler.getTask(compilerOutput, fileManager, null, optionList, null,  
+
+fileManager.getJavaFileObjectsFromFiles(Arrays.asList(files)));
+
+boolean compilationSuccess = compilationTask.call();
+
+System.out.println("Compilation messages, warnings and errors:\n " + compilationSuccess.toString());
+]]></programlisting>
+        </para>
+    </section>
+</section>
+<!--
+<xi:include href="compilerOptions/compilerOptions.docbook"/>
+
+<xi:include href="diagnostics/diagnostics.docbook"/>
+-->

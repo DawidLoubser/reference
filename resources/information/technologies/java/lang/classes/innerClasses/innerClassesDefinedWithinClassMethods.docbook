@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6178:section xmlns:ns6178="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.lang.ooLanguage.innerClasses.innerClassesDefinedWithinClassMethods">
+    <ns6179:title xmlns:ns6179="http://docbook.org/ns/docbook">Inner Classes defined within Class Methods</ns6179:title>
+    <ns6180:para xmlns:ns6180="http://docbook.org/ns/docbook">Assume we have defined a common interface, <ns6181:emphasis xmlns:ns6181="http://docbook.org/ns/docbook" role="verb">FunctionDoubleDouble</ns6181:emphasis>, for functions which map real numbers onto real numbers:<ns6182:programlisting xmlns:ns6182="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../source/FunctionDoubleDouble.java"/>
+</ns6182:programlisting>
+    </ns6180:para>
+    <ns6183:para xmlns:ns6183="http://docbook.org/ns/docbook">Assume further that we have a utility class which offers a collection of class services
+        for solving for a root of such functions (an $x$-value for which the function value is
+        zero). We only show one implementation of a root solver which implements the simple
+        bisection method for solving for a root.<ns6184:programlisting xmlns:ns6184="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../source/RootSolvers.java"/>
+</ns6184:programlisting>
+    </ns6183:para>
+    <ns6185:para xmlns:ns6185="http://docbook.org/ns/docbook">In the bisection method you are given a function and an interval (two $x$-values) over
+        which the function value changes sign (from positive to negative). Assuming the function is
+        continuous, we know that there is at least one root. The method iteratively finds the center
+        of the interval and creates a new interval (which is half the size of the previous interval)
+        over which the function still changes sign (within which the function still has at leasdt
+        one root).</ns6185:para>
+    <ns6186:para xmlns:ns6186="http://docbook.org/ns/docbook">Note that the first argument to our root solver method is an interface. This specifies
+        that any object of any class which implements that interface can be passed to our root
+        solver. All the root solver needs to know is that the object can be queried for function
+        values at different $x$-values.</ns6186:para>
+    <ns6187:para xmlns:ns6187="http://docbook.org/ns/docbook">Figure: RootFunction shows a function with several roots. In our example we shall
+        determine the root which lies between 0 and 1.
+        <!--\begin{figure}[hbt]
+  \begin{center}\input{OOReview/Function.tex}\end{center}
+  \caption{A function with several roots. We will be searching for the root
+           which lies between 0 and 1. \label{figRootFunction"
+\end{figure}-->
+        <!-- please add apropriate solmsDoc/MathML-->
+    </ns6187:para>
+    <ns6188:para xmlns:ns6188="http://docbook.org/ns/docbook">Assume further we have some class which requires for one of its services to find the root
+        of some function which is solely defined for the class itself. For example, below we assume
+        that there is a class <ns6189:emphasis xmlns:ns6189="http://docbook.org/ns/docbook" role="verb">MyConstruction</ns6189:emphasis> which needs to find
+        the root of a particular function in order to calculate the stress. This function exists
+        solely for the purpose of calculating the stress for that particular construction. Hence we
+        define it within the method<ns6190:emphasis xmlns:ns6190="http://docbook.org/ns/docbook" role="verb">calculateStress()</ns6190:emphasis>.<ns6191:programlisting xmlns:ns6191="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../source/MyConstruction.java"/>
+</ns6191:programlisting>
+    </ns6188:para>
+    <ns6192:para xmlns:ns6192="http://docbook.org/ns/docbook">This function implements the <ns6193:emphasis xmlns:ns6193="http://docbook.org/ns/docbook" role="verb">FunctionDoubleDouble</ns6193:emphasis>
+        interface. The class can only be instantiated within the method in which it is defined, but
+        a handle to instances of that class can be given to some other class. In our example an
+        instance of our inner class is passed to our root solver. All the root solver needs to know
+        is that our function can be queried for its value at a given $x$-value.</ns6192:para>
+    <ns6194:para xmlns:ns6194="http://docbook.org/ns/docbook">Being an inner class, the <ns6195:emphasis xmlns:ns6195="http://docbook.org/ns/docbook" role="verb">RootSolver</ns6195:emphasis> is not able to
+        typecast the<ns6196:emphasis xmlns:ns6196="http://docbook.org/ns/docbook" role="verb">FunctionDoubleDouble</ns6196:emphasis> it receives to a <ns6197:emphasis xmlns:ns6197="http://docbook.org/ns/docbook" role="verb">InnerFunction</ns6197:emphasis>. In fact, the only method the root solver can use
+        (without reverting to really filthy means) is the <ns6198:emphasis xmlns:ns6198="http://docbook.org/ns/docbook" role="verb">value(double)</ns6198:emphasis> method.</ns6194:para>
+    <ns6199:para xmlns:ns6199="http://docbook.org/ns/docbook">Finally, let us write a little main program which demonstrates that the above actually works:<ns6200:programlisting xmlns:ns6200="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../source/InnerClassTest.java"/>
+</ns6200:programlisting>
+    </ns6199:para>
+    <ns6201:para xmlns:ns6201="http://docbook.org/ns/docbook">If you run the program, you will receive the following output:<ns6202:programlisting xmlns:ns6202="http://docbook.org/ns/docbook">
+stress = 0.31681060791015625
+        </ns6202:programlisting>
+    </ns6201:para>
+</ns6178:section>

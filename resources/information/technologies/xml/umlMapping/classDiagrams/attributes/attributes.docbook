@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-01-16 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Mapping attributes onto XML</title>
+    <para> If the UML attribute type represents a simple XML type, the attribute can be mapped onto
+        either an attribute or a sub-element. On the other hand, if the attribute type corresponds
+        to a complex XML type, then the attribute needs to be mapped onto a sub-element. For
+        example, a product may be defined in an XML schema document as follows: <programlisting><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.solms.co.za/retail/products"
+    xmlns:prod="http://www.solms.co.za/retail/products"
+    xmlns="http://www.w3.org/2001/XMLSchema">
+    
+ <complexType name="Product">
+   <sequence>
+     <element name="price" type="prod:Money"/>
+   </sequence>
+   <attribute name="code" type="integer"/>
+ </complexType>
+
+ <complexType name="Money">
+   <sequence>
+     <element name="amount" type="decimal"/>
+     <element name="currency" type="string"/>
+   </sequence>
+ </complexType>
+
+</schema>	]]></programlisting>
+    </para>
+    <para> An XML instance complying to this specification of a product might look as follows: <programlisting>
+		    <![CDATA[
+ <product code="1234">
+   <price>
+     <amount>100</amount>
+     <currency>EURO</currency>
+  </price>
+ </product>
+			]]>
+			</programlisting>
+    </para>
+
+    <section>
+        <title>Mapping collection attributes onto XML</title>
+        <para> The multiplicity constraints in UML map onto more limited multiplicity constraints in
+            XML schema <programlisting>
+			    <![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.solms.co.za/insurance/claim"
+    xmlns:claim="http://www.solms.co.za/insurance/claim"
+    xmlns="http://www.w3.org/2001/XMLSchema">
+    
+  <complexType name="Claim">
+    <sequence>
+      <element name="clientReference", type="string"/> 
+      <element name="claimItem" type="claim:ClaimItem" maxOccurs="unbounded"/>
+      <element name="contactDetails" type="claim:ContactDetail" 
+      		minOccurs="1" maxOccurs="2"/>
+    </sequence>
+  </complexType>
+
+  <complexType name="ClaimItem">...</complexType>
+    
+  <complexType name="ContactDetail">...</complexType>
+</schema>				
+     ]]>			
+     </programlisting>
+            <note>
+                <para> The default value for both, minOccurs and maxOccurs is 1. </para>
+            </note>
+        </para>
+    </section>
+
+    <section>
+        <title>Mapping derived attributes onto XML</title>
+        <para> Derived attributes should preferably not feature in an XML-schema based data type
+            specification as XML parsers would not be able to validate the derived data. Instead the
+            reporting of derived attributes should be left to reporting tools or to system
+            representations of the XML objects (for example, to the Java representation obtained
+            from an XML-Java mapping of the XML data). </para>
+    </section>
+
+
+</section>

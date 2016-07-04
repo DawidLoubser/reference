@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2me.xml.XMLByExample"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Simple XML Example</title>
+    <para> Two convenient uses on mobile devices for XML is persistence and
+        messaging. Information structured in xml could have a natural OO form
+        which makes it much easier and more convenient to work with. Sending
+        messages in xml helps to integrate device software into larger and next
+        generation systems that use technologies like webservices. </para>
+    <para> In this section we will cover a simple example that maps business
+        objects onto xml and vice versa. You can then use either the object to
+        XML mapping to produce XML for messages or persistence. The other way
+        around allows you to receive XML and to construct objects usable in the
+        program. </para>
+    <para> We will continue to use the mobile order example and process the
+        order object. Let's first look at the pieces of the program, the complete code listing: 
+        <xref linkend="orderXMLGenerator"/>
+    </para>
+    <para>First we have a method that will accept an order as an argument and return
+    a node constructed from that order object.
+    <programlisting>public Node getXMLFromOrder(Order order)</programlisting>
+    Next we'll instantiate an element that'll be our Order element and create the child elements
+    that make up the contents of an Order.
+    <programlisting>
+        Element orderElement = new Element();
+        orderElement.setName("order");     
+        // Give the element a name
+        
+        Element name = new Element();
+        name.setName("name");
+        name.addChild(Xml.TEXT, order.getClientName());
+        /* 
+            When adding child nodes we have to spesify the type.
+            There are static final int fields in Xml class for
+            all the different nodes   
+        */
+    </programlisting>
+    Finally we return the <emphasis>order</emphasis> element node:
+    <programlisting>
+        return orderElement;
+    </programlisting>
+    </para>
+    
+    <para> In XML there is the concept of a node. Absolutely any entity (not the refrence kind)
+        addressable with X-Path qualifies as a node including white space, comments
+        and processing instructions. A node could contain child nodes or be one.
+    </para>
+    <para> An xml document is always structured in a tree. It must have at least
+        one root element. In <methodname>public Node getXMLFromOrder(Order
+        order)</methodname> we create a root element called order. Next we
+        create Elements and subelementspopulating them from the Order object's data
+        until the whole root node is complete. Once the node has been completely 
+        populated we simply return it. At anytime when you need an XML representation
+    of your order you can simply call this method with your Order object and then
+    either submit the XML to a server for processing or persist it to a single rms record.</para>
+    <para>
+      Whenever you need to recreate an order object to change it for example you can simply use:
+      <methodname>public Order getOrderFromDocument(Node orderNode)</methodname> passing
+      it the order XML node as an argument. You could get this order node by parsing 
+      a persisted XML file from the file system or from a network resource. You can then
+      carry on using the order in your application as you did previously.
+    </para>
+    <example id="orderXMLGenerator">
+        <title>Order to XML and XML to Order example</title>
+        <programlisting>&orderxml;&orderxmlgenerator;</programlisting>
+    </example>
+</section>

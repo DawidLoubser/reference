@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.multiThreading.executors.executorService.executorService">
+  <title>Executor service</title>
+  <para>
+    Java defines an <literal>ExecutorService</literal> interface which extends
+    <literal>Executor</literal> by
+    <itemizedlist>
+      <listitem><para>
+       providing more control over the executing thread, and
+      </para></listitem>
+      <listitem><para>
+        providing support for deferred synchronous service requests (<abbrev>i.e.</abbrev>
+        asynchronous service requests which provide a return value).
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>Task termination</title>
+    <para>
+      The <literal>ExecutorService</literal> extends the executor interface with the task
+      termination services shown below:
+      <programlisting language="Java"><![CDATA[
+ public interface ExecutorService extends Executor 
+ {
+
+    /**
+      * Initiates an orderly shutdown in which previously submitted 
+      * tasks are executed, but no new tasks will be accepted. 
+      */
+    void shutdown();
+
+    /**
+     * Attempts to stop all actively executing tasks, 
+     * halts the processing of waiting tasks, and returns 
+     * a list of the tasks that were awaiting execution.
+     *
+     * @return a list of all tasks that never commenced execution
+     */
+    List<Runnable> shutdownNow();
+
+    /**
+     * Returns true if this executor has been shut down.
+     */
+    boolean isShutdown();
+
+
+    /**
+     * Returns true if this executor has been shut down, i.e. all started
+     * tasks have been either completed or shut down.
+     */
+    boolean isTerminated();
+
+    /**
+     * Blocks until all tasks have completed execution after a shutdown
+     * request, or the timeout occurs, or the current thread is
+     * interrupted, whichever happens first.
+     *
+     * @param timeout the maximum time to wait
+     * @param granularity the time unit of the timeout argument
+     * @return <tt>true</tt> if this executor terminated and <tt>false</tt>
+     * if waiting time elapsed before termination.
+     * @throws IllegalStateException if not shut down
+     * @throws InterruptedException if interrupted while waiting
+     */
+    boolean awaitTermination(long timeout, TimeUnit granularity)
+        throws InterruptedException;
+}
+    
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Deferred synchronous requests</title>
+    <para>
+      In order to support deferred synchronous service requests, Java introduces the following
+      interfaces:
+      <orderedlist>
+        <listitem><formalpara>
+          <title>Callable</title>
+          <para>
+            A <literal>Callable</literal> is effectively a <literal>Runnable</literal> with return value and the possibility
+            to throw exceptions. 
+          </para></formalpara>
+        </listitem>
+        <listitem><formalpara>
+          <title>Future</title>
+          <para>
+            A <literal>Future</literal> is an object which will be poppulated with the return value
+            and any exceptions which were thrown for a task. The client can
+            retrieve these whenever it is convenient.
+          </para>
+        </formalpara>
+        </listitem>
+      </orderedlist>
+    </para>
+    
+    <section>
+      <title>Callable</title>
+      <para>
+        The <literal>Callable</literal> interface has a single <literal>call</literal> service which
+        starts the processing of the task and ultimately either returns a return value or throws an
+        exception (or is in an infinite loop, I suppose).
+      </para>
+      <para>
+        The <literal>Callable interface is defined generically, receiving the return type as
+        as parameter. The interface looks effectively as follows</literal>
+        <programlisting language="Java"><![CDATA[
+  package java.util.concurrent;
+                
+  public interface Callable<T>
+  {
+    /**
+      * computes the result and throws an exception 
+      * if unable to do so.
+      */          
+    public T call() throws Exception;             
+  }              
+                ]]></programlisting>    
+      </para>
+    </section>
+    
+    <section>
+      <title>Future</title>
+      <para>
+        A <literal>Future</literal> can now be used to poll for and retrieve the result. If the tasj
+        was refused, <abbrev>i.e.</abbrev> if it threw an exception, that exception will be packaged
+        within an <literal>ExecutionException</literal> which is then thrown upon retrieving the
+        execution result.
+      </para>
+      <para>
+        The interface for futures looks as follows:
+        <programlisting language="Java"><![CDATA[
+public interface Future<T>
+{ 
+  /**
+   * Attempts to cancel execution of this task.
+   * @return false if already completed or canceled, 
+   *         true otherwise.          
+   */          
+  boolean cancel(boolean mayInterruptIfRunning)
+      
+  /**
+   * Waits, if necessary, for the computation to complete, 
+   * and then retrieves its result.
+   * @throws CancellationException if the computation 
+   *          was cancelled.
+   * @throws ExecutionException if underlying computation 
+   *         threw an exception.
+   * @throws InterruptedException if current thread was 
+   *         interrupted while waiting.
+   */          
+   T	get()
+          
+  /**
+   * Waits, if necessary, for the computation to complete, 
+   * and then retrieves its result.
+   * @throws CancellationException if the computation 
+   *          was cancelled.
+   * @throws ExecutionException if underlying computation 
+   *         threw an exception.
+   * @throws InterruptedException if current thread was 
+   *         interrupted while waiting.
+   * @throws TimeoutException if the wait timed out.          
+   */          
+   T get(long timeout, TimeUnit unit)
+
+  /**
+   * Returns true if this task was cancelled before it completed normally.
+   */          
+  boolean isCancelled()
+          
+  /**
+   * Returns true if this task completed.
+   */          
+  boolean isDone()
+}                 
+          ]]></programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>Invoking deferred synchronous requests</title>
+      <para>
+        An executor service can now be used to make a single or multiple deferred synchronous
+        service requests. The request submission returns a single or a collection of
+        <literal>Future</literal>s which can be polled for completion before retriving the result.    
+      </para>
+      <para>
+      
+        <programlisting language="Java"><![CDATA[
+public interface ExecutorService extends Executor 
+{
+  /**
+    * Submits a value-returning task for execution and 
+    * returns a Future representing the pending results 
+    * of the task.
+    */      
+  <T> Future<T> submit(Callable<T> task)
+           
+  /**
+    * Executes the given tasks, returning a list of Futures 
+    * holding their status and results when all complete.
+    */          
+  <T> List<Future<T>>
+     invokeAll(Collection<Callable<T>> tasks)
+         
+  /**
+    * Executes the given tasks, returning a list of Futures 
+    * holding their status and results when all complete or 
+    * the timeout expires, whichever happens first.
+    */          
+  <T> List<Future<T>>
+  	invokeAll(Collection<Callable<T>> tasks, 
+                    long timeout, TimeUnit unit)
+          
+  /**
+    * Executes the given tasks, returning the result of one that has 
+    * completed successfully (i.e., without throwing an exception), 
+    * if any do.
+    */          
+  <T> T invokeAny(Collection<Callable<T>> tasks)
+           
+          
+  /**
+    * Executes the given tasks, returning the result of one that has 
+    * completed successfully (i.e., without throwing an exception), 
+    * if any do before the given timeout elapses.          
+    */          
+  <T> T
+  	invokeAny(Collection<Callable<T>> tasks, 
+             long timeout, TimeUnit unit)
+            
+}          
+          ]]></programlisting>
+      </para>
+    </section>
+  </section>
+</section>

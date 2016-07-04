@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/samples/docbook/xml/docbookx.dtd">
+-->
+<section id="resources.information.technologies.java.j2me.introduction.Profiles"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Profiles</title>
+    <para>The next level of API specifications that extend the configuration APIs are refered to as
+        profiles. With the different profiles, implementations become even more device specific.
+        Portabillity on as wide as possible selection of devices are still considdered in the spec. </para>
+    <para>As mentioned else where the focus of this course will be MID profile since it's the most
+        widely used and implemented profile.</para>
+    <para>The following profile spesifications are available: <itemizedlist>
+            <listitem>
+                <para>MIDP</para>
+            </listitem>
+            <listitem>
+                <para>Foundation Profile</para>
+            </listitem>
+            <listitem>
+                <para>Personal Basis Profile</para>
+            </listitem>
+            <listitem>
+                <para>Personal Profile</para>
+            </listitem>
+        </itemizedlist> The Personal Profile is an extension on Personal Basis Profile which is an
+        extension on the Foundatio Profile. </para>
+    <section>
+        <title>MIDP</title>
+        <para>The MIDP spec document is a well written easily understandable document and is
+            included on the CDRom I will just touch on some of the functional details here. The spec
+            defines classes for at least the following functionality:</para>
+        <orderedlist>
+            <listitem>
+                <para>Application delivery and billing</para>
+            </listitem>
+            <listitem>
+                <para>Application lifecycle</para>
+            </listitem>
+            <listitem>
+                <para>Application signing model and privileged domains security model</para>
+            </listitem>
+            <listitem>
+                <para>End-to-end transactional security</para>
+            </listitem>
+            <listitem>
+                <para>MIDlet push registration</para>
+            </listitem>
+            <listitem>
+                <para>Networking</para>
+            </listitem>
+            <listitem>
+                <para>Persistent storage</para>
+            </listitem>
+            <listitem>
+                <para>Sound</para>
+            </listitem>
+            <listitem>
+                <para>Timers</para>
+            </listitem>
+            <listitem>
+                <para>User interface (UI) (display, input and game requirements).</para>
+            </listitem>
+        </orderedlist>
+        <para>There is minimal class library requiement and more spesific detailed requirements
+            regarding the above. For example requirements about http support and network security.
+            You will find specific information on what's available in the javadoc documentation. We
+            will cover most of your functional needs in this course.</para>
+        <para>The spec also left space for OEM specific APIs. These classes will be device specific
+            and applications utilising them not nessecarily portable to other devices.</para>
+        <para>a MIDP device will at least have:</para>
+        <orderedlist>
+            <listitem>
+                <para>Display:</para>
+            </listitem>
+            <listitem>
+                <para>Screen-size: 96x54</para>
+            </listitem>
+            <listitem>
+                <para>Display depth: 1-bit</para>
+            </listitem>
+            <listitem>
+                <para>Pixel shape (aspect ratio): approximately 1:1</para>
+            </listitem>
+            <listitem>
+                <para>Input:</para>
+                <para>At least one of the following:</para>
+                <orderedlist>
+                    <listitem>
+                        <para>one-handed keyboard</para>
+                    </listitem>
+                    <listitem>
+                        <para>two-handed keyboard</para>
+                    </listitem>
+                    <listitem>
+                        <para>touch screen</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>
+                    <emphasis>Memory:</emphasis>
+                </para>
+                <para> 256 kilobytes non-volatile memory</para>
+                <para>128 kilobytes of volatile memory for the Java runtime (e.g., the Java heap)</para>
+                <para>Keep in mind that the configuration, CLDC in this case still has it's own
+                    memmory requirement</para>
+            </listitem>
+            <listitem>
+                <para>
+                    <emphasis>Networking:</emphasis>
+                </para>
+                <para> Two-way, wireless, intermittent, with limited bandwidth(this requirement
+                    could also be satisfied with an add-on device. ie via pc or phone)</para>
+            </listitem>
+            <listitem>
+                <para>
+                    <emphasis>Sound:</emphasis>
+                </para>
+                <para>Either via hardware or software.</para>
+            </listitem>
+        </orderedlist>
+        <para>On top of these hardware requirements MIDP assumes an operating system/software layer
+            via which it will access the devices.</para>
+        <para/>
+        <para>Part of the spec specify mechanisms for MIDLet and MIDLet-Suite installation and
+            deletion. Also the abillity to receive applications via http. You should be able to
+            safely assume this functionality to be on the target device you code for, that is if
+            it's a MIDP device.</para>
+        <para>MIDP MIDLets will execute in a sandbox enviroment. There are user security
+            restrictions that apply. Amongst others, if class verification cannot be verified, the
+            code will be rejected. Applications will be downloaded and executed and some level of
+            paranoia is required. Users will be able to deny and grant permissions to certain APIs.
+            MIDLet-suite jar files can be signed with 'X.509 Public Key Infrastructure'
+            certificates. It will allow the platform to verify the application with a trusted
+            domain. </para>
+        <section>
+            <title>Class Libraries</title>
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <emphasis>java.lang.*;</emphasis>
+                    </para>
+                    <para>In addition to the CLDC classes MIPD adds java.lang.IllegalStateException
+                        which is thrown when illegal transitions are requested like scheduling a TimerTask</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>java.util.*;</emphasis>
+                    </para>
+                    <para>MIDP adds: java.util.Timer and java.util.TimerTask to the CLDC classes.
+                        You can use these to schedule once off or tasks in a abckground thread.</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>javax.microedition.io.*;</emphasis>
+                    </para>
+                    <para>On top of the generic connection framework in CLDC, MIDP adds the
+                        following interfaces:</para>
+                    <itemizedlist>
+                        <listitem>
+                            <para>
+                                <emphasis>CommConnection</emphasis>
+                            </para>
+                            <para>CommConnection extends Connection, InputConnection,
+                                OutputConnection, StreamConnection. It applies more spesifically to
+                                serial port communication including IrDA and IRCOMM. the protocol
+                                part of the URI will be <emphasis>comm:</emphasis> example:
+                                Connector.open( comm:com0;baudrate=19200 ) where comm is the
+                                protocol, com0 a port spec and the baudrate optional parrameters.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>HttpConnection</emphasis>
+                            </para>
+                            <para>extends: Connection, ContentConnection, InputConnection,
+                                OutputConnection, StreamConnection</para>
+                            <para>This interface requires a very complete subset of the HTTP
+                                protocol to be implemented. with various convenient methods. </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>HttpsConnection</emphasis>
+                            </para>
+                            <para>extends: Connection, ContentConnection, HttpConnection,
+                                InputConnection, OutputConnection, StreamConnection</para>
+                            <para>This interface specifies the requirements for a secure HTTP connection</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>SocketConnection</emphasis>
+                            </para>
+                            <para>extends: Connection, InputConnection, OutputConnection, StreamConnection</para>
+                            <para>A generic socket connection to a port. Example:
+                                'socket://play.solmstraining.co.za:8083'. where
+                                'play.solmstraining.co.za' is the host name and ':8083' the port spec.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>SecureConnection</emphasis>
+                            </para>
+                            <para>extends: Connection, InputConnection, OutputConnection,
+                                SocketConnection, StreamConnection</para>
+                            <para>For secure or encrypted generic socket connections.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>ServerSocketConnection</emphasis>
+                            </para>
+                            <para>extends: Connection, StreamConnectionNotifier</para>
+                            <para>A connection to the device itself</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>UDPDatagramConnection</emphasis>
+                            </para>
+                            <para>extends: Connection, DatagramConnection</para>
+                            <para>The response to a Connector.open(datagram://somehost:port)</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>PushRegistry</emphasis>
+                            </para>
+                            <para>The Push registry is a list of inbound connections that will be
+                                maintained while the application is running or not. If an inbound
+                                connection is made while the application is not running, the
+                                aplication manager of the device will invoke the apropriate application.</para>
+                        </listitem>
+                    </itemizedlist>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>javax.microedition.lcdui</emphasis>
+                    </para>
+                    <para>The User Interface classes for these kind of devices has to be easy to use
+                        by non-expert users. They have to fit the usual appearance of the devices
+                        user interface. They also need to take into consideration that different
+                        devices have different input devices and methods.</para>
+                    <para>The user interface classes is sub divided into high level, low level and
+                        common classes. </para>
+                    <para>During this course we will discus these classes indepth.</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>javax.microedition.lcdui.game</emphasis>
+                    </para>
+                    <para>The gaming API makes rich games possible with the minimum overheads.</para>
+                    <para>The package consists of vife classes: <itemizedlist>
+                            <listitem>
+                                <para>
+                                    <emphasis>GameCanvas</emphasis>
+                                </para>
+                                <para>Extends LCDUI's canvas and adds game convenience methods.
+                                    Methods to query the current state of the game keys and methods
+                                    for synchronous graphics flushing</para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <emphasis>Layer</emphasis>
+                                </para>
+                                <para>An abstract class that serves as a base for a layer framework
+                                    with the basic attributes of layer visibility position and size.</para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <emphasis>LayerManager</emphasis>
+                                </para>
+                                <para>Symplifies working with multiple layered games.</para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <emphasis>Sprite</emphasis>
+                                </para>
+                                <para>Multiple frames makes up a basic animation. The class includes
+                                    some general image transitions. Frames can be animated in
+                                    different sequences.</para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <emphasis>TiledLayer</emphasis>
+                                </para>
+                                <para>A layer is subdivided into a grid. Different cells can be
+                                    manipulated individually, which makes large immage rendering
+                                    much less resource intensive. Individual cells can also contain
+                                    their own animations.</para>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>javax.microedition.media</emphasis>
+                    </para>
+                    <para>Some mobile devices have multi media capabillities. The media package is
+                        only part of Mobile Media API with the limitations that it's audio only and
+                        doesn't cater for custom protocols. Classes can be implemented to bring full
+                        MMAPI functionality to a device.</para>
+                    <para>The API employes the concepts of a manager, player and controll objects.
+                        You can get an apropriate player from a manager and then use the controll
+                        interface of that player to controll the media being played.</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>javax.microedition.midlet</emphasis>
+                    </para>
+                    <para>A MIDLet is a MIDP application. It defines the application to system
+                        interaction, the life cycle of the application and rules for packaging and
+                        sharing in the same virtual machine.</para>
+                    <para>The application will have different states and the Abstract class specify
+                        methods for dealing with the different states. </para>
+                    <para>The MIDletStateChangeException is specified as part of this package.</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>javax.microedition.pki</emphasis>
+                    </para>
+                    <para>This package consists of the Cetificate and CertificateException to deal
+                        with all security related methods that use certificates to authenticate or encrypt.</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>javax.microedition.rms</emphasis>
+                    </para>
+                    <para>Finally we have the rms package which contains all the classes we need to
+                        deal with persistence on these small devices.</para>
+                    <para>It's made up of the following classes: <itemizedlist>
+                            <listitem>
+                                <para>
+                                    <emphasis>InvalidRecordIDException</emphasis> Is thrown if you
+                                    try to access a record with an invalid record ID.</para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <emphasis>RecordComparator</emphasis> interface. Specifies
+                                    compare method that will return an int to indicate that the
+                                    records are equal or whether the one comes before the other.</para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <emphasis>RecordEnumeration</emphasis> can enumerate
+                                    bi-directionally through record store. Use a filter to enumerate
+                                    through a subset or comparator to enumerate in a specific order.</para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <emphasis>RecordFilter</emphasis> interface specifies the
+                                    boolean mathes() method. Used to match one or more records from
+                                    a record store. </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <emphasis>RecordListener</emphasis> An interface to check for
+                                    record state changes: Record Changed,Added or Deleted</para>
+                            </listitem>
+                            <listitem>
+                                <para>The <emphasis>RecordStore</emphasis> represents a collection
+                                    of records maintained accross varous system events. Different
+                                    devices implement persistence differently, but the record store
+                                    abstracts the programmer from these device specific implementations.</para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <emphasis>RecordStoreException</emphasis> represents a general
+                                    record store exception. </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <emphasis>RecordStoreFullException</emphasis> extends
+                                    RecordStoreException and is thrown as expected, when storage is full</para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <emphasis>RecordStoreNotFoundException</emphasis> extends
+                                    RecordStoreException and is thrown when a request for a
+                                    non-existent record store is made.</para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <emphasis>RecordStoreNotOpenException</emphasis> extends
+                                    RecordStoreException and will be thrown when attempting to
+                                    access a closed a record store. </para>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+    </section>
+    <section>
+        <title>Personal Profile</title>
+        <para>Personal Profile supercedes Personal Java Aplication Enviroment(PJAE). It is still
+            very new and consists of a combination of profiles as earlier mentioned.</para>
+        <para>Personal Profile is based on CDC configuration and thus on the CVM virtual machine and
+            conforms to Java 2 (1.3.1) specification.</para>
+        <para> Different restrictions and exclusions apply in the different levels of profiles.
+            Foundation profile being the first level profile on CDC, Personal Basis Profile the next
+            and Personal Profile the closest to a full J2SE implementation.</para>
+        <para>The technology is still very new and no device implementations exist of my knowing at
+            this stage. Information available is mostly for profile implementers.</para>
+    </section>
+</section>

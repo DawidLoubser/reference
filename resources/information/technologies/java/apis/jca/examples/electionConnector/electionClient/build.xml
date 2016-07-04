@@ -1,0 +1,270 @@
+<?xml version="1.0"?>
+  
+<project name="ElectionClient" default="help" basedir=".">
+  
+  <target name="help">
+    <echo message=
+      "Available targets: (typically used in this order)"/>
+    <echo message=
+      "  "/>
+    <echo message=
+      "  clean  - deletes all but the source files."/>
+    <echo message=
+      "  prepare  - creates the directories for compilation and distribution."/>
+    <echo message=
+      "  common.compile  - compiles the common Java source files."/>
+    <echo message=
+      "  ejb.compile  - compiles the EJB source files."/>
+    <echo message=
+      "  client.compile  - compiles the Java client source files."/>
+    <echo message=
+      "  servlet.compile  - compiles the common Java source files."/>
+    <echo message=
+      "  ejb.jar  - creates an archive for the ejb distribution."/>
+    <echo message=
+      "  client.jar  - creates an archive for the client distribution."/>
+    <echo message=
+      "  servlet.jar  - creates the servlet archive (war)."/>
+    <echo message=
+      "  ear  - creates the enterprise archive."/>
+    <echo message=
+      "  ejb.deploy  - deploys the session bean."/>
+    <echo message=
+      "  ear.deploy  - deploys the enterprise application."/>
+    <echo message=
+      "  undeploy - undeploys the all deployed elements."/>
+    <echo message=
+      "  run  - launches the client application."/>
+    <echo message=
+      "  "/>
+  </target>
+    
+  <!-- The server application which is launched in the start target -->
+  <property name="client.app" 
+    value="za.co.solms.election.client.ElectionClient"/>
+
+  <!-- File name for target jar file for the server -->
+  <property name="client.jar" value="electionClient.jar"/>
+  
+  <!-- File name for target jar file for the server -->
+  <property name="ejb.jar" value="election.ejb3"/>
+  
+  <!-- File name for target jar file for the server -->
+  <property name="servlet.jar" value="election.war"/>
+  
+  <!-- File name for target jar file for the enterprise archive -->
+  <property name="ear" value="election.ear"/>
+  
+  <!-- Handle to environment -->
+  <property environment="env"/>	
+  
+  <!-- Directories -->
+  <property name="src.dir" value="src"/>
+  <property name="src.common.dir" value="src/common"/>	
+  <property name="src.ejb.dir" value="src/ejb"/>	
+  <property name="src.client.dir" value="src/client"/>	
+  <property name="src.servlet.dir" value="src/servlet"/>	
+  <property name="src.application.dir" value="src/application"/>	
+  <property name="build.dir" value="build" />
+  <property name="build.common.dir" value="build/common" />
+  <property name="build.ejb.dir" value="build/ejb" />
+  <property name="build.client.dir" value="build/client" />
+  <property name="build.servlet.dir" value="build/servlet" />
+  <property name="shelf.dir" value="shelf" />
+  <property name="dist.dir" value="dist"/>
+  <property name="deploy.dir" 
+    value="${env.JBOSS_HOME}/server/default/deploy"/>
+  
+  <!-- Compiler flags -->
+  <property name="compile.debug" value="true"/>
+  <property name="compile.optimize" value="false"/>
+  <property name="compile.deprecation" value="true"/>
+
+  <!-- Libraries path -->
+  <path id="shelf">
+    <fileset dir="${shelf.dir}">
+      <include name="**/*.jar" />
+      <include name="**/*.rar" />
+    </fileset>
+  </path>  	
+	
+  <!-- path used for build target -->
+  <path id="build.path">
+    <path refid="shelf"/>
+    <pathelement path="${build.common.dir}"/>
+  </path>
+  
+  <!-- Removes all generated artifacts -->
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target> 	
+  
+  <!-- Prepares the required directories for the build -->
+  <target name="prepare">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.common.dir}"/>
+    <mkdir dir="${build.ejb.dir}"/>
+    <mkdir dir="${build.client.dir}"/>
+    <mkdir dir="${build.servlet.dir}"/>
+    <mkdir dir="${dist.dir}"/>
+  </target>
+  
+  <!-- Compiles the common Java source -->
+  <target name="common.compile" depends="prepare">
+    <javac srcdir="${src.common.dir}" 
+      destdir="${build.common.dir}"
+      deprecation="${compile.deprecation}"
+      optimize="${compile.optimize}"
+      debug="${compile.debug}">
+      <classpath>
+        <path refid="shelf"/>
+        <pathelement path="${build.common.dir}"/>
+      </classpath>
+    </javac>           
+  </target>
+  
+  <!-- Compiles the EJB source files -->
+  <target name="ejb.compile" depends="common.compile">
+    <javac srcdir="${src.ejb.dir}" destdir="${build.ejb.dir}"
+      deprecation="${compile.deprecation}"
+      optimize="${compile.optimize}"
+      debug="${compile.debug}">
+      <classpath>
+        <path refid="shelf"/>
+        <pathelement path="${build.common.dir}"/>
+        <pathelement path="${build.ejb.dir}"/>
+      </classpath>
+    </javac>           
+  </target>
+  
+  <!-- Compiles the Java client source files -->
+  <target name="client.compile" depends="common.compile">
+    <javac srcdir="${src.client.dir}" destdir="${build.client.dir}"
+      deprecation="${compile.deprecation}"
+      optimize="${compile.optimize}"
+      debug="${compile.debug}">
+      <classpath>
+        <path refid="shelf"/>
+        <pathelement path="${build.common.dir}"/>
+        <pathelement path="${build.client.dir}"/>
+      </classpath>
+    </javac>           
+  </target>
+  
+  <!-- Compiles the Servlet source files -->
+  <target name="servlet.compile" depends="common.compile">
+    <javac srcdir="${src.servlet.dir}" destdir="${build.servlet.dir}"
+      deprecation="${compile.deprecation}"
+      optimize="${compile.optimize}"
+      debug="${compile.debug}">
+      <classpath>
+        <path refid="shelf"/>
+        <pathelement path="${build.common.dir}"/>
+        <pathelement path="${build.servlet.dir}"/>
+      </classpath>
+    </javac>           
+  </target>
+  
+  <!-- Generates the deployable Java archive for the 
+    session bean implementation -->
+  <target name="ejb.jar" depends="ejb.compile">
+    <delete file="${dist.dir}/${ejb.jar}"/>  	
+    <jar jarfile="${dist.dir}/${ejb.jar}"> 
+      <fileset dir="${build.common.dir}" 
+        includes="**/*.class"/>
+      <fileset dir="${build.ejb.dir}" includes="**/*.class"/>
+    </jar>
+  </target>
+  
+  <!-- Generates the Web archive containing the 
+    server side presentation layer -->
+  <target name="servlet.jar" depends="servlet.compile">
+    <delete file="${dist.dir}/${servlet.jar}"/>
+    <zip zipfile="${dist.dir}/${servlet.jar}">
+      <zipfileset dir="${build.common.dir}" 
+        prefix="WEB-INF/classes">
+        <include name="**/*.class"/>
+      </zipfileset>
+      <zipfileset dir="${build.servlet.dir}" 
+        prefix="WEB-INF/classes">
+        <include name="**/*.class"/>
+      </zipfileset>
+      <zipfileset dir="${src.servlet.dir}">
+        <include name="*.jsp"/>
+      </zipfileset>
+      <zipfileset dir="${src.servlet.dir}" 
+        prefix="WEB-INF">
+        <include name="*.xml"/>
+      </zipfileset>
+    </zip>
+  </target>
+
+   
+  <!-- Creates the enterprise archive containing both,
+       server-side presentation and business logic layers -->
+  <target name="ear" depends="ejb.jar,servlet.jar">
+    <delete file="${dist.dir}/${ear}"/>  	
+    <jar jarfile="${dist.dir}/${ear}"> 
+      <fileset dir="${dist.dir}"
+        includes="${ejb.jar},${servlet.jar}"/>
+      <fileset dir="${src.dir}" 
+        includes="META-INF/application.xml"/>
+    </jar>
+  </target>
+
+  <!-- Generates the deployable Java archive for the 
+    client application -->
+  <target name="client.jar" depends="client.compile">
+    <delete file="${dist.dir}/${client.jar}"/>  	
+    <jar jarfile="${dist.dir}/${client.jar}"> 
+      <fileset dir="${build.common.dir}" 
+        includes="**/*.class"/>
+      <fileset dir="${build.client.dir}" 
+        includes="**/*.class"/>
+      
+      <fileset  dir="${src.client.dir}" 
+        includes="**/*.properties"/>
+      <fileset  dir="${src.client.dir}" 
+        includes="**/*.policy"/>
+    </jar>
+  </target>
+  
+  <!-- Deploys the session bean -->
+  <target name="ejb.deploy">
+    <copy file="${dist.dir}/${ejb.jar}" todir="${deploy.dir}"/>
+  </target>
+  
+  <!-- Deploys the servlet layer -->
+  <target name="servlet.deploy" depends="servlet.jar">
+    <copy file="${dist.dir}/${servlet.jar}" todir="${deploy.dir}"/>
+  </target>
+  
+  <!-- Deploys the enterprise application -->
+  <target name="ear.deploy" depends="ear">
+    <copy file="${dist.dir}/${ear}" todir="${deploy.dir}"/>
+  </target>
+  
+  <target name="undeploy">
+    <delete file="${deploy.dir}/${ejb.jar}"/>
+    <delete file="${deploy.dir}/${servlet.jar}"/>
+    <delete file="${deploy.dir}/${ear}"/>
+  </target>
+  
+  <!-- Launches the client -->
+  <target name="run">
+    <echo message="Running the ${client.app} application:" />
+    <echo message=
+       "  java -classpath ${dist.dir}/${client.jar} ${client.app}"/>
+    <java fork="on" classname="${client.app}" >
+      <!--<arg value="-Djava.security.manager 
+        -Djava.security.policy=policy.all"/>-->
+      <!--<arg value="-Djava.security.policy=security.policy"/> -->
+      <classpath>
+        <pathelement location="${dist.dir}/${client.jar}"/>
+        <path refid="shelf"/>
+      </classpath>
+    </java>
+  </target>
+  
+</project>

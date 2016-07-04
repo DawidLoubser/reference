@@ -1,0 +1,86 @@
+\section{URDAD model structure}
+
+An URDAD model is service centric. Every service is associated with a use case and a services contract. 
+Effectively URDAD treats a use case as a diagrammatic representation of a service. Services are recursively
+assembled from lower level services. The leaf services are services sourced from outside the scope of the system
+being modeled. These services may either be low level services provided by the programming language or employed
+frameworks (e.g.\ enterprise application servers, object-relational mappers, graphic library services, ...) or services
+sourced from other systems or other external service providers. In either case, the service requirements for these
+leaf services are specified through a services contract.
+
+%--------------------------------------------------------------------------------------------------------------------------
+
+\subsection{Model elements for a service at a particular level of granularity}
+
+URDAD fixes levels of granularity and hence exhibits the different levels of granularity directly in the model structure.
+For a service/use case at any level of granularity URDAD specifies
+\begin{itemize}
+  \item a services contract with the inputs and outputs, pre- and post conditions and quality requirements for the service,
+  \item the responsibility allocation view specifying the functions required to realize the pre and post-conditions 
+specified in the services contract, and the allocation of these services to services contracts encoded as interfaces in UML.
+  \item the process design showing the process details of how a service is assembled from the lower level services.
+\end{itemize}
+
+%--------------------------------------------------------------------------------------------------------------------------
+
+\subsection{UML model encoding}
+
+An URDAD model can be encoded in UML/OCL using
+\begin{itemize}
+  \item a class diagram with an interface for the services contract with the pre- and post-conditions specified through
+	 OCL encoded constraints.
+  \item class diagrams for exchanged entities/value objects,
+  \item an activity diagram for the process specification.
+\end{itemize}
+
+In addition use case diagrams can be used to specify functional requirements and sequence diagrams to 
+specify user work flows.
+
+%--------------------------------------------------------------------------------------------------------
+
+\subsection{Decoupling via interfaces/contracts}
+
+URDAD enforces throughout decoupling via services contracts (encoded in UML as interfaces). In an implementation
+mapping it is understood that, when plugging in a particular concrete service provider to realize the services contract,
+an appropriate adapter is used (e.g.\ web services, JCA adapter, ...). If the service is to be provided by a human, a human
+adapter will be used (e.g.\ an email request channel with a link to a web-based user interface).
+
+Actors are represented in URDAD by UML interfaces and not by UML actors. This introduces one less concept for a role 
+and facilitates the inclusion of contractual obligations for the external objects (including the user obligations). It also
+avoids the problem of something being external (an actor) at one level of granularrity, but internal (not an actor) at another.
+
+%--------------------------------------------------------------------------------------------------------
+
+\subsection{Services contract specification}
+
+A services contract is specified using a UML interface with the service, its inputs and outputs, pre- and
+post-conditions and quality requirements. 
+
+%--------------------------------------------------------------------------------------------------------
+
+\subsection{Process specification}
+
+In URDAD the process specification for a service is usually populated via a UML activity diagram 
+which has a very restricted structure. The process specification is a control flow across lower level
+services from which the higher level service is assembled. Each activity in the process specification
+is thus either a call operation requesting a lower level service or a control flow activity like a decision 
+or merge node, fork or synchronization bar. The inputs and outputs for the process are, of course,
+the inputs and outputs for the composite service. These are shown diagrammatically as parameter
+nodes.
+
+Because the flows are control flows as executed by the control logic of the higher level service,
+the input and output pins are not connected via object flows as the output of one lower level service
+is not the input to the next lower level service. Instead, the output is received by the controller 
+(i.e.\ the outer composite service) which then constructs the service request object for the next requested
+service in the process specification from the information which is at that stage available to the process.
+
+Each service has one initial (entry) node which starts with the receipt of the request object and two 
+activity final nodes, one for normal exit and one for service abortion. 
+In the case of normal exit the service is provided and resultant return value are provided. 
+A service can only be aborted if one of the pre-conditions for the service is not met. In such scenarios
+the exception associated with the pre-condition is raised and sent via a send signal action and
+the process flow terminates on that aborted activity final node which represents service abortion.
+
+In a complete UML/OCL encoding of an URDAD model OCL invariance constraints are used to specify how the
+controller (higher level service) constructs the request object for a lower level service from the request object for
+the higher level service and any information so far accumulated in the process.

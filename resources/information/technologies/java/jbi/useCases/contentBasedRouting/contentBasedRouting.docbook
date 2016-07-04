@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <title>Content-based routing</title>
+    
+    <indexterm>
+        <primary>content-based routing</primary>
+    </indexterm>
+    
+    <para>
+       Content-based routing can be seen as a special form of Service Orchestration, where the
+       router service
+       <itemizedlist>
+           <listitem>
+               <para>
+                   receives a message, and is responsible for routing the message to one or more
+                   other services based on the contents of the message (or perhaps some other
+                   context, such as the day of the week, time of day, etc) 
+               </para>
+           </listitem>
+           <listitem>
+               <para>
+                   does not have to control or be aware of any business process (and thus, does not concern itself
+                   with partial service failure, request message construction, etc), and thus
+               </para>
+           </listitem>
+           <listitem>
+               <para>
+                   does not necessarily implement a services contract
+               </para>
+           </listitem>
+       </itemizedlist>
+    </para>
+    
+    <para>
+        Although any orchestration technology could be used to implement a content-based router (because most
+        of them allow for dynamic endpoint resolution) a content-based router can usually be implement in a
+        service engine that specifically allows for the declarative specification of routing rules (e.g. in
+        an XML file), such as the Apache Camel service engine. This usually allows the developer to specify
+        message filers using the XPath query language, and route to the appropriate ultimate service provider.
+    </para>
+    
+    <para>
+        If one wants benefit from JBI's automatic service coupling based on services contracts, it may make sense
+        to introduce a services contract for the content-based-router which
+        <itemizedlist>
+            <listitem>
+                <para>has a unique name</para>
+            </listitem>
+            <listitem>
+                <para>specifies the exact services and exchanges messages as the ultimate services
+                to which it routes messages</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        We may now plug multiple implementations of some service contract into our ESB. A service that requires them, does not
+        <emphasis>consume</emphasis> their services contract, however. It <emphasis>consumes</emphasis> the content-based-router's
+        contract, which will ensure that messages are routed to the ultimate service(s) based on the routing rules contained within
+        the router service unit (e.g. a Apache Camel pipeline).
+    </para>
+    
+    <figure>
+        <title>Content-based routing</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="contentBasedRouting.png"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+    
+</section>

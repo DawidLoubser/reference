@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- FIXME: Needs substantial rework to fit within the conceptual framework laid out in the beginning of the course --><ns2518:section xmlns:ns2518="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.integration.persistanceStorageBased.databaseStorage">
+    <ns2519:title xmlns:ns2519="http://docbook.org/ns/docbook">Database Storage Integration</ns2519:title>
+    <ns2520:para xmlns:ns2520="http://docbook.org/ns/docbook">One of the best descriptions of database storage integration is that of triggers in a
+        database. These triggers are set to fire when a certain event occurs. The trigger can be
+        used to alert users that an event has taken place for example, or it could also be used to
+        dump a newer copy of the database to a specific location as well. This is entirely
+        customisable by the user for his/her specific enterprise requirements. 
+    </ns2520:para>
+    <ns2521:section xmlns:ns2521="http://docbook.org/ns/docbook">
+        <ns2522:title xmlns:ns2522="http://docbook.org/ns/docbook">Database Triggers</ns2522:title>
+        <ns2523:para xmlns:ns2523="http://docbook.org/ns/docbook">Triggers offer database developers and administrators a tremendous degree of
+            flexibility. They are, quite simply, stored procedures that may be configured to
+            automatically execute when certain events take place.</ns2523:para>
+        <ns2524:para xmlns:ns2524="http://docbook.org/ns/docbook">All enterprise-level relational databases support triggers in one form or another.
+            We'll take a brief look at the syntax used by Microsoft SQL Server, but the basic
+            concepts in this article apply equally to Oracle databases. There are only some slight
+            differences in keywords and formatting. </ns2524:para>
+        <ns2525:figure xmlns:ns2525="http://docbook.org/ns/docbook">
+            <ns2526:title xmlns:ns2526="http://docbook.org/ns/docbook">Triggers</ns2526:title>
+            <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="./triggers.gif"/></imageobject></mediaobject>
+        </ns2525:figure>
+        <ns2527:para xmlns:ns2527="http://docbook.org/ns/docbook">Notice that triggers are stored in the database separate from their associated tables.
+            Triggers can be defined only on tables, not on views. However, triggers on the base
+            table(s) of a view are fired if an INSERT, UPDATE, or DELETE statement is issued against
+            a view. </ns2527:para>
+        <ns2528:para xmlns:ns2528="http://docbook.org/ns/docbook">The basic command used to create a new trigger is the CREATE TRIGGER statement. This
+            statement is followed by the details of when the trigger should fire. Triggers may be
+            associated with INSERT, UPDATE and DELETE events and may be used either INSTEAD OF or
+            AFTER the specified operation. Once you've specified the trigger criteria, you supply
+            the SQL statement that contains the trigger's payload. For example, if we wanted to
+            configure a simple trigger to send an e-mail to the president each time a record is
+            removed from the Orders table, we would use the following syntax: <ns2529:programlisting xmlns:ns2529="http://docbook.org/ns/docbook">
+            CREATE TRIGGER OrderRemoved ON Orders
+            AFTER DELETE
+            AS
+            EXEC xp_sendmail 'info@solms.co.za','A record has been deleted.' 
+            </ns2529:programlisting>
+        </ns2528:para>
+        <ns2530:para xmlns:ns2530="http://docbook.org/ns/docbook">If you later get an angry phone call from someone on the info mailing list asking you
+            to stop sending him e-mail and decide to redirect your messages to the just the db
+            administrator, you could modify the trigger using the ALTER TRIGGER command, which has
+            the same basic syntax: <ns2531:programlisting xmlns:ns2531="http://docbook.org/ns/docbook">
+                
+                
+                
+            ALTER TRIGGER OrderRemoved ON Orders
+            AFTER DELETE
+            AS
+            EXEC xp_sendmail 'dbAdmin@solms.co.za','A record has been deleted.' 
+            </ns2531:programlisting>
+        </ns2530:para>
+        <ns2532:para xmlns:ns2532="http://docbook.org/ns/docbook"> If you forget the name of your trigger, you may obtain a list of all of the triggers
+            that fire based upon the Orders table by using the command: <ns2533:programlisting xmlns:ns2533="http://docbook.org/ns/docbook">
+           sp_helptrigger Orders 
+            </ns2533:programlisting>
+        </ns2532:para>
+        <ns2534:para xmlns:ns2534="http://docbook.org/ns/docbook">If you'd like to view the SQL behind a specific trigger, you may view it by issuing
+            the command:<ns2535:programlisting xmlns:ns2535="http://docbook.org/ns/docbook">
+            sp_helptrigger Orders 
+            </ns2535:programlisting>
+        </ns2534:para>
+        <ns2536:para xmlns:ns2536="http://docbook.org/ns/docbook">Finally, if you later decide that you want to completely remove a trigger, the syntax is:<ns2537:programlisting xmlns:ns2537="http://docbook.org/ns/docbook">
+            DROP TRIGGER OrderRemoved 
+            </ns2537:programlisting>
+        </ns2536:para>
+        <ns2538:para xmlns:ns2538="http://docbook.org/ns/docbook">Triggers add a tremendously powerful capability to database servers. The examples
+            mentioned above are relatively trivial, but you should keep in mind that triggers are
+            indeed stored procedures and you may use them to perform any action that a stored
+            procedure can perform. This includes calling other stored procedures, accessing
+            information from other data sources and modifying the contents of other database
+        tables.</ns2538:para>
+    </ns2521:section>
+    <ns2539:section xmlns:ns2539="http://docbook.org/ns/docbook">
+        <ns2540:title xmlns:ns2540="http://docbook.org/ns/docbook">Backing up Databases to the enterprise</ns2540:title>
+        <ns2541:para xmlns:ns2541="http://docbook.org/ns/docbook">Very often we would want to backup a database stored remotely and there are many ways
+            to do this. Should we choose to do this we can make use of simple scripts bash or batch
+            for example. Lets have a look at a simple way of doing this using a bash script. <ns2542:programlisting xmlns:ns2542="http://docbook.org/ns/docbook">
+             #!/bin/bash
+                         
+             # Export the database to a flat file
+             su - postgres  -c 'pg_dump jboss &gt; jboss_data.sql'
+              
+              # Mail the flat file
+              #cat /var/lib/postgresql/jboss_data.sql |mail -s "Backup" \
+                        internal@solms.co.za
+                
+              #Create a compressed backup file
+              rm /var/lib/postgresql/jboss_data.sql.bz2
+              bzip2 /var/lib/postgresql/jboss_data.sql
+                
+              #Now send the backup file
+              metasend -b -m "binary/bzip" -f /var/lib/postgresql/    \
+                jboss_data.sql.bz2 -s "Backup : `date`" -t internal@solms.co.za
+            </ns2542:programlisting>
+        </ns2541:para>
+        <ns2543:para xmlns:ns2543="http://docbook.org/ns/docbook">This is for a postgres database. The file is backed up on the remote side and then
+            emailed to the user.This script can be executed at whatever interval you reuire and this
+            is set up in a cron job or a windows scheduler depending on the operating system at
+        hand</ns2543:para>
+    </ns2539:section>
+</ns2518:section>

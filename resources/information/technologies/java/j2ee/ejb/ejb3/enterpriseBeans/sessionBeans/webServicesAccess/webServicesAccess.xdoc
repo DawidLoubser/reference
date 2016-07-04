@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.webServicesAccess.webServicesAccess"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Web services access</title>
+  <para>
+    The Enterprise Java Beans specification requires that application servers
+    must support the publication of session beans as web service endpoints,
+    using the standard JAX-WS framework.
+    </para>
+  <para>
+    To publish a session bean as a web service, the bean must be
+    annotated as a <literal>@WebService</literal>. Each method which should be
+    accessible via web services should be annotated as a
+    <literal>@WebMethod</literal> (or, by default, all public methods will be available).
+  </para>
+  <para>
+    For example
+    <programlisting><![CDATA[
+import javax.ejb.*;
+      
+@Remote({OrderProcessorRemote.class}) 
+@WebService 
+public class OrderProcessorBean implements OrderProcessorRemote
+{
+  /**
+   * Processes an order.
+   *
+   * @param  order  the order to be processed.
+   * @return an order number.
+   */   
+  @WebMethod
+  public int processOrder(Order order)
+  {
+    ...
+  }
+     
+  @WebMethod
+  public Status getStatus(in orderNumber)
+  {
+    ...
+  }    
+}      
+    ]]></programlisting>
+  </para>
+  <para>
+    The container will automatically generate a WSDL (web service contract) using the <literal>JAX-WS</literal> API and map all the value objects
+    to XML Schema, using the <literal>JAXB</literal> API. The WSDL/Schema is automatically published by the application server
+    to a default URL, which may be explicitly specified by the developer. 
+    See the JAX-WS documentation for details.
+  </para>
+</section>  

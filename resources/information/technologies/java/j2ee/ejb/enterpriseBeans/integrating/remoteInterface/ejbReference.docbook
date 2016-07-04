@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1831:section xmlns:ns1831="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.integrating.remoteInterface.ejbReference">
+
+  <ns1832:title xmlns:ns1832="http://docbook.org/ns/docbook">EJB references </ns1832:title>
+  <ns1833:para xmlns:ns1833="http://docbook.org/ns/docbook">
+    The JNDI name of an enterprise bean is bound at deployment time - in the case of JBoss
+    this is done within the <ns1834:literal xmlns:ns1834="http://docbook.org/ns/docbook">jboss.xml</ns1834:literal> file. Component developers must, however,
+    be able to refer to enterprise beans independently of the name chosen at compile time.
+    Different ejb developers may even refer to the same enterprise bean (deployed under the same
+    JNDI name) under different logical names. This decoupling of logical names from JNDI names is
+    achieved via EJB references.
+  </ns1833:para>
+  <ns1835:para xmlns:ns1835="http://docbook.org/ns/docbook">
+    The container does, however, provide a special mechanism enabling one bean to access the
+    home interfaces of other beans through logical names which need not correspond to the JNDI
+    names asssigned during deployment. Within the deployment descriptor the logical name is then
+    bound to a particular bean registered under a particular JNDI name. This is done via EJB references.
+  </ns1835:para>
+  <ns1836:para xmlns:ns1836="http://docbook.org/ns/docbook">
+    The advantage of this is that developers of the bean which uses another bean need not know
+    the JNDI name under which the server bean is ultimately deployed.
+  </ns1836:para>
+
+  <ns1837:section xmlns:ns1837="http://docbook.org/ns/docbook">
+    <ns1838:title xmlns:ns1838="http://docbook.org/ns/docbook">The ejb-jar file</ns1838:title>
+    <ns1839:para xmlns:ns1839="http://docbook.org/ns/docbook">
+      To achieve this decoupling, the EJB specification defines an additional tag in the EJB
+      deployment descriptor. The tag looks as follows:
+<ns1840:programlisting xmlns:ns1840="http://docbook.org/ns/docbook">
+&lt;!DOCTYPE ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN"
+"http://java.sun.com/j2ee/dtds/ejb-jar_2_0.dtd"&gt;
+&lt;ejb-jar&gt;
+&lt;enterprise-beans&gt;
+ &lt;session&gt;
+   &lt;ejb-name&gt;LoanCalculator&lt;/ejb-name&gt;
+   &lt;home&gt;za.co.SolmsTraining.finance.calculators.LoanCalculatorHome&lt;/home&gt;
+   &lt;remote&gt;za.co.SolmsTraining.finance.calculators.LoanCalculator&lt;/remote&gt;
+   &lt;ejb-class&gt;za.co.SolmsTraining.finance.calculators.LoanCalculatorBean&lt;/ejb-class&gt;
+   &lt;session-type&gt;Stateless&lt;/session-type&gt;
+   &lt;transaction-type&gt;Container&lt;/transaction-type&gt;
+ &lt;/session&gt;
+ &lt;session&gt;
+   &lt;ejb-name&gt;HomeLoanApplication&lt;/ejb-name&gt;
+   &lt;home&gt;za.co.SolmsTraining.finance.loans.HomeLoanApplicationHome&lt;/home&gt;
+   &lt;remote&gt;za.co.SolmsTraining.finance.loans.HomeLoanApplication&lt;/remote&gt;
+   &lt;ejb-class&gt;za.co.SolmsTraining.finance.loans.HomeLoanApplicationBean&lt;/ejb-class&gt;
+   &lt;session-type&gt;Stateless&lt;/session-type&gt;
+   &lt;transaction-type&gt;Container&lt;/transaction-type&gt;
+   &lt;ejb-ref&gt;
+     &lt;ejb-ref-name&gt;ejb/finance/LoanCalculator&lt;/ejb-ref-name&gt;
+     &lt;ejb-ref-type&gt;Session&lt;/ejb-ref-type&gt;
+     &lt;home&gt;za.co.SolmsTraining.finance.calculators.LoanCalculatorHome&lt;/home&gt;
+     &lt;remote&gt;za.co.SolmsTraining.finance.calculators.LoanCalculator&lt;/remote&gt;
+     &lt;ejb-link&gt;LoanCalculator&lt;/ejb-link&gt;
+   &lt;/ejb-ref&gt;
+ &lt;/session&gt;
+&lt;/enterprise-beans&gt;
+&lt;assembly-descriptor&gt;
+ &lt;container-transaction&gt;
+   &lt;method&gt;
+     &lt;ejb-name&gt;LoanCalculator&lt;/ejb-name&gt;
+     &lt;method-name&gt;*&lt;/method-name&gt;
+   &lt;/method&gt;
+   &lt;trans-attribute&gt;Required&lt;/trans-attribute&gt;
+ &lt;/container-transaction&gt;
+&lt;/assembly-descriptor&gt;
+&lt;/ejb-jar&gt;
+</ns1840:programlisting>
+    </ns1839:para>
+    <ns1841:para xmlns:ns1841="http://docbook.org/ns/docbook">
+      We have added an <ns1842:literal xmlns:ns1842="http://docbook.org/ns/docbook">&lt;ejb-ref&gt;</ns1842:literal> element which has the following
+      child elements: ejb-ref-name The name under which the client application refers to the bean.
+      ejb-ref-type The type of bean this reference refers to (session or entity). home The
+      expected Java type of the home interface which is resolved through the reference. remote The
+      expected Java type of the remote interface of the bean which is resolved through the
+      reference, <ns1843:literal xmlns:ns1843="http://docbook.org/ns/docbook">ejb-link</ns1843:literal>. 
+      The enterprise bean name as specified in the ejb-jar file which defines
+      the enterprise bean. In our example above the referenced enterprise bean is defined in the
+      same <ns1844:literal xmlns:ns1844="http://docbook.org/ns/docbook">ejb-jar</ns1844:literal> file but one can give a full path to the ejb-jar hosting the
+      referenced enterprise bean. For example
+<ns1845:programlisting xmlns:ns1845="http://docbook.org/ns/docbook">
+  &lt;ejb-link&gt;../utils/LoanCalculator.jar#LoanCalculator&lt;/ejb-link&gt;
+</ns1845:programlisting>
+    </ns1841:para>
+    <ns1846:para xmlns:ns1846="http://docbook.org/ns/docbook">
+      defines a link to a <ns1847:literal xmlns:ns1847="http://docbook.org/ns/docbook">LoanCalculator</ns1847:literal> enterprise bean defined in the ejb-jar file
+      packaged in <ns1848:literal xmlns:ns1848="http://docbook.org/ns/docbook">LoanCalculator.jar</ns1848:literal> located in the utils directory which is a
+      subdirectory of the parent directory in which the current jar file is hosted.
+    </ns1846:para>
+  </ns1837:section>
+
+  <ns1849:section xmlns:ns1849="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.integrating.logicalNameslogicalNames">
+    <ns1850:title xmlns:ns1850="http://docbook.org/ns/docbook">Referring to a bean via its logical name</ns1850:title>
+    <ns1851:para xmlns:ns1851="http://docbook.org/ns/docbook">
+      The J2EE specification recommends (though it does not require) that beans access other
+      beans through their logical names and that these names should start with ejb.
+    </ns1851:para>
+    <ns1852:para xmlns:ns1852="http://docbook.org/ns/docbook">
+      Note that the <ns1853:literal xmlns:ns1853="http://docbook.org/ns/docbook">LoanCalculator</ns1853:literal> bean has been published with the JNDI
+      under the name <ns1854:literal xmlns:ns1854="http://docbook.org/ns/docbook">STC/LoanCalculator</ns1854:literal> but that the bean is referenced from
+      the <ns1855:literal xmlns:ns1855="http://docbook.org/ns/docbook">HomeLoanApplication</ns1855:literal> bean with the logical name
+      <ns1856:literal xmlns:ns1856="http://docbook.org/ns/docbook">ejb/finance/LoanCalculator</ns1856:literal>. We have to now specify within
+      the<ns1857:literal xmlns:ns1857="http://docbook.org/ns/docbook">HomeLoanApplication</ns1857:literal> bean that the lookup should be done via the
+      logical name and not via the JNDI name.</ns1852:para>
+    <ns1858:para xmlns:ns1858="http://docbook.org/ns/docbook">To look up a bean via the logical name, one looks it up in the
+      <ns1859:literal xmlns:ns1859="http://docbook.org/ns/docbook">java:/comp/env</ns1859:literal> context. The steps required for an enterprise bean to
+      connect to another enterprise bean via the remote interface are
+      <ns1860:orderedlist xmlns:ns1860="http://docbook.org/ns/docbook">
+        <ns1861:listitem xmlns:ns1861="http://docbook.org/ns/docbook">
+          <ns1862:para xmlns:ns1862="http://docbook.org/ns/docbook">Obtain the default JNDI initial context via the default constructor of the
+            <ns1863:literal xmlns:ns1863="http://docbook.org/ns/docbook">InitialContext</ns1863:literal> class. 
+<ns1864:programlisting xmlns:ns1864="http://docbook.org/ns/docbook">
+  InitialContext jndiContext = new InitialContext();
+</ns1864:programlisting>
+          </ns1862:para>
+        </ns1861:listitem>
+        <ns1865:listitem xmlns:ns1865="http://docbook.org/ns/docbook">
+          <ns1866:para xmlns:ns1866="http://docbook.org/ns/docbook">Look up the home interface from logical name as published in the
+            <ns1867:literal xmlns:ns1867="http://docbook.org/ns/docbook">java:comp/env:</ns1867:literal> context. For example 
+<ns1868:programlisting xmlns:ns1868="http://docbook.org/ns/docbook">
+    Object beanHomeRef
+      = jndiContext.lookup("ejb/finance/LoanCalculator");
+    LoanCalculatorHome home =
+      (LoanCalculatorHome)PortableRemoteObject.narrow
+        (beanHomeRef, LoanCalculatorHome.class);
+    
+    loanCalculator = home.create();
+</ns1868:programlisting>
+          </ns1866:para>
+        </ns1865:listitem>
+        <ns1869:listitem xmlns:ns1869="http://docbook.org/ns/docbook">
+          <ns1870:para xmlns:ns1870="http://docbook.org/ns/docbook">Create and connect to the remote interface of a loan calculator session bean via one
+            of the <ns1871:literal xmlns:ns1871="http://docbook.org/ns/docbook">create()</ns1871:literal> services provided by the home interface. 
+<ns1872:programlisting xmlns:ns1872="http://docbook.org/ns/docbook">
+    loanCalculator = home.create();
+</ns1872:programlisting>
+          </ns1870:para>
+        </ns1869:listitem>
+        <ns1873:listitem xmlns:ns1873="http://docbook.org/ns/docbook">
+          <ns1874:para xmlns:ns1874="http://docbook.org/ns/docbook">Request services from the bean via its remote interface.</ns1874:para>
+        </ns1873:listitem>
+      </ns1860:orderedlist>
+    </ns1858:para>
+  </ns1849:section>
+</ns1831:section>

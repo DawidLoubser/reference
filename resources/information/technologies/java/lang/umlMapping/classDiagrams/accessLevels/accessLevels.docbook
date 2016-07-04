@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-01-16 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Mapping UML access levels onto Java</title>
+
+    <para> Java supports very similar access levels to those provided by UML. It supports both, the
+            <emphasis>public</emphasis> and <emphasis>package</emphasis> access levels with package
+        access level being the default for Java. There is thus no keyword for package scope. If no
+        access level is requested, package scope is assumed. </para>
+    <para> The <emphasis>protected</emphasis> access level in Java provides not only access to
+        sub-class instances, but also to any objecct from any class which is within the same package
+        -- <abbrev>i.e.</abbrev>
+        <emphasis>protected</emphasis> includes <emphasis>package scope</emphasis>. </para>
+    <para> The <emphasis>private</emphasis> access level in Java does not mean private to the
+        instance, but private to the class. Thus, from within one instance of, for example, the
+        account class, you can access directly the private balance of another instance of an
+        account. </para>
+    <para> Generally one should use only the <emphasis>private</emphasis> access level for class
+        fields, <abbrev>i.e.</abbrev> fields should preferbly be encapsulated to within a class as
+        they represent an implementation detail of the class). Services, on the other hand, are
+        commonly defined with public and protected scope. Package scope is used seldom for services. </para>
+    <para> At times, classes are meant to be an implementation detail of a framework. Such classes
+        should only be accessible from other classes within that same framework. This is achieved by
+        defining a package for the framework and declaring such a class with
+        <emphasis>package</emphasis> scope. </para>
+    <para> As an example of the Java syntax for access level specification, consider the following
+        code extract:
+        <programlisting language="Java">
+<xi:include parse="text" href="LinkedList.java"/>
+        </programlisting>
+        Here the <literal>Node</literal> class has been defined with package scope. It is reusable
+        within the package for the collections framework, but not visible by users of that
+        framework. </para>
+
+</section>

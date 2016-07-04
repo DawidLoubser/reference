@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.architecture.referenceArchitectures.j2ee.whatDoesEjbContainerProvide.componentPooling"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Component pooling</title>
+  <para>
+      Component pooling is possible because, as we shall see, clients do not
+      obtain a direct reference to the enterprise bean instance.
+  </para>
+  <para>
+      As one deploys enterprise beans within a container, the container typically
+      creates a pool of instances of the bean. The algorithm used is specific to the
+      container -- this is one of the many areas where application server vendors
+      compete.
+  </para>
+  <para>
+      Pooling is particularly simple for stateless session beans which provide a set
+      of client services but which do not maintain information across service
+      requests. In this case the session bean is returned to the pool upon completion
+      of the service and if the same or another client requests a service from that
+      same enterprise bean one of the bean instances in the pool is allocated to
+      the client.
+  </para>
+  <para>
+      Containers also provide component pooling and life-cycle management for other
+      enterprise beans. For message-driven beans it is basically as simple as for
+      stateless session beans. For stateful session beans and entity beans the state
+      has to be persisted before the same bean instance can be used for another client.
+  </para>
+  <para>
+      If, say during peak hours, the demand for a particular enterprise bean increases,
+      the container can dynamically increase the pool size and at a later stage, 
+      when the load decreases, the pool size can be reduced again.
+  </para>
+  <para>
+      A relatively small number of beans can thus serve a large number of clients.
+  </para>
+</section>

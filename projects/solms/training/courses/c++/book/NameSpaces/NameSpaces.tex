@@ -1,0 +1,354 @@
+\chapter{Packaging via Namespaces \label{chapNameSpaces}}
+
+Namespaces in C++ perrform the same function as packages in UML
+or Java and modules in CORBA. They provide a mechanism for hierachical
+naming. But why do we need this?
+
+%-------------------------------------------------------------------
+
+\section{NameSpace Pollution}
+
+So far we declared all our classes and functions within global scope.
+One can also define objects and variables at global scope, though we
+have refrained from doing this.
+
+One of the problems with declaring elements at global scope is that
+one has to somehow ensure that eac name is globally unique. If one
+used two libraries which both define a verb+Date+ class at global scope
+-- this would not be that unlikely -- then the compiler could not 
+distinguish between the two \verb+Date+ classes if both libraries
+were used simultaneously.
+
+%-------------------------------------------------------------------
+
+\subsection{Unique Naming}
+
+Prior to
+the ANSI/C++ standard which introduced the concept of namespaces, the
+approach was to insert a prefix (or append a postfix) into each name,
+hoping that this aproach would result in unique names and avoid
+the polution of the global namespace. For example, if we defined a
+\verb+Date+ class, we could have called the class
+
+\noindent {\small \begin{verbatim}
+class SolmsTraining_Date
+{
+  ...
+};
+\end{verbatim}}
+
+But this may not be enough to avoid name clashes. Particularly in large
+organizations, where there are multiple development teams, one might
+want to define further nested scopes for the individual development 
+teams. 
+
+For example, both, the front-end and back-end development teams
+may define their own date/time class, \verb+Date+. In this case
+one may ant to introduce a further level in the naming:
+
+
+\noindent {\small \begin{verbatim}
+class OrganizationName_FrontEnd_Date
+{
+  ...
+};
+\end{verbatim}}
+
+\noindent {\small \begin{verbatim}
+class OrganizationName_BackEnd_SolmsTraining_Date
+{
+  ...
+};
+\end{verbatim}}
+
+The resultant names become very long and the code becomes less and 
+less readable. 
+
+%------------------------------------------------------------------
+
+\section{Defining NameSpaces}
+
+A namespace is in C++ a conceptual organization of the global 
+namespace into a hierachical structure which is conceptually
+very similar to UML or Java packages. As with Java, one should
+always put ones classes and functions into namespaces. 
+
+To put a elements into a namespace one uses the \verb+namespace+
+keyword:
+
+\noindent{\small \begin{verbatim}
+namespace SolmsTraining
+{
+  const double PI = 3.14159265359;
+  
+	template <class T> bubbleSort(T array[], const int length) { ... }
+	
+	template <class T> class Matrix
+	{
+	   ...
+	};
+}
+\end{verbatim}}	
+
+%-------------------------------------------------------------------
+
+\subsection{Namespaces are Cumulative}
+
+If we define the same namespace at different locations, the contents
+of the namespace will be the sum total of all the elements defined
+at the various locations for that namespace. Thus
+
+\noindent{\small \begin{verbatim}
+namespace SolmsTraining
+{
+  const double PI = 3.14159265359;
+}
+
+namespace TimLewis
+{
+  void convertGifToJPeg(istraem& gifStream, ostream& jpegStream) {...};
+}  
+  
+namespace SolmsTraining
+{  
+	template <class T> bubbleSort(T array[], const int length) { ... }
+	
+	template <class T> class Matrix
+	{
+	   ...
+	};
+}
+\end{verbatim}}	
+
+would assign the same 3 elements to the \verb+SolmsTraining+ namespace
+as the previous example.
+
+%------------------------------------------------------------------
+
+\subsection{Namespaces Span Accross Files}
+
+As with Java packages, namespace elements are typically defined in multiple
+files. However, unlike Java's package mechanism, C++ implies no mapping 
+between the namespace structure and the directory hierarchy. 
+
+Conversely, a file may contain elements assigned to multiple namespaces.
+
+%------------------------------------------------------------------
+
+\section{Using Elements Defined in Other NameSpaces}
+
+You can either access an element from another name space through a fully
+qualified name or by importing it via a \verb+using+ clause. For example,
+if we wanted to refer to a matrix class generated from the \verb+Matrix+
+template defined in the \verb+SolmsTraining+ namespace, we could do sovia
+
+\noindent{\small \begin{verbatim}
+SolmsTraining::Matrix<double> m(20,20);
+\end{verbatim}}
+
+\noindent
+or we could import the name into the current name spece via the following using
+statement:
+
+\noindent{\small \begin{verbatim}
+using SolmsTraining::Matrix;
+using SolmsTraining::PI;
+
+Matrix<double> m(20,20);
+
+m[0][0]= 2.1*PI;
+\end{verbatim}}
+
+%------------------------------------------------------------------
+
+\subsection{Importing Entire Namespaces}
+
+At times you want to have direct access to all elements defined in a 
+namespace without importing the elements individually. This is 
+particularly useful when reworking existing code which did not make use
+of namespaces to use elements which have now been packaged within 
+namespaces. To import an entire namespace -- i.e.\ all elements from
+that namespace, one adds the \verb+namespace+ keyword after the
+\verb+using+ keyword:
+
+\noindent{\small \begin{verbatim}
+using namespace SolmsTraining;
+
+Matrix<double> m(20,20);
+
+m[0][0]= 2.1*PI;
+\end{verbatim}}
+
+%------------------------------------------------------------------
+
+\section{Hierarchical Naming via Nested NameSpaces}
+
+One would typically want to use a hierarchical naming along development
+team boundaries or, more sensibly, along application domain
+boundaries. Thus, to encourage re-use accross projects and
+accross team boundaries, the packaging should not be done along
+either of these criteria. Instead you would want to have a
+packaging hierarchy which packages related objects together,
+irrespective of the project they have been developed for or
+the team which developed them.
+
+An example of elements from a packaging hierarchy which follows the 
+along the lines of a clean conceptual structure is shown below:
+
+\noindent{\small\begin{verbatim}
+SolmsTraining::Maths::LinearAlgebra::Vector<T>;
+SolmsTraining::Maths::LinearAlgebra::Matrix<T>;
+...
+SolmsTraining::Maths::Numeric::Integrate::SimpsonIntegrator;
+SolmsTraining::Maths::Numeric::Integrate::RombergIntegrator;
+...
+SolmsTraining::Utils::DateTime::Date;
+SolmsTraining::Utils::DateTime::TimePeriod;
+SolmsTraining::Utils::DateTime::AnchoredTimePeriod;
+\end{verbatim}}
+
+Such a hierarchy is conceptually clean and with the support of a
+decent documentation generation tool it can simplify the search 
+for components -- it facilitates a natural search guided by once 
+requirements.
+
+For globally unique naming one may want to prefix
+the namespace hierarchy with the inverted domain name of the
+organization, e.g.\ \verb+za::co::SolmsTraining::Maths+.
+
+%------------------------------------------------------------------
+
+\section{Splitting Implementation from Header}
+
+When splitting the implementation from the header by writing seperate
+\verb+cpp+ and \verb+h+ files, one should keep in mind that within the 
+implementation file one has to do one of the following:
+\begin{itemize}
+  \item Import the names for the elements whose implementation is
+        specified in the file.
+  \item Import the entire namespace(s). 
+  \item Use fully qualified names.
+\end{itemize}  
+
+%------------------------------------------------------------------
+
+\section{Anonymous Namespaces}
+
+At times one wants to hide certain elements within a single file.
+Such elements are used by other elements in the file but should
+are not generally useful. Furthermore, we want to ensure that the 
+name used for these elements is save from name-clashes with 
+similarly names elements defined in other files. 
+
+In this case one may want to introduce an anonymous namespace. This 
+is in some ways similar to Java's \verb+package+ access-level 
+specification, just that here the access is restricted to a particular
+file:
+
+For example, when writing a collection of sorting routines we may 
+want to define a \verb+swap+ function and we may want to ensure that 
+the this function is distinguished from any other swap function which
+may defines in another library we are using. Furthermore, we do not want
+to publish this function for general use because we want to be at 
+liberty to modify it as required by the sorting algorithms it serves.
+
+In this case we may want to put our \verb+swap+ function into an 
+anonymous namespace as follows:
+
+\noindent{\small \begin{verbatim}
+namespace 
+{
+  template <class T> void swap (T& x, T& y);
+}
+
+template <class T> void bubbleSort(T* array);
+template <class T> void mergeSort(T* array);
+template <class T> void quickSort(T* array);
+\end{verbatim}}
+
+%-------------------------------------------------------------------
+
+\section{An Example}
+
+Let us look at an example where we put an account class and a client 
+class into seperate namespaces and at a little example application 
+which uses these two classes.
+
+%----------------------------------
+
+\subsubsection{Account.h}
+
+The account class is put into a nested namespace, 
+\verb+SolmsTraining::finance+:
+
+\noindent{\small \input{NameSpaces/Programs/Account.h}}
+
+%----------------------------------
+
+\subsubsection{Account.cpp}
+
+In the implementation file we use fully qualified names to resolve
+the packaged items:
+
+\noindent{\small \input{NameSpaces/Programs/Account.cpp}}
+
+%----------------------------------
+
+\subsubsection{Client.h}
+
+Similarly, the client class is put into a nested namespace, 
+\verb+SolmsTraining::clients+. It uses the \verb+Account+ class
+and avoids having to use fully qualified naming for it by importing
+it via a \verb+using+ satement:
+
+\noindent{\small \input{NameSpaces/Programs/Client.h}}
+
+%----------------------------------
+
+\subsubsection{Client.cpp}
+
+In this implementation file we totally avoid using fully qualified
+names by importing both, the \verb+Account+ class from the 
+\verb+SolmsTraining::finance+ namespace and the \verb+Client+ class
+from the \verb+SolmsTraining::clients+ namespace:
+
+\noindent{\small \input{NameSpaces/Programs/Client.cpp}}
+
+%----------------------------------
+
+\subsubsection{TestNameSpace.cpp}
+
+Finally we use these classes in the following example application:
+
+\noindent{\small \input{NameSpaces/Programs/TestNameSpace.cpp}}
+
+%-------------------------------------------------------------------
+
+\section{Finding Classes}
+
+Packaging can help significantly in finding classes. One should make 
+some effort in simplifying the search process for existing functionality,
+not only because one can avoid the cost of re-developing the functionality,
+but also because it will help reduce the code bulk which has to be 
+maintained over time (as well as the size of executables).
+Even tasks like testing and performance tuning are simpler with
+less code bulk.
+
+Packaging can help significantly in simplifying the search for existing
+functionality, especially if the package hierarchy is along the lines
+of functionality and responsibility.
+
+Documentation tools may present class documentation along in
+a hierarchical form which mirrors the package structure.
+
+One may also want to use Java's idea of mapping the package 
+(namespace) hierarchy onto a directory hierarchy. This may
+also help to simply the search for components.
+
+%------------------------------------------------------------------
+
+\section{Exercises}
+
+Decide on a sensible package hierarchy for the elements of the exercise
+of chapter \ref{chapAbstraction} and insert the components into the
+hierarchy. Test that your application still compiles and runs.

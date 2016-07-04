@@ -1,0 +1,638 @@
+\chapter{Solving Linear Systems of Equations \label{chapLinsyst}}
+
+%==============================================================
+
+\section{Introduction}
+
+Sets of coupled linear equations are encountered very frequently 
+in general mathematical modeling (e.g.\ modeling electrical circuits,
+biological systems, physics, chemistry, \dots). Furthermore, many other 
+numerical methods (e.g.\ solving coupled non-linear equations, 
+optimization,  solving differential equations, \dots) require as part of
+their algorithm the solution of coupled sets of linear equations.
+
+Assume, for example ,that you are given a set of data points 
+\[
+  \{ (1,-3.5), (2,-0.2), (3,6.5), (4,17.2) \}
+\]
+and that you are asked to 
+determine the coefficients of the third order polinomial 
+($y=c_3 x^3 + c_2 x^2 + c_1 x + c_0$) going through 
+these points. You will have to solve the following set of 4 coupled 
+linear equations:
+
+\begin{eqnarray}
+\begin{array}{*{3}{c@{\:+\:}}c@{\;=\;}c}
+      c_3 &    c_2 &   c_1 & c_0 & -3.5 \\
+   8  c_3 &  4 c_2 & 2 c_1 & c_0 & -0.2 \\
+   27 c_3 &  9 c_2 & 3 c_1 & c_0 &  6.5 \\
+   64 c_3 & 16 c_2 & 4 c_1 & c_0 & 17.2 \\
+\end{array}
+   \label{lineq_poly3}
+\end{eqnarray}
+
+This is a special case of the general set of coupled linear equations
+\begin{eqnarray}
+\begin{array}{*{3}{c@{\:+\:}}c@{\;=\;}c}
+  a_{11} x_1 & a_{12} x_2 & \cdots & a_{1N} x_N & b_1 \\
+  a_{21} x_1 & a_{22} x_2 & \cdots & a_{1N} x_N & b_2 \\
+  \multicolumn{5}{c}{\dotfill} \\
+  a_{M1} x_1 & a_{M2} x_2 & \cdots & a_{MN} x_N & b_M
+\end{array}
+   \label{lineq_sysFull}
+\end{eqnarray}
+which has to be solved for the $\{ x_1, x_2, \dots, x_N \}$.
+Using vector/matrix notation, we rewrite equations 
+(\ref{lineq_sysFull})in a more compact form:
+\begin{eqnarray}
+  {\bf A x} = {\bf b} \label{lineq_sysMatrix}
+\end{eqnarray}
+
+For $M \!\! = \!\! N$ we have a unique solution if and only if the 
+matrix ${\bf A}$ is non-singular, i.e.\ if ${\rm det}({\bf A}) \! \neq 
+\! 0$. One method to find such a unique solution is Gaussian elimination 
+with backsubstitution. We discussed the method here mainly to introduce 
+the concepts for solving linear systems of equations. The C++ 
+implementation of this method is left to the reader
+(see the exercises at the end of the chapter).
+
+Trianglar decomposition methods which factorize
+the origional matrix into a product of a lower and an
+upper triangular matrix are generally more efficient. 
+LU-decomposition is widely used to solve general linear systems.
+We discuss this method in section \ref{secLineqLUdecomp}. When the 
+matrix is positive definite one can use the computationally more 
+efficient Cholesky decomposition discussed in section 
+\ref{secLineqCholesky}.
+
+For $N \!\! > \!\! M$ we have more unknowns than equations.
+The system is usually underdetermined and one can either find 
+that particular solution which optimizes a certain cost function
+subect to the linear constraints of the set of linear equations
+(this will be done in the chapter on optimization 
+\ref{chapLinopt}).
+
+For $M \!\! > \!\! N$ we have more equations than unknowns and
+usually the system is overdetermined. In this case one can find
+the least squares solution which is the best solution 
+in the sense that the sum of the squares of the
+differences between the left and the right hand side is
+minimized. Linear least squares problems will be discussed in
+in section \ref{secLineqLeastsqu}.
+
+%==========================================================
+
+\section{Gaussian Elimination with BackSubstitution}
+
+In the case of Gaussian elimination we rewrite the set of coupled 
+linear
+equations into triangular form and then solve for the unknowns one by 
+one. In order to rewrite the system into triangular form we make  use 
+of the fact that applying the following operations on the system 
+generates an equivalent system:
+
+\begin{enumerate}
+  \item {\bf Scaling:} Multiplying an equation by a non-zero constant.
+  \item {\bf Row interchanges:} the order of two equations can be 
+          changed.
+  \item {\bf Column interchanges:} the order in which the  terms of the 
+          equations are written can be changed.
+  \item {\bf Linear superposition:} Adding a multiple of any 
+other equation to an equation.
+\end{enumerate}
+
+%----------------------------------------------------------------
+
+\subsection{Obtaining a Tri-Diagonal System}
+
+In order to have a more compact notation, one usually starts by creating
+an augmented matrix $[A,{\bf b}]$. For example, the system 
+(\ref{lineq_poly3}) is written in augmented matrix form
+
+
+\begin{eqnarray}
+  [A,{\bf b}] & = & \left[
+    \begin{array}{*{3}{r}c@{\; | \;}r}
+        1  &    1 &   1 & 1 & -3.5 \\
+        8   &  4  & 2  & 1 & -0.2 \\
+      27  &  9  & 3  & 1 &  6.5 \\
+      64  & 16  & 4  & 1 & 17.2 
+    \end{array} \right] \nonumber 
+\end{eqnarray}
+
+\noindent
+We will now rewrite the system into upper-triangular form (all elements 
+below the diagonal are made zero) by making use of the above operations 
+which leave the system equivalent. We first elliminate those elements of
+the first column which are below the diagonal element by subtracting  
+$\alpha \!\! = \!\! \frac{a_{i1}}{a_{11}}$ times the first  row from the 
+$i$'th row ($i>1$):
+
+\begin{eqnarray}
+  & = & \begin{array}{l} \\ \alpha=8 \\ \alpha=27 \\ \alpha=64 \end{array}
+    \left[
+    \begin{array}{*{3}{r}c@{\; | \;}r}
+       1 &    1 &    1   & 1   & -3.5 \\
+       0 &  -4  &   -6  &  -7 & 27.8 \\
+       0 & -18  & -24  & -26 &  101 \\
+       0 & -48  & -60  & -63 & 241.2 
+    \end{array} \right] \nonumber \\
+\end{eqnarray}
+
+\noindent
+Similarly, subtracting $\alpha \!\! = \!\! \frac{a_{i2}}{a_{22}}$ times
+the second row from the $i$'th row ($i\!\!>\!\!2$) we make the second 
+column zero below the diagonal:
+
+\begin{eqnarray}
+  & = & \begin{array}{l} \\  \\ \alpha=4.5 \\ \alpha=12 \end{array}
+    \left[
+    \begin{array}{*{3}{r}c@{\; | \;}r}
+       1 &    1 &   1  & 1   &  -3.5 \\
+       0 &  -4  & -6  &  -7 &  27.8 \\
+       0 &   0  &   3  & 5.5 & -24.1 \\
+       0 &   0  & 12  &  -1 & -92.4 
+    \end{array} \right] \nonumber \\
+\end{eqnarray}
+
+\noindent
+Finally, subtracting $\alpha \!\! = \!\! \frac{a_{i3}}{a_{33}}$ times
+the third row from the $4$'th row we obtain an upper triangular system:
+
+\begin{eqnarray}
+  & = & \begin{array}{l} \\  \\  \\ \alpha=4 \end{array}
+    \left[
+    \begin{array}{*{3}{r}c@{\; | \;}r}
+       1 &    1 &   1  & 1   &  -3.5 \\
+       0 &  -4  & -6  &  -7 &  27.8 \\
+       0 &   0  &   3  & 5.5 & -24.1 \\
+       0 &   0  &   0  &  -1 &   4 
+    \end{array} \right] \nonumber 
+\end{eqnarray}
+
+\noindent
+which is a compact notation for
+
+\begin{eqnarray}
+    c_3 + c_2 + c_1 + c_0 & = & -3.5 \nonumber \\
+        -4 c_2 -6 c_1 -7 c_0 & = & 27.8 \nonumber \\
+           3 c_1 +5.5 c_0 & = & -24.1 \nonumber \\
+              - c_0 & = & 4 
+   \label{lineq_poly3tri}
+\end{eqnarray}
+
+%----------------------------------------------------------------
+
+\subsection{Backsubstitution}
+
+This system (\ref{lineq_poly3tri}) is solved by backsubstitution 
+yielding directly 
+\[
+   c_0 = -4 \nonumber
+\]
+then
+\[
+  c_1 = \frac{1}{3}(-24.1-5.5c_0) = -0.7 \nonumber
+\]
+and 
+\[
+  c_2 = -\frac{1}{4}(27.8+7c_0+6c_1) = 1.1 \nonumber
+\]
+and finally
+\[
+  c_3 = -3.5 - c_0 - c_1 - c_2 = 0.1
+\]
+
+\noindent
+The cubic polynomial through the points
+\[
+  \{ (1,-3.5), (2,-0.2), (3,6.5), (4,17.2) \}
+\]
+is thus given by
+\[
+  y(x) = 0.1x^3 + 1.1x^2 -0.7x - 4
+\]
+
+\noindent
+In general we have the following equation for the backsubstitution step:
+\begin{equation}          
+            c_k = \frac{1}{a_{kk}} \left( b_k -
+                     \sum_{i=k+1}^N a_{ki}c_i \right); \;\;
+                      k = N, N\!\! - \!\! 1, \dots, 1
+\end{equation}
+
+%----------------------------------------------------------------
+
+\subsection{Pivoting \label{secLineqGausspivot}}
+
+There is still one problem with the above algorithm. It can happen that 
+the diagonal element $a_{ii}$ in $\alpha \!\! = \!\! 
+\frac{a_{ik}}{a_{kk}}$ (called the pivotal element) becomes zero 
+resulting in a divide-by-zero error. For example, the following simple 
+system of 3 coupled linear equations
+
+\begin{eqnarray}
+  \begin{array}{*{2}{c@{\:+\:}}c@{\;=\;}c}
+      x_1 &   x_2 &   x_3 & 1 \\
+      x_1 &   x_2 &  2x_3 & 2 \\
+      x_1 & 2x_2 & 2x_3 & 1
+  \end{array}
+   \label{lineq_pivotsys1}
+\end{eqnarray}
+
+\noindent
+is non-singular and has a unique solution $x_1 = -x_2 = x_3 = 1$. 
+Rewriting the system in augmented matric form we obtain
+
+\begin{eqnarray}
+  [A,{\bf b}] & = & \left[
+    \begin{array}{*{2}{r}c@{\; | \;}r}
+        1  &  1 &  1 &  1 \\
+        1  &  1 &  2 &  2 \\
+        1  &  2 &  2 &  1 \\
+    \end{array} \right] \nonumber 
+\end{eqnarray}
+
+\noindent
+and eliminating the lower triangular elements of the first column we 
+obtain
+
+\begin{eqnarray}
+  \left[
+    \begin{array}{*{2}{r}c@{\; | \;}r}
+        1  &  1 &  1 &  1 \\
+        0  &  0 &  1 &  1 \\
+        0  &  1 &  1 &  0 \\
+    \end{array} \right] \nonumber 
+\end{eqnarray}
+
+\noindent
+In order to eliminate the lower triangular elements of  the second 
+column we would try to subtract $\frac{1}{0} = \infty$ times the second 
+row from the third row which of course results in an overflow. The 
+obvious solution is to exchange the second and third rows and we obtain 
+the analytical result by backsubstitution. Alternatively we could have 
+exchanged the second and third columns. We have to,  however, keep track
+of column exchanges because it exchanges the order of the unknowns.
+
+The above example shows that pivoting is required to avoid a breakdown 
+of the algorithm in the case where a pivot element becomes zero. 
+Furthermore, pivot elements which are very close to zero can result in 
+numerical instability. 
+
+%-----------------------------------
+
+\subsubsection{Partial Pivoting}
+
+Usually one performs only row. This is called partial pivoting. It can 
+be shown that any nonsingular system of equations can be reduced to 
+triangular form by Gaussian elimination with partial pivoting pivoting. 
+
+\begin{figure}[htb]
+  \hfil \epsfbox{linequs/figures/ppivot.eps} \hfil
+  \caption{In partial pivoting one exchanges rows such that the
+              largest lower triangular element in column $k$ becomes 
+              the pivot element.
+              \label{figLineqPpivot}} 
+\end{figure}
+
+When eliminating the lower triangular elements of column $k$ one first 
+finds 
+\begin{equation}
+  |a_{rk}^{(k)}| = \max_{k \le i \le N} |a_{ik}^{(k)}|
+\end{equation}
+and then one exchanges rows $k$ and $r$ (see figure 
+\ref{figLineqPpivot}). One thus finds that particular row below the 
+diagonal which, when exchanged with the pivot row, results in a pivotal 
+element with the largest absolute value, reducing the risk of rouding 
+errors.
+
+%-----------------------------------
+
+\subsubsection{Complete Pivoting}
+
+In the case of complete pivoting one finds the largest absolute element 
+in the submatrix below the diagonal (see figure \ref{figLineqCpivot}) 
+\begin{equation}
+  |a_{rs}^{(k)}| = \max_{k \le i, j \le N} |a_{ij}^{(k)}|
+\end{equation}
+and then one exchanges both, rows $k$ and $r$ and columns $k$ and $s$. 
+This results in minimal rounding errors. For most problems,  however, 
+one finds that partial pivoting is sufficient and that the much larger 
+search in the case of complete pivoting is not justified.
+
+\begin{figure}[htb]
+  \hfil \epsfbox{linequs/figures/cpivot.eps} \hfil
+  \caption{In complete pivoting one exchanges rows  and columns such 
+              that the largest lower triangular element in column the 
+              submatrix below the $k$'th row becomes the pivot element.
+              \label{figLineqCpivot}} 
+\end{figure}
+
+%----------------------------------------------------------------
+
+\subsection{The Algorithm \label{secLineqGaussalg}}
+
+\begin{enumerate}
+  \item Form the $N \times (N \!\! + \!\! 1)$ augmented matrix
+          \[
+            {\bf C} := \left[ \begin{array}{*6{c}}
+              a_{11} & a_{12} & \cdots & \cdots & a_{1N} & b_1 \\
+              a_{21} & a_{22} & \cdots & \cdots & a_{2N} & b_2 \\
+              \vdots & \vdots & \ddots & & \vdots &  \vdots \\
+              \vdots & \vdots & & \ddots & \vdots &  \vdots \\
+              a_{N1} & a_{N2} & \cdots & \cdots & a_{NN} & b_N \\
+            \end{array}  \right]
+          \]
+  \item For $k=1,2,\dots,N\!\!-\!\!1$ do the following:
+    \begin{enumerate}
+      \item Find $ |c_{rk}| = \max_{k\le i \le N} |c_{ik}|$.
+      \item If $|c_{rk}| = 0$ return with error message {\em ``The
+              system of equations is singular.''}
+      \item Exchange $c_{ri}$ and $c_{ki}$ for 
+              $i = k,k\!\!+\!\!1, \dots, N \!\! + \!\! 1$.
+      \item For $\ell = k \!\! + \!\! 1,  k \!\! + \!\! 2, \dots , N$ do
+        \begin{enumerate}
+          \item Calculate $\alpha = \frac{c_{\ell k}}{kk}$.
+          \item Replace $c_{\ell i}$ with $c_{\ell i} - \alpha c_{ki}$
+                  for $i = k, k\!\! + \!\! 1, \dots, N \!\! + \!\! 1$.
+        \end{enumerate}
+    \end{enumerate}
+  \item Find the solution vector, ${\bf x}$ by backsubstitution via
+          \[
+            x_k = \frac{1}{c_{kk}} \left( c_{k,n+1} -
+                     \sum_{i=k+1}^N c_{ki}x_i \right); \;\;
+                      k = N, N\!\! - \!\! 1, \dots, 1
+          \]
+\end{enumerate}
+
+The {\em C++} implementation of this algorithm is left as an exercise to
+the reader.
+
+%----------------------------------------------------------------
+
+\subsection{Counting the Number of Arithmetic Operations}
+
+
+
+
+%==========================================================
+
+\section{LU-decomposition \label{secLineqLUdecomp}}
+
+In one of the exercises the reader is asked to show how the Gaussian
+elimination with backsubstitution algorithm can be modified to solve
+the linear system (\ref{lineq_sysMatrix}) for multiple right-side 
+vectors ${\bf b}$. However, for many applications the right hand side 
+vectors are not all known in advance. In such cases the 
+tri-diagonalization has to be repeated when new right-hand side vectors 
+are obtained.
+
+If, on the other hand, we decompose the matrix ${\bf A}$ into the 
+product of an upper and a lower triangular matrix
+\begin{eqnarray}
+  {\bf A} = {\bf LU} \label{lineq_AeqLU}
+\end{eqnarray}
+we obtain the equivalent system ${\bf LUx} = {\bf b}$ which decomposes 
+into two triangular systems
+\begin{eqnarray}
+  {\bf Ly} = {\bf b} \hspace{12mm} {\bf Ux} = {\bf y}
+             \label{lineq_2triangular}
+\end{eqnarray}
+For new right-hand side vectors, ${\bf b}$ these two triangular systems 
+can be solved with $2 \cdot \frac{1}{2} n^2 = n^2$ operations compared 
+to the $\frac{1}{3} n^3$ operations required for Gaussian elimination.
+
+One can prove by induction that if ${\bf A}$ is non-singular
+(if its determinant is non-zero) then there exists a unique
+factorization  into a lower triangular matrix ${\bf L}$ with
+diagonal elements all equal to unity and a unique upper triangular
+matrix ${\bf U}$ such that ${\bf a} = {\bf LU}$
+(see for example \cite{Noble88}).
+
+%----------------------------------------------------------------
+
+\subsection{Example}
+
+In order to find the factorization consider the following
+$N \times N$ system with $N \!\! = \!\! 4$:
+\begin{eqnarray}
+ \left[
+  \begin{array}{cccc}
+    a_{11} & a_{12} & a_{13} & a_{14} \\
+    a_{21} & a_{22} & a_{23} & a_{24} \\
+    a_{31} & a_{32} & a_{33} & a_{34} \\
+    a_{41} & a_{42} & a_{43} & a_{44}
+  \end{array}
+ \right]
+ =
+ \left[
+  \begin{array}{cccc}
+    l_{11} & 0       & 0      & 0       \\
+    l_{21} & l_{22} & 0      & 0      \\
+    l_{31} & l_{32} & l_{33} & 0      \\
+    l_{41} & l_{42} & l_{43} & l_{44}
+  \end{array}
+ \right]
+ \cdot
+ \left[
+  \begin{array}{cccc}
+    u_{11} & u_{12} & u_{13} & u_{14} \\
+    0        & u_{22} & u_{23} & u_{24} \\
+    0        & 0        & u_{33} & u_{34} \\
+    0        & 0        & 0        & u_{44}
+  \end{array}
+ \right]
+\end{eqnarray}
+This is equivalent to the $N^2 = 16$ equations 
+\begin{eqnarray}
+  a_{ij} = \sum_{k=1}^N l_{ik}u_{kj}
+\end{eqnarray}
+which have to be solved for the $N^2 + N = 20$ unknowns,
+$\{l_ij, u_{ij}\}$.
+We can thus pick $N$ of the unknowns arbitrarily and solve
+for the remaining $N^2$ unknowns. Choosing $l_{kk} \!\! = \!\! 1$
+for all $k$ results in Doolitte's method (alternatively, choosing
+the $u_{kk} \!\! = \!\! 1$ for all $k$ yields Crout's method).
+
+Because ${\bf L}$ and ${\bf U}$ are triangular with 
+$l_{kk} \!\! = \!\! 1 \; \forall \; k$ we can solve for the
+$N^2$ unknowns via the following algorithm:
+\begin{itemize}
+  \item For each $j=1, \dots, N$ perform the following two steps:
+    \begin{enumerate}
+      \item For each $i = 1, \dots j$ solve for the $u_{ij}$ via
+              \begin{eqnarray}
+                u_{ij} = a_{ij} - \sum_{k=1}^{i-1} l_{ik}u_{kj}
+              \end{eqnarray}
+      \item For $i = j+1, j+2, \dots, N$ solve for the $l_{ij}$ via
+              \begin{eqnarray}
+                l_{ij} = \frac{1}{u_{jj}} \left( a_{ij} - \sum_{k=1}^{j-1} l_{ik} u_{kj} \right)
+              \end{eqnarray}
+    \end{enumerate}
+\end{itemize}
+
+Once we have the decomposition we can easily solve first the
+lower triangular system (${\bf Ly} = {\bf b}$) for the $y_i$
+\begin{eqnarray}
+    y_i = b_i - \sum_{j=1}^{i-1} l_{ij} y_j \;\; , \;\;\;\; i=1,2,\dots,N
+\end{eqnarray}
+and then the upper trianglar system (${\bf Ux} = {\bf y}$) for
+the $x_i$
+\begin{eqnarray}
+    x_i = \frac{1}{u_{ii}} \left[ y_i - \sum_{j=i+1}^N u_{ij} x_j \right] 
+         \;\; , \;\;\; i=N,N-1,\dots,1
+\end{eqnarray}
+
+%----------------------------------------------------------------
+
+\subsection{Determinant and Matrix Inverse via LU-decomposition 
+                \label{lineq_inverse}}
+
+LU decomposition is also very useful to  calculate the determinant or 
+the inverse of a matrix.
+
+%------------------------------------------------------
+
+\subsubsection{The Determinant of a LU-decomposed Matrix}
+
+For triangular matrices (upper- or lower-triangular) the determinant is 
+given simply by the product of the diagonal elements. Furthermore,  the 
+product rule for determinants states that the determinant of the product
+of two matrices is equal to the product of their determinants. Hence 
+\begin{equation}
+  {\rm det}(A) = {\rm det}(LU) = {\rm det}(L) {\rm det}(U)   
+    =  \left( \prod_{i=1}^N l_{ii} \right)  \left( \prod_{i=1}^N u_{ii} 
+         \right) 
+    = \prod_{i=1}^N u_{ii} 
+\end{equation}
+since $l_{ii} = 1 \forall i$ in the case of Doolittle's method. In other 
+words, the determinant of a matrix whose LU-decomposition we have is, in
+the case of Doolittle's method given simply by the product of the 
+diagonal elements of the upper triangular matrix (in the case of Crout's
+method it is given by the product of the diagonal elements of  the lower 
+triangular matrix). 
+
+%------------------------------------------------------
+
+\subsubsection{Computing the Inverse of a Matrix}
+
+Let ${\bf X} = {\bf A}^{-1}$ be the inverse of $(N \times N)$ matrix 
+${\bf A}$. Then ${\bf X}$ must satisfy
+\[
+  {\bf AX} = {\bf I}
+\]
+We can determine ${\bf X} = {\bf A}^{-1}$ column for column by computing
+\begin{equation}
+  {\bf A} {\bf x}_i = {\bf e}_i, \;\;\; i = 1,2,\dots,N
+\end{equation}
+where ${\bf e}_i$ is the $i$'th unit vector. This is a set of systems of
+coupled linear equations which can be solved by LU-decomposition.
+
+%----------------------------------------------------------------
+
+\subsection{C++ Implementation}
+
+We implement Doolittle's algorithm with partial pivoting using out 
+{\bf Vector} and {\bf Matrix} classes. The only subtelty is that we 
+perform the LU-decomposition in-place, i.e.\ the origional matrix, 
+${\bf A} = {\bf LU}$, is overwritten (hence if the user plans to use 
+${\bf A}$ further he/she will first have to make a copy (say 
+${\bf B} \! = \! {\bf A}$ and perform the LU decomposition on the matrix
+${\bf B}$. On exit the matrix ${\bf B}$ will hold the LU decomposition 
+of the origional matrix ${\bf B}$ and hence of ${\bf A}$.
+
+We make of course heavy use of our vector and matrix classes developed 
+in chapter \ref{chapVecmat}
+
+//------------------
+
+\subsubsection{The Header File: LUDECOMP.H}
+
+\noindent
+{\footnotesize
+  \input{linequs/programs/ludecomp.h}
+}
+
+In linear systems one might encounter a special type of error, 
+namely that the user tries to solve a linear system ${\bf Ax} = {\bf 
+b}$ with ${\bf A}$ singular. For this purpose we derive a specialized 
+{\bf IllegalOperation} exception class which we call {\bf 
+SingularMatrix} (see chapter \ref{chapErrorhnd} for more info on 
+exception handling).
+
+Note that we encapsulate 4 static member functions in a class, {\bf 
+LUdecomposition}. In this way we avoid functions with global scope and 
+hence polluting the global name space. Making the member functions 
+static allows the user to call them directly from the class, i.e.\ to 
+perform the LU decomposition the user can write
+
+\noindent
+{\footnotesize\begin{verbatim}
+LUdecomposition::decompose(A,order,even);
+\end{verbatim}}
+
+//------------------
+
+\subsubsection{The Header File: LUDECOMP.CPP}
+
+\noindent
+{\footnotesize
+  \input{linequs/programs/ludecomp.cpp}
+}
+
+
+%----------------------------------------------------------------
+
+\subsection{Counting the number of arithmetic operations:}
+
+% see Atkinson
+
+
+%----------------------------------------------------------------
+
+\subsection{C++ Implementation}
+
+
+%==========================================================
+
+\section{Cholesky decomposition \label{secLineqCholesky}}
+
+
+%==========================================================
+
+\section{Singular Value Decomposition \label{secLineqSVD}}
+
+%----------------------------------------------------------------
+
+\subsection{C++ Implementation}
+
+%==========================================================
+
+\section{The Linear Least Squares Problem \label{secLineqLeastsqu}}
+
+
+%==========================================================
+
+\section{Exercises}
+
+\begin{exercises}
+  \item  Write a {\em C++} program which implements the Gaussian
+           elimination with backsubstitution and row-pivoting algorithm
+           specified in section \ref{secLineqGaussalg}.
+
+  \item  Discuss how you would modify the Gaussian elimination algorithm 
+           to solve the system \label{lineqSysMatrix} for multiple 
+           vectors $\{ {\bf b}_k, k=1,\dots,M\}$ without repeating Gauss
+           elimination for each vector, ${\bf b}_k$.
+
+??????????????????
+  \item show that the number of multiplications/division and 
+          additions/subtractions required for LU decomposition is XXX 
+          and YYY respectively. Show further that the backsubstitution 
+          step after LU decomposition requires ZZZ 
+          multiplications/divisions and AAA additions/subtractions.
+      
+\end{exercises}
+
+

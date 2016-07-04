@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2se.networking.addressing.hostLookup"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Host Lookup</title>
+    
+    <para>
+        The main function of the <literal>java.net.InetAddress</literal> class is to facilitate
+        automatic name lookup. Though one does not typically have a use case for performing name
+        lookup explicitly (but rather uses it internally when connecting to hosts), the following
+        sample code demonstrates a simplistic name lookup program:
+        <programlisting>
+<xi:include href="src/za/co/solms/net/AddressLookup.java" parse="text"/>"
+        </programlisting>
+    </para>
+    
+    <para>
+        Examine the output of the program as run below:
+        <programlisting>
+$ java za.co.solms.net.AddressLookup google.com cube 192.168.1.211 foo
+            
+IP:   72.14.207.99
+Name: google.com
+72.14.207.99
+
+IP:   192.168.1.200
+Name: cube
+cube.solmshome.co.za
+
+IP:   192.168.1.211
+Name: dawidl.solmshome.co.za
+dawidl.solmshome.co.za
+
+** java.net.UnknownHostException: foo
+        </programlisting>
+    </para>
+    <note>
+        <para>
+            Notice how <emphasis>reverse lookup</emphasis> is automatically performed if an <abbrev>IP</abbrev>
+            address is provided instead of a name. The call to <literal>InetAddress.getCanonicalHostName()</literal> provides,
+            if possible, the fully qualified domain name (such as cases where a <quote>local</quote> name on
+            a <abbrev>LAN</abbrev> is provided.
+        </para>
+    </note>
+    
+</section>

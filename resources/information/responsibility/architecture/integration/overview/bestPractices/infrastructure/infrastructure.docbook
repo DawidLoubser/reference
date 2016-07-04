@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+  <title>Best practices around integration infrastructure</title>
+  <para>
+     An  enterprise integration solution will ultimately be based on an infrastructure within which
+     the integration requirements can be realized. In this section we look at some common
+    guidelines for such an infrastructure.
+  </para>
+  
+  <section>
+    <title>Factor out integration responsibility</title>
+    <para>
+      In order to avoid the combinatorics problem one is faced when potentially having to integrate
+      every work unit with every other work unit, one typically removes the integration
+      responsibility from the individual work units and localises it within a general integration
+      infrastructure.
+    </para>
+      <para>
+        This integration infrastructure is typically shared 
+        across the various systems integrated within the organization.
+      </para>
+  </section>
+  
+  
+  <section>
+    <title>Localize information about enterprise wide business processes</title>
+    <para>
+      Since business processes span work units, the business process definition is naturally outside
+      the realm of any of the work units. Identify a natural host for the business process
+      specification.
+    </para>
+  </section>
+  
+  <section>
+    <title>Localise the workflow management responsibility</title>
+    <para>
+      There is a lot of benefit of localising the workflow management responsibility -- URDAD directly
+      enforces that at each level of granularity the workflow management responsibility has to be
+      localized within a workflow manager (or Controller). The workflow manager 
+      <itemizedlist>
+        <listitem><para>
+          acts as mediator between the role players in the workflow, decoupling the individual role
+          players from another,
+        </para></listitem>
+        <listitem><para>
+          takes ownership of the use case and
+          drives the use case through the business process through which it is realised.
+          The workflow manager thus contains the business process information integrating the workflow
+          steps across the various systems and enforcing decision points, transactions across
+          workflow steps and other business process related issues. 
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Separate architecture of integration framework from its design</title>
+    <para>
+      The integration framework itself has to address functional as well as quality
+      requirements like performance, scalability, reliability, ...
+      Decoupling the design of an integration solution from its architecture enables
+      one to address functional and quality requirements independently and allows one 
+      to address quality issues (e.g. performance, scalability or reliability issues) independently
+      from its design.
+    </para>
+  </section>
+  
+  <section>
+    <title>Specify standards for publishing lower level services to integration infrastructure</title>
+    <para>
+      The services available within the various work units within the organization as well as work 
+      units made available  by external service providers are used when defining a higher level
+      business process. 
+    </para>
+    <para>
+      In order to be able to effectively design these high level business
+      processes, the integration solution will require that individual work units publish the
+      services they offer in a standard way.  
+    </para>
+  </section>
+  
+  <section>
+    <title>Formalise contracts and decouple via them</title>
+    <para>
+      A business process is realized across work units addressing individual workflow steps. These
+      workflow steps are realized within work units by the lower level services they publish to the
+      integration solution. For each of these lower level services one needs to define a contract
+      including the pre- and post-conditions of the service as well as the  qualities with which the
+      service is rendered. It is this contract which makes the work unit testable.
+    </para>
+    <para>
+      The higher level business process is decoupled from the lower level service realizations
+      through these contracts. These contracts must be obtainable and preferably one should be able
+      to auto-generate tests for these contracts.
+    </para>
+  </section>
+  
+  <section>
+    <title>Use public standards</title>
+    <para>
+      For purposes of integration, it is of the utmost importance that open (public) standards are adhered to
+      wherever possible. This
+      <itemizedlist>
+        <listitem><para>
+          increases the likelihood that one can., in future, add other systems (possibly based on other
+          technologies) to the integrated solution,
+        </para></listitem>
+        <listitem><para>
+          increases the likelihood that the integration solution will be long-lived,
+        </para></listitem>
+        <listitem><para>
+          and reduces the risk of locking not just one, but a whole range of systems to a proprietary (e.g. vendor) integration
+          solution.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Monitoring of business process status</title>
+    <para>
+      The integration infrastructure typically has to provide information on the status of various
+      business processes. Ultimately the information of the status of a business process should be
+      provided by the workflow manager who can effectively provide that information.
+    </para>
+  </section>
+  
+  <section>
+    <title>Support auditability</title>
+    <para>
+      Enterprise systems need to be auditable. This includes the auditability of business processes
+      realized across business units. Typically it is the integration infrastructure which provides
+      this high level of auditability.
+    </para>
+  </section>
+  
+</section>

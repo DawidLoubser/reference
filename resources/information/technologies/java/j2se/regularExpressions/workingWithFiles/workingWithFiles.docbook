@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+         xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+
+    <title>Using regular expressions with files</title>
+    <indexterm>
+        <primary>Regular expressions (Java)</primary>
+        <secondary>files</secondary>
+    </indexterm>
+
+    <para>
+        The Java Regular Expressions framework does not include the functionality
+        to directly work with information in domains such as the file system,
+        network sockets, user interfaces, etc - this is because Java already contains
+        the infrastructure to produce instances of character sequences.
+    </para>
+    <para>
+        A common requirement is to search for patterns within files. These files
+        are often massive (such as log files) and a major benefit of Java (introduced
+        at version 1.4) is the ability to use the NIO framework to memory-map
+        a file to an object which can be directly exposed as a character sequence.
+        In this scenario, the infrastructure (largely the operating system) takes full
+        responsibility for managing the data access and memory required.
+    </para>
+    <para>
+        For example, the following program uses a regular expression to find
+        all the names of the declared types (variables) in use in a Java source
+        file:
+        <programlisting language="Java">
+            <xi:include href="src/ListVarNames.java" parse="text"/>
+        </programlisting>
+        Which, if invoked on its own source code via:
+        <programlisting><![CDATA[
+java ListVarNames ../source/ListVarNames.java
+      ]]></programlisting>
+        produces the following output:
+        <programlisting><![CDATA[
+channel (of type FileChannel)
+buf (of type ByteBuffer)
+text (of type CharBuffer)
+varPattern (of type String)
+m (of type Matcher)
+varName (of type String)
+type (of type String)
+      ]]></programlisting>
+    </para>
+    <note>
+        <para>
+            Using Java NIO and Memory-mapping will enable this small program to
+            scale very well, even with the ability to read files larger than what
+            could fit into memory.
+        </para>
+    </note>
+
+</section>

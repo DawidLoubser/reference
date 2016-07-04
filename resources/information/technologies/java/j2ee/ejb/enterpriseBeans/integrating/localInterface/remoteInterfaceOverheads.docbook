@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1754:section xmlns:ns1754="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.integrating.localInterface.remoteInterfaceOverheads">
+
+  <ns1755:title xmlns:ns1755="http://docbook.org/ns/docbook">Overheads of remote interfaces</ns1755:title>
+  <ns1756:para xmlns:ns1756="http://docbook.org/ns/docbook">
+    Accessing local beans through their home and remote interfaces is unnecessarily slow. The
+    steps performed are: 
+    <ns1757:orderedlist xmlns:ns1757="http://docbook.org/ns/docbook">
+      <ns1758:listitem xmlns:ns1758="http://docbook.org/ns/docbook">
+        <ns1759:para xmlns:ns1759="http://docbook.org/ns/docbook">The client calls a local stub. </ns1759:para>
+      </ns1758:listitem>
+      <ns1760:listitem xmlns:ns1760="http://docbook.org/ns/docbook">
+        <ns1761:para xmlns:ns1761="http://docbook.org/ns/docbook">The stub marshalls the service request onto a RMI/IIOP or a IIOP message. </ns1761:para>
+      </ns1760:listitem>
+      <ns1762:listitem xmlns:ns1762="http://docbook.org/ns/docbook">
+        <ns1763:para xmlns:ns1763="http://docbook.org/ns/docbook">The message is sent via a network connection to the server skeleton. </ns1763:para>
+      </ns1762:listitem>
+      <ns1764:listitem xmlns:ns1764="http://docbook.org/ns/docbook">
+        <ns1765:para xmlns:ns1765="http://docbook.org/ns/docbook">The server skeleton de-marshals the service request and calls the EJB object which is
+          network enabled. </ns1765:para>
+      </ns1764:listitem>
+      <ns1766:listitem xmlns:ns1766="http://docbook.org/ns/docbook">
+        <ns1767:para xmlns:ns1767="http://docbook.org/ns/docbook">The EJB object applies middleware support services like </ns1767:para>
+        <ns1768:itemizedlist xmlns:ns1768="http://docbook.org/ns/docbook">
+          <ns1769:listitem xmlns:ns1769="http://docbook.org/ns/docbook">
+            <ns1770:para xmlns:ns1770="http://docbook.org/ns/docbook">connection pooling, </ns1770:para>
+          </ns1769:listitem>
+          <ns1771:listitem xmlns:ns1771="http://docbook.org/ns/docbook">
+            <ns1772:para xmlns:ns1772="http://docbook.org/ns/docbook">transaction control, </ns1772:para>
+          </ns1771:listitem>
+          <ns1773:listitem xmlns:ns1773="http://docbook.org/ns/docbook">
+            <ns1774:para xmlns:ns1774="http://docbook.org/ns/docbook">life-cycle services, </ns1774:para>
+          </ns1773:listitem>
+          <ns1775:listitem xmlns:ns1775="http://docbook.org/ns/docbook">
+            <ns1776:para xmlns:ns1776="http://docbook.org/ns/docbook">persistence services (e.g. loading an entity bean's state from a database) and </ns1776:para>
+          </ns1775:listitem>
+          <ns1777:listitem xmlns:ns1777="http://docbook.org/ns/docbook">
+            <ns1778:para xmlns:ns1778="http://docbook.org/ns/docbook">security.</ns1778:para>
+          </ns1777:listitem>
+        </ns1768:itemizedlist>
+      </ns1766:listitem>
+      <ns1779:listitem xmlns:ns1779="http://docbook.org/ns/docbook">
+        <ns1780:para xmlns:ns1780="http://docbook.org/ns/docbook">The EJB object calls the bean implementations sevices via a normal Java call. </ns1780:para>
+      </ns1779:listitem>
+      <ns1781:listitem xmlns:ns1781="http://docbook.org/ns/docbook">
+        <ns1782:para xmlns:ns1782="http://docbook.org/ns/docbook">On service completion further middleware services may be applied (e.g. life-cycle and
+          persistence services) </ns1782:para>
+      </ns1781:listitem>
+      <ns1783:listitem xmlns:ns1783="http://docbook.org/ns/docbook">
+        <ns1784:para xmlns:ns1784="http://docbook.org/ns/docbook">The server skeleton marshalls the return value, any output arguments or any exceptions
+          raised by the server onto the RMI/IIOP stream. </ns1784:para>
+      </ns1783:listitem>
+      <ns1785:listitem xmlns:ns1785="http://docbook.org/ns/docbook">
+        <ns1786:para xmlns:ns1786="http://docbook.org/ns/docbook">The client stub de-marshalls the server response and passes it on to the client.</ns1786:para>
+      </ns1785:listitem>
+    </ns1757:orderedlist>
+  </ns1756:para>  
+  <ns1787:para xmlns:ns1787="http://docbook.org/ns/docbook">
+    If this was the only way one bean can make use of the services of another bean, then
+    performance would put a significant damper on re-using enterprise beans from within enterprise
+    beans and hence on developing small fine-grained beans.
+  </ns1787:para>
+</ns1754:section>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns4641:section xmlns:ns4641="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.security.iptables">
+
+	<ns4642:title xmlns:ns4642="http://docbook.org/ns/docbook">Securing the network</ns4642:title>
+	<ns4643:para xmlns:ns4643="http://docbook.org/ns/docbook">
+	Several different options to implement various levels of security are available in linux. A squid proxy server, for example, removes the need to be directly connected to the internet, from where most attacks originate. ipTables allows you to configure a packet filter, blocking potential hazardous traffic. The linux kernel has the option to receive a set of parameters to further secure the workstation.
+	</ns4643:para>
+	
+	<ns4644:section xmlns:ns4644="http://docbook.org/ns/docbook">
+		<ns4645:title xmlns:ns4645="http://docbook.org/ns/docbook">Squid</ns4645:title>
+		<ns4646:para xmlns:ns4646="http://docbook.org/ns/docbook">
+		Squid is a http proxy and cache, which can be used to route all browser traffic via a central workstation to the internet. This provides security as the client workstations are not required to connect to the internet directly. Only the squid server is connected to the internet. It is, however, still recommended that the squid server is placed behind a firewall to protect it from attacks originating from the internet.
+		</ns4646:para>
+	</ns4644:section>	
+	
+	<ns4647:section xmlns:ns4647="http://docbook.org/ns/docbook">
+		<ns4648:title xmlns:ns4648="http://docbook.org/ns/docbook">IP Tables</ns4648:title>
+		<ns4649:para xmlns:ns4649="http://docbook.org/ns/docbook">
+		IPTables is a packet filter performing, which can be configured to allow, or deny, packets based on source and destination address, or port number or protocol specific features.  
+		</ns4649:para>
+		
+		<ns4650:section xmlns:ns4650="http://docbook.org/ns/docbook">
+			<ns4651:title xmlns:ns4651="http://docbook.org/ns/docbook">Initialising iptables</ns4651:title>
+			<ns4652:para xmlns:ns4652="http://docbook.org/ns/docbook">
+			To clear out any previous filters and rules, iptables has to be initialised. The default chain is flushed (-F), deleted (-X) and it's counters are reset (-X). This is important to ensure that the subsequent rules are added to a clean environment, rather then being added to some unknown set of rules.
+			</ns4652:para>
+			<ns4653:programlisting xmlns:ns4653="http://docbook.org/ns/docbook">
+iptables -F
+iptables -X
+iptables -Z
+			</ns4653:programlisting>
+		</ns4650:section>	
+		
+		<ns4654:section xmlns:ns4654="http://docbook.org/ns/docbook">
+			<ns4655:title xmlns:ns4655="http://docbook.org/ns/docbook">Blocking traffic</ns4655:title>
+			<ns4656:para xmlns:ns4656="http://docbook.org/ns/docbook">
+			The configuration is started by blocking all incoming and outgoing traffic. This is achieved by setting the policy (-P) for incoming, outgoing and forward connections to drop all packets.
+			</ns4656:para>
+			<ns4657:programlisting xmlns:ns4657="http://docbook.org/ns/docbook">
+iptables -P INPUT DROP				
+iptables -P FORWARD DROP				
+iptables -P OUTPUT DROP				
+			</ns4657:programlisting>
+		</ns4654:section>	
+	
+		<ns4658:section xmlns:ns4658="http://docbook.org/ns/docbook">
+			<ns4659:title xmlns:ns4659="http://docbook.org/ns/docbook">Allowing specific traffic</ns4659:title>
+			<ns4660:para xmlns:ns4660="http://docbook.org/ns/docbook">
+			Depending on the requirements, iptables is now configured to allow specific interactions. In the example below, we allow incoming requests on port 22, if they are ESTABLISHED within the context of a communication. Outgoing requests are allowed, if they are part of a NEW connection, or an already ESTABLISHED one. Depending on the nature of the service to be enabled, these rules can get very complex. iptables has a number of mechanisms to filter connection. 	
+			</ns4660:para>
+			<ns4661:programlisting xmlns:ns4661="http://docbook.org/ns/docbook">
+iptables -A INPUT -i eth0 -p tcp -sport 22 -m state --state ESTABLISHED -j ACCEPT
+iptables -A OUTPT -o eth0 -p tcp -dport 22 -m state --state NEW, ESTABLISHED -j ACCEPT
+			</ns4661:programlisting>
+			<ns4662:note xmlns:ns4662="http://docbook.org/ns/docbook">
+			<ns4663:para xmlns:ns4663="http://docbook.org/ns/docbook">Due to the nature of the FTP protocol, a more complex filter has to be specified, capable of tracking the connections made during the FTP session.</ns4663:para>
+			</ns4662:note>
+		</ns4658:section>	
+	
+		<ns4664:section xmlns:ns4664="http://docbook.org/ns/docbook">
+			<ns4665:title xmlns:ns4665="http://docbook.org/ns/docbook">IP Masquerading and forwarding requests</ns4665:title>
+			<ns4666:para xmlns:ns4666="http://docbook.org/ns/docbook">
+			Often it is desirable to share an internet connection between the workstation on a network, when only one workstation is connected to the internet via dialup. The following script allows you to <ns4667:emphasis xmlns:ns4667="http://docbook.org/ns/docbook" role="strong">forward</ns4667:emphasis> traffic on the internal network into the internet via IP Masquerading. The important feature to note is that outgoing connections are allowed (ACCEPT) while incoming connections are only allowed through when their state is related and established. Also the kernel parameter (/proc/sys/net/ipv4/ip_forward) is enabled to allow forwarding of packets.
+			</ns4666:para>
+			<ns4668:programlisting xmlns:ns4668="http://docbook.org/ns/docbook">
+				
+#!/bin/sh			
+iptables -t nat --flush
+iptables --flush
+iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE
+iptables -A FORWARD -i ppp0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -o ppp0 -j ACCEPT
+echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+				
+			</ns4668:programlisting>	
+		</ns4664:section>	
+		
+		<ns4669:section xmlns:ns4669="http://docbook.org/ns/docbook">
+			<ns4670:title xmlns:ns4670="http://docbook.org/ns/docbook">Disabling IPTables</ns4670:title>
+			<ns4671:para xmlns:ns4671="http://docbook.org/ns/docbook">
+			During the installation of Linux on certain distributions, IPTables is enabled with a default ruleset. This can lead to a number of problems if you are not aware of iptables being operational and filtering out packets. An NFS mount, for example, would fail due to this. To disable iptables, we flush the ruleset and stop the service from running.
+			</ns4671:para>
+		</ns4669:section>
+		
+	</ns4647:section>	
+	
+	<ns4672:section xmlns:ns4672="http://docbook.org/ns/docbook">
+		<ns4673:title xmlns:ns4673="http://docbook.org/ns/docbook">Linux Kernel Parameters</ns4673:title>
+		<ns4674:para xmlns:ns4674="http://docbook.org/ns/docbook">
+		A number of kernel parameters are available to configure and finetune many aspects, including networking. These kernel parameters are set in text files residing in the /proc directory and are configured by setting in boolean values to either true (1) or false (0). To set these parameter, typically either a 0 or a 1 are piped into the files as demonstrated in the example below. The kernel parameters covered in this section reside int <ns4675:emphasis xmlns:ns4675="http://docbook.org/ns/docbook" role="strong">/proc/sys/net/ipv4/</ns4675:emphasis>
+		</ns4674:para>
+		<ns4676:programlisting xmlns:ns4676="http://docbook.org/ns/docbook">
+echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+		</ns4676:programlisting>
+		<ns4677:formalpara xmlns:ns4677="http://docbook.org/ns/docbook">
+			<ns4678:title xmlns:ns4678="http://docbook.org/ns/docbook">icmp_echo_ignore_all</ns4678:title>
+			<ns4679:para xmlns:ns4679="http://docbook.org/ns/docbook">
+			All ICMP requests are ignored. Set this options to block ping requests. 
+			</ns4679:para>
+		</ns4677:formalpara>	
+		<ns4680:formalpara xmlns:ns4680="http://docbook.org/ns/docbook">
+			<ns4681:title xmlns:ns4681="http://docbook.org/ns/docbook">ip_forward</ns4681:title>
+			<ns4682:para xmlns:ns4682="http://docbook.org/ns/docbook">
+			Allows packets to be forwarded. This is only required on multi homed workstations
+			</ns4682:para>
+		</ns4680:formalpara>	
+		<ns4683:formalpara xmlns:ns4683="http://docbook.org/ns/docbook">
+			<ns4684:title xmlns:ns4684="http://docbook.org/ns/docbook">log_martians</ns4684:title>
+			<ns4685:para xmlns:ns4685="http://docbook.org/ns/docbook">
+			Log packets with impossible addresses to kernel log
+			</ns4685:para>
+		</ns4683:formalpara>	
+		<ns4686:formalpara xmlns:ns4686="http://docbook.org/ns/docbook">
+			<ns4687:title xmlns:ns4687="http://docbook.org/ns/docbook">icmp_echo_ignore_breadcast</ns4687:title>
+			<ns4688:para xmlns:ns4688="http://docbook.org/ns/docbook">
+			ICMP requests, with a broadcast destination address, are ignored.
+			</ns4688:para>
+		</ns4686:formalpara>	
+	</ns4672:section>	
+</ns4641:section>

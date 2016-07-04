@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns459:section xmlns:ns459="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.clustering.configuration.clusteringJndi">
+  <ns460:title xmlns:ns460="http://docbook.org/ns/docbook">Clustering the JNDI naming service</ns460:title>
+  
+  <ns461:para xmlns:ns461="http://docbook.org/ns/docbook">
+  Bean clustering provides fail-over safety  (avoids single points
+  of failure) by clustering enterprise beans and providing an intelligent
+  client-side dispatcher in the form of a smart proxy.
+  </ns461:para>
+  <ns462:para xmlns:ns462="http://docbook.org/ns/docbook">
+  We do, however, still have a single point of failure in the form of a
+  single naming service. This is a problem, since handles to enterpise
+  beans are typically obtained through a JNDI naming service.
+  </ns462:para>
+  <ns463:para xmlns:ns463="http://docbook.org/ns/docbook">
+  We thus need to cluster the naming service itself in order to remove
+  the last single point of failure. This is achieved in JBoss through
+  <ns464:literal xmlns:ns464="http://docbook.org/ns/docbook">HA-JNDI</ns464:literal> (High Availability Java Naming and Directory Interface).
+  </ns463:para>
+
+  <ns465:section xmlns:ns465="http://docbook.org/ns/docbook">
+    <ns466:title xmlns:ns466="http://docbook.org/ns/docbook">What does HA-JNDI supply?</ns466:title>
+    <ns467:para xmlns:ns467="http://docbook.org/ns/docbook">
+      HA-JNDI provides a fail-safe naming service by
+      <ns468:itemizedlist xmlns:ns468="http://docbook.org/ns/docbook">
+        <ns469:listitem xmlns:ns469="http://docbook.org/ns/docbook"><ns470:para xmlns:ns470="http://docbook.org/ns/docbook">
+          hosting a copy of the JNDI naming service on each node in the cluster,
+        </ns470:para></ns469:listitem>  
+        <ns471:listitem xmlns:ns471="http://docbook.org/ns/docbook"><ns472:para xmlns:ns472="http://docbook.org/ns/docbook">
+          replicating the JNDI tree accross the (now clustered) HA-JNDI naming service,
+          in the form of a <ns473:emphasis xmlns:ns473="http://docbook.org/ns/docbook">cluster-wide JNDI tree</ns473:emphasis>,
+        </ns472:para></ns471:listitem>  
+        <ns474:listitem xmlns:ns474="http://docbook.org/ns/docbook"><ns475:para xmlns:ns475="http://docbook.org/ns/docbook">
+           ensuring that the smart proxy automatically queries another instance
+           of the JNDI naming service when failing to connect to a particular instance 
+           of the naming service and
+         </ns475:para></ns474:listitem>  
+        <ns476:listitem xmlns:ns476="http://docbook.org/ns/docbook"><ns477:para xmlns:ns477="http://docbook.org/ns/docbook">
+           forwarding the lookup query to local JNDI trees if the requested
+           name is not yet available in the cluster-wide tree.
+         </ns477:para></ns476:listitem>  
+      </ns468:itemizedlist>
+    </ns467:para>
+  </ns465:section>  
+  
+  <ns478:section xmlns:ns478="http://docbook.org/ns/docbook">
+    <ns479:title xmlns:ns479="http://docbook.org/ns/docbook">Setting up HA-JNDI</ns479:title>
+    <ns480:para xmlns:ns480="http://docbook.org/ns/docbook"> 
+       HA-JNDI is set up for a particular partition, <ns481:abbrev xmlns:ns481="http://docbook.org/ns/docbook">i.e.</ns481:abbrev> separate partitions will
+       have their own HA-JNDI. The HA-JNDI for the default partition is set up in
+       the <ns482:literal xmlns:ns482="http://docbook.org/ns/docbook">cluster-service.xml</ns482:literal> as follows:
+       <ns483:programlisting xmlns:ns483="http://docbook.org/ns/docbook">
+
+    &lt;mbean code="org.jboss.ha.jndi.HANamingService" 
+           name="jboss:service=HAJNDI"&gt;
+       &lt;depends&gt;jboss:service=DefaultPartition&lt;/depends&gt;
+      &lt;attribute name="PartitionName"&gt;DefaultPartition&lt;/attribute&gt;
+      &lt;attribute name="RmiPort"&gt;0&lt;/attribute&gt;  &lt;!-- use any available port --&gt;
+      &lt;attribute name="Port"&gt;1100&lt;/attribute&gt;  &lt;!-- port uused for HA-JNDI --&gt;
+      &lt;attribute name="Backlog"&gt;50&lt;/attribute&gt;
+    &lt;/mbean&gt;
+  
+    &lt;mbean code="org.jboss.invocation.jrmp.server.JRMPInvokerHA"
+           name="jboss:service=invoker,type=jrmpha"&gt;
+    &lt;/mbean&gt;
+
+       
+       </ns483:programlisting>
+    </ns480:para>
+  </ns478:section>
+  
+  <ns484:section xmlns:ns484="http://docbook.org/ns/docbook">
+    <ns485:title xmlns:ns485="http://docbook.org/ns/docbook">HA-JNDI lookup algorithm</ns485:title>  
+    <ns486:para xmlns:ns486="http://docbook.org/ns/docbook">
+      The algorithm processing a JNDI lookup query is as follows:
+      <ns487:orderedlist xmlns:ns487="http://docbook.org/ns/docbook">
+        <ns488:listitem xmlns:ns488="http://docbook.org/ns/docbook"><ns489:para xmlns:ns489="http://docbook.org/ns/docbook">
+           If the requested binding is available on the cluster-wide tree it is returned.
+        </ns489:para></ns488:listitem>
+        <ns490:listitem xmlns:ns490="http://docbook.org/ns/docbook"><ns491:para xmlns:ns491="http://docbook.org/ns/docbook">
+          If the requested binding is not available in the cluster-wide tree, the lookup
+          query is forwarded to the local JNDI service (the one to which the client is
+          currently connected).
+        </ns491:para></ns490:listitem>
+        <ns492:listitem xmlns:ns492="http://docbook.org/ns/docbook"><ns493:para xmlns:ns493="http://docbook.org/ns/docbook">
+          If the requested binding is not available on the local JNDI tree, the request
+          is forwarded to all other HA-JNDI services in the cluster, and the first
+          successful match is returned.
+        </ns493:para></ns492:listitem>
+        <ns494:listitem xmlns:ns494="http://docbook.org/ns/docbook"><ns495:para xmlns:ns495="http://docbook.org/ns/docbook">
+          If no match is found a <ns496:literal xmlns:ns496="http://docbook.org/ns/docbook">NameNotFoundException</ns496:literal> is thrown.
+        </ns495:para></ns494:listitem>
+      </ns487:orderedlist>
+    </ns486:para>
+  </ns484:section>  
+  
+  <ns497:section xmlns:ns497="http://docbook.org/ns/docbook">
+    <ns498:title xmlns:ns498="http://docbook.org/ns/docbook">Making the initial lookup fail-safe</ns498:title>
+    <ns499:para xmlns:ns499="http://docbook.org/ns/docbook">
+      The initial client interaction with an application server is typically through the
+      JNDI naming service. Once the first lookup has been made, the client has a handle
+      to the HA-JNDI naming service through a smart proxy which is fail safe.
+    </ns499:para>
+    <ns500:para xmlns:ns500="http://docbook.org/ns/docbook">
+      Thee initial lookup could, however, fail. To address this one typically inserts
+      multiple known naming servers in the list of JNDI naming providers.  This list
+      is often supplied in the <ns501:literal xmlns:ns501="http://docbook.org/ns/docbook">jndi.properties</ns501:literal> file (in the form
+      of a comma-separated list).
+      The resultant <ns502:literal xmlns:ns502="http://docbook.org/ns/docbook">jndi.properties</ns502:literal> file (configured for the JBoss
+      naming service) could look as follows:
+      <ns503:programlisting xmlns:ns503="http://docbook.org/ns/docbook">
+
+  java.naming.factory.initial=org.jnp.interfaces.NamingContextFactory
+  java.naming.provider.url=jndiHost1:1100,jndiHost2:1100:jndiHost3:1100
+  java.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces
+  jnp.socketFactory=org.jnp.interfaces.TimedSocketFactory
+  #Connection timeout (0 == blocking)
+  jnp.timeout=0
+  #Read timeout (0 == blocking)
+  jnp.sotimeout=0
+      
+      </ns503:programlisting>
+    </ns500:para>
+  </ns497:section>
+</ns459:section>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.architecture.patterns.modelViewController.solution"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Solution</title>
+  <para>
+    The solution suggested by the model-view-controller pattern is to localize the responsibilities
+    of
+    <orderedlist>
+      <listitem><para>hosting business logic and data,</para></listitem>
+      <listitem><para>presenting information to users and</para></listitem>
+      <listitem><para>reacting to user events</para></listitem>
+    </orderedlist>
+    on separate, loosely coupled, components called the <emphasis>model</emphasis>,
+    the <emphasis>view</emphasis> and the <emphasis>controller</emphasis>.
+  </para>
+  
+  <section>
+    <title>Responsibility allocation</title>
+    <para>
+      The responsibility localization is shown in
+      <xref linkend="resources.information.concepts.architecture.patterns.modelViewController.responsibilityAllocation_fig"/>.
+    </para>
+    
+    <figure id="resources.information.concepts.architecture.patterns.modelViewController.responsibilityAllocation_fig">
+      <title>Responsibility allocation in the model-view-controller pattern</title>
+      <graphic fileref="responsibilityAllocation.jpg"/>
+    </figure>
+  </section>
+  
+  <section>
+    <title>Structure</title>
+    <para>
+      The model is independent of both, the view and the controller. It simply
+      supports observers, notifying them of state change events.
+      The view and the controller are, however, directly coupled to the model:
+      <itemizedlist>
+        <listitem><para>
+          The view obtains business information from the model.  
+        </para></listitem>
+        <listitem><para>
+          The controller requests business services from the model.  
+        </para></listitem>
+      </itemizedlist>
+      
+      <note><para>
+        The direct dependency between the view and controller on the model can
+        be removed by introducing an adapter which maps the view requirements
+        onto the actual model. This approach is followed in the Swing GUI library
+        provided by Java.
+      </para></note>
+    </para>
+    
+    <figure id="resources.information.concepts.architecture.patterns.modelViewController.structure_fig">
+      <title>Structure of the model-view-controller pattern</title>
+      <graphic fileref="structure.jpg"/>
+    </figure>
+    
+  </section>
+  
+  <section>
+    <title>Dynamics</title>
+    <para>
+      We shall look here at 3 scenarios:
+      <orderedlist>
+        <listitem><para>The initialization process.</para></listitem>
+        <listitem><para>The dynamics upon user events.</para></listitem>
+        <listitem><para>The dynamics upon system events.</para></listitem>
+      </orderedlist>
+    </para>
+    <para>
+      During initialization we have to ensure that both, the view and the controller
+      <itemizedlist>
+        <listitem><para>
+           have a message path to the model, and
+        </para></listitem>
+        <listitem><para>
+          are registered with the model as observers.  
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    
+    <figure id="resources.information.concepts.architecture.patterns.modelViewController.initialization_fig">
+      <title>Initialization of the model-view-controller pattern</title>
+      <graphic fileref="initialization.jpg"/>
+    </figure>
+
+    <para>
+      Upon user event
+      <itemizedlist>
+        <listitem><para>
+          the controller interprets the event and requests the appropriate system service,
+        </para></listitem>
+        <listitem><para>
+          the model 
+          <itemizedlist>
+            <listitem><para>
+              realizes the service which may change the information contained in the model,    
+            </para></listitem>
+            <listitem><para>
+              informs all observers (views and controllers) that the system information has changed,  
+            </para></listitem>
+          </itemizedlist>
+        </para></listitem>  
+        <listitem><para>
+          upon which the observers
+          <itemizedlist>
+            <listitem><para>
+              retrieve the information they are interested in, and  
+            </para></listitem>
+            <listitem><para>
+              update their representation or behavior accordingly.  
+            </para></listitem>
+          </itemizedlist>
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    
+    <figure id="resources.information.concepts.architecture.patterns.modelViewController.userUpdate_fig">
+      <title>Dynamics of model-view-controller pattern: user event</title>
+      <graphic fileref="userUpdate.jpg"/>
+    </figure>
+   
+    <para>
+      Similarly, on system events certain business logic may be performed which may change
+      business data. The observers (<abbrev>e.g.</abbrev> the view and controller) are
+      notified and request the information they are interested in to see whether they need
+      to update their representation or behavior.
+    </para>
+    
+    <figure id="resources.information.concepts.architecture.patterns.modelViewController.systemUpdate_fig">
+      <title>Dynamics of model-view-controller pattern: system event</title>
+      <graphic fileref="/systemUpdate.jpg"/>
+    </figure>
+  </section>
+  
+</section>
+ 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Deploying the Service</title>
+    
+    <indexterm>
+        <primary>JAX-WS</primary>
+        <secondary>service deployment</secondary>
+    </indexterm>
+    
+    <para>
+        To deploy oru service in a stand-alone (Java SE) context, we simply choose a URL,
+        and make use of a <literal>javax.xml.ws.Endpoint</literal> to publish an instance of
+        our implementation class to a URL:
+        <programlisting language="Java">
+<xi:include parse="text" href="project/source/my/service/StartServer.java"/>
+        </programlisting>
+    </para>
+    
+    <section>
+        <title>Obtaining the published service contract</title>
+        <para>
+            It is industry convention to request the service URL (with an HTTP GET), with
+            a question mark appended to the endpoint URL, in order to request the
+            service contract from the service. In our case, we can refer clients
+            simply to
+            <programlisting><![CDATA[
+http://localhost:8080/unitConverter?WSDL
+]]></programlisting>
+            in which case they will receive the service contract, which gives them everything they 
+            need to use our service.
+        </para>
+        <note><para>
+            If the JAX-WS runtime does not have access to our hand-written WSDL (which we used to create
+            the service) it will generate a new one on-th-fly, which may be syntactically different
+            from our original, but which is functionally equivalent.
+        </para></note>
+    </section>
+    
+</section>

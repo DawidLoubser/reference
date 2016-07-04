@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>HttpServletResponse</title>
+    <para>
+        A new <literal>HttpServletResponse</literal> object is created for every user request. This is the channel through which to generate the response
+        to the user, and contains a number of services to this effect. Some of the commonly used ones are:
+        <itemizedlist>
+            <listitem>
+                <formalpara>
+                    <title>sendError( int )</title>
+                    <para>
+                        Used to send a specific HTP error ot the user. HttpServletResponse contains constants for all the HTTP status codes.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>setContentType( String )</title>
+                    <para>
+                        Used to indicate to the client what MIME type the reponse has. For instance, web pages have
+                        <literal>applications/xhtml+xlm</literal> or <literal>text/html</literal>, whereas arbitrary
+                        XML has type <literal>text/xml</literal>. This is used by the user-agent to figure out how to
+                        render the content (and, if it can or not)
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>sendRedirect( String )</title>
+                    <para>
+                        Sends a temporary redirect response to the client using the specified redirect location URL. The client
+                        should automatically resubmit the request to the given location. Location is either a relative or
+                        absolute URL. (It is always converted to the corresponding absolute URL when sent to the client)
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>getOutputStream() : ServletOutputStream</title>
+                    <para>
+                        Returns a <literal>ServletOutputStream</literal> suitable for writing arbitrary (usually binary) data to the client.
+                        Calling <literal>flush()</literal> on the ServletOutputStream commits the response. Either this method or <literal>getWriter()</literal> 
+                        (for text output) may be called to write output, but not both.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>getWriter() : PrintWriter</title>
+                    <para>
+                        Returns a PrintWriter object that writes text information back to the client. The PrintWriter uses the character encoding 
+                        returned by <literal>getCharacterEncoding()</literal>. Calling <literal>flush()</literal> on the PrintWriter commits the response. 
+                    </para>
+                </formalpara>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <note>
+        <para>
+            The <emphasis>HttpServletResponse</emphasis> is used only to communicate with the client, and typically not used for
+            inter-object communication on the server like the request is.
+        </para>    
+    </note>
+</section>

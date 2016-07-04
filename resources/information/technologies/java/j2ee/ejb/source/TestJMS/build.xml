@@ -1,0 +1,114 @@
+<project name="Loan Calculator EJB"
+         default="compileBusinessLogic" 
+         basedir=".">
+
+  <property environment="env"/>
+  <property file="build.properties"/>
+  <property file="env.properties"/>
+  
+  <property name="srcDir" value="${basedir}/src"/>
+  <property name="classesDir" value="${basedir}/classes"/>
+  
+  <property name="subscriberName" value="TestJMS.GoldPriceSubscriber"/>
+  <property name="publisherName" value="TestJMS.GoldPricePublisher"/>
+  <property name="senderName" value="TestJMS.MessageSender"/>
+  <property name="receiverName" value="TestJMS.MessageRecipient"/>
+
+  <path id="jboss.jars">
+    <!--<pathelement location="${jboss.home}/lib/ext/jboss.jar" />-->
+    <fileset dir="${jboss-home}/client">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="clean"
+          description="Removes the classes directories">
+    <delete dir="${classesDir}" />
+  </target>
+
+  <target name="prepareDirectories" depends="clean">
+    <echo message="Creating build and distribution directories ..." />
+    <mkdir dir="${classesDir}" />
+  </target>
+
+  <target name="compileTopic" depends="prepareDirectories">
+    <echo message="Compiling topic publisher and subscriber  ..."/>
+    <javac srcdir="${srcDir}/topic"
+           destdir="${classesDir}"
+	   deprecation="${compile.deprecation}"
+           optimize="${compile.optimize}"
+           debug="${compile.debug}"
+           includes="**/*.java"
+         >
+      <classpath path="${classpath}">
+        <path refid="jboss.jars"/>
+        <path location="${classesDir}"/>
+      </classpath>
+    </javac>   
+  </target>
+
+  <target name="compileQueue" depends="prepareDirectories">
+    <echo message="Compiling msg queue sender and receiver  ..."/>
+    <javac srcdir="${srcDir}/queue"
+           destdir="${classesDir}"
+           deprecation="${compile.deprecation}"
+           optimize="${compile.optimize}"
+           debug="${compile.debug}"
+           includes="**/*.java"
+           >
+      <classpath path="${classpath}">
+        <path refid="jboss.jars"/>
+        <path location="${classesDir}"/>
+      </classpath>
+    </javac>   
+  </target>
+
+  <target name="runSubscriber">
+    <echo message="Running ${subscriberName}" />
+    <echo message="  java -classpath ${classesDir} ${subscriberName}"/>
+    <java fork="on" classname="${subscriberName}" >
+       <classpath path="${classpath}">
+         <path refid="jboss.jars"/>
+         <pathelement location="${classesDir}"/>
+         <pathelement path="."/>
+       </classpath>
+    </java>
+  </target>
+
+  <target name="runPublisher">
+    <echo message="Running ${subscriberName}" />
+    <echo message="  java -classpath ${classesDir} ${publisherName}"/>
+    <java fork="on" classname="${publisherName}" >
+       <classpath path="${classpath}">
+         <path refid="jboss.jars"/>
+         <pathelement location="${classesDir}"/>
+         <pathelement path="."/>
+       </classpath>
+    </java>
+  </target>
+
+  <target name="runSender">
+    <echo message="Running ${senderName}" />
+    <echo message="  java -classpath ${classesDir} ${senderName}"/>
+    <java fork="on" classname="${senderName}" >
+       <classpath path="${classpath}">
+         <path refid="jboss.jars"/>
+         <pathelement location="${classesDir}"/>
+         <pathelement path="."/>
+       </classpath>
+    </java>
+  </target>
+
+  <target name="runReceiver">
+    <echo message="Running ${receiverName}" />
+    <echo message="  java -classpath ${classesDir} ${receiverName}"/>
+    <java fork="on" classname="${receiverName}" >
+       <classpath path="${classpath}">
+         <path refid="jboss.jars"/>
+         <pathelement location="${classesDir}"/>
+         <pathelement path="."/>
+       </classpath>
+    </java>
+  </target>
+
+</project>

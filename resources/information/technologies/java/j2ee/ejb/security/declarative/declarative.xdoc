@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"-->
+<section id="resources.information.technologies.java.j2ee.ejb.security.declarative.declarative"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Declarative Authorization</title>
+  <para>
+    Security roles should, where possible, be defined declaratively -- <abbrev>i.e.</abbrev> 
+    within the XML deployment descriptor and not within the code. There are several 
+    advantages to using declarative security model: 
+    <itemizedlist>
+      <listitem>
+        <para>Usually bean developers would not have sufficient information about the security
+          requirements of the deployment environment. </para>
+      </listitem>
+      <listitem>
+        <para>If security is coded into the bean, the re-use opportunities may be limited. </para>
+      </listitem>
+      <listitem>
+        <para>Declarative security enables security administrators without coding experience to
+          specify and modify the security aspects of the system.</para>
+      </listitem>
+    </itemizedlist>
+    The responsibility of assigning and controlling authorizations is thus not with the
+    bean developer, but with the deployer.
+  </para>
+  
+  <section>
+    <title>The Assembly Descriptor</title>
+    <para>
+      The assembly descriptor is an optional element of the deployment descriptor.
+      Enterprise bean developers typically omit this part of the deployment descriptor. It is
+      usually added at a later stage when the beans are being deployed.
+    </para>
+    <para>
+      The assembly descriptor defines security roles and method permissions. In addition to
+      these security elements the assembly descriptor can also be used to specify which
+      transactional attributes apply to which methods. 
+    </para>
+    <para>
+      Have a look at the following XML deployment descriptor:
+<programlisting><![CDATA[
+<ejb-jar>
+ <enterprise-beans>
+   <session>
+     <ejb-name>Purchase</ejb-name>
+     ...
+   </session>
+
+   <entity>
+     <ejbname>Product</ejbname>
+     ...
+   </entity>
+ </enterprise-beans>
+
+ <assembly-descriptor>
+
+   <security-role>
+     <description>Administrators may modify product details.</description>
+     <role-name>administrator</role-name>
+   </security-role>
+
+   <security-role>
+     <description>customers can query product details.</description>
+     <role-name>customer</role-name>
+   </security-role>
+
+   <method-permission>
+     <role-name>administrator</role-name>
+     <method>
+       <ejb-name>Product</ejb-name>
+       <method-name>*</method-name>
+     </method>
+   </method-permission>
+
+   <method-permission>
+     <role-name>customer</role-name>
+     <method>
+       <ejb-name>Product</ejb-name>
+       <method-name>getName</method-name>
+     </method>
+     <method>
+       <ejb-name>Product</ejb-name>
+       <method-name>getPrice</method-name>
+       <method-params>Currency</method-params>
+     </method>
+   </method-permission>
+ </assembly-descriptor>
+</ejb-jar>
+]]></programlisting>
+    </para>
+    <para>
+        Here we defined to enterprise beans, one <literal>Purchase</literal>
+        session bean and one <literal>Product</literal> entity bean. The bean
+        developer would only include the  
+        <literal><![CDATA[<enterprise-beans>]]></literal> section.
+      <note><para>
+        Note that managers have access to all product services, while customers may only
+        query the product name and use that <literal>getPrice</literal> ethos
+        which receives the currency as argument -- i.e. may query the price of the product in a
+        supplied currency.
+      </para></note>
+    </para>
+    <para>
+      The deployer would add the assembly descriptor in which the security roles are
+      defined and in which the security permissions are set.
+    </para>
+  </section>
+  
+  <section>
+    <title>Mapping Principals onto Roles</title>
+    <para>
+      Finally the principals have to be mapped onto the security roles. In other words,
+      users or user groups (or identifications like smart cards) have to be mapped onto the
+      security roles. The way this is done depends on the application server which would
+      typically supply tools for mapping user information obtained from directory services or
+      user databases onto the security roles.
+    </para>
+  </section>
+</section>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Immediate event handling</title>
+    <para>
+        The immediate event handling property of JSF is used to handle events that normally 
+        don't necessitate validating the entire form. This is typically the case when certain
+        fields are dynamically added or removed from the form.
+    </para>
+    <para>
+        By setting the <literal>immediate</literal> attribute of a component to
+        <emphasis>true</emphasis> (by default it is <emphasis>false</emphasis>),
+        the conversion, validation as well as the execution of any actions and
+        action listeners for that component is brought forward to the 
+        <emphasis>apply-request-values</emphasis> phase.
+    </para>
+    <para>    
+        For example, assume you are capturing person details and, depending on whether
+        the person is busy studying, you want to capture the details of the qualification
+        he or she is studying for. You could have a "busy studying" check box and only if that
+        check box is ticked, show fields through which you capture the details of the
+        qualification they are studying for.
+    </para>
+    <para>
+        Because the check box is used only to populate the form with additional fields 
+        (or to remove them), there is no for the entire form to be in a valid state
+        when processing this event. We thus need not validate the form in its entirety
+        and can simply go ahead and perform the conversion, validation and any action
+        events for that component only.
+        In this case, you would use immediate event handling.
+        
+    </para>
+    <para>
+        Normally the other components are taken through the standard life cycle.
+        However, if an action listener calls <literal>facesContext.renderResponse()</literal>,
+        then the rest of the
+        life cycle phases up to the <emphasis>render phase</emphasis> are skipped.
+        <note><para>
+            The rest of the components are thus not yet converted or validated and need
+            thus not yet have valid values.
+        </para></note>
+    </para>
+</section>    

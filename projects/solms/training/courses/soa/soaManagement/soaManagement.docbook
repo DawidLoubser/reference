@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Managing your JBI-based infrastructure to realise quality of service</title>
+    
+    <!--
+        INTENT:
+        - How to realise qualities like scalability, reliability, auditability, security, etc in JBI (can this be done
+        vendor-neutral, or will it have some locked-in elements?
+    -->
+
+    <indexterm>
+        <primary>JBI</primary>
+        <secondary>QOS</secondary>
+        <seealso>
+            <indexterm>
+                <primary>quality of service</primary>
+            </indexterm>
+        </seealso>
+    </indexterm>
+    
+    <para>
+        The JBI Specification (version 1.0) addresses almost no quality-of-service aspects of hosting an ESB. 
+        The core focus on the first version of the specification appears to have been almost purely functional. As such, different ESB vendors compete on the front of offering
+        certain qualities of service, although (in practice) most ESB implementations seem to offer
+        a similar feature set in this regard. We can thus make general statements and propose general strategies
+        for achieving certain service qualities:
+    </para>
+
+    <section>
+        <title>Reliability</title>
+        
+        <section>
+            <title>High Availability</title>
+            <para>
+                Although JBI describes a logically centralised infrastructure (i.e. a "single" normalised message router), 
+                most ESBs can be clustered across multiple physical hosts. This is usually achieved in the context of 
+                configuring the underlying (typically JMS-based) messaging system used by the Normalized Message Router
+                (for example, Apache ActiveMQ used by the Servicemix ESB).
+            </para>
+            <para>
+                To achieve high reliability, a cluster of ESBs are configured such that a single instance is <quote>active</quote>, with
+                the other instances being in <quote>stand-by</quote> mode. Should the active instance go down, one of the stand-by
+                instances takes over as the active instance.
+            </para>
+            <para>
+                This scenario achieves high availability without incurring any of the complexity of true clustering.
+                Apache Servicemix, for example, calls this <quote>passive clustering</quote>.
+            </para>
+        </section>
+        
+        <section>
+            <title>Reliable Message Delivery</title>
+            <para>
+                The ESB's underlying messaging system usually allows vendor-specific configuration to trade off messaging performance
+                against reliability. In its most reliable form, message delivery involves the transactional storage of messages in a
+                database during message routing, ensuring that the ESB can survive system failures by continuing in a consistent
+                state when the system is brought back up again.
+            </para>
+        </section>
+        
+    </section>
+    
+    <section>
+        <title>Scalability</title>
+        
+        <section>
+            <title>Clustering</title>
+            <para>
+                To achieve a high degree of scalability, multiple instances of one's ESB can be run across multiple
+                network hosts. They are all configured to actively join a cluster group, after which they can all
+                see each other's components and services. In this scenario, messages can be seamlessly routed
+                between ESBs as if all endpoints were defined in a single ESB.
+            </para>
+            <para>
+                In most current implementations, though the ESB infrastructure is clustered (duplicated across hosts), the service
+                units themselves are not. Different service units are usually deployed to different hosts.
+            </para>
+        </section>
+        
+    </section>
+    
+    <section>
+        <title>Auditability</title>
+        <para>
+            One of the biggest advantages of mediated message exchange via the NMR is that sophisticated auditability
+            (such as logging messages for future inspection) can be enabled. This can usually be done through one of two mechanisms:
+            <itemizedlist>
+                <listitem>
+                    <para>Configuring logging handlers for the normalised message router, such as plugging in a specific Log4J
+                    or <literal>java.util.logging</literal> handler into the specific ESB's messaging logger.</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Configuring a global message listener, usually via an ESB-specific API
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Unfortunately, JBI 1.0 does not directly specify an interception API, so it is possible that one's
+            auditability solution may be somewhat locked into a particular ESB, or at least its logging system
+            (e.g. Log4J).
+        </para>
+        <para>
+            Recall, however, that JBI <emphasis>does</emphasis> specify standard administration and monitoring
+            via JMX. Most of the MBeans support real-time statistics and monitoring, effectively providing another
+            avenue through which to perform certain auditing tasks.
+        </para>
+    </section>
+    
+    <section>
+        <title>Security</title>
+        
+        
+        <section>
+            <title>Authentication</title>
+            <para>
+                Authentication is usually performed in Binding components, when external clients make requests.
+                User credentials are then typically stored in the incoming message (as JBI message headers) as
+                the message is routed to different services.
+                <!-- TODO: How is the info stored? -->
+            </para>
+        </section>
+        
+        <section>
+            <title>Authorisation</title>
+            <para>
+                JBI 1.0 does not specify any standard mechanism to perform authorisation (such as role-based authorisation)
+                for services. Most ESB implementations, however, allow one to specify the authorisation requirements
+                on a per-service level. If an authenticated service request is routed to such a service endpoint, it may be refused (by means of
+                a fault message) if the client is not allowed to invoke the service. 
+            </para>
+        </section>
+        
+        <section>
+            <title>Confidentiality</title>
+            <para>
+                The Normalised Message Router itself inherently represents a trusted environment. As such, there is usually no mechanism to specify
+                confidential message exchange between service endpoints on the ESB. Binding components, however, may employ several protocol-level
+                confidentiality features (such as SSL / HTTPS) to ensure the confidential exchange of messages between external client(s) and 
+                the binding component.
+            </para>
+        </section>
+        
+        <!--
+            Via some kind of XML digest mechanism?
+        <section>
+            <title>Non-repudiation</title>
+            <para></para>
+        </section>
+        -->
+        
+    </section>
+    
+<!-- TODO
+
+    <section>
+        <title>Concrete strategies for Apache ServiceMix</title>
+        <para>Security, reliability, auditability, etc etc</para>
+    </section>
+    -->
+
+</chapter>

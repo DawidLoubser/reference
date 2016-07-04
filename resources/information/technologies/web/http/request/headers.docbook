@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xml:id="components.technologies.www.http.request.headers">
+    <title>Common HTTP Request Headers</title>
+  <indexterm>
+    <primary>HTTP</primary>
+    <secondary>request</secondary>
+    <tertiary>headers</tertiary>
+  </indexterm>
+    <section>
+        <title>Host:</title>
+        <para>
+            Specifies the name of the server to which the request is being made.
+            While this may seem unusual, as the client already knows the name of the server in order
+            to connect to it and send the request in the first place, this useful feature allows for
+            <emphasis>virtual hosting</emphasis> - a concept which allows for more than one web host
+            to reside on the same server. It is uneconomical to require a physical server (or network address) 
+            for every web site, and Host headers allows a server hosting many virtual web sites to delegate
+            the request to the correct site.
+        </para>
+    </section>
+    <section>
+        <title>User-Agent:</title>
+        <para>Identifies the program that's making the request, in the
+            form <literal>ProgramName/Version (Detailed Version Info) More Info,</literal> e.g.
+            <literal>Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.0.2) Gecko/20030208 Netscape/7.02</literal>
+        </para>
+        <para>
+            The User-Agent header can be used to service a request tailored to specific output devices,
+            e.g. different browsers, or platforms such as PDA's and cellular phones.
+        </para>
+    </section>
+    <section>
+        <title>Accept:</title>
+        <para>Specifies a space-separated list of content-types (MIME-types) which the
+            application which made the request is capable of processing. 
+        </para>
+        <para>
+            In the case of web browsers, these are usually the types that the browser can handle <emphasis>internally</emphasis>,
+            e.g. it may be able to handle additional content types with the help of other applications.
+        </para>
+    </section>
+    <section>
+        <title>Connection:</title>
+        <para> The type of connection. (e.g. Keep-Alive) </para>
+    </section>
+    <section>
+        <title>Keep-Alive:</title>
+        <para>
+            The keep alive timeout (milliseconds), if <emphasis>Keep-Alive</emphasis> is supported on the
+            connection (HTTP 1.1 +). This type of connection allows for more than one request/response to be processed
+            using the same connection, allowing for much greater efficiency
+            during requests for web pages with many dependencies (such as images) - especially over slow
+            connections. The client-sent Keep-Alive header is merely a request to the server, and the server
+            may still specify its own timeout if it does not agree with the client's request.
+        </para>
+    </section>
+    <section>
+        <title>Cookie:</title>
+        <para>
+            A cookie is one or more name=value pair(s) of information that the server asked the
+            client to store. This is often used to uniquely identify a particular client
+            upon subsequent requests, as theoretically
+            only the client which received the cookie can reproduce it correctly, unless the connection
+            has somehow been compromised. Security is often enhanced by employing a secure/encrypted
+            network connection using HTTPS.
+        </para>
+      <para>
+        Any cookies that the server asked the client to store must be sent back to the server
+        with every request if the criteria (e.g. path, hostname and
+        validity period) matches.
+      </para>
+    </section>
+    <section>
+        <title>Referer</title>
+        <para> The Referer request-header field allows the client to specify, for the server's
+            benefit, the address (URI) of the resource from which the Request-URI was obtained (the
+            &quot;referrer&quot;, although the header field is intentionally misspelled.) 
+            The Referer request-header allows a server to generate lists of back-links to resources for
+            interest, logging, optimized caching, etc. It also allows obsolete or mistyped links to
+            be traced for maintenance. The Referer field must not be sent if the Request URI was
+            obtained from a source that does not have its own URI, such as input from the user
+            keyboard (e.g. typing an address into the browser location bar). </para>
+    </section>
+    <section>
+        <title>Accept-Encoding</title>
+        <para>
+            Standard HTTP messages are sent as-is (unencoded). However, the client may indicate
+            that it supports one or more methods of encoding, typically for reasons of
+            data compression. The server may then encode the message in a supported format,
+            thereby saving large amounts of network bandwith (as text content typically compresses very well).
+            The most common supported encoding is <literal>gzip</literal>, with others being <literal>deflate</literal>
+            and <literal>compress</literal> (all different compression algorithms).
+        </para>
+    </section>
+    
+</section>

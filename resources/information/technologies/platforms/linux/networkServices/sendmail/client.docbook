@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns3359:section xmlns:ns3359="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.sendmail.client">
+
+	<ns3360:title xmlns:ns3360="http://docbook.org/ns/docbook">Mail clients</ns3360:title>
+	<ns3361:para xmlns:ns3361="http://docbook.org/ns/docbook">
+	For the testing of the sendmail, we used the <ns3362:emphasis xmlns:ns3362="http://docbook.org/ns/docbook" role="strong">mail</ns3362:emphasis> command which provided minimalistic features. Many other more friendly tools are available, and the configuration between these applications are similar. To send email, a SMTP server is required, which is accessed on port 25. To receive email, a POP3 server, which is accessed on port 110, is required. 
+	</ns3361:para>
+	
+	<ns3363:section xmlns:ns3363="http://docbook.org/ns/docbook">
+		<ns3364:title xmlns:ns3364="http://docbook.org/ns/docbook">Sending email via telnet</ns3364:title>
+		<ns3365:para xmlns:ns3365="http://docbook.org/ns/docbook">
+		</ns3365:para>
+		<ns3366:programlisting xmlns:ns3366="http://docbook.org/ns/docbook">
+		
+[butterfly:~] alex% telnet client8 25
+Trying 192.168.1.18...
+Connected to client8.
+Escape character is '^]'.
+220 client8.solmshome.co.za ESMTP Sendmail 8.12.8/8.12.8; Thu, 4 Sep 2003 11:03:53 +0200
+mail from: alex@client8.solmshome.co.za
+250 2.1.0 alex@client8.solmshome.co.za... Sender ok
+rcpt to: root@client8.solmshome.co.za
+250 2.1.5 root@client8.solmshome.co.za... Recipient ok
+data
+354 Enter mail, end with "." on a line by itself
+Subject: This is the subject
+And this is the message body
+Which can span mulitple lines
+And is ended with a . on a line by itself
+.
+250 2.0.0 h8493rhc004817 Message accepted for delivery
+^]
+telnet&gt; quit
+Connection closed.
+[butterfly:~] alex%
+		
+		</ns3366:programlisting>
+	</ns3363:section>	
+	<ns3367:section xmlns:ns3367="http://docbook.org/ns/docbook">
+		<ns3368:title xmlns:ns3368="http://docbook.org/ns/docbook">Receiving mail via the mail tool</ns3368:title>
+		<ns3369:para xmlns:ns3369="http://docbook.org/ns/docbook">
+		
+		</ns3369:para>
+		<ns3370:programlisting xmlns:ns3370="http://docbook.org/ns/docbook">
+		
+[root@client8 mail]# mail
+Mail version 8.1 6/6/93.  Type ? for help.
+"/var/spool/mail/root": 1 message 1 new
+&gt;N  1 alex@client8.solmsho  Thu Sep  4 11:05  15/665   "This is the subject"
+&amp;
+Message 1:
+From alex@client8.solmshome.co.za  Thu Sep  4 11:05:31 2003
+Date: Thu, 4 Sep 2003 11:03:53 +0200
+From: alex@client8.solmshome.co.za
+X-Authentication-Warning: client8.solmshome.co.za: butterfly [192.168.1.88] didn't use HELO protocol
+Subject: This is the subject
+ 
+And this is the message body
+Which can span mulitple lines
+And is ended with a . on a line by itself
+ 
+&amp;
+		
+		</ns3370:programlisting>
+	</ns3367:section>	
+	<ns3371:section xmlns:ns3371="http://docbook.org/ns/docbook">
+		<ns3372:title xmlns:ns3372="http://docbook.org/ns/docbook">Receiving mail status via telnet</ns3372:title>
+		<ns3373:para xmlns:ns3373="http://docbook.org/ns/docbook">
+	 	To query a POP3 server using telnet for information on how many messages are available within an account inbox, telnet into the server on port 110.	
+		</ns3373:para>
+		<ns3374:programlisting xmlns:ns3374="http://docbook.org/ns/docbook">
+[butterfly:~] alex% telnet client8 110
+Trying 192.168.1.18...
+Connected to client8.
+Escape character is '^]'.
++OK POP3 client8 v2001.78rh server ready
+User user
++OK User name accepted, password please
+Pass password
++OK Mailbox open, 1 messages
+		</ns3374:programlisting>
+		<ns3375:para xmlns:ns3375="http://docbook.org/ns/docbook">
+		Once this has been completed successfully, any other client should be able to retrieve the messages from the inbox.
+		</ns3375:para>
+	</ns3371:section>	
+</ns3359:section>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-01-16 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Mapping UML association relationships onto XML</title>
+    <para> UML associations would typically be mapped onto <itemizedlist>
+            <listitem>
+                <para>
+                    <emphasis>key references</emphasis> in the case of intra-document references
+                        (<abbrev>i.e.</abbrev> if the referenced object is contained in the same XML
+                    document as the object which has the association), </para>
+            </listitem>
+            <listitem>
+                <para> or onto <emphasis>xlink</emphasis>s in the case of external links
+                        (<abbrev>i.e.</abbrev> where the referenced object is eternal to the
+                    document hosting the object which has the association). </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+
+    <section>
+        <title>Intra-document associations</title>
+        <para> Intra-document associations are preferable specified using keys and key references. A
+            key is a special type of uniqueness constraint which is referencable. It may be a
+            composite key which is assembled across multiple elements and/or attributes. </para>
+        <para> For a <literal>key</literal> we need to specify <orderedlist>
+                <listitem>
+                    <para> the scope across which the key is unique, </para>
+                </listitem>
+                <listitem>
+                    <para> the object which is uniquely identified by the key, and </para>
+                </listitem>
+                <listitem>
+                    <para> the fields within the object from which a unique identifier for the
+                        object is assembled. </para>
+                </listitem>
+            </orderedlist> The scope is specified by putting the key definition within that element
+            within which the key needs to be unique. The selector element of a key definition points
+            to the object which is uniquely identified by the key. Finally, the field element(s)
+            refer(s) to the element(s) and/or atrribute(s) which make up the unique identifier for
+            the key. </para>
+        <para> Similarly, for a <literal>keyRef</literal> element (which represents the actual
+            association or pointer) we need to specify the object which hosts the association or
+            pointer and the fields which make up the data for the association (pointer) variable. </para>
+        <section>
+            <title>Example: Retail outlets associated with regions</title>
+            <para> Consider, for example, the UML diagram in <xref
+                    linkend="technology.xml.umlMappings.classDiagram.association.retailOutlets_fig"
+                />. </para>
+            <figure xml:id="technology.xml.umlMappings.classDiagram.association.retailOutlets_fig">
+                <title>Retail outlets associated with regions</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="retailOutlets.jpg"/>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+            <para> To implement the association in XML schema, we need to specify a key definition
+                for the <literal>Region</literal> class and a <literal>keyRef</literal> definition
+                for the association variable of the <literal>RetailOutlet</literal> class.
+                <programlisting xml:space="preserve"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.solms.co.za/retail/outlets"
+    xmlns:r="http://www.solms.co.za/retail/outlets"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+    
+    <xs:element name="retailOutlets" type="r:RetailOutlets">
+        
+        <xs:key name="RegionKey">
+            <xs:selector xpath="./r:region"/>
+            <xs:field xpath="@id"/>
+        </xs:key>
+        
+        <xs:keyref refer="r:RegionKey" name="RegionRef">
+            <xs:selector xpath="./r:retailOutlet"/>
+            <xs:field xpath="r:region"/>
+        </xs:keyref>
+        
+    </xs:element>
+    
+    <xs:complexType name="RetailOutlets">
+        <xs:sequence>
+            <xs:element name="retailOutlet" type="r:RetailOutlet" 
+                  maxOccurs="unbounded"/>
+            <xs:element name="region" type="r:Region" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="RetailOutlet">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="address" type="xs:string"/>
+            <xs:element name="region" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+    
+    <xs:complexType name="Region">
+        <xs:sequence>
+            <xs:element name="name"/>
+            <xs:element name="description" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+
+</xs:schema>					
+					]]></programlisting>
+            </para>
+            <para> An XML instance document complying to this schema is shown below:
+                <programlisting><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<retailOutlets xmlns="http://www.solms.co.za/retail/outlets"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.solms.co.za/retail/outlets 
+        ./retailOutlets.xsd">
+    
+    <retailOutlet id="out1">
+        <name>Soul Flutes</name>
+        <address>12 Groovy Rd, Jazz Town</address>
+        <region>Deep South</region>
+    </retailOutlet>
+    
+    <retailOutlet id="out2">
+        <name>Chanting Drums</name>
+        <address>7 Rhythm ave, Beat Town</address>
+        <region>Far West</region>
+    </retailOutlet>
+    
+    <retailOutlet id="out3">
+        <name>His Master's Voice</name>
+        <address>13 Armstrong Ave, Freedom Town</address>
+        <region>Deep South</region>
+    </retailOutlet>
+    
+    <region id="Deep South">
+        <name>South Border</name>
+        <description>Below the mellow river</description>
+    </region>
+    
+    <region id="Far West">
+        <name>West Coast</name>
+        <description>Behind the spooky forest</description>
+    </region>
+</retailOutlets>					
+					]]></programlisting>
+            </para>
+            <note>
+                <para> Even though the UML diagram defines the association for the class, the
+                        <literal>keyRef</literal> declaration is at role level. If the same class is
+                    reused in different places, we need to redefine the association for each usage
+                    of the class. </para>
+            </note>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Inter-document associations</title>
+        <para> An association to an object or resource which is not contained within the XML
+            document containing the object which has the association can be implemented using
+            extended links, XLinks.
+            <programlisting><![CDATA[
+<out:retailOutlet id="out1"
+  xlink:href="http://www.deepSouth.com"
+  xlink:role="http://www.solms.co.za/region"
+  xlink:title="Outlet region">
+        <name>soul Flutes</name>
+        <address>12 Groovy Rd, Jazz Town</address>
+        <region>Deep South</region>
+</my:crossReference>
+				]]></programlisting>
+        </para>
+    </section>
+</section>

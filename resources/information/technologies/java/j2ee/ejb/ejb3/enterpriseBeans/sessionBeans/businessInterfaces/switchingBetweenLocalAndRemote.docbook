@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.businessInterfaces.switchingBetweenLocalAndRemote">
+	  <title>Switching between local and remote interfaces</title>
+	  <para>
+		EJB does not support automatic switching between local and remote interfaces.
+		The reason for this is that it would be unsafe, as the different parameter
+		handling may result in changes in logic.
+	</para>
+	
+	  <section>
+		    <title>Parameter handling in plain Java objects</title>
+		    <para>
+			Java only supports input parameters, <abbrev>i.e.</abbrev> they are copied
+			from the client to the server upon service request and never back. 
+			Method parameters may be either primitives (like
+			int, boolean or double) or object references. In either way they are copied
+			to the client. In the case of an object reference, the client using that
+			reference (without changing the value of the reference itself) will access
+			the actual object and potentially change its state. It is through this
+			mechanism that Java simulates output and input/output parameters.
+		</para>
+	  </section>
+	
+	  <section>
+		    <title>Parameter handling in remote Java objects (via RMI)</title>
+		    <para>
+			When accessing remote Java objects, primitive parameters are also treated as
+			input arguments. For object parameters, there are, however, two scenarios. 
+			<orderedlist>
+				        <listitem>
+               <para>
+					If the argument is itself a remotely accessible object (<abbrev>i.e.</abbrev> a
+					RMI server which implements
+					<literal>java.rmi.UnicastRemoteObject</literal>, then the client will
+					receive a remote reference through which the object itself can be
+					manipulated.
+				</para>
+            </listitem>
+				        <listitem>
+               <para>
+					Otherwise the class for that object must implement
+					<literal>java.io.Serializable</literal> and the object will be serialized
+					onto the RMI stream upon service request. The object will not be sent back
+					upon service completion.
+				</para>
+            </listitem>
+			      </orderedlist>
+		    </para>
+		    <para>
+			From the above we see that objects which are RMI servers are treated the same
+			across local and remote interfaces, but other objects are not. Changing a
+			local to a remote interface and vice versa is only safe if the client only
+			requires read access.
+			<note>
+            <para>
+				An effective way of enforcing this is by making the argument an interface which
+				provides clients read-only access to the underlying object.
+			</para>
+         </note>
+		    </para>
+	  </section>
+
+	  <section>
+		    <title>Providing access locally and remotely</title>
+		    <para>
+			A bean implementation, if deemed safe, may implement both a local and a
+			remote interface. In this case one often uses interface extension to avoid
+			code duplication and promote consistency:
+	    	<programlisting language="Java">
+public interface OrderProcessor
+{
+  public Invoice processOrder(Order order) 
+				   throws InsufficientFundsException;
+}
+
+				</programlisting>
+		    	<programlisting language="Java">
+@javax.ejb.Local 
+public interface OrderProcessorLocal 
+    extends OrderProcessor {}
+				
+				</programlisting>
+		    	<programlisting language="Java">
+@javax.ejb.Remote 
+public interface OrderProcessorRemote 
+    extends OrderProcessor {}
+				
+				</programlisting>
+		    	<programlisting language="Java">
+@javax.ejb.Stateless 
+public class OrderProcessorBean 
+    implements OrderProcessorLocal,	OrderProcessorRemote
+{
+  public Invoice processOrder(Order order) 
+           throws InsufficientFundsException
+  {
+    ...
+  }			
+}
+</programlisting>
+
+			
+		    </para>
+		    <para>
+			Again, if one does not want to classify the roles the interfaces play
+			within the interfaces themselves, one may use the alternative method of
+			performing the classification within the Bean implementation itself. In
+			this scenario, you may still choose to implement different interfaces for
+			remote and local access, but it is quite common to now refer to the same
+			interface:
+	    	<programlisting language="Java">
+import javax.ejb.*;
+
+@Local({OrderProcessor.class})
+@Remote({OrderProcessor.class})
+@Stateless 
+public class OrderProcessorBean implements OrderProcessor
+{
+  public Invoice processOrder(Order order) 
+           throws InsufficientFundsException
+  {
+    ...
+  }			
+}
+				</programlisting>
+		    </para>
+	  </section>
+	
+</section>

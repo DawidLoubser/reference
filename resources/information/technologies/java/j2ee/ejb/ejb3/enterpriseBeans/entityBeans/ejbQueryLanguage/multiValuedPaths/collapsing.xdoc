@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.entityBeans.ejbQueryLanguage.multiValuedPaths.collapsing"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Collapsing Multi-Valued Paths into Single-Valued Paths via Collection Variables</title>
+  <para>
+    SELECT clauses are restricted to single-valued paths. The same is largely true for WHERE 
+    clauses. So, how do we handle queries along multi-valued paths?
+  </para>
+  <para>
+    In EJB-QL this is done by defining collection variables via an  
+    <literal>IN</literal> clause. Consider, for example the invalid query
+<programlisting><![CDATA[
+SELECT client.bonds.account FROM Client client      -> INVALID
+]]></programlisting>
+  </para>
+  <para>
+    The correct form of this query in EJB-QL is
+<programlisting><![CDATA[
+SELECT bonds.account FROM Client c, IN(c.bonds) bonds      -> VALID
+]]></programlisting>
+  </para>
+  <para>
+     Here the <literal>IN</literal>-clause defines a collection variable,
+     <literal>bonds</literal> which, for each client, resembles the client's bonds.
+  </para>
+  <para>
+    In a similar way we can fix the following invalid EJB-QL statement
+<programlisting><![CDATA[
+SELECT p.presenters.course.name FROM Presentation p   -> INVALID
+]]></programlisting>
+    by defining a collection variable,<literal>ps</literal> , via an  
+    <literal>IN</literal> clause
+<programlisting><![CDATA[
+SELECT ps.course.name FROM Presentation p, IN(p.presenters) ps   -> VALID
+]]></programlisting></para>
+</section>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.design.patterns.classical.structural.flyWeight.consequences"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Consequences</title>
+  <para>
+    The flyweight pattern has a whole range of consequences some of which my prevent
+    it from being used in certain situations.
+  <itemizedlist>
+    <listitem><formalpara>
+      <title>The total number of objects may be significantly reduced</title>
+      <para>
+        particularly if the number of conceptual objects becomes very large like in character
+        objects of a text document, the number of physical objects maintained by the system
+        may be reduced significantly when using the flyweight pattern.
+      </para>
+    </formalpara></listitem>
+    
+    <listitem><formalpara>
+      <title>Reduced instance creation/deletion</title>
+      <para>
+        Since objects are re-used in different contexts, the amount of objects which are
+        instantiated and deleted may be significantly reduced by using the flyweight pattern.
+      </para>
+    </formalpara></listitem>
+    
+    <listitem><formalpara>
+      <title>The application logic may not rely on intrinsic object identity</title>
+      <para>
+        Since the same object is shared and re-used in different contexts, the different
+        conceptual objects will be realized by the same physical object. If the application
+        requires object identity at the fine-grained object (flyweight) level, then that
+        object identity must be part of the extrinsic state managed by the application.
+      </para>
+    </formalpara></listitem>
+    
+    <listitem><formalpara>
+        <title>Requires support for reference counting</title>
+        <para>
+          Objects are shared and this may complicate the memory management significantly, 
+          particularly if the implementation language does not support garbage collection. Note
+          that clients cannot delete an object when they are finished with it since the same physical
+          object may be used in the context of a different conceptual object somewhere else.
+          The factory is the only object which is in a position to manage the life cycle of the flyweights.
+          It will have to implement a reference counting scheme which will enable it to delete
+          unreferenced objects.
+        </para>
+    </formalpara></listitem>
+  </itemizedlist>
+    </para>
+</section>

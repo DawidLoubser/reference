@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <title>Sending an email</title>
+    <para>
+        All resources including connection resources should be managed by the application server. Hence one should not
+        open directly a connection to a mail server, but request a mail resource from the application server instead.
+    </para>
+    
+    <section>
+        <title>Registering an email server</title>
+        <para>
+            This is typically done through the management console of your application server. On Glassfish the resultant
+            mail service descriptor is added to the <literal>config/domain.xml</literal> domain descriptor:
+            <programlisting language="xml"><![CDATA[
+<mail-resource host="solms.co.za" store-protocol="pop3" store-protocol-class="com.sun.mail.imap.POP3Store" 
+           jndi-name="mail/solms" from="appServer@solms.co.za" user="appServer">
+      <property name="mail.smtp.auth" value="true" />
+      <property name="mail.smtp.password" value="appServerPassword" />
+      <property name="mail.smtp.user" value="sbss" />
+      <property name="mail.smtp.port" value="425" />
+</mail-resource>
+                ]]></programlisting>
+        </para>
+    </section>
+
+    <section>
+        <title>Sending an email from an enterprise bean</title>
+        <para>
+            Sending an email from  a session or message-driven bean is no different than sending one from any other Java code 
+            except that the email server session is not to be created within the code, but rather to be provided (via depenency
+            injection) by the application server:
+        </para>
+        <para>
+            <programlisting><![CDATA[
+@Stateless
+public class PersonServices
+{
+
+  @Override
+    public void emailAuthenticationCredentials(String emailAddress)
+            throws NoPersonWithThatEmailAddressException, MessagingException
+    {
+        List<Person> persons = this.getPersonsWithEmailAddress(emailAddress);
+
+        if (persons.size() == 0)
+                throw new NoPersonWithThatEmailAddressException();
+
+       Transport transport = mailSession.getTransport();
+
+        for (Person person:persons)
+        {
+           User user = person.getUser();
+
+           MimeMessage message = new MimeMessage(mailSession);
+           message.setSubject("Password notification");
+           message.setText("Your username and password for solms.co.za are \n" +
+                "username: " + user.getUsername() + "\npassword:" + user.getPassword());
+           message.setFrom(new InternetAddress("info@solms.co.za"));
+           message.addRecipient(Message.RecipientType.TO,
+                new InternetAddress(emailAddress));
+
+           transport.connect();
+           transport.sendMessage(message,
+               message.getRecipients(Message.RecipientType.TO));
+           transport.close();
+        }
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @EJB
+    private UserServices userServices;
+
+   @Resource(name = "mail/solms")
+   private Session mailSession;
+
+]]></programlisting>
+        </para>
+    </section>
+</section>    
+    

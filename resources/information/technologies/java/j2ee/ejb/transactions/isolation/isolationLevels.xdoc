@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.transactions.isolation.isolationLevels"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Transaction Isolation Levels</title>
+  <para>
+    Enterprise bean developers can control how isolated your bean's transaction scope is
+    from other transactions. The choice of isolation level must be weighed up against it's
+    performance cost.
+  </para>
+  
+  <section>
+    <title>Serializable</title>
+    <para>
+      This is the most stringent isolation level which enforces that your transaction
+      requires exclusive read and write privileges to data. Transactions can neither read nor
+      write the same data your transaction accesses until your transaction has committed.
+    </para>
+  </section>
+  
+  <section>
+    <title>Repeatable Reads</title>
+    <para>
+      This isolation level prevents your transaction to modify any data which is read by
+      other transactions, <abbrev>i.e.</abbrev> there may be multiple concurrent reads,
+      but no thread can be writing while other threads are reading.
+    </para>
+    <para>
+      Phantom reads can occur. A phantom read is the reading of a database record which was
+      not yet present when your transaction started, but has been added while your transaction
+      is busy processing.
+    </para>
+  </section>
+  
+  <section>
+    <title>Read Committed</title>
+    <para>
+      This isolation level prevents your transaction from reading uncommitted data. As with
+      repeatable reads, phantom reads can occur.
+    </para>
+    <para>
+      Furthermore non-repeatable reads may occur. A non-repeatable read is one where the
+      information may change during the same transaction, <abbrev>i.e.</abbrev> if the 
+      data is read again during  the same transaction it may lead to different results.
+    </para>
+  </section>
+  
+  <section>
+    <title>ReadUncommited</title>
+    <para>
+      This is the weakest isolation level allowing your transaction to read data from
+      databases which has not yet been committed. Reading of uncommitted data is referred to as
+      dirty reads.
+    </para>
+    <para>
+      In the case of the Dirty Read Problem one transaction can perform a credit and before
+      the transaction is committed another application reads the uncommitted ("dirty") new
+      balance. At a later stage it may happen that the credit transaction is rolled back and the
+      application is working with the incorrect balance.
+    </para>
+  </section>
+</section>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+xml:id="resources.information.technologies.xml.schemas.importSchema.importSchema"
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Importing Schemas into Schemas</title>
+  <indexterm>
+    <primary>XML Schema</primary>
+    <secondary>importing schemas</secondary>
+  </indexterm>
+    <para> 
+      One would like to use a component-based development approach similar to that of
+      used in general software development. To this end schemas themselves must be
+      reusable within the context of other schemas, <abbrev>i.e.</abbrev> 
+      one should be able to use elements from one schema to define high-level elements 
+      in another.
+    </para>
+    <para>
+        When importing a schema the importing schema will 
+        <itemizedlist>
+          <listitem><para>
+              add a namespace declaration for the imported schema, e.g.
+              <programlisting><![CDATA[
+xmlns:cl = "http://www.solms.co.za/clients"                
+                ]]></programlisting>
+          </para></listitem>
+          <listitem><para>
+            add an import request, e.g.
+            <programlisting><![CDATA[
+<xs:import 
+    namespace="http://www.solms.co.za/clients" 
+    schemaLocation="http://www.solms.co.za/clients/client.xsd"/>              
+              ]]></programlisting>
+          </para></listitem>
+        </itemizedlist>
+    </para>
+  <para>
+     It is important to understand the handling of the name spaces in the instance document:
+     the name space of an element is always the same as that of the schema <emphasis>within
+      which it was defined</emphasis>.
+  </para>
+  
+  <section>
+    <title>Example: SalesReport</title>
+    <para>
+      Assume you want to write a schema for a sales report which shows the orders linked to clients as well as
+      the line items associated to products. Clients could be either persons or companies. We have here
+      composition (sub-element or attribute), specialization (inheritance from base) and association (key/keyRef)
+      relationships between the classes (complex types).
+    </para>
+  
+    <figure>
+      <title>SalesReport requiring objects from different domains</title>
+      <mediaobject><imageobject>
+          <imagedata fileref="SalesReport.png"/>
+      </imageobject></mediaobject>
+    </figure>
+    
+    <para>
+      However, even though these object need all be contained in the sales report, they should preferably not be defined
+      in a single schema. Instead may want to maintain client related information (including persons and companies) in
+      one <literal>clients.xsd</literal>, products information in a <literal>products.xsd</literal>, the data structure
+      specification for orders in an <literal>orders.xsd</literal> and the actual report format in a 
+      <literal>salesReport.xsd</literal> which includes the other schemas.
+    </para>
+    
+    <section>
+      <title>client.xsd</title>
+      <para>
+        <programlisting>
+<xi:include href="src/client.xsd" parse="text"/>
+        </programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>product.xsd</title>
+      <para>
+        <programlisting>
+<xi:include href="src/product.xsd" parse="text"/>
+        </programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>order.xsd</title>
+      <para>
+        <programlisting>
+<xi:include href="src/order.xsd" parse="text"/>
+        </programlisting>
+      </para>
+    </section>
+    
+    
+    <section>
+      <title>salesReport.xsd</title>
+      <para>
+        <programlisting>
+<xi:include href="src/salesReport.xsd" parse="text"/>
+        </programlisting>
+        <note>
+          <para>
+            This schema imports the three other schemas and is careful with the name space resolution, particularly on the 
+            <literal>key</literal> and <literal>keyref</literal> declarations which enforce 
+            <itemizedlist>
+              <listitem><para>
+                the uniqueness of clients, products and orders,    
+              </para></listitem>
+              <listitem><para>
+                that each order is associated with an existing client, and
+              </para></listitem>
+              <listitem><para>
+                that each line item is associated with an existing product.
+              </para></listitem>
+            </itemizedlist>
+          </para>
+        </note>
+      </para>
+    </section>
+    
+    <section>
+      <title>salesReport.xml</title>
+      <para>
+        And now the XML instance document which refers to the name spaces of all used schemas and is careful
+        with the namespace prefixes:
+        <programlisting>
+<xi:include href="src/salesReport.xml" parse="text"/>
+        </programlisting>
+      </para>
+    </section>
+  </section>
+</section>

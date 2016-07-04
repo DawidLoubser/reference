@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE chapter SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<chapter id="resources.information.technologies.c.specialization.specialization"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Specialization: Inheritance and Polymorphism in ANSI-<emphasis>C</emphasis></title>
+
+  <section><title>Introduction</title>
+    <para>
+      So far we have not yet tapped the core power of object-orientation - that of being
+      able to work at different levels of abstraction. For this we need 
+      <emphasis>subclassing</emphasis>,
+      <emphasis>substitutability</emphasis> and <emphasis>polymorphism</emphasis>.
+    </para>
+    <para>
+      In order to support these we will have to extend the framework developed in the
+      previous section significantly. However, our interfaces will be in the same
+      spirit as before and hence the client code will not be affected by the rather
+      significant changes to the underlying machinery.
+    </para>
+    <para>
+      As an example we will again use an <type>Account</type> class, but this time we will
+      introduce a subclass, <type>ChequeAccount</type>, through which we will demonstrate
+      how the core object-oriented concepts of 
+      <itemizedlist>
+        <listitem><para>
+          inheritance,  
+        </para></listitem>
+        <listitem><para>
+          substitutability and
+        </para></listitem>
+        <listitem><para>
+          polymorphism
+        </para></listitem>
+      </itemizedlist>
+      can be obtained in object-oriented ANSI-<emphasis>C</emphasis>.
+    </para>
+  </section>
+  
+  <section><title>The header files publishing the class interfaces</title>
+    <para>
+      As before, the header files publish the class interface via a structure
+      of function pointers which will point to the class and instance services
+      and constant pointers to constant structure instances which users of the 
+      provide a safe class handle.
+    </para>
+    <example id="resources.information.technologies.c.specialization.specializationAccount_h">
+      <title>Specialization: Account.h</title>
+      <para>
+        The account interface is virtually unchanged. We only add a <function>print</function>
+        service which will be realized in different ways for different types of accounts
+        (<abbrev>i.e.</abbrev> different  specializations of <type>Account</type>).
+        
+        <programlisting>
+          <xi:include href="Account.h" parse="text"/>
+        </programlisting>
+      </para>  
+    </example>
+    <para>
+      The subclass, <type>ChequeAccount</type> must supply at least the same services
+      as <type>Account</type> (otherwise we will violate substitutability). For our
+      <emphasis>C</emphasis> implementation we will also require that the subclass
+      interface has the same function pointer variables as the superclass in the
+      same order as is specified in the superclass interface. 
+    </para>
+    <para>
+      Of course, a subclass may provide additional services (for example our
+      cheque account provides a <function>getChequeFee</function> service which
+      is not supplied by <type>Account</type>s). The function pointers for these
+      additional services must be appended to the services supplied by the superclass.
+    </para>
+  </section>
+  
+  <section><title>Implementing specialization with substitutatibily and polymorphism</title>
+    <para>
+      Of course, we always have a price to pay for using a language which does not
+      directly support object-orientation. For starters, the implementation is more
+      complex and more error prone.
+    </para>
+    <para>
+      A second consequence is that we are forced to construct dependencies between
+      implementation files of a class and its subclasses. The reason for this
+      is that we need to be able to do the method mappings to <command>static</command> 
+      functions in the subclasses (recall that we declare the instance and class
+      methods <command>static</command> in order to prevent users from using these
+      methods directly bypassing the object-oriented interface).
+    </para>
+    <section><title>Defining an object explicitly</title>
+      <para>
+        In our more sophisticated implementation which supports inheritance, 
+        substitutability and polyorphism, it will be useful to introduce the
+        concept of an object explicitly. An object represents an 
+        <emphasis>Abstract Data Type</emphasis> where the data and the operations
+        applicable to the data are encapsulated within a single unit, an object.
+      </para>
+      <para>
+        The data we will encapsulate within a <type>state</type> structure while the
+        instance and class methods will be encapsulated, as before, in a structure
+        containing function pointers to the functions representing the class 
+        functions and instance methods.
+      </para>
+      <example id="resources.information.technologies.c.specialization.specializationObject_c">
+        <title>Specialization: Object.c</title>
+        <programlisting>
+          <xi:include href="Object.c" parse="text"/>
+        </programlisting>
+      </example>
+    </section>
+    <section><title>Representing object state</title>
+      <para>
+        The state of an object is represented by a structure which is
+        not exported - <abbrev>i.e.</abbrev> which is local to the implementation file(s).
+        For example, the state of an account could be represented via
+        <programlisting>
+struct AccountState
+{
+  char * accountNo;
+  double balance;
+};
+        </programlisting>
+      </para>
+    </section>
+    
+    <section><title>Specifying the mapping for the class and instance services</title>
+      <para>
+        As before, we use function pointers to specify the class and instance services.
+        The latter receive as first argument the instance whose service is requested.
+        However, this time the mapping is not done directly at the interface level
+        but at a hidden class level, <abbrev>i.e.</abbrev> in the implementation file, we specify
+        the structure, initialize and instance and provide a constant handle to it:
+        <programlisting>
+<![CDATA[
+struct AccountClass
+{
+  void *             (*create)       (const char * const accountNo);
+
+  const char * const (*getAccountNo) (const void * const this);
+  double             (*getBalance)   (const void * const this);
+  void               (*credit)       (const void * const this, const double amount);
+  int                (*debit)        (const void * const this, const double amount);
+  void               (*print)        (const void * const this);
+
+  void               (*delete)       (void * * this);
+};
+
+/*====================== Account Methods ================================*/
+
+/* NOTE: All methods declared static (private to file) and can hence
+         not be accessed directly, only through the interface, Account
+         defined above which has method pointers assigned to these
+         methods. Implementation is encapsulated. */
+
+static double getBalance_Account(const void * const state)
+{
+  return ((struct AccountState*)state)->balance;
+};  
+
+...
+
+/*============== Setting the pointers for the Account Methods ===========*/
+
+/* Here we initialize the function pointers for the instance and class 
+   methods. Instance methods get the instance reference (object reference)
+   as argument, class services (static methods) do not. */
+
+static const struct AccountClass theAccountClass =
+{
+  create_Account,       /* initializes function pointer for constructor */
+  getAccountNo_Account, /* initializes function pointer for getAccountNo method. */
+  getBalance_Account,   /* getBalance method */
+  credit_Account,       /* credit method */
+  debit_Account,        /* debit method */
+  print_Account,        /* print method */
+  delete_Account        /* initializes function pointer to destructor */
+};
+
+/* Specifying a non-modifiable handle to the class with the function pointers
+   fixed. */
+const struct AccountClass * const accountClass = &theAccountClass;
+        </programlisting>
+      </para>
+    </section>
+
+    <section><title>Implementing dynamic binding to support polymorphism</title>
+      <para>
+       In order to support polymorphism we have to identify the actual class
+       of an object and link its method dynamically. In our framework we can
+       easily delegate that functionality to the interface which
+       <itemizedlist>
+         <listitem><para>
+           extracts the objects state and class and then
+         </para></listitem>
+         <listitem><para>
+           sends the service request message to the class supplying the object
+           state as argument.
+         </para></listitem>
+       </itemizedlist>
+      </para>
+      <para>
+        For example, the implementation of the interface service, <function>debit</function>,
+        is
+        <programlisting>
+static int debit_AccountInterface(const void * const this, const double amount)
+{
+  struct Object * instance = (struct Object *)this;
+
+  struct AccountClass * class = (struct AccountClass *)instance->class;
+  struct AccountState * state = (struct AccountState *)instance->state;
+
+  return class->debit(state, amount);
+}
+]]>
+        </programlisting>
+      </para>
+    </section>
+
+    <section><title>Implementing constructors</title>
+      <para>
+        Since constructors are class services, not instance services, we do not
+        need dynamic binding for them. At the interface level we simply have
+        <programlisting>
+static void * create_AccountInterface(const char * const accountNo)
+{
+  return create_Account(accountNo);
+}
+        </programlisting>
+      </para>
+      <para>
+        At the class level we provide the implementation for the constructor.
+        We have to
+        <itemizedlist>
+          <listitem><para>
+            create and initialize the instance state,            
+          </para></listitem>
+          <listitem><para>
+            create an object  and initialize the state structure and class for that
+            object and
+          </para></listitem>
+          <listitem><para>
+            return a handle to the object.
+          </para></listitem>
+        </itemizedlist>
+        <programlisting>
+static void * create_Account(const char * const accountNo)
+{
+  struct AccountState * newInstanceState 
+    = (struct AccountState *)calloc(1, sizeof(struct AccountState));
+
+  newInstanceState->accountNo = (char *)malloc(strlen(accountNo)+1);
+  
+  strcpy(newInstanceState->accountNo, accountNo);
+
+  newInstanceState->balance = 0;
+  
+  struct Object *object = (struct Object *)malloc(sizeof(struct Object));
+  
+  object->state = newInstanceState;
+  object->class = (void *)accountClass;
+
+  return (void *)object;
+};    
+</programlisting>        
+      </para>
+    </section>
+    
+    <section><title>Implementing destructors</title>
+      <para>
+        While constructors are class services, destructors, on the other hand are
+        instance services. We
+        <itemizedlist>
+          <listitem><para>
+            free the memory for the state fields and the  state structure itself and             
+          </para></listitem>
+          <listitem><para>
+            set the self pointer (<varname>this</varname> pointer) to NULL.
+          </para></listitem>
+        </itemizedlist>
+        <programlisting>
+<![CDATA[
+static void delete_Account(void * * this)
+{
+  struct AccountState * * accountState = (struct AccountState * *)this;
+
+  free ((*accountState)->accountNo);
+  free (*accountState);
+  
+  *(struct Object * *)this = 0;
+};          
+        ]]></programlisting>
+      </para>
+      <example id="resources.information.technologies.c.specialization.specializationAccount_c">
+        <title>Specialization: Account.c</title>
+        <para>The complete listing of the <type>Account</type> class:</para>
+        <programlisting>
+          <xi:include href="Account.c"  parse="text"/>
+        </programlisting>
+      </example>
+    </section>
+  </section>
+  
+  <section><title>Defining a subclass</title>
+    <para>
+      The subclass, <type>ChequeAccount</type>, looks in many ways very similar to the
+      superclass, <type>Account</type> with the following features to be noted
+      <itemizedlist>
+        <listitem><para>
+          The state of the subclass fully contains the state of the superclass.
+        </para></listitem>
+        <listitem><para>
+          The subclass supplies all the  services of the superclass and potentially
+          adds  additional services.
+        </para></listitem>
+        <listitem><para>
+          A subclass may map a service onto a superclass implementation, thereby
+          inheriting the service from the superclass.
+        </para></listitem>
+        <listitem><para>
+          A subclass may override a service of the superclass. In the implementation
+          it may often still call the superclass service.
+        </para></listitem>
+        <listitem><para>
+          Because the subclass implementation depends explicitly on the superclass
+          implementation we have to import not only the header, but also the
+          implementation of the superclass, <type>Account</type>
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    <section><title>The header file of the subclass</title>
+      <para>
+        Here we must make certain that the subclass contains up-front
+        all the methods of the superclass in the same order as what the
+        superclass supplies them.
+      </para>
+      <para>
+        We then add the subclass-specific services.
+      </para>
+      <example id="resources.information.technologies.c.specialization.specializationChequeAccount_h">
+        <title>Specialization: ChequeAccount.h</title>
+        <programlisting>
+          <xi:include href="ChequeAccount.h" parse="text"/>
+        </programlisting>
+      </example>
+    </section>
+    <section><title>Implementing a subclass</title>
+      <para>
+       The implementation file contains the implementations of the subclass-specific
+       methods (both, the new methods and the overridden methods) and specifies
+       the method bindings (also to the inherited methods of the superclass).
+      </para>
+      <example id="resources.information.technologies.c.specialization.specializationChequeAccount_c">
+        <title>Specialization: ChequeAccount.c</title>
+        <para>The complete listing of the <type>ChequeAccount</type> class:</para>
+        <programlisting>
+          <xi:include href="ChequeAccount.c" parse="text"/>
+        </programlisting>
+      </example>
+      <note>
+        <title>Calling superclass methods from subclass methods which override them</title>
+        <para>
+          This is not uncommon because, in the spirit of <emphasis>design by contract</emphasis>
+          a subclass method must provide all the postconditions (deliverables) of the superclass
+          method and may add additional responsibilities. The reason for this is once again the
+          core of specialization, substitutability.
+        </para>
+      </note>
+    </section>  
+  </section>
+  
+  <section><title>Substitutability and polymorphism in practice</title>
+    <para>
+      The following example program demonstrates
+      <itemizedlist>
+        <listitem><para>
+          inheritance of the <function>credit</function> method,
+        </para></listitem>
+        <listitem><para>
+          polymorphism on the <function>debit</function>, <function>print</function>
+          and <function>delete</function> methods and
+        </para></listitem>
+        <listitem><para>
+          substitutability of <type>ChequeAccount</type>s for <type>Account</type>s.
+        </para></listitem>
+      </itemizedlist>
+      <example id="resources.information.technologies.c.specialization.specializationAccountTest_c">
+        <title>Specialization: AccountTest.c</title>
+        <programlisting>
+          <xi:include href="AccountTest.c" parse="text"/>
+        </programlisting>
+      </example>
+    </para>
+  
+  </section>
+  
+  <section><title>Exercises</title>
+    <orderedlist>
+      <listitem><para>
+        Define an <type>Employee</type> class and a <type>Developer</type>
+        subclass. Employees have a name and a salary. Developers also have
+        a computer allowance. Both provide a <function>getTotalSalary</function>
+        service, which in the case of employees simply returns the salary,
+        but in the case of developers returns the salary plus the computer
+        allowance. Supply also a polymorphic print service. Finally write a little
+        test application which tests
+        <itemizedlist>
+          <listitem><para>
+            inheritance of the <function>getName</function> method,
+          </para></listitem>
+          <listitem><para>
+            polymorphism on the <function>getSalary</function>, <function>print</function>
+            and <function>delete</function> services and
+          </para></listitem>
+          <listitem><para>
+            the substitutability of developers for employees.
+          </para></listitem>
+        </itemizedlist>
+      </para></listitem>
+      <listitem><para>
+        Define an interface <type>Sortable</type> which specifies that any class which 
+        implements <type>Sortable</type>+ must be comparable to another
+        <type>Sortable</type>. The <function>compareTo</function> method should
+        return <constant>-1</constant> if the argument object is less than the 
+        <varname>this</varname> object, <constant>0</constant> if they are equal and 
+        <constant>+1</constant> otherwise. Now, let <type>Person</type> implement 
+        <type>Sortable</type> such that the comparison is done lexicographically first
+        on the surname and then on the first names (the <type>Person</type> class should 
+        have the appropriate attributes). Define also an <type>Account</type> class with
+        <varname>accounts</varname> being sorted on their balance. Now write a little 
+        <type>BubbleSort</type> class which implements the <type>Sorter</type>
+        interface specifying that every <type>Sorter</type> must provide a service,
+        <function>sort</function> which can  sort an array of <type>Sortable</type>s.
+        Test your sorter by sorting an array of persons and an array of accounts respectively.
+        <note>
+          <para>
+            You are now in a position to select any implementation of a
+            <type>Sorter</type> to sort anything which is <type>Sortable</type>.
+          </para>  
+        </note>  
+      </para></listitem>
+    </orderedlist>
+  </section>
+</chapter>

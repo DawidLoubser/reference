@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.rtti.javaReflectionApi.javaReflectionApi"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/dist/resources/components/za/co/solms/solmsDoc/schema/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="Java Reflection API">Java's Reflection API</title>
+
+<para>When using run-time type identification you really have to know the class
+at compile tiome before you can do anything useful. For example, we had to
+know that <emphasis role="verb">Person</emphasis> and <emphasis role="verb">Employee</emphasis> had <emphasis role="verb">save()</emphasis> and
+<emphasis role="verb">load()</emphasis> methods and similarly we had to know that <emphasis role="verb">MyClass</emphasis>
+had a <emphasis role="verb">doMySpecialThing()</emphasis> method.</para>
+
+<para>However, in some cases you might have no clue about the classes you will
+be working with. This is typically the case when you are writing tools
+like debuggers, profilers or GUI builders. Also the internet centric
+applications of today are themselves to the world, having run-time exposure
+to a lot of classes which you did not know about at compile-time.</para>
+
+<para>For this purpose Java's reflection API is very useful. It is again
+centered around the class <emphasis role="verb">Class</emphasis> which has methods for querying
+constructors, methods and attributes (in the sense of data fields) of
+a class. Methods, in turn can be further queried for their arguments,
+return value and any exceptions they might throw.</para>
+
+<para>The following little application takes as command line argument the
+name of a class and it lists the public attributes, constructors and
+methods of the class.
+<programlisting>
+<xi:include parse="text" href="../source/Reflect.java"/>
+</programlisting>
+</para>
+<para>If we run the application on the <emphasis role="verb">Employee</emphasis> class we obtain the
+following output:
+
+<programlisting><![CDATA[
+java Reflect Employee
+
+Constructors =
+public Employee(java.lang.String,java.lang.String,double)
+public Employee(java.lang.String,java.lang.String,double,java.lang.String)
+
+Methods =
+public boolean java.lang.Object.equals(java.lang.Object)
+public void Employee.finalize() throws java.lang.Throwable
+public final native java.lang.Class java.lang.Object.getClass()
+public native int java.lang.Object.hashCode()
+public final native void java.lang.Object.notify()
+public final native void java.lang.Object.notifyAll()
+public java.lang.String Employee.toString()
+public final void java.lang.Object.wait() throws java.lang.InterruptedException
+public final native void java.lang.Object.wait(long) throws java.lang.InterruptedException
+public final void java.lang.Object.wait(long,int) throws java.lang.InterruptedException
+public java.lang.String Person.getIdNumber()
+public java.lang.String Person.getName()
+public java.lang.String Employee.getJobDecription()
+public double Employee.getSalary()
+]]></programlisting>
+</para>
+<para>Note that all the methods are listed, those defined in <emphasis role="verb">Employee</emphasis>, those
+inherited from <emphasis role="verb">Person</emphasis> and those inherited from <emphasis role="verb">Object</emphasis>.
+</para>
+    
+    <xi:include href="objectStateReflectionAndDynamicMethodInvocation.xdoc"/>
+    
+</section>

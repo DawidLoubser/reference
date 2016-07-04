@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.commands.release"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Releasing a working copy</title>
+  <para>
+    When you want to remove a working copy of a CVS project you can, of
+    course, simply delete all the files via something like
+    <synopsis><![CDATA[
+rm -Rf projectDirectory    
+    ]]></synopsis>
+  </para>
+  <para>
+    However, there are significant advantages in applying the 
+    <command>release</command> command first including the following:
+    <itemizedlist>
+      <listitem><para>
+        You will be warned if your copy contains uncommitted changes.
+      </para></listitem>
+      <listitem><para>
+        The <command>release</command> command enables the repository to 
+        record in the repository history that you have abandoned your
+        <command>checkout</command>.
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  
+  <para>
+    The command is of the form
+    <synopsis><![CDATA[
+cvs -d /usr/local/cvs/testRepository release -d LoanCalculator    
+    ]]></synopsis>
+    where the <option>-d</option> command option specifies that the
+    working
+    directory should be deleted.
+    <warning>
+      <para>
+        The <option>-d</option> option requests the recursive deletion
+        of all directories and files in the working copy. If you have added
+        files or directories which have not been added to the repository,
+        they will be deleted.
+      </para>
+    </warning>
+  </para>
+  <section><title>Release messages</title>
+   <para>
+     The <command>release</command> command will print a message for any file
+     in the working directory which is not identical to a corresponding file
+     in the repository. The message is one of the following:
+     <itemizedlist>
+       <listitem><para>
+         <literal><![CDATA[M file]]></literal>:
+         the file has been modified in the local copy, but the modification
+         has not yet been committed. Additionally there might also be a newer
+         version in the repository.
+       </para></listitem>
+       <listitem><para>
+         <literal><![CDATA[R file]]></literal>:
+         the file has been removed from the local copy, but has not been
+         removed from the repository because the removal has not been
+         committed.
+       </para></listitem>
+       <listitem><para>
+         <literal><![CDATA[? file]]></literal> the file is in the working 
+         directory, but there is no corresponding file in the repository.
+         The file will be lost if it is removed from the repository.
+       </para></listitem>
+       <listitem><para>
+         <literal><![CDATA[P file]]></literal>:
+         there exists a newer version of the file in the repository.  
+       </para></listitem>
+     </itemizedlist>
+     
+     
+   </para>
+  </section>
+  
+</section>

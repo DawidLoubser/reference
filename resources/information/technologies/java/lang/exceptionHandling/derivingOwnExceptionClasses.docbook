@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6329:section xmlns:ns6329="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.exceptionHandling.derivingOwnExceptionClasses">
+  <ns6330:title xmlns:ns6330="http://docbook.org/ns/docbook">Deriving your own Exception Classes</ns6330:title>
+  <ns6331:para xmlns:ns6331="http://docbook.org/ns/docbook">
+    You would have to derive your exception class from one of the existing exception
+    classes. To decide which one, try and ask yourself the “is a" question. For
+    example, your class might read a setup file. This file should be in a certain format and
+    if that format is incorrect, you might want to throw a <ns6332:literal xmlns:ns6332="http://docbook.org/ns/docbook">FileFormatException</ns6332:literal>. 
+    You would most probably decide to derive
+    this exception class from <ns6333:literal xmlns:ns6333="http://docbook.org/ns/docbook">IOException</ns6333:literal>.
+    <ns6334:programlisting xmlns:ns6334="http://docbook.org/ns/docbook">
+class FileFormatException extends IOException
+{
+   public FileFormatException() {}
+   public FileFormatException(String message) { super(message); }
+}
+    </ns6334:programlisting>
+  </ns6331:para>  
+  <ns6335:para xmlns:ns6335="http://docbook.org/ns/docbook">
+    Note that we supply the two standard constructors supplied with all of Java's exception
+    classes. If the exception is thrown but not caught, this message is automatically printed
+    when the application aborts. You can access this message via the <ns6336:literal xmlns:ns6336="http://docbook.org/ns/docbook">getMessage()</ns6336:literal> 
+    method defined in <ns6337:literal xmlns:ns6337="http://docbook.org/ns/docbook">Throwable</ns6337:literal>.
+    <ns6338:programlisting xmlns:ns6338="http://docbook.org/ns/docbook">
+ ...
+ boolean fileNotOpened = true;
+ 
+ while (fileNotOpened)
+ {
+   try
+   {
+     fileNotOpened = false;
+     ...
+   }
+   catch (FileFormatException exception)
+   {
+     System.out.println("The following exception was thrown: "
+                         + exception.toString());
+     fileNotFound = true;
+   }
+ }
+ ...
+    </ns6338:programlisting>
+   </ns6335:para>  
+   <ns6339:para xmlns:ns6339="http://docbook.org/ns/docbook">
+     Note that exception classes are just like any other class, just that they are subclasses
+     of <ns6340:literal xmlns:ns6340="http://docbook.org/ns/docbook">Throwable</ns6340:literal>. They can have various constructors and
+     various methods. For example, we could include the <ns6341:literal xmlns:ns6341="http://docbook.org/ns/docbook">File</ns6341:literal> variable which 
+     caused the<ns6342:literal xmlns:ns6342="http://docbook.org/ns/docbook">FileFormatException</ns6342:literal> with our exception class:
+     <ns6343:programlisting xmlns:ns6343="http://docbook.org/ns/docbook">
+class FileFormatException extends java.io.IOException
+{
+   public FileFormatException() {}
+   public FileFormatException(String message) { super(message); }
+   public FileFormatException(String message, File file)
+   {
+     super(message);
+     this.file = file;
+   }
+ 
+   public File getFile() {return file;}
+ 
+   private File file;
+}
+     </ns6343:programlisting>
+  </ns6339:para>  
+  <ns6344:para xmlns:ns6344="http://docbook.org/ns/docbook">
+    On the client side we catch the <ns6345:literal xmlns:ns6345="http://docbook.org/ns/docbook">FileFormatException</ns6345:literal>
+    object and can send messages (e.g. <ns6346:literal xmlns:ns6346="http://docbook.org/ns/docbook">getFile()</ns6346:literal>) to the
+    exception just as we would to any other object.
+  </ns6344:para>
+  <ns6347:para xmlns:ns6347="http://docbook.org/ns/docbook">
+    Always think how much control you want to give clients for distinguishing
+    exceptions. For the above problem it would be better to write the <ns6348:literal xmlns:ns6348="http://docbook.org/ns/docbook">FileFormatException</ns6348:literal> 
+    to be able to catch all types of file
+    format exceptions and then to subclass it with <ns6349:literal xmlns:ns6349="http://docbook.org/ns/docbook">MyFileFormatException</ns6349:literal>. 
+    This will allow clients to distinguish
+    between various types of <ns6350:literal xmlns:ns6350="http://docbook.org/ns/docbook">FileFormatException</ns6350:literal>s as well
+    as allowing to work with file format exceptions at the more abstract <ns6351:literal xmlns:ns6351="http://docbook.org/ns/docbook">FileFormatException</ns6351:literal> 
+    level. For example, in the following code
+    snippet we treat <ns6352:literal xmlns:ns6352="http://docbook.org/ns/docbook">MyFileFormatException</ns6352:literal>s in one
+    particular way, all other <ns6353:literal xmlns:ns6353="http://docbook.org/ns/docbook">FileFormatExceptions</ns6353:literal> in
+    another and all other <ns6354:literal xmlns:ns6354="http://docbook.org/ns/docbook">IOException</ns6354:literal>s in a third way.
+    <ns6355:programlisting xmlns:ns6355="http://docbook.org/ns/docbook">
+try
+{
+  ...
+}
+catch (MyFileFormatException e) { ... }
+catch (FileFormatException e)   { ... }
+catch (IOException e)           { ... }
+    </ns6355:programlisting>
+  </ns6347:para>  
+</ns6329:section>

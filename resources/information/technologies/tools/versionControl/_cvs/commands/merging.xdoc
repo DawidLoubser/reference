@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.commands.merging"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Merging concurrent modifications</title>
+    <para>
+      So far we assumed that there were no concurrent modifications to
+      the file, <abbrev>i.e.</abbrev> that a repository file did not 
+      change between the last update and the time the changes were
+      committed. In large developer groups it is, however, bit unlikely
+      that a file is modified by different developers at the same time.
+    </para>
+    <para>
+      In this section we shall assume that there are no conflicts between
+      the updates made by the different developers. We shall show how CVS
+      merges the changes done by different developers. In
+      <xref linkend="resources.information.technologies.tools.versionControl._cvs.commands.resolvingConflicts"/>
+      we shall discuss how CVS assists in resolving conflicts between changes 
+      made to the same file by different developers.
+    </para>
+    
+    <section><title>The original file</title>
+      <para>
+        Consider the following state of a file before either of the developers
+        made any changes to it. 
+        <programlisting><![CDATA[
+package za.co.stcd.finance.calculators.presentation.swing;
+
+import javax.swing.*;
+
+public class LoanCalculatorClient extends JFrame
+{
+  public LoanCalculatorClient()
+  {
+    setTitle("STCD Loan Calculator");
+
+    calculatorPanel = new LoanCalculatorPanel();
+
+    getContentPane().add(calculatorPanel);
+
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    pack();
+  }
+
+  public static void main(String[] args)
+  {
+    new LoanCalculatorClient().show();
+  }
+
+  private LoanCalculatorPanel calculatorPanel;
+}
+        ]]></programlisting>
+      </para>
+      <para>
+        Assume two developers, Sikhalo and Piet obtain this state of the file on their last 
+        updates of the project and start to work on it concurrently.
+      </para>
+    </section>
+    
+    <section><title>Developer 1 applies changes and commits them.</title>
+      <para>
+        Assume Sikhalo simplifies the code in the file as shown in the listing below:
+        <programlisting><![CDATA[
+package za.co.stcd.finance.calculators.presentation.swing;
+
+import javax.swing.*;
+
+public class LoanCalculatorClient extends JFrame
+{
+  public LoanCalculatorClient()
+  {
+    setTitle("STCD Loan Calculator");
+
+    getContentPane().add(new LoanCalculatorPanel());
+
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    pack();
+  }
+
+  public static void main(String[] args)
+  {
+    new LoanCalculatorClient().show();
+  }
+}
+        ]]></programlisting>
+      </para>
+      <para>
+        In order to review the modification he made, Sikhalo, runs <command>diff</command> 
+        on the file and obtains the following output:
+        <synopsis><![CDATA[
+RCS file: /usr/local/cvs/testRepository/LoanCalculator/za/co/stcd/finance/calculators...
+            /presentation/swing/LoanCalculatorClient.java,v
+retrieving revision 1.1.1.1
+diff -r1.1.1.1 LoanCalculatorClient.java
+11,13c11
+<     calculatorPanel = new LoanCalculatorPanel();
+<
+<     getContentPane().add(calculatorPanel);
+---
+>     getContentPane().add(new LoanCalculatorPanel());
+24,25d21
+<
+<   private LoanCalculatorPanel calculatorPanel;
+        ]]></synopsis>
+        The additions are shown with a right arrow, <literal><![CDATA[>]]></literal>
+        and the removals with a left arrow, <literal><![CDATA[<]]></literal>
+      </para>
+      <para>
+        Sikhalo is content with the changes and commits them.
+      </para>
+    </section>
+    
+    <section><title>Developer 2 concurrently updates the file and tries to commit</title>
+      <para>
+        Assume Piet adds a line printing on the console that the application is starting up:
+        <programlisting><![CDATA[
+package za.co.stcd.finance.calculators.presentation.swing;
+
+import javax.swing.*;
+
+public class LoanCalculatorClient extends JFrame
+{
+  public LoanCalculatorClient()
+  {
+    setTitle("STCD Loan Calculator");
+
+    calculatorPanel = new LoanCalculatorPanel();
+
+    getContentPane().add(calculatorPanel);
+
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    pack();
+  }
+
+  public static void main(String[] args)
+  {
+    System.out.println("application is starting up...");
+    new LoanCalculatorClient().show();
+  }
+
+  private LoanCalculatorPanel calculatorPanel;
+}
+        ]]></programlisting>
+      </para>
+      <para>
+        He too runs diff and obtains the following output:
+        <synopsis><![CDATA[
+RCS file: /usr/local/cvs/testRepository/LoanCalculator/za/co/stcd/finance...
+            /calculators/presentation/swing/LoanCalculatorClient.java,v
+retrieving revision 1.1.1.1
+diff -r1.1.1.1 LoanCalculatorClient.java
+21a22
+>     System.out.println("application is starting up...");
+        ]]></synopsis>
+      </para>
+      <para>
+        But when Piet tries to book in the changes, he obtains the following failure message:
+        <synopsis><![CDATA[
+cvs commit: Up-to-date check failed for `LoanCalculator/za/co/stcd/finance...
+              /calculators/presentation/swing/LoanCalculatorClient.java'
+cvs commit: Examining LoanCalculator/za/co/stcd/finance/calculators/presentation/web
+cvs [commit aborted]: correct above errors first!
+        ]]></synopsis>
+      </para>
+    </section>
+    
+    <section>
+      <title>Developer 2 merges the modifications via an update and commits</title>
+      <para>
+Piet has to do an update 
+        before he can commit. Running the update, CVS provides the following message:
+        <synopsis><![CDATA[
+Merging differences between 1.1.1.1 and 1.2 into LoanCalculatorClient.java
+        ]]></synopsis>
+        CVS thus merged his modifications with those done by 
+Sikhalo. The resultant
+        merged file looks like this:
+        <programlisting><![CDATA[
+package za.co.stcd.finance.calculators.presentation.swing;
+
+import javax.swing.*;
+
+public class LoanCalculatorClient extends JFrame
+{
+  public LoanCalculatorClient()
+  {
+    setTitle("STCD Loan Calculator");
+
+    getContentPane().add(new LoanCalculatorPanel());
+
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    pack();
+  }
+
+  public static void main(String[] args)
+  {
+    System.out.println("application is starting up...");
+    new LoanCalculatorClient().show();
+  }
+}
+        ]]></programlisting>
+Piet can now go ahead and 
+        commit the merged file.
+      </para>
+    </section>
+</section>

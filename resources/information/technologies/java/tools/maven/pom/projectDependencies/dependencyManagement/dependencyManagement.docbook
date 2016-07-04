@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Dependency management</title>
+    <para>
+        Across the various projects and modules one may accumulate dependencies across large version ranges of other projects.
+        One often would like to standardize the dependencies to particular versions and then manage a controlled process to
+        evolve ones dependencies to later versions. This one does not, however, want to do project for project or even module for
+        module. It is for this purpose that Maven introduces the concept of dependency management.
+    </para>
+    <para>
+        Dependencies themselves are, of course, not inherited by child projects. One can, however, define in the 
+        <literal><![CDATA[<dependencyManagement>]]></literal> section of the parent project the preferred versions
+        for libraries which are used across child projects. In the child project one still needs to specify the dependency on
+        a particular library, but one can ommit to specify a version. In such cases the version will be determined by the
+        version specified in the <literal><![CDATA[<dependencyManagement>]]></literal> element of the parent
+        project.
+    </para>
+    <para>
+        Consider, for example, the following top-level POM used by an organization:
+        <programlisting><![CDATA[
+<project>
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>za.co.solms<groupId>
+   <artifactId>approvedLibs</artifactId>
+   <version>2.1</version>
+   ...
+   <dependencyManagement>
+       <dependencies>
+          <dependency>
+             <groupId>junit</groupId>
+             <artifactId>junit</artifactId>
+             <version>4.0.1</version>
+          </dependency>
+          <dependency>
+             <groupId>com.hp.hpl.jena</groupId>
+             <artifactId>jena</artifactId>
+             <version>2.6.0</version>
+          </dependency>
+       </dependencies>
+    </dependencyManagement>   
+   ...
+</project>
+]]></programlisting>        
+    </para>
+    <para>
+        All projects within the organization could now inherit the approved versions for standard libraries used within
+        the organization from the parent POM. The child POMs for the actual projects would not specify the version
+        numbers for these standard libraries (except if they need to override the approved version numbers with
+        project specific version numbers):
+        <programlisting><![CDATA[
+<project>
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>za.co.solms<groupId>
+   <artifactId>courseNotesAssembly</artifactId>
+   <version>0.8-SNAPSHOT</version>
+   ...
+   <dependencies>
+      <dependency>
+         <groupId>com.hp.hpl.jena</groupId>
+         <artifactId>jena</artifactId>
+      </dependency>
+   </dependencies>
+   ...
+</project>
+]]></programlisting>
+    </para>
+</section>    

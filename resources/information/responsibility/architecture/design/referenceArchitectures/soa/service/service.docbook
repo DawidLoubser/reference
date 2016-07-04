@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Services within the context of Services-Oriented Architectures</title>
+    <para>
+        To understand services oriented architectures we need to have a clear understanding
+        of the concept of a service. 
+        <blockquote><para><emphasis>
+            A service or use case is an activity or sequence of activities which generates some value to the 
+            user of the service.
+        </emphasis></para></blockquote>
+    </para>
+    
+    <section>
+        <title>Attributes of a service</title>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>Inputs</title>
+                        <para>
+                            A service may require certain information from users which need to either
+                            <itemizedlist>
+                                <listitem><para>
+                                    be provided upon service request or,
+                                </para></listitem>
+                                <listitem><para>
+                                    will be requested from the user during the process of realizing the service.
+                                </para></listitem>
+                            </itemizedlist>
+                        </para>
+                    </formalpara>
+                </listitem>
+              
+                <listitem>
+                    <formalpara>
+                        <title>Outputs</title>
+                        <para>
+                            A service generates certain outputs for the user which are provided to the user either
+                            <itemizedlist>
+                                <listitem><para>
+                                    during the course of realizing the service, or
+                                </para></listitem>
+                                <listitem><para>
+                                    after completion of the service.
+                                </para></listitem>
+                            </itemizedlist>
+                        </para>
+                    </formalpara>
+                </listitem>
+                
+                <listitem>
+                    <formalpara>
+                        <title>Preconditions</title>
+                        <para>
+                            A service may not be available unconditionally. If a service has certain pre-conditions, then the
+                            service provider is entitled to refuse the service without the service refusal being in breach of the
+                            services contract. They typically refer to a state in the environment of the service under which the
+                            service is not provided. For example, if an account is in a state where the available funds are lower
+                            than the withdrawel amount requested for a withdrawel service, then the service may be refused
+                            without the bank being in breach of contract.
+                        </para>
+                    </formalpara>
+                </listitem>
+                
+                <listitem>
+                    <formalpara>
+                        <title>Post-conditions</title>
+                        <para>
+                            The post-conditions are the conditions which must hold after the service has been provided. These
+                            refer to the way the service modifies its environment. For example, after the debit service has been
+                            provided, the state of the account balance has been changed to what it was prior to the service request
+                            minus the withdrawel amount, and the state of the transaction history of that account has changed 
+                            such that it includes the withdrawel transaction.
+                        </para>
+                    </formalpara>    
+                </listitem>
+                
+                <listitem>
+                    <formalpara>
+                        <title>Service qualities</title>
+                        <para>
+                            The service qualities refer to non-functional service attributes like, for example, 
+                            <itemizedlist>
+                                <listitem><para>
+                                    performance, the time required to realize a service request,
+                                </para></listitem>
+                                <listitem><para>
+                                    reliability, an upper limit on the percentage of service requestsfor which the
+                                    contractual obligations are not met of for which the service could not be
+                                    provided,
+                                </para></listitem>
+                                <listitem><para>
+                                    scalability, the number of service requests which can be processed per unit time
+                                    or the number of service requests which can be processed concurrently.
+                                </para></listitem>
+                            </itemizedlist>
+                        </para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>        
+        </para>
+    </section>
+    
+    <section>
+        <title>The services contract</title>
+        <para>
+            The services contract wil thus specify
+            <itemizedlist>
+                <listitem><para>
+                    the inputs and outputs,
+                </para></listitem>
+                <listitem><para>
+                    the pre- and post-conditions,
+                </para></listitem>
+                <listitem><para>
+                    the message exchange patterns,
+                </para></listitem>
+                <listitem><para>
+                    and the required qualities of service.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Requirements for a service</title>
+        <para>
+            General requirements for a service include
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>No persistent state across service requests</title>
+                        <para>
+                            Even though a service will typically 
+                            <itemizedlist>
+                                <listitem><para>
+                                    maintain state across the (business) process of realizing
+                                    a particular instance of a service request, and
+                                </para></listitem>
+                                <listitem><para>
+                                    may affect the service environment in some persistent way,
+                                </para></listitem>
+                            </itemizedlist>
+                            there is no aspect of state within the service which is shared across
+                            service invocations.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Self-contained</title>
+                        <para>
+                            Although a service may and often would make use of lower level services,
+                            it may not have any direct dependencies on the service from which it is called or
+                            on services which are requested after the completion of this service.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Self-healing</title>
+                        <para>
+                            A service should gracefully recover from an error in such a way that
+                            a problem encoutered within one invocation of a service, <abbrev>i.e.</abbrev>
+                            within a business process realizing a particular service request, should not
+                            affect other invocations of that service.
+                        </para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>        
+        </para>
+    </section>
+    
+</section>    

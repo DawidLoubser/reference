@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<chapter xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Constructing and executing queries</title>
+    <para>
+        Queries are constructed in JPQL via the entity manager and are executed by requesting a result list:
+        <programlisting><![CDATA[
+List<Product> products = entityManager.createQuery
+        ("SELECT p FROM Product p WHERE p.description like :descr")
+          .setParameter("descr", description)
+          .setMaxResults(30)
+          .setFirstResult(pageNo*30)
+          .getResultList();            
+            ]]></programlisting>
+    </para>
+    
+    <section>
+        <title>Named queries</title>
+        <para>
+            Named queries are annotated with a <literal>@NamedQuery</literal>            
+            <programlisting><![CDATA[
+@NamedQuery(name="bonds.getAllAbove" 
+     query="select b from Bond b where b.balance &gt;= :amount")                
+                ]]></programlisting>
+        </para>
+        <para>
+            Instances of named queries are created via
+            <programlisting><![CDATA[
+Query query = entityManager.createNamedQuery("bonds.getAllAbove");
+query.setParameter(0, new Double(500000));
+List<Bond> list = (List<Bond>)query.getResultList() ;
+                ]]></programlisting>
+        </para>
+    </section>
+</chapter>    

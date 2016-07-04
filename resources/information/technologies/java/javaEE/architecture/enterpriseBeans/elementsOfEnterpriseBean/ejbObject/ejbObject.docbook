@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+
+    <title>The EJBObject</title>
+    <para>
+        If incoming service requests were dispatched directly to a bean,
+        all of the enterprise services provided by the EJB container would be
+        bypassed. To this end, beans which are deployed in a EJB container
+        are never directly accessible: The EJB container
+        <emphasis>generates</emphasis>
+        a class (which implements both the remote interface of the bean, as well
+        as the
+        <literal>javax.ejb.EJBObject</literal>
+        interface). The EJB container
+        uses the information specified either as Java annotations, or in XML deployment
+        descriptor, to generate an EJBObject which enforces the qualities desired by the
+        developer (security, transactional behaviour, web services publication, etc).
+    </para>
+    <para>
+        The EJB object thus intercepts the call to the enterprise bean, enabling the
+        container to provide standard support to your beans, such as
+        <itemizedlist>
+            <listitem>
+                <para>concurrency,</para>
+            </listitem>
+            <listitem>
+                <para>transactions,</para>
+            </listitem>
+            <listitem>
+                <para>security, and</para>
+            </listitem>
+            <listitem>
+                <para>persistence.</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+
+    <para>
+        The way in which a service request is intercepted and ultimately processed is shown in
+        the following figure.
+        <note>
+            <para>
+                Incoming calls via any protocol, such as SOAP/HTTP, or Restful JSON via the web container,
+                are handled in the same way as the illustrated RMI/IIOP.
+            </para>
+        </note>
+    </para>
+
+    <figure xml:id="javaee.enterpriseBeans.elementsOfEnterpriseBean.beanServiceRequestProcessing_fig">
+        <title>Bean Service Request Processing</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="beanServiceRequestProcessing.png"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+</section>

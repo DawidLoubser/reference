@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2se.exceptionHandling.finally"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title role="The finally clause">The finally clause</title>
+  <para>
+    The finally clause specifies a block of code which is always executed, irrespective
+    of whether an exception was caught or not. This is useful if we have to do some cleaning
+    up upon both, normal and abnormal termination of a block of code. A typical example is
+    that of closing input or output streams (e.g. files or internet streams). The finalize
+    clause is illustrated in the following code snipped:
+    <programlisting><![CDATA[
+try
+{
+    /* code performing file I/O */
+}
+catch (EOFException eofError) {/* do nothing */}
+ 
+catch (IOException ioError) // Now handle all other ioErrors
+   { System.err.println (ioError.getMessage()); }
+ 
+finally
+  {
+     try
+     {
+        if (fin  != null)  fin.close();
+        if (fout != null) fout.close();
+     }
+     catch (IOException error ) {}
+}
+    ]]></programlisting>
+  </para>  
+  <para>
+    You might ask, what is the difference between closing the files in the <literal>finally</literal> clause and closing them using standard statements
+    after the catch clauses. The difference arises when the server throws an exception which
+    we are not catching and which is then directly passed on to the next higher context, i.e.
+    up the calling hierarchy. In this case the files would only be closed if the corresponding
+    statements are located within a <literal>finally</literal> clause.
+  </para>
+</section>

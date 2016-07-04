@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+
+    <title>An Overview of SOA technologies</title>
+
+    <indexterm>
+        <primary>SOA</primary>
+        <secondary>technology</secondary>
+        <tertiary>overview</tertiary>
+    </indexterm>
+
+
+    <para>
+        SOA abstractly specifies a number of conceptual components, such as <emphasis>services</emphasis>,
+        an <emphasis>enterprise services bus</emphasis> for service integration, as well as a
+        <emphasis>business process execution engine</emphasis> to host business processes. In this section, 
+        we introduce some of the common technologies used today to realise these components.
+    </para>
+
+
+    <section>
+        <title>Services contracts</title>
+        <indexterm>
+            <primary>services</primary>
+            <secondary>contracts</secondary>
+            <tertiary>technology overview</tertiary>
+        </indexterm>
+        <para>
+            As SOA technologies have universally settled on the <emphasis>web services</emphasis> technologies
+            when it comes to service interaction / messaging, it is the associated <acronym>WSDL</acronym>
+            (Web Services Definition Language) which is used to specify services contracts.
+        </para>
+        <para>
+            WSDL is a general container format for expressing any of
+            <itemizedlist>
+                <listitem>
+                    <para>the structure of exchanged value objects (using XML Schema),</para>
+                </listitem>
+                <listitem>
+                    <para>the functional requirements around a service, such as the sequence of exchanged messages and
+                    the preconditions,</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        the non-functional requirements around a service, such as the security and performance requirements,
+                        using WS-Policy and WS-PolicyAttachment annotations,
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        how a particular service is bound to a particular transport protocol (such as SOAP/HTTP), and
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        concrete service endpoints (such as URLs where messages may be sent to)
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            The original WSDL 1.1 standard has been superseded by the WSDL 2.0 standard, although most SOA implementations will support
+            both for the foreseeable future.
+        </para>
+    </section>
+
+
+    <section>
+        <title>Service implementations</title>
+        <indexterm>
+            <primary>services</primary>
+            <secondary>implementation</secondary>
+            <tertiary>technology overview</tertiary>
+        </indexterm>
+        <para>
+            SOA in principle does not make any statements as to the physical realisation of services, as it is concerned only with
+            the integration and orchestration of such services. When deciding to implement a service, it should always be hosted
+            in an environment which was chosen because it meets the <emphasis>qualities</emphasis> required by the contract, such
+            as performance, scalability, and so on.
+        </para>
+        <para>
+            Several suitable enterprise component technologies (most of which pre-date SOA) exist to host general business 
+            logic services, such as Enterprise JavaBeans. If fewer qualities are required, a more lightweight approach may be taken,
+            such as hosting Java objects in a Spring Framework or POJO container. Most of these environments will provide access
+            to general services such as persistence to relational database via an object-relational mapper.
+        </para>
+        <para>
+            If the purpose of a service is simply to support integration (such as transforming messages between services) then
+            it may be better implemented by hosting one or more XSLT transformations in an XSLT container (usually provided by
+            any SOA environment).
+        </para>
+        <para>
+            Of course, if a service implementation requires, as qualities, a great deal of innovation and problem-solving ability,
+            it may of course be implemented by a human which has been trained for the job.
+        </para>
+        <para>
+            In <emphasis>all</emphasis> of these cases, a suitable adaptor needs to exist in order to plug the service runtime
+            into the SOA runtime, in order for message exchange to take place. These are usually standardised (and freely available)
+            for a great number of implementation technologies.
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Integration infrastructure</title>
+        <indexterm>
+            <primary>integration</primary>
+            <secondary>technology overview</secondary>
+        </indexterm>
+        <para>
+            As the heart of the SOA infrastructure, any standards around the Enterprise Service Bus are
+            sure to dictate the entire systems development, packaging and testing process. Public standards
+            in this area allow organisations to use ESB frameworks without becoming vendor-locked to a particular
+            framework.
+        </para>
+        <para>
+            Not being vendor-locked is especially important during the development process, as the potential complexity
+            of assembling composite integration scenarios may require a number of sophisticated tools. It is unlikely that
+            a single vendor can provide all the tools to keep all the users of a particular ESB productive.
+        </para>
+        <para>
+            An ESB standard should cover not only the service hosting and message routing, but preferably also standardise
+            the deployment, management and monitoring process.
+        </para>
+        <para>
+            The primary standard for <acronym>ESB</acronym>s is <acronym>JBI</acronym>, <emphasis>Java Business Integration</emphasis>.
+            It specifies standards not only for the inner workings of the ESB (such as message routing and a normalised message format)
+            but also for the contract between the ESB and components plugged into it (such as a Business Process Execution Engine) as
+            well as standardised management and monitoring using <acronym>JMX</acronym> (Java Management eXtensions). It goes as far
+            as to standardise tasks for the Apache Ant build tool, which enables development projects to manage and deploy components
+            identically regardless of JBI implementation.
+        </para>
+        <para>
+            An ecosystem of JBI components (Service Engines, Protocol Binding Components) have also come into existence, which means
+            that one no longer has to choose an ESB based on the components they provide: With JBI, one ESB's components may be installed
+            in another ESB. Examples of JBI implementations are Apache ServiceMix, OpenESB and Petals ESB. JBI is currently still quite immature
+            (version 1.0) which means that many practical aspects of the ESB are, in fact, not yet governed by the specification. JBI 2.0
+            aims to practically simplify ESB development in a similar manner to how EJB 3.0 greatly simplified Enterprise Java development without
+            changing the fundamental (and sound) architecture.
+        </para>
+        <para>
+            An alternative SOA solution architecture, <acronym>SCA</acronym> (Service Components Architecture) is also promoted,
+            especially by IBM and BEA Systems. This proposes a different, de-centralised infrastructure not based on the
+            <emphasis>mediated message exchange</emphasis> paradigm of JBI. While JBI is a specification for ESBs implemented using
+            Java, SCA aims to be more technology neutral, applying a common language runtime concept similar to Microsoft's .NET.
+        </para>
+    </section>
+
+
+    <section>
+        <title>Service clients</title>
+        <indexterm>
+            <primary>services</primary>
+            <secondary>clients</secondary>
+            <tertiary>technology overview</tertiary>
+        </indexterm>
+        <para>
+            Ultimately, the services published via the SOA infrastructure needs to be made use of
+            by clients, if they are to have any value. By virtue of the nature of SOA, most service clients
+            are in fact simply other services. It is, however, often the high-level services accessed by 
+            humans which carry the highest profile, due to their visibility.
+        </para>
+        <para>
+            Since and SOA environment contains adaptors to most communications- and messaging-technologies, many
+            external service clients could simply access the service using their protocol of choice, as long as the
+            correct messages are sent. Most external clients will access services via SOAP web services, and for these,
+            standard web services-to-object frameworks could be used, such as <acronym>JAX-WS</acronym> for Java clients.
+            Such frameworks can generate all required artifacts (service stubs, exchanged value objects, etc) by examining
+            the <emphasis>service contract</emphasis> published by the services infrastructure.
+        </para>
+        <para>
+            When one considers graphical user interfaces (and, specifically, web-based user interfaces) it is likely that SOA
+            will, over time, bring forth a big change in the way that these are implemented. Almost all current user-interface
+            technologies contain a control layer, which actually hosts the application work-flow at the topmost level of granularity.
+            Examples include Java Server Faces, Jakarta Struts, and Microsoft ASP.NET. Since SOA aims to move the business process to
+            the ESB itself (via a Business Process Execution Engine) we believe there will be an emphasis on more modern, lightweight
+            user interface technologies. All that is fundamentally required is the ability to interactively populate a service's request messages,
+            and display the response messages to the user. An example of such a technology is W3C XForms, which replaces standard
+            web forms in the XHTML version 2.0 standard for web pages.
+        </para>
+    </section>
+
+
+    <section>
+        <title>Service registries</title>
+        <indexterm>
+            <primary>services</primary>
+            <secondary>registry</secondary>
+            <tertiary>technology overview</tertiary>
+        </indexterm>
+        <para>
+            When discussing the publication of a service (via its contract) in a services registry, one must consider
+            the separate cases of publishing the service <emphasis>to the services infrastructure</emphasis> (i.e.
+            in order for other services in the same SOA infrastructure to find and use), as well as publishing the
+            service <emphasis>to external clients</emphasis> (i.e. in a public marketplace in order for prospective clients
+            ad business partners to discover).
+        </para>
+        <para>
+            Since the core responsibility of an SOA is the integration and orchestration of services, most implementation
+            frameworks include a well-defined, query-able services registry. Service endpoints are typically published
+            automatically as they come online. This holds true for all JBI-based ESBs.
+        </para>
+        <para>
+            The two prominent standards for public registries are <acronym>UDDI</acronym> and <acronym>ebXML</acronym>.
+            Unfortunately, it appears as it they are currently not universally adopted, nor do SOA frameworks commonly
+            support automatic publication to such external registries. Publishing a service to an external, public registry
+            is currently thus a manual and explicit business activity.
+        </para>
+    </section>
+
+
+    <section>
+        <title>Business Process Execution Engine</title>
+        <indexterm>
+            <primary>BPEE</primary>
+            <secondary>
+                technology overview
+            </secondary>
+        </indexterm>
+        
+        <para>
+            The primary standard for declaratively specifying potentially long-running business processes
+            is <acronym>WS-BPEL</acronym>, the <emphasis>Web Services Business Process Execution Language</emphasis>.
+            WS-BPEL is managed by the OASIS standards organisation, and aims to be a robust language for managing
+            an orchestration of lower-level services, itself again exposed as a service.
+        </para>
+        <para>
+            Though SOA dictates a business process execution engine <quote>provided by the ESB infrastructure</quote>,
+            in practise almost no ESB can natively execute business processes. Instead, a WS-BPEL process is usually deployed
+            to a service engine hosted by the ESB.
+        </para>
+        <para>
+            An example of a BPEE is Apache ODE (Orchestration Director Engine), a standard JBI component which may be installed
+            to any JBI-compliant ESB. 
+        </para>
+        <note>
+            <para>
+                Because of the practical issues often encountered with immature technologies such as WS-BPEL, standard
+                programming languages like Java is also very commonly used for business process execution.
+            </para>
+        </note>
+    </section>
+
+</section>

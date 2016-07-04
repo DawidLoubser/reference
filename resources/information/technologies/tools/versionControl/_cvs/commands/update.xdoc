@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.commands.update"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Updating one's working copy</title>
+  <para>
+    Before one starts to apply changes one would typically want to update
+    one's work directory such that any changes applied by other developers
+    to the repository files since the last <command>checkout</command> or
+    <command>update</command> command. To this end one uses the
+    <command>update</command> command:
+    <synopsis><![CDATA[
+cvs -d /usr/local/cvs/testRepository/ update LoanCalculator    
+    ]]></synopsis>
+    As usual one can update single files or only parts of of a project.
+  </para>
+  <para>
+    CVS will report which files in the working directory have been modified
+    during the update by putting a <literal>M</literal> in front of the files
+    which have been modified in the local working copy. For example, the listing below shows
+    the <filename>LoanCalculatorClient.java</filename> file being modified
+   during an <command>update</command>:
+    <synopsis><![CDATA[
+cvs update: Updating LoanCalculator
+cvs update: Updating LoanCalculator/za
+cvs update: Updating LoanCalculator/za/co
+cvs update: Updating LoanCalculator/za/co/stcd
+cvs update: Updating LoanCalculator/za/co/stcd/finance
+cvs update: Updating LoanCalculator/za/co/stcd/finance/calculators
+cvs update: Updating LoanCalculator/za/co/stcd/finance/calculators/businessLogic
+cvs update: Updating LoanCalculator/za/co/stcd/finance/calculators/presentation
+cvs update: Updating LoanCalculator/za/co/stcd/finance/calculators/presentation/midp
+cvs update: Updating LoanCalculator/za/co/stcd/finance/calculators/presentation/swing
+M LoanCalculator/za/co/stcd/finance/calculators/presentation/swing/LoanCalculatorClient.java
+cvs update: Updating LoanCalculator/za/co/stcd/finance/calculators/presentation/web
+    ]]></synopsis>
+    
+    <note>
+      <para>
+        You may want to use a <command>diff</command> (see 
+        <xref linkend="resources.information.technologies.tools.versionControl._cvs.commands.diff"/>)
+        command to identify any differences between the files in the
+        repository and those in the working directory.
+      </para>
+      <para>
+        Alternatively, a commit will notify the developer of any conflicts
+        between the modifications he/she made and those made by other
+        developers.
+      </para>
+    </note>
+  </para>
+  <para>
+    If you want to only see the output from the <command>update</command> itself,
+    then you can request the <option>-q</option> CVS option to request supression 
+    of the CVS output. This will result in the following, shortened output:
+    <synopsis><![CDATA[
+M LoanCalculator/za/co/stcd/finance/calculators/
+      presentation/swing/LoanCalculatorClient.java
+    ]]></synopsis>
+  </para>
+  <note><title>Shortcut for update command</title>
+    <para>
+      The CVS shortcut for the update command is simply up:
+      <synopsis><![CDATA[
+cvs up LoanCalculator    
+      ]]></synopsis>
+    </para>
+  </note>  
+</section>

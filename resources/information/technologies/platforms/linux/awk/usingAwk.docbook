@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns300:section xmlns:ns300="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.awk.usingAwk">
+
+  <ns301:title xmlns:ns301="http://docbook.org/ns/docbook">Using <ns302:command xmlns:ns302="http://docbook.org/ns/docbook">awk</ns302:command></ns301:title>
+  <ns303:para xmlns:ns303="http://docbook.org/ns/docbook">
+    The general syntax for using <ns304:command xmlns:ns304="http://docbook.org/ns/docbook">awk</ns304:command> is
+    <ns305:cmdsynopsis xmlns:ns305="http://docbook.org/ns/docbook"><ns306:command xmlns:ns306="http://docbook.org/ns/docbook">
+awk awkProgram inputStreams      
+    </ns306:command></ns305:cmdsynopsis>
+    Often the <ns307:command xmlns:ns307="http://docbook.org/ns/docbook">awk</ns307:command> program is not provided in-line, but
+    is stored in a file instead. In that case one uses
+    <ns308:cmdsynopsis xmlns:ns308="http://docbook.org/ns/docbook"><ns309:command xmlns:ns309="http://docbook.org/ns/docbook">
+awk -f awkProgramFile inputStreams      
+    </ns309:command></ns308:cmdsynopsis>
+  </ns303:para>
+  
+  <ns310:section xmlns:ns310="http://docbook.org/ns/docbook">
+    <ns311:title xmlns:ns311="http://docbook.org/ns/docbook">The structure of an <ns312:command xmlns:ns312="http://docbook.org/ns/docbook">awk</ns312:command> program</ns311:title>
+    <ns313:para xmlns:ns313="http://docbook.org/ns/docbook">
+      <ns314:command xmlns:ns314="http://docbook.org/ns/docbook">Awk</ns314:command>  matches records on <ns315:emphasis xmlns:ns315="http://docbook.org/ns/docbook">patterns</ns315:emphasis>
+      and performs the requested <ns316:emphasis xmlns:ns316="http://docbook.org/ns/docbook">actions</ns316:emphasis> on these patterns.
+    </ns313:para>
+    <ns317:para xmlns:ns317="http://docbook.org/ns/docbook">
+      The structure of a general <ns318:command xmlns:ns318="http://docbook.org/ns/docbook">awk</ns318:command> program is thus
+      <ns319:programlisting xmlns:ns319="http://docbook.org/ns/docbook">
+pattern1   { action1 }
+pattern2   { action2 }
+...
+      </ns319:programlisting>
+    </ns317:para>
+  </ns310:section> 
+  
+  <ns320:section xmlns:ns320="http://docbook.org/ns/docbook">
+    <ns321:title xmlns:ns321="http://docbook.org/ns/docbook">A simple example</ns321:title>
+    <ns322:para xmlns:ns322="http://docbook.org/ns/docbook">
+      Consider you perform a directory listing. With
+      <ns323:cmdsynopsis xmlns:ns323="http://docbook.org/ns/docbook"><ns324:command xmlns:ns324="http://docbook.org/ns/docbook">
+ls -l        
+      </ns324:command></ns323:cmdsynopsis>
+      you will receive something like
+      <ns325:programlisting xmlns:ns325="http://docbook.org/ns/docbook">
+total 469415
+drwx------    3 fritz    users         104 2003-09-03 21:16 Desktop
+drwxrwxrwx    7 fritz    users         248 2003-08-25 12:40 Documents
+-rw-r--r--    1 fritz    users         954 2003-08-21 10:15 EnrollmentConfirmation.txt
+drwxr-xr-x    5 fritz    users         120 2003-09-01 15:00 GNUstep
+drwx------   10 fritz    users         592 2003-08-11 16:06 Mail
+-rw-r-----    1 fritz    users       10642 2003-08-11 16:10 Map.gif
+drwxr-xr-x    3 fritz    users         320 2003-06-26 07:21 OpenOffice.org
+-rw-r-----    1 fritz    users         450 2003-08-04 14:31 Signature.txt
+-rw-r--r--    1 root     root         2061 2003-08-26 18:36 cdrecord.out
+drwx------    8 fritz    users         504 2003-09-05 18:54 evolution
+-rw-------    1 fritz    users      226436 2003-09-03 09:06 mbox
+drwxrwxrwx    2 fritz    solms         136 2003-09-04 09:16 temp
+drwxr-xr-x    2 fritz    users         368 2003-07-20 19:15 tst
+-rw-r--r--    1 root     root     479954944 2003-09-05 16:21 unixbookshelf.iso
+drwxrwxrwx    6 fritz    users         200 2003-09-04 00:35 work
+      </ns325:programlisting>
+    </ns322:para>
+    <ns326:para xmlns:ns326="http://docbook.org/ns/docbook">
+      But, say you only want to see the files which were modified today together with their file
+      sizes. We thus only want the filename (field 8) and the filesize (field 5) of those records
+      which contain today's date. 
+    </ns326:para>
+    <ns327:para xmlns:ns327="http://docbook.org/ns/docbook">
+      We can achieve this by feeding the output of the <ns328:command xmlns:ns328="http://docbook.org/ns/docbook">ls</ns328:command> command
+      into an <ns329:command xmlns:ns329="http://docbook.org/ns/docbook">awk</ns329:command> program which selects all records containing
+      todays date and extracts fields 8 and 5 from them:
+      <ns330:cmdsynopsis xmlns:ns330="http://docbook.org/ns/docbook"><ns331:command xmlns:ns331="http://docbook.org/ns/docbook">
+ls -l | awk '/2003-09-05/ { print $8,$5 }'    
+      </ns331:command></ns330:cmdsynopsis>
+      <ns332:note xmlns:ns332="http://docbook.org/ns/docbook">
+        <ns333:para xmlns:ns333="http://docbook.org/ns/docbook">
+          We enclose the <ns334:emphasis xmlns:ns334="http://docbook.org/ns/docbook">awk program</ns334:emphasis> within quotes so that it is
+          protected from the shell.
+        </ns333:para>
+      </ns332:note>  
+      The output would be
+      <ns335:programlisting xmlns:ns335="http://docbook.org/ns/docbook">
+evolution 504
+unixbookshelf.iso 479954944
+      </ns335:programlisting>
+    </ns327:para>
+  </ns320:section>
+  
+</ns300:section>

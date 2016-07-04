@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.design.patterns.classical.behavioral.acyclicVisitor.cyclicDependencies"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>The cyclic dependency problem of the visitor pattern</title>
+  <para>
+    In the classical visitor pattern  we have a cyclic dependency which is realized as follows:
+    <itemizedlist>
+      <listitem><para>
+        The visitor has a visitation method for each class in the hierarchy to which a 
+        polymorphic service is added. 
+      </para></listitem>
+      <listitem><para>
+        Each of these classes is dependent on each of its superclasses (specialization is
+        also realized via a message path that superclass instance which is created for that
+        subclass instance). Ultimately each of the classes in the hierarchy depends on the
+        root of the class hierarchy, <literal>Element</literal>.
+      </para></listitem>
+      <listitem><para>
+        The root of the class hierarchy itself is in turn dependent on the root of the
+        visitor hierarchy through the fact that it accepts visitors.
+      </para></listitem>
+    </itemizedlist>
+    This cyclic dependency is illustrated in
+  </para>
+  
+  <figure id="resources.information.concepts.design.patterns.classical.behavioral.visitor.cyclicDependencies_fig">
+    <title>There are cyclic dependencies between the members of the classical visitor pattern</title>
+    <graphic fileref="../visitor/cyclicDependencies.jpg"/>
+  </figure>
+  
+  <para>
+    The cyclic dependencies have a number introduces a number of issues including
+    <itemizedlist>
+      <listitem><formalpara>
+        <title>Increased maintenance costs</title>
+        <para>
+          Every time a new element is added to the element hierarchy, each visitor must be modified to
+          add an invitation service for that element.
+        </para>
+      </formalpara></listitem>
+      <listitem><formalpara>
+        <title>Compilation overheads</title>
+        <para>
+          Because of the cyclic dependencies both hierarchies have to be recompiled in their entirety
+          every time any class in either the element or the visitor hierarchy is modified.
+        </para>
+      </formalpara></listitem>
+      <listitem><formalpara>
+        <title>Partial visitations</title>
+        <para>
+          In the classical visitor pattern every element must support visitations by any visitor --
+          alternatively the invite services must throw a decline exception transferring a
+          compile-time error into a runtime error.
+          At times one would like to add visitors which only visit a certain subset of the
+          element hierarchy. The classical visitor pattern is very inconvenient for such
+          problems.
+        </para>
+      </formalpara></listitem>
+    </itemizedlist>
+    
+  </para>  
+</section>

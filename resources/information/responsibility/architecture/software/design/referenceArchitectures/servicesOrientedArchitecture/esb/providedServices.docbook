@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>What services do the ESB provide ?</title>
+    
+    <indexterm>
+        <primary>ESB</primary>
+        <secondary>functionality</secondary>
+    </indexterm>
+    
+    <para>
+        The ESB, as integration infrastructure, provides a number of key services which enable
+        Services-Oriented Integration across services.
+    </para>
+
+    <section>
+        <title>Indirect service requests</title>
+        <para> If somebody wishes to call a service published on the ESB, it does not send a message
+            directly to the service. Instead, it requests it from the ESB directly, which will route
+            the request to, and the response from, the service in question. </para>
+        <para> Service clients could request services <emphasis>abstractly</emphasis> (i.e. only
+            based on the contract which is implemented, not caring "who" services the request) 
+            or <emphasis>concretely</emphasis> based on a specific service endpoint (by name). </para>
+    </section>
+
+    <section>
+        <title>Service coupling</title>
+        <para> Every service deployment to a service container must indicate (via contracts) both
+            the services it <emphasis>provides</emphasis> to the environment, as well as the
+            services it <emphasis>needs</emphasis> from the environment. </para>
+        <para> Based on this information, the ESB can work out the message routing between services.
+            This powerful feature completely de-couples services from one another, guaranteeing
+            service autonomy and plug-ability. </para>
+    </section>
+
+    <section>
+        <title>Message delivery</title>
+        <para> The ESB is responsible to deliver messages, in accordance with the message exchange
+            pattern(s) specified in the contract, to services. Most ESBs allow one to specify the
+            quality trade-offs for message delivery: Higher performance with potential failure if
+            the ESB goes down mid-call, vs. reliable message delivery via persistence and
+            acknowledgement or receipt. </para>
+    </section>
+
+    <section>
+        <title>Message transformation</title>
+        <para> More often than not, request messages to services need to be constructed by
+            transforming existing messages. This is especially common when incompatible service
+            contracts exist, and an <emphasis>adaptor</emphasis> needs to be built. </para>
+        <para> Since most ESBs use XML as the internal messaging format, they typically allow the
+            deployment of XSLT-based transformation services to an XSLT service container, which is
+            then called just like any other service. </para>
+    </section>
+
+    <section>
+        <title>Service access via diverse protocols</title>
+        <para> The ESB must support a range of protocol binding components, which each support a
+            particular communication protocol, such as SOAP/HTTP, SMTP (e-mail), CORBA, JMS, CICS,
+            and so on. Each binding component can be configured to either <emphasis>expose a service
+                endpoint</emphasis> to external clients, or host a <emphasis>proxy to an external
+                service</emphasis>. </para>
+        <para> This is implement no different to the services hosted in the ESB's service
+            containers: Each binding component deployment either <emphasis>provides</emphasis> or
+                <emphasis>needs</emphasis> (consumes) a specific service contract. This, coupled
+            with the ESB's service coupling featured (based on the contracts) makes it possible to
+            expose/consume any service via almost any protocol, without the service's knowledge
+            thereof. </para>
+    </section>
+    
+    <section>
+        <title>Service Monitoring and Management</title>
+        <para>
+            The ESB must expose services to
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>Control the life cycle of services and assemblies</title>
+                        <para>It must be possible to deploy, undeploy, start, suspend and resume individual services,
+                        as well as entire groups of services which form part of a particular integration assembly</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Configure the message delivery channels</title>
+                        <para>It must be possible to configure the reliability/performance characteristics,
+                        as well as e.g. the storage of messages being delivered by the messaging infrastructure.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Optimise connection, thread- and object pools</title>
+                        <para>This is useful to tune the ESB to deal with varying different loads.</para>
+                    </formalpara>
+                </listitem>
+                <!-- TODO: etc? -->
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Security</title>
+        <para>
+            As an integration mechanism, the ESB does not typically enforce authorisation itself: It is merely responsible
+            for passing along any authentication metadata collected by protocol binding components to services.
+        </para>
+    </section>
+    
+    <section>
+        <title>Transaction management</title>
+        <para>
+            Services are often realised over a number of lower-level services which address specific
+            aspects of that service. Often a service needs to be completed as a whole or otherwise
+            the service steps need to be undone. To this end a SOA implementation needs to support
+            transactions.
+        </para>
+    </section>
+
+</section>

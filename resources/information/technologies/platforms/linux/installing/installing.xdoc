@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.platforms.linux.installing.installing"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Installing Linux</title>
+<para>
+</para>
+	<section>
+		<title>Guidelines</title>
+		<para>
+		As a rule of thumb it is good practice to install all packages available on the distribution. This prevents later on having to install additional packages and their respective dependencies. This rule should however only be applied to client / workstation installations. For servers, only the packages required for the server purpose to be addressed, are to be installed. This also prevents the introduction of security holes in unnecessary packages.
+		</para>
+	</section>
+	
+	<section>
+		<title>Partitioning and boot loaders</title>
+		<para>
+			Going with the default option to autopartition your drive, a /boot partition, a / [root] partition as well as a swap partition [virtual memory] are created. It could be useful to also create a separate partition for /home [Users private space] and /usr [installed application] or /var [logs] as well. 
+		</para>
+	</section>
+
+	<section>
+		<title>Creating other users</title>
+		<para>
+		You should never use the root user. (...except if you have to). The root user has special privileges which can pose a danger even to experienced users. File deletion is handled differently for the root user in that the assumtion is made that the user is certain and the request is processed without further prompts. For this reason it is good practice to create another user used for day to day tasks. This is also the reason for a section within the installation process catering for the creation of another user.
+		</para>
+	</section>
+
+	<section> 
+		<title>Selecting Packages</title>
+		<para>
+			As already previously mentioned, for client / workstation installation it is recommended to install all available packages if possible. At least for a linux novice user, until a basic understanding of the various available packages has been developed.  	
+		</para>
+	</section>
+
+	<section>
+		<title>Hardware </title>
+		<para>
+		In general most popular hardware is supported. Distributions like <emphasis role="strong">Redhat</emphasis>	offer a list of compatible hardware devices online.
+		</para>
+		<!--section>
+			<title>Graphics Cards</title>
+			<para>
+			</para>
+		</section>
+		<section>
+			<title>Sound Cards</title>
+			<para>
+			</para>
+		</section-->
+	</section>
+
+	<section>
+		<title>Choosing a Windows Manager</title>
+		<para>
+		Choosing a window manager is very much a matter of taste. Both KDE and Gnome offer a user-friendly interface with many wizards to configure the environment. Window Maker on the other hand provides a simpler more lightweight interface. For a novice user on a fair sized workstation either Gnome or KDE are recommended as they provide online help and other features easing the introduction to linux.
+		</para>
+		<!--section>
+			<title>KDE</title>
+			<para>
+			</para>
+		</section>	
+		<section>
+			<title>Gnome</title>
+			<para>
+			</para>
+		</section>	
+		<section>
+			<title>WindowMaker</title>
+			<para>
+			</para>
+		</section>	
+		<section>
+			<title>Other Windows Manager</title>
+			<para>
+			 	Other Window Managers are available although not widely in use. 
+			</para>
+		</section-->	
+	</section>	
+	
+	<section>
+		<title>Installing from CDROM or 3 1/5" disk</title>
+		<para>
+			Most modern linux distributions are available as downloadable ISO images. Once these images are burnt onto a CD, linux can be installed by booting off the CD. Should the CD-drive not support booting off CDROM disks, many distributions offer a boot disk image on the CD which can be used to create a boot stiffy disk. This boot stiffy disk can be used to boot off and load the kernel. Once the appropriate drivers have been loaded the installation process continues off the cdrom.
+		</para>
+	</section>	
+	<section>
+		<title>Installing from network</title>
+		<para>
+			In many cases it is convenient to install workstations off a server hosted on the same network. This removes the need of cd or cdrom drives and is supported by most popular network cards. 			
+		</para>
+		<section>
+			<title>Configuring the server</title>
+			<para>
+				The content of all cdroms is copied to the same directory on the server which is subsequently shared either via NFS, FTP or HTTP. This requires about 3 Gb of free diskspace on the server and dependent on the number of clients to be installed concurrently an appropriate network interface.
+			</para>
+		</section>	
+		<section>
+			<title>Installing the client</title>
+			<para>
+				On the first cdrom in the distribution collection one or more image files have to be copied onto a stiffy disk via the dd command. The clients are booted off the disks, given an IP address, either manually or via DHCP, and a reference to the share on the server, share type (NFS, FTP, HTTP).
+			</para>
+			<programlisting>
+dd -if [imagefile] -of /dev/fd0 -b 1440				
+			</programlisting>
+			<note>
+			<para>
+			For Redhat 9 the bootimage as well as the network driver disk have to be cut onto disks.
+			</para>
+			</note>
+		</section>	
+	</section>	
+	<section>
+		<title>Installing via source distribution</title>
+		<para>
+			Many distributions offer source packages which are downloaded from the internet and compiled on the target workstation. Amongst these distributions are debian and gentoo to mention two rather more popular ones. Updates to these distributions are also available via download from the internet.
+		</para>
+	</section>	
+	<section>
+		<title>Installing Redhat 9.0 - A Step by Step guide</title>
+		<formalpara>
+			<title>Booting</title>
+			<para>
+				Either boot off CDRom or 3 1/5" disk.
+			</para>
+		</formalpara>	
+		<formalpara>
+			<title>Selecting Language</title>
+			<para>
+				<itemizedlist>
+					<listitem>
+						<para>
+						During installation process select <emphasis role="strong">English</emphasis>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+						Keyboard layout - typically either US or UK.
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</formalpara>	
+		<formalpara>
+			<title>Selecting Installation options</title>
+			<para>
+			<itemizedlist>
+				<listitem>
+					<para>
+					Local CDROM - The distribution is mounted in the CDRom drive.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+					Hard drive - The distribution has already been copied onto a partition on the target workstation.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+				  NFS - Installing over the network of a NFS server.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+					FTP - Installing over the network of a FTP server.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+					HTTP - Installing over the network of a HTTP server.
+					</para>
+				</listitem>
+			</itemizedlist>
+			</para>
+		</formalpara>
+		
+		<formalpara>
+			<title>Mouse configuration</title>
+			<para>
+			Select the mouse connected to the workstation. When in doubt select a generic model. Important to tick <quote>Emulate 3 buttons</quote> which emulates a three button mouse. The middle button is emulated when both the left and right buttons are pressed simultaneously. This is a useful feature as the middle button performs a <emphasis role="strong">paste</emphasis> function of anything previously highlighted and <emphasis role="strong">copied</emphasis> with the left button. 
+			</para>
+		</formalpara>	
+		
+		<formalpara>
+			<title>Installation type</title>
+			<para>
+				Personal Desktop (home / desktop use), Workstation (tools for development), Server (file and print sharing, web services), Custom (Everything ...)
+			</para>
+		</formalpara>	
+		
+		<formalpara>
+			<title>Partitioning</title>
+			<para>
+				Autopartition vs Disk druid. This will create a default set of partitions required. A small boot partition to store the kernel image. A swap partition to be used as virtual memory and a root partition on which the distribution resides.
+			</para>
+		</formalpara>	
+		
+		<formalpara>
+			<title>Bootloader</title>
+			<para>
+				Grub, Lilo or nothing. Grub (the default) will cater for most needs.
+			</para>
+		</formalpara>	
+		
+		<formalpara>
+			<title>Network</title>
+			<para>
+				Network configuration allows the configuration of the IP address, DNS server, default gateway and the workstations hostname.
+			</para>
+		</formalpara>	
+		
+		<formalpara>
+			<title>Firewall</title>
+			<para>
+				For the paranoid. A local firewall blocking access to ports. This configures iptables to perform port filtering.
+			</para>
+		</formalpara>	
+		
+		<formalpara>
+			<title>Language Support</title>
+			<para>
+				Basic English (default) should suffice in most cases.
+			</para>
+		</formalpara>	
+		
+		<formalpara>
+			<title>Timezone</title>
+			<para>
+				Select Africa / Johannesburg.
+			</para>
+		</formalpara>	
+
+		<formalpara>
+			<title>Root Password</title>
+			<para>
+				Set the Administrator password to <quote>stc007</quote>. Please note small case.
+			</para>
+		</formalpara>	
+		
+		<formalpara>
+			<title>Authentication config</title>
+			<para>
+				MD5, shadow, NIS, LDAP, Kerberos 5 and SMB. Users are authenticated via a local file containing a MD5 checksum of their password, a shadow file containing their encrypted password, NIS, LDAP, Kerberos 5 encryption or SMB (Windows). The default MD5 and shadow file typically suffice.
+			</para>
+		</formalpara>	
+		
+		<formalpara>
+			<title>Packages</title>
+			<para>
+				For a client workstation scroll down to the end of the list and select "everything" at the end of the list.
+			</para>
+		</formalpara>	
+	
+		<formalpara>
+			<title>Wait !</title>
+			<para>
+				Dependent on package selection and workstation up to 1 hour.
+			</para>
+		</formalpara>	
+		
+		<formalpara>
+			<title>Bootdisk</title>
+			<para>
+				If you would like to create a boot disk, which can be used to recover a faulty boot sectory for example, use this option.
+			</para>
+		</formalpara>	
+		
+		<formalpara>
+			<title>X Windows</title>
+			<para>
+				Dependent on the hardware configuration, the installed graphics card and monitor are detected. In some cases minor modifications are required. Also select the default login page (KDE or Gnome).
+			</para>
+		</formalpara>	
+		
+	</section>
+	
+	<section>
+		<title>Documentation</title>
+		<para>
+		A good amount of information about Linux and available applications are available with the distributions documentation and resides in <emphasis role="strong">/usr/share/docs</emphasis> or <emphasis role="strong">/usr/local/share/docs</emphasis>. Further information on specific topics in the form of <emphasis role="strong">HowTo's</emphasis> (whitepapers) is available online from the Linux Documentation Project (LDP). These HowTo offer step by step instructions as well as information on many topics and services. Many newsgroups and IRC channels also offer assistance, although questions which are well documented in FAQ's, HowTos etc are frowned upon, and might not result in the intended response. 
+		</para>
+		<note>
+		<para>RTFM and RTFS are good guides, even though they may not always be the easiest.</para>
+		</note>
+	</section>	
+</section>

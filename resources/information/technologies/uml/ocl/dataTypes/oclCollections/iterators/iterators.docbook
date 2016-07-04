@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>
+        Collection iterators
+    </title>
+    <indexterm><primary>Object Constraint Language</primary><secondary>collection iterators</secondary></indexterm>
+    <para>
+        OCL provides an <literal>iterate operation</literal> which enables one to iterate across a collection of elements,
+        applying an expression to each element and accumulating the expression results within an accumulator. 
+    </para>
+    <para>
+        For example, if we wanted to query the total outstanding debt accross a collection of accounts, then we could
+        iterate as follows:
+        <programlisting><![CDATA[
+accounts->iterate(account : Account; totalDebt : Real = 0 |
+            if account.balance < 0 then
+                totalDebt = totalDebt + account.balance)
+            else
+                totalDebt
+            endif    
+            ]]></programlisting>
+    </para>
+    <para>
+        Similarly, if we wanted to accumulate all woman employees in a collection, we could do it as follows
+        <programlisting><![CDATA[
+employees->iterate (employee : Employee; women : Set(Employee) = Set{} |
+            if employee.sex = Sex::female then
+                women.including(employee)
+            else
+                women
+            endif    
+            ]]></programlisting>
+    </para>
+    <note><para>
+        Often one can use <literal>select</literal>, <literal>reject</literal>, <literal>collect</literal> or <literal>sum</literal>
+        operations instead of iterate.
+    </para></note>
+</section>    
+    

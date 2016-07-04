@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.xml.webServices.wsdl.simpleExample">
+    
+    <title>A simple example of a WSDL contract</title>
+    
+    
+    
+    <para>
+        The following WSDL illustrates an elementary, <emphasis>WS-I Basic Profile</emphasis>
+        compliant WSDL. Consider the following scenario:
+    </para>
+    <para>
+        A small web service provides a single operation to search an inventory for items, based
+        on a simple <literal>string</literal> of keywords. We want to provide a service which would
+        be conceptually similar to the following Java-like pseudocode:
+        <programlisting><![CDATA[
+InventoryService
+{
+  public SearchResponse searchInventory( SearchRequest ) throws SearchFault;
+}
+        ]]></programlisting>
+    </para>
+    <para>
+        The following WSDL describes the contract for our service, which is both sufficient to generate the
+        framework (skeleton) of our server implementation, as well most of the client. The document is
+        followed by a brief guide tot he five sections.
+        <programlisting language="XML"><![CDATA[
+]]><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/inventoryExample.wsdl" parse="text"/><![CDATA[
+        ]]></programlisting>
+    </para>
+    <para>
+        <orderedlist>
+            <listitem>
+                <formalpara>
+                    <title>types</title>
+                    <para>In this simple example, we define the schema types in-line, without
+                    splitting between <emphasis>core</emphasis> (business) and <emphasis>service</emphasis>
+                    (message definitions) domains. Note that we define <literal>elements</literal>
+                    for the message types, as the WSDL will contain references to these.</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>messages</title>
+                    <para>We define three simple messages, a search request, search response,
+                    and an error. These are without context, and may be re-used by several
+                    operations.</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>portType</title>
+                    <para>An abstract, yet conceptually complete, definition of our
+                    service, the one use case it supports (searchInventory), and what messages
+                    are transferred (including faults)</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>binding</title>
+                    <para>A <emphasis>Document/Literal, SOAP</emphasis> binding 
+                        to <emphasis>HTTP</emphasis> (the scheme which one should
+                        almost exclusively use).
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>service</title>
+                    <para>Indicates the web address where an HTTP binding of the
+                    inventory service can be found. Conversely, a web site on this
+                    server most likely provided a link to this WSDL in the first place.</para>
+                </formalpara>
+            </listitem>
+        </orderedlist>
+    </para>
+    
+</section>

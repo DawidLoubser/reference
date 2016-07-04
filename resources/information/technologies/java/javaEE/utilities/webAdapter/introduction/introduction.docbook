@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za  -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Introduction</title>
+    <para>
+        In a normal URDAD-based technology neutral process specification a user requests a service and the controller assembles a business
+        processes from services sourced from different service providers (realizing appropriate contracts) as well as potentially from services
+        sourced from the user itself.
+    </para>
+    <para>
+        When processing an order, the customer might have to accept a quote. So, in that case, the processOrder service would be assembled
+        from lower level services sourced from Finance, StockManagement, Deliveries as well as the acceptQuote service which is requested
+        from the client. Note that you cannot return for the process order service with a quote. The customer did not ask you to request a quote,
+        but to process an order and you can only return once that service has been provided. Instead, provide quote needs to be a call-back to
+        the customer.
+    </para>    
+    <para>
+        In an URDAD based design this would be cleanly done with the understanding that you have the appropriate adapters to each of the concrete
+        service providers you are ultimately using as well as an adapter to your customer. The customer could request the service from their systems
+        via a web service or from a human user interface which could be a application or web client. For each integration channel you would have the
+        appropriate adapter.
+    </para>
+    <para>
+        In the case of a web client one is facing the technical challange that you cannot make a call-back to the processor. You can only respond
+        with a HTTP response, not with a request. The adapter thus needs to deliver the acceptQuote request as a return, i.e. we need to
+        decouple the technicality of making a call or a return from the conceptual level where we are making a request or a response. The infrastructure
+        needs to thus be able to send both, a request or a response, as either a call or a return.        
+    </para>
+</section>    

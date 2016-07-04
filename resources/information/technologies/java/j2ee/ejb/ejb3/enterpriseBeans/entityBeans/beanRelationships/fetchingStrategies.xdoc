@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.entityBeans.beanRelationships.fetchingStrategies"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Fetching strategies</title>
+  <para>
+    The EJB specification supports the definition of fetching strategies which
+    enables one to perform some optimization based on domain and usage
+    knowledge.
+  </para>
+
+  <section>
+    <title>Eager fetching</title>
+    <para>
+      Associated bean and embedded classes can be eagerly loaded or lazily
+      fetched. The fetch strategy for a bean relationship can be specified as a
+      relationship attribute:
+    </para>
+    <para>
+      For example
+      <programlisting><![CDATA[
+@ENTITY
+public class Order
+{
+  ...
+  @ManyToOne(fetchType=FetchType.EAGER)
+  public Client getClient()
+  {
+    ...
+  }
+}        
+        ]]></programlisting>
+      specifies that the client information should be retrieved when the order
+      is retrieved.
+    </para>
+    <para>
+      In the case of lazy fetching, the associated bean is only fetched when it
+      is required. It is specified via the <literal>FetchType.LAZY</literal>
+      value for the <literal>fetchType</literal> relationship attribute.
+    </para>
+  </section>
+  
+  <section>
+    <title>Defaults fetching strategies</title>
+    <para>
+      The default fetching strategy is
+      <itemizedlist>
+        <listitem><para>
+          <emphasis>EAGER</emphasis> for one-to-one and many-to-one bean
+          relationships and for embedded classes.
+        </para></listitem>
+        <listitem><para>
+          <emphasis>LAZY</emphasis> for one-to-many and many-to-many
+          relationships.
+        </para></listitem>
+      </itemizedlist>
+      
+    </para>
+  </section>
+  
+  
+</section>  

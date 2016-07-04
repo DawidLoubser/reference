@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns3556:section xmlns:ns3556="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.security.SSLClientAuthentication.Connect">
+
+	<ns3557:title xmlns:ns3557="http://docbook.org/ns/docbook">Connecting to the server</ns3557:title>
+	<ns3558:section xmlns:ns3558="http://docbook.org/ns/docbook">
+		<ns3559:title xmlns:ns3559="http://docbook.org/ns/docbook">Using OPENSSL and a browser</ns3559:title>
+		<ns3560:para xmlns:ns3560="http://docbook.org/ns/docbook">
+		Now that we have created a CA and configured Apache to use SSL and provide secure contence on port 443 a connection can be attempted. If we have switched client authentication on <ns3561:emphasis xmlns:ns3561="http://docbook.org/ns/docbook" role="strong">SSLVerifyClient require</ns3561:emphasis> then we still need to create and sign a client certificate. The process to do this is the same a we used to create the servers certificate.
+		</ns3560:para>
+		<ns3562:programlisting xmlns:ns3562="http://docbook.org/ns/docbook">
+perl CA.pl -newreq
+perl CA.pl -sign
+mv newreq.pem client_req.pem
+mv newcert.pem client_cert.pem
+openssl rsa &lt; client_req.pem &gt; client_key.pem
+openssl pkcs12 -export -in client_cert.pem -inkey client_key.pem -out client.p12
+		</ns3562:programlisting>
+		<ns3563:para xmlns:ns3563="http://docbook.org/ns/docbook">
+			The resulting <ns3564:emphasis xmlns:ns3564="http://docbook.org/ns/docbook" role="strong">client.p12</ns3564:emphasis> file must be imported into the browser. In many cases it might be required to add the CA's certificate <ns3565:emphasis xmlns:ns3565="http://docbook.org/ns/docbook" role="strong">cacerts.pem</ns3565:emphasis> to the browsers certificate store as well. This might also prevent popups appearing.
+		</ns3563:para>	
+	</ns3558:section>
+	<ns3566:section xmlns:ns3566="http://docbook.org/ns/docbook">
+		<ns3567:title xmlns:ns3567="http://docbook.org/ns/docbook">Using JAVA API</ns3567:title>
+		<ns3568:para xmlns:ns3568="http://docbook.org/ns/docbook">
+			To connect using a java program follow the steps. Details on the commands issued are the the Tools section	
+		</ns3568:para>
+		<ns3569:programlisting xmlns:ns3569="http://docbook.org/ns/docbook">
+Create a keystore with a key pair in it
+Export a CSR from the keystore
+Sign the request with your own CA's cacert
+Re-Import the signed cert back into the keystore. Remember to use the same alias
+		</ns3569:programlisting>
+		<ns3570:para xmlns:ns3570="http://docbook.org/ns/docbook">
+			Connection using standard JSSE calls. One might need to specify the proper <ns3571:emphasis xmlns:ns3571="http://docbook.org/ns/docbook" role="strong">key</ns3571:emphasis> and <ns3572:emphasis xmlns:ns3572="http://docbook.org/ns/docbook" role="strong">trustore</ns3572:emphasis> (default truststore is $JAVA_HOME/jre/lib/security/cacerts). Keystores are used to contain keys and trusted certs and must contain a entry of type <ns3573:emphasis xmlns:ns3573="http://docbook.org/ns/docbook" role="strong">keyEntry</ns3573:emphasis> consisting of the client's private key and the signed certificate. Truststores are used to validated trusted entities. The truststore must contain the CA's public certificate. To specify the key and truststores at runtime the following paramters used <ns3574:emphasis xmlns:ns3574="http://docbook.org/ns/docbook" role="strong">-Djavax.net.ssl.keyStore and -Djavax.net.ssl.keyStorePassword</ns3574:emphasis> and respectively <ns3575:emphasis xmlns:ns3575="http://docbook.org/ns/docbook" role="strong">-Djavax.net.ssl.trustStore and -Djavax.net.ssl.trustStorePassword</ns3575:emphasis>
+		</ns3570:para>
+	</ns3566:section>
+</ns3556:section>

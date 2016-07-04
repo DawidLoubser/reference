@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    targetNamespace="http://www.solms.co.za/orders"
+    xmlns:o="http://www.solms.co.za/orders"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xs:import namespace="http://www.solms.co.za/products" schemaLocation="product.xsd"/>
+        
+    <xs:complexType name="Order">
+        <xs:sequence>
+            <xs:element name="orderNo" type="xs:string"/>
+            <xs:element name="client" type="xs:string"/>
+            <xs:element name="lineItem" type="o:LineItem" maxOccurs="unbounded"/>
+        </xs:sequence>    
+    </xs:complexType>
+    
+    <xs:complexType name="LineItem">
+        <xs:sequence>
+            <xs:element name="quantity" type="xs:positiveInteger"/>
+            <xs:element name="unitPrice" type="xs:double"/>
+            <xs:element name="product">
+                <xs:complexType>
+                    <xs:attribute name="ref" type="xs:string" use="required"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Orders">
+        <xs:sequence>
+            <xs:element name="order" type="o:Order" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="order" type="o:Order"/>
+    
+    <xs:element name="orders" type="o:Orders">
+        <xs:key name="orderKey">
+            <xs:selector xpath="./o:order"/>
+            <xs:field xpath="o:orderNo"/>
+        </xs:key>
+    </xs:element>
+</xs:schema>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.c.pointers.dynamicMemoryAllocation"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Dynamic memory allocation</title>
+  <para>
+    <emphasis>C</emphasis> enables one to dynamically allocate and release memory.
+    This enables one to create dynamic data structures like linked lists, 
+    dynamically resizing arrays and so on.
+  </para>    
+   
+ <section><title>Malloc and free</title>
+   <para>
+     The two core functions used when allocating memory dynamically:
+     <function>malloc</function> and <function>free</function>. 
+     <itemizedlist>
+       <listitem><formalpara><title>void* malloc(size_t numBytes)</title>
+         <para>
+           Malloc grabs a contiguous memory block of <varname>numBytes</varname> bytes 
+           from the heap
+         </para>
+       </formalpara></listitem>
+       <listitem><formalpara><title>void free(void* p)</title>
+         <para>
+           The function <function>free</function> releases the memory allocated to
+           that pointer by a previous call to <function>malloc</function>. 
+           <warning><para>
+             You have to call free on the same pointer variable for which you called
+             malloc. If you use pointer assignment to define a new pointer pointing
+             to the same memory and then call free on the new pointer, you are likely
+             to get memory leaks.
+           </para></warning>
+         </para>
+       </formalpara></listitem>
+     </itemizedlist>
+     <xref linkend="polygon.c"/> illustrates the use of functions
+     <function>malloc</function> and <function>free</function>.
+   </para>
+   <example id="polygon.c"><title>polygon.c</title>
+     <para>
+       In this example we define a structure <type>Point</type> as before (and
+       register the structure as a type via typedef). We then ask the user for
+       the type of polygon (<abbrev>i.e.</abbrev> the number of points, 3 for triangle, 4 for 
+       quadrangle, ..., 10 for pentangle and so on).
+     </para>   
+     <para>
+       Once we have the number of points, we request memory for 
+       <constant>numPoints</constant> of type <type>Point</type>.
+       For example, if the user requested 3 points for a triangle,
+       our call to <function>malloc</function> will request
+       <constant>3 * sizeof(Point) = 3 * 16 = 48</constant> bytes.
+     </para>
+     <programlisting><xi:include href="polygon.c" parse="text"/></programlisting>
+     <para>
+       We then initialize the memory with the points for the polygon.
+       For this we simply use the array element access operator,
+       <command>[]</command>. <xref linkend="noteArraysAsPointers"/>
+       discusses why we can simply use the array element access operator
+       and what happens behind the scene. In <xref linkend="secPointerArithmetic"/>
+       we show how we could have used pointer arithmetic to access the individual
+       points of our polygon.
+       <note id="noteArraysAsPointers"><title>Arrays as pointers</title>
+         <para>
+           Arrays are internally represented as pointers and we can use
+           the array elements access operator directly on a pointer. Hence
+           <programlisting>
+             polygon[3]
+           </programlisting>
+           is equivalent to
+           <programlisting>
+             &amp;(polygon + 3*sizeof(Point))
+           </programlisting>
+           In the last expression we add 3 times the size of a <type>Point</type>
+           to the address held by the pointer, <varname>polygon</varname>. This
+           will be the address of the 4'th point in the array of points. We then
+           dereference the address, interpreting the 16 bytes following that
+           memory address as a <type>Point</type>.
+         </para>
+       </note>
+     </para>
+     <para>
+       Next we print out the points of our polygon followed by the memory positions 
+       for the individual points.
+       Finally we release the memory allocated for the polygon.
+     </para>
+   </example>
+ </section>  
+ 
+ <section><title>Calloc</title>
+   <para>
+     The function <function>calloc</function> is similar to <function>malloc</function>
+     in that it requests blocks of memory from the operating system. Unlike 
+     <function>malloc</function>, <function>calloc</function> also initializes the
+     memory to zero. Hence it is a little less efficient than <function>malloc</function>,
+     but has the benefit that you may not need to initialize the elements you created
+     dynamically yourself.
+   </para>
+   <para>
+    The syntax for <function>calloc</function> is different to that of <function>malloc</function>:
+    <programlisting>
+void* calloc(size_t numElements, size_t elementSize)
+    </programlisting>
+    Hence, for our point example, we would call it as
+    <programlisting>
+Point* polygon = (Point*)calloc(numPoints, sizeof(Point));      
+    </programlisting>
+   </para>
+ </section>
+ 
+ <section><title>Realloc</title>
+   <para>
+     The function <function>realloc</function> is used to modify the size of a block of 
+     memory allocated to a pointer, <abbrev>i.e.</abbrev> to either increase or decrease the amount
+     of memory assigned to the pointer. 
+   </para>  
+   <para>  
+     The latter is, of course, always possible.
+     The former, <abbrev>i.e.</abbrev> to increase the amount of memory allocated to a pointer,
+     may or may not be possible, depending on whether there is sufficient memory 
+     available directly after the memory occupied currently. If t is not possible,
+     <function>realloc</function> will allocate a new block of memory and copy
+     the contents of the original block of memory into the start of the new
+     block of memory.
+   </para>
+   <para>
+     The syntax for <function>realloc</function> is
+     <programlisting>
+void* realloc(void* p, size_t newSize);       
+     </programlisting>
+   </para>
+ </section>
+</section>

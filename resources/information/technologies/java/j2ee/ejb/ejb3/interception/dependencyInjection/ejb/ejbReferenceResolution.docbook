@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.dependencyInjection.ejb.ejbReferenceResolution">
+  <title>Linking logical EJB names to physical JNDI names</title>
+  <para>
+    If an EJB is given a name (called the <literal>ejb-name</literal>, this name is used as the basis of the bean's JNDI name. 
+    The mapping is done either in the <literal>&lt;enterprise-beans&gt;</literal>
+    section of an <literal>ejb-jar.xml</literal> deployment descriptor, or as part of the annotation
+    to indicate that a bean is a stateless or stateful session bean:
+  <programlisting language="XML">
+&lt;ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd" 
+  version="3.0"&gt;
+    &lt;enterprise-beans&gt;
+      &lt;session&gt;
+        ...
+        &lt;ejb-name&gt;EmployeeService&lt;/ejb-name&gt;
+        &lt;ejb-class&gt;com.wombat.empl.EmployeeServiceBean&lt;/ejb-class&gt;
+        ...
+        
+        &lt;ejb-ref&gt;
+          &lt;description&gt;
+            This is a reference to an EJB 2.1 entity bean that
+            encapsulates access to employee records.
+          &lt;/description&gt;
+          &lt;ejb-ref-name&gt;ejb/EmplRecord&lt;/ejb-ref-name&gt;
+          &lt;ejb-ref-type&gt;Entity&lt;/ejb-ref-type&gt;
+          &lt;home&gt;com.wombat.empl.EmployeeRecordHome&lt;/home&gt;
+          &lt;remote&gt;com.wombat.empl.EmployeeRecord&lt;/remote&gt;
+        &lt;/ejb-ref&gt;
+        &lt;ejb-local-ref&gt;
+          &lt;description&gt;
+            This is a reference to the local business interface
+            of an EJB 3.0 session bean that provides a payroll
+            service.
+          &lt;/description&gt;
+          &lt;ejb-ref-name&gt;ejb/Payroll&lt;/ejb-ref-name&gt;
+          &lt;local&gt;com.aardvark.payroll.Payroll&lt;/local&gt;
+        &lt;/ejb-local-ref&gt;
+        &lt;ejb-local-ref&gt;
+          &lt;description&gt;
+            This is a reference to the local business interface
+            of an EJB 3.0 session bean that provides a pension
+            plan service.
+          &lt;/description&gt;
+          &lt;ejb-ref-name&gt;ejb/PensionPlan&lt;/ejb-ref-name&gt;
+          &lt;local&gt;com.wombat.empl.PensionPlan&lt;/local&gt;
+        &lt;/ejb-local-ref&gt;
+        ...
+      &lt;/session&gt;
+      ...
+    &lt;/enterprise-beans&gt;
+&lt;/ejb-jar&gt; 
+</programlisting>
+    or, using the name attribute of the annotation:
+    <programlisting language="Java">
+import javax.ejb.*;
+
+@Stateless(name="SAHomeLoanCalculator")
+@Remote({HomeLoanCalculator.class})
+public class HomeLoanCalculatorBean implements HomeLoanCalculator
+{
+  ...
+}
+      </programlisting>
+  </para>
+  <para>
+    Alternatively, an absolute JNDI name may be given to the bean via the <literal>mappedName</literal>
+    attribute:
+<programlisting language="Java">
+import javax.ejb.*;
+
+@Stateless(mappedName="calculators/HomeLoan")
+@Remote({HomeLoanCalculator.class})
+public class HomeLoanCalculatorBean implements HomeLoanCalculator
+{
+...
+}
+</programlisting>    
+  </para>
+</section>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2009-2-4 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Copy-modify-merge strategy for resource protection</title>
+    <para>
+        In this approach anybody who wants to make a change to a resource gets a local copy, applies the
+        modifications and merges the resource back into the repository.
+        This approach to resource protection does not serialize modification access to resources. Multiple
+        people can modify their local copies concurrently. If the modifications are on separate areas of the 
+        resource, then there are no conflicts and all modifications are merged back into the repository copy.
+        On the other hand, person A may make certain modifications and person B may make modifications
+        which overlap with those made by A. In such a case a conflict is signaled and person B (the second
+        person to commit) is requested to resolve those conflicts before being able to commit his/her changes
+        to the repository.
+    </para>
+    <para>
+        The advantages of the <emphasis>copy-modify-merge</emphasis> approach are
+        <itemizedlist>
+            <listitem><para>
+                The system is not vulnerable to individuals locking resources unnecesarily and for excessivly long times.
+            </para></listitem>
+            <listitem><para>
+                Developers can work more efficiently with multiple people working concurrently on the same resources.
+                Typically the time required to resolve conflicts is significantly less than the time wasted by locking resources.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        However, there are also disadvantages around the <emphasis>copy-modify-merge</emphasis> approach
+        to resource protection. In particular
+        <itemizedlist>
+            <listitem><para>
+                This approach is only suitable for certain types of resources like text based resources and resources with
+                a well defined structure - many binary files are not suitable for this approach to resource protection,
+                i.e. they are unmergable.
+            </para></listitem>
+            <listitem><para>
+                If the merge process results in conflicts, developers and other resource modifiers may be exposed to
+                complexities which are difficult for them to manage.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+</section>    

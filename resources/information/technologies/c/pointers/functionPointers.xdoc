@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->  
+<section id="resources.information.technologies.c.pointers.functionPointers"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Function pointers</title>
+    <para>
+      One of the very powerful aspects of <emphasis>C</emphasis> is that
+      of function pointers, <abbrev>i.e.</abbrev> we can call a function by simply having
+      a pointer to a function and we do not need to know the function
+      name itself or which function the pointer is currently pointing
+      to. A function pointer  thus holds the address of the entry point of a function.
+    </para> 
+    <section><title>Function pointers and polymorphism</title>
+      <para>
+        Function pointers directly provide a mechanism for working at a higher
+        level of abstraction, for polymorphism. We can write code calling
+        functions without knowing which function will be executed at run time.
+        All we need to know is the interface for that function, <abbrev>i.e.</abbrev> which
+        parameters it gets and what type it returns.
+      </para>
+    </section>
+    <section><title>Declaring function pointers</title>
+      <para>
+        The syntax for declaring function pointers is
+        <programlisting>
+returnType (*functionPointerName)(arg1Type arg1, ..., argNType argN);
+        </programlisting>
+        For example
+        <programlisting>
+double (*d_f_d)(double x)          
+        </programlisting>
+        declares a function pointer with variable name <varname>d_f_d</varname>
+        which can point to any function which gets a <type>double</type> as argument
+        and returns a <type>double</type>.
+      </para>
+      <para>
+        Having declared a variable of type pointer-to-function, we can now assign
+        this pointer to point to any function with compatible function header. For
+        example,
+        <programlisting>
+f = sin;          
+        </programlisting>
+        or
+        <programlisting>
+f = sqrt;          
+        </programlisting>
+      </para>
+      
+      <example id="simpleFunctionPointer.c"><title>simpleFunctionPointer.c</title>
+        <programlisting><xi:include href="simpleFunctionPointer.c" parse="text"/></programlisting> 
+      <para>
+        Running the program yields the following output: 
+        <programlisting>
+f(2.000000) = 7.414214
+f(2.000000) = 1.414214          
+        </programlisting>
+      </para>
+      </example>
+    </section>
+    <section><title>Simpson integration</title>
+      <para>
+        Simpson integration is one of the simplest integration techniques. In this
+        example we provide a basic implementation of Simpson integration which can
+        integrate any bounded function over a specified interval.
+      </para>
+      <para>
+        Note that the function, <function>simpsonIntegrate</function>, takes as
+        first argument a function pointer. The function which will be integrated
+        will be that function to which the pointer points.
+      </para>
+      <example id="simpsonIntegration.c"><title>simpsonIntegration.c</title>
+        <programlisting><xi:include href="simpsonIntegration.c" parse="text"/></programlisting>
+        <para>
+          An example output is shown below:
+          <programlisting>
+Simpson integration:
+number of intervals = 100
+integration boundaries: a, b = -7.6 9
+Integral_-7.600000^9.000000 f(x) dx = 392.522064
+          </programlisting>
+        </para>
+      </example>
+    </section>  
+</section>    

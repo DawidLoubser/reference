@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" --><ns22:section xmlns:ns22="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.jboss.clustering.architecture.clusteringArchitecture">
+
+  <ns23:title xmlns:ns23="http://docbook.org/ns/docbook">The clustering architecture of JBoss</ns23:title>
+  <ns24:para xmlns:ns24="http://docbook.org/ns/docbook">
+      In this section we discuss the core architectural elements
+      of the clustering architecture of JBoss.
+  </ns24:para>  
+  
+  <ns25:section xmlns:ns25="http://docbook.org/ns/docbook">
+    <ns26:title xmlns:ns26="http://docbook.org/ns/docbook">Partitions and nodes</ns26:title>
+    <ns27:para xmlns:ns27="http://docbook.org/ns/docbook">
+      A node is an instance of the application server. To create
+      a cluster from a number of application server instances
+      (typically running on separate machines), one groups those
+      servers into the same partition.    
+      <ns28:note xmlns:ns28="http://docbook.org/ns/docbook"><ns29:para xmlns:ns29="http://docbook.org/ns/docbook">
+         The same node can belong to multiple clusters.
+      </ns29:para></ns28:note>
+    </ns27:para>
+  </ns25:section>
+  
+  <ns30:section xmlns:ns30="http://docbook.org/ns/docbook">
+    <ns31:title xmlns:ns31="http://docbook.org/ns/docbook">The default partition</ns31:title>
+    <ns32:para xmlns:ns32="http://docbook.org/ns/docbook">
+        If a partition is not given a name, it acquires the default name,
+        <ns33:literal xmlns:ns33="http://docbook.org/ns/docbook">partition/cluster</ns33:literal>. Consequently, starting new nodes without
+        specifying a partition name will make the nodes belong to the same
+        default partition. However, clustering is switched off by  default.
+    </ns32:para>
+  </ns30:section>
+  
+  <!--
+  <section>
+    <title>Sub-Partitions</title>
+  </section>
+  -->
+  
+    <ns34:section xmlns:ns34="http://docbook.org/ns/docbook">
+      <ns35:title xmlns:ns35="http://docbook.org/ns/docbook">Automatic node discovery</ns35:title>
+      <ns36:para xmlns:ns36="http://docbook.org/ns/docbook">
+          In JBoss one does not have to define a cluster statically. One simply
+          assigns a node to a partition by providing a partition name (it will
+          be in the default partition if a partition name is not specified).
+      </ns36:para>
+      <ns37:para xmlns:ns37="http://docbook.org/ns/docbook">
+          The nodes communicate with one another informing the other nodes
+          in the partition of their availability. A node can be dynamically
+          reassigned to another cluster.
+      </ns37:para>
+    </ns34:section>
+
+    <ns38:section xmlns:ns38="http://docbook.org/ns/docbook">
+      <ns39:title xmlns:ns39="http://docbook.org/ns/docbook">Intra-node communication</ns39:title>
+      <ns40:para xmlns:ns40="http://docbook.org/ns/docbook">
+        Nodes communicate their state (<ns41:abbrev xmlns:ns41="http://docbook.org/ns/docbook">e.g.</ns41:abbrev> that it has become available or 
+        that it is going down) by sending multi-cast messages. JBoss uses 
+        JavaGroup's which is a framework for reliable group communication via 
+        UDP-multicast messaging.
+      </ns40:para>
+    </ns38:section>
+    
+    <ns42:section xmlns:ns42="http://docbook.org/ns/docbook">
+      <ns43:title xmlns:ns43="http://docbook.org/ns/docbook">Connnecting to nodes in a fail-over safe way</ns43:title>
+      <ns44:para xmlns:ns44="http://docbook.org/ns/docbook">
+        To achieve fail-over safety a connection must automatically be 
+        established to a node which is currently up and running and, upon
+        failure of that node, the connection should be redirected to
+        another node.
+      </ns44:para>
+      <ns45:para xmlns:ns45="http://docbook.org/ns/docbook">
+        In this section we first explain some commonly used approaches
+        before discussing the <ns46:emphasis xmlns:ns46="http://docbook.org/ns/docbook">smart-proxy</ns46:emphasis> solution provided by
+        <ns47:emphasis xmlns:ns47="http://docbook.org/ns/docbook">JBoss</ns47:emphasis>.      
+      </ns45:para>
+    </ns42:section>
+    
+    <ns48:section xmlns:ns48="http://docbook.org/ns/docbook">
+      <ns49:title xmlns:ns49="http://docbook.org/ns/docbook">Building fail-over safety into client applications</ns49:title>
+      <ns50:para xmlns:ns50="http://docbook.org/ns/docbook">
+        For fail over safety a client has to, upon failure at a particular node,
+        reconnect to another node. This logic could be built in to the client
+        application, but that would embed clustering logic directly into client
+        applications. 
+      </ns50:para>
+      <ns51:para xmlns:ns51="http://docbook.org/ns/docbook">
+        However, the clustering should preferably be transparent to client 
+        applications, <ns52:abbrev xmlns:ns52="http://docbook.org/ns/docbook">i.e.</ns52:abbrev> a client application simply makes use of a service
+        offered by a service provider and is unaware oof which node ultimately
+        supplies the service.
+      </ns51:para>
+    </ns48:section>
+    
+    <ns53:section xmlns:ns53="http://docbook.org/ns/docbook">
+      <ns54:title xmlns:ns54="http://docbook.org/ns/docbook">Using a server-side dispatcher</ns54:title>
+      <ns55:para xmlns:ns55="http://docbook.org/ns/docbook">
+        Alternatively one could host the fail-over safety on the server side
+        by having clients call a dispatcher which forwards the request to one
+        of the nodes, and, upon failure of that node, redirects the request
+        to another node.
+      </ns55:para>
+      <ns56:para xmlns:ns56="http://docbook.org/ns/docbook">
+        Using a dispatcher has, however,the disadvantage that there is still
+        a single point of failure, the dispatcher itself.
+      </ns56:para>
+    </ns53:section>
+    
+    <ns57:section xmlns:ns57="http://docbook.org/ns/docbook">
+      <ns58:title xmlns:ns58="http://docbook.org/ns/docbook">Smart proxies</ns58:title>
+      <ns59:para xmlns:ns59="http://docbook.org/ns/docbook">
+        JBoss uses smart-proxies to provide fail-over safety to clients in a 
+        transparent way. Smart proxies have an embedded dispatcher, <ns60:abbrev xmlns:ns60="http://docbook.org/ns/docbook">i.e.</ns60:abbrev> the 
+        dispatcher is now on the client side.
+      </ns59:para>
+      
+      <ns61:section xmlns:ns61="http://docbook.org/ns/docbook">
+        <ns62:title xmlns:ns62="http://docbook.org/ns/docbook">What do smart-proxies provide you?</ns62:title>
+        <ns63:para xmlns:ns63="http://docbook.org/ns/docbook">
+          A smart proxy is an intelligent proxy which
+          <ns64:itemizedlist xmlns:ns64="http://docbook.org/ns/docbook">
+            <ns65:listitem xmlns:ns65="http://docbook.org/ns/docbook"><ns66:para xmlns:ns66="http://docbook.org/ns/docbook">
+              <ns67:emphasis xmlns:ns67="http://docbook.org/ns/docbook">is completely transparent to the client</ns67:emphasis>
+              (the client need not even know that he is using a smart proxy),
+            </ns66:para></ns65:listitem>
+            <ns68:listitem xmlns:ns68="http://docbook.org/ns/docbook"><ns69:para xmlns:ns69="http://docbook.org/ns/docbook">
+              <ns70:emphasis xmlns:ns70="http://docbook.org/ns/docbook">contains fail-over logic</ns70:emphasis> and hence selects an available
+              node for service requests and automatically connects to another node 
+              when one node fails,
+            </ns69:para></ns68:listitem>
+            <ns71:listitem xmlns:ns71="http://docbook.org/ns/docbook"><ns72:para xmlns:ns72="http://docbook.org/ns/docbook">
+              <ns73:emphasis xmlns:ns73="http://docbook.org/ns/docbook">contains load-balancing logic</ns73:emphasis>, <ns74:abbrev xmlns:ns74="http://docbook.org/ns/docbook">i.e.</ns74:abbrev>
+              uses some pluggable load-balancing policy (<ns75:abbrev xmlns:ns75="http://docbook.org/ns/docbook">e.g.</ns75:abbrev>
+              <ns76:emphasis xmlns:ns76="http://docbook.org/ns/docbook">first-available</ns76:emphasis> or <ns77:emphasis xmlns:ns77="http://docbook.org/ns/docbook">round-robin</ns77:emphasis>
+              to distribute requests accross the available nodes, and
+            </ns72:para></ns71:listitem>
+            <ns78:listitem xmlns:ns78="http://docbook.org/ns/docbook"><ns79:para xmlns:ns79="http://docbook.org/ns/docbook">
+              smart proxies <ns80:emphasis xmlns:ns80="http://docbook.org/ns/docbook">are initialized and continually updated with the available
+              available nodes list</ns80:emphasis>, i.e.\ nodes can be removed and added while a client
+              is interfacing with a system through smart proxies.
+            </ns79:para></ns78:listitem>
+          </ns64:itemizedlist>
+        </ns63:para>
+      </ns61:section>
+      
+      <ns81:section xmlns:ns81="http://docbook.org/ns/docbook">
+        <ns82:title xmlns:ns82="http://docbook.org/ns/docbook">Pluggable load-balancing policies</ns82:title>
+        <ns83:para xmlns:ns83="http://docbook.org/ns/docbook">
+          The load balancing policy can be selected at deploy-time (is purely a deployment
+          parameter) and can be dynamically modified at  run-time. They implement a standard 
+          interface and one can simply develop further, more specialized load-balancing
+          algorithms and plug them in.        
+        </ns83:para>
+      </ns81:section>
+      
+      <ns84:section xmlns:ns84="http://docbook.org/ns/docbook">
+        <ns85:title xmlns:ns85="http://docbook.org/ns/docbook">Making smart proxies available to clients</ns85:title>
+        <ns86:para xmlns:ns86="http://docbook.org/ns/docbook">
+          The smart proxy has to be either
+          <ns87:itemizedlist xmlns:ns87="http://docbook.org/ns/docbook">
+            <ns88:listitem xmlns:ns88="http://docbook.org/ns/docbook"><ns89:para xmlns:ns89="http://docbook.org/ns/docbook">
+              packaged within the client jar or
+            </ns89:para></ns88:listitem>
+            <ns90:listitem xmlns:ns90="http://docbook.org/ns/docbook"><ns91:para xmlns:ns91="http://docbook.org/ns/docbook">
+              downloaded at run-time where the proxy class can even be generated on the fly.
+            </ns91:para></ns90:listitem>
+          </ns87:itemizedlist>
+          JBoss uses object-serialization (the proxy is passed by value) to transfer the proxy 
+          via RMI from the server to the client. The serialized proxy is annotated with a URL
+          providing the client a location from which the proxy class can be downloaded from if
+          it is not available on the client side.
+        </ns86:para>
+      </ns84:section>
+    </ns57:section>
+</ns22:section>

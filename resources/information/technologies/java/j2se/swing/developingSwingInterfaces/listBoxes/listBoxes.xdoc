@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+    id="resources.information.technologies.java.j2se.swing.developingSwingInterfaces.listBoxes.listBoxes"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title role="List Boxes">List Boxes</title>
+    <para>Like all swing components, list boxes adhere to the Model-View-Controller framework with
+        the view and the control services supplied by the swing component (verb+JList+ in our
+        example) and the Model being an external data model. List boxes can be an alternative to a
+        collection of check boxes.</para>
+    <para>The advantage of this aproach is that there is a standard interface between the swing
+        component and the underlying data model it exposes, allowing the model to inform the view in
+        data changes and allowing the view to update the model (the underlying data) when necessary.</para>
+    <para>The data model interface for a component is specified in a corresponding Java interface.
+        For example, <literal>ListModel</literal> lays down the specifications for data models which
+        can be applied to combo boxes.</para>
+    <para>For some swing components Java 2 supplies a default model. This is, for example, the case
+        for <literal>JList</literal>. The <literal>DefaultListModel</literal> represents a default
+        data model for list boxes. Since list boxes represent an indexed collection, list models
+        represent and array in functionality (unfortunately conforming to the old
+        <literal>Vector</literal> interface -- in general the swing components to not yet embrace
+        Java's new collection framework consistently.</para>
+    <para>We can insert objects into alist and the <literal>toString()</literal> method will be used
+        to obtain a a text string used for the object's representation within the list box. Thus, if
+        the user slects an item in the list box, he/she selects the actual object and not some
+        string from which the object has to be identified.</para>
+    <para>Lists use a selection model to specify the selection mode. <literal>JList</literal>
+        supports three selection models: SINGLE_SELECTION This works like radio buttons. Selecting a
+        new item, deselects any previously selected item. SINGLE_INTERVAL_SELECTION This allows you
+        to select a single contiguous range of items. MULTIPLE_INTERVAL_SELECTION This allows you to
+        select any combination of items from the list.</para>
+    <para>In our shopping list application we have two lists, a from which the required items are
+        selected and another showing the selected items. The first does not change and hence we
+        simply constructed it from a vector of shopping list items read in from a file without using
+        a model for the data representation. The second list contains those items selected from the
+        first list and its data content (the actual shopping list) will change. For this list we do
+        use a data model namely the<literal>DefaultListModel</literal>.</para>
+    <para>Note further that both lists are packed within a scroll pane in order to obtain scrolling
+        support and both scroll panes have a titled border associated to them (efectively the title
+        for the corresponding list boxes).</para>
+    <para>In order to receive notification of selection changes the split pane registers with the
+        <literal>allGroceries</literal> list box as <literal>ListSelectionListener</literal>. It
+        implements the<literal>valueChanged()</literal> service as required by the
+        <literal>ListSelectionListener</literal> interface. Upon being notified that the user
+        changed the selection from the<literal>alGroceries</literal> list, the event handler first
+        clears the data model for the<literal>requiredGroceries</literal> list, and then populates
+        the data model with the now selected groceries. Note that we did not modify the view, i.e.
+        the actual<literal>JList</literal>. The view is updated automatically as the underlying data
+        model changes.</para>
+    <para/>
+</section>

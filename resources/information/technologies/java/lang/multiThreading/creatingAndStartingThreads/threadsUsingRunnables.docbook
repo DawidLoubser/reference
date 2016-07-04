@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.tecnologies.java.lang.multiThreading.creatingAndStartingThreads.threadsUsingRunnables">
+
+  <title>Using the java.lang.Runnable interface</title>
+
+  <para>So far the initial thread tasks were specified within the
+      <emphasis role="verb">run()</emphasis> method of a <emphasis
+      role="verb">Thread</emphasis> class, <abbrev>i.e.</abbrev> we
+    subclassed <emphasis role="verb">Thread</emphasis> and overloaded its
+      <emphasis role="verb">run()</emphasis> method. If you want to
+    package a thread's <emphasis role="verb">run()</emphasis> method
+    within a class which is already derived from another class (bar
+      <emphasis role="verb">Object</emphasis>), and if that superclass is
+    not itself derived from <emphasis role="verb">Thread</emphasis>, we
+    have a problem. Java does not support multiple inheritance of classes
+    and hence we cannot derive that class from <emphasis role="verb"
+      >Thread</emphasis>.</para>
+
+  <para>Java's solution to this problem is to wrap the object which
+    supplies the <emphasis role="verb">run()</emphasis> method with a
+      <emphasis role="verb">Thread</emphasis>. The thread will then obtain
+    the instructions for its task from the <emphasis role="verb"
+    >run()</emphasis> method of the object it wraps. Of course, the object
+    which is wrapped by the thread must always provide a <emphasis role="verb"
+      >run()</emphasis> service, and to enforce this it must implement
+    the <emphasis role="verb">java.lang.Runnable</emphasis> interface. This is
+    illustrated in the following code snippet:</para>
+
+  <para>
+    <programlisting><![CDATA[
+class ClassWithRunMethodForThread implements Runnable
+{
+  ...
+  public void run() {...}
+}  
+
+public static void main(String args)
+{
+  ...
+  new Thread(new ClassWithRunMethodForThread()).start();
+  ...
+} 
+]]></programlisting>
+  </para>
+
+</section>

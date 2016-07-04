@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns2851:section xmlns:ns2851="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.ldap.client">
+
+	<ns2852:title xmlns:ns2852="http://docbook.org/ns/docbook">LDAP client</ns2852:title>
+	<ns2853:para xmlns:ns2853="http://docbook.org/ns/docbook">
+	The command line tools to access an LDAP directory are configured centrally in <ns2854:emphasis xmlns:ns2854="http://docbook.org/ns/docbook" role="strong">/etc/openldap/ldap.conf</ns2854:emphasis>. This file specifies the LDAP suffix / base, as well as the host of the ldap directory. These settings provide the default settings, and can be overwritten  
+	</ns2853:para>
+	<ns2855:programlisting xmlns:ns2855="http://docbook.org/ns/docbook">
+HOST 127.0.0.1
+BASE o=solms,c=za
+	</ns2855:programlisting>	
+	
+	<ns2856:section xmlns:ns2856="http://docbook.org/ns/docbook">
+		<ns2857:title xmlns:ns2857="http://docbook.org/ns/docbook">ldapadd / ldapmodify - Adding and Changing entries</ns2857:title>
+		<ns2858:para xmlns:ns2858="http://docbook.org/ns/docbook">
+		</ns2858:para>
+		<ns2859:screen xmlns:ns2859="http://docbook.org/ns/docbook">
+			<ns2860:userinput xmlns:ns2860="http://docbook.org/ns/docbook">
+				<ns2861:command xmlns:ns2861="http://docbook.org/ns/docbook">ldapadd</ns2861:command> <ns2862:replaceable xmlns:ns2862="http://docbook.org/ns/docbook">flags</ns2862:replaceable>  			
+			</ns2860:userinput>
+		</ns2859:screen>
+		<ns2863:table xmlns:ns2863="http://docbook.org/ns/docbook" frame="all">
+			<ns2864:title xmlns:ns2864="http://docbook.org/ns/docbook">ldapadd Flags</ns2864:title>
+			<ns2865:tgroup xmlns:ns2865="http://docbook.org/ns/docbook" cols="2">
+				<ns2866:thead xmlns:ns2866="http://docbook.org/ns/docbook">
+					<ns2867:row xmlns:ns2867="http://docbook.org/ns/docbook"><ns2868:entry xmlns:ns2868="http://docbook.org/ns/docbook">Flag</ns2868:entry><ns2869:entry xmlns:ns2869="http://docbook.org/ns/docbook">Description</ns2869:entry></ns2867:row>
+				</ns2866:thead>	
+				<ns2870:tbody xmlns:ns2870="http://docbook.org/ns/docbook">
+					<ns2871:row xmlns:ns2871="http://docbook.org/ns/docbook"><ns2872:entry xmlns:ns2872="http://docbook.org/ns/docbook">-D</ns2872:entry><ns2873:entry xmlns:ns2873="http://docbook.org/ns/docbook">the binddn of the user</ns2873:entry></ns2871:row>
+					<ns2874:row xmlns:ns2874="http://docbook.org/ns/docbook"><ns2875:entry xmlns:ns2875="http://docbook.org/ns/docbook">-w</ns2875:entry><ns2876:entry xmlns:ns2876="http://docbook.org/ns/docbook">The bind password</ns2876:entry></ns2874:row>
+					<ns2877:row xmlns:ns2877="http://docbook.org/ns/docbook"><ns2878:entry xmlns:ns2878="http://docbook.org/ns/docbook">-x</ns2878:entry><ns2879:entry xmlns:ns2879="http://docbook.org/ns/docbook">Use simple authentication instead of SASL</ns2879:entry></ns2877:row>
+					<ns2880:row xmlns:ns2880="http://docbook.org/ns/docbook"><ns2881:entry xmlns:ns2881="http://docbook.org/ns/docbook">-c</ns2881:entry><ns2882:entry xmlns:ns2882="http://docbook.org/ns/docbook">Continue on errors</ns2882:entry></ns2880:row>
+					<ns2883:row xmlns:ns2883="http://docbook.org/ns/docbook"><ns2884:entry xmlns:ns2884="http://docbook.org/ns/docbook">-F</ns2884:entry><ns2885:entry xmlns:ns2885="http://docbook.org/ns/docbook">Force application of changes</ns2885:entry></ns2883:row>
+					<ns2886:row xmlns:ns2886="http://docbook.org/ns/docbook"><ns2887:entry xmlns:ns2887="http://docbook.org/ns/docbook">-v</ns2887:entry><ns2888:entry xmlns:ns2888="http://docbook.org/ns/docbook">Verbose mode</ns2888:entry></ns2886:row>
+					<ns2889:row xmlns:ns2889="http://docbook.org/ns/docbook"><ns2890:entry xmlns:ns2890="http://docbook.org/ns/docbook">-a</ns2890:entry><ns2891:entry xmlns:ns2891="http://docbook.org/ns/docbook">Add new entries</ns2891:entry></ns2889:row>
+					<ns2892:row xmlns:ns2892="http://docbook.org/ns/docbook"><ns2893:entry xmlns:ns2893="http://docbook.org/ns/docbook">-h</ns2893:entry><ns2894:entry xmlns:ns2894="http://docbook.org/ns/docbook">The host of the directory</ns2894:entry></ns2892:row>
+					<ns2895:row xmlns:ns2895="http://docbook.org/ns/docbook"><ns2896:entry xmlns:ns2896="http://docbook.org/ns/docbook">-f</ns2896:entry><ns2897:entry xmlns:ns2897="http://docbook.org/ns/docbook">An LDIF file to be imported</ns2897:entry></ns2895:row>
+				</ns2870:tbody>
+			</ns2865:tgroup>
+		</ns2863:table>	
+		<ns2898:programlisting xmlns:ns2898="http://docbook.org/ns/docbook">
+ldapadd -c -F -v -x -D "cn=Manager,o=solms,c=za" -w secret -f intranetAdmin.ldif		
+		</ns2898:programlisting>
+	</ns2856:section>
+	
+	<ns2899:section xmlns:ns2899="http://docbook.org/ns/docbook">
+		<ns2900:title xmlns:ns2900="http://docbook.org/ns/docbook">ldapdelete - Deleting entries</ns2900:title>
+		<ns2901:para xmlns:ns2901="http://docbook.org/ns/docbook">
+		Delete the entry specified by the DN.
+		</ns2901:para>
+		<ns2902:screen xmlns:ns2902="http://docbook.org/ns/docbook">
+			<ns2903:userinput xmlns:ns2903="http://docbook.org/ns/docbook">
+				<ns2904:command xmlns:ns2904="http://docbook.org/ns/docbook"/>  <ns2905:replaceable xmlns:ns2905="http://docbook.org/ns/docbook">flags</ns2905:replaceable> <ns2906:replaceable xmlns:ns2906="http://docbook.org/ns/docbook">dn</ns2906:replaceable>  			
+			</ns2903:userinput>
+		</ns2902:screen>
+		<ns2907:table xmlns:ns2907="http://docbook.org/ns/docbook" frame="all">
+			<ns2908:title xmlns:ns2908="http://docbook.org/ns/docbook">ldapdelete Flags</ns2908:title>
+			<ns2909:tgroup xmlns:ns2909="http://docbook.org/ns/docbook" cols="2">
+				<ns2910:thead xmlns:ns2910="http://docbook.org/ns/docbook">
+					<ns2911:row xmlns:ns2911="http://docbook.org/ns/docbook"><ns2912:entry xmlns:ns2912="http://docbook.org/ns/docbook">Flag</ns2912:entry><ns2913:entry xmlns:ns2913="http://docbook.org/ns/docbook">Description</ns2913:entry></ns2911:row>
+				</ns2910:thead>	
+				<ns2914:tbody xmlns:ns2914="http://docbook.org/ns/docbook">
+					<ns2915:row xmlns:ns2915="http://docbook.org/ns/docbook"><ns2916:entry xmlns:ns2916="http://docbook.org/ns/docbook">-D</ns2916:entry><ns2917:entry xmlns:ns2917="http://docbook.org/ns/docbook">the binddn of the user</ns2917:entry></ns2915:row>
+					<ns2918:row xmlns:ns2918="http://docbook.org/ns/docbook"><ns2919:entry xmlns:ns2919="http://docbook.org/ns/docbook">-w</ns2919:entry><ns2920:entry xmlns:ns2920="http://docbook.org/ns/docbook">The bind password</ns2920:entry></ns2918:row>
+					<ns2921:row xmlns:ns2921="http://docbook.org/ns/docbook"><ns2922:entry xmlns:ns2922="http://docbook.org/ns/docbook">-x</ns2922:entry><ns2923:entry xmlns:ns2923="http://docbook.org/ns/docbook">Use simple authentication instead of SASL</ns2923:entry></ns2921:row>
+				</ns2914:tbody>
+			</ns2909:tgroup>
+		</ns2907:table>	
+		<ns2924:programlisting xmlns:ns2924="http://docbook.org/ns/docbook">
+		
+[alex@teddy alex]$ ldapdelete -v -x -D "cn=Manager,o=solms,c=za" -w secret "cn=Mike Myers,ou=people,o=solms,c=za"
+ldap_initialize( &lt;DEFAULT&gt; )
+deleting entry "cn=Mike Myers,ou=people,o=solms,c=za"
+Delete Result: Success (0)
+[alex@teddy alex]$
+		
+		</ns2924:programlisting>
+	</ns2899:section>	
+
+	<ns2925:section xmlns:ns2925="http://docbook.org/ns/docbook">
+		<ns2926:title xmlns:ns2926="http://docbook.org/ns/docbook">ldapsearch - Finding entries</ns2926:title>
+		<ns2927:para xmlns:ns2927="http://docbook.org/ns/docbook">
+		Searches the directory for specific entries matching a filter. When a space-separated list of attributes is provided, only those attributes are returned.
+		</ns2927:para>
+		<ns2928:screen xmlns:ns2928="http://docbook.org/ns/docbook">
+			<ns2929:userinput xmlns:ns2929="http://docbook.org/ns/docbook">
+				<ns2930:command xmlns:ns2930="http://docbook.org/ns/docbook"/> <ns2931:replaceable xmlns:ns2931="http://docbook.org/ns/docbook">flags</ns2931:replaceable> <ns2932:replaceable xmlns:ns2932="http://docbook.org/ns/docbook">filter</ns2932:replaceable> <ns2933:replaceable xmlns:ns2933="http://docbook.org/ns/docbook">attributes</ns2933:replaceable>  			
+			</ns2929:userinput>
+		</ns2928:screen>
+		<ns2934:table xmlns:ns2934="http://docbook.org/ns/docbook" frame="all">
+			<ns2935:title xmlns:ns2935="http://docbook.org/ns/docbook">ldapsearch Flags</ns2935:title>
+			<ns2936:tgroup xmlns:ns2936="http://docbook.org/ns/docbook" cols="2">
+				<ns2937:thead xmlns:ns2937="http://docbook.org/ns/docbook">
+					<ns2938:row xmlns:ns2938="http://docbook.org/ns/docbook"><ns2939:entry xmlns:ns2939="http://docbook.org/ns/docbook">Flag</ns2939:entry><ns2940:entry xmlns:ns2940="http://docbook.org/ns/docbook">Description</ns2940:entry></ns2938:row>
+				</ns2937:thead>	
+				<ns2941:tbody xmlns:ns2941="http://docbook.org/ns/docbook">
+					<ns2942:row xmlns:ns2942="http://docbook.org/ns/docbook"><ns2943:entry xmlns:ns2943="http://docbook.org/ns/docbook">-L -LL -LLL</ns2943:entry><ns2944:entry xmlns:ns2944="http://docbook.org/ns/docbook">The output is in LDIFv1, without comments and without version number respectively.</ns2944:entry></ns2942:row>
+					<ns2945:row xmlns:ns2945="http://docbook.org/ns/docbook"><ns2946:entry xmlns:ns2946="http://docbook.org/ns/docbook">-D</ns2946:entry><ns2947:entry xmlns:ns2947="http://docbook.org/ns/docbook">the binddn of the user</ns2947:entry></ns2945:row>
+					<ns2948:row xmlns:ns2948="http://docbook.org/ns/docbook"><ns2949:entry xmlns:ns2949="http://docbook.org/ns/docbook">-w</ns2949:entry><ns2950:entry xmlns:ns2950="http://docbook.org/ns/docbook">The bind password</ns2950:entry></ns2948:row>
+					<ns2951:row xmlns:ns2951="http://docbook.org/ns/docbook"><ns2952:entry xmlns:ns2952="http://docbook.org/ns/docbook">-x</ns2952:entry><ns2953:entry xmlns:ns2953="http://docbook.org/ns/docbook">Use simple authentication instead of SASL</ns2953:entry></ns2951:row>
+				</ns2941:tbody>
+			</ns2936:tgroup>
+		</ns2934:table>	
+		<ns2954:programlisting xmlns:ns2954="http://docbook.org/ns/docbook">
+		
+ldapsearch -v -x -D "cn=Manager,o=solms,c=za" &gt;AdressBook.ldif		
+[alex@teddy alex]$ ldapsearch -v -x -D "cn=Manager,o=solms,c=za" "(&amp;(givenName=Alexander)(sn=Hartner))" 
+ldap_initialize( &lt;DEFAULT&gt; )
+filter: (&amp;(givenName=Alexander)(sn=Hartner))
+requesting: ALL
+dn: cn=Alexander Hartner,ou=people,o=solms,c=za
+initials: A
+sn: Hartner
+objectClass: inetOrgPerson
+mail: alex@bluescontrol.co.za
+telephoneNumber: 083 422 4358
+givenName: Alexander
+cn: Alexander Hartner
+displayName: Alexander Hartner
+userPassword:: ajJhbnl3aGVyZQ==
+businessCategory: intranet
+businessCategory: manager
+businessCategory: intranetAdmin
+businessCategory: admin
+businessCategory: tomcat
+uid: alex
+
+[alex@teddy alex]$
+		
+		</ns2954:programlisting>
+	</ns2925:section>	
+</ns2851:section>

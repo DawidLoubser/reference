@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->   
+<section id="resources.information.technologies.c.compoundTypes.arrays"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Arrays</title>
+  <para>
+    An array is a contiguous memory space for a collection of data fields of a
+    specified type. The array occupies a block of 
+    <command>arrayLength x sizeof(dataType)</command> bytes.
+    The n'th array element of an array, <command>vec</command>, is retrieved by 
+    extracting <command>sizeof(dataType)</command> bytes from memory at memory
+    position <command>&amp;vec + (n-1) * sizeOf(dataType)</command>.
+  </para>
+  <section id="secSingleDimArrays"><title>Single-dimensional arrays</title>
+    <para>
+      The syntax for declaring a single dimensional array is
+      <programlisting>
+dataType arrayName[numberOfElements];            
+      </programlisting>
+      The first array element is accessed as <command>arrayName[0]</command>.
+      In general, the i'th array element is accessed as <command>arrayName[i-1]</command>.
+      <note>
+        <para>
+          The element access operator, <command>[]</command>, is used for both,
+          <itemizedlist>
+            <listitem><para>array element retrieval and</para></listitem>
+            <listitem><para>array element assignment,</para></listitem>
+          </itemizedlist>
+          <abbrev>i.e.</abbrev>, for both read and write access to array elements. For example,
+          <programlisting>
+array[2] = array[3];                  
+          </programlisting>
+          assigns the value of the third array element to that of the fourth.
+        </para>  
+      </note>
+      <warning>
+        <para>
+          Array element indeces start at 0. The last array element is
+          <command>arrayName[length-1]</command>
+        </para>
+      </warning>
+    </para>
+    <para>
+      We can declare and initialize arrays in a single statement via
+      <programlisting>
+double vec[4] = {1.1, 2.2, 3.3, 4.4};
+      </programlisting>
+    </para>
+
+    <example id="vectorNorm.c"><title>vectorNorm.c</title>
+      <para>
+        In this example we read in a vector from the keyboard and then call
+        a function which returns the norm of the vector. We also appended
+        two statements to <command>main</command> which demonstrate that
+        <emphasis>C</emphasis> does not do run-time bounds checking.
+      </para>
+      <programlisting><xi:include href="vectorNorm.c" parse="text"/></programlisting>
+      <para>
+        To run the application, we have to include the <command>-lm</command>
+        command line argument, <abbrev>i.e.</abbrev> we run it via
+        <programlisting>
+          gcc -x c -lm -Wall -o vectorNorm vectorNorm.c
+        </programlisting>
+        The command-line argument <command>-lm</command> specifies that the
+        math library should be included during the linking (loading) phase.
+        <warning><title>C is not a "safe" language like Java</title>
+          <para>
+            Note that in the last <command>printf</command> we access array elements 
+            which do not exist, <abbrev>i.e.</abbrev> we read from and in the following statement we 
+            even write to memory which is not used by the vector - who knows what
+            we are overwriting? Note that the target addresses are simply calculated
+            via the formula given in <xref linkend="secSingleDimArrays"/>.
+          </para>
+        </warning>
+      </para>  
+    </example>
+  </section>
+  
+  <section id="secMultiDimArrays"><title>Multi-dimensional arrays</title>
+    <para>
+      Multidimensional arrays are still stored under the hood as one long contiguous
+      memory block and the elements of the n'th row are simply concatenated after the
+      elements of the row (n-1). We can go to as many dimensions as we like. For example
+      <programlisting>
+double tensor[5][10][5];            
+      </programlisting>
+      declares a 3-dimensional array. The array elements are retrieved via 
+      <command>tensor[i][j][k]</command> with <command>tensor[0][0][0]</command>
+      being the first and <command>tensor[4][9][4]</command> being the last element.
+    </para>
+    <para>
+      <xref linkend="matrixProduct.c"/> demonstrates two-dimensional arrays via
+      a matrix multiplication program.
+      <example id="matrixProduct.c"><title>matrixProduct.c</title>
+        <programlisting><xi:include href="matrixProduct.c" parse="text" /></programlisting>
+      </example>
+      An example output of the application is shown below:
+      <programlisting>
+mat1: no of rows, columns = 2 3
+mat[0][0] = 1
+mat[0][1] = 2
+mat[0][2] = 3
+mat[1][0] = 2
+mat[1][1] = 3
+mat[1][2] = 4
+mat2: no of rows, columns = 3 3
+mat2[0][0] = 1
+mat2[0][1] = 2
+mat2[0][2] = 2
+mat2[1][0] = 3
+mat2[1][1] = 2
+mat2[1][2] = 3
+mat2[2][0] = 4
+mat2[2][1] = 3
+mat2[2][2] = 5
+
+matrix product:
+19.0000    15.0000    23.0000
+27.0000    22.0000    33.0000              
+      </programlisting>
+      <note>
+        <para>
+          We have quite some code duplication and we have also not localized
+          the responsibilities in separate function. Furthermore, all arrays
+          are created on the stack. The stack is a on many operating systems 
+          a very limited resource and to create arrays, particularly large
+          arrays, on the stack is not a good idea. Once we have covered pointers 
+          we shall show how arrays are created on the heap and how we can write 
+          an application with re-usable functions.
+        </para>
+      </note>
+    </para>
+  </section>
+  
+  <section><title>Declaring and initializing multi-dimensional arrays</title>
+    <para>
+      As with single-dimensional arrays, we can also declare and initialize
+      multi-dimensional arrays in a single statement. Since an array is simply
+      a contiguous memory bock (irrespective of whether it is single or
+      multi-dimensional) we could simply initialize that memory block in
+      the same way we did earlier. For example
+      <programlisting>
+double mat[2][2] = {1, 2, 3, 4};            
+      </programlisting>
+      initializes the first row with elements 1 and 2 and the second row with 
+      elements 3 and 4.
+    </para>
+    <para>
+      <emphasis>C</emphasis> provides, however, a much more intuitive notation
+      for initializing multidimensional arrays by encapsulating the individual
+      rows within curly brackets:
+      <programlisting>
+double mat[2][2] = {{1, 2}, {3, 4}};            
+      </programlisting>
+    </para>
+  </section>
+</section>

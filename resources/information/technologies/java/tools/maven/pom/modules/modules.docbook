@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Project modules</title>
+    <para>
+        Whilst project inheritance is used to inherit metadata from parent projects, modules are used to specify a
+        part-of or aggregation relationship between projects. This is used to aggregate builds of sub-projects into
+        a single higher-level build which builds all sub-projects of a project.
+    </para>
+    <para>
+        One specifies a POM for the aggregate object which lists a number of sub-projects as modules. These sub-projects
+        are, however, not identified via the standard groupId-artifactId-version identifiers but are assumed to be of the same 
+        groupId. The module name maps onto the artifactId of the sub-project and the subproject needs to be contained in
+        a sub-directory of the directory for the aggregate project.
+    </para>
+    <para>
+        Whilst the inheritance relationship is specified from the child projects perspective, aggregation is done from the
+        perspective of the aggregate projects with the sub-projects being unaware that they are modules of an aggregate
+        project. 
+    </para>
+    <para>
+        For example, one could specify different modules for the web client, swing client, web services portal, business logic layer
+        and the reporting module of an enrollment system:
+        <programlisting><![CDATA[
+<project>
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>za.co.solms<groupId>
+   <artifactId>enrollmentSystem</artifactId>
+   <version>2.3</version>            
+   
+   <modules>
+       <module>webClient</module>
+       <module>swingClient</module>
+       <module>webServicesPortal</module>
+       <module>businessLogicLayer</module>
+       <module>reporting</module>
+   </modules>
+   ....
+</project>   
+]]></programlisting>
+        these sub-projects would be contained in corresponding sub-directories of the enrollment system base
+        directory. They would each have their own POM which could be unaware of the higher-level aggregate
+        enrollment-system project.
+    </para>
+    <para>
+        The aggregate project need not be the parent of the sub-projects. It is, however, very common to declare the
+        aggregate project the parent project of the sub-projects as that enables one to specify commonalities across
+        sub-projects and in particular introduce some uniformity around the version dependencies via the
+        <emphasis>dependencyManagement</emphasis> construct.
+    </para>
+    
+</section>    

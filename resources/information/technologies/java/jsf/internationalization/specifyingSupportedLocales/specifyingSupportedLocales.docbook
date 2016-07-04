@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Specifying supported locales</title>
+    <para>
+        The supported locales are specified in the <literal>faces-config.xml</literal>.
+        One needs to specify
+        <itemizedlist>
+            <listitem><para>
+                the base file name and location of the properties files representing the resouce bundles,
+            </para></listitem>
+            <listitem><para>
+                the variable which is used to refer to the resource bundle,
+            </para></listitem>
+            <listitem><para>
+                the default locale,
+            </para></listitem>
+            <listitem><para>
+                any other supported locales.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        Consider the following <literal>faces-config</literal> file:
+        <programlisting language="xml"><![CDATA[
+<?xml version="1.0"?>
+<faces-config version="2.0" 
+              xmlns="http://java.sun.com/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="
+              http://java.sun.com/xml/ns/javaee 
+              http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+  <application>
+  	<locale-config>
+		<default-locale>en-ZA</default-locale>
+		<supported-locale>xh-ZA</supported-locale>
+		<supported-locale>af-ZA</supported-locale>
+	</locale-config>
+
+    <resource-bundle>
+      <base-name>za.co.solms.training.jsf.messages</base-name>
+      <var>msgs</var>
+    </resource-bundle>
+  </application>   
+</faces-config>            
+            ]]></programlisting>
+        Here we specify that
+        <itemizedlist>
+            <listitem><para>
+              the default locale is South-African English.              
+            </para></listitem>
+            <listitem><para>
+                Xhosa and Afrikaans are also supported.
+            </para></listitem>
+            <listitem><para>
+                the resouce bundle base name, i.e. the name of the propeties file for
+                the resource bundle for the default locale is <literal>messages.properties</literal>
+                and that it is available at <literal>za/co/solms/training/jsf/</literal> (relative
+                to a directory which is in the class path),
+            </para></listitem>
+            <listitem><para>
+                the variable used in the EL expressions to access the key-value pairs in the resource
+                bundle is <literal>msgs</literal>, e.g. <literal>#{msgs.detailedInvoice}</literal>.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+</section>    

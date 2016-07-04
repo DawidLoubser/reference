@@ -1,0 +1,60 @@
+\section{C++ and Interfaces}
+
+Interfaces have become a very important concept in the software world.
+Not only do the Unified Modeling Language (UML) and Java directly
+support the concept of an interface, but a lot of the progress in the
+software development industry has been around interfaces.
+
+For example, the entire CORBA specification published by the OMG is
+only an interface specification. So is the EJB framework published by
+Sun. Most new class libraries are designed around interfaces. These include
+the Standard Template Library of C++, the Java Messaging, Transaction and
+Services (JMS and JTS) and many others.
+
+An interface simply specifies a set of services which classes which
+implement the interface must supply. As such an interface is like
+an abstract class with only abstract methods -- and, yes, this is the
+way you implement interfaces in C++.
+
+For example, you may specify that any class which claims to be a source
+of interest rates should implement an \verb+InterestRateSource+ interface
+which requires the implementing classes to supply two services:
+
+\noindent{\small \begin{verbatim}
+class InterestRateSource
+{
+  public:
+
+    virtual InterestRate getRate(const Date& date1, const Date& date2) const = 0;
+
+    virtual double getDiscountFactor(const Date& date1, const Date& date2) const = 0;
+};
+\end{verbatim}}
+
+A wide range of classes could potentially supply these services. Here we
+list a few in order to illustrate how totally different their implementations
+can be:
+\begin{description}
+  \item[ReutersRateSource] which reports the current market rates as perceived
+        by Reuters.
+  \item[ZeroCurve] which stores spot interest rates for investements of
+        different durations made at the spot date. This class would
+        calculate interest rates over periods covered by the curve from
+        the spot rates.
+  \item[DealerWindow] which pops up on the terminal of a dealer on the
+        interest rate desk. He/she is expected to know the market and
+        would be in a position to supply the interest rate for a supplied
+        period.
+  \item[BondPortfolio] which contains a collection of priced Bonds. 
+        Interest rates for  a given period can be calculated from the
+        bond prices.
+\end{description}
+
+These different implementation have virtually nothing in common, except, that
+they all can provide the service. But why should you lock within your code
+into a specific service provider. If your code couples to the interface instead,
+you will be able to plug in any implementation of an interest rate source.
+You are thus decoupling from specific implementations and have the basics
+of plug-and-play programming.
+
+

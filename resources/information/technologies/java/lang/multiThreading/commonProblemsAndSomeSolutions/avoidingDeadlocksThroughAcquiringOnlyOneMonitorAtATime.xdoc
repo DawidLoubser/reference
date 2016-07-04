@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.lang.multiThreading.commonProblemsAndSomeSolutions.avoidingDeadlocksThroughAcquiringOnlyOneMonitorAtATime"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+    <title role="Avoiding Deadlocks through acquiring only one monitor at a time">Avoiding Deadlocks through acquiring only one monitor at a time</title>
+
+<para>If no thread holds more than one monitor at any time a deadlock cannot occur.
+At times one can modify an algorithm such that only one monitor is acquired
+at any time. For example, in a transfer method one might, on first thought,
+want to acquire the monitors of the source and destination accounts 
+simultaneously:</para>
+
+<para><programlisting>
+public void transfer(Account source, Account destination, double amount)
+               throws InsufficientFunds
+{
+  synchronized(source)
+  {
+    source.debit(amount);
+    
+    synchronized(destination)
+    {
+      destination.credit(amount);
+    }
+  }
+}
+</programlisting></para>
+<para>
+On closer inspection there is actually no need to hold the monitors for
+both accounts simultaneously and one can safely rewrite the algorithm
+in the following deadlock-save way:</para>
+
+<para><programlisting>
+public void transfer(Account source, Account destination, double amount)
+               throws InsufficientFunds
+{
+  synchronized(source)
+  {
+    source.debit(amount);
+  }  
+  synchronized(destination)
+  {
+    destination.credit(amount);
+  }
+}
+</programlisting></para>
+    
+</section>

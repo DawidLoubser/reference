@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1654:section xmlns:ns1654="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.resourceReference.resourceReference">
+
+  <ns1655:title xmlns:ns1655="http://docbook.org/ns/docbook">Specifying a resource reference in ejb-jar.xml</ns1655:title>
+  <ns1656:para xmlns:ns1656="http://docbook.org/ns/docbook">
+    In the ejb-jar file we specify a resource reference for the resource which will
+    represent the persistence resource for the bean. For example:
+<ns1657:programlisting xmlns:ns1657="http://docbook.org/ns/docbook">
+&lt;ejb-jar&gt;
+&lt;display-name&gt;Account entity bean&lt;/display-name&gt;
+&lt;enterprise-beans&gt;
+ &lt;entity&gt;
+   &lt;ejb-name&gt;AccountMySQL&lt;/ejb-name&gt;
+   ...
+   &lt;resource-ref&gt;
+     &lt;res-ref-name&gt;jdbc/mySQLDS&lt;/res-ref-name&gt;
+     &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
+     &lt;res-auth&gt;Container&lt;/res-auth&gt;
+   &lt;/resource-ref&gt;
+ &lt;/entity&gt;
+ ...
+&lt;/enterprise-beans&gt;
+&lt;assembly-descriptor&gt;
+ ...
+&lt;/assembly-descriptor&gt;
+&lt;/ejb-jar&gt;
+</ns1657:programlisting>        
+    specifies
+    that the entity bean,<ns1658:literal xmlns:ns1658="http://docbook.org/ns/docbook">AccountMySQL</ns1658:literal> will be persisted in
+    a resource identified as<ns1659:literal xmlns:ns1659="http://docbook.org/ns/docbook">jdbc/MySQLDS</ns1659:literal>. The resource
+    reference has the following 3 entries: res-ref-name This specifies a logical name used to
+    refer to a resource connection factory. In the  
+    <ns1660:literal xmlns:ns1660="http://docbook.org/ns/docbook">jboss.xml</ns1660:literal> file this logical name is bound to a JNDI name.
+    res-type which specifies the type (class) for the resource manager. In our case it is a
+    class implementing <ns1661:literal xmlns:ns1661="http://docbook.org/ns/docbook">javax.sql.DataSource</ns1661:literal> interface
+    specified in JDBC 2. This is a standard interface for connection pools to SQL data
+    sources. res-auth is assigned one of the following values: Container: This value specifies
+    that authentication information is specified in the deployment descriptor (or in the
+      <ns1662:literal xmlns:ns1662="http://docbook.org/ns/docbook">jboss.jcml</ns1662:literal> file). In other words, the authentication
+    is supplied by the deployer. Application: specifies that the application will gather
+    resource authentication information and that the application will supply this information
+    when requesting connections to the resource.
+  </ns1656:para>
+</ns1654:section>

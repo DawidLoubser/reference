@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Typical persistence context for managed applications</title>
+    <para>
+        A typical persistence unit configuration for a managed environment uses
+        JTA-based transactions and refers to a data source defined for the container.
+        In addition it can specify some properties for the object-relational mapper:            
+        <programlisting language="xml"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://java.sun.com/xml/ns/persistence 
+http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+<persistence-unit name="myEnterpriseApp" transaction-type="JTA">
+<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+<jta-data-source>jdbc/myDataSource</jta-data-source>
+<properties>
+           <property name="eclipselink.ddl-generation" value="create-tables"/>     
+</properties>
+</persistence-unit>
+</persistence>
+        ]]></programlisting>
+    </para>
+</section>

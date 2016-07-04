@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+
+    <title>Optimising processes</title>
+
+    <indexterm>
+        <primary>JPA</primary>
+        <secondary>optimisation</secondary>
+        <tertiary>processes</tertiary>
+    </indexterm>
+    
+    <section>
+        <title>Domain objects versus Exchanged value objects</title>
+        <para>
+            This may result in a lot of unnecessary information being exchanged.
+            Instead one should have use case-specific request response objects which
+            convey <emphasis>only</emphasis> the information the client is require (and allowed) 
+            to access.
+        </para>
+    </section>
+    
+    <section>
+        <title>Batch updates and deletes</title>
+        <para>
+            Use batch updates and deletes for use-cases where otherwise large numbers
+            of objects would have to be individually changed in code.
+        </para>
+    </section>
+    
+    <section>
+        <title>Course-grained services</title>
+        <para>
+            Publish services across levels of granularity, such that coarse
+            grained services can be used remotely with processes assembled locally
+            on the application server not requiring remote service requests. 
+            This also shifts business process out of client.
+        </para>
+        <para>
+            The canonical example is publishing a high-level <literal>AccountServices.transfer(... , ...)</literal>
+            service, instead of the client requesting separate <emphasis>credit</emphasis> or <emphasis>debit</emphasis>
+            services.
+        </para>
+    </section>
+    
+    <section>
+        <title>Supporting paging</title>
+        <para>
+            JPA automatically supports <emphasis>ranged views</emphasis> onto the results
+            of a collection (for example, to retrieve only results 40 to 60). However, in your
+            own services, you need to provide for the client specifying the desired range
+            as pert of the service request.
+        </para>
+    </section>
+    
+    <!-- section>
+        <title>Complex database queries</title>
+        <para>???</para>
+    </section -->
+    
+    <!-- Fritz already included this in the best practices section>
+        <title>Stored Procedures / Native Queries for extreme cases</title>
+        <para>
+            One can, in extreme cases, use stored procedures to create one's use case
+            specific results at the database level already, thus avoiding having to
+            process large amounts of data via JPA in the first place.
+        </para>
+        <para>
+            Though better performance is theoretically possible, the stored procedures may of
+            course be complex to write and maintain.
+        </para>
+    </section -->
+    
+    <section>
+        <title>Query Tuning</title>
+        <para>
+            There is not a lot that can be done in terms of tuning one's JPA queries, as the language is
+            designed to be abstracted from the actual technicalities of database access, referring purely
+            to the conceptual object structure.
+        </para>
+    </section>
+    
+</section>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- TODO These are just some ramblings which need to be cleaned up to a better standard of quality -->
+
+<article xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      id="projects.solms.research.categorization.categorization">
+    
+    <articleinfo>
+        <title>Orthogonal Data Categorization (DRAFT)</title>
+        <subtitle>A generic categorization philosophy and mechanism</subtitle>
+        <authorgroup>
+            <xi:include href="../../../../resources/knowledge/solms/resources/skills/dawidLoubser/authorInfo.xdoc"/>
+            <!-- UNCOMMENT WHEN YOU CONTRIBUTE :-) xi:include href="../../../../resources/knowledge/solms/resources/skills/fritzSolms/authorInfo.xdoc"/ -->
+        </authorgroup>
+    </articleinfo>
+    
+    <abstract>
+        <para>
+            Categorization is employed in one form or another to digital information in almost all its
+            forms. From simple and implicit schemes, such as files in directories (for example, <quote>My Downloaded Files</quote>)
+            and <literal>ID3</literal> (e.g. <quote>genre</quote>) tags in <literal>MP3</literal> files, to
+            abstract, evolving categories such as those used by <ulink url="http://wikipedia.org/"/> - all are
+            used to sort information, enabling us to more easily find what we want.
+        </para>
+        <para>
+            There is a clear need for a <emphasis>generic</emphasis>, <emphasis>orthogonalised</emphasis>
+            categorization mechanism, which, together with its metaphors, tools, and visualisations, can be
+            used in a wide variety of applications. This research topic considers a possible solution to this
+            need, both conceptually and in implementation.
+        </para>
+    </abstract>
+    
+    
+    <section>
+        <title>What is required from a categorization scheme?</title>
+        
+        <para>
+            With so many categorization methods out there (with few of them having
+            a clear design or motivation) one has to consider - <emphasis>what exactly do
+            we want from categorization ?</emphasis> We also have to consider both the
+            <emphasis>information model / semantics</emphasis>, as well as the <emphasis>user
+            interaction</emphasis> (i.e. how it will be used).
+        </para>
+        
+        <para>
+        <literal>TODO</literal> I think a theoretical section on the difference between INHERENT (objective?) information such 
+        as Type (e.g. object class, file type), Bit rate (music / video), etc. versus CATEGORY (subjective?) 
+        information would be useful.
+        </para>
+        
+        <para>
+        <literal>TODO</literal>Also, often CATEGORIZATION information is inferred from INHERENT information? e.g. Category "High Fidelity"
+        could be inferred from inherent information, e.g. Bit rate in a song, photo resolution (which is a tools issue I guess)? 
+        </para>
+            
+        <section>
+            <title>Orthogonalisation</title>
+            <para>
+                Unlike a scheme with a <quote>flat</quote> space, such as <emphasis>Wikipedia</emphasis> (which simply
+                has a single tree of free-form category names), we want several trees, each addressing a particular
+                aspect or semantic (musical genre, animal species, music instrument, era, etc). These trees are abstract, and
+                as such, items from various domains may reference the same categories, for example (in the context of the
+                categories just mentioned):
+                <itemizedlist>
+                    <listitem>
+                        <para>A piece of classical music from the romantic era</para>
+                    </listitem>
+                    <listitem>
+                        <para>A photograph of a reindeer</para>
+                    </listitem>
+                    <listitem>
+                        <para>A high-fidelity video, filmed during the depression era where a dog gets kicked, while
+                            jazz music is played in the background
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+            <para>
+                Let us call each aspect an <literal>axis</literal>.
+            </para>
+            <para>....</para>
+        </section>
+        
+        <section>
+            <title>Portability / Self-Containment</title>
+            <para>
+                Category information should be contained <emphasis>within</emphasis> or <emphasis>alongside</emphasis>
+                the data being categorised in as compact a manner as possible, whilst still retaining the full
+                information set <emphasis>relevant to it</emphasis>, e.g. both the <literal>axis</literal> and the
+                actual <literal>category</literal>. For example, instead of a music file containing 
+                <literal>"category {34}, category {786}"</literal>, it should contain 
+                <literal>"category {genre:electronic.trance.psytekk}, category {mood:dark}</literal>
+            </para>
+            <para>
+                Simple references to categories (e.g. by number) would require category trees to be
+                standardised and shared. Because categorization is often a very subjective activity, it is impractical
+                to require this standardisation. Furthermore, category trees need to evolve, and a self-contained,
+                portable mechanism will allow them to do so, both in terms of their contents, as well as their
+                axes (different aspects by which to categorise data). For widely used and well-understood axes such
+                as Musical Genre, <quote>pseudo-standard</quote> trees will most likely evolve in anyway.
+            </para>
+            <para>
+                The self-containment will, in addition, prevent the locking-in to any particular axis/tree, framework, or
+                toolset. It's clear to see why music bought from the Apple Music store, containing abstract pointers to categories
+                hosted by them (and accessible through iTunes only) would counterproductive. Every act of categorisation
+                must simply add value to the data, accessible to all.
+            </para>
+            <para>
+                <literal>TODO</literal> Categories, and possibly axes, could belong to name spaces, which will aid
+                classification and standardisation.
+            </para>
+        </section>
+        
+        
+        <section>
+            <title>Consistency from a user perspective, with abstraction from data format or implementation</title>
+            <para>
+                A <emphasis>consistent</emphasis> visual mechanism for interacting with categorisation would have
+                great benefits to users. Categorisation should become a standard user interface paradigm (such as
+                searching, dragging-and-dropping, and file renaming) - available in diverse applications (e.g. file
+                managers, music managers, customer relationship software, etc). How the categorization is implemented
+                in terms of the underlying data technically (e.g. ile metadata, compressed music, database records), should 
+                not alter the user experience.
+            </para>
+            <para>
+                The ideal standard visual paradigm (and associated use cases) however, remains independent of the underlying
+                information model / principles, so that it can be re-interpreted in different ways in future. Compare this
+                to the X11/Desktop model in Linux - Most desktops conform to an expected visual paradigm (and interactivity),
+                which has evolved to become a <emphasis>de-facto standard</emphasis>. It is however always possible to
+                re-interpret the user experience, on top of the same information model / principles.
+            </para>
+            <para>
+                <literal>TODO</literal> Propose such a UI mechanism (and, if we're evil, PATENT it!!) - and discuss why the
+                "tree" mechanism is not good enough (because we're essentially working with a single (or multiple) items
+                belonging to multiple trees.)
+            </para>
+        </section>
+        
+        
+        <section>
+            <title>Re-usability within other schemes</title>
+            <para>
+                Categorization, and <emphasis>only</emphasis> categorization, should be addressed by this scheme. It should
+                be easily <quote>mixable</quote> with other metadata schemes, such Dublin Core, RDF, ID3, MPEG-7, etc (since
+                none of these address categorization in a pure and orthogonal manner).
+            </para>
+            <para>....</para>
+        </section>
+        
+    </section>
+    
+    
+    <section>
+        <title>Consideration of schemes currently in use</title>
+        <para>
+            ...
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Solution</title>
+        
+        <section>
+            <title>Conceptual (Design)</title>
+            <para>...</para>
+        </section>
+        
+        <section>
+            <title>Implementation</title>
+            <para>...</para>
+            <para>
+                <literal>TODO</literal> There are two angles to this: An implementation from a user perspective (framework) e.g. Java Swing,
+                as well as various domains containing categorization, e.g. XML (Documents?), Music, Files, MPEG movies, etc.
+            </para>
+            
+        </section>
+        
+    </section>
+    
+</article>

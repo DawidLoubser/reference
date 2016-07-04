@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2me.multimedia.mmAPI"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Multimedia API</title>
+	<para>
+	In the MIDP2 specification a audio-only subset from the MMAPI (Mobile Media API) has been included allowing for the playback of audio, such as WAV and MIDI files as well as MPEG data. Certain devices may also support the full MMAPI 1.0 specification allowing for the playback and recording of audio and video content.
+	</para>
+	
+	<section>
+		<title>MMAPI Audio Only Subset as included in MIDP2</title>
+		<para>
+		The subset included in the MIDP2 API from the MMAPI consist of the <emphasis>Manager class</emphasis>, <emphasis>Controll class</emphasis>, <emphasis>Player interface</emphasis> and <emphasis>Control interface</emphasis>. A Manger is used to construct an instance of a Player for a particular Audio MIME type. The instance of the Player provides various services around playback such as repititions, start and stop, and some resource management. An instance of a controll can also be accessed via the player's <emphasis>getControl</emphasis> method.
+		</para>
+		<para>
+		Two type of controls are provided, a <emphasis>TuneControl</emphasis> and a <emphasis>VolumenControl</emphasis>. The TuneControl controls the playback of user defined monotonic tone sequences. The VolumeControl mananges the volume at which playback occurs. It also allows for the muting of current playback.
+		</para>
+		<para>
+		Play a note for 5000 milliseconds as full volume (100)
+			<programlisting>
+try
+{
+	Manager.playTone(ToneControl.C4,5000, 100)
+}
+catch (MediaException e)
+{
+	... 
+}
+			</programlisting>
+		The following snippet illustrated the playback of a wav file	
+			<programlisting>
+try
+{
+	InputStream in = getClass().getResourceAsStream("music.wav");
+	Player player = Manager.createPlayer(in, "audio/X-wav");
+	player.start();	
+}
+catch (IOException ioe)
+{
+	... 
+}
+catch (MediaException me)
+{
+	... 
+}
+			</programlisting>
+		</para>
+		<para>
+
+
+		It may require a significant amount of resources to construct and initialise a player, which may deplay the actual playback from time the start method has been invoked. To minimize this delay the Player provides a number of services. When the player is instanticated it is in the <emphasis>UNREALIZED</emphasis>. At this point the Player does not have enought information to function, and invokations to <emphasis>getContentType</emphasis> result in a IllegalStateException to be thrown. The player enters a <emphasis>REALIZED</emphasis> state via the realize method. During the realization the player obtains the information required to acquire the media resource. At may acquire further resources, except those which are exclusive / scarce system resources, such as the audio device.
+		</para>
+		<para>
+		To further minize the delay between invokation of the play method and actual playback the <emphasis>prefetch</emphasis> service is available. During prefetchinch the player aquires all resources required for playback as well as read a portion of the media resource into a buffer. After completion of the prefetch method the player is in a <emphasis>PREFETCHED</emphasis> state. After playback the player returns into this state as well.
+		</para>
+		<para>
+		During playback the player is in a <emphasis>STARTED</emphasis> state. To release any aquired resources the <emphasis>close</emphasis> method must be invoked. After closing the player enters the <emphasis>CLOSED</emphasis> state.
+		</para>
+	</section>	
+
+	<section>
+		<title>MultiMedia API 1.0 (MMAPI)</title>
+		<para>
+		The MMAPI is an add on API which may be supported on certain devices. It facilitates the playback and recording of both audio and video content. As such it required relatively powerfull devices.
+		</para>
+	</section>	
+	
+</section>	

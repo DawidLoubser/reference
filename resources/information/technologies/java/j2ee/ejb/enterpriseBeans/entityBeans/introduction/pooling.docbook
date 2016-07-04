@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1504:section xmlns:ns1504="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.introduction.pooling">
+
+  <ns1505:title xmlns:ns1505="http://docbook.org/ns/docbook">Entity bean instances can be pooled</ns1505:title>
+  <ns1506:para xmlns:ns1506="http://docbook.org/ns/docbook">
+    In principle entity beans could be created as clients require access to information
+    encapsulated by these beans and destroyed as the client no longer requires the information
+    or when the client disconnects. In practice this may lead to a huge number of object
+    creations and destructions with the corresponding computational overheads.
+  </ns1506:para>
+  
+  <ns1507:para xmlns:ns1507="http://docbook.org/ns/docbook">
+    In order to ensure a better scalability, application servers typically pool entity
+    objects, not only for use of a particular instance but also accross instances of the same
+    class. For example, a student entity object may be reused for different students.
+  </ns1507:para>
+  
+  <ns1508:para xmlns:ns1508="http://docbook.org/ns/docbook">
+    Beans in the pool should be able to release and acquire resources upon releasing the
+    bean back to the pool and reactivating the bean. To this end the container makes two
+    call-backs to the bean: ejbActivate() in which bean resources like sockets are acquired.
+    The bean is associated with a particular primary key and the bean state is populated after
+    activation via a call to <ns1509:literal xmlns:ns1509="http://docbook.org/ns/docbook">ejbLoad()</ns1509:literal>. ejbPassivate() in
+    which bean resources are released after the state of the bean has been saved into
+    persistent storage (The container calls <ns1510:literal xmlns:ns1510="http://docbook.org/ns/docbook">ejbStore()</ns1510:literal>
+    before calling <ns1511:literal xmlns:ns1511="http://docbook.org/ns/docbook">ejbActivate()</ns1511:literal>. The link between the EJB
+    object and the primary key is broken during passivation. 
+  </ns1508:para>
+  
+  <ns1512:figure xmlns:ns1512="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.introduction.passivation_jpg">
+    <ns1513:title xmlns:ns1513="http://docbook.org/ns/docbook">Beans are loaded after activation and stored before passivation.</ns1513:title>
+    <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="passivation.jpg"/></imageobject></mediaobject>   
+  </ns1512:figure>
+</ns1504:section>

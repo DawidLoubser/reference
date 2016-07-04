@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+			<html xmlns="http://www.w3.org/1999/xhtml"
+    		xmlns:f="http://java.sun.com/jsf/core"
+            xmlns:h="http://java.sun.com/jsf/html">
+<head>
+	<title>Capture book details</title>
+</head>
+<body>
+    <h1><h:outputText id="header1" value="Capture Book Details"/></h1>
+    
+    <h:messages/>
+    
+    <h:form id="form">
+        <h:panelGrid id="grid" columns="3">
+            <h:outputLabel id="bookTitleLabel" value="Book Title:" for="bookTitleFieldField"/>
+            <h:inputText id="bookTitleField" required="true" value="#{captureBookDetailsBinding.bookDetails.title}"/>
+            <h:message for="bookTitleField"/>
+            
+            <h:outputLabel id = "fullAuthorNameLabel" value="Full Author Name:" for="fullAuthorNameField"/>
+            <h:inputText id="fullAuthorNameField" value="#{captureBookDetailsBinding.bookDetails.authorName}">
+                <f:converter converterId="za.co.solms.fullNamesConverter"/>
+            </h:inputText>
+            <h:message for="fullAuthorNameField"/>
+            
+            <h:outputLabel id = "publicationDateLabel" value="Publication Date:" for="publicationDateField"/>            
+            <h:inputText id="publicationDateField" value="#{captureBookDetailsBinding.bookDetails.publicationDate}">
+                <f:convertDateTime pattern="yyyy-MM-dd"/>
+            </h:inputText>
+            <h:message for="publicationDateField"/>
+            
+            <h:outputLabel id = "priceLabel" value="Price:" for="priceField"/>
+            <h:inputText id="priceField" value="#{captureBookDetailsBinding.bookDetails.price}">
+                <f:convertNumber type="currency" currencySymbol="R"/>
+            </h:inputText>
+            <h:message for="priceField"/>
+        </h:panelGrid>
+        
+        <h:commandButton id="save" action="#{captureBookDetailsBinding.saveBookDetails}" value="save"/>
+    </h:form>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.lang.testing.unitTesting"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/Docs/re_schema/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="Unit Testing">Unit Testing</title>
+
+<para>The test itself is usually very specific to the class and are usually written by
+a seperate person/group of persons who are responsible for the requirements
+specification for that class or by the class developer self.</para>
+
+<para>Writing an exhaustive test for a class is often more difficult than writing 
+the class itself and often a fully exhaustive test is impractical and too 
+expensive. Still, writing tests which at least cover a range of example scenarios
+for the usage of the class is a very valuable exercise.</para>
+
+<para>When writing tests it is usually a good idea to have the tests comply to the 
+specifications of some testing framework.
+</para>
+<para>To this end one can use simple testing frameworks 
+which locate and run all unit tests and generate log files reporting any problems 
+encountered.</para>
+<para>
+For example, one could specify a <emphasis>Testable</emphasis> superclass which is to be implemented
+by all test classes as follows:
+<programlisting>
+<xi:include parse="text" href="Testable.java"/>
+</programlisting>
+</para>
+    
+<para>where we introduced the <emphasis>TestFailedException</emphasis> as follows:
+<programlisting>
+<xi:include parse="text" href="TestFailedException.java"/>
+</programlisting>
+</para>
+    
+<para>Every <emphasis>Testable</emphasis> must implement the <emphasis>runTest()</emphasis> method. How this is implemented
+is up to the test developer which may be the class developer self. Typically the <emphasis>runTest</emphasis>
+method would call a number of individual tests testing normal and abnormal usage of the class.
+In general, the only exception which should be thrown by the test
+class is a <emphasis>TestFailedException</emphasis>.</para>
+
+<para>Note that the default implementation of a testable supplied by <emphasis>Testable</emphasis> sees to it that
+detailed output is supplied when the user-IO test is run. In the concrete subclasses there
+should be a main function which simply runs this user-IO test. 
+A convention I usually follow is that every package has a subpackage, <emphasis>Test</emphasis> 
+containing all the code required for testing the elements of that package. The
+convention for the main test class file names I use is that the test class name
+is that of the class it tests with a <emphasis>"Test"</emphasis> appended to it. Thus, the test
+class for <emphasis>CashFlow</emphasis> is <emphasis>CashFlowTest</emphasis> and it resides in a directory 
+<emphasis>Test</emphasis> which is a subdirectory of the directory containing the actual
+<emphasis>CashFlow</emphasis> class.For example, a parabola test
+could create $N$ random parabolas, calculate the roots and turning point and check each
+of these as follows:
+<programlisting>
+    <xi:include parse="text" href="ParabolaTest.java"/>
+    </programlisting>
+</para>
+    
+<para>
+The actual <emphasis>Parabola</emphasis> class is in the <emphasis>Maths</emphasis> package:
+<programlisting>
+<xi:include parse="text" href="Parabola.java"/>
+</programlisting>
+</para>
+<para>
+The testing framework itself searches in all sub-directories for test classes, checks
+whether they are testable, runs the test and reports any problems:
+<programlisting>
+<xi:include parse="text" href="RunTests.java"/>
+</programlisting>
+</para>
+<para>
+This application runs all testable test classeswithin any of the packages below the current
+directory. It should be run from the root directory of a package (the directory in the
+class path). It makes use of a number of file name filters as well as the directory utilities
+listed below:
+<programlisting>
+<xi:include parse="text" href="DirectoryUtils.java"/>
+</programlisting>
+</para>
+    
+<para>To run the testing framework, <emphasis>RunTests</emphasis> you first go to a root directory of a class
+library (the directory in the classpath) and then type from command line
+
+<programlisting><![CDATA[
+java TestUtils.RunTests
+]]></programlisting>
+</para>
+    
+</section>

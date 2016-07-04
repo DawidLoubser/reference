@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Overview</title>
+    <para>
+        The <emphasis>Unified Expression Lanuage</emphasis> (EL) was developed
+        as a merger of expression languages used in JSP and JSF development.
+    </para>
+    <para>
+        The core purpose of the EL is to enable views (e.g. facelets) to access
+        backing bean properties and services. For this purpose the EL provides
+        a very simple syntax. For example, in order to access, from a facelet,
+        the <literal>name</literal> 
+        of the <literal>person</literal> property maintained by the 
+        <literal>createPerson</literal> backing bean, once can use
+        <programlisting language="xml"><![CDATA[
+${createPersonBinding.person.name}            
+]]></programlisting>
+        and to request the <literal>persistPerson</literal> service of that same
+        backing bean we can either use
+        <programlisting language="xml"><![CDATA[
+${createPersonBinding.persistPerson}            
+]]></programlisting>
+        or, should one prefer to highlight that a service is requested, we could alternatively
+        use
+        <programlisting language="xml"><![CDATA[
+${createPersonBinding.persistPerson()}            
+]]></programlisting>
+        <note><para>
+            The expression
+            <programlisting><![CDATA[
+${createPersonBinding}                
+]]></programlisting>
+            resolves the backing bean itself. This is done vie the page context using the
+            <programlisting><![CDATA[
+PageContext.findAttribute(String name)                
+]]></programlisting>
+            service.
+        </para></note>
+    </para>
+    <para>
+        The expressions may also contain logic which may be relevant for the view. One could
+        use expressions like
+        <programlisting><![CDATA[
+<c:if test="${captureOrderBean.order.lineItems.size == 0}">            
+]]></programlisting>
+        <note><para>
+            This is an EL expression which requests immediate evaluation.
+        </para></note>
+    </para>
+</section>    

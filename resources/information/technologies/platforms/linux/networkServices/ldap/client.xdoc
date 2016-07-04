@@ -1,0 +1,134 @@
+<section id="resources.information.platforms.linux.networkServices.ldap.client"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>LDAP client</title>
+	<para>
+	The command line tools to access an LDAP directory are configured centrally in <emphasis role="strong">/etc/openldap/ldap.conf</emphasis>. This file specifies the LDAP suffix / base, as well as the host of the ldap directory. These settings provide the default settings, and can be overwritten  
+	</para>
+	<programlisting>
+HOST 127.0.0.1
+BASE o=solms,c=za
+	</programlisting>	
+	
+	<section>
+		<title>ldapadd / ldapmodify - Adding and Changing entries</title>
+		<para>
+		</para>
+		<screen>
+			<userinput>
+				<command>ldapadd</command> <replaceable>flags</replaceable>  			
+			</userinput>
+		</screen>
+		<table frame="all">
+			<title>ldapadd Flags</title>
+			<tgroup cols="2">
+				<thead>
+					<row><entry>Flag</entry><entry>Description</entry></row>
+				</thead>	
+				<tbody>
+					<row><entry>-D</entry><entry>the binddn of the user</entry></row>
+					<row><entry>-w</entry><entry>The bind password</entry></row>
+					<row><entry>-x</entry><entry>Use simple authentication instead of SASL</entry></row>
+					<row><entry>-c</entry><entry>Continue on errors</entry></row>
+					<row><entry>-F</entry><entry>Force application of changes</entry></row>
+					<row><entry>-v</entry><entry>Verbose mode</entry></row>
+					<row><entry>-a</entry><entry>Add new entries</entry></row>
+					<row><entry>-h</entry><entry>The host of the directory</entry></row>
+					<row><entry>-f</entry><entry>An LDIF file to be imported</entry></row>
+				</tbody>
+			</tgroup>
+		</table>	
+		<programlisting>
+ldapadd -c -F -v -x -D "cn=Manager,o=solms,c=za" -w secret -f intranetAdmin.ldif		
+		</programlisting>
+	</section>
+	
+	<section>
+		<title>ldapdelete - Deleting entries</title>
+		<para>
+		Delete the entry specified by the DN.
+		</para>
+		<screen>
+			<userinput>
+				<command></command>  <replaceable>flags</replaceable> <replaceable>dn</replaceable>  			
+			</userinput>
+		</screen>
+		<table frame="all">
+			<title>ldapdelete Flags</title>
+			<tgroup cols="2">
+				<thead>
+					<row><entry>Flag</entry><entry>Description</entry></row>
+				</thead>	
+				<tbody>
+					<row><entry>-D</entry><entry>the binddn of the user</entry></row>
+					<row><entry>-w</entry><entry>The bind password</entry></row>
+					<row><entry>-x</entry><entry>Use simple authentication instead of SASL</entry></row>
+				</tbody>
+			</tgroup>
+		</table>	
+		<programlisting>
+		<![CDATA[
+[alex@teddy alex]$ ldapdelete -v -x -D "cn=Manager,o=solms,c=za" -w secret "cn=Mike Myers,ou=people,o=solms,c=za"
+ldap_initialize( <DEFAULT> )
+deleting entry "cn=Mike Myers,ou=people,o=solms,c=za"
+Delete Result: Success (0)
+[alex@teddy alex]$
+		]]>
+		</programlisting>
+	</section>	
+
+	<section>
+		<title>ldapsearch - Finding entries</title>
+		<para>
+		Searches the directory for specific entries matching a filter. When a space-separated list of attributes is provided, only those attributes are returned.
+		</para>
+		<screen>
+			<userinput>
+				<command></command> <replaceable>flags</replaceable> <replaceable>filter</replaceable> <replaceable>attributes</replaceable>  			
+			</userinput>
+		</screen>
+		<table frame="all">
+			<title>ldapsearch Flags</title>
+			<tgroup cols="2">
+				<thead>
+					<row><entry>Flag</entry><entry>Description</entry></row>
+				</thead>	
+				<tbody>
+					<row><entry>-L -LL -LLL</entry><entry>The output is in LDIFv1, without comments and without version number respectively.</entry></row>
+					<row><entry>-D</entry><entry>the binddn of the user</entry></row>
+					<row><entry>-w</entry><entry>The bind password</entry></row>
+					<row><entry>-x</entry><entry>Use simple authentication instead of SASL</entry></row>
+				</tbody>
+			</tgroup>
+		</table>	
+		<programlisting>
+		<![CDATA[
+ldapsearch -v -x -D "cn=Manager,o=solms,c=za" >AdressBook.ldif		
+[alex@teddy alex]$ ldapsearch -v -x -D "cn=Manager,o=solms,c=za" "(&(givenName=Alexander)(sn=Hartner))" 
+ldap_initialize( <DEFAULT> )
+filter: (&(givenName=Alexander)(sn=Hartner))
+requesting: ALL
+dn: cn=Alexander Hartner,ou=people,o=solms,c=za
+initials: A
+sn: Hartner
+objectClass: inetOrgPerson
+mail: alex@bluescontrol.co.za
+telephoneNumber: 083 422 4358
+givenName: Alexander
+cn: Alexander Hartner
+displayName: Alexander Hartner
+userPassword:: ajJhbnl3aGVyZQ==
+businessCategory: intranet
+businessCategory: manager
+businessCategory: intranetAdmin
+businessCategory: admin
+businessCategory: tomcat
+uid: alex
+
+[alex@teddy alex]$
+		]]>
+		</programlisting>
+	</section>	
+</section>	

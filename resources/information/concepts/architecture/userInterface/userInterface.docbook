@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>User Interfaces</title>
+    
+    <para>
+        The user interface of a system defines its accessibility and usability, and 
+        drives the user experience. The same set of design principles and best
+        practises can be applied to user interfaces across implementation
+        technologies, whether Java-based system or shop front.
+    </para>
+    <para>
+        Building a user interface for a system that adheres to
+        design-by-contract principles greatly simplifies and formalises the 
+        task.
+    </para>
+    <para>
+        Any user interface usually consists of two orthogonal (unrelated) aspects:
+        <itemizedlist>
+            <listitem>
+                <para>
+                    Visual design and/or branding, also known as
+                    look and feel.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Effectiveness in terms of flexibility,
+                    access to information and use-cases,
+                    and conformance to user expectations
+                    and needs.
+                </para>
+            </listitem>
+        </itemizedlist>
+        An increase
+        in the quality of the one <emphasis>does not imply an improvement
+        in the other</emphasis>.
+    </para>
+    
+    <!-- Design approach to User-interfaces -->
+    
+    <section>
+        <!-- Discuss the importance of Use-case driven design (URDAD),
+            and how most designs should follow SOA principles (stateless) -->
+        <title>The importance of use-case-driven design</title>
+        
+        <para>
+            If the design of a new system is not derived through a use-case-driven
+            process such as <abbrev>URDAD</abbrev> (which enforces responsibility
+            localisation as well as a contracts-driven approach at all levels of 
+            granularity) the system usually ends up being tied to a particular user interface.
+        </para>
+        <para>
+            Such systems often have very complex conversational state, fine-grained
+            dependencies and intricacies (<quote>spaghetti code</quote>), and may 
+            be difficult to maintain.
+        </para>
+        <para>
+            A system should rather be designed in a technology-neutral manner,
+            with full emphasis being placed on the business processes themselves,
+            keeping in mind that the use-cases initiating these processes will
+            ultimately be accessible through some user interface. The exact nature
+            of the user interface will ultimately not be important.
+        </para>
+        <para>
+            A system designed in such a manner is usually represented by
+            a <emphasis>contract</emphasis>, which cleanly publishes the
+            use-cases (as well as the full pre- and post-conditions for each)
+            in a manner that can easily be exposed through different access 
+            channels.
+        </para>
+        
+        <section>
+            <title>The user interface as an afterthought</title>
+            <para>
+                Often to the great chagrin of web- and graphic designers
+                as well as marketing departments, there are great advantages
+                in leaving the user interface as an <quote>afterthought</quote>
+                during the design of a system.
+            </para>
+            <para>
+                However, consider an entrepeneur planning a new innovative
+                business; there will likely not be any aspects of his
+                business model tied to the reception area of the business
+                headquarters. The reason is simple: If there were, it would
+                likely be the case that, in order to make use of any of the
+                use-cases the business offers, one would have to physically make 
+                use of the reception area. With the exception of a select
+                few kinds of business (certain department stores and the like)
+                such a business model would not make sense, and would contain
+                many risks regarding the future adaptability of the business.
+            </para>
+            <para>
+                Thus, in practice, treating the user interface of a system
+                as a separate (and later) concern guarantees multiple
+                access channels to the use-cases, and usually a simpler,
+                course-grained system with regarding:
+                <itemizedlist>
+                    <listitem>
+                        <para>maintainability</para>
+                    </listitem>
+                    <listitem>
+                        <para>testability</para>
+                    </listitem>
+                    <listitem>
+                        <para>flexibility to satisfy new requirements</para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+        </section>
+    </section>
+    
+    <section>
+        <!-- User interface workflow is not the same as the business
+            process workflow, typically concerns itself with: -->
+        <title>The purpose of the user interface</title>
+        <para>
+            If one treats the user interface as a separate concern onto
+            existing system functionality (use-cases), what then should the 
+            user interface provide?
+        </para>
+        <para>
+            If a system is exposed through a clean services contract, the
+            use-cases therein may seem numerous, complex, and without context. Furthermore,
+            they are often only useful to user who know exactly what they
+            want, and understand how to express this need to the system in the
+            system's native form of communication (e.g. the Java programming
+            language, or booking a vehicle reparation by providing a detailed list of
+            job codes and part numbers that will be needed).
+        </para>
+        
+        <section>
+            <title>Exposing use-cases</title>
+            <para>
+                The primary, and obvious, purpose of any user interface is
+                to expose the use-cases of a system, and to allow for 
+                them to be invoked. This must be done in a manner which is 
+                understandable to and desired by it users. 
+                This could entail
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            Only publishing use-cases which users are allowed to
+                            invoke, based on some form of authorisation.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            Publishing use-cases in such a way to emphasise
+                            those a user may be most interested in, based on past
+                            usage or some other mechanism.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            After the completion of a use-cases, publishing further
+                            ones which would make sense (or are typically needed).
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            Providing assistance and guidance along the way.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+        </section>
+        
+        <section>
+            <!-- Constructing data objects for these use-cases, and
+                trying to ensure that all preconditions for use case
+                are met -->
+            <title>Meeting the preconditions of a use-case</title>
+            <para>
+                The user interface must assist the user to meet all the 
+                preconditions of a particular use-case. This could involve
+                <itemizedlist>
+                    <listitem>
+                        <para>Constructing input or command objects
+                        (ensuring the user does so correctly). This could
+                        in itself be an elaborate, interactive and/or 
+                        multi-step workflow for complex objects.</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            Not allowing a user to invoke a use-case for
+                            which the preconditions are not currently met,
+                            in order to prevent the system from having to
+                            receive and refuse the service request.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+            <note>
+                <para>
+                    It is usually a good idea to prevent invocation of use-cases
+                    only when the user interface is absolutely certain that the
+                    preconditions are not met. If there is any doubt, it is always
+                    better to allow the user to invoke the use-case (and risk
+                    a refusal of service) than to risk the frustration of
+                    wrongly refusing a service to a user. For example, if
+                    a potential client brings an unknown type of camera to the 
+                    reception desk of a camera repair shop, it would be unwise
+                    for the receptionist (who would typically have limited 
+                    knowledge of the inner workings of the workshop) to refuse
+                    a potential business transaction. However, if it cannot
+                    be repaired, the use-case may still be refused by the system.
+                </para>
+            </note>
+        </section>
+        
+        <section>
+            <!-- Displaying the post-conditions, and offering further
+                use-cases around them -->
+            <title>Communicating the post-conditions</title>
+            <para>
+                After the successful completion of a use-case, the user 
+                interface must communicate the post-conditions to the user.
+                This usually involves displaying any objects produced or 
+                returned by the business process, as well as explaining
+                them (and their implications) to the user.
+            </para>
+        </section>
+        
+        <section>
+            <!-- Handling exceptions (preconditions not met) sensibly
+                and conveniently (i.e. analogy: mistake on form should not
+                cause entire form to have to be re-filled) -->
+            <title>Handling failures sensibly</title>
+            <para>
+                If the preconditions of a use-case were not met, the user-interface
+                must assist as far as possible to rectify the problem,
+                explain the problem to the user, and, if sensible, allow the
+                user to re-invoke the use-case. For example, a mistake on
+                an application form should not have to cause the user to
+                re-complete an entire new form.
+            </para>
+            <para>
+                If, on the other hand, a system could not fulfil its
+                contractual obligations (even though the preconditions
+                may have been met) the user interface is responsible
+                for <quote>saving face</quote> - to explain the nature of
+                the problem in such a way that the user understands, to suggest 
+                alternative use-cases, or to bring the user into contact with
+                higher-level authority. Many computer system user interfaces
+                are notoriously bad at this aspect (such as <quote>Error 0x4A8</quote>).
+            </para>
+        </section>
+        
+        <section>
+            <title>Localisation</title>
+            <para>
+                The user interface is responsible for mediating between the
+                system and the user, and this often involves communication
+                in the user's native language.
+            </para>
+            <para>
+                Another important aspect to localise is
+                <emphasis>context</emphasis> - the user interface must
+                express concepts and workflows in such a way that is
+                meaningful to the user, and his/her background or
+                work environment.
+            </para>
+            <caution>
+                <para>
+                    Context localisation should best not be taken too far: Trying 
+                    to hide the core concepts of the system, and representing them 
+                    as something completely different, often makes the system more
+                    difficult and confusing to use. 
+                </para>
+            </caution>
+        </section>
+    </section>
+    <section>
+        <title>User interface frameworks</title>
+        <para>
+            Most programming environments and platforms provide one or
+            more frameworks to assist with the creation of user interfaces.
+            When choosing such a framework, it is important to ascertain whether
+            the framework can fulfil its role as a pure user interface technology
+            for a system written according to clean design-by-contract principles.
+        </para>
+        <para>
+            Many user interface frameworks intrinsically encourage a merger
+            of business logic with presentation logic (i.e. do not support
+            the Model-View-Controller pattern cleanly) and these will often
+            produce inflexible, complex systems. 
+        </para>
+    </section>
+</section>

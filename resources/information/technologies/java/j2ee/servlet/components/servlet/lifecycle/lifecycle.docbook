@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>The Servlet Life cycle</title>
+  <indexterm>
+    <primary>Servlet</primary>
+    <secondary>lifecycle</secondary>
+  </indexterm>
+    <para>
+        The life cycle of a Servlet is controlled by the container in which the Servlet has 
+        been deployed. For every deployed Servlet, the container performs
+        the following:
+        <orderedlist>
+            <listitem>
+                <para>If an instance of the Servlet does not exist, the web container
+                    <orderedlist>
+                        <listitem><para>Loads the Servlet class.</para></listitem>
+                        <listitem><para>Creates an instance of the Servlet class.</para></listitem>
+                        <listitem><para>Initialises the Servlet instance by calling the <literal>init(...)</literal> method.</para></listitem>
+                    </orderedlist>
+                </para>
+            </listitem>
+            <listitem>
+                <para>For every incoming client request, the <literal>service(...)</literal> method is invoked, passing <literal>request</literal> 
+                    and <literal>response</literal> objects. In the case of HTTP servlets, the respective <literal>doXXXX()</literal> method
+                is then automatically called, based on the HTTP method of the request.</para>
+            </listitem>
+            <listitem>
+                <para>If the container needs to remove the Servlet, it finalizes the Servlet by calling the 
+                Servlet’s <literal>destroy(...)</literal> method. This is done, for instance, when an application is undeployed, or the server
+                is shut down.</para>
+            </listitem>
+        </orderedlist>
+    </para>
+    <para>
+        The <literal>HttpServlet</literal> class (in the <literal>javax.servlet.http</literal> package) specifically defines life cycle methods
+        for HTTP-based Servlets. By extending this class, your class inherits a set of <literal>doXXX(...)</literal>
+        methods, such as <literal>doGet(...)</literal> or <literal>doPost(...)</literal> (one for each HTTP protocol method). 
+    </para>
+    
+    <xi:include href="init.docbook"/>
+    <xi:include href="service.docbook"/>
+    <xi:include href="destroy.docbook"/>
+    
+</section>

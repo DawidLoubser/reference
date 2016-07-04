@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Two phase commit</title>
+    <para>
+         A simple two-phase commit example:       
+        <programlisting><![CDATA[
+            XADataSource xaDS;
+XAConnection xaCon;
+XAResource   xaRes;
+Xid          xid;
+Connection   con;
+Statement    stmt;
+int          ret;
+
+xaDS = getDataSource();
+xaCon = xaDS.getXAConnection("jdbc_user", "jdbc_password");
+xaRes = xaCon.getXAResource();
+
+con = xaCon.getConnection();
+stmt = con.createStatement();
+
+xid = new MyXid(100, new byte[]{0x01}, new byte[]{0x02});
+
+try {
+    xaRes.start(xid, XAResource.TMNOFLAGS);
+    stmt.executeUpdate("insert into test_table values (100)");
+    xaRes.end(xid, XAResource.TMSUCCESS);
+
+    ret = xaRes.prepare(xid);
+    if (ret == XAResource.XA_OK) {
+        xaRes.commit(xid, false);
+    }
+}
+catch (XAException e) {
+    e.printStackTrace();
+}
+finally {
+    stmt.close();
+    con.close();
+    xaCon.close();
+}
+            ]]></programlisting>
+    </para>
+</section>    

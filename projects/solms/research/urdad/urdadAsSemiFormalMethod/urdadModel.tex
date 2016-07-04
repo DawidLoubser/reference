@@ -1,0 +1,124 @@
+\section{The URDAD Model}
+
+Following the URDAD methodology, one constructs a URDAD model which is a well defined UML model.
+This section aims to formally specify the URDAD model structure by defining a set of model constraints
+which an URDAD model needs to adhere to.
+
+An URDAD model is symmetrical across levels of granularity in that the model structure is the same for all
+levels of granularity.
+
+The central concept in an URDAD model is that of a service. Complex services are constructed by
+defining a work flow across lower level services. Leaf services are specified purely via the contract
+they need to realize.
+
+In an URDAD model a use case and a service are exchangeable concepts. URDAD treats a use case as a
+diagrammatic representation of a service - note that UML does not provide any other diagrammatic representation of a service.
+
+For any service, there is the services contract and the user work flow specification. In addition there
+may be the functional requirements specification.
+ 
+For implementation mapping one only needs the services contract and the process specification. For traceability and documentation generation one requires also the <<requires>> dependencies from
+stake holders or use cases to pre and post conditions as well as from pre and post conditions to functional requirements.
+
+%===========================================================================================
+
+\subsection{Constraints on the URDAD requirements model}
+
+The URDAD requirements model contains the services contract specification and the user work flow specification. Below is a set of constraints which must hold true for the requirements model of
+any service at any level of granularity.
+
+The starting point for any service is the requirement for such a service or function. Such a functional
+requirement is represented by a use case.
+
+UML does not have the concept of a responsibility which is so central to design. In URDAD a responsibility
+domain is represented by a services contract for that responsibility domain. High level responsibilities
+will be assigned to high-level contracts which specify the requirements for high-level services whilst
+lower level responsibility domains are assigned to lower level services contracts which specify lower
+level services.
+
+%-------------------------------------------------------------------------------------------
+
+\subsubsection{Use case realized by contract service of same name }
+
+A use case represents the informal requirement for a service. These requirements are formalized within
+a services contract represented by a UML interface with a service which realizes the use case. The serviceand the use case should have the same name.
+
+
+
+\textit{
+context UseCase inv useCaseRealizedByContractServiceOfSameName:
+(supplierDependency->size()>0) and
+(supplierDependency->exists(d | d.oclIsKindOf(Realization) and
+d.source->exists(s | s.oclIsKindOf(Operation) and
+s.oclAsType(Operation).name=self.name and
+s.oclAsType(Operation).interface.oclIsKindOf(Interface))))
+}
+
+%--------------------------------------------------------------------------------------------
+
+\subsubsection{Each service receives one request parameter and returns one result object}
+
+URDAD enforces the well known best practice of using a parameter or request object instead of
+a parameter list (see, for example, \cite{fowler:refactoring}). URDAD requires further that the
+request object is service specific, i.e.\ its components may be reused, but the request object itself
+should not be reused so that it can be freely modified as the requirements for the service evolce.
+This is enforced by requiring that the class for the request object is called
+\verb+[ServiceName]Request+ whilst the class for the result object is called
+\verb+[ServiceName]Result+.
+
+\textit{
+self.paramters.size()=1 AND substring(self.parameters[0].name,self.name.size()).toLower=self.name.toLower()
+}
+
+
+
+%--------------------------------------------------------------------------------------------
+
+\subsubsection{Each pre- and post-condition is required}
+
+%--------------------------------------------------------------------------------------------
+
+\subsubsection{Each pre- and post- condition is specified}
+
+%===========================================================================================
+
+\subsection{Constraints on the URDAD design model}
+
+%--------------------------------------------------------------------------------------------
+
+\subsubsection{Each functional requirement of a use case is required to address one or more pre- and/or post-conditions}
+
+%--------------------------------------------------------------------------------------------
+
+\subsubsection{Each functional requirement is assigned to a service in a services contract represented by a UML interface}
+
+Note: Can this be incorporated into the same requirement as above?
+
+%===========================================================================================
+
+\subsection{Process design}
+
+%--------------------------------------------------------------------------------------------
+
+\subsubsection{Each process is assigned as behaviour to a service of a class which realizes a service in a services contract}
+
+\subsubsection{The process inputs and outputs correspond to the service inputs and outputs}
+
+%--------------------------------------------------------------------------------------------
+
+\subsubsection{A collaboration is assembled from call operations, send signals, decision nodes, forks and synchronization bars}
+
+%--------------------------------------------------------------------------------------------
+
+\subsubsection{Only unsatisfied pre-conditions lead to aborting the service}
+
+%--------------------------------------------------------------------------------------------
+
+\subsubsection{All functional requirements are realized within the business process}
+
+%--------------------------------------------------------------------------------------------
+
+\subsection{The value of all elements of each request object as well as of the return value is specified via OCL constraints as a function of the objects available to the process}
+
+
+%--------------------------------------------------------------------------------------------

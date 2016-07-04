@@ -1,0 +1,39 @@
+#getRealizingServices($targetUseCase)
+#set($realizingServices = $result)
+
+<section>
+    <title>Controller</title>
+    <para>
+        The controller takes ownership of the business process and manages the business process for the use case.
+        The controller is responsible for assembling the business process across lower level services sourced from
+        service providers realizing lower level services contracts. All work flow decisions and control logic are
+        executed by the controller. As such the controller also decouples the lower level service providers from
+        one another, <abbrev>i.e.</abbrev> the lower level service providers are have know knowledge of either
+        the business process within which the services are used or any other service providers participating in the
+        business process.
+    </para>   
+    
+    #if ($realizingServices.size() == 0)
+        <note>
+            <title>ERROR: No service realizing use case specified</title>
+            <para>
+                For a designed business process, URDAD requires that at least one service/operation has been assigned to
+                realize the use case (via a realization relationship between the use case and the service).
+                This service will be hosted by the controller which is responsible for assembling the business process
+                for the use case from services sourced from other service providers.
+            </para>
+        </note>
+    #else
+        <para>
+            <itemizedlist>
+                #foreach ($realizingService in $realizingServices)
+                    <listitem><para>
+                            The controller specifying the business process for the $targetUseCase.name is
+                            $realizingService.owner.name.
+                            It realizes the use case via the $realizingElement.getName() service.
+                    </para></listitem>    
+                 #end   
+             </itemizedlist>
+        </para>
+   #end    
+</section>    

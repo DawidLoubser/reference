@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink" 
+    xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+
+        <title>A Simple Service Provider (Java-Based)</title>
+
+        <para>
+            Once we have a services contract, we may decide that we wish to build an implementation of
+            the contract as a service hosted within one a service engine (which itself is hosted by the ESB).
+            There are typically various implementation technologies to choose from, and in this case
+            we build a simple implementation using Java.
+        </para>
+        <para>
+            The service which we wish to build, is a simple value estimator of motor vehicles. We will deploy it
+            into the <literal>servicemix-cxf-se</literal> service engine, a simple Spring-based service engine that hosts
+            Java classes, and makes their services available on the ESB.
+        </para>
+        <figure>
+            <title>JBI Example: Building a simple Java-based service</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="hostedService.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    
+    <para>
+        We need to
+        <itemizedlist>
+            <listitem>
+                <para>Create a high-level Maven project (with a <literal>pom.xml</literal>) describing
+                    our project</para>
+            </listitem>
+            <listitem>
+                <para>Create a service unit (containing a Java class that implements out contract) which we will deploy to the <literal>servicemix-cxf-se</literal>
+                    service engine. We can do so via the Maven archetype <literal>servicemix-cxf-se-service-unit</literal>.</para>
+            </listitem>
+            <listitem>
+                <para>
+                    Place our existing WSDL contract (for the value estimator) into the service unit, and use Maven to generate the appropriate Java artifacts
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Edit the <literal>xbean.xml</literal> service unit configuration, to tell it which class(es) to expose to the ESB, and
+                    which service and endpoint names to use, etc.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Create a <emphasis>service assembly</emphasis> module (via Maven's <literal>servicemix-service-assembly</literal> archetype) to which we
+                    add, as dependencies, the above service unit.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    <para>
+        Our Maven project structure is as follows:
+        <programlisting><![CDATA[
+javaBasedServiceProvider/
+    pom.xml
+    javaBasedServiceProvider-assembly/
+        pom.xml
+    motor-value-estimator/
+        pom.xml
+        src/
+            main/
+                resources/
+                    motor-value-estimator.wsdl
+                    motor-value-estimator-soap.wsdl
+                    xbean.xml
+                java/
+                  za/
+                    co/
+                      solms/
+                        ... 
+                          .java
+        ]]></programlisting>
+    </para>
+    
+    <para>
+        The services contract that we wish to implement looks as follows:
+        <programlisting language="XML">
+<xi:include href="src/javaBasedServiceProvider/motor-value-estimator/src/main/resources/motor-value-estimator.wsdl" parse="text"/>
+        </programlisting>
+    </para>
+    
+    <para>
+        The high-level project's POM:
+        <programlisting language="XML">
+<xi:include href="src/javaBasedServiceProvider/pom.xml" parse="text"/>
+        </programlisting>
+    </para>
+    
+    <section>
+        <title>Modules</title>
+        <section>
+            <title>motor-value-estimator</title>
+            <para>
+                This is the service unit that will implement our contract. After placing a copy of the WSDL contract in the
+                resources directory, we generate (using JAX-WS) the java artifacts from the WSDL, and build a simple
+                implementation of the service. The project has the following structure (as seen here in the Eclipse IDE):
+                <figure>
+                    <title>Project Structure of java-based service unit</title>
+                    <mediaobject>
+                        <imageobject>
+                            <imagedata fileref="javaProjectStrucure.png"/>
+                        </imageobject>
+                    </mediaobject>
+                </figure>
+            </para>
+            <para>
+                The service unit's POM is:
+                <programlisting language="XML">
+<xi:include href="src/javaBasedServiceProvider/motor-value-estimator/pom.xml" parse="text"/>
+                </programlisting>
+            </para>
+            <para>
+                After running Maven's <literal>generate-sources</literal> goal, we can write a simple pure Java implementation
+                of the service provider:
+            </para>
+            <programlisting language="Java">
+<xi:include href="src/javaBasedServiceProvider/motor-value-estimator/src/main/java/za/co/solms/example/motors/impl/BasicMotorValueEstimator.java" parse="text"/>
+            </programlisting>
+            <para>
+                The deployment configuration, <literal>xbean.xml</literal>, indicates to the CXF service engine which
+                java object(s) to create, and how to expose them to the ESB. We can also wire up other ESB-based services
+                in order for our Java object to call them, in this file.
+                <programlisting language="XML">
+<xi:include href="src/javaBasedServiceProvider/motor-value-estimator/src/main/resources/xbean.xml" parse="text"/>
+                </programlisting>
+            </para>
+        </section>
+        
+        <section>
+            <title>javaBasedServiceProvider-assembly</title>
+            <para>
+                The service assembly simply contains a POM (generate by Maven) which we update to refer to the modules which we wish to include in this service
+                assembly. This is done in the <emphasis>dependencies</emphasis> section. The <literal>pom.xml</literal>:
+                <programlisting language="XML">
+<xi:include href="src/javaBasedServiceProvider/javaBasedServiceProvider-assembly/pom.xml" parse="text"/>
+                </programlisting>
+            </para>
+        </section>
+    </section>
+    
+    <section>
+        <title>Building and Deploying</title>
+        <para>
+            Running <literal>mvn install</literal> on the top-level project builds al sub-components,
+            and installs them in the local maven repository.
+        </para>
+        <para>
+            The service assembly can be deployed, either by running the Maven <literal>jbi:projectDeploy</literal> goal
+            in the service assembly's directory, or simply by copying the service assembly <literal>javaBasedServiceProvider-assembly-0.1.jar</literal>
+            from the service assembly's <literal>target</literal> directory to your ESB's hot deploy directory.
+        </para>
+        <para>
+            Depending on the ESB, the service assembly may or not be automatically started, which means the ESB administration should be
+            used (via Ant, JMX, or vendor tool) to start the assembly.
+        </para>
+    </section>
+    
+    <section>
+        <title>Testing the service</title>
+        <para>
+            Since the service is implemented in Java, during development, standard test-driven development
+            practise may be followed.
+        </para>
+        <para>
+            Once deployed, any pother component (such as an HTTP consumer) may be configured to send messages
+            to an endpoint of type <literal>{http://solms.co.za/example/motors/}MotorValueEstimator</literal>
+            and these should be routed to our implementation.
+        </para>
+    </section>
+
+</section>

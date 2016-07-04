@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.design.patterns.concurrentSystems.doubleCheckedLocking.solution"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Solution</title>
+  <para>
+    The solution proposed by the double-checking locking pattern is to
+    <orderedlist>
+      <listitem><para>
+          Check whether an instance exists and return a handle to it if it does.
+      </para></listitem>
+      <listitem><para>
+         If no instance exists, the thread acquires the lock for the class and re-checks 
+         before creating the instance.
+      </para></listitem>
+    </orderedlist>
+  </para>
+  <section>
+    <title>The structure of the double-checked locking pattern</title>
+    <para>
+      The structure is similar to that of the singleton except that the
+      <literal>getInstance()</literal> service of the meta-class delegates
+      the instance creation to a separate <literal>createInstance()</literal>
+      service which is defined with <emphasis>{concurrent}</emphasis>
+      constraint, <abbrev>i.e.</abbrev> threads will thus have to acquire the
+      lock for the class upon entering the <literal>createInstance()</literal>
+      service.
+    </para>
+    <figure id="resources.information.concepts.design.patterns.concurrentSystems.doubleCheckedLocking.structure_fig">
+      <title>The structure of the singleton pattern</title>      
+      <graphic fileref="structure.jpg"/>
+    </figure>
+  </section>
+  
+  <section>
+    <title>Dynamics of the double-checked locking pattern</title>
+    <para>
+      After checking for the existence of the instance, the lock for the class is acquired and
+      and the thread re-checks for the existence of the instance. After the second check
+      no other thread could have created an instance because the current thread now has 
+      exclusive access to the lock of the class and hence exclusive access to the class (static)
+      services. It then creates the instance, releases the lock and returns a handle to the 
+      instance.
+      <note>
+        <para>
+          Subsequent requests for an instance do not require the acquisition of the lock
+          of the class.
+        </para>
+      </note>  
+    </para>
+    <figure id="resources.information.concepts.design.patterns.concurrentSystems.doubleCheckedLocking.dynamics_fig">
+      <title>The dynamics of the singleton pattern</title>      
+      <graphic fileref="dynamics.jpg"/>
+    </figure>
+  </section>
+  
+  
+</section>

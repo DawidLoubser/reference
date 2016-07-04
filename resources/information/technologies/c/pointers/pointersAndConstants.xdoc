@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.c.pointers.pointersAndConstants"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Pointers and constants</title>
+  <para>
+    Pointers are intrinsically unsafe. In order to increase the comfort zone when
+    working with pointers we can use constants to prevent either the pointer
+    itself from changing or the memory the pointer points to or both.
+  </para>
+  <section><title>Constant pointers</title>
+    <para>
+      A pointer can, like any other variable, be declared a constant, in order to 
+      prevent the modification of the pointer variable itself, <abbrev>i.e.</abbrev> the address to
+      which the pointer points. For example, if we have a <command>int *</command>
+      then we can declare it constant via
+       <programlisting><![CDATA[
+int i = 17;
+      
+int * const i_p = &i;
+      ]]></programlisting>  
+      which declares <command>i_p</command> as a constant which holds the address of
+      the variable <command>i</command>. Now we cannot say, at a later stage,
+      <programlisting><![CDATA[
+i_p = &k;
+      ]]></programlisting>  
+      because we may not change the value of the pointer, but we can say
+      <programlisting><![CDATA[
+*i_p = -5;
+      ]]></programlisting>  
+      changing the value of the variable to which the pointer points to 
+      <command>-5</command>.
+    </para>  
+  </section>
+  <section><title>Pointers to constants</title>
+    <para>
+    On the other hand, we can also specify that the pointer itself is not constant, 
+    but that the memory to which it points is. This is done via
+    <programlisting><![CDATA[
+int i = 17;
+      
+const * i_p = &i;
+    ]]></programlisting>  
+    which declares <command>i_p</command> as a pointer variable to a memory position 
+    which may not be modified (at least not through the pointer <command>i_p</command>).
+  </para>  
+  <para>
+    Now we cannot say, at a later stage,
+    <programlisting><![CDATA[
+*i_p = -5;
+    ]]></programlisting>  
+    because we may not change the value of the variable to which the pointer points
+    through this pointer, but we can say
+    <programlisting><![CDATA[
+i_p = &k;
+    ]]></programlisting>  
+    changing the value of the pointer variable itself such that it now points to 
+    another memory position occupied by the variable <command>k</command>.
+    </para>  
+  </section>
+  <section><title>Constant pointers to constants</title>
+    <para>
+      Finally we can also have constant pointers to constants. In this case one may
+      neither change the pointer itself, nor what the pointers are pointing to:
+      <programlisting><![CDATA[
+const int * const i_p = &i;
+      ]]></programlisting>
+    </para>  
+  </section>
+  <section><title>Pointers to pointers and constants</title>
+    <para>
+      Pointers to pointers are not uncommon in <emphasis>C</emphasis>.
+      For starters, they are required when constructing multi-dimensional
+      arrays. For example, we used
+      <programlisting><![CDATA[
+double * * mat;
+      ]]></programlisting>
+      to specify a data structure for a matrix. We can now insert constants at 
+      any level. For example
+      <programlisting><![CDATA[
+const double * const * const mat;
+      ]]></programlisting>
+      Here 
+      <itemizedlist>
+        <listitem><para>
+          the first <command>const</command> specifies that the <command>double</command>
+          variables to which the <command>double *</command>s point are constant,
+        </para></listitem>
+        <listitem><para>
+          the second <command>const</command> specifies that the <command>double *</command>s
+          themselves are constant and
+        </para></listitem>
+        <listitem><para>
+          the third <command>const</command> specifies that the pointers to the
+          <command>double *</command>s may not change either.
+        </para></listitem>
+      </itemizedlist>  
+    </para>  
+  </section>
+</section>  

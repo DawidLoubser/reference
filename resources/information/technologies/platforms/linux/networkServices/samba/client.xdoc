@@ -1,0 +1,57 @@
+<section id="resources.information.platforms.linux.networkServices.samba.client"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Samba filesharing</title>
+	<para>
+	The smbclient command can be used to interogate samba as well as windows share. It provides a command line interface to transfer files and browse directories.
+	</para>
+	<programlisting>
+	<![CDATA[
+[root@teddy root]# smbclient -L teddy
+added interface ip=192.168.0.1 bcast=192.168.0.255 nmask=255.255.255.0
+Password: 
+Anonymous login successful
+Domain=[EARTH] OS=[Unix] Server=[Samba 2.2.3a]
+
+        Sharename      Type      Comment
+        ---------      ----      -------
+        IPC$           IPC       IPC Service (Teddy)
+        ADMIN$         Disk      IPC Service (Teddy)
+        S400           Printer   
+
+        Server               Comment
+        ---------            -------
+        TEDDY                Teddy
+
+
+        Workgroup            Master
+        ---------            -------
+        EARTH                TEDDY
+[root@teddy root]# 
+	]]>	
+	</programlisting>
+	<programlisting>
+	<![CDATA[
+[root@teddy root]# smbclient "\\\\teddy\\alex" -U alex
+added interface ip=192.168.0.1 bcast=192.168.0.255 nmask=255.255.255.0
+Password: 
+Domain=[EARTH] OS=[Unix] Server=[Samba 2.2.3a]
+smb: \> ls
+  .                                   D        0  Thu Sep 11 07:07:54 2003
+  ..                                  D        0  Wed Jul 30 19:25:04 2003
+  .kde                               DH        0  Tue Apr 29 23:33:22 2003
+  .gtkrc                             AH      163  Wed Feb 26 22:32:30 2003
+  .bash_logout                       AH       24  Sat Feb 22 15:45:52 2003
+  .bash_profile                      AH      191  Sat Feb 22 15:45:52 2003
+  .bashrc                            AH      124  Sat Feb 22 15:45:52 2003
+  .emacs                             AH      854  Sat Feb 22 15:45:52 2003
+  .gnome                             DH        0  Wed Sep  3 16:36:13 2003
+  GNUstep                             D        0  Sun Jun 22 12:12:42 2003
+  .esd_auth                          AH       16  Sat Feb 22 15:53:27 2003
+  .mcop                              DH        0  Tue Apr 29 23:34:26 2003
+  .xine                              DH        0  Sat Feb 22 15:54:20 2003
+	]]>	
+	</programlisting>
+</section>	

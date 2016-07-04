@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    id="resources.information.technologies.java.j2ee.examples.simpleWeatherService.businessLayer.businessLayer">
+    
+    <title>The Business Layer</title>
+
+    <section>
+        <title>Writing the Contracts and Data Objects</title>
+    
+        <para>
+            We start off the business layer by writing the contracts as Java interfaces. Note that both the
+            business service, as well as the actual <emphasis>data objects</emphasis>, are expressed as
+            interfaces. This allows us to express different <emphasis>views</emphasis> onto the same objects,
+            e.g. read-only vs mutable. The abstract contract for the service, and it's collection of
+            data objects, are placed in the package <literal>za.org.weather.service</literal>.
+        </para>
+        
+        <figure>
+            <title>The Weather Forecast service contract</title>
+            <programlisting>
+<xi:include href="src/source/za/org/weather/service/WeatherForecastService.java" parse="text"/>
+            </programlisting>
+        </figure>
+        <note>
+            <para>
+                The weather service always returns a list of read-only weather forecasts,
+                as specified by the <literal>WeatherForecast</literal> interface.
+            </para>
+        </note>
+        
+        <figure>
+            <title>Weather Forecast Data Object</title>
+            <programlisting>
+<xi:include href="src/source/za/org/weather/service/WeatherForecast.java" parse="text"/>
+            </programlisting>
+        </figure>
+        
+        <figure>
+            <title>Locality Data Object</title>
+            <programlisting>
+<xi:include href="src/source/za/org/weather/service/Locality.java"  parse="text"/>
+            </programlisting>
+        </figure>
+        
+        <para>
+            The service contract package also contains default implementations of the data objects,
+            which are straightforward Java Objects. Implementations may or may not choose to use them,
+            but recall that there are never any direct dependencies on these classes:
+            <programlisting>
+<xi:include href="src/source/za/org/weather/service/WeatherForeCastImpl.java"  parse="text"/>
+            </programlisting>
+            <programlisting>
+<xi:include href="src/source/za/org/weather/service/LocalityImpl.java"  parse="text"/>
+            </programlisting>
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Writing the Implementation</title>
+        <para>
+            As the correct functioning of this service si not relevant to the exercise,
+            we write an implementation of a <literal>WeatherForecastService</literal>
+            that simply maintains a list of <quote>known</quote> localities, and generates
+            random weather forecasts upon request.
+        </para>
+        <figure>
+            <title>The Weather Forecast service contract</title>
+            <programlisting>
+<xi:include href="src/source/za/org/weather/service/impl/WeatherForecastServiceBean.java" parse="text"/>
+            </programlisting>
+        </figure>
+        <note>
+            <para>
+                The service, as implemented here as a <emphasis>stateless session bean</emphasis>, is
+                nothing more than a plain Java class with some annotations (<literal>@Stateless</literal>,
+                <literal>@Local</literal> and <literal>@Remote</literal>) which indicate to the container
+                the type of managed bean, and which interfaces to expose to both local (in-container) and
+                remote clients.
+            </para>
+        </note>
+    </section>
+    
+    
+    
+    <section>
+        <title>Structuring and Building the Project</title>
+        <para>
+            We assemble the project into a self-contained directory structure, which
+            uses <literal>ant</literal> to automate compilation and assembly. Earlier
+            versions of EJB required specific structures and deployment descriptors,
+            but an EJB3 application is simply a Java Archived (JAR) tree of classes
+            and resources.
+        </para>
+        <figure>
+            <title>Project Directory Structure</title>
+            <graphic fileref="images/businessLayerFileStructure.jpg"/>
+        </figure>
+        <figure>
+            <title>The Ant Build Script</title>
+            <programlisting>
+<xi:include href="src/build.xml" parse="text"/>
+            </programlisting>
+        </figure>
+        <figure>
+            <title>Externalised Build properties</title>
+            <programlisting>
+<xi:include href="src/build.properties" parse="text"/>
+            </programlisting>
+        </figure>
+        <para>
+            Running
+            <programlisting><![CDATA[
+ant package
+            ]]></programlisting>
+            compiles and builds the application JAR, which can then simply be deployed to your
+            application server. In the case of, it may simply be copied to:
+            <programlisting><![CDATA[
+$JBOSS_HOME/server/default/deploy
+                ]]></programlisting>
+            which immediately deploys the service. Your service may now be used from
+            <itemizedlist>
+                <listitem>
+                    <para>Local Java clients, running in the same container (e.g. other services, EJBs, etc)</para>
+                </listitem>
+                <listitem>
+                    <para>Remote Java clients, by connecting to it using Java RMI</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Remote clients in other languages (such as C++), by using CORBA
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Running
+            <programlisting><![CDATA[
+ant export-contract
+                ]]></programlisting>
+            produces an API JAR which contains the <quote>contract</quote> of this
+            service. This is useful to provide to other clients who want to access
+            your service, and will also be used to create a decoupled user interface
+            (web presentation layer) for the service.
+        </para>
+    </section>
+</section>

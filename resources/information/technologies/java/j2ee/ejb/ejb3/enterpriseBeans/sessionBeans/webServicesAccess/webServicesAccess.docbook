@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.webServicesAccess.webServicesAccess">
+  <title>Web services access</title>
+  <para>
+    The Enterprise Java Beans specification requires that application servers
+    must support the publication of session beans as web service endpoints,
+    using the standard JAX-WS framework.
+  </para>
+  <para>
+    Through this mechanism, incoming web services (SOAP) messages are de-marshalled to Java
+    object using the JAXB framework, and returned types are marshalled back to SOAP, supporting
+    interoperability with as great number of services and clients.
+  </para>
+  <para>
+    To publish a session bean as a web service, the bean must be
+    annotated with the <literal>@javax.jws.WebService</literal> annotation. Using only this
+    annotation, the JAX-WS framework will use its default interpretation to generate a full
+    web services contract from the session bean, although the bean author may typically wish
+    to customise this process via further annotations.
+  </para>
+  <para>
+    For example, consider the Java services contract for the following (incomplete) book shop:
+    <programlisting language="Java">
+<xi:include href="src/BookShop.java" parse="text"/>
+    </programlisting>
+    <programlisting language="Java">
+<xi:include href="src/BookAvailabilityRequest.java" parse="text"/>
+    </programlisting>
+    <programlisting language="Java">
+<xi:include href="src/BookAvailabilityResponse.java" parse="text"/>
+    </programlisting>
+  </para>
+  <para>
+    A stateless session bean implementation, which has been annotated for web services access (using all-defaults)
+    would look as follows:
+    <programlisting language="Java">
+<xi:include href="src/BookShopBean.java" parse="text"/>
+    </programlisting>
+  </para>
+  <note>
+    <para>
+      Web Service publication is only supported for <emphasis>stateless</emphasis> session beans, as services are
+      stateless by definition. The contract is also only generated from the <emphasis>remote</emphasis> interface. 
+    </para>
+  </note>
+  
+  <section>
+    <title>The generated web services contract</title>
+    <para>
+      When deployed, the application server will automatically publish the service under a default URL,
+      usually derived from the bean name (for example, <literal>http://localhost:8080/BookShopBeanService/BookShopBean</literal>)
+    </para>
+    <para>
+      Following the industry standard convention, requesting the contract for this service (via <literal>http://192.168.1.142:8080/BookShopBeanService/BookShopBean?WSDL</literal>)
+      we find the following generated contract:
+      <programlisting language="XML">
+<xi:include href="src/bookshop-generated.wsdl" parse="text"/>
+      </programlisting>
+      And the generated schema for the structure of the exchanged messages:
+      <programlisting language="XML">
+<xi:include href="src/bookshop-generated.xsd" parse="text"/>
+      </programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Customising the web services mapping</title>
+    <para>
+      The full range of JAX-WS and JAXB annotations may be used to customise the generated contract,
+      such as mapping Java attributes to either XML Schema elements or attributes, customising the
+      names of arguments and return types, and so on.
+    </para>
+    <para>
+      For more details, refer to the <literal>JAX-WS</literal> and <literal>JAXB</literal> documentation.
+    </para>
+  </section>
+  
+</section>

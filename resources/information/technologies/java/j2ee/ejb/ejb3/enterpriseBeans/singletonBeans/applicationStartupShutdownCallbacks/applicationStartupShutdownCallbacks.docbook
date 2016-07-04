@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <!-- author Fritz Solms -->
+    <title>Starup and shutdown callbacks</title>
+    <para>
+        Because singleton's usually provide access to application-wide resources, they are typically initialized during 
+        application startup. They can also be used to perform some other application startup initialization.
+    </para>
+    <para>
+        By default the EJB container will decide when to initialize the singleton instance. This could happen the first time
+        the singleton is accessed. However, one can request that the singleton should be instantiated upon application
+        startup using the <literal>@Startup</literal> annotation.
+    </para>
+    <para>
+        The standard bean life cycle interceptors <literal>@PostConstruct</literal> and <literal>@PreDestroy</literal>
+        can be used to specify tasks which should be executed upon bean initialization and bean destruction. The
+        bean destruction is done when the application is undeployed. Using the <literal>@Startup</literal> annotation
+        one requests the bean instantiation to be done on application startup and in that case the tasks
+        annotated with <literal>PreConstruct</literal> will also be executed upon application startup.
+    </para>
+    <para>
+        This is done as follows:
+        <programlisting><![CDATA[
+
+@Singleton
+@Startup
+public class PropertiesBean {
+
+@PostConstruct
+private void startup() { ... }
+
+@PreDestroy
+private void shutdown() { ... }
+
+...
+
+}
+            ]]></programlisting>
+    </para>
+</section>    

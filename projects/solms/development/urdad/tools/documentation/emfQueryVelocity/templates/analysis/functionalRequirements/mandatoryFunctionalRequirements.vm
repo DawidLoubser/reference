@@ -1,0 +1,39 @@
+#set($mandatoryFunctionalRequirements = $urdadModelQueryInterface.getMandatoryFunctionalRequirements($targetUseCase))
+
+<section>
+    <title>Mandatory functional requirements</title>
+    <para>
+        The following functional requirements need to be addressed for any success scenario of the use case, 
+        <abbrev>i.e.</abbrev> for any scenario where the user obtains the value from the use case.
+        <itemizedlist>
+#foreach($functionalRequirement in $mandatoryFunctionalRequirements)
+            <listitem><formalpara>
+                <title>$functionalRequirement.name</title>
+                <para>
+#insertAnnotations($functionalRequirement)                
+
+#set($stakeholders = $urdadModelQueryInterface.getStakeholdersForFunctionalRequirement($functionalRequirement))   
+#if ($stakeholders.size() > 0)
+                    This is required by
+                    <itemizedlist>
+#foreach ($sh in $stakeholders)
+                        <listitem><para>$sh.name</para></listitem>
+#end
+                    </itemizedlist>
+#else
+                    <note>
+                        <title>ERROR: Missing stakeholder specification</title>
+                        <para>
+                            URDAD requires that each functional requirement is linked to the stakeholder(s) who require it via a requires
+                            relationship. The $functionalRequirement.name requirement is not linked to a stakeholder via a requires relationship.
+                        </para>
+                    </note>
+#end
+
+                </para>
+            </formalpara></listitem>
+#end
+        </itemizedlist>
+    </para>
+</section>
+                

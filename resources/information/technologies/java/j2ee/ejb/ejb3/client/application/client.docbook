@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.client.application.client">
+  <title>A simple session bean client</title>
+  <para>
+    The following illustrates a stand-alone Java client which will access the
+    EJB across the network. Stand-alone clients are, to some degree, bound to the
+    application server which hosts the EJB, as the client needs to be configured to
+    connect to the specific (type and location) JNDI naming service of the application
+    server in question. This limitation has caused the introduction of the
+    <emphasis>client container</emphasis> in Java EE 5, a self-contained environment
+    which is used to launch a client application which now no longer needs to contain
+    such configuration information.
+  </para>
+  <section>
+      <title>Client.java</title>
+      <para>
+      The client initialises its naming context and then looks up the
+      application server generated remote object using the JNDI name for the
+      remote interface. Once the reference to the remote session bean has been
+      obtained, the client may use the business services offered by the session
+      bean.
+      <programlisting language="Java">
+            <xi:include parse="text"
+                        href="../../examples/average/src/client/app/java/za/co/solms/average/Client.java"/>
+         </programlisting>
+      </para>
+  </section>
+  
+  <section>
+      <title>Packaging the JNDI properties file with the client</title>
+      <para>
+         <programlisting>
+            <xi:include parse="text" href="../../examples/average/src/client/app/jndi.properties"/>
+         </programlisting>
+      </para>
+  </section>    
+  
+  <section>
+      <title>Running the client application</title>
+      <para>
+      To build the client application you only nead to run the ant-task,
+      <literal>jar.client.app</literal>. This will compile the
+      common and client code and archive them into
+      <literal>AverageClient.jar</literal>. In addition to this the JBoss
+      client-side library files need to be included in the classpath.
+    </para>
+  </section>
+  
+  <section>
+      <title>Providing a fully self-contained client</title>
+      <para>
+      For the client to run on a remote machine one needs to make some of the
+      EJB libraries available on the client side. One can package these within
+      the client jar, but one needs to first unpack the library jars before
+      inserting the library components into the client jar (because extraction
+      from nested jars is not currently supported in Java). 
+    </para>
+  </section>
+  
+</section>

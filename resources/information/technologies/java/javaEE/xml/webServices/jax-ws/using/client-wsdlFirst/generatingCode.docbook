@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Generating the Java artifacts</title>
+    
+    <indexterm>
+        <primary>JAX-WS</primary>
+        <secondary>wsimport</secondary>
+        <tertiary>ant</tertiary>
+    </indexterm>
+    
+    <para>
+        By running
+        <programlisting>
+ant import-wsdl
+        </programlisting>
+        we generate the Java equivalents of the WSDL artifacts:
+        <itemizedlist>
+            <listitem>
+                <para>
+                    For each complex type (exchanged value object) in the schema(s), a JavaBean class
+                    (via JAXB) is generated
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    For each <emphasis>PortType</emphasis> in the WSDL, a Java Interface is generated, with a method
+                    for each WSDL operation
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    For each WSDL fault which would be raised for an operation, a Java Exception is generated
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    For each service (a particular realisation of the WSDL port type with a particular binding,
+                    running at a particular location) a <literal>javax.xml.ws.Service</literal> is generated. Via this
+                    service, we will create a proxy to interact with the service.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        After running this task, we see all the generated Java classes and interfaces in our source directory. The ant
+        file could easily be modified to rather directly place them in a referenced JAR, if desired.
+    </para>
+    
+</section>

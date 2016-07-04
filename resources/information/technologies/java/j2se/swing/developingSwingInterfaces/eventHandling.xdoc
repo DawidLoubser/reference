@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+    id="resources.information.technologies.java.j2se.swing.developingSwingInterfaces.eventHandling"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title role="Event Sources and Event Listeners">Event Sources and Event Listeners</title>
+    <para>In the delegation based event handling model event-source notify any registered event
+        listeners of the appropriate events. If the event listener object is no longer interested in
+        the events from that event source, it simply deregisters. </para>
+    <figure>
+        <title>Figure 6.4</title>
+        <graphic fileref="ButtonPress.jpg"/>
+    </figure>
+    <para>In the following simple example program we have a frame window with a button. Two objects
+        will listen to the button, a <literal>ButtonPressHandler</literal> who changes the test on
+        the button and the frame window object itself which changes the color of the button label.
+        Both objects are registered with the button to receive the <literal> ActionEvent</literal>s
+        issued when the button is pressed. The<literal> ButtonPressHandler</literal> deregisters
+        with the button after ten button presses. From then onwards the button label does not change
+        anymore, but the label color still changes.</para>
+    <para>
+        <programlisting>
+<xi:include href="./src/ButtonPress.java" parse="text"/>
+        </programlisting>
+    </para>
+    <para> Note that the <literal>ButtonPressHandler</literal> as well as the
+        <literal>ButtonPress</literal> object istelf register with the button for receiving action
+        events. The corresponding classes must implement the <literal> ActionListener</literal>
+        interface which forces them to have the required event handler method <literal>actionPerformed(ActionEvent)</literal>.</para>
+    <para>Note that the <literal>ButtonPressHandler</literal> does not have a handle (reference) to
+        the<literal>button</literal>. Nevertheless, it can ask the event for the source of the
+        event. Note also that the object deregisters itself from the event source (the button) after
+        10 button-press events.</para>
+    <para>We have also used an anonymous inner window adapter class to exit the application on the
+        window closing event of the frame window. A adapter class is a class which implements all
+        the methods defined for listener interface (the<literal> WindowListener</literal> interface
+        in this case) with event handlers which have empty bodies. We subclass this class (creating
+        an anonymous inner class) and overwrite the <literal>windowClosing()</literal> event
+        handler. </para>
+</section>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The oclIsTypeOf and oclIsKindOf properties</title>
+    <para>
+        <indexterm><primary>oclIsTypeOf</primary></indexterm>
+        <indexterm><primary>oclIsKindOf</primary></indexterm>
+        Using the <literal>oclIsTypeOf</literal> property, we can query whether an object is a direct instance of a particular class. Thus
+        <programlisting><![CDATA[
+Context ChequeAccount
+    inv: self.oclsTypeOf(ChequeAccount)   -- evaluates to true
+    inv: self.oclsTypeOf(Account)   -- evaluates to false
+    inv: self.oclsTypeOf(Apple)   -- evaluates to false
+                ]]></programlisting>
+    </para>
+    <para>
+        In many cases one would like to check type compatibility polymorphically. In general an instance of a cheque account is
+        indeed also an instance of an account. To perform this more convential type checking, one uses the
+        <literal>oclIsKindOf</literal> property:
+        <programlisting><![CDATA[
+Context ChequeAccount
+    inv: self.oclsKindOf(ChequeAccount)   -- evaluates to true
+    inv: self.oclsKindOf(Account)   -- evaluates to true
+    inv: self.oclsKindOf(Apple)   -- evaluates to false
+                ]]></programlisting>
+    </para>
+</section>    

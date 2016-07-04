@@ -1,0 +1,46 @@
+digraph serviceContract
+{
+	label="Integration Specialist\n(Training stream, Solms TCD)";
+	rankdir=LR;
+	splines=true;
+	fontname = "Bitstream Vera Sans"
+    fontsize = 9
+	node [fontname = "Bitstream Vera Sans Bold", fontsize = 9, colorscheme=ylgn9, fontcolor=9,shape=folder,style=filled,color=9]
+    edge [fontname = "Bitstream Vera Sans",fontsize = 8, colorscheme=greys9, labelfloat=true, arrowsize=0.5]
+    
+
+	/* Courses */	
+	itj[label="Introduction to Java",fillcolor=1];
+	pij[label="Programming in Java",fillcolor=2];
+	xwsj[label="XML and Web Services with Java",fillcolor=3];
+	ei[label="Enterprise Integration",fillcolor=3];
+	soa[label="Designing and implementing\nSOA-based solutions",fillcolor=4];
+
+	
+	/* Dependencies */
+	itj -> pij -> xwsj -> soa;
+	pij -> ei;
+
+	
+	
+	/* Skills Enhancements */
+	subgraph clusterEnhancements
+	{
+		label="Skills Enhancements"
+		aj[label="Advanced Java",fillcolor=4];
+		jt[label="Java Tools",fillcolor=4];
+		ooad[label="Object-Oriented Analysis and Design using UML",fillcolor=1];
+		arch[label="Architecture",fillcolor=5];
+	}
+    {
+    	edge[style=dotted]
+    	soa -> aj;
+    	soa -> jt;
+    	soa -> ooad;
+    	soa -> arch;
+    	ei -> aj;
+    	ei -> jt;
+    	ei -> ooad;
+    	ei -> arch;
+    }
+}

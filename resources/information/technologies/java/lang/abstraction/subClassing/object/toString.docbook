@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Simple String representation via toString()</title>
+  
+  <para>
+    During testing, development, and runtime, it is often convenient to
+    print a String representation of an object to a console, log file,
+    or some such location. This is usually for the benefit of a human, 
+    enabling him to readily identify objects from one another.
+  </para>
+  <para>
+    All classes inherit the <literal>toString</literal> service, 
+    specified as
+    <programlisting language="Java"><![CDATA[
+public class Object
+{
+  public String toString()
+  {
+    //...
+  }
+}
+    ]]></programlisting>
+  </para>
+  <para>
+    Whenever a <literal>java.lang.String</literal> representation of an
+    object is required, either by
+    <itemizedlist>
+      <listitem>
+        <para>explicitly invoking <literal>toString()</literal>, or</para>
+      </listitem>
+      <listitem>
+        <para>implicitly using an object as a String, such as
+        concatenating it to another string using the <literal>+</literal>
+        operator, or by printing it to an output stream in the
+        manner of <literal>System.out.println( myObj )</literal></para>
+      </listitem>
+    </itemizedlist>
+    the object in question will represent itself as a String using the
+    instructions in the <literal>toString()</literal> service.
+  </para>
+  <para>
+    It is thus recommended that, in all classes, one overrides the service
+    in order to output meaningful (but preferably compact) aspects of its
+    state, such as the following:
+    <programlisting language="Java"><![CDATA[
+public class Person
+{
+  ...
+  
+  public String toString()
+  {
+    return name + " born on " + birthDate;
+  }
+  
+  private Name name;
+  private java.util.Date birthDate;
+}
+    ]]></programlisting>
+    <note>
+      <para>
+        The <literal>toString</literal> services of both our <literal>Name</literal>
+        class, as well as the standard <literal>java.util.Date</literal>
+        class, are implicitly invoked during the <literal>Person</literal>'s
+        realisation of the service.
+      </para>
+    </note>
+    <programlisting language="Java"><![CDATA[
+public class Name
+{
+  ...
+  
+  public String toString()
+  {
+    return firstName + " " + surname;
+  }
+  
+  private String firstName, surname;
+}
+    ]]></programlisting>
+  </para>
+  
+  
+  <important>
+    <para>
+      It is vital that, under no circumstances, <literal>toString</literal> be used for
+      the purposes of integration or persistence (such as converting an
+      object to XML or CSV text format, or saving to / restoring from
+      a file). Better mechanisms exist for such use-cases, and the format
+      or details of simple String representation should be able to change
+      without any effect on other components.
+    </para>   
+  </important>
+  
+</section>

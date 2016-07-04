@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.architecture.referenceArchitectures.j2ee.clustering.clustering"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Clustering</title>
+  <para>
+    Clustering is a group of machines working transparently together to provide enterprise services
+    with a higher level of reliability and scalability.
+  </para>
+  
+  <section>
+    <title>What needs to be clustered</title>
+    <para>
+      For a fail-over safe system, one would preferably not have any single point of failure,
+      <abbrev>i.e.</abbrev> a situation where the failure in one system component results in a
+      failure. To this end one would usually want redundancy and fail over safety in all of the following:
+      <itemizedlist>
+        <listitem><para>firewalls,</para></listitem>
+        <listitem><para>load balancers,</para></listitem>
+        <listitem><para>web containers with session replication,</para></listitem>
+        <listitem><para>EJB containers with session replication,</para></listitem>
+        <listitem><para>JNDI repositories with synchronization,</para></listitem>
+        <listitem><para>data bases with synchronization and fail-safe data base connections or SAN
+          switches,</para></listitem>
+        <listitem><para>messaging services, and</para></listitem>
+        <listitem><para>web services.</para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Availability versus reliability</title>
+    <para>
+      In a high availability system a redundant server is available when a server falls over. The
+      user may, however, have to establish a new session and the session state of the previous
+      session will typically get lost.
+    </para>
+    <para>
+      In a high reliability system the state of the various components is replicated across the
+      cluster or at least across parts of the cluster such that, upon a server falling over, the
+      user can transparently continue with his/her work flow without realizing that the machine 
+      hosting the session has been switched.
+    </para>
+  </section>
+  
+  <section>
+    <title>Using Storage Area Networks (SAN)</title>
+    <para>
+      Normally shared disk clusters where software elements on different nodes use shared
+      persistent storage would be avoided due to the single point of failure at the persistence
+      level. However, SAN can provide a single logical interface into a redundant storage medium to provide 
+      failover and scalability.
+    </para>
+    <para>
+      Using shared fail-over safe storage as in SAN systems reduces the complexity around the
+      replication and synchronization
+    </para>
+  </section>
+  
+  <section>
+    <title>Replication algorithms</title>
+    <para>
+      Some application servers like perform cluster-wide or partition-wide replication
+      with automatic cluster configuration via node discovery mechanisms, while others like
+      perform single-node replication with spawning of another replicated bean
+      on another available node upon node failure.
+    </para>
+  </section>
+  
+</section>

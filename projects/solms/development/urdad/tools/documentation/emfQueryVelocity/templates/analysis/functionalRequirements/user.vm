@@ -1,0 +1,39 @@
+<section>
+    <title>The user role</title>
+    <para>
+        The user role is the role played by those objects which make use of the use case. It is represented by an interface/contract
+        which accumulates the contractual obligations of the user itself.
+#set($userContractResult = $urdadModelQueryInterface.getUserContract($targetUseCase))
+#if ($userContractResult.result != $null)
+#set ($userContract = $userContractResult.result)
+	Users who make use of the $targetUseCase.name use case play the role of a $userContract.name.
+</para>
+<para>	
+#insertAnnotations($userContract,$false)
+</para>	
+#else
+</para>
+	Exception: $userContractResult.exception.class.name
+	#if ($userContractResult.exception.class.name == "za.co.solms.urdad.emf.uml.EmfUrdadModelQueryInterface$UserContractNotSpecifiedException")
+<note>	
+  <title>ERROR: User contract not specified</title>
+  <para>
+    URDAD requires that there is a single association between the user represented by an
+    interface for the user contract for the user of that use case.
+    There is no user contract associated with the $targetUseCase.name use case.
+  </para>
+</note>
+	#else
+	#if ($userContractResult.exception.class.name == "za.co.solms.urdad.emf.uml.EmfUrdadModelQueryInterface$MultipleUserContractException")
+<note>
+  <title>ERROR: Multiple user contracts specified for $targetUseCase.name</title>
+  <para>
+    URDAD requires that there is a single association between the user represented by an
+    interface for the user contract for the user of that use case.
+    There are multiple user contracts associated with the $targetUseCase.name use case.
+  </para>
+</note>
+		#end
+	#end	
+#end
+</section>

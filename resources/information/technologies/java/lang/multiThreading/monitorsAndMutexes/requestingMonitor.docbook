@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.tecnologies.java.lang.multiThreading.monitorsAndMutexes.requestingMonitor">
+
+  <title
+    role="A Thread Requesting an Object's Monitor for a Block of Code">A
+    Thread Requesting an Object's Monitor for a Block of Code</title>
+
+  <para>A thread can also request ownership of an object's (or class's)
+    monitor before it enters a critical block of code. For example,
+    instead of declaring the <emphasis role="verb">credit()</emphasis> and
+      <emphasis role="verb">debit()</emphasis> services as synchronized,
+    the <emphasis role="verb">AccountUser</emphasis> threads could have
+    actively requested ownership of the account's monitor for the
+      <emphasis role="verb">credit()</emphasis> service. The following
+    code snippet illustrates this: </para>
+  <para>
+    <programlisting language="Java"><![CDATA[
+synchronized(account) {account.credit(100);}
+Thread.yield();
+synchronized(account) {account.debit (100);}
+]]></programlisting>
+  </para>
+
+  <para>Here the <literal>synchronized(account) {...}</literal> requests a lock from the account's monitor for the
+    block of code within the curly brackets. The account user's thread
+    then yields control to give other threads a chance before requesting
+    the monitor once again for the <emphasis role="verb"
+    >debit()</emphasis> service.</para>
+
+</section>

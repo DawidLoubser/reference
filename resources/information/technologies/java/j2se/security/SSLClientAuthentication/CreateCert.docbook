@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns3596:section xmlns:ns3596="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.security.SSLClientAuthentication.CreateCert">
+
+	<ns3597:title xmlns:ns3597="http://docbook.org/ns/docbook">Creating a Certificate</ns3597:title>
+	<ns3598:para xmlns:ns3598="http://docbook.org/ns/docbook">
+		To create a certificate with openssl the following command can be used
+	</ns3598:para>
+	<ns3599:programlisting xmlns:ns3599="http://docbook.org/ns/docbook">
+alex% perl CA.pl -newreq
+Using configuration from /System/Library/OpenSSL/openssl.cnf
+Generating a 1024 bit RSA private key
+..++++++
+.......................++++++
+writing new private key to 'newreq.pem'
+Enter PEM pass phrase: password
+Verifying password - Enter PEM pass phrase: password
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:ZA
+State or Province Name (full name) [Some-State]:Gauteng
+Locality Name (eg, city) []:Johannesburg
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:myOtherOrg
+Organizational Unit Name (eg, section) []:SpecialBranch
+Common Name (eg, YOUR name) []:specialbranch.myOtherOrg.co.za
+Email Address []:admin@specialbranch.myOtherOrg.co.za
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+Request (and private key) is in newreq.pem
+alex% 
+	</ns3599:programlisting>
+	<ns3600:para xmlns:ns3600="http://docbook.org/ns/docbook">
+		This command will generate a file <ns3601:emphasis xmlns:ns3601="http://docbook.org/ns/docbook" role="strong">newreq.pem</ns3601:emphasis> containing a certificate and a private key. To sign the generated certificate signing request <ns3602:emphasis xmlns:ns3602="http://docbook.org/ns/docbook" role="strong">CSR</ns3602:emphasis> the following command is used : 
+	</ns3600:para>
+	<ns3603:programlisting xmlns:ns3603="http://docbook.org/ns/docbook">
+alex% perl CA.pl -sign
+Using configuration from /System/Library/OpenSSL/openssl.cnf
+Enter PEM pass phrase:
+Check that the request matches the signature
+Signature ok
+The Subjects Distinguished Name is as follows
+countryName           :PRINTABLE:'ZA'
+stateOrProvinceName   :PRINTABLE:'Gauteng'
+localityName          :PRINTABLE:'Johannesburg'
+organizationName      :PRINTABLE:'myOtherOrg'
+organizationalUnitName:PRINTABLE:'SpecialBranch'
+commonName            :PRINTABLE:'specialbranch.myOtherOrg.co.za'
+emailAddress          :IA5STRING:'admin@specialbranch.myOtherOrg.co.za'
+Certificate is to be certified until Aug  2 20:34:21 2004 GMT (365 days)
+Sign the certificate? [y/n]:y
+
+
+1 out of 1 certificate requests certified, commit? [y/n]y
+Write out database with 1 new entries
+Data Base Updated
+Signed certificate is in newcert.pem
+alex% 
+	</ns3603:programlisting>
+	<ns3604:para xmlns:ns3604="http://docbook.org/ns/docbook">
+		This will create <ns3605:emphasis xmlns:ns3605="http://docbook.org/ns/docbook" role="strong">newcert.pem</ns3605:emphasis> which contains a signed certificate, signed by your own certificae authoritiy. To extract the private key from the request use the following.
+ 	</ns3604:para>	
+	<ns3606:programlisting xmlns:ns3606="http://docbook.org/ns/docbook">
+alex% openssl rsa &lt; newreq.pem &gt; servler_key.pem
+read RSA key
+Enter PEM pass phrase:
+writing RSA key
+alex% 
+	</ns3606:programlisting>
+	<ns3607:para xmlns:ns3607="http://docbook.org/ns/docbook">
+		Often is is helpful to change the create file names.
+	</ns3607:para>
+	<ns3608:programlisting xmlns:ns3608="http://docbook.org/ns/docbook">
+newcert.pem -&gt;	server_cert.pem   [signed certificate]
+newreq.pem  -&gt; server_req.pe     [CSR]
+                  server_key.pem    [private key]
+	</ns3608:programlisting>
+</ns3596:section>

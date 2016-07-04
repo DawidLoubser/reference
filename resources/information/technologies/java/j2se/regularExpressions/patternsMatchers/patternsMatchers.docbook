@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+  <title>Regular expressions support through patterns and matchers</title>
+  
+  <indexterm>
+    <primary>Regular expressions (Java)</primary>
+    <secondary>Patterns and Matchers</secondary>
+  </indexterm>
+  
+  <para>
+    The classes <literal>Pattern</literal> and <literal>Matcher</literal>
+    in the package <literal>java.util.regex</literal> offer more powerful
+    and often higher-performing regular expressions capability than the
+    convenience service provided by <literal>java.lang.String</literal>.
+  </para>
+  <para>
+    If this added functionality is not needed, however, it is recommended
+    to use the aforementioned convenience services due to their simplicity.
+    Specifically, Patterns and Matchers are typically used when
+    <itemizedlist>
+      <listitem>
+        <para>
+          for performance reasons, the developer wishes to compile
+          a regular expression pattern once, and re-use it in compiled form
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          the developer wishes to move through an input string in a stateful manner,
+          iteratively finding and/or replacing sections, with the ability to change
+          the regular expression pattern on the fly, reset state, etc.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          the regular expression contains <emphasis>capturing groups</emphasis>,
+          sub-regions of the regular expression which can be referred to at a
+          later stage for more involved searching or replacement
+        </para>
+      </listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>Patterns</title>
+    <indexterm>
+      <primary>Regular expressions (Java)</primary>
+      <secondary>Pattern</secondary>
+    </indexterm>
+    <para>
+      A <literal>java.util.regex.Pattern</literal> represents a compiled
+      regular expression, and serves as a factory for <literal>Matcher</literal>
+      objects. Patterns are re-usable, and are typically created with the
+      static <literal>compile(String)</literal> class service:
+      <programlisting language="Java"><![CDATA[
+// Matches South-African Identity numbers
+Pattern saIdNo = Pattern.compile("[0-9]{13}");
+        ]]></programlisting>
+    </para>
+    <section>
+      <title>Creating case-insensitive patterns</title>
+      <indexterm>
+        <primary>Regular expressions (Java)</primary>
+        <secondary>Pattern</secondary>
+        <tertiary>case-insensitive</tertiary>
+      </indexterm>
+      <para>
+        As a special case, a case-insensitive version of a matcher
+        can be created by using the factory method that accepts
+        a <emphasis>bit mask</emphasis> of <quote>flags</quote>
+        as second argument. To utilise ASCII-text case insensitivity, the
+        <literal>Pattern.CASE_INSENSITIVE</literal> constant is used. To
+        enable general Unicode case-insensitivity, it is used in conjunction
+        with the <literal>Pattern.UNICODE_CASE</literal> flag. For example,
+        <programlisting language="Java"><![CDATA[
+Pattern animalName = Pattern.compile("dog|cat|bird", 
+  Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+          ]]></programlisting>
+        matches on any case variation of the three animal names.
+      </para>
+      <note>
+        <para>
+          In practise, most regular expressions do care about case, with the
+          case-insensitive parts rather specified as part of the regular expression
+          itself.
+        </para>
+      </note>
+    </section>
+  </section>
+  
+  <section>
+    <title>Matchers</title>
+    <indexterm>
+      <primary>Regular expressions (Java)</primary>
+      <secondary>Matcher</secondary>
+    </indexterm>
+    <para>
+      A <literal>java.util.regex.Matcher</literal>, created from a
+      <literal>java.util.regex.Pattern</literal>, is an engine that performs 
+      match operations on a character sequence (such as a <literal>java.lang.String</literal>) 
+      by interpreting a Pattern.
+    </para>
+    <para>
+      A matcher is typically created, from a Pattern, to perform matching operations
+      on a single sequence of characters, and thereafter discarded. For example:
+      <programlisting language="Java"><![CDATA[
+// Matches telephone numbers in the form "(011) 555-5555'
+Pattern telephoneNumber = Pattern.compile("\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}");
+
+// Create a matcher, which allows us to find, replace, etc
+Matcher teleMatcher = telephoneNumber.matcher( someInputString );
+        ]]></programlisting>
+      </para>
+      
+      
+      <section>
+        <title>Testing whether the whole input string matches the pattern</title>
+        <para>
+          The <literal>matches()</literal> service returns a boolena, indicating
+          whether the entire input matches the pattern from which the matcher
+          was compiled. For example:
+          <programlisting language="Java"><![CDATA[
+// Matches telephone numbers in the form "(011) 555-5555'
+Pattern telephoneNumber = Pattern.compile("\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}");
+
+// Create a matcher, which allows us to find, replace, etc
+Matcher teleMatcher = telephoneNumber.matcher("(012) 555-5555");
+
+if (teleMatcher.matches())
+{
+  //....
+}
+        ]]></programlisting>
+        </para>
+      </section>
+    
+    
+    <section>
+      <title>Finding matching occurrences in an input string</title>
+      <indexterm>
+        <primary>Regular expressions (Java)</primary>
+        <secondary>Matcher</secondary>
+        <tertiary>searching</tertiary>
+      </indexterm>
+      <para>
+        A Matcher can be used to repeatedly find the next matching
+        character sequence in an input string. The <literal>find()</literal>
+        service attempts to find the next matching sequence, and returns
+        a <literal>boolean</literal> indicating whether a match was found.
+      </para>
+      <para>
+        If a match is found, more information can be obtained with the
+        <literal>start() : int</literal>, <literal>end() : int</literal>
+        and <literal>group() : String</literal> services.
+        <itemizedlist>
+          <listitem>
+            <formalpara>
+              <title>start()</title>
+              <para>returns the index of the first character of the text that matched
+                the pattern after the last <literal>find()</literal> was performed
+              </para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>end()</title>
+              <para>returns the index of the last character of the text
+                that matched the pattern after the last <literal>find()</literal> was performed</para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>group()</title>
+              <para>return the character sequence that matched the pattern</para>
+            </formalpara>
+          </listitem>
+        </itemizedlist>
+      </para>
+      <para>
+        For example, to find all the telephone numbers in a piece of text, the
+        following could be used:
+        <programlisting language="Java"><![CDATA[
+String s = "I tried to call you on (011) 555-5555 but " +
+  "failed to reach you. Should I have tried (013) 123-4567 " +
+  "or (012) 321-7654 instead?";
+    
+// Matches telephone numbers in the form "(011) 555-5555'
+Pattern telephoneNumber = Pattern.compile("\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}");
+
+// Create a matcher, which allows us to find, replace, etc
+Matcher m = telephoneNumber.matcher( s );
+
+// Find each telephone number in the input text
+while ( m.find() )
+{
+  String telNo = m.group();
+  System.out.println("Tel: " + telNo);
+}
+          ]]></programlisting>
+        which produces the following output:
+        <programlisting><![CDATA[
+Tel: (011) 555-5555
+Tel: (013) 123-4567
+Tel: (012) 321-7654
+          ]]></programlisting>
+      </para>
+      
+      <section>
+        <title>Using capturing groups</title>
+        <indexterm>
+          <primary>Regular expressions (Java)</primary>
+          <secondary>capturing groups</secondary>
+        </indexterm>
+        <para>
+          Capturing groups are groups of characters in a regular expression
+          indicated with parentheses. The are <emphasis>numbered</emphasis>,
+          and are done so by counting their opening parentheses from left to 
+          right. In the regular expression <literal>((A)(B(C)))</literal>, for 
+          example, there are four such groups:
+          <orderedlist>
+            <listitem>
+              <para>((A)(B(C)))</para>
+            </listitem>
+            <listitem>
+              <para>(A)</para>
+            </listitem>
+            <listitem>
+              <para>(B(C))</para>
+            </listitem>
+            <listitem>
+              <para>(C)</para>
+            </listitem>
+          </orderedlist>
+        </para>
+        <para>
+          Capturing groups are so named because, during a match, each subsequence 
+          of the input sequence that matches such a group is saved. The captured 
+          subsequence may be used later in the expression, via a <emphasis>back reference</emphasis>, 
+          and may also be retrieved from a <literal>Matcher</literal> once the match operation is complete.          
+        </para>
+        <para>
+          To find the character sequence within a match that matches a particular
+          capturing group, it can be requested by number, through the <literal>Matcher.group(int) : String</literal>
+          service. For example, if, for each found telephone number, we wished to distinguish between the
+          area code and local number, we could do so easily by adding two capturing groups to the regular expression:
+          <programlisting language="Java"><![CDATA[
+String s = "I tried to call you on (011) 555-5555 but " +
+    "failed to reach you. Should I have tried (013) 123-4567 " +
+    "or (012) 321-7654 instead?";
+
+// Matches telephone numbers in the form "(011) 555-5555'
+Pattern telephoneNumber = 
+  Pattern.compile("\\(([0-9]{3})\\) ([0-9]{3}-[0-9]{4})");
+
+// Create a matcher, which allows us to find, replace, etc
+Matcher m = telephoneNumber.matcher( s );
+
+// Find each telephone number in the input text
+while (m.find())
+{
+  String code = m.group(1);
+  String num = m.group(2);
+  System.out.println(num + " (in area code " + code + ")");
+}
+            ]]></programlisting>
+        </para>
+        <note>
+          <para>
+            <literal>.group(0)</literal> will always match the whole expression, and
+            is equivalent to calling <literal>.group()</literal>
+          </para>
+        </note>
+      </section>
+      
+      <!-- TODO: Add back-references -->
+      
+    </section>
+    
+    <section>
+      <title>Iteratively replacing matches</title>
+      <indexterm>
+        <primary>Regular expressions (Java)</primary>
+        <secondary>Matcher</secondary>
+        <tertiary>replacement</tertiary>
+      </indexterm>
+      <para>
+        Though the <literal>replaceAll()</literal> and <literal>replaceFirst()</literal>
+        services (available both in <literal>java.util.regex.Matcher</literal>
+        and <literal>java.lang.String)</literal> are the preferred, and most convenient,
+        way of replacing matches, a Matcher offers a greater degree of control
+        if required.
+      </para>
+      <para>
+        This is accomplished by
+        <itemizedlist>
+          <listitem>
+            <para>Constructing or providing a new <literal>java.lang.StringBuffer</literal>
+            which will iteratively be built up as the replaced sequences are
+            appended</para>
+          </listitem>
+          <listitem>
+            <para>
+              for each <literal>find()</literal>, calling the <literal>Matcher.appendReplacement(StringBuffer, String)</literal>
+              service, indicating the desired replacement for the matched sequence
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              finally, calling <literal>Matcher.appendTail(StringBuffer)</literal>
+              to append the rest of the input string (if any)
+            </para>
+          </listitem>
+        </itemizedlist>
+      </para>
+      <para>
+        For example, we may wish to, for each found telephone number, append the
+        name of the area code:
+        <programlisting language="Java"><![CDATA[
+// Maps are codes to place names
+Map<String, String> placeNames = new HashMap<String, String>();
+placeNames.put("011", "Johannesburg");
+placeNames.put("012", "Pretoria");
+//...
+
+String s = "I tried to call you on (011) 555-5555 but " +
+    "failed to reach you. Should I have tried (012) 123-4567 " +
+    "or (012) 321-7654 instead?";
+
+// Matches telephone numbers in the form "(011) 555-5555'
+Pattern telephoneNumber = 
+  Pattern.compile("\\(([0-9]{3})\\) ([0-9]{3}-[0-9]{4})");
+
+// Create a matcher, which allows us to find, replace, etc
+Matcher m = telephoneNumber.matcher( s );
+
+// Find each telephone number in the input text, and
+// replace and append to the output text
+StringBuffer sb = new StringBuffer();
+while (m.find())
+{
+  String code = m.group(1);
+  String num = m.group(2);
+  
+  m.appendReplacement(sb, placeNames.get(code) + " " + num );
+}
+m.appendTail(sb);
+
+System.out.println( sb );
+          ]]></programlisting>
+        to produce the output:
+        <programlisting><![CDATA[
+I tried to call you on Johannesburg 555-5555 but failed to reach you. 
+Should I have tried Pretoria 123-4567 or Pretoria 321-7654 instead?
+          ]]></programlisting>
+      </para>
+    </section>
+
+  </section>
+  
+</section>

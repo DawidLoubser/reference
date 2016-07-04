@@ -1,0 +1,99 @@
+<section id="resources.information.platforms.linux.networkServices.sendmail.server"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Mail server using Sendmail</title>
+	<para>
+	The installation of sendmail, if not already done during the installation, is performed via the rpm utility. Once the installation is completed, the sendmail service should be available to be started. (<emphasis role="strong">/etc/init.d/sendmail start</emphasis>). Before we start sendmail, we have to ensure that the hostname and name resolution are configured correctly, as sendmail makes use of these features. Once you have made certain that the network parameters are correct, create a set of users to test your mail server installation and start the service. 
+	</para>
+	<para>
+	The mail command is used to send and receive mail to an email address using the local sendmail server. As both mail accounts are on the same server, sendmail is able to deliver the message. When invoked without any parameters, the uses mailbox is listed. 
+	</para>
+	<screen>
+		<userinput>
+			<command>mail</command> <replaceable>flag</replaceable> <replaceable>recipient</replaceable> 
+		</userinput>
+	</screen>
+	<table frame="all">
+		<title>mail Flags</title>
+		<tgroup cols="2">
+			<thead>
+				<row><entry>Flag</entry><entry>Description</entry></row>
+			</thead>	
+			<tbody>
+				<row><entry>-c ccaddress</entry><entry>add addresses (comma separated) which will receive a carbon copy of the message</entry></row>
+				<row><entry>-b bccaddress</entry><entry>add addresses (comma separated) which will receive a blind carbon copy of the message</entry></row>
+			</tbody>
+		</tgroup>
+	</table>	
+	<programlisting>
+	<![CDATA[
+[alex@client8 alex]$ mail user@client8.solmshome.co.za
+Subject: Hi there						
+Cc: 
+Null message body; hope that's ok
+[alex@client8 alex]$ 
+[alex@client8 alex]$ ls |mail user@client8.solmshome.co.za
+[alex@client8 alex]$ 
+
+[user@client8 user]$ mail
+Mail version 8.1 6/6/93.  Type ? for help.
+"/var/spool/mail/user": 1 message 1 new
+>N  1 alex@client8.solmsho  Thu Sep  4 11:39  17/678  
+& 
+Message 1:
+From alex@client8.solmshome.co.za  Thu Sep  4 11:39:16 2003
+Date: Thu, 4 Sep 2003 11:39:16 +0200
+From: alex@client8.solmshome.co.za
+To: user@client8.solmshome.co.za
+
+dud.txt
+mail
+mbox
+
+& 
+	]]>
+	</programlisting>
+	<note>
+	<para>Press CTRL+D to go to the next step / field. CTRL+D is the EOF character indicating that a particular field has been completed.</para>
+	</note>
+	<para>
+	So far we have only sent messages on the same workstation. To network enable the webserver, we need to start another service, either POP3 or IMAP. POP3 allows the message to be transferred to the clients workstation. IMAP stores the messages on the server. Both these services are controlled by XINETD (<xref linkend="resources.information.platforms.linux.networkServices.xinetd.xinetd"/>). The default installations of sendmail may not allow for remote connection. To enable this feature, a minor change is required to the sendmail configuration file <emphasis role="strong">/etc/mail/sendmail.mc</emphasis>. This configuration file has to be processed by the M4 utility to generate the configuration file used by sendmail <emphasis role="strong">/etc/mail/sendmail.cf</emphasis>.
+	</para>
+	<para>
+	This line
+	</para>
+	<programlisting>
+DAEMON_OPTIONS(`Port=smtp,Addr=127.0.0.1, Name=MTA')dnl
+	</programlisting>
+	<para>
+	is replace with this line.
+	</para>
+	<programlisting>
+dnl # DAEMON_OPTIONS(`Port=smtp,Addr=127.0.0.1, Name=MTA')dnl
+	</programlisting>
+	<para>
+	It might be desirable to forward messages designated for an outside address to a corporate mail server. To configure sendmail to forward all messages which does not know how to process to another mail server, configure the SMARTHOST parameter. If you don't want to go via the M4 processing, you can also modify the DS property in  the sendmail.cf file directly. This is, however, not recommended, as this file is overwritten on the M4 invocation.
+	</para>
+	<para>
+	Uncomment this line
+	</para>
+	<programlisting>
+dnl define(`SMART_HOST',`smtp.your.provider')		
+	</programlisting>
+	<para>
+	so that is looks like this
+	</para>
+	<programlisting>
+define(`SMART_HOST',`smtp.your.provider')		
+	</programlisting>
+	<para>
+	The example below illustrates the use of the M4 processor. Certain distributions also provide a make file used to package the configuration. After a change to the configuration has been made, the sendmail server has to be restarted. 
+	</para>
+	<programlisting>
+[root@client8 mail]# m4 sendmail.mc > sendmail.cf
+[root@client8 mail]# make
+[root@client8 mail]# /etc/init.d/sendmail restart
+	</programlisting>
+</section>

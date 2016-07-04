@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    targetNamespace="http://www.solms.co.za/clients"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:cl="http://www.solms.co.za/clients"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+
+    <xs:complexType name="Client" abstract="true">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="code" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Person">
+        <xs:complexContent>
+            <xs:extension base="cl:Client">
+                <xs:sequence>
+                    <xs:element name="idNo" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="Company">
+        <xs:complexContent>
+            <xs:extension base="cl:Client">
+                <xs:sequence>
+                    <xs:element name="regNo" type="xs:string"/>
+                    <xs:element name="vatNo" type="cl:Client"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="Clients">
+        <xs:sequence>
+            <xs:element name="client" type="cl:Client" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="client" type="cl:Client"/>
+    
+    <xs:element name="clients" type="cl:Clients">
+        <xs:key name="clientKey">
+            <xs:selector xpath="./cl:client"/>
+            <xs:field xpath="code"/>
+        </xs:key>
+    </xs:element>
+    
+</xs:schema>

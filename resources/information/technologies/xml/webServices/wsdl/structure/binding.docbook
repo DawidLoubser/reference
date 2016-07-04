@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.xml.webServices.wsdl.binding">
+    
+    <title>The 'binding' section</title>
+    
+    <para>
+        A binding defines message format and protocol details for operations and messages defined by 
+        a particular <literal>portType</literal>. There may be any number of bindings for a given 
+        <literal>portType</literal>.
+        <programlisting><![CDATA[
+<wsdl:definitions .... >
+    <wsdl:binding name="nmtoken" type="qname"> *
+        <-- extensibility element (1) --> *
+        <wsdl:operation name="nmtoken"> *
+           <-- extensibility element (2) --> *
+           <wsdl:input name="nmtoken"? > ?
+               <-- extensibility element (3) --> 
+           </wsdl:input>
+           <wsdl:output name="nmtoken"? > ?
+               <-- extensibility element (4) --> *
+           </wsdl:output>
+           <wsdl:fault name="nmtoken"> *
+               <-- extensibility element (5) --> *
+           </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+</wsdl:definitions>
+        ]]></programlisting>
+    </para>
+    <para>
+        The <literal>name</literal> attribute provides a unique name among all bindings defined 
+        within in the enclosing WSDL document.
+    </para>
+    <para>
+        A binding references the <literal>portType</literal> that it binds using the 
+        <literal>type</literal> attribute.
+    </para>
+    <para>
+        Binding relies heavily on <emphasis>extensibility elements</emphasis> to provide binding-specific information, e.g.
+        SOAP/HTTP.
+    </para>
+  
+  <section>
+    <title>SOAP/HTTP binding</title>
+    <para>
+      The most common, and indeed the only safe (from an interoperability
+      perspective) binding to use is the Document/Literal SOAP binding,
+      which implies that SOAP messages are exchanged via HTTP. This binding is
+      specified as:
+      <programlisting language="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+  ...
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    
+  ...
+    
+  <wsdl:binding name="MySOAPBinding" type="my:MyPortType">
+  
+    <!-- Indicate document-style messages over HTTP -->
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" 
+        style="document"/>
+  
+    <!-- For each operation, indicate literal (XML Schema-based)
+         encoding of the input, output and/or fault message(s) -->  
+    <wsdl:operation name="myOperation">
+        <soap:operation soapAction="" style="document"/>
+        <wsdl:input>
+            <soap:body use="literal"/>
+        </wsdl:input>
+        <wsdl:output>
+            <soap:body use="literal"/>
+        </wsdl:output>
+        <wsdl:fault name="nameOfFault">
+            <soap:body use="literal"/>
+        </wsdl:fault>
+    </wsdl:operation>
+    
+  </wsdl:binding>
+  
+  ...
+  
+</wsdl:definitions>
+      ]]></programlisting>
+    </para>
+  </section>
+  
+  <!-- section>
+    <title>REST/HTTP Binding</title>
+    <para>
+      A large number of services are deployed globally under the auspices of
+      being <quote>web services</quote>, whilst in fact being simple services
+      that accept non-SOAP xml messages as simple HTTP parameters.
+    </para>
+    <para>
+      These services are often referred to as REST (Representative State Transfer)
+      services. If absolutely required for interoperability reasons (with the understanding
+      that REST services have very few of the qualities of SOAP-based services)
+      a WSDL can contain the following binding to indicate that it should receive
+      non-SOAP messages over HTTP (in this case, via the HTTP POST method) 
+    </para>
+    <programlisting language="XML"><![CDATA[
+      ]]></programlisting>
+    <warning>
+      <para>
+        Before using this binding in a web services client or service provider,
+        you need to ensure that your chosen toolkit/platform indeed supports this
+        non-standard binding.
+      </para>
+    </warning>
+  </section -->
+    
+</section>

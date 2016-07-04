@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+xml:id="resources.information.technologies.java.j2se.xml.apis.jaxp.validaton.using.using"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Using JAXP Schema Validation</title>
+
+    <section>
+        <title>Stand-alone validation</title>
+      <para>
+        A common use-case of working with XML is to explicitly validate a document
+        before parsing or using it. It is also useful to for an application to
+        validate any XML that it has produced before sending it to an external
+        party, to ensure that invalid information is not inadvertently shared.
+      </para>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>Obtain a SchemaFactory for your Schema technology</title>
+                        <para>
+                            A <literal>SchemaFactory</literal> is responsible for compiling schemas (written in a
+                            particular language) into <literal>Schema</literal> instances. An instance of
+                            this factory is requested, by specifying the desired schema language.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Compile your schema</title>
+                        <para>
+                            Request the SchemaFactory to compile your schema (as specified by a <literal>javax.xml.transform.Source</literal>).
+                            This typically only needs to be done once during a runtime session, as the Schema may be re-used.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Obtain a validator</title>
+                        <para>
+                            Request a <literal>Validator</literal> instance from the schema, which may now be used to
+                            validate an XML instance (again, specified as a <literal>javax.xml.transform.Source</literal>,
+                            which provides flexibility as to the nature of the location of the XML).
+                        </para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            The steps are illustrated through this example:
+            <programlisting language="Java"><![CDATA[
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Schema;
+import javax.xml.validation.Validator;
+
+// Obtain a schema factory (for W3C XML Schema, in this case)
+SchemaFactory schemaFactory =
+      SchemaFactory.newInstance(XMLConstants.W3C_SCHEMA_NS_URI);
+
+// Compile the specified schema (in this case, sourced from a URL)
+Source schemaSource = new StreamSource("http://www.my.com/mySchema.xsd"));
+Schema schema = schemaFactory.newSchema(schemaSource);
+
+// Obtain a validator, and validate the given XML (in this case,
+// on the file system)
+Validator validator = schema.newValidator();
+validator.validate( new StreamSource("file:/home/user/my-file.xml") );
+                ]]></programlisting>
+        </para>
+    </section>
+  
+  <section>
+    <title>Selecting a schema language</title>
+    
+    <para>
+      XML Schema languages are identified by a URI (typically the same URI
+      being used for the name space of the schema documents, if written
+      in XML) and a convenient class called <literal>javax.xml.XMLConstants</literal>
+      contains a number of constant fields for supported schema languages:
+      <itemizedlist>
+        <listitem>
+          <formalpara>
+            <title>XMLConstants.W3C_XML_SCHEMA_NS_URI:</title>
+            <para>W3C XML Schema (http://www.w3.org/2001/XMLSchema)</para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>XMLConstants.XML_DTD_NS_URI</title>
+            <para>Legacy Document Type Definitions (http://www.w3.org/TR/REC-xml)</para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>XMLConstants.RELAXNG_NS_URI</title>
+            <para>RelaxNG, an alternative (non-Object-Oriented) schema language (http://relaxng.org/ns/structure/1.0)</para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <para>etc.</para>
+        </listitem>
+      </itemizedlist>
+    </para>
+    
+  </section>
+  
+  <section>
+    <title>Validation using multiple schemas</title>
+    <para>
+      Often, multiple schemas are required to validate a document. The <literal>SchemFactory</literal>
+      specifies a variant of the <literal>newSchema()</literal> service which
+      accepts an array of sources. This will parse multiple schemas and still 
+      return a single representative schema instance. For example:
+      <programlisting language="Java"><![CDATA[
+// Specify multiple schema sources
+Source[] schemaSources = 
+{
+  new StreamSource("http://somewhere/schemaA.xsd")),
+  new StreamSource("http://somewhereElse/schemaB.xsd")),
+  new StreamSource("file:/home/foo/bar/schemaC.xsd"))
+};
+
+// Create a composite schema
+Schema schema = schemaFactory.newSchema(schemaSources);
+        ]]></programlisting>
+    </para>
+  </section>
+    
+    <section>
+        <title>Handling Validation Errors</title>
+        <para>
+            If a validation error occurs during the <literal>validate(...)</literal> service, 
+            a <literal>SAXException</literal> will be thrown. One often wants fine-grained 
+            control of error processing, i.e. the ability to be <emphasis>notified</emphasis> of
+          errors as they occur, and the ability to <emphasis>suppress</emphasis> certain
+          errors. This is accomplished in two steps:
+            <itemizedlist>
+                <listitem>
+                    <para>Write your own implementation of the <literal>org.xml.sax.ErrorHandler</literal>
+                    interface, which handles <literal>error(...)</literal>, <literal>fatalError(...)</literal>
+                    and <literal>warning(...)</literal> events.</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Hand an instance of this error handler to the validator (through the <literal>setErrorHandler(...)</literal> service)
+                        before asking it to validate an instance document.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            Your handler may then take any action it pleases, based on these events.
+        </para>
+        <para>
+            For example, a skeleton for an error handler could be defined
+            as follows:
+            <programlisting language="Java"><![CDATA[
+import org.xml.sax.*;
+
+/** A custom XML validation error handler */
+public class MySchemaErrorHandler implements ErrorHandler
+{
+  public void error(SAXParseException exception) throws SAXException
+  {
+    // Deal with validation error
+    // ...
+  }
+
+  public void fatalError(SAXParseException exception)
+      throws SAXException
+  {
+    // Deal with fatal error (such as ill-formed XML document)
+    // ...
+  }
+
+  public void warning(SAXParseException exception) throws SAXException
+  {
+    // Deal with warning
+    // ...
+  }
+}
+              ]]></programlisting>
+          It can then be plugged into a validator as follows:
+            <programlisting language="Java"><![CDATA[
+// Request a validator
+Validator validator = schema.newValidator();
+
+// Hand it your own instance of an error handler
+ErrorHandler mySchemaErrorHandler = new MySchemaErrorHandler();
+validator.setErrorHandler(mySchemaErrorHandler);
+
+// Validate the instance
+validator.validate(new StreamSource("myFile.xml"));
+                ]]></programlisting>
+        </para>
+      
+      <section>
+        <title>Suppressing errors</title>
+        <para>
+          Each of the <literal>warning(...)</literal>, <literal>error(...)</literal>
+          and <literal>fatalError(...)</literal> services of the plugged-in
+          error handler may throw a <literal>org.xml.sax.SAXException</literal>.
+        </para>
+        <para>
+          The developer of the error handler may choose to either throw such an
+          exception (thus indicating a serious problem, and aborting the validation)
+          or to otherwise simply ignore, store, or display parsing errors to the user.
+        </para>
+      </section>
+    </section>
+
+</section>

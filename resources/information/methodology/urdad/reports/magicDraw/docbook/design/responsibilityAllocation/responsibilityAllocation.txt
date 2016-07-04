@@ -1,0 +1,44 @@
+<!-- RESPONSIBILITY ALLOCATION -->
+<!-- ***************************** -->
+
+#getDiagramForUseCase($targetUseCase,$urdad_responsibilityAllocationDiagram)    
+#set($diagram = $result)
+
+#if ($diagram && $diagram != '')
+#set($diagramId = $diagram.qualifiedName.replaceAll('::','.').replaceAll(' ','_'))
+    <section>
+        <title>Responsibility identification and allocation: $targetUseCase.name</title>
+        
+        <para>
+            <xref linkend="$diagramId"/> shows
+            the grouping of functional requirements into responsibility domains. Each responsibility domain
+            is assigned to a separate services contract.
+        </para>
+        #set ($diagramComment = $report.getComment($diagram).body)
+        #if ($diagramComment && $diagramComment != '')
+        <para>
+            $diagramComment
+        </para>
+        #end
+        
+        <figure xml:id="$diagramId">
+            <title>The responsibility allocation diagram for the $targetUseCase.name use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="$diagram.image"/>
+            </imageobject></mediaobject>
+        </figure>
+
+        #parse("design/responsibilityAllocation/controller/controller.txt")
+        #parse("design/responsibilityAllocation/serviceProviderContracts/serviceProviderContracts.txt")
+    </section>
+#else
+    <section>
+        <title>ERROR: missing responsibility allocation diagram</title>
+        <para>
+            URDAD requires that a responsibility allocation diagram is provided which shows how functional
+            requirements are grouped into responsibility domains and the services contract to which each
+            responsibility domain is assigned to.
+        </para>
+            
+    </section>
+#end

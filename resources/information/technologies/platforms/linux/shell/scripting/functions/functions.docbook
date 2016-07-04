@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns5422:section xmlns:ns5422="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.functions.functions">
+
+  <ns5423:title xmlns:ns5423="http://docbook.org/ns/docbook">Functions</ns5423:title>
+  <ns5424:para xmlns:ns5424="http://docbook.org/ns/docbook">
+    Linux shell scripts provide support for simple functions. The purpose is to encapsulate
+    a reusable block of statements within a function which can be called from a number
+    of different places.
+  </ns5424:para>
+  <ns5425:para xmlns:ns5425="http://docbook.org/ns/docbook">
+    Like functions declared in programming languages, shell functions also have a function
+    header and a function body delimited by curly brackets.
+  </ns5425:para>
+  
+  <ns5426:section xmlns:ns5426="http://docbook.org/ns/docbook">
+    <ns5427:title xmlns:ns5427="http://docbook.org/ns/docbook">A simple example function</ns5427:title>
+    <ns5428:para xmlns:ns5428="http://docbook.org/ns/docbook">
+      The following shell script contains a function which constructs a meeting which depends
+      on the time of the day.
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/greeting_sh.docbook"/>    
+      The output of the script is something like
+      <ns5429:programlisting xmlns:ns5429="http://docbook.org/ns/docbook">
+Good morning, fritz. Please try and not do too much damage on the machine today.
+      </ns5429:programlisting>
+    </ns5428:para>
+  </ns5426:section>
+  
+  <ns5430:section xmlns:ns5430="http://docbook.org/ns/docbook">
+    <ns5431:title xmlns:ns5431="http://docbook.org/ns/docbook">Function arguments and return values</ns5431:title>
+    <ns5432:para xmlns:ns5432="http://docbook.org/ns/docbook">
+      Linux shell functions also support function parsing arguments to functions, and obtaining
+      return values from functions.
+    </ns5432:para>
+    <ns5433:para xmlns:ns5433="http://docbook.org/ns/docbook">
+      Function arguments are provided via
+      <ns5434:cmdsynopsis xmlns:ns5434="http://docbook.org/ns/docbook"><ns5435:command xmlns:ns5435="http://docbook.org/ns/docbook">
+functionName arg1 arg2 ...        
+      </ns5435:command></ns5434:cmdsynopsis>
+      They are accessible within the function as <ns5436:emphasis xmlns:ns5436="http://docbook.org/ns/docbook">positional parameters</ns5436:emphasis>
+      similar to the command-line arguments the shell script itself receives, <ns5437:abbrev xmlns:ns5437="http://docbook.org/ns/docbook">i.e.</ns5437:abbrev>
+      via <ns5438:literal xmlns:ns5438="http://docbook.org/ns/docbook">$1</ns5438:literal>, <ns5439:literal xmlns:ns5439="http://docbook.org/ns/docbook">$2</ns5439:literal> and so forth.
+    </ns5433:para>
+    <ns5440:para xmlns:ns5440="http://docbook.org/ns/docbook">
+      The return value is returned via a <ns5441:command xmlns:ns5441="http://docbook.org/ns/docbook">return</ns5441:command> statement, which also
+      exits the function. The return value is accessible from within the callings script via
+      the <ns5442:emphasis xmlns:ns5442="http://docbook.org/ns/docbook">exit status</ns5442:emphasis> variable, <ns5443:literal xmlns:ns5443="http://docbook.org/ns/docbook">$?</ns5443:literal>.
+    </ns5440:para>
+    <ns5444:para xmlns:ns5444="http://docbook.org/ns/docbook">
+      The syntax of function parameters and return values is illustrated in the following shell
+      script, which uses a <ns5445:command xmlns:ns5445="http://docbook.org/ns/docbook">factorial</ns5445:command> function to calculate the factorial
+      of a supplied integer value:
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/factorial1_sh.docbook"/>    
+      The output of the script when run with parameter <ns5446:constant xmlns:ns5446="http://docbook.org/ns/docbook">5</ns5446:constant> is
+      <ns5447:programlisting xmlns:ns5447="http://docbook.org/ns/docbook">
+factorial(5) = 120
+      </ns5447:programlisting>
+    </ns5444:para>
+  </ns5430:section>
+  
+  <ns5448:section xmlns:ns5448="http://docbook.org/ns/docbook">
+    <ns5449:title xmlns:ns5449="http://docbook.org/ns/docbook">Recursion and local variables</ns5449:title>
+    <ns5450:para xmlns:ns5450="http://docbook.org/ns/docbook">
+     A function can also call itself. For example, below we show a recursive implementation
+     of the factorial function:
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/factorial2_sh.docbook"/>    
+       From a user's perspective, the function behaves in the same way as the previous implementation
+      of <ns5451:command xmlns:ns5451="http://docbook.org/ns/docbook">factorial</ns5451:command>. The output of the script when run with parameter 
+      <ns5452:constant xmlns:ns5452="http://docbook.org/ns/docbook">5</ns5452:constant> is
+      <ns5453:programlisting xmlns:ns5453="http://docbook.org/ns/docbook">
+factorial(4) = 24
+      </ns5453:programlisting>
+    </ns5450:para>
+  
+    <ns5454:section xmlns:ns5454="http://docbook.org/ns/docbook">
+      <ns5455:title xmlns:ns5455="http://docbook.org/ns/docbook">Local function variables</ns5455:title>
+      <ns5456:para xmlns:ns5456="http://docbook.org/ns/docbook">
+        So far all our variables were either
+        <ns5457:itemizedlist xmlns:ns5457="http://docbook.org/ns/docbook">
+          <ns5458:listitem xmlns:ns5458="http://docbook.org/ns/docbook"><ns5459:para xmlns:ns5459="http://docbook.org/ns/docbook">local to the shell, or</ns5459:para></ns5458:listitem>
+          <ns5460:listitem xmlns:ns5460="http://docbook.org/ns/docbook"><ns5461:para xmlns:ns5461="http://docbook.org/ns/docbook">
+            global variables which were <ns5462:command xmlns:ns5462="http://docbook.org/ns/docbook">export</ns5462:command>ed to other shells.
+          </ns5461:para></ns5460:listitem>
+        </ns5457:itemizedlist>
+      </ns5456:para>
+      <ns5463:para xmlns:ns5463="http://docbook.org/ns/docbook">
+        Shell scripts also provide limited support for local variables -- in particular for
+        variables which are local to a particular function. For example, the recursive 
+        implementation of <ns5464:command xmlns:ns5464="http://docbook.org/ns/docbook">factorial</ns5464:command>, above, declares the
+        variable <ns5465:varname xmlns:ns5465="http://docbook.org/ns/docbook">factorial_product</ns5465:varname> as <ns5466:command xmlns:ns5466="http://docbook.org/ns/docbook">local</ns5466:command>,
+        thereby protecting it from being modified outside the function.
+      </ns5463:para>
+    </ns5454:section>
+  </ns5448:section>
+
+</ns5422:section>

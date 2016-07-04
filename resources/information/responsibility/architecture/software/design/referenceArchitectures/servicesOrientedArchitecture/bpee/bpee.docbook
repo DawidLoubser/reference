@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>The Business Process Execution Engine</title>
+    
+    <indexterm>
+        <primary>BPEE</primary>
+        <seealso>
+            <indexterm>
+                <primary>business process</primary>
+            </indexterm>
+        </seealso>
+    </indexterm>
+    
+    <para>
+        A critical part of any SOA implementation is the support for a <emphasis>business process execution engine</emphasis>,
+        whereby the infrastructure itself is responsible for executing and managing business processes which have been
+        assembled across services.
+    </para>
+    <para>
+        Though most service implementation technologies (such as Enterprise JavaBeans) have the ability to define workflows
+        across lower-level service providers, what sets an SOA Business Process Execution Engine apart is
+        <itemizedlist>
+            <listitem>
+                <para>the declarative nature of the process</para>
+            </listitem>
+            <listitem>
+                <para>the support for long-running business processes</para>
+            </listitem>
+            <listitem>
+                <para>the complete de-coupling of the business process from the low-level services via the ESB</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    
+    <section>
+        <title>Declarative business processes</title>
+        <indexterm>
+            <primary>business process</primary>
+            <secondary>declarative</secondary>
+        </indexterm>
+        <para>
+            Instead of being implemented in a compiled language such as Java, most BPEEs support business processes
+            written in a declarative way (typically using an XML vocabulary). Such languages are usually simpler than
+            fully-fledged programming languages, concentrating instead on the tasks typical of service orchestration, such
+            as
+            <itemizedlist>
+                <listitem>
+                    <para>invoking services via the ESB,</para>
+                </listitem>
+                <listitem>
+                    <para>transforming request and result messages,</para>
+                </listitem>
+                <listitem>
+                    <para>performing conditional and/or repeated workflow steps</para>
+                </listitem>
+                <listitem>
+                    <para>performing tasks in sequence or in parallel</para>
+                </listitem>
+                <listitem>
+                    <para>managing faults / exceptions and performing compensating actions for failed actions</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Because of the declarative, XML-based nature of such languages, intuitive graphical tools are made
+            possible to allow persons with a weaker level of technical skill to assemble business processes from existing 
+            services. Though such tools are in theory possible for any programming language, the simpler and purpose-designed
+            nature of business process languages make such tools far easier to implement.
+        </para>
+    </section>
+    
+    <section>
+        <title>Long-running business processes</title>
+        <indexterm>
+            <primary>business process</primary>
+            <secondary>long-running</secondary>
+        </indexterm>
+        <para>
+            Most services offered by typical object-oriented and client/server systems are of a simple
+            synchronous (request-response) nature. Furthermore, it is assumed that such services will
+            complete in a very short time (usually a second or less).
+        </para>
+        <para>
+            Though the concept of a long-running business process is a natural one in the business world,
+            traditional systems do not explicitly support this in any way - it is up to the developers to
+            <quote>tie together</quote> several different service interactions into a <quote>business process</quote>,
+            usually requiring a lot of manual work around storing and modifying the <emphasis>state</emphasis> of
+            the business process.
+        </para>
+        <para>
+            In SOA, the BPEE on the other hand allows the implementor to specify one (potentially long-lived) business
+            process, as well as all the (either synchronous or asynchronous) interactions between the process, its clients,
+            and it's lower-level service providers, which could occur during the lifespan of the business process.
+        </para>
+        <para>
+            The BPEE creates and manages <emphasis>instances</emphasis> of such business processes on demand, completely
+            freeing the implementor from the rigours of reliably maintaining the state of a business process which could last 
+            anything from milliseconds to years.
+        </para>
+    </section>
+    
+    <section>
+        <title>Removing processes from the hands of people</title>
+        <indexterm>
+            <primary>business process</primary>
+            <secondary>removing out of human hands</secondary>
+        </indexterm>
+        <para>
+            A surprising number of organisations - even ones with mature and well-implemented information systems - 
+            have solid low-level services, but with the actual business process being <emphasis>implicitly</emphasis>
+            applied across these services by human beings. Unless the on-the-fly ingenuity and adaptability of this
+            implementation technology is required by business, most typical organisations could greatly benefit from having
+            one well-defined, executable <quote>version</quote> of the business process managed by the SOA infrastructure,
+            with the human beings rather playing the role of lower-level service providers as and when needed.
+        </para>
+    </section>
+    
+</section>

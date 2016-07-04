@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.tools.junit.anExample"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/Docs/re_schema/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="An Example">An Example</title>
+
+<para>Let us consider a simple polynomial class like the onw shown below:
+<programlisting>
+<xi:include parse="text" href="source/PolynomialR2.java"/>
+</programlisting>
+</para>
+    <para>
+where <emphasis>FunctionR2</emphasis> is the interface
+<programlisting>
+  <xi:include parse="text" href="source/FunctionR2.java"/>
+</programlisting>
+    </para>
+<para>
+and <emphasis>PointR2</emphasis> is simply a point in 2-dimensional space:
+<programlisting>
+  <xi:include parse="text" href="source/PointR2.java"/>
+</programlisting>
+</para>
+<para>    
+Let us now write a <emphasis> JUnit</emphasis>-based test case for the polynomial class.
+We will have to
+<itemizedlist>
+  <listitem><para>Have our test case class extend <emphasis>junit.framework.TestCase</emphasis>.</para></listitem>
+  <listitem><para>Overwrite the <emphasis>setUp</emphasis> method to supply the ficture (test data).</para></listitem>
+  <listitem><para>Supply a test, <emphasis>testXXX</emphasis> for each method <emphasis>XXX</emphasis>.</para></listitem>
+  <listitem><para>Assemble a test suite for the test case (if the test case class itself
+        is supplied, <emphasis> JUnit</emphasis> will assemble a test suite from the supplied
+        <emphasis>suite</emphasis> method . The <emphasis>suite</emphasis> method may be assembled manually
+        as is done below:
+<programlisting><![CDATA[
+public static Test suite()
+{
+  TestSuite suite = new TestSuite();
+  suite.addTest(new PolynomialTest("testValue"));
+  suite.addTest(new PolynomialTest("testgetCoefficient"));
+  return suite;
+}  
+]]></programlisting>
+        Alternatively we may, as is done in our example, assemble it automatically 
+        by supplying simply a test class. 
+<programlisting><![CDATA[
+public static Test suite()
+{
+  return new TestSuite(PolynomialR2Test.class);
+}  
+]]></programlisting>
+        <emphasis> JUnit</emphasis> will use reflection to assemble
+        a test suite from all the <emphasis>textXXX</emphasis> methods (also the inherited ones)
+        of the class.</para></listitem>
+  \item Supply a <emphasis>main</emphasis> method used to run the test case separately.
+</itemizedlist>
+</para>
+<para>Below we list an example <emphasis> JUnit</emphasis>-based unit test for the <emphasis>PolynomialR2</emphasis>
+class:
+<programlisting>
+  <xi:include parse="text" href="source/PolynomialR2Test.java"/>
+</programlisting>
+</para>
+    
+</section>

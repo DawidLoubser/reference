@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.commands.resolvingConflicts"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Resolving conflicts</title>
+  <para>
+    In <xref linkend="resources.information.technologies.tools.versionControl._cvs.commands.merging"/>  
+    we looked at how CVS merges concurrent modifications to a file.
+    We have, however, assumed that there are no conflicts. 
+  </para>
+  <para>
+    Let us now look at the case where there are conflicts between the 
+    concurrent modifications applied by different developers. Assume
+    both developers change the title of an error message dialog.
+    When the second developer tries to commit, CVS will abort with an
+    error message that the <literal>Up-to-date check failed</literal>
+    on the file.
+  </para>  
+  <para>
+    When updating the working copy, CVS issues a warning that the merging 
+    resulted in conflicts. The file which hosts the conflict is marked with 
+    a <literal>C</literal> label:
+    <synopsis><![CDATA[
+RCS file: /usr/local/cvs/testRepository/LoanCalculator/za/co/stcd/finance...
+            /calculators/presentation/swing/LoanCalculatorPanel.java,v
+retrieving revision 1.1.1.1
+retrieving revision 1.3
+Merging differences between 1.1.1.1 and 1.3 into LoanCalculatorPanel.java
+rcsmerge: warning: conflicts during merge
+cvs update: conflicts found in LoanCalculator/za/co/stcd/finance/calculators...
+                                 /presentation/swing/LoanCalculatorPanel.java
+C LoanCalculator/za/co/stcd/finance/calculators/presentation/swing/LoanCalculatorPanel.java
+    ]]></synopsis>  
+  </para>
+  <para>
+    Editing the merged file, one sees that CVS added the conflicts between
+    <literal><![CDATA[<<<<<<<<  ... >>>>>>>]]></literal> with the version
+    in the developer's working directory shown above the 
+    <literal><![CDATA[=======]]></literal> and the current repository version
+    shown below it:
+    <programlisting><![CDATA[
+            catch (Exception e)
+            {
+              JOptionPane.showMessageDialog
+                (LoanCalculatorPanel.this,
+<<<<<<< LoanCalculatorPanel.java
+                 e.toString(), "Failed to calculate loan amount",
+=======
+                 e.toString(),
+                 "Could not calculate maximum loan amount.",
+>>>>>>> 1.3
+                 JOptionPane.ERROR_MESSAGE);
+            }
+    ]]></programlisting>
+  </para>
+  <para>
+    The developer can now resolve the conflict manually and commit the changes.
+    For example:
+    <programlisting><![CDATA[
+            catch (Exception e)
+            {
+              JOptionPane.showMessageDialog
+                (LoanCalculatorPanel.this,
+                 e.toString(), "Failed to calculate maximum loan amount",
+                 JOptionPane.ERROR_MESSAGE);
+            }
+    ]]></programlisting>
+  </para>
+</section>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2se.collections.interfaces.collectionsInterface"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The Collection Interface</title>
+    <para>The <literal>Collection</literal> interface supplies the most abstract view of
+        collections. The primary uses of this interface are </para>
+    <para>
+        <orderedlist>
+            <listitem>
+                <para>Lay down the specification for the services which all collections must supply
+                    including the signatures for the corresponding service request messages (i.e.
+                    the method names, arguments and return values). </para>
+            </listitem>
+            <listitem>
+                <para>Lay down the specification for optional services which may be supplied by
+                    collections. </para>
+            </listitem>
+            <listitem>
+                <para>Enables one to pass around collections without having to care what type of
+                    collection it is.</para>
+            </listitem>
+        </orderedlist>
+    </para>
+    <para>Assume, for example, that you want to supply a service for calculating the total salary
+        expenditure of your company. You do not care whether the employees are stored in a
+        <literal>LinkedList</literal>, <literal>HashMap</literal>, <literal>TreeMap</literal> or
+        whatever. All you want to do is step through the collection of employees and accumulate the salaries:</para>
+    <para/>
+    <para>
+        <programlisting>
+public class EmployeeStatistics 
+ { 
+    ... 
+    public static double getTotalSalary(Collection employees) 
+    {
+        Iterator iter = employees.iterator(); 
+        double totalSalary = 0; 
+        while(iter.hasNext())
+        totalSalary += ((Employee)iter.next()).getSalary(); 
+        return totalSalary; 
+    } 
+}
+        </programlisting>
+    </para>
+    <para> We ask the collection for an iterator which allows us to step through the collection and
+        then, while the iterator has not reached the end of the collection, we ask for the next
+        element of the collection.</para>
+    <para>Since collections can store any object and since we have trusted the client (most probably
+        a mistake) that he/she will always supply one or other collection containing only employees
+        (or specialized employees), we can typecast the object we extract from the collection to an
+        <literal>Employee</literal> and ask it for its salary.</para>
+    <para>Iterators will be discussed in more detail later on, but for now observe that the method
+        is completely independent of the type of collection used to store the employees. In order to
+        see what type of services are offered by all collections, let us have a look at the
+        <literal>Collection</literal> interface:</para>
+    <para/>
+    <para>
+        <programlisting><![CDATA[
+public interface Collection 
+{ 
+    // Standard Services
+    int size (); 
+    boolean isEmpty ();
+    boolean contains (Object element); 
+    boolean add (Object element) throws UnsupportedOperationException; 
+    boolean remove (Object element) throws UnsupportedOperationException; 
+    Iterator iterator (); 
+            
+    // Bulk Services
+    boolean containsAll (Collection c); 
+    boolean addAll (Collection c) throws UnsupportedOperationException; 
+    boolean removeAll (Collection c) throws UnsupportedOperationException; 
+    boolean retainAll (Collection c) throws UnsupportedOperationException; 
+    void clear () throws UnsupportedOperationException; //
+            
+    // Array Services 
+    Object[] toArray (); 
+    Object[] toArray (Object a[]); 
+}   
+]]>     
+        </programlisting>
+    </para>
+    <para> The services which have to be supplied by all collections are</para>
+    
+    <formalpara>
+        <title>size()</title>
+        <para>A service returning the number of elements (object references) currently stored in
+        the collection.
+        </para>
+    </formalpara>
+    
+    <formalpara>
+        <title>isEmpty()</title>
+        <para>A service returning <literal>true</literal> when there are
+        currently no elements stored in the collection.
+        </para>
+    </formalpara>
+    
+    <formalpara>
+        <title>contains( Object )</title>
+        <para>A service returning true if the specified object is currently in the collection.
+        </para>
+    </formalpara>
+    
+    <formalpara>
+        <title>iterator()</title>
+        <para>returns an iterator which
+        can be used to step through the collection.
+        </para>
+    </formalpara>
+    
+    <formalpara>
+        <title>containsAll()</title>
+        <para>
+            returns <literal>true</literal> if
+        the collection contains all the elements contained in the collection supplied as argument.
+        </para>
+    </formalpara>
+    
+    <formalpara>
+        <title>toArray()</title>
+        <para>
+            returns an array containing all the elements in the collection.
+        </para>
+    </formalpara>
+    
+    <formalpara>
+        <title>toArray( Object[] )</title>
+        <para>
+            Returns all the elements in the collection whose run-time type is that of the array. For
+        example, if we call the method with a <literal>Person[]</literal> array it will return all the persons
+        (and specialized persons, i.e. <literal>Employee</literal>) contained in the collection and
+        not, for example, the accounts contained in the collection. If the extracted elements plus
+        an extra null reference indicating the end of the subcollection fit into the supplied array,
+        this array is returned. If not, a new array is created.
+        </para>
+    </formalpara>
+    
+    <para>Supporting the remaining services is not obligatory, but most collection implementations
+        actually do. These include adding and removing objects and collections of objects as well as
+        the <literal>retainAll( Collection )</literal> method which retains only those elements in the
+        collection which are also in the supplied collection.</para>
+    <para/>
+    <section>
+        <title>The Set Interface</title>
+        <para>A set is a collection which contains no duplicate elements. A <literal>Set</literal>
+            contains no other services than those specified in <literal>Collection</literal>. Sets
+            only apply the restriction of not allowing duplicate elements in the collection.</para>
+        <para>If the <literal>Set</literal> interface simply extends the
+            <literal>Collection</literal> interface without specifying any further services, what
+            then is the purpose of defining the <literal>Set</literal> interface at all? The reason
+            is that this introduces a further classification level, enabling servers to specify that
+            a service requires not just any collection, but only some sort of <literal>Set</literal>
+            (e.g. for example a <literal>HashSet</literal> or a <literal>TreeSet</literal>).</para>
+        <para/>
+    </section>
+    <section>
+        <title>The List Interface</title>
+        <para>While sets do not guarantee ordering of its elements, a <literal>List</literal> does.
+            A <literal>List</literal> is thus an ordered collection (sometimes referred to as a sequence).</para>
+        <para>One can access the elements of a list by their position. Thus one can request the n'th
+            element of a list. In this sense a <literal>List</literal> is a random access
+            collection. Alternatively one can have sequential access to the elements of a list via a
+            <literal>ListIterator</literal> which is a special type of <literal>Iterator</literal>
+            adding some special list-specific services like traversing through the list in reverse order:</para>
+        <para/>
+        <para>
+            <programlisting>
+public interface List extends Collection 
+{ 
+    // Positional Access 
+    Object get (int index); 
+    Object set (int index, Object element) 
+                throws UnsupportedOperationException; 
+    void add (int index, Object element) 
+                throws UnsupportedOperationException; 
+    Object remove (int index) 
+                throws UnsupportedOperationException; 
+    abstract boolean addAll(int index, Collection c) 
+                throws UnsupportedOperationException; 
+                
+    // Search 
+    int indexOf(Object o); 
+    int lastIndexOf(Object o); 
+                
+    // Iteration 
+    ListIterator listIterator(); 
+    ListIterator listIterator(int index); 
+                
+    // Range-view 
+    List subList(int from, int to); 
+}            
+            </programlisting>
+        </para>
+        <para> Thus additional to the services specified in <literal>Collection</literal>, the list
+            interface supports</para>
+        <para/>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    <para>Retrieving, modifying, adding and removing elements by their position. </para>
+                </listitem>
+                <listitem>
+                    <para>Searching for the position of an object in the collection. </para>
+                </listitem>
+                <listitem>
+                    <para>Obtaining a range-view of the list which projects a specified range of
+                        elements into a sublist.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>Note that a list supports all the services we expect from an array (a
+            <literal>Vector</literal> in pre-Java 2 terms), in particular the indexed element
+            access. We shall see that an <literal>ArrayList</literal> is a concrete implementation
+            of such an array.</para>
+        <para>Furthermore, a list contains all the services of a linked list. In particular
+            bi-directional sequential traversal of the collection and insertion and removal at
+            specified positions. A concrete implementation of a traditional linked list is supplied
+            with the <literal>LinkedList</literal> class.</para>
+        <para>One of the very interesting features of the <literal>List</literal> interface is that
+            it supports a service for supplying a view of a range within the list. Note that it is
+            only a view of the range. Thus manipulating elements from the returned view results in
+            manipulation of the underlying list elements. For example, the following statement
+            removes a range from a list:</para>
+        <para>
+            <programlisting>
+list.subList(fromIndex, toIndex).clear(); 
+            </programlisting>
+        </para>
+    </section>
+</section>

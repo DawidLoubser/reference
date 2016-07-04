@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-03-12 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>Mapping UML Aggregation to Java</title>
+    <para>By default, aggregation is implemented in the same way that association is, The aggregate
+        object simply maintains a message path to the component. In addition to this, the aggregate
+        object will typically have certain properties whose value is affected by state changes in
+        the components.
+    </para>
+    <para>Assume, for example, that client has multiple accounts via aggregation and that the
+        client has an exposure property which represents the total exposure the organization has
+        with respect to the client. Assume this is calculated as the sum total of the balances of
+        the client's accounts.
+    </para>
+    <figure>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="Client.png"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+    <para>This could be simply implemented as
+        <programlisting language="Java">
+<xi:include parse="text" href="Client1.java"/>
+        </programlisting>
+        <note>
+            <para>The client state depends on the state of the components. If the balance of one of
+                the accounts changes the exposure of the client changes.
+            </para>
+        </note>
+    </para>
+    <para>In certain applications (usually desktop of mobile apps with graphic user interface), you may want
+        to support state change notification. This is often done within
+        the Java Beans framework (Property listeners). To do this, the client will have to register as state change
+        listener with all its accounts. Upon receiving a balance change event from one of its
+        accounts, the client will have to issue an exposure change event to its state change
+        listeners:
+        <programlisting language="Java">
+<xi:include parse="text" href="Client2.java"/>
+        </programlisting>
+    </para>
+</section>

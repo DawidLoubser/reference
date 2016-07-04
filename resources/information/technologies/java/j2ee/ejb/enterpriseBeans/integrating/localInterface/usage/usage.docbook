@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1788:section xmlns:ns1788="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.integrating.localInterface.usage.usage">
+
+  <ns1789:title xmlns:ns1789="http://docbook.org/ns/docbook">Using local interfaces</ns1789:title>
+  <ns1790:para xmlns:ns1790="http://docbook.org/ns/docbook"> 
+    Using local interfaces is simpler than local interfaces since one does not need to cater
+    for managing potential <ns1791:literal xmlns:ns1791="http://docbook.org/ns/docbook">java.rmi.RemoteException</ns1791:literal>s. 
+  </ns1790:para>
+  
+  <ns1792:section xmlns:ns1792="http://docbook.org/ns/docbook">
+    <ns1793:title xmlns:ns1793="http://docbook.org/ns/docbook">Specifying a Local Interface</ns1793:title>
+    <ns1794:para xmlns:ns1794="http://docbook.org/ns/docbook">
+      A local interface is very similar to a remote interface. The differences are essentially
+      that 
+      <ns1795:itemizedlist xmlns:ns1795="http://docbook.org/ns/docbook">
+        <ns1796:listitem xmlns:ns1796="http://docbook.org/ns/docbook">
+          <ns1797:para xmlns:ns1797="http://docbook.org/ns/docbook">Local interfaces extend <ns1798:literal xmlns:ns1798="http://docbook.org/ns/docbook">javax.ejb.EJBLocalObject</ns1798:literal> instead of
+            <ns1799:literal xmlns:ns1799="http://docbook.org/ns/docbook">javax.ejb.EJBObject</ns1799:literal>. The former is not an extension of
+            <ns1800:literal xmlns:ns1800="http://docbook.org/ns/docbook">java.rmi.Remote</ns1800:literal> and calls will thus be resolved as local calls. </ns1797:para>
+        </ns1796:listitem>
+        <ns1801:listitem xmlns:ns1801="http://docbook.org/ns/docbook">
+          <ns1802:para xmlns:ns1802="http://docbook.org/ns/docbook">The services published in local interfaces do not throw <ns1803:literal xmlns:ns1803="http://docbook.org/ns/docbook">java.rmi.RemoteException</ns1803:literal>.</ns1802:para>
+        </ns1801:listitem>
+      </ns1795:itemizedlist>
+    </ns1794:para>  
+    <ns1804:para xmlns:ns1804="http://docbook.org/ns/docbook">
+      Below we show a local interface for our <ns1805:literal xmlns:ns1805="http://docbook.org/ns/docbook">LoanCalculator</ns1805:literal> bean:
+<ns1806:programlisting xmlns:ns1806="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../source/HomeLoanApplicationLocal/src/businessLogic/LoanCalculatorLocal.java"/>
+</ns1806:programlisting>      
+    </ns1804:para>
+  </ns1792:section>
+  
+  <ns1807:section xmlns:ns1807="http://docbook.org/ns/docbook">
+    <ns1808:title xmlns:ns1808="http://docbook.org/ns/docbook">Specifying a Local Home Interface</ns1808:title>
+    <ns1809:para xmlns:ns1809="http://docbook.org/ns/docbook">
+      A local home interface differs in the same way from the home interface: 
+      <ns1810:itemizedlist xmlns:ns1810="http://docbook.org/ns/docbook">
+        <ns1811:listitem xmlns:ns1811="http://docbook.org/ns/docbook">
+          <ns1812:para xmlns:ns1812="http://docbook.org/ns/docbook">Local Home interfaces extend <ns1813:literal xmlns:ns1813="http://docbook.org/ns/docbook">javax.ejb.EJBLocalHome</ns1813:literal> instead of
+            <ns1814:literal xmlns:ns1814="http://docbook.org/ns/docbook">javax.ejb.EJBHome</ns1814:literal>. </ns1812:para>
+        </ns1811:listitem>
+        <ns1815:listitem xmlns:ns1815="http://docbook.org/ns/docbook">
+          <ns1816:para xmlns:ns1816="http://docbook.org/ns/docbook">The services published in the local home interface do not throw <ns1817:literal xmlns:ns1817="http://docbook.org/ns/docbook">java.rmi.RemoteException</ns1817:literal>.</ns1816:para>
+        </ns1815:listitem>
+      </ns1810:itemizedlist>
+     </ns1809:para> 
+    <ns1818:para xmlns:ns1818="http://docbook.org/ns/docbook">
+      Below we show a local home interface for our <ns1819:literal xmlns:ns1819="http://docbook.org/ns/docbook">LoanCalculator</ns1819:literal> bean:
+<ns1820:programlisting xmlns:ns1820="http://docbook.org/ns/docbook">
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../source/HomeLoanApplicationLocal/src/businessLogic/LoanCalculatorLocalHome.java"/>
+</ns1820:programlisting>      
+    </ns1818:para>
+  </ns1807:section>
+  
+  <ns1821:section xmlns:ns1821="http://docbook.org/ns/docbook">
+    <ns1822:title xmlns:ns1822="http://docbook.org/ns/docbook">Deployment Descriptors for Local Enterprise Beans</ns1822:title>
+    <ns1823:para xmlns:ns1823="http://docbook.org/ns/docbook">
+      Below we show the deployment descriptor for a loan calculator session bean which can be
+      accessed either remotely or locally. We also define a <ns1824:literal xmlns:ns1824="http://docbook.org/ns/docbook">HomeLoanApplication</ns1824:literal>
+      session bean which uses the a local loan calculator. Note the definition of the local and
+      local-home interfaces as well as the referencing of the local bean.
+<ns1825:programlisting xmlns:ns1825="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../source/HomeLoanApplicationLocal/META-INF/ejb-jar.xml"/>
+</ns1825:programlisting>      
+    </ns1823:para>
+  </ns1821:section>
+  
+  <ns1826:section xmlns:ns1826="http://docbook.org/ns/docbook">
+    <ns1827:title xmlns:ns1827="http://docbook.org/ns/docbook">Obtaining a Reference to a Local Enterprise Bean</ns1827:title>
+    <ns1828:para xmlns:ns1828="http://docbook.org/ns/docbook">
+      Local enterprise beans are typically resolved by other enterprise beans hosted within the
+      same application server. The bean reference is still obtained through a lookup to an
+      implementation of the JNDI. The lookup must be on the logical name of the bean and not on the
+      JNDI name. Furthermore, we can cast the resolved local home interface directly without having
+      to go through <ns1829:literal xmlns:ns1829="http://docbook.org/ns/docbook">PortableRemoteObject.narrow(...)</ns1829:literal>:
+<ns1830:programlisting xmlns:ns1830="http://docbook.org/ns/docbook">
+ InitialContext jndiContext = new InitialContext();
+ 
+ LoanCalculatorLocalHome calculatorHome = (LoanCalculatorLocalHome)
+       jndiContext.lookup("java:comp/env/ejb/finance/LoanCalculator");
+ 
+ LoanCalculatorLocal calculator = calculatorHome.create();
+ 
+ ...
+</ns1830:programlisting></ns1828:para>
+  </ns1826:section>
+  
+</ns1788:section>

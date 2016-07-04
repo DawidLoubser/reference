@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Querying package dependencies</title>
+    <para>
+        A simple way to check missing dependencies is to run
+        <programlisting><![CDATA[
+emerge --pretend <someEbuild>            
+]]></programlisting>
+        This command will show the order in which packages (the missing dependencies and the target package)
+        will be emerged.
+    </para>
+    <para>
+        For example, 
+        <programlisting><![CDATA[
+# emerge --pretend apache
+
+These are the packages that would be merged, in order:
+
+Calculating dependencies... done!
+[ebuild     U ] dev-libs/openssl-0.9.8n [0.9.8l-r2]
+[ebuild  N    ] app-admin/apache-tools-2.2.15  USE="ssl"
+[ebuild  N    ] www-servers/apache-2.2.15  USE="ssl -debug -doc -ldap (-selinux) -static -suexec 
+-threads" APACHE2_MODULES="actions alias auth_basic authn_alias authn_anon authn_dbm authn_default 
+authn_file authz_dbm authz_default authz_groupfile authz_host authz_owner authz_user autoindex cache 
+dav dav_fs dav_lock deflate dir disk_cache env expires ext_filter file_cache filter headers include info 
+log_config logio mem_cache mime mime_magic negotiation rewrite setenvif speling status unique_id 
+userdir usertrack vhost_alias -asis -auth_digest -authn_dbd -cern_meta -charset_lite -dbd -dumpio 
+-ident -imagemap -log_forensic -proxy -proxy_ajp -proxy_balancer -proxy_connect -proxy_ftp 
+-proxy_http -substitute -version" APACHE2_MPMS="-event -itk -peruser -prefork -worker"            
+            ]]></programlisting>
+    </para>
+    
+    <section>
+        <title>Using <literal>equery</literal></title>
+        <para>
+            This tool is useful to provide a wide range of information:
+            
+            <itemizedlist>
+                <listitem><formalpara>
+                    <title>Reporting the packages which depend on a particular package</title>
+                    <para>
+                        This is done via the <literal>depends</literal> query:
+                        <programlisting><![CDATA[
+equery depends udev                             
+]]></programlisting>
+                        Here "depends" means "depends-on". This command searches for all direct dependencies.
+                        One can add a <literal>-D</literal> flag to request also indirect dependencies.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>Querying a dependency graph</title>
+                    <para>
+                        This is a tool which can provide a full dependency graph for a package which will most likely provide
+                        and un-processable amoutn of information. You would, in most cases, limit the depth of the dependency
+                        graph analysis to 2 or so levels:
+                        <programlisting><![CDATA[
+$ equery depgraph -n 2 syslog-ng-3.0.6                             
+]]></programlisting>
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>Querying the USE flags for a package</title>
+                    <para>
+                        In order to identify which USE flags is being used by a particular package, you can use
+                        <programlisting><![CDATA[
+$ equery uses links
+[ Searching for packages matching links... ]
+[ Colour Code : set unset ]
+[ Legend : Left column  (U) - USE flags from make.conf              ]
+[        : Right column (I) - USE flags packages was installed with ]
+[ Found these USE variables for www-client/links-2.2 ]
+ U I
+ + + X        : Adds support for X11
+ + + bzip2    : Use the bzlib compression library
+ - - directfb : Adds support for DirectFB layer (library for FB devices)
+ - - fbcon    : Adds framebuffer support for the console, via the kernel
+ + + gpm      : Adds support for sys-libs/gpm (Console-based mouse driver)
+ + + jpeg     : Adds JPEG image support
+ - - livecd   : !!internal use only!! DO NOT SET THIS FLAG YOURSELF!, used during livecd building
+ + + png      : Adds support for libpng (PNG images)
+ - - sdl      : Adds support for Simple Direct Layer (media library)
+ + + ssl      : Adds support for Secure Socket Layer connections
+ - - svga     : Adds support for SVGAlib (graphics library)
+ + + tiff     : Adds support for the TIFF image format
+ + + unicode  : Adds support for Unicode
+ + + zlib     : Adds support for zlib (de)compression
+]]></programlisting>
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>Querying the size of an installation</title>
+                    <para> It may be very useful to query the total size required to install some
+                            package and its dependencies. This can be done as follows: <programlisting><![CDATA[
+$ equery size postgresql-server
+[ Searching for packages matching postgresql-server... ]
+* size of dev-db/postgresql-server-8.4.2-r1
+           Total files : 228
+    Inaccessible files : 1
+           Total size  : 10625.53 KiB                           
+                            ]]></programlisting>
+                        </para>
+                </formalpara>
+                </listitem>
+            </itemizedlist>
+            
+        </para>
+        
+    </section>    
+</section>    

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>
+        The context of an OCL expression
+        <indexterm><primary>Object Constraint Language</primary><secondary>context</secondary></indexterm>
+    </title>
+    <para>
+        The context definition of an OCL expression defines the model entity for which the OCL expression is defined. Usually the
+        context of an OCL expression is either
+        <itemizedlist>
+            <listitem><para>an interface,</para></listitem>
+            <listitem><para>a class, or</para></listitem>
+            <listitem><para>a service/operation.</para></listitem>
+        </itemizedlist>
+        Note that the context has a type, the <emphasis>contextual type</emphasis>.
+        <indexterm><primary>Object Constraint Language</primary><secondary>contextual type</secondary></indexterm>
+    </para>
+    <para>
+        <indexterm><primary>Object Constraint Language</primary><secondary>context decalaration</secondary></indexterm>
+        Any OCL expression starts with a context declaration. For example
+        <programlisting><literal>
+context Account
+...
+        </literal></programlisting>
+        or
+        <programlisting><literal>
+context Account::debit(amount:Money)
+...
+        </literal></programlisting>
+    </para>
+    
+    <section>
+        <title>
+            Self
+            <indexterm><primary>Object Constraint Language</primary><secondary>self</secondary></indexterm>
+        </title>
+        <para>
+            Even though an OCL expression is defined for a type, it is ultimately evaluated for
+            an instance of the model entity, <abbrev>i.e.</abbrev> 
+            <itemizedlist>
+                <listitem><para>
+                    an instance of any class realizing an interface/contract,         
+                </para></listitem>
+                <listitem><para>
+                    an instance of an implementation class, or        
+                </para></listitem>
+                <listitem><para>
+                    an instance of a service realization.       
+                </para></listitem>
+            </itemizedlist>
+            The keyword <literal>self</literal> is used to refer to a model element instance.
+        </para>
+        <para>
+            <indexterm><primary>Object Constraint Language</primary><secondary>contextual instance</secondary></indexterm>
+            For example, if the model type is an account, then the contextual instance, <literal>self</literal>, will be 
+            an instance of that <literal>Account</literal> class.
+            <programlisting><literal>
+context Account
+    inv: self.accountNo > 0
+            </literal></programlisting>
+            <note><para>
+                The <literal>inv:</literal> specifies an invariance constraint, <abbrev>i.e.</abbrev> that the constraint must always
+                hold for any instance of the context.
+            </para></note>
+            As is the case for many programming languages, the <literal>self</literal> is by default implied. The above OCL
+            is thus equivalent to
+            <programlisting><literal>
+                context Account
+                inv: accountNo > 0
+            </literal></programlisting>
+        </para>
+    </section>
+</section>    

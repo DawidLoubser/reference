@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2009-2-4 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Committing modifications via <literal>svn commit</literal></title>
+    <para>
+        To commit modifications to a repository you use the <literal>commit</literal> command. This sends the modifications
+        (changes, additions and deletions) to the repository and creates a new revision number for this new repository state.
+    </para>
+    <para>
+        Commits are <emphasis>atomic</emphasis>, i.e. either all changes are committed or nothing at all. Thus, if there are
+        any outstanding problems which still need to be resolved then the entire commit will fail.
+    </para>
+    <para>
+        You are required to provide a message for the commit. If you don't do so via the <literal>--message</literal> 
+        (<literal>-m</literal>) or <literal>--file</literal> (<literal>-f</literal>) command line parameters, you will be prompted 
+        to provide one via the default editor of your system.
+    </para>
+    <para>
+        You can commit a single resource (e.g. a single file) or a list of resources. Each resource can be either a file or a directory.
+        If the resource is a directory, then its contents is added too.
+        <programlisting><![CDATA[
+svn commit [resource1] [resource2] -m "Message here"
+]]></programlisting>
+        If no resources are specified then all changes in the current directory, and anywhere below, are committed. Thus
+        <programlisting><![CDATA[
+svn commit            
+]]></programlisting>
+        simply commits the changes made withing the current directory.
+    </para>
+    <para>
+        If any of the modified resources have been, in the mean time, modified on the server side, then subversion will require
+        you to update your working copy firs. This may result in your changes being merged with those made during previous
+        commits and this, in turn, may result in conflicts which have to be resolved prior to committing your changes.
+    </para>
+</section>    
+    

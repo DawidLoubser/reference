@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Implementation guidelines</title>
+    <para>
+        Although the prototype pattern is structurally virtually trivial, it does pose some complexities
+        during implementation.
+    </para>
+    
+    <section>
+        <title>Implementing the clone method</title>
+        <para>
+            The core complexity faced when implementing the prototype pattern is the implementation
+            of the <literal>clone()</literal> services. Often the terms 
+            <emphasis>deep</emphasis> and <emphasis>shallow</emphasis> copying are used.
+            This is typically not very helpful since, where do you go deep and where do you remain
+            shallow. These questions need to be solved from a design perspective and a solid UML
+            model will specify concrete implementation requirements.
+        </para>
+        <para>
+            Deep copying should be done on composition relationships while aggregation and association 
+            should be implemented in the <literal>clone</literal> service via
+            shallow copying.
+        </para>
+    </section>
+    
+    <section>
+        <title>Initializing the state of the prototype</title>
+        <para>
+            The state of the prototype object should be managed to resemble at any stage
+            the default state of the objects which are created from it.
+        </para>
+    </section>
+    
+    <section>
+        <title>Introducing a prototype manager</title>
+        <para>
+            Typically one should introduce a prototype manager who manages the prototypes
+            available for object creation. The prototype manager should supply services for
+            <itemizedlist>
+                <listitem><para>
+                    registering new prototypes and    
+                </para></listitem>
+                <listitem><para>
+                    de-registering existing prototypes.          
+                </para></listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            The prototype manager is typically implemented as an <emphasis>associative store</emphasis>
+            associating user handles (<abbrev>e.g.</abbrev> dragable icons) with prototype objects. Clients
+            may be able to browse and modify the prototype registry at run-time.
+        </para>
+    </section>
+    
+</section>

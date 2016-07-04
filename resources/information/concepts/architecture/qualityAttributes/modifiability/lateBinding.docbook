@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xml:id="resources.information.concepts.architecture.qualityAttributes.modifiability.lateBinding" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+
+  <title>Late binding</title>
+  <para>
+    Thus far the modifiability tactics enable developers to apply system changes more
+    cost efficiently. The changes were however applied at compile time. Late binding
+    tactic enables one to apply changes at either deploy or run time.
+  </para>
+  
+  <section>
+    <title>Benefits of late binding</title>
+    <para>
+      Architectures which defer binding decisions to either deploy or run time are
+      usually considerably more flexible. They facilitate
+      <itemizedlist>
+        <listitem><para>
+          deployers to  deploy customized solutions without requiring developers to make system
+          changes,
+        </para></listitem>
+        <listitem><para>
+          and even clients to modify a system at run-time without bringing the system down.  
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Tactics used to realize late binding</title>
+    <para>
+      Below we provide a few concrete tactics used to realize late binding strategies.      
+    </para>
+    
+    <section>
+      <title>Runtime registration</title>
+      <para>
+        This strategy facilitates registration and loading of new components at run-time. 
+        These components should typically realize a <emphasis>contract</emphasis>.
+        This can be achieved by registering service providers with 
+        <itemizedlist>
+          <listitem><para>
+           naming and/or trader services,  
+          </para></listitem>
+          <listitem><para>
+            message queues,  
+          </para></listitem>
+          <listitem><para>
+            messaging bus,  
+          </para></listitem>
+          <listitem><para>
+            component containers like EJB containers or servlet/JSP or ASP containers.  
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Customized deployment via configuration files</title>
+      <para>
+        This tactic supports the selection of components or entire frameworks (like
+        presentation layer frameworks) at deploy-time. It is often used together
+        with the <emphasis>abstract factory</emphasis> pattern.
+      </para>
+    </section>
+    
+    <section>
+      <title>Service provider lookup via naming and trader services</title>
+      <para>
+        Service providers may register themselves with naming or trader services
+        Potential clients look up service providers at run-time, obtaining a message
+        path to the service provider (<abbrev>e.g.</abbrev> a CORBA reference or
+        a URL to a web service). This message path is then used to issue service 
+        requests.
+      </para>
+      <para>
+        Naming services enables potential clients to look up service providers from a name. 
+        They are conceptually similar to a normal telephone book containing a 
+        name to telephone number (message path) mapping.       
+      </para>
+      <para>
+        Trader services, on the other hand enable clients to look up service providers via
+        a hierarchical classification of services, <abbrev>i.e.</abbrev> via the service
+        they require.
+      </para>
+      <para>
+        Using a naming or trader service facilitates late binding. The concrete service provider
+        bound to may be replaced at run-time. In middleware frameworks (<abbrev>e.g.</abbrev>
+        CORBA) the reference itself is location transparent and the concrete realization of a service
+        provider may be altered significantly (location, implementation technologies like
+        programming language, platform, ...).
+      </para>
+    </section>
+    
+  </section>
+  
+</section>

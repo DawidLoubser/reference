@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xml:id="resources.information.concepts.architecture.patterns.modelViewController.solution"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+
+    <title>Model-View-Controller Dynamics</title>
+    <para>We discuss three scenarios:
+        <orderedlist>
+            <listitem>
+                <para>The initialization process.</para>
+            </listitem>
+            <listitem>
+                <para>The dynamics upon user events.</para>
+            </listitem>
+            <listitem>
+                <para>The dynamics upon system events.</para>
+            </listitem>
+        </orderedlist>
+    </para>
+    <para>
+        During initialization we have to ensure that both the view and the controller
+        <itemizedlist>
+            <listitem>
+                <para>
+                    have a message path to the model, and
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    are registered with the model as observers.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+
+    <figure xml:id="resources.information.concepts.architecture.patterns.modelViewController.initialization_fig">
+        <title>Initialization of the model-view-controller pattern</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="initialization.jpg"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+
+    <para>
+        Upon user event
+        <itemizedlist>
+            <listitem>
+                <para>
+                    the controller interprets the event and requests the appropriate system service,
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    the model
+                    <itemizedlist>
+                        <listitem>
+                            <para>
+                                realizes the service which may change the information contained in the model,
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                informs all observers (views and controllers) that the system information has
+                                changed,
+                            </para>
+                        </listitem>
+                    </itemizedlist>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    upon which the observers
+                    <itemizedlist>
+                        <listitem>
+                            <para>
+                                retrieve the information they are interested in, and
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                update their representation or behavior accordingly.
+                            </para>
+                        </listitem>
+                    </itemizedlist>
+                </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+
+    <figure xml:id="resources.information.concepts.architecture.patterns.modelViewController.userUpdate_fig">
+        <title>Dynamics of model-view-controller pattern: user event</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="userUpdate.jpg"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+
+    <para>
+        Similarly, on system events certain business logic may be performed which may change
+        business data. The observers (
+        <abbrev>e.g.</abbrev>
+        the view and controller) are
+        notified and request the information they are interested in to see whether they need
+        to update their representation or behavior.
+    </para>
+
+    <figure xml:id="resources.information.concepts.architecture.patterns.modelViewController.systemUpdate_fig">
+        <title>Dynamics of model-view-controller pattern: system event</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="/systemUpdate.jpg"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+
+</section>

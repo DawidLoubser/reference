@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.entityBeans.introduction.introduction"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+  <title role="Introduction">Introduction</title>
+  <para>
+    The EJB specification defines entity beans as 
+    <blockquote><para><emphasis>
+      light-weight, persistent domain objects.
+    </emphasis></para></blockquote>
+    Unlike session beans, which only exist for the duration of a session, entity
+    beans exist from the instant they are created until they are purposefully
+    deleted.
+  </para>
+  <para>
+    Entity beans are managed through a <literal>javax.persistence.EntityManager</literal>,
+    an object that is responsible for managing all database operations, as well as
+    performing object-relational mapping.
+  </para>
+  
+  <section>
+    <title>Technology-neutral queries</title>
+    <para>
+      The EJB specification includes the Query API which provides a technology
+      neutral, object oriented query language (EJBQL). These queries are mapped 
+      internally by the entity manager to queries suitable for the chosen 
+      persistence technology.
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Entity bean relationships</title>
+    <para>
+      Entity beans support relationships (composition and
+      association/aggregation) which are persisted through to the database.
+    </para>
+  </section>
+  
+  <section>
+    <title>Entity bean specialization</title>
+    <para>
+      Entity beans support specialization (inheritance) and the bean deployer
+      can decide how the relationship should be mapped onto persistent storage.
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Detaching and re-attaching</title>
+    <para>
+      Entity beans are standard Java objects which can be detached and re-attached to the 
+      persistent context. This, for example, allows one to conceptually find an object, 
+      send it to the client, receive an updated object, and <quote>merge</quote> it back
+      into the server's persistent state.
+    </para>
+  </section>
+  
+  <section>
+    <title>Entity beans as fly-weights</title>
+    <para>
+      From the user's perspective, entity beans always exist (from creation to
+      destruction). The application server does not, however, maintain the
+      corresponding physical objects in memory for that period. 
+    </para>
+    <para>The (potentially large number of)
+      conceptual entities are represented by a smaller collection of
+      physical objects, maintained in a bean pool. When a service is requested
+      from a particular entity, the application server selects one of the
+      physical objects in the bean pool, populates it with object identity (key)
+      and state from persistent storage, and makes it available to the client.
+    </para>
+  </section>
+  
+</section>  

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns7425:section xmlns:ns7425="http://docbook.org/ns/docbook" xml:id="resources.information.tecnologies.java.tools.junit.anExample">
+    
+    <ns7426:title xmlns:ns7426="http://docbook.org/ns/docbook">An Example</ns7426:title>
+
+<ns7427:para xmlns:ns7427="http://docbook.org/ns/docbook">Let us consider a simple polynomial class like the onw shown below:
+<ns7428:programlisting xmlns:ns7428="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/PolynomialR2.java"/>
+</ns7428:programlisting>
+</ns7427:para>
+    <ns7429:para xmlns:ns7429="http://docbook.org/ns/docbook">
+where <ns7430:emphasis xmlns:ns7430="http://docbook.org/ns/docbook">FunctionR2</ns7430:emphasis> is the interface
+<ns7431:programlisting xmlns:ns7431="http://docbook.org/ns/docbook">
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/FunctionR2.java"/>
+</ns7431:programlisting>
+    </ns7429:para>
+<ns7432:para xmlns:ns7432="http://docbook.org/ns/docbook">
+and <ns7433:emphasis xmlns:ns7433="http://docbook.org/ns/docbook">PointR2</ns7433:emphasis> is simply a point in 2-dimensional space:
+<ns7434:programlisting xmlns:ns7434="http://docbook.org/ns/docbook">
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/PointR2.java"/>
+</ns7434:programlisting>
+</ns7432:para>
+<ns7435:para xmlns:ns7435="http://docbook.org/ns/docbook">    
+Let us now write a <ns7436:emphasis xmlns:ns7436="http://docbook.org/ns/docbook"> JUnit</ns7436:emphasis>-based test case for the polynomial class.
+We will have to
+<ns7437:itemizedlist xmlns:ns7437="http://docbook.org/ns/docbook">
+  <ns7438:listitem xmlns:ns7438="http://docbook.org/ns/docbook"><ns7439:para xmlns:ns7439="http://docbook.org/ns/docbook">Have our test case class extend <ns7440:emphasis xmlns:ns7440="http://docbook.org/ns/docbook">junit.framework.TestCase</ns7440:emphasis>.</ns7439:para></ns7438:listitem>
+  <ns7441:listitem xmlns:ns7441="http://docbook.org/ns/docbook"><ns7442:para xmlns:ns7442="http://docbook.org/ns/docbook">Overwrite the <ns7443:emphasis xmlns:ns7443="http://docbook.org/ns/docbook">setUp</ns7443:emphasis> method to supply the ficture (test data).</ns7442:para></ns7441:listitem>
+  <ns7444:listitem xmlns:ns7444="http://docbook.org/ns/docbook"><ns7445:para xmlns:ns7445="http://docbook.org/ns/docbook">Supply a test, <ns7446:emphasis xmlns:ns7446="http://docbook.org/ns/docbook">testXXX</ns7446:emphasis> for each method <ns7447:emphasis xmlns:ns7447="http://docbook.org/ns/docbook">XXX</ns7447:emphasis>.</ns7445:para></ns7444:listitem>
+  <ns7448:listitem xmlns:ns7448="http://docbook.org/ns/docbook"><ns7449:para xmlns:ns7449="http://docbook.org/ns/docbook">Assemble a test suite for the test case (if the test case class itself
+        is supplied, <ns7450:emphasis xmlns:ns7450="http://docbook.org/ns/docbook"> JUnit</ns7450:emphasis> will assemble a test suite from the supplied
+        <ns7451:emphasis xmlns:ns7451="http://docbook.org/ns/docbook">suite</ns7451:emphasis> method . The <ns7452:emphasis xmlns:ns7452="http://docbook.org/ns/docbook">suite</ns7452:emphasis> method may be assembled manually
+        as is done below:
+<ns7453:programlisting xmlns:ns7453="http://docbook.org/ns/docbook">
+public static Test suite()
+{
+  TestSuite suite = new TestSuite();
+  suite.addTest(new PolynomialTest("testValue"));
+  suite.addTest(new PolynomialTest("testgetCoefficient"));
+  return suite;
+}  
+</ns7453:programlisting>
+        Alternatively we may, as is done in our example, assemble it automatically 
+        by supplying simply a test class. 
+<ns7454:programlisting xmlns:ns7454="http://docbook.org/ns/docbook">
+public static Test suite()
+{
+  return new TestSuite(PolynomialR2Test.class);
+}  
+</ns7454:programlisting>
+        <ns7455:emphasis xmlns:ns7455="http://docbook.org/ns/docbook"> JUnit</ns7455:emphasis> will use reflection to assemble
+        a test suite from all the <ns7456:emphasis xmlns:ns7456="http://docbook.org/ns/docbook">textXXX</ns7456:emphasis> methods (also the inherited ones)
+        of the class.</ns7449:para></ns7448:listitem>
+  \item Supply a <ns7457:emphasis xmlns:ns7457="http://docbook.org/ns/docbook">main</ns7457:emphasis> method used to run the test case separately.
+</ns7437:itemizedlist>
+</ns7435:para>
+<ns7458:para xmlns:ns7458="http://docbook.org/ns/docbook">Below we list an example <ns7459:emphasis xmlns:ns7459="http://docbook.org/ns/docbook"> JUnit</ns7459:emphasis>-based unit test for the <ns7460:emphasis xmlns:ns7460="http://docbook.org/ns/docbook">PolynomialR2</ns7460:emphasis>
+class:
+<ns7461:programlisting xmlns:ns7461="http://docbook.org/ns/docbook">
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/PolynomialR2Test.java"/>
+</ns7461:programlisting>
+</ns7458:para>
+    
+</ns7425:section>

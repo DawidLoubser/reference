@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns5185:section xmlns:ns5185="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.conditionals.if">
+
+  <ns5186:title xmlns:ns5186="http://docbook.org/ns/docbook">The <ns5187:command xmlns:ns5187="http://docbook.org/ns/docbook">if</ns5187:command> statement</ns5186:title>
+  <ns5188:para xmlns:ns5188="http://docbook.org/ns/docbook">
+    The <ns5189:command xmlns:ns5189="http://docbook.org/ns/docbook">if</ns5189:command> command conditionally executes a block of statements
+    depending on whether a criterion is met or not.
+  </ns5188:para>
+  
+  <ns5190:section xmlns:ns5190="http://docbook.org/ns/docbook">
+    <ns5191:title xmlns:ns5191="http://docbook.org/ns/docbook">The standard if statement</ns5191:title>
+    <ns5192:para xmlns:ns5192="http://docbook.org/ns/docbook">
+      In a simple <ns5193:command xmlns:ns5193="http://docbook.org/ns/docbook">if</ns5193:command> statement, the conditional block of statements
+      is executed if the command behind the <ns5194:command xmlns:ns5194="http://docbook.org/ns/docbook">if</ns5194:command> returns zero (the
+      success flag).
+      For example, in
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/catrm1_sh.docbook"/>      
+      the temporary file is created via the <ns5195:command xmlns:ns5195="http://docbook.org/ns/docbook">cat</ns5195:command> command in the 
+      script and should thus normally exist. The second <ns5196:command xmlns:ns5196="http://docbook.org/ns/docbook">cat</ns5196:command> 
+      command prints the temporary file and returns with the success zero and hence
+      the temporary file is deleted.
+    </ns5192:para>
+  </ns5190:section>
+  
+  <ns5197:section xmlns:ns5197="http://docbook.org/ns/docbook">
+    <ns5198:title xmlns:ns5198="http://docbook.org/ns/docbook">Using test expressions</ns5198:title>
+    <ns5199:para xmlns:ns5199="http://docbook.org/ns/docbook">
+      The <ns5200:command xmlns:ns5200="http://docbook.org/ns/docbook">if</ns5200:command> command can also conditionally execute a block
+      of statements depending on whether a <ns5201:emphasis xmlns:ns5201="http://docbook.org/ns/docbook">test</ns5201:emphasis> is successful
+      (returns true) or not.
+    </ns5199:para>
+    <ns5202:para xmlns:ns5202="http://docbook.org/ns/docbook">
+      The test may be specified via the <ns5203:command xmlns:ns5203="http://docbook.org/ns/docbook">test</ns5203:command> keyword
+      <ns5204:programlisting xmlns:ns5204="http://docbook.org/ns/docbook">
+if test $x -eq 5
+then
+      ...
+fi      
+      </ns5204:programlisting>
+      or by implicitly by inserting the test expression within square brackets
+      <ns5205:programlisting xmlns:ns5205="http://docbook.org/ns/docbook">
+if [$x -eq 5]
+then
+      ...
+fi      
+      </ns5205:programlisting>
+      Both versions behave identical. 
+    </ns5202:para>
+    <ns5206:para xmlns:ns5206="http://docbook.org/ns/docbook">
+      Shell scripts support comparison operators for numbers, strings and files as well
+      as 3 logical operators which can be used to assemble a compound conditional.
+      These are shown in
+      <ns5207:xref xmlns:ns5207="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.shell.scripting.conditionals.if.numericalComparison"/>,
+      <ns5208:xref xmlns:ns5208="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.shell.scripting.conditionals.if.stringComparison"/>,
+      <ns5209:xref xmlns:ns5209="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.shell.scripting.conditionals.if.fileTests"/>,
+      and <ns5210:xref xmlns:ns5210="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.shell.scripting.conditionals.if.logicalOperators"/>.
+      
+      <ns5211:table xmlns:ns5211="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.conditionals.if.numericalComparison">
+        <ns5212:title xmlns:ns5212="http://docbook.org/ns/docbook">Numerical comparison operators</ns5212:title>
+        <ns5213:tgroup xmlns:ns5213="http://docbook.org/ns/docbook" cols="2">
+          <ns5214:thead xmlns:ns5214="http://docbook.org/ns/docbook">
+            <ns5215:row xmlns:ns5215="http://docbook.org/ns/docbook"><ns5216:entry xmlns:ns5216="http://docbook.org/ns/docbook">Comparison operator</ns5216:entry><ns5217:entry xmlns:ns5217="http://docbook.org/ns/docbook">Description</ns5217:entry></ns5215:row>
+          </ns5214:thead>
+          <ns5218:tbody xmlns:ns5218="http://docbook.org/ns/docbook">
+            <ns5219:row xmlns:ns5219="http://docbook.org/ns/docbook"><ns5220:entry xmlns:ns5220="http://docbook.org/ns/docbook">-eq</ns5220:entry><ns5221:entry xmlns:ns5221="http://docbook.org/ns/docbook">is equal to</ns5221:entry></ns5219:row>
+            <ns5222:row xmlns:ns5222="http://docbook.org/ns/docbook"><ns5223:entry xmlns:ns5223="http://docbook.org/ns/docbook">-ne</ns5223:entry><ns5224:entry xmlns:ns5224="http://docbook.org/ns/docbook">not equal to</ns5224:entry></ns5222:row>
+            <ns5225:row xmlns:ns5225="http://docbook.org/ns/docbook"><ns5226:entry xmlns:ns5226="http://docbook.org/ns/docbook">-lt</ns5226:entry><ns5227:entry xmlns:ns5227="http://docbook.org/ns/docbook">less than</ns5227:entry></ns5225:row>
+            <ns5228:row xmlns:ns5228="http://docbook.org/ns/docbook"><ns5229:entry xmlns:ns5229="http://docbook.org/ns/docbook">-le</ns5229:entry><ns5230:entry xmlns:ns5230="http://docbook.org/ns/docbook">less than or equal to</ns5230:entry></ns5228:row>
+            <ns5231:row xmlns:ns5231="http://docbook.org/ns/docbook"><ns5232:entry xmlns:ns5232="http://docbook.org/ns/docbook">-gt</ns5232:entry><ns5233:entry xmlns:ns5233="http://docbook.org/ns/docbook">greater than</ns5233:entry></ns5231:row>
+            <ns5234:row xmlns:ns5234="http://docbook.org/ns/docbook"><ns5235:entry xmlns:ns5235="http://docbook.org/ns/docbook">-ge</ns5235:entry><ns5236:entry xmlns:ns5236="http://docbook.org/ns/docbook">greater than or equal to</ns5236:entry></ns5234:row>
+          </ns5218:tbody>
+        </ns5213:tgroup>
+      </ns5211:table>
+      
+      <ns5237:table xmlns:ns5237="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.conditionals.if.stringComparison">
+        <ns5238:title xmlns:ns5238="http://docbook.org/ns/docbook">String comparison operators</ns5238:title>
+        <ns5239:tgroup xmlns:ns5239="http://docbook.org/ns/docbook" cols="2">
+          <ns5240:thead xmlns:ns5240="http://docbook.org/ns/docbook">
+            <ns5241:row xmlns:ns5241="http://docbook.org/ns/docbook"><ns5242:entry xmlns:ns5242="http://docbook.org/ns/docbook">Comparison operator</ns5242:entry><ns5243:entry xmlns:ns5243="http://docbook.org/ns/docbook">Description</ns5243:entry></ns5241:row>
+          </ns5240:thead>
+          <ns5244:tbody xmlns:ns5244="http://docbook.org/ns/docbook">
+            <ns5245:row xmlns:ns5245="http://docbook.org/ns/docbook"><ns5246:entry xmlns:ns5246="http://docbook.org/ns/docbook">str1 = str2</ns5246:entry><ns5247:entry xmlns:ns5247="http://docbook.org/ns/docbook">Strings have same characters.</ns5247:entry></ns5245:row>
+            <ns5248:row xmlns:ns5248="http://docbook.org/ns/docbook"><ns5249:entry xmlns:ns5249="http://docbook.org/ns/docbook">str1 != str2</ns5249:entry><ns5250:entry xmlns:ns5250="http://docbook.org/ns/docbook">Strings are not equal.</ns5250:entry></ns5248:row>
+            <ns5251:row xmlns:ns5251="http://docbook.org/ns/docbook"><ns5252:entry xmlns:ns5252="http://docbook.org/ns/docbook">str1</ns5252:entry><ns5253:entry xmlns:ns5253="http://docbook.org/ns/docbook">Returns true if str1 is not null or is not defined</ns5253:entry></ns5251:row>
+            <ns5254:row xmlns:ns5254="http://docbook.org/ns/docbook"><ns5255:entry xmlns:ns5255="http://docbook.org/ns/docbook">-n str1</ns5255:entry><ns5256:entry xmlns:ns5256="http://docbook.org/ns/docbook">Returns true if str1 is not null and it exists.</ns5256:entry></ns5254:row>
+            <ns5257:row xmlns:ns5257="http://docbook.org/ns/docbook"><ns5258:entry xmlns:ns5258="http://docbook.org/ns/docbook">-z str1</ns5258:entry><ns5259:entry xmlns:ns5259="http://docbook.org/ns/docbook">Returns true if str1 is null and exists.</ns5259:entry></ns5257:row>
+          </ns5244:tbody>
+        </ns5239:tgroup>
+      </ns5237:table>
+      
+      <ns5260:table xmlns:ns5260="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.conditionals.if.fileTests">
+        <ns5261:title xmlns:ns5261="http://docbook.org/ns/docbook">File test operators</ns5261:title>
+        <ns5262:tgroup xmlns:ns5262="http://docbook.org/ns/docbook" cols="2">
+          <ns5263:thead xmlns:ns5263="http://docbook.org/ns/docbook">
+            <ns5264:row xmlns:ns5264="http://docbook.org/ns/docbook"><ns5265:entry xmlns:ns5265="http://docbook.org/ns/docbook">Test</ns5265:entry><ns5266:entry xmlns:ns5266="http://docbook.org/ns/docbook">Description</ns5266:entry></ns5264:row>
+          </ns5263:thead>
+          <ns5267:tbody xmlns:ns5267="http://docbook.org/ns/docbook">
+            <ns5268:row xmlns:ns5268="http://docbook.org/ns/docbook"><ns5269:entry xmlns:ns5269="http://docbook.org/ns/docbook">-s file</ns5269:entry><ns5270:entry xmlns:ns5270="http://docbook.org/ns/docbook">Returns true if file is non-empty.</ns5270:entry></ns5268:row>
+            <ns5271:row xmlns:ns5271="http://docbook.org/ns/docbook"><ns5272:entry xmlns:ns5272="http://docbook.org/ns/docbook">-f file</ns5272:entry><ns5273:entry xmlns:ns5273="http://docbook.org/ns/docbook">Returns true if file exists and is not a directory.</ns5273:entry></ns5271:row>
+            <ns5274:row xmlns:ns5274="http://docbook.org/ns/docbook"><ns5275:entry xmlns:ns5275="http://docbook.org/ns/docbook">-d directory</ns5275:entry><ns5276:entry xmlns:ns5276="http://docbook.org/ns/docbook">Returns true if directory exists.</ns5276:entry></ns5274:row>
+            <ns5277:row xmlns:ns5277="http://docbook.org/ns/docbook"><ns5278:entry xmlns:ns5278="http://docbook.org/ns/docbook">-r file</ns5278:entry><ns5279:entry xmlns:ns5279="http://docbook.org/ns/docbook">Returns true if file is readable.</ns5279:entry></ns5277:row>
+            <ns5280:row xmlns:ns5280="http://docbook.org/ns/docbook"><ns5281:entry xmlns:ns5281="http://docbook.org/ns/docbook">-w file</ns5281:entry><ns5282:entry xmlns:ns5282="http://docbook.org/ns/docbook">Returns true if file is writable.</ns5282:entry></ns5280:row>
+            <ns5283:row xmlns:ns5283="http://docbook.org/ns/docbook"><ns5284:entry xmlns:ns5284="http://docbook.org/ns/docbook">-x file</ns5284:entry><ns5285:entry xmlns:ns5285="http://docbook.org/ns/docbook">Returns true if file is executable.</ns5285:entry></ns5283:row>
+          </ns5267:tbody>
+        </ns5262:tgroup>
+      </ns5260:table>
+      
+      <ns5286:table xmlns:ns5286="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.conditionals.if.logicalOperators">
+        <ns5287:title xmlns:ns5287="http://docbook.org/ns/docbook">Logical operators</ns5287:title>
+        <ns5288:tgroup xmlns:ns5288="http://docbook.org/ns/docbook" cols="2">
+          <ns5289:thead xmlns:ns5289="http://docbook.org/ns/docbook">
+            <ns5290:row xmlns:ns5290="http://docbook.org/ns/docbook"><ns5291:entry xmlns:ns5291="http://docbook.org/ns/docbook">Operator</ns5291:entry><ns5292:entry xmlns:ns5292="http://docbook.org/ns/docbook">Description</ns5292:entry></ns5290:row>
+          </ns5289:thead>
+          <ns5293:tbody xmlns:ns5293="http://docbook.org/ns/docbook">
+            <ns5294:row xmlns:ns5294="http://docbook.org/ns/docbook"><ns5295:entry xmlns:ns5295="http://docbook.org/ns/docbook">! logicalExpression</ns5295:entry><ns5296:entry xmlns:ns5296="http://docbook.org/ns/docbook">Logical NOT</ns5296:entry></ns5294:row>
+            <ns5297:row xmlns:ns5297="http://docbook.org/ns/docbook"><ns5298:entry xmlns:ns5298="http://docbook.org/ns/docbook">logExpr1 -a logExpr2</ns5298:entry><ns5299:entry xmlns:ns5299="http://docbook.org/ns/docbook">Logical AND</ns5299:entry></ns5297:row>
+            <ns5300:row xmlns:ns5300="http://docbook.org/ns/docbook"><ns5301:entry xmlns:ns5301="http://docbook.org/ns/docbook">logExpr1 -o logExpr2</ns5301:entry><ns5302:entry xmlns:ns5302="http://docbook.org/ns/docbook">Logical OR</ns5302:entry></ns5300:row>
+          </ns5293:tbody>
+        </ns5288:tgroup>
+      </ns5286:table>
+    </ns5206:para>
+    <ns5303:section xmlns:ns5303="http://docbook.org/ns/docbook">
+      <ns5304:title xmlns:ns5304="http://docbook.org/ns/docbook">A simple example</ns5304:title>
+      <ns5305:para xmlns:ns5305="http://docbook.org/ns/docbook">
+        The following little shell script 
+        <ns5306:itemizedlist xmlns:ns5306="http://docbook.org/ns/docbook">
+          <ns5307:listitem xmlns:ns5307="http://docbook.org/ns/docbook"><ns5308:para xmlns:ns5308="http://docbook.org/ns/docbook">creates a temporary file,</ns5308:para></ns5307:listitem>
+          <ns5309:listitem xmlns:ns5309="http://docbook.org/ns/docbook"><ns5310:para xmlns:ns5310="http://docbook.org/ns/docbook">asks the user whether it should be deleted after completion,</ns5310:para></ns5309:listitem>
+          <ns5311:listitem xmlns:ns5311="http://docbook.org/ns/docbook"><ns5312:para xmlns:ns5312="http://docbook.org/ns/docbook">lists it and</ns5312:para></ns5311:listitem>
+          <ns5313:listitem xmlns:ns5313="http://docbook.org/ns/docbook"><ns5314:para xmlns:ns5314="http://docbook.org/ns/docbook">deletes it if so requested.</ns5314:para></ns5313:listitem>
+        </ns5306:itemizedlist>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/catrm2_sh.docbook"/>      
+        The output is something like the following
+        <ns5315:programlisting xmlns:ns5315="http://docbook.org/ns/docbook">
+Delete temporary file when successfully printed (y,n)?
+y
+#!/bin/bash
+
+cat $0 &gt; temp.sh  # stream this shell script into the temporary file.
+
+echo "Delete temporary file when successfully printed (y,n)?"
+read deleteTemp
+
+if cat temp.sh
+then
+  if [ $deleteTemp = "y" ]
+  then
+    rm temp.sh
+                echo "Deleted temporary file"
+  fi
+fi
+Deleted temporary file
+        </ns5315:programlisting>
+      </ns5305:para>
+    </ns5303:section>
+  </ns5197:section>
+  
+  <ns5316:section xmlns:ns5316="http://docbook.org/ns/docbook">
+    <ns5317:title xmlns:ns5317="http://docbook.org/ns/docbook">If-else constructs</ns5317:title>
+    <ns5318:para xmlns:ns5318="http://docbook.org/ns/docbook">
+      Shell scripts also support the standard if-else constructs. This is illustrated in the following
+      little script which
+      <ns5319:itemizedlist xmlns:ns5319="http://docbook.org/ns/docbook">
+        <ns5320:listitem xmlns:ns5320="http://docbook.org/ns/docbook"><ns5321:para xmlns:ns5321="http://docbook.org/ns/docbook">receives a filename as command-line argument,</ns5321:para></ns5320:listitem>
+        <ns5322:listitem xmlns:ns5322="http://docbook.org/ns/docbook"><ns5323:para xmlns:ns5323="http://docbook.org/ns/docbook">executes the file if it is executable, or</ns5323:para></ns5322:listitem>
+        <ns5324:listitem xmlns:ns5324="http://docbook.org/ns/docbook"><ns5325:para xmlns:ns5325="http://docbook.org/ns/docbook">lists it if it is not.</ns5325:para></ns5324:listitem>
+      </ns5319:itemizedlist>
+      <ns5326:programlisting xmlns:ns5326="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/processFile1_sh.docbook"/>      
+      </ns5326:programlisting>
+      The output of the application when providing our previous (executable) shell script as argument
+      is
+      <ns5327:programlisting xmlns:ns5327="http://docbook.org/ns/docbook">
+catrm2.sh is executable. Shall execute it now.
+Delete temporary file when successfully printed (y,n)?
+y
+#!/bin/bash
+
+cat $0 &gt; temp.sh  # stream this shell script into the temporary file.
+
+echo "Delete temporary file when successfully printed (y,n)?"
+read deleteTemp
+
+if cat temp.sh
+then
+  if [ $deleteTemp = "y" ]
+  then
+    rm temp.sh
+                echo "Deleted temporary file"
+  fi
+fi
+Deleted temporary file
+        
+      </ns5327:programlisting>
+      If we provide a non-executable file, we obtain something like
+      <ns5328:programlisting xmlns:ns5328="http://docbook.org/ns/docbook">
+test.txt is not executable. Shall list it for you instead.
+These are the experiences of Donald Duck,
+the champion of mediocrity and life as
+a whole.
+      </ns5328:programlisting>
+    </ns5318:para>
+  </ns5316:section>
+  
+  <ns5329:section xmlns:ns5329="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.conditionals.if.multilevel">
+    <ns5330:title xmlns:ns5330="http://docbook.org/ns/docbook">Multi-level if</ns5330:title>
+    <ns5331:para xmlns:ns5331="http://docbook.org/ns/docbook">
+      We can nest <ns5332:command xmlns:ns5332="http://docbook.org/ns/docbook">if-else</ns5332:command> statements by simply inserting another
+      <ns5333:command xmlns:ns5333="http://docbook.org/ns/docbook">if</ns5333:command> in the <ns5334:emphasis xmlns:ns5334="http://docbook.org/ns/docbook">then</ns5334:emphasis> or <ns5335:emphasis xmlns:ns5335="http://docbook.org/ns/docbook">else</ns5335:emphasis>
+      clause. Alternatively we can use a multi-level if which contains multiple <ns5336:command xmlns:ns5336="http://docbook.org/ns/docbook">elif</ns5336:command>s
+      (<ns5337:emphasis xmlns:ns5337="http://docbook.org/ns/docbook">else if</ns5337:emphasis>s).
+    </ns5331:para>
+    <ns5338:para xmlns:ns5338="http://docbook.org/ns/docbook">
+      Consider, for example, the following little script which is an extension of the previous
+      <ns5339:command xmlns:ns5339="http://docbook.org/ns/docbook">processFile.sh</ns5339:command> which also checks if the supplied file is a directory,
+      and if so, lists the content of that directory:
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/processFile2_sh.docbook"/>      
+      If one provides a normal file as command=line argument, it behaves like the previous script. If,
+      on the other hand, a directory is provided it lists it:
+      <ns5340:cmdsynopsis xmlns:ns5340="http://docbook.org/ns/docbook"><ns5341:command xmlns:ns5341="http://docbook.org/ns/docbook">
+testDir/ is a directory. Shall list its contents:
+testFile1  testFile2
+      </ns5341:command></ns5340:cmdsynopsis>
+    </ns5338:para>
+  </ns5329:section>
+  
+</ns5185:section>

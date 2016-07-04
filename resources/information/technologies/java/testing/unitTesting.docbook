@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2009-4-16 -->
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Testing</title>
+    
+    <xi:include 
+    
+    <xi:include href="whatShouldBeTested/whatShouldBeTested.docbook"/>
+    
+    
+    
+
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns7290:section xmlns:ns7290="http://docbook.org/ns/docbook" xml:id="resources.information.tecnologies.java.lang.testing.unitTesting">
+    
+    <ns7291:title xmlns:ns7291="http://docbook.org/ns/docbook">Unit Testing</ns7291:title>
+
+<ns7292:para xmlns:ns7292="http://docbook.org/ns/docbook">The test itself is usually very specific to the class and are usually written by
+a seperate person/group of persons who are responsible for the requirements
+specification for that class or by the class developer self.</ns7292:para>
+
+<ns7293:para xmlns:ns7293="http://docbook.org/ns/docbook">Writing an exhaustive test for a class is often more difficult than writing 
+the class itself and often a fully exhaustive test is impractical and too 
+expensive. Still, writing tests which at least cover a range of example scenarios
+for the usage of the class is a very valuable exercise.</ns7293:para>
+
+<ns7294:para xmlns:ns7294="http://docbook.org/ns/docbook">When writing tests it is usually a good idea to have the tests comply to the 
+specifications of some testing framework.
+</ns7294:para>
+<ns7295:para xmlns:ns7295="http://docbook.org/ns/docbook">To this end one can use simple testing frameworks 
+which locate and run all unit tests and generate log files reporting any problems 
+encountered.</ns7295:para>
+<ns7296:para xmlns:ns7296="http://docbook.org/ns/docbook">
+For example, one could specify a <ns7297:emphasis xmlns:ns7297="http://docbook.org/ns/docbook">Testable</ns7297:emphasis> superclass which is to be implemented
+by all test classes as follows:
+<ns7298:programlisting xmlns:ns7298="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="Testable.java"/>
+</ns7298:programlisting>
+</ns7296:para>
+    
+<ns7299:para xmlns:ns7299="http://docbook.org/ns/docbook">where we introduced the <ns7300:emphasis xmlns:ns7300="http://docbook.org/ns/docbook">TestFailedException</ns7300:emphasis> as follows:
+<ns7301:programlisting xmlns:ns7301="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="TestFailedException.java"/>
+</ns7301:programlisting>
+</ns7299:para>
+    
+<ns7302:para xmlns:ns7302="http://docbook.org/ns/docbook">Every <ns7303:emphasis xmlns:ns7303="http://docbook.org/ns/docbook">Testable</ns7303:emphasis> must implement the <ns7304:emphasis xmlns:ns7304="http://docbook.org/ns/docbook">runTest()</ns7304:emphasis> method. How this is implemented
+is up to the test developer which may be the class developer self. Typically the <ns7305:emphasis xmlns:ns7305="http://docbook.org/ns/docbook">runTest</ns7305:emphasis>
+method would call a number of individual tests testing normal and abnormal usage of the class.
+In general, the only exception which should be thrown by the test
+class is a <ns7306:emphasis xmlns:ns7306="http://docbook.org/ns/docbook">TestFailedException</ns7306:emphasis>.</ns7302:para>
+
+<ns7307:para xmlns:ns7307="http://docbook.org/ns/docbook">Note that the default implementation of a testable supplied by <ns7308:emphasis xmlns:ns7308="http://docbook.org/ns/docbook">Testable</ns7308:emphasis> sees to it that
+detailed output is supplied when the user-IO test is run. In the concrete subclasses there
+should be a main function which simply runs this user-IO test. 
+A convention I usually follow is that every package has a subpackage, <ns7309:emphasis xmlns:ns7309="http://docbook.org/ns/docbook">Test</ns7309:emphasis> 
+containing all the code required for testing the elements of that package. The
+convention for the main test class file names I use is that the test class name
+is that of the class it tests with a <ns7310:emphasis xmlns:ns7310="http://docbook.org/ns/docbook">"Test"</ns7310:emphasis> appended to it. Thus, the test
+class for <ns7311:emphasis xmlns:ns7311="http://docbook.org/ns/docbook">CashFlow</ns7311:emphasis> is <ns7312:emphasis xmlns:ns7312="http://docbook.org/ns/docbook">CashFlowTest</ns7312:emphasis> and it resides in a directory 
+<ns7313:emphasis xmlns:ns7313="http://docbook.org/ns/docbook">Test</ns7313:emphasis> which is a subdirectory of the directory containing the actual
+<ns7314:emphasis xmlns:ns7314="http://docbook.org/ns/docbook">CashFlow</ns7314:emphasis> class.For example, a parabola test
+could create $N$ random parabolas, calculate the roots and turning point and check each
+of these as follows:
+<ns7315:programlisting xmlns:ns7315="http://docbook.org/ns/docbook">
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="ParabolaTest.java"/>
+    </ns7315:programlisting>
+</ns7307:para>
+    
+<ns7316:para xmlns:ns7316="http://docbook.org/ns/docbook">
+The actual <ns7317:emphasis xmlns:ns7317="http://docbook.org/ns/docbook">Parabola</ns7317:emphasis> class is in the <ns7318:emphasis xmlns:ns7318="http://docbook.org/ns/docbook">Maths</ns7318:emphasis> package:
+<ns7319:programlisting xmlns:ns7319="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="Parabola.java"/>
+</ns7319:programlisting>
+</ns7316:para>
+<ns7320:para xmlns:ns7320="http://docbook.org/ns/docbook">
+The testing framework itself searches in all sub-directories for test classes, checks
+whether they are testable, runs the test and reports any problems:
+<ns7321:programlisting xmlns:ns7321="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="RunTests.java"/>
+</ns7321:programlisting>
+</ns7320:para>
+<ns7322:para xmlns:ns7322="http://docbook.org/ns/docbook">
+This application runs all testable test classeswithin any of the packages below the current
+directory. It should be run from the root directory of a package (the directory in the
+class path). It makes use of a number of file name filters as well as the directory utilities
+listed below:
+<ns7323:programlisting xmlns:ns7323="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="DirectoryUtils.java"/>
+</ns7323:programlisting>
+</ns7322:para>
+    
+<ns7324:para xmlns:ns7324="http://docbook.org/ns/docbook">To run the testing framework, <ns7325:emphasis xmlns:ns7325="http://docbook.org/ns/docbook">RunTests</ns7325:emphasis> you first go to a root directory of a class
+library (the directory in the classpath) and then type from command line
+
+<ns7326:programlisting xmlns:ns7326="http://docbook.org/ns/docbook">
+java TestUtils.RunTests
+</ns7326:programlisting>
+</ns7324:para>
+    
+</ns7290:section>

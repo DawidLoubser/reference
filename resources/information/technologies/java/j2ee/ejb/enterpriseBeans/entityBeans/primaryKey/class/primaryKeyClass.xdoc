@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.primaryKey.class.primaryKeyClass"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Primary Key Classes</title>
+    <para>
+      The primary key is used to uniquely identify entity objects -- the identity of an entity
+      bean is the value of its primary key. Often the primary key of an entity bean is a simple
+      field. The primary key may, however, be any datatype (i.e. any class)
+      which fulfills certain requirements.
+    </para>
+
+    <section>
+      <title>Requirements for Primary Keys</title>
+      <para>
+        Any objects of any class can be used forprimary keys as long as 
+        <itemizedlist>
+          <listitem>
+            <para>The type is a legal type for RMI/IIOP -- i.e. instances of the primary key class are
+              serializable. </para>
+          </listitem>
+          <listitem>
+            <para>The method <literal>hashCode()</literal> supplies unique identifier. </para>
+          </listitem>
+          <listitem>
+            <para>The <literal>equals()</literal> method has been overridden to return true if objects
+              of the primary key class are equal and false otherwise. </para>
+          </listitem>
+          <listitem>
+            <para>Any primary key object is unique within the entire set of beans for which it
+             supposed to be a primary key. </para>
+          </listitem>
+          <listitem>
+            <para>A <literal>toString()</literal> method which returns a string represetation for the
+              primary key which is unique accross all instances of the class.</para>
+          </listitem>
+        </itemizedlist>
+      </para>  
+      <para>
+        In general one should always use a primary key class, even if the primary key could have
+        been represented by a basic data type like an integer or a string. This makes it easier if
+        the problem domain changes and further requirements are placed on the primary key class.
+      </para>
+    </section>
+    
+    <section>
+      <title>WeatherStation Remote Interface</title>
+      <para>
+        Let us have a look at an example where we use a custom primary key class. Assume an
+        account we have a weather station which accumulates temperature readings from different
+        locations. It supplies two services, 
+        <itemizedlist>
+          <listitem>
+            <para>one for supplying temperature readings to the weather station and </para>
+          </listitem>
+          <listitem>
+            <para>one for querying the average temperature over a period.</para>
+          </listitem>
+        </itemizedlist>
+        The weather station offers these services through a stateless session bean:
+<programlisting>
+<xi:include parse="text" href="../../../../source/WeatherStation/src/common/WeatherStation.java" />
+</programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>A Local Interface for Weather Readings</title>
+      <para>
+        Weather reading entity beans will only be accessed locally by the session bean. We thus
+        supply only a local interface:
+<programlisting>
+<xi:include parse="text" href="../../../../source/WeatherStation/src/businessLogic/WeatherReadingLocal.java" />
+</programlisting>
+       </para>
+    </section>
+    
+    <section>
+      <title>The Primary Key Class: WeatherReadingPK.java</title>
+      <para>
+        Our weather station which receives temperature readings from different locations. Each
+        reading must be uniquely identified by, say the date/time together with the location. These
+        two fields together can thus be used for the primary key of the weather reading entity beans:
+      </para>
+      <para>
+        The primary key class must implement <literal>java.io.Serializable</literal> so that the
+        container can serialize its instances as BLOBs (binary large objects) to the database.
+      </para>
+      <para>
+        Our primary key class combines the fields which make up the primary key and supplies
+        an<literal>equals</literal> method which returns true if the argument object is a weather
+        reading for the same date and location and false otherwise:
+<programlisting>
+<xi:include parse="text" href="../../../../source/WeatherStation/src/businessLogic/WeatherReadingPK.java" />
+</programlisting>
+      </para>        
+    </section>
+    
+    <section>
+      <title>The Local Home Interface: WeatherReadingLocalHome.java</title>
+      <para>
+        We have to modify the home interface such that the create method takes at least all
+        arguments used to construct the primary key (alternatively our class could automatically
+        generate primary keys):
+<programlisting>
+<xi:include parse="text" href="../../../../source/WeatherStation/src/businessLogic/WeatherReadingLocalHome.java" />
+</programlisting>
+
+        We have specified a variety of finder methods which return collections of primary keys.</para>
+      <para/>
+    </section>
+    
+    <section>
+      <title>The Entity Bean Implementation Class: WeatherReadingBean.java</title>
+      <para>
+        The bean implementation class hosts the accessors, and supplies an
+        <literal>ejbCreate</literal> service:
+<programlisting>
+<xi:include parse="text" href="../../../../source/WeatherStation/src/businessLogic/WeatherReadingBean.java" />
+</programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>The Weather Station Client Class</title>
+      <para>
+        The weather station client does not interface directly with the weather reading entity
+        bean. It cannot since we only published local interfaces for it. It looks up the session
+        bean with the naming context and uses the services supplied by it to create and query entity
+        beans indirectly:
+<programlisting>
+<xi:include parse="text" href="../../../../source/WeatherStation/src/client/application/WeatherStationClient.java" />
+</programlisting>
+       </para>
+    </section>
+    
+    <section>
+      <title>The ejb-jar deployment descriptor</title>
+      <para>
+        The ejb-jar deployment descriptor specifies the remote and local interfaces as well as
+        the bean implementation classes for our two beans. Note that the primary key class is
+        specified as our primary key class. This will be typically stored as a serialized Java
+        object (as a BLOB).
+<programlisting>
+<xi:include parse="text" href="../../../../source/WeatherStation/META-INF/ejb-jar.xml" />
+</programlisting>
+      </para>
+
+      <note><para>
+        We specified the implementation of the finder methods in EJB-QL. This should be
+        readable to you, but we shall cover the EJB Query Language in more detail in the following chapter.
+      </para></note>
+    </section>
+    
+    <section>
+      <title>Compiling, Deploying and Running our WeatherStation</title>
+      <para>
+        Once again we use our generic targets.xml to do this steps via ant in the standard way.
+      </para>
+    </section>
+    
+  </section>

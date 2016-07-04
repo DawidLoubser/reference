@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6448:section xmlns:ns6448="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.exceptionHandling.finally">
+  <ns6449:title xmlns:ns6449="http://docbook.org/ns/docbook">The finally clause</ns6449:title>
+  <ns6450:para xmlns:ns6450="http://docbook.org/ns/docbook">
+    The finally clause specifies a block of code which is always executed, irrespective
+    of whether an exception was caught or not. This is useful if we have to do some cleaning
+    up upon both, normal and abnormal termination of a block of code. A typical example is
+    that of closing input or output streams (e.g. files or internet streams). The finalize
+    clause is illustrated in the following code snipped:
+    <ns6451:programlisting xmlns:ns6451="http://docbook.org/ns/docbook">
+try
+{
+    /* code performing file I/O */
+}
+catch (EOFException eofError) {/* do nothing */}
+ 
+catch (IOException ioError) // Now handle all other ioErrors
+   { System.err.println (ioError.getMessage()); }
+ 
+finally
+  {
+     try
+     {
+        if (fin  != null)  fin.close();
+        if (fout != null) fout.close();
+     }
+     catch (IOException error ) {}
+}
+    </ns6451:programlisting>
+  </ns6450:para>  
+  <ns6452:para xmlns:ns6452="http://docbook.org/ns/docbook">
+    You might ask, what is the difference between closing the files in the <ns6453:literal xmlns:ns6453="http://docbook.org/ns/docbook">finally</ns6453:literal> clause and closing them using standard statements
+    after the catch clauses. The difference arises when the server throws an exception which
+    we are not catching and which is then directly passed on to the next higher context, i.e.
+    up the calling hierarchy. In this case the files would only be closed if the corresponding
+    statements are located within a <ns6454:literal xmlns:ns6454="http://docbook.org/ns/docbook">finally</ns6454:literal> clause.
+  </ns6452:para>
+</ns6448:section>

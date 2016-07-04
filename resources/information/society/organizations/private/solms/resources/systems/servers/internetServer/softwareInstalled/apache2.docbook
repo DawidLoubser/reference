@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbook.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+  
+        <title>Apache 2</title>
+    
+    <para>
+        Emerged apache2 and mod_jk (unmasked the latter) and added -D JK to APACHE_OPTS in
+        /etc/conf.d/apache2 file - this feeds, by default, all requests for JSP pages to Tomcat
+        assumed to be running on port 8080.
+    </para>
+    <para>
+        All static pages and images deployed on apache, no longer via JBoss/Tomcat.
+    </para>
+    <section>
+        <title>Virtual hosting</title>
+        <para>
+            The Apache web server has been configured to use name based virtual hosting.
+            The virtual hosts configuration is found in 
+            <programlisting><![CDATA[
+/etc/apache2/vhosts.d          
+          ]]></programlisting>
+            and looks something like this:
+            <programlisting><![CDATA[
+NameVirtualHost *:80
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+#  ServerAlias solms.co.za *.solms.co.za
+#  DocumentRoot /var/www/solms
+  ServerName www.solms.co.za
+  jkmount /* ajp13
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+#  ServerAlias ledger.solms.co.za www.solmsledger.co.za
+  DocumentRoot /usr/local/sql-ledger
+  ServerName ledger.solms.co.za
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+  DocumentRoot /var/www/solms/dav
+  ServerName dav.solms.co.za
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+  DocumentRoot /var/www/solms/projects
+  ServerName projects.solms.co.za
+  ErrorLog logs/solms.co.za-error_log
+  CustomLog logs/solms.co.za-access_log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+  DocumentRoot /var/www/solms/dotproject
+  ServerName dotproject.solms.co.za
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+  DocumentRoot /var/www/solms/ical
+  ServerName ical.solms.co.za
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+  ServerAlias thinktank.org.za *.thinktank.org.za
+  DocumentRoot /var/www/thinktank
+  ServerName www.thinktank.org.za
+#  jkmount /* ajp13
+</VirtualHost>
+          ]]></programlisting>
+        </para> 
+        <para>
+            For the main domains, solms.co.za and thinktank.org.za there are also standard zone files in
+            the <literal><![CDATA[/var/bind]]></literal> directory.
+        </para>
+    </section>
+    <section>
+        <title>Authorization</title>
+        <para>
+            Created passwords file via
+            <programlisting><![CDATA[
+htpasswd -c /usr/local/apache/passwd/passwords fritz
+          ]]></programlisting>
+            and added users with same command, but leaving out the -c directive.
+        </para>
+        <para>
+            Created .htaccess in protected
+        </para>
+        
+        </section>
+    
+</article>

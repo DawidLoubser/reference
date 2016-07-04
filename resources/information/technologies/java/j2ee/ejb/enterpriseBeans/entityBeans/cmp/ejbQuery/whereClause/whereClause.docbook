@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1243:section xmlns:ns1243="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.whereClause.whereClause">
+
+<ns1244:title xmlns:ns1244="http://docbook.org/ns/docbook">Restricting the result collection via the WHERE clause</ns1244:title>
+<ns1245:para xmlns:ns1245="http://docbook.org/ns/docbook">
+  Analogous to SQL, EJB-QL uses a <ns1246:literal xmlns:ns1246="http://docbook.org/ns/docbook">WHERE</ns1246:literal> clause to
+  restrict the elements returned in the result collection.
+</ns1245:para>
+<ns1247:para xmlns:ns1247="http://docbook.org/ns/docbook">
+  For example, we can select only those courses to which one or more presenters have been
+  allocated via
+<ns1248:programlisting xmlns:ns1248="http://docbook.org/ns/docbook">
+SELECT Object(c)
+   FROM Course c
+      WHERE c.presenters NOT EMPTY
+</ns1248:programlisting>
+</ns1247:para>
+
+  <ns1249:section xmlns:ns1249="http://docbook.org/ns/docbook">
+    <ns1250:title xmlns:ns1250="http://docbook.org/ns/docbook">Using Collection Variables in WHERE Clauses</ns1250:title>
+    <ns1251:para xmlns:ns1251="http://docbook.org/ns/docbook">
+      We often have to define collection variables for multi-valued path constraints in
+      <ns1252:literal xmlns:ns1252="http://docbook.org/ns/docbook">WHERE</ns1252:literal> clauses. For example
+<ns1253:programlisting xmlns:ns1253="http://docbook.org/ns/docbook">
+SELECT Object(c)
+   FROM Course c
+      WHERE c.prerequisites.name = 'Programming in Java'
+</ns1253:programlisting>
+        is invalid because of the match against a multi-valued path, while
+<ns1254:programlisting xmlns:ns1254="http://docbook.org/ns/docbook">
+SELECT Object(c)
+   FROM Course c, IN(c.prerequisites) p
+      WHERE p.name = 'Programming in Java'
+</ns1254:programlisting>
+       is valid.
+    </ns1251:para>
+  </ns1249:section>
+</ns1243:section>

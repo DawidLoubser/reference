@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+  -->  
+<section id="resources.information.technologies.c.pointers.pointersToPointers"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Pointers to pointers</title>
+  <para>
+      A pointer may point to a variable which itself is a pointer. This is the basis
+      on which multi-dimensional arrays is built.
+  </para>    
+  
+  <section><title>Multi-dimensional arrays</title>
+    <para>
+      When we construct a multi-dimensional array we 
+      <itemizedlist>
+        <listitem><para>
+          either create it as a single
+          large memory block and resolve the correct element by mapping between the
+          multi-dimensional representation used by users and the single-dimensional
+          internal representation or
+        </para></listitem>
+        <listitem><para>
+          build up the multidimensional structure in memory using pointer to pointers
+          as is illustrated in <xref linkend="figDynamicArray2D"/>.
+        </para></listitem>
+      </itemizedlist>
+      <figure id="figDynamicArray2D">
+        <title>Constructing a 2-dimensional array dynamically.</title>
+        <graphic format="JPG"  fileref="DynamicArray2D.jpg"/>
+      </figure>  
+      <example id="matrixProduct2.c"><title>matrixProduct2.c</title>
+        <para>
+          In this example we revisit the matrix product discussed in 
+          <xref linkend="matrixProduct2.c"/>. But this time we make use of pointers
+          to make our code a lot cleaner and more re-usable:
+        </para>    
+
+        <programlisting><xi:include href="matrixProduct2.c" parse="text"/></programlisting>   
+
+        <para>
+          Note how we construct our matrix row-for-row and note also how
+          we free the pointers in reverse order, <abbrev>i.e.</abbrev> that we first
+          release the memory held by the <type>double*</type>s which
+          reference the matrix rows and then we release the
+          <type>double**</type> pointing to the array of row-pointers.
+        </para>
+      </example>
+    </para>  
+    
+    <section><title>Pointers and constants</title>
+      <para>
+        In <xref linkend="matrixProduct2.c"/> we used constant pointers to lay
+        down a contract that a method will not change certain information.
+        For example, the function <function>matrixProduct</function> will
+        take two matrices as arguments and return the product matrix. Neither
+        of the two operand matrices will be modified by the function. In order
+        to state this in our interface specification we used the following interface:
+        <programlisting>
+double** matrixProduct(const double * const * const mat1, 
+                     const int nRowsMat1, const int nColsMat1, 
+                     const double * const * const mat2, 
+                     const int nRowsMat2, const int nColsMat2,
+                     int* nRowsProduct, int* nColsProduct)
+{ ... }          
+        </programlisting>
+      </para>
+      <para>
+        On first sight this may look rather intimidating. How should one interpret
+        <type>const double * const * const</type>. In order to understand this data
+        type, take another look at <xref linkend="figDynamicArray2D"/>. Let us now
+        go from right to left. The right-most <type>const</type> specifies that the
+        <type>double**</type> may not be modified, <abbrev>i.e.</abbrev> the address it points to.
+      </para>
+      <para>
+        The second <type>const</type> specifies that each of the <type>double*</type>,
+        <abbrev>i.e.</abbrev> each of the row pointers is will not be modified by the
+        <function>matrixProduct</function> function and the left-most <type>const</type>
+        specifies that the <type>double</type>s they point to (<abbrev>i.e.</abbrev> the actual matrix
+        elements) will not be modified by the function.
+      </para>
+    </section>
+  </section>        
+</section>

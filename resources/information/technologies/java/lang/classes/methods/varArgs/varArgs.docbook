@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Variable-length arguments</title>
+  
+  <indexterm>
+    <primary>Variable-length arguments</primary>
+  </indexterm>
+  
+  <para>
+    Variable-length arguments (often called <quote>VarArgs</quote>) are a 
+    source-code construct which makes it more convenient to write and invoke 
+    certain services which require an undetermined number of arguments (parameters).
+  </para>
+  
+  <section>
+    <title>Using variable-length arguments</title>
+    <para>
+      Varargs do offer any additional functionality over the usage of
+      collection types (such as arrays) for arguments. They do, however,
+      make it more convenient to <emphasis>literally</emphasis> invoke
+      services by removing the need for the developer to create the array
+      or collection to hold the values being passed in. Consider the
+      following example of a simple number averaging service:
+      <programlisting language="Java">
+<xi:include href="src/Average.java" parse="text"/>
+      </programlisting>
+      Which could be invoked as follows:
+      <programlisting language="Java">
+<xi:include href="src/AverageClient.java" parse="text"/>
+      </programlisting>
+    </para>
+    <para>
+      While an approach based on arrays (or more typically, Collections)
+      is preferable for most services which will be invoked with input
+      derived from some a source external to the class (such as user input, 
+      database results, etc) there are cases where we would like a more
+      convenient method to, at a source code level, invoke a service with
+      a multi-valued argument. To do so, we could write the service
+      provider as follows:
+      <programlisting language="Java">
+<xi:include href="src/Average2.java" parse="text"/>
+      </programlisting>
+      Which could be invoked as follows:
+      <programlisting language="Java">
+<xi:include href="src/Average2Client.java" parse="text"/>
+      </programlisting>
+      We changed the specification of the <literal>numbers</literal> argument by
+      adding an ellipsis (<literal>...</literal>). This implies that
+      the argument will be of type <emphasis>array</emphasis>, but that
+      the actual array (container) will be constructed by Java itself -
+      the developer may invoke it by passing the parameter values as
+      discrete arguments. In the test program we do so twice, with
+      different numbers of arguments.
+    </para>
+    <note>
+      <para>
+        If a parameter has been specified as a VarArg (with
+        <literal>...</literal>) it could still, at any time, be invoked by
+        passing in an array object reference. Both forms are thus
+        interchangeable, but the reverse is not true: If an argument has
+        explicitly been specified as an array, it cannot not be invoked by
+        simply passing a variable number of arguments (An array will be
+        required).
+      </para>
+    </note>
+    
+    <section>
+      <title>Multiple parameters</title>
+      <para>
+        A Variable-length argument could be specified in conjunction with
+        other arguments. However,
+        <itemizedlist>
+          <listitem>
+            <para>at most one VarArg may be used per service, and</para>
+          </listitem>
+          <listitem>
+            <para>the VarArg must be the last argument in the list.</para>
+          </listitem>
+        </itemizedlist>
+        This avoids any possible ambiguity problems. For example, we could
+        specify a service to print a collection of numbers (specified as a
+        VarArg), each with a given prefix and suffix, as follows:
+        <programlisting language="Java">
+<xi:include href="src/NumberPrint.java" parse="text"/>
+        </programlisting>
+        The program produces the following output:
+        <programlisting><![CDATA[
+<-1...>
+<-2...>
+<-3...>
+<-4...>
+<-5...>
+[30.3]
+[40.4]
+          ]]></programlisting>
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>When to use variable-length arguments?</title>
+    <para>
+      Clearly, VarArgs are of limited practical use for most business
+      problems. They are mapped to arrays, which are often not suitable
+      to represent more dynamic collections of objects (such as sorted
+      sets, queues, etc).
+    </para>
+    <para>
+      Furthermore, most collections of objects that must be passed to
+      a service would have been assembled from some external source or
+      activity (such as a user interface).
+    </para>
+    <para>
+      Variable-length arguments are thus useful only for collections of objects 
+      which are explicitly known at development time: For this scenario,
+      they do reduce code bulk. It is possible that VarArgs were
+      introduced solely for the benefit of <emphasis>Formatter</emphasis>s
+      and the <literal>printf</literal> service of
+      <literal>java.io.Printstream</literal>. Inspired by
+      <literal>C</literal>'s <literal>printf</literal> service, this
+      service makes it easy to output formatted and localised text by
+      specifying an output pattern (using special placeholder characters), and 
+      then binding objects to them. For example:
+      <programlisting language="Java"><![CDATA[
+System.out.printf("Dear %s, happy birthday on %F", p.getName(), p.getBDay());
+        ]]></programlisting>
+    </para>
+    <para>
+      Similarly, it could be useful (for example) to request that several
+      GUI windows be closed at once, such as in this hypothetical example:
+      <programlisting language="Java"><![CDATA[
+windowController.close( toolbox, colourPalette, editingWindow );
+        ]]></programlisting>
+      In both cases, the collections of objects are known at development
+      time, and the number of arguments are likely to vary in different
+      contexts.
+    </para>
+  </section>
+  
+  <section>
+    <title>VarArgs and Java reflection</title>
+    <para>
+      Whenever we use Java's reflection framework to inspect or 
+      programatically invoke a service, a variable-length argument will simply be represented
+      for what it really is: an array. Like <emphasis>Generics</emphasis>,
+      VarArgs are really a source code / developer convenience feature, and do 
+      not exist as such at runtime. 
+    </para>
+  </section>
+
+</chapter>

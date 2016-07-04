@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="components.technologies.www.http.maintainingClientState">
+    <title>Maintaining Client State</title>
+  <indexterm>
+    <primary>HTTP</primary>
+    <secondary>state</secondary>
+    <tertiary>maintenance</tertiary>
+  </indexterm>
+    <para>
+        Because HTTP is connectionless, and due to the nature of the Internet, network paths
+        and IP addresses can change at any time. HTTP itself does not
+        specify any mechnism for a web server
+        to identify any two successive requests as originating from the same client.
+    </para>
+    <para>
+        Yet, many web sites / web applications require the maintenance of client state, an obvious example being 
+        the maintenance of a user's shopping cart on an e-commerce site. Several mechanisms have been devised to solve 
+        this problem:
+    </para>
+    <para>
+        <itemizedlist>
+            <listitem>
+                <formalpara><title>Cookies</title>
+                    <para>When a client visits a server for the first time, he is given a &quot;token&quot; in the form of
+                    a cookie. This token is usually a long/ecrypted hash code of some sort, with an extremely small chance
+                    of being reproduced by any other client. During subsequent requests, the client passes this
+                    cookie back to the server, until indicated by the server to remove the cookie, or until it expires. 
+                    This makes cookies the most practical mechanism for maintaining client state.</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara><title>URL Rewriting</title>
+                    <para>Similar to cookies, the idea is to provide the client with a unique token to reproduce on the next
+                    request: This is accomplished by the server re-writing all links in the HTML code (on the fly) to include the token
+                    as a parameter, should the link be followed. This method is quite inefficient, and requires the server to
+                    parse all pages before sending them to the client (every time).</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara><title>Hidden Form Fields</title>
+                <para>Similar to URL rewriting, here the token is included as a hidden field in HTTP forms. When the user submits
+                the form, the token is sent with (thus, also as a parameter). Since this mechanism only works for
+                requests that result from the submission of an HTML form, it is not practical for general site-wide use, and is
+                rarely used anymore.</para>
+                </formalpara>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        Once the server has established a mechanism for exchanging a unique token with the user, it can now
+        use any server-specific methods to provide customised behaviour based on the identity of the requester,
+        e.g. storing different users' items in their own shopping carts, or showing privileged content
+        to certain users only.
+    </para>
+  </section>

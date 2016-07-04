@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns2819:section xmlns:ns2819="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.dns.server">
+
+	<ns2820:title xmlns:ns2820="http://docbook.org/ns/docbook">DNS Server</ns2820:title>
+	<ns2821:para xmlns:ns2821="http://docbook.org/ns/docbook">
+ 	The server is configured via a set of configuration files. The <ns2822:emphasis xmlns:ns2822="http://docbook.org/ns/docbook" role="strong">/etc/named.conf</ns2822:emphasis>	contains the server configuration, including the server behaviour, it's forwarding policy, a list of domain names hosted on this server, and some details pertaining to security.
+	</ns2821:para>
+	<ns2823:programlisting xmlns:ns2823="http://docbook.org/ns/docbook">
+	
+options {
+	directory "/var/named";
+};
+
+zone "." IN {
+	type hint;
+	file "named.ca";
+};
+
+zone "localhost" IN {
+	type master;
+	file "localhost.zone";
+};
+
+zone "0.0.127.in-addr.arpa" IN {
+	type master;
+	file "named.local";
+};
+
+zone "0.168.192.in-addr.arpa" IN {
+	type master;
+	file "0.168.192.in-addr.arpa";
+};
+
+zone "earth" IN {
+	type master;
+	file "earth";
+};
+	
+	</ns2823:programlisting>
+	<ns2824:para xmlns:ns2824="http://docbook.org/ns/docbook">
+	The directory parameter indicates the directory in which the domain specific configuration files are stored. Each zone section contains the configuration for the uni directional mapping (name-&gt;address or address-&gt;name). The type parameter indicates either master for the primary server, or slave for the secondary (or ternary) server. For zones with type slave, a list of master servers has to be specified via a <ns2825:emphasis xmlns:ns2825="http://docbook.org/ns/docbook" role="strong">masters { 127.0.0.1; }</ns2825:emphasis>. The file parameter specifies a file residing in the directory specified with the directory parameter. Once the server has been configured, each of the domain records hosted on the DNS server has to be configured. For each domain record, a mapping has to be configured for mapping a name to an address, as well as a reverse mapping which maps the address to a name. 
+	</ns2824:para>
+	
+	<ns2826:para xmlns:ns2826="http://docbook.org/ns/docbook">
+	Zone : Maps names to addressed
+	</ns2826:para>
+	<ns2827:programlisting xmlns:ns2827="http://docbook.org/ns/docbook">
+		
+$TTL 3D 
+@          IN   SOA  earth. alex.earth. ( 
+                        200302231   ; serial, todays date + todays serial # 
+                        28800      ; Refresh
+                        14400      ; Retry
+                        3600000    ; Expire
+                        86400 )    ; Minimum
+;
+                NS   teddy.earth.  ; Inet Address of name server 
+                MX   10   butterfly.earth.  ; Primary Mail Exchanger 
+;
+teddy           A     192.168.0.1
+butterfly  IN   A     192.168.0.2
+bumblebee  IN   A     192.168.0.3
+arb1       IN   A     192.168.0.4
+arb2       IN   A     192.168.0.5
+arb3       IN   A     192.168.0.6
+bug        IN   CNAME  teddy
+		
+	</ns2827:programlisting>
+	
+	<ns2828:para xmlns:ns2828="http://docbook.org/ns/docbook">
+	Reverse Zone : Maps addressed to names.
+	</ns2828:para>
+	<ns2829:programlisting xmlns:ns2829="http://docbook.org/ns/docbook">
+		
+$TTL  3D
+@       IN      SOA     earth. alex.earth.  (
+                        200302231  ; Serial
+                        28800      ; Refresh
+                        14400      ; Retry
+                        3600000    ; Expire
+                        86400 )    ; Minimum
+         IN      NS      teddy.earth.
+      
+1        IN      PTR     teddy.earth.
+2        IN      PTR     butterfly.earth.
+3        IN      PTR     bumblebee.earth.
+4        IN      PTR     arb1.earth.
+5        IN      PTR     arb2.earth.
+6        IN      PTR     arb3.earth.
+		
+	</ns2829:programlisting>
+	<ns2830:para xmlns:ns2830="http://docbook.org/ns/docbook">
+Both configuration files have to begin with a line containing <ns2831:emphasis xmlns:ns2831="http://docbook.org/ns/docbook" role="strong">$TTL 3D</ns2831:emphasis>, which is followed by the SOA record. There can only be a single SOA record per zone configuration file. The SOA record contains information on the administrator (alex@earth), the version of the zone file, and caching information. The serial number traditionally consists of the date, plus a number usually starting at 1, and is used to compare the records residing on the master server with those on the slave server. Should the master server have a higher number than the slave server, then the zone is transferred. The NS record contains a list of name servers for this domain record. The MX record lists the mail servers, which are configured to receive email for this domain. Each MX record also contains the priority, lowest first starting from 10. The A record is used to map authoritively a name to an address. The PTR record (Domain Name Pointer) in the reverse zone mapping, maps an address to a name.
+	</ns2830:para>
+	<ns2832:para xmlns:ns2832="http://docbook.org/ns/docbook">
+	Once the configuration parameters are set, and the bind packages are installed, the name server can be started via <ns2833:emphasis xmlns:ns2833="http://docbook.org/ns/docbook" role="strong">/etc/init.d/named start</ns2833:emphasis>.
+	</ns2832:para>
+	<ns2834:section xmlns:ns2834="http://docbook.org/ns/docbook">
+		<ns2835:title xmlns:ns2835="http://docbook.org/ns/docbook">Forwarding requests to another DNS server</ns2835:title>
+		<ns2836:para xmlns:ns2836="http://docbook.org/ns/docbook">
+		Optionally, a forward configuration can be added to the option section in <ns2837:emphasis xmlns:ns2837="http://docbook.org/ns/docbook" role="strong">/etc/named.conf</ns2837:emphasis>. This will forward requests to another DNS server, thus reducing traffic on the local network. Should the target server not be able to resolve the request, the server itself will perform an attempt.
+		</ns2836:para>
+		<ns2838:programlisting xmlns:ns2838="http://docbook.org/ns/docbook">
+forward first;
+forwarders {
+	192.168.1.1;
+	192.168.1.2;
+};
+		</ns2838:programlisting>
+	</ns2834:section>	
+</ns2819:section>

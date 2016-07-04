@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-03-10 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>Mapping UML interfaces onto Java</title>
+    <para>
+        UML interfaces map directly onto Java interfaces. The realization relationship maps to
+        the Java
+        <literal>implements</literal>
+        keyword.
+    </para>
+
+    <figure xml:id="technology.java.lang.umlMappings.classDiagram.interface.accountInterface_fig">
+        <title/>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="400" fileref="./accountInterface.jpg"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+
+    <para>Consider the interface with pre- and post-conditions shown in<xref
+            linkend="technology.java.lang.umlMappings.classDiagram.interface.accountInterface_fig"/>.
+        This interface maps onto the following Java interface with each pre-condition mapping
+        onto a notifiable (non-run time) exception:
+        <programlisting language="Java">
+<xi:include parse="text" href="Account.java"/>
+        </programlisting>
+        <note>
+            <para>The notifiable (non run-time) exceptions are the contract exceptions. They are
+                used to notify the client that a the service requested is not going to be provided
+                as one of the pre-conditions was not met.
+            </para>
+            <para>The runtime exceptions are used to specify application errors. These should be
+                thrown when the contractual requirements could not be met.
+            </para>
+        </note>
+    </para>
+    <para>A class which implements the interface will have to method bodies for the business
+        processes through which the services are realized.
+        <programlisting language="Java">
+<xi:include parse="text" href="SavingsAccount.java"/>
+        </programlisting>
+    </para>
+
+    <para>The Java language attempts to enforce that the pre-conditions are not increased by
+        forbidding that any implementing class may not throw any other non-run-time exceptions than
+        those specified int the interface.
+    </para>
+    <note>
+        <para>To check whether one's implementation satisfied the post-conditions, one commonly
+            uses inserts
+            <literal>assert</literal>
+            statements just before returning from the method
+            to the client.
+        </para>
+    </note>
+
+    <para>Interface (or contract) extension is supported in Java. For example, if one would like to
+        specify that any class which implements
+        <literal>Printable</literal>
+        should also be
+        <literal>Viewable</literal>
+        (
+        <abbrev>i.e.</abbrev>
+        that one can obtain a preview for any
+        printable resource), then one can specify that the
+        <literal>Printable</literal>
+        interface
+        <emphasis>extends</emphasis>
+        the
+        <literal>Viewable</literal>
+        interface:
+        <programlisting language="Java">
+<xi:include parse="text" href="Viewable.java"/>
+        </programlisting>
+    </para>
+
+</section>

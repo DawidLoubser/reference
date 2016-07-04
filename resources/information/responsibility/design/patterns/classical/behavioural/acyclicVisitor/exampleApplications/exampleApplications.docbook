@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Example applications</title>
+    <para>
+        The acyclic visitor pattern still enables one to add a polymorphic service across a class hierarchy
+        without modifying the classes in the class hierarchy and without introducing a cyclic dependency
+        between the element and the visitor hierarchy.
+    </para>
+    <para>
+        It can be applied to the same problem domain as what the classical visitor pattern is applied to
+        including adding polymorphic services to class hierarchies which
+        <itemizedlist>
+            <listitem><para>
+                cannot be modified because the source code is not available,       
+            </para></listitem>
+            <listitem><para>
+                one does not want to modify because the class hierarchy is maintained by a different
+                development team and one does not want to absorb the maintenance burden of maintaining
+                one's own modifications, and
+            </para></listitem>
+            <listitem><para>
+                one may not want to modify because adding those services would pollute the responsibility
+                focus of the classes.
+            </para></listitem>
+        </itemizedlist>
+        
+    </para>
+    <section>
+        <title>Total salary and total leave calculators</title>
+        <para>
+            Reconsider the example of the <literal>TotalSalaryCalculator</literal> and
+            let us add a <literal>TotalLeaveCalculator</literal>.
+        </para>
+        
+        <figure>
+            <title>The structure used for a visitor adding a getTotalSalary() service to employees.n</title>
+            <mediaobject><imageobject>
+                <imagedata fileref="employeeVisitors.jpg"/>
+            </imageobject></mediaobject>
+        </figure>        
+        
+        <para>
+            The <literal>TotalSalaryCalculator</literal> adds a polymorphic 
+            <literal>getTotalSalary()</literal> method to the entire element class hierarchy
+            which executes different algorithms for different types of employees.
+        </para>
+        <para>
+            The <literal>TotalLeaveCalculator</literal> cannot be applied to contract workers
+            and hence only impements the <literal>DeveloperVisitor</literal> and
+            <literal>ManagerVisitor</literal> interfaces.
+        </para>
+    </section>
+</section>

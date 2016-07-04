@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Scheduling jobs for periodic processing via <command>crontab</command></title>
+    <para>
+        At times you may want to schedule recurring jobs. For example, every Friday you may
+        want to run a system backup or every morning at 7h00 you may want to download the 
+        price list for the day. In such cases you can use the cron facility.
+    </para>
+    
+    <section><title>Restricting access to <command>cron</command></title>
+        <para>
+            Firstly, any user who wishes to submit jobs to the cron daemon must be a member of the cron
+            group. You can add a user to the cron group via
+            <programlisting><![CDATA[
+gpasswd -a hamlet cron        
+        ]]></programlisting>
+        </para>
+        <para>
+            Access to the <command>cron</command> command is controlled through two files,
+            <filename>/etc/cron.allow</filename> and <filename>/etc/cron.deny</filename>.
+            If neither of the files exist then only the superuser can schedule commands via
+            <command>cron</command>.
+            Usually one only uses one of the two files:
+            <itemizedlist>
+                <listitem><para>
+                    If one wants to deny access by default and only grant access to specified users,
+                    one only has a <filename>/etc/cron.allow</filename>. The users listed in that 
+                    file will be able to schedule jobs via <command>crontab</command>. If the file
+                    is empty then only the superuser is able to use <command>crontab</command>.
+                </para></listitem>
+                <listitem><para>
+                    If one wants to allow all users by default to be able to use <command>cron</command>,
+                    then one uses the <filename>/etc/cron.deny</filename> file to list those users which
+                    are explicitly prevented from using it. If the file is empty, all users can schedule
+                    jobs via <command>crontab</command>.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Submitting a job to <command>cron</command></title>
+        <para>
+            Users will submit their routinely recurring jobs within a file which is located
+            in the <filename>/var/spool/cron/tabs</filename> directory and which has
+            the user name as filename. The crontab files should NOT be edited directly.
+            Instead they should be edited via the 
+            <cmdsynopsis><command>
+                crontab -e        
+            </command></cmdsynopsis>
+            which launches your default editor (as specified with the <varname>EDITOR</varname>
+            environment variable -- <command>vi</command> being the default) to edit
+            your crontab file.
+            The file contains one line for each job which has the entries shown in the table below.
+            An asterisk for any of the fields specifies that field can have any value.
+        </para>
+        
+        <table>
+            <title>The structure of the user's <command>cron</command> files</title>
+            <tgroup cols="6">
+                <tbody>
+                    <row>
+                        <entry>minute</entry>
+                        <entry>hour</entry>
+                        <entry>dayOfMonth</entry>
+                        <entry>monthOfYear</entry>
+                        <entry>dayOfWeek</entry>
+                        <entry>command</entry>
+                    </row>
+                    <row>
+                        <entry>00 - 59</entry>
+                        <entry>00 - 23</entry>
+                        <entry>00 - 31</entry>
+                        <entry>01 - 12</entry>
+                        <entry>01 - 07</entry>
+                        <entry> command to be scheduled</entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </table>
+
+        <para>
+            For example, assume that every Friday at 21h30 you would want to find all the 
+            <quote><emphasis>transaction failed</emphasis></quote> lines in a log file
+            and mail them through to user <emphasis>jack</emphasis>. You could enter
+            the following line into the user's tab file:
+            <programlisting><![CDATA[
+30 21 * * 05 grep 'transaction failed' /var/log/transactionLog | mail -s"failed transactions" jack    
+      ]]></programlisting>
+        </para>
+        
+        <section>
+            <title>Viewing and removing all crontab entries</title>
+            <para>
+                You can use the command
+                <cmdsynopsis><command>
+                    crontab -l          
+                </command></cmdsynopsis>
+                to list the crontab entries. 
+            </para>
+            <para>
+                You can use 
+                <cmdsynopsis><command>
+                    crontab -e          
+                </command></cmdsynopsis>
+                to edit the crontab file for your user and delete the entries you want to remove.
+                Alternatively you can use
+                <cmdsynopsis><command>
+                    crontab -r          
+                </command></cmdsynopsis>
+                to remove all the entries from your crontab file.
+            </para>
+        </section>
+    </section>
+    
+    
+    <section>
+        <title>Specifying standard hourly, daily, weekly and monthly jobs</title>
+        <para>
+            In addition to the user's crontab file, Linux supports a separate system-wide 
+            hourly, daily and monthly scheduling mechanism. For this purpose there are
+            the directories
+            <filename>/etc/cron.hourly</filename>, <filename>/etc/cron.daily</filename>,
+            <filename>/etc/cron.weekly</filename> and <filename>/etc/cron.monthly</filename>.
+            Shell scripts placed in these directories will be run from the <varname>root</varname>
+            user in the corresponding frequency.
+        </para>
+        <para>
+            For example, on most Linux distributions, the <filename>/etc/cron.daily</filename>
+            includes <command>logrotate</command> which rotates and compresses system
+            log files.
+        </para>
+        
+        <section>
+            <title>Configuration via <filename>/etc/crontab</filename></title>
+            <para>
+                The <filename>/etc/crontab</filename> file contains the configuration information
+                for the standard hourly, daily, weekly and monthly schedules. It specifies
+                <itemizedlist>
+                    <listitem><para>
+                        the shell from which the scheduled jobs should be run,  
+                    </para></listitem>
+                    <listitem><para>
+                        the <varname>PATH</varname> environment variable to be used,
+                    </para></listitem>
+                    <listitem><para>
+                        the user (typically <varname>root</varname>) to be mailed with the
+                        job outputs,
+                    </para></listitem>
+                    <listitem><para>
+                        and for each interval when the jobs are to be run and under which user
+                        they should be run.
+                    </para></listitem>
+                </itemizedlist>
+                Below is an example <filename>/etc/crontab</filename> file  :
+                <programlisting><![CDATA[
+SHELL=/bin/sh
+PATH=/usr/bin:/usr/sbin:/sbin:/bin:/usr/lib/news/bin
+MAILTO=root
+#
+# check scripts in cron.hourly, cron.daily, cron.weekly, and cron.monthly
+#
+-*/15 * * * *   root  test -x /usr/lib/cron/run-crons && /usr/lib/cron/run-crons >/dev/null 2>&1
+59 *  * * *     root  rm -f /var/spool/cron/lastrun/cron.hourly
+14 0  * * *     root  rm -f /var/spool/cron/lastrun/cron.daily
+29 0  * * 6     root  rm -f /var/spool/cron/lastrun/cron.weekly
+44 0  1 * *     root  rm -f /var/spool/cron/lastrun/cron.monthly
+        ]]></programlisting>
+            </para>
+        </section>
+    </section>
+</section>

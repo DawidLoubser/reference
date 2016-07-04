@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-3-20 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The Wide-Band Delphi estimation meeting</title>
+
+
+    <para> The Wide-Band Delphi method is used to establish a common understanding of the work which
+        needs to be performed and the project risks and to generate a consensus estimate for the
+        project tasks and the project as a whole. </para>
+
+    <section>
+        <title>Establishing a common task list</title>
+        <para> The meeting starts with an initial discussion where each estimator reads their task
+            and risk lists (without estimates), discusses and assumptions made and raises any
+            questions they may have. From this a complete task list is consolidated. In order to
+            consolidate a common task list the tasks of some estimators may need to be split up and
+            those of others which may have gone to a too fine level of granularity may have to be
+            recombined. The task list should have at most 30 or 40 tasks and may be significantly
+            shorter than this. </para>
+    </section>
+
+    <section>
+        <title>Pert Estimation</title>
+
+        <para> PERT estimation can be applied to any level of estimation. It is a simple statistical
+            approach where obtain not only estimates for the expected time required, but in addition
+            to this also optimistic and pessimistic estimates. </para>
+    </section>
+
+    <section>
+        <title>A Wide-Band Delphi iteration</title>
+        <para>
+            <orderedlist>
+                <listitem>
+                    <para> Each estimator provides for each task his/her minimum, most-likely and
+                        maximum estimates. Assuming a normal distribution, Pert estimation then
+                        estimates <itemizedlist>
+                            <listitem>
+                                <para> the <emphasis>mean</emphasis> for each expert as
+                                    <programlisting>
+mean_i = (maxValue_i + 4*expectedValue_i + minValue_i) / 6            
+                  </programlisting>
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para> the standard deviation for the probability distribution for
+                                    the estimate of each expert, <literal>i</literal>, as
+                                    <programlisting>
+stdDev_i = (maxValue_i - minValue_i) / 6            
+                  </programlisting>
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para> For each task the following cycle is performed <orderedlist>
+                            <listitem>
+                                <para> The moderator calculates from the average of the expected
+                                    values across the estimators via
+                                    <programlisting>
+averageExpectedValue = sum_i expectedValue_i / numExperts                  
+                  </programlisting>
+                                    and then determines the expert estimate,
+                                        <literal>expectedValue_i</literal>, which deviates most from
+                                    the average. </para>
+                            </listitem>
+                            <listitem>
+                                <para> Only the average for each task is communicated to the panel
+                                    of experts. </para>
+                            </listitem>
+                            <listitem>
+                                <para> The estimator who provided the estimate furthest removed from
+                                    the average may have identified risks or complexities which the
+                                    others omitted. He/she discusses with the panel the motivation
+                                    behind the estimate. </para>
+                            </listitem>
+                            <listitem>
+                                <para> The panel is given the opportunity to update their estimate
+                                    for that task. </para>
+                            </listitem>
+                            <listitem>
+                                <para> The process is repeated for this task until either consensus
+                                    within a specified range (<abbrev>e.g.</abbrev> 20 or 25%) or
+                                    until the maximum number of iterations (typically 3 or 4) is
+                                    reached. </para>
+                            </listitem>
+                        </orderedlist>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para> The final minimum, most-likely and maximum estimates for that task is
+                        captured for each estimator and from this the mean,
+                        <literal>mean_i</literal>, and standard deviation,
+                            <literal>standardDeviation_i</literal>, for the probability distribution
+                        of each estimator is calculated. </para>
+                </listitem>
+                <listitem>
+                    <para> The probability distribution for the entire panel of experts for that
+                        task is assumed to be a normal distribution with
+                        <programlisting>
+mean = sum_i weight_i mean_i              
+              </programlisting>
+                        and
+                        <programlisting>
+stdDev = sqrt( sum_i weight_i (stdDev_i^2  + mean_i^2) - mean^2)
+              </programlisting>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para> The process is repeated for the next task until the Wide-Band Delphi
+                        estimates for each task have been obtained. </para>
+                </listitem>
+            </orderedlist>
+        </para>
+        <note>
+            <para> If only 2 experts are used then the process is simplified to a discussion on the
+                differences in the initial estimates for each task and a second estimation by the
+                two experts after their discussion. </para>
+        </note>
+
+        <section>
+            <title>Example</title>
+            <para> Assume there are 3 experts who provide the following estimates for the minimum,
+                expected and maximum values. The calculated pert estimates for the mean and standard
+                deviation are shown in column 5 and 6. </para>
+            <table>
+                <title>Expert estimates, the mean and standard deviation</title>
+                <tgroup cols="6">
+                    <thead>
+                        <row>
+                            <entry>
+                                <para>Expert</para>
+                            </entry>
+                            <entry>
+                                <para>Min value</para>
+                            </entry>
+                            <entry>
+                                <para>Expected value</para>
+                            </entry>
+                            <entry>
+                                <para>Max value</para>
+                            </entry>
+                            <entry>
+                                <para>Mean</para>
+                            </entry>
+                            <entry>
+                                <para>Std deviation</para>
+                            </entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>1</para>
+                            </entry>
+                            <entry>
+                                <para>75 person days</para>
+                            </entry>
+                            <entry>
+                                <para>100 person days</para>
+                            </entry>
+                            <entry>
+                                <para>105 person days</para>
+                            </entry>
+                            <entry>
+                                <para>96.7 person days</para>
+                            </entry>
+                            <entry>
+                                <para>5</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>2</para>
+                            </entry>
+                            <entry>
+                                <para>90 person days</para>
+                            </entry>
+                            <entry>
+                                <para>95 person days</para>
+                            </entry>
+                            <entry>
+                                <para>125 person days</para>
+                            </entry>
+                            <entry>
+                                <para>99.2 person days</para>
+                            </entry>
+                            <entry>
+                                <para>5.83</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>3</para>
+                            </entry>
+                            <entry>
+                                <para>85 person days</para>
+                            </entry>
+                            <entry>
+                                <para>110 person days</para>
+                            </entry>
+                            <entry>
+                                <para>130 person days</para>
+                            </entry>
+                            <entry>
+                                <para>109.2 person days</para>
+                            </entry>
+                            <entry>
+                                <para>7.5</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </table>
+            <para> Using equal weights for the experts we obtain the probability distribution for
+                the panel as a normal distribution with mean 101.67 and a standard deviation of
+                8.22. The approximated normal probability distributions of the individual experts
+                and the resultant cumulative probability distribution for the panel are shown in
+                    <xref
+                    linkend="responsibility.projectManagement.costManagement.estimation.quantitativeWideBandDelphi.process.expertPanelProbabilityDistribution_fig"
+                />. <note>
+                    <para> Once exerts have established an estimation track record, the more
+                        experienced experts with the a history of good estimates can be given a
+                        stronger weight then less experienced experts or experts who have a
+                        background of less accurate estimation. </para>
+                </note>
+            </para>
+            <figure xml:id="responsibility.projectManagement.costManagement.estimation.quantitativeWideBandDelphi.process.expertPanelProbabilityDistribution_fig">
+                <title>Probability distribution of individual experts and the panel as a whole</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="expertPanelProbabilityDistribution.jpg"/>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        </section>
+    </section>
+
+
+
+    <section>
+        <title>Total project estimate</title>
+        <para> Finally the probability distribution for the man hours required for entire project is
+            obtained as a normal distribution with <itemizedlist>
+                <listitem>
+                    <para> mean equal to the sum of the means of the individual tasks, and </para>
+                </listitem>
+                <listitem>
+                    <para> standard deviation equal to the square-root of the sum of the squares of
+                        the standard deviations of the individual project tasks. </para>
+                </listitem>
+            </itemizedlist>
+            <note>
+                <para> The standard deviation can be seen as a measure of project risk. </para>
+            </note>
+        </para>
+        <section>
+            <title>Example</title>
+            <para> Assume the project has 3 major tasks and the panel's probability distributions
+                for the 3 tasks had means of 80, 60 and 90 and standard deviations of 10, 5 and 15.
+                Then the probability distribution for the entire project is a normal distribution
+                with mean 230 person hours and a standard deviation of 18.71. </para>
+        </section>
+    </section>
+
+</section>

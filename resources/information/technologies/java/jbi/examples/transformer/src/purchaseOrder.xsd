@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://example.co.za/purchaseOrder/"
+    xmlns:po="http://example.co.za/purchaseOrder/"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+
+    <xs:complexType name="PurchaseOrder">
+        <xs:sequence>
+            <xs:element name="customer" type="po:Person"/>
+            <xs:element name="item" type="po:Item" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="total" type="xs:double" use="required"/>
+    </xs:complexType>
+    <xs:element name="purchaseOrder" type="po:PurchaseOrder"/>
+    
+    <xs:complexType name="Person">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Item">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="price" type="xs:double" use="required"/>
+    </xs:complexType>
+    
+</xs:schema>

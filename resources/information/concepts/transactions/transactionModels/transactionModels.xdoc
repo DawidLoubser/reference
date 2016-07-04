@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.transactions.transactionModels.transactionModels"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="Transaction models">Transaction models</title>
+  <para>
+    There are a number of transactions models generally used. The most common are 
+    <itemizedlist>
+      <listitem>
+        <para>flat transactions and </para>
+      </listitem>
+      <listitem>
+        <para>nested transactions</para>
+      </listitem>
+    </itemizedlist>
+  </para>
+  <para>
+    The J2EE specification only requires support for flat transactions. The reason for this
+    is that these are standard across databases and hence J2EE does not introduce excessive
+    requirements on databases which can be used with application servers.
+  </para>
+  
+  <section>
+    <title>Flat Transactions</title>
+    <para>
+      In the case of flat transactions each unit of work is at the same level and if any of
+      these fails, the entire transaction fails and is rolled back.
+    </para>
+  </section>
+  
+  <section>
+    <title>Nested Transactions</title>
+    <para>
+      Nested transactions allows for lower-level atomic units to be embedded in
+      higher-level atomic units. The result is a <emphasis>transaction tree</emphasis>. 
+      If any of the
+      sub-transactions fails, it will be rolled back, but the higher level transactions will not
+      be affected.
+    </para>
+    <para>
+      For example, part of the work flow of organizing a party may be to obtain funding and
+      to book your favorite band. We would start transaction 
+      <literal>OrganizeParty</literal> which encapsulates
+      the hole process. We may then try and obtain the funding in a nested transaction,
+      <literal>ObtainFunds</literal>. 
+      Within that we try to transfer the required funds from your credit card to
+      your current account. This would be done in a nested transaction 
+      <literal>TransferFromCreditCard</literal>.
+    </para>
+    <para>
+      <emphasis>If that transaction fails may not want to abort the idea of having the party. 
+      Only that step should be rolled back.</emphasis> 
+      You can start a new transaction for transferring the required
+      funds from your savings account, <literal>TransferFromSavingsAccount</literal>. 
+      If either of these is successful, the <literal>ObtainFunds</literal> is successful, but still 
+      kept open (not committed). Next you attempt the transaction <literal>BookBand</literal>. 
+      If successful, then the whole process, <literal>organizeParty</literal>,
+      can be committed resulting in <literal>BookBand</literal> and 
+      <literal>ObtainFunds</literal> being committed. If either step
+      failed all transactions would be rolled back and there would be no party.
+    </para>
+  </section>
+</section>

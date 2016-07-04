@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns49:section xmlns:ns49="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.persistence.rdbms.implementations.hsqldb.quickstart.quickstart">
+    
+    <ns50:title xmlns:ns50="http://docbook.org/ns/docbook">Quick Start</ns50:title>
+    <ns51:para xmlns:ns51="http://docbook.org/ns/docbook">
+        For all of the tasks listed below, make sure you know where your <ns52:literal xmlns:ns52="http://docbook.org/ns/docbook">hsqldb.jar</ns52:literal> file is.
+        It ships in the <ns53:literal xmlns:ns53="http://docbook.org/ns/docbook">lib</ns53:literal> directory of the HSQLDB ZIP distribution. This JAR file is the only
+        file you need - the rest of the provided files are examples, documentation, etc.
+    </ns51:para>
+    
+    <ns54:section xmlns:ns54="http://docbook.org/ns/docbook">
+        <ns55:title xmlns:ns55="http://docbook.org/ns/docbook">Running a Database Server</ns55:title>
+        <ns56:para xmlns:ns56="http://docbook.org/ns/docbook">
+            This section illustrates how to create and run a simple, stand-alone database server,
+            which can be accessed either locally or across the network.
+        </ns56:para>
+        <ns57:para xmlns:ns57="http://docbook.org/ns/docbook">
+            To start a server with a single database called <ns58:quote xmlns:ns58="http://docbook.org/ns/docbook">mydb</ns58:quote>, accessible from
+            JDBC using the same name, run the command:
+            <ns59:programlisting xmlns:ns59="http://docbook.org/ns/docbook">
+java -cp hsqldb.jar org.hsqldb.Server -database.0 mydb -dbname.0 mydb
+            </ns59:programlisting>
+        </ns57:para>
+        <ns60:para xmlns:ns60="http://docbook.org/ns/docbook">
+            We are executing the class <ns61:literal xmlns:ns61="http://docbook.org/ns/docbook">org.hsqldb.Server</ns61:literal>, and it is found because we place
+            the <ns62:literal xmlns:ns62="http://docbook.org/ns/docbook">mysqldb.jar</ns62:literal> file on the classpath. The additional arguments we provide
+            indicate that we want to start one server called <ns63:quote xmlns:ns63="http://docbook.org/ns/docbook">mydb</ns63:quote>. Once running, you will
+            notice several <ns64:literal xmlns:ns64="http://docbook.org/ns/docbook">mydb.*</ns64:literal> files created in the current directory. These contain
+            the actual data. To stop the database abruptly, simply kill the running process (CTRL+C if it's
+            active in the console window). To shut down normally, connect, and execute the SQL command
+            <ns65:literal xmlns:ns65="http://docbook.org/ns/docbook">SHUTDOWN</ns65:literal>.
+        </ns60:para>
+        <ns66:note xmlns:ns66="http://docbook.org/ns/docbook">
+            <ns67:para xmlns:ns67="http://docbook.org/ns/docbook">
+                If the database called <ns68:quote xmlns:ns68="http://docbook.org/ns/docbook">mydb</ns68:quote> does not exist, it is automatically created.
+                The default administrative user is <ns69:literal xmlns:ns69="http://docbook.org/ns/docbook">sa</ns69:literal> and the password is an empty string.
+            </ns67:para>
+        </ns66:note>
+    </ns54:section>
+    
+    <ns70:section xmlns:ns70="http://docbook.org/ns/docbook">
+        <ns71:title xmlns:ns71="http://docbook.org/ns/docbook">Using the Provided Client</ns71:title>
+        <ns72:para xmlns:ns72="http://docbook.org/ns/docbook">
+            HSQLDB ships with a simple graphical client called <ns73:emphasis xmlns:ns73="http://docbook.org/ns/docbook">DatabaseManager</ns73:emphasis>
+            the allows you to interact with your database. To start up the client, execute:
+            <ns74:programlisting xmlns:ns74="http://docbook.org/ns/docbook">
+java -cp hsqldb.jar org.hsqldb.util.DatabaseManager
+            </ns74:programlisting>
+        </ns72:para>
+        <ns75:figure xmlns:ns75="http://docbook.org/ns/docbook">
+            <ns76:title xmlns:ns76="http://docbook.org/ns/docbook">The HSQLDB Database Manager</ns76:title>
+            <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="databaseManager.jpg"/></imageobject></mediaobject>
+        </ns75:figure>
+        
+        <ns77:para xmlns:ns77="http://docbook.org/ns/docbook">
+            To connect to a locally running server with default settings called <ns78:quote xmlns:ns78="http://docbook.org/ns/docbook">mydb</ns78:quote> 
+            (as defined above), enter the following connection information:
+            <ns79:itemizedlist xmlns:ns79="http://docbook.org/ns/docbook">
+                <ns80:listitem xmlns:ns80="http://docbook.org/ns/docbook">
+                    <ns81:formalpara xmlns:ns81="http://docbook.org/ns/docbook">
+                        <ns82:title xmlns:ns82="http://docbook.org/ns/docbook">Type:</ns82:title>
+                        <ns83:para xmlns:ns83="http://docbook.org/ns/docbook">HSQL Database Engine Server</ns83:para>
+                    </ns81:formalpara>
+                </ns80:listitem>
+                <ns84:listitem xmlns:ns84="http://docbook.org/ns/docbook">
+                    <ns85:formalpara xmlns:ns85="http://docbook.org/ns/docbook">
+                        <ns86:title xmlns:ns86="http://docbook.org/ns/docbook">Driver:</ns86:title>
+                        <ns87:para xmlns:ns87="http://docbook.org/ns/docbook">org.hsqldb.jdbcDriver</ns87:para>
+                    </ns85:formalpara>
+                </ns84:listitem>
+                <ns88:listitem xmlns:ns88="http://docbook.org/ns/docbook">
+                    <ns89:formalpara xmlns:ns89="http://docbook.org/ns/docbook">
+                        <ns90:title xmlns:ns90="http://docbook.org/ns/docbook">URL:</ns90:title>
+                        <ns91:para xmlns:ns91="http://docbook.org/ns/docbook">jdbc:hsqldb:hsql://localhost/mydb</ns91:para>
+                    </ns89:formalpara>
+                </ns88:listitem>
+                <ns92:listitem xmlns:ns92="http://docbook.org/ns/docbook">
+                    <ns93:formalpara xmlns:ns93="http://docbook.org/ns/docbook">
+                        <ns94:title xmlns:ns94="http://docbook.org/ns/docbook">User:</ns94:title>
+                        <ns95:para xmlns:ns95="http://docbook.org/ns/docbook">sa</ns95:para>
+                    </ns93:formalpara>
+                </ns92:listitem>
+                <ns96:listitem xmlns:ns96="http://docbook.org/ns/docbook">
+                    <ns97:formalpara xmlns:ns97="http://docbook.org/ns/docbook">
+                        <ns98:title xmlns:ns98="http://docbook.org/ns/docbook">Password:</ns98:title>
+                        <ns99:para xmlns:ns99="http://docbook.org/ns/docbook">(none)</ns99:para>
+                    </ns97:formalpara>
+                </ns96:listitem>
+            </ns79:itemizedlist>
+        </ns77:para>
+    </ns70:section>
+</ns49:section>

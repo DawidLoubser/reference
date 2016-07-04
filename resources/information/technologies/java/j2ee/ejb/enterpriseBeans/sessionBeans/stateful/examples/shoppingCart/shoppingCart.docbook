@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1906:section xmlns:ns1906="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateful.examples.shoppingCart.shoppingCart">
+
+  <ns1907:title xmlns:ns1907="http://docbook.org/ns/docbook">Example: ShoppingCart</ns1907:title>
+  <ns1908:para xmlns:ns1908="http://docbook.org/ns/docbook">
+    A shopping cart carries state, i.e. the state of the shopping cart must be maintained
+    for the session.
+  </ns1908:para>
+  
+  <ns1909:section xmlns:ns1909="http://docbook.org/ns/docbook">
+    <ns1910:title xmlns:ns1910="http://docbook.org/ns/docbook">Code Listing: ShoppingCartServices</ns1910:title>
+    <ns1911:para xmlns:ns1911="http://docbook.org/ns/docbook">
+      The business services are specified in a separate interface from which the remote
+      interface is derived and the bean implementation will implement this interface:
+<ns1912:programlisting xmlns:ns1912="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/src/common/ShoppingCartServices.java"/>
+</ns1912:programlisting>  
+    </ns1911:para>
+  </ns1909:section>  
+  
+  <ns1913:section xmlns:ns1913="http://docbook.org/ns/docbook">
+    <ns1914:title xmlns:ns1914="http://docbook.org/ns/docbook">The remote interface</ns1914:title>
+    <ns1915:para xmlns:ns1915="http://docbook.org/ns/docbook">
+      Favouring compile-time errors over deploy-time errors, we 
+      introduce a services interface which is extended by the remote interface and implemented
+      by the bean implementation.
+<ns1916:programlisting xmlns:ns1916="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/src/common/ShoppingCart.java"/>
+</ns1916:programlisting>  
+    </ns1915:para>
+  </ns1913:section>
+  
+  <ns1917:section xmlns:ns1917="http://docbook.org/ns/docbook">
+    <ns1918:title xmlns:ns1918="http://docbook.org/ns/docbook">The home interface</ns1918:title>
+    <ns1919:para xmlns:ns1919="http://docbook.org/ns/docbook">
+      Recall the stateless session beans were always created via a default  
+      <ns1920:literal xmlns:ns1920="http://docbook.org/ns/docbook">ejbCreate()</ns1920:literal> service -- one without arguments. In the case of
+      stateful session beans one may have to supply some state information when creating the
+      bean. The required state information is supplied as arguments to the  
+      <ns1921:literal xmlns:ns1921="http://docbook.org/ns/docbook">ejbCreate</ns1921:literal> method(s).
+<ns1922:programlisting xmlns:ns1922="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/src/common/ShoppingCartHome.java"/>
+</ns1922:programlisting>  
+    </ns1919:para>
+  </ns1917:section>  
+  
+  <ns1923:section xmlns:ns1923="http://docbook.org/ns/docbook">
+    <ns1924:title xmlns:ns1924="http://docbook.org/ns/docbook">The enterprise bean implementation</ns1924:title>
+    <ns1925:para xmlns:ns1925="http://docbook.org/ns/docbook">
+      Just like stateless session beans, stateful session beans also implement 
+      <ns1926:literal xmlns:ns1926="http://docbook.org/ns/docbook">javax.ejb.SessionBean</ns1926:literal>. The fact that you are defining a session
+      bean will be communicated to the container in the deployment descriptor.
+    </ns1925:para>
+    <ns1927:para xmlns:ns1927="http://docbook.org/ns/docbook">
+      Below we list the different classes which make up the implementation of our stateful
+      session bean. They are defined in two packages,  
+      <ns1928:literal xmlns:ns1928="http://docbook.org/ns/docbook">shopping</ns1928:literal> and <ns1929:literal xmlns:ns1929="http://docbook.org/ns/docbook">finance</ns1929:literal>.
+<ns1930:programlisting xmlns:ns1930="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/src/businessLogic/ShoppingCartBean.java"/>
+</ns1930:programlisting>  
+      </ns1927:para>
+  </ns1923:section>
+  
+  <ns1931:section xmlns:ns1931="http://docbook.org/ns/docbook">
+    <ns1932:title xmlns:ns1932="http://docbook.org/ns/docbook">Code Listing: Item</ns1932:title>
+    <ns1933:para xmlns:ns1933="http://docbook.org/ns/docbook">
+      An item has a name and a price. It is serializable so that we can pass items to
+      remote clients:
+<ns1934:programlisting xmlns:ns1934="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/src/common/Item.java"/>
+</ns1934:programlisting>  
+     </ns1933:para>
+  </ns1931:section>
+    
+  <ns1935:section xmlns:ns1935="http://docbook.org/ns/docbook">
+    <ns1936:title xmlns:ns1936="http://docbook.org/ns/docbook">Code Listing: CreditCard</ns1936:title>
+    <ns1937:para xmlns:ns1937="http://docbook.org/ns/docbook">
+      We encapsulate credit card information in a serializable class <ns1938:literal xmlns:ns1938="http://docbook.org/ns/docbook">CreditCard</ns1938:literal>:
+<ns1939:programlisting xmlns:ns1939="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/src/common/CreditCard.java"/>
+</ns1939:programlisting>  
+    </ns1937:para>
+  </ns1935:section>
+    
+  <ns1940:section xmlns:ns1940="http://docbook.org/ns/docbook">
+    <ns1941:title xmlns:ns1941="http://docbook.org/ns/docbook">Code Listing: Invoice</ns1941:title>
+    <ns1942:para xmlns:ns1942="http://docbook.org/ns/docbook">
+      An invoice is not only text, but an object which preserves all relevant
+      information, but can supply a text version of itself:
+<ns1943:programlisting xmlns:ns1943="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/src/common/Invoice.java"/>
+</ns1943:programlisting>  
+    </ns1942:para>
+  </ns1940:section>
+    
+  <ns1944:section xmlns:ns1944="http://docbook.org/ns/docbook">
+    <ns1945:title xmlns:ns1945="http://docbook.org/ns/docbook">Code Listing: PaymentFailed</ns1945:title>
+    <ns1946:para xmlns:ns1946="http://docbook.org/ns/docbook">
+      EJB exceptions are defines just like any other exception. Note that exceptions are serializable.
+<ns1947:programlisting xmlns:ns1947="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/src/common/PaymentFailed.java"/>
+</ns1947:programlisting>  
+    </ns1946:para>
+  </ns1944:section>
+    
+  <ns1948:section xmlns:ns1948="http://docbook.org/ns/docbook">
+    <ns1949:title xmlns:ns1949="http://docbook.org/ns/docbook">Code Listing: Formatters</ns1949:title>
+    <ns1950:para xmlns:ns1950="http://docbook.org/ns/docbook">
+      This is a simple utility factory which returns standard formatters. In our case we
+      only supply a <ns1951:literal xmlns:ns1951="http://docbook.org/ns/docbook">priceFormat</ns1951:literal> object which is used in
+      several classes:
+<ns1952:programlisting xmlns:ns1952="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/src/common/Formatters.java"/>
+</ns1952:programlisting>  
+    </ns1950:para>
+  </ns1948:section>
+    
+  <ns1953:section xmlns:ns1953="http://docbook.org/ns/docbook">
+    <ns1954:title xmlns:ns1954="http://docbook.org/ns/docbook">The ejb-jar deployment descriptor</ns1954:title>
+    <ns1955:para xmlns:ns1955="http://docbook.org/ns/docbook">
+      It is in the deployment descriptor that we declare the shopping cart bean a stateful
+      session bean. Otherwise the deployment descriptor looks pretty much like the one for our
+      stateless word counter bean.
+<ns1956:programlisting xmlns:ns1956="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/META-INF/ejb-jar.xml"/>
+</ns1956:programlisting>  
+    </ns1955:para>
+  </ns1953:section>  
+  
+  <ns1957:section xmlns:ns1957="http://docbook.org/ns/docbook">
+    <ns1958:title xmlns:ns1958="http://docbook.org/ns/docbook">The jboss deployment descriptor</ns1958:title>
+    <ns1959:para xmlns:ns1959="http://docbook.org/ns/docbook">
+      The JBoss-specific deployment info file,  
+      <ns1960:literal xmlns:ns1960="http://docbook.org/ns/docbook">ejb-inprise.xml</ns1960:literal>, looks similar to the one we used for our
+      stateless session bean:
+<ns1961:programlisting xmlns:ns1961="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/META-INF/jboss.xml"/>
+</ns1961:programlisting>  
+    </ns1959:para>
+    <ns1962:para xmlns:ns1962="http://docbook.org/ns/docbook">
+      As in the case of stateless session beans, we specify the name used to identify the bean
+      in the naming service. Here <ns1963:literal xmlns:ns1963="http://docbook.org/ns/docbook">bean-home-name</ns1963:literal>,  
+      <ns1964:literal xmlns:ns1964="http://docbook.org/ns/docbook">ShoppingCart</ns1964:literal>, is set as the name to be used by clients to
+      look up the <ns1965:literal xmlns:ns1965="http://docbook.org/ns/docbook">ShoppingCart</ns1965:literal> bean.
+    </ns1962:para>
+  </ns1957:section>
+  
+  <ns1966:section xmlns:ns1966="http://docbook.org/ns/docbook">
+    <ns1967:title xmlns:ns1967="http://docbook.org/ns/docbook">Developing a Client Application</ns1967:title>
+    <ns1968:para xmlns:ns1968="http://docbook.org/ns/docbook">
+      Our client application builds up a GUI and connects to the statefull session bean:
+    </ns1968:para>
+    
+    <ns1969:section xmlns:ns1969="http://docbook.org/ns/docbook">
+      <ns1970:title xmlns:ns1970="http://docbook.org/ns/docbook">Listing: ShoppingCartPanel.java</ns1970:title>
+      <ns1971:para xmlns:ns1971="http://docbook.org/ns/docbook">
+<ns1972:programlisting xmlns:ns1972="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/src/client/common/ShoppingCartPanel.java"/>
+</ns1972:programlisting>  
+      </ns1971:para>  
+    </ns1969:section>
+    
+    <ns1973:section xmlns:ns1973="http://docbook.org/ns/docbook">
+      <ns1974:title xmlns:ns1974="http://docbook.org/ns/docbook">Listing: ShoppingCartClient.java</ns1974:title>
+      <ns1975:para xmlns:ns1975="http://docbook.org/ns/docbook">
+<ns1976:programlisting xmlns:ns1976="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/ShoppingCart/src/client/application/ShoppingCartClient.java"/>
+</ns1976:programlisting>  
+      </ns1975:para>  
+    </ns1973:section>
+    
+    <ns1977:section xmlns:ns1977="http://docbook.org/ns/docbook">
+      <ns1978:title xmlns:ns1978="http://docbook.org/ns/docbook">Removing Stateful Session Beans</ns1978:title>
+      <ns1979:para xmlns:ns1979="http://docbook.org/ns/docbook">
+        If the client process is terminated the session bean should be removed. This is the
+        clients responsibility (though the server shall remove the bean if there is no active
+        connection over a period of time).
+      </ns1979:para>
+      <ns1980:para xmlns:ns1980="http://docbook.org/ns/docbook">
+        In our case we remove the bean in the client's finalize method which is called upon
+        closing the frame window.
+      </ns1980:para>
+    </ns1977:section>
+  </ns1966:section>
+
+<ns1981:section xmlns:ns1981="http://docbook.org/ns/docbook">
+  <ns1982:title xmlns:ns1982="http://docbook.org/ns/docbook">Building, Deploying and Running the ShoppingCart</ns1982:title>
+  <ns1983:para xmlns:ns1983="http://docbook.org/ns/docbook">
+    We use the generic targets as in the previous chapter: 
+  <ns1984:orderedlist xmlns:ns1984="http://docbook.org/ns/docbook">
+    <ns1985:listitem xmlns:ns1985="http://docbook.org/ns/docbook">
+      <ns1986:para xmlns:ns1986="http://docbook.org/ns/docbook">ant ejbJar </ns1986:para>
+    </ns1985:listitem>
+    <ns1987:listitem xmlns:ns1987="http://docbook.org/ns/docbook">
+      <ns1988:para xmlns:ns1988="http://docbook.org/ns/docbook">ant deployEjbJar </ns1988:para>
+    </ns1987:listitem>
+    <ns1989:listitem xmlns:ns1989="http://docbook.org/ns/docbook">
+      <ns1990:para xmlns:ns1990="http://docbook.org/ns/docbook">ant jarClientApp </ns1990:para>
+    </ns1989:listitem>
+    <ns1991:listitem xmlns:ns1991="http://docbook.org/ns/docbook">
+      <ns1992:para xmlns:ns1992="http://docbook.org/ns/docbook">ant runCientApp</ns1992:para>
+    </ns1991:listitem>
+  </ns1984:orderedlist>
+  </ns1983:para>
+  </ns1981:section>
+</ns1906:section>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"--><ns2392:section xmlns:ns2392="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateless.introduction.lifeCycle">
+
+  <ns2393:title xmlns:ns2393="http://docbook.org/ns/docbook">Life-cycle of a stateless session bean</ns2393:title>
+  <ns2394:para xmlns:ns2394="http://docbook.org/ns/docbook">
+    The life cycle of a stateless session bean is depicted in
+    <ns2395:xref xmlns:ns2395="http://docbook.org/ns/docbook" linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateless.introduction.lifeCycle_fig"/>. 
+  
+    <ns2396:figure xmlns:ns2396="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateless.introduction.lifeCycle_fig">
+      <ns2397:title xmlns:ns2397="http://docbook.org/ns/docbook">The life-cycle of a stateless session bean</ns2397:title>
+      <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="lifeCycle.jpg"/></imageobject></mediaobject>
+    </ns2396:figure>
+  </ns2394:para>
+  
+  <ns2398:section xmlns:ns2398="http://docbook.org/ns/docbook">
+    <ns2399:title xmlns:ns2399="http://docbook.org/ns/docbook">Physical versus virtual bean</ns2399:title>
+    <ns2400:para xmlns:ns2400="http://docbook.org/ns/docbook">
+       From a client's perspective an enterprise bean exists from the time the client calls
+       <ns2401:literal xmlns:ns2401="http://docbook.org/ns/docbook">create()</ns2401:literal> on the home interface until he calls <ns2402:literal xmlns:ns2402="http://docbook.org/ns/docbook">remove()</ns2402:literal>
+       on the remote interface.
+    </ns2400:para>  
+    <ns2403:para xmlns:ns2403="http://docbook.org/ns/docbook">
+      The life span of the physical bean may, however, be very different. The bean typically exists
+      physically in an object (thread) pool prior to the client creating a virtual instance (represented
+      by an object handle). But even after the client creates his virtual bean instance, the
+      different service requests to that instance may be realized by different physical bean
+      instances, <ns2404:abbrev xmlns:ns2404="http://docbook.org/ns/docbook">i.e.</ns2404:abbrev> different threads.
+    </ns2403:para>
+    <ns2405:para xmlns:ns2405="http://docbook.org/ns/docbook">
+       Before a service can be realized by a stateless session bean, it's session context must be set
+       to that of the client. The session context contains client identity information and may
+       potentially also include other context information like transaction context information.
+       After the session context has been assigned the bean is in the method-ready pool. Upon 
+       <ns2406:literal xmlns:ns2406="http://docbook.org/ns/docbook">remove()</ns2406:literal>, or when a container chooses to unbind the physical bean
+       from the virtual client bean, the bean is put back into the object (thread) pool.
+       <ns2407:note xmlns:ns2407="http://docbook.org/ns/docbook"><ns2408:para xmlns:ns2408="http://docbook.org/ns/docbook">
+         Some application servers unbind stateless session beans after every service request.  
+       </ns2408:para></ns2407:note>
+    </ns2405:para>
+  </ns2398:section>
+</ns2392:section>

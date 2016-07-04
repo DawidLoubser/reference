@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<chapter xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Static imports</title>
+  
+  <indexterm>
+    <primary>Static imports</primary>
+  </indexterm>
+  
+  <para>
+    Static imports allow one to refer to the static members (services,
+    attributes, enumeration constants) of a type (usually a class) without
+    having to qualify those statements with their owner.
+  </para>
+  <para>
+    This is analogous to how <quote>normal</quote> imports allow us to
+    refer to a type (class, interface, enum, annotation) without having
+    to qualify the reference with the package name.
+  </para>
+  
+  <section>
+    <title>Using static imports</title>
+    <indexterm>
+      <primary>Static imports</primary>
+      <secondary>using</secondary>
+    </indexterm>
+    <para>
+      Consider the following class, where we make use of the static
+      <literal>random()</literal> service of <literal>java.lang.Math</literal>
+      to print out a random number.
+      <programlisting language="Java">
+<xi:include href="src/StaticExample.java" parse="text"/>
+      </programlisting>
+    </para>
+    <para>
+      By using the <literal>import static</literal> keyword in the
+      <emphasis>imports section</emphasis> (at the top of the source
+      file) we may statically import the member <literal>java.lang.Math.random</literal>
+      and then refer to it in an unqualified manner, as follows:
+      <programlisting language="Java">
+<xi:include href="src/StaticImport.java" parse="text"/>
+      </programlisting>
+    </para>
+    <para>
+      Members can be imported one-by-one (as per the above example) or
+      all, in the form of:
+      <programlisting language="Java"><![CDATA[
+import static java.lang.Math.*;
+        ]]></programlisting>
+    </para>
+    <note>
+      <para>
+        <literal>Math.random()</literal> is a convenience service to using
+        the more powerful <literal>java.util.Random</literal> random
+        number generator class.
+      </para>
+    </note>
+  </section>
+  
+  <section>
+    <title>The Benefits of static imports</title>
+    <indexterm>
+      <primary>Static imports</primary>
+      <secondary>benefits</secondary>
+    </indexterm>
+    
+    <para>
+      The measurable benefits of static imports are hard to identify, and
+      in many cases the drawbacks outweigh them. They appear to have been
+      introduced purely as a mechanism to reduce code bulk, and seem to
+      appeal specifically to programmers coming from a language such as
+      <emphasis>C</emphasis>, which allows for global functions,
+      variables, etc. To maintain the same coding style when moving to
+      a fundamentally different language, however, is questionable. 
+    </para>
+    <para>
+      Certain low-level APIs (such as OpenGL, a mature, open, graphics drawing
+      framework supported by most graphics hardware, implemented in the
+      C programming language) have been ported to Java (e.g.
+      the <emphasis>JOGL</emphasis> api). If large pieces of code (which
+      makes exclusive use of global functions) have to be ported to Java, static
+      imports can reduce the workload by enabling the source code to look
+      almost identical to it's C-based counterpart.
+    </para>
+  </section>
+  
+  <section>
+    <title>The Drawback of static imports</title>
+    <indexterm>
+      <primary>Static imports</primary>
+      <secondary>drawbacks</secondary>
+    </indexterm>
+    
+    <section>
+      <title>Undermining OO</title>
+      <para>
+        One of the core tenets of object-orientation is the concept of
+        sending messages to objects (to which we often have very abstract
+        references), which are interpreted polymorphically. In this regards,
+        apart from some small stand-alone algorithms and utility functions,
+        <literal>static</literal> functions in general should be avoided.
+      </para>
+      <para>
+        Using static methods, coupled with static imports, effectively turns
+        Java into a procedural programming language.
+      </para>
+    </section>
+    
+    <section>
+      <title>Maintainability</title>
+      <para>
+        Static imports (especially if used to import all the static members
+        of a class using the <literal>*</literal> token) may make it
+        significantly more difficult to understand a piece of code.
+      </para>
+      <para>
+        It is non-obvious, at a glance, whether a service request is made
+        to a local service (in the same object), or statically to some other
+        class. Furthermore, having services with the same name in
+        different classes may cause ambiguite problems.
+      </para>
+    </section>
+    
+  </section>
+  
+</chapter>

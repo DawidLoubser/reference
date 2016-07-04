@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2006-12-16 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Attributes</title>
+    <para>
+        <indexterm>
+            <primary>attribute</primary>
+        </indexterm>
+        <indexterm>
+            <primary>class</primary>
+            <secondary>diagram</secondary>
+            <tertiary>attributes</tertiary>
+        </indexterm> Attributes are commonly used when modeling domain objects. An attribute
+        represents a component of the class which may have state. The state of the component is part
+        of the state of the owner. For example, an account has a balance. If the balance of the
+        account changes, then the state of the account changes. </para>
+    <para> Attributes are shown in UML in a separate atributes compartment which is added below the
+        compartment which hosts the class name. </para>
+    <figure>
+        <title> Adding an attributes compartment to a class. </title>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="400" fileref="attributesCompartment.jpg"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+
+    <section>
+        <title>Collection attributes and multiplicity constraints</title>
+        <para>
+            <indexterm>
+                <primary>attribute</primary>
+                <secondary>collection</secondary>
+            </indexterm>
+            <indexterm>
+                <primary>constraint</primary>
+                <secondary>multiplicity</secondary>
+            </indexterm> At times an object may have a collection attribute which contains multiple
+            instances. In such cases one can the required cardinality or cardinality range on the
+            attribute type (the class). This is done using square brackets with the cardinality
+            constraint specified within the bracket. Thus
+            <programlisting>
+telephoneNumbers:TelephoneNumber[3]
+        </programlisting> specifies
+            that the <literal>telephoneNumbers</literal> attribute is a collection of 3 telephone
+            numbers. Similarly
+            <programlisting>
+telephoneNumbers:TelephoneNumber[1..3]
+        </programlisting>
+            specifies that between 1 and 3 telephone numbers are required. </para>
+        <para> If one wants to specify an open ended cardinality, then one can use a single star,
+                <literal>*</literal>. For example, to specify that a claim has one or more claim
+            items one uses <programlisting>
+claimItems:ClaimItem[1..*]
+        </programlisting>
+        </para>
+        <para> If a star is used without specifying a lower bound for the cardinality range then
+            zero is assumed for the lower bound. For example, to specify that an account has a
+            transaction history with zero or more transactions, one can use
+            transactions:Transaction[*] </para>
+
+        <figure xml:id="technologies.uml.classDiagrams.multiplicityConstraints_fig">
+            <title>Multiplicity constraints on attributes</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="multiplicityConstraints.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+
+        <para> As a more complete example, consider the specification of an order shown in <xref
+                linkend="technologies.uml.classDiagrams.multiplicityConstraints_fig"
+            />. The class diagram specifies that a claim has one claim number, one or more claim
+            items, and either one or two contact details. </para>
+        <para> The contact details itself has between one and 3 telephone numbers, an optional email
+            address, a postal address and a physical address. </para>
+    </section>
+
+    <section>
+        <title>Derived attributes</title>
+        <para>
+            <indexterm>
+                <primary>attribute</primary>
+                <secondary>derived</secondary>
+            </indexterm> At times attributes are not independent of one another. The value of one
+            attribute may depend on the value of the other attributes of the object. Such an
+            attribute is called a derived attribute. </para>
+        <para> For example, whether an account is in an <emphasis>overdrawn</emphasis> state or not
+            would depend on its current balance and overdraft limit. </para>
+
+        <figure>
+            <title>Derived attribute and the constraints specifying how their values are determined
+                from the current value of the other attributes.</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="derivedAttributes.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    </section>
+
+</section>

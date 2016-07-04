@@ -1,0 +1,74 @@
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.dependencyInjection.setterInjected"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Setter injection</title>
+  <para>
+    EJB supports setter injection where the field to be injected needs not be
+    declared public. The setter methods for which injections are defined will be
+    called prior to any business service being realized.
+  </para>
+  <para>
+    For example
+<programlisting><![CDATA[
+@Resource(name="clientDB" type="javax.sql.DataSource")
+public void setClientDB(DataSource db)
+{
+  this.clientDB = db;
+}  
+]]></programlisting>
+    will specify that the <literal>setClientDB</literal> is to be called using
+    as parameter the resource published under JNDI as <literal>clientDB</literal>.
+  </para>
+  <para>
+    If the datasource type can be inferred, the type parameter can be ommitted.
+    For example 
+<programlisting><![CDATA[
+@Resource(name="clientDB")
+public void setClientDB(DataSource db)
+{
+  this.clientDB = db;
+}  
+  ]]></programlisting>
+    would suffice for the above.
+  </para>
+  <para>
+    If the JNDI name can be inferred from the property name,
+    <literal>clientDB</literal>, then the name parameter can also be ommitted:
+<programlisting><![CDATA[
+@Resource
+public void setClientDB(DataSource clientDB)
+{
+  this.clientDB = clientDB;
+}  
+]]></programlisting>
+  </para>
+  <para>
+    Typically we would inject a bean which is either resolved from 
+    <itemizedlist>
+      <listitem><para>
+        only the parameter type
+<programlisting><![CDATA[
+@EJB 
+  public void setTaxCalculator(VatCalculatorRSALocal taxCalculator)
+{
+  this.taxCalculator = taxCalculator;
+},  
+  ]]></programlisting>
+      </para></listitem>
+       <listitem><para>
+        One can specify a logical name which will default to the jndi name if the logical name is
+         not mapped onto a JNDI name on deployment:
+<programlisting><![CDATA[
+@EJB (name="ejb/VATCalculator")
+public void (vatCalculatorRSALocal taxCalcultor)
+{
+  this.taxCalculator = taxCalculator;
+}
+]]></programlisting> 
+      </para></listitem>
+  </itemizedlist>    
+  </para>
+  
+</section>  

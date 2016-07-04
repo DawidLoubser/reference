@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1181:section xmlns:ns1181="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.queryStructure.queryStructure">
+
+  <ns1182:title xmlns:ns1182="http://docbook.org/ns/docbook">The structure of a EJB Query</ns1182:title>
+  <ns1183:para xmlns:ns1183="http://docbook.org/ns/docbook">
+    The structure of an EJB QL query is in many ways similar to a traditional SQL query. It
+    is generally of the form
+<ns1184:programlisting xmlns:ns1184="http://docbook.org/ns/docbook">
+SELECT &lt;selection&gt; FROM &lt;source&gt; WHERE &lt;condition&gt;
+</ns1184:programlisting>
+    where 
+    <ns1185:itemizedlist xmlns:ns1185="http://docbook.org/ns/docbook">
+      <ns1186:listitem xmlns:ns1186="http://docbook.org/ns/docbook"><ns1187:formalpara xmlns:ns1187="http://docbook.org/ns/docbook">
+        <ns1188:title xmlns:ns1188="http://docbook.org/ns/docbook">SELECT</ns1188:title>
+        <ns1189:para xmlns:ns1189="http://docbook.org/ns/docbook">
+           specifies the type of objects or values to be selected which may be 
+          <ns1190:itemizedlist xmlns:ns1190="http://docbook.org/ns/docbook">
+            <ns1191:listitem xmlns:ns1191="http://docbook.org/ns/docbook">
+              <ns1192:para xmlns:ns1192="http://docbook.org/ns/docbook">an entity bean, </ns1192:para>
+            </ns1191:listitem>
+            <ns1193:listitem xmlns:ns1193="http://docbook.org/ns/docbook">
+              <ns1194:para xmlns:ns1194="http://docbook.org/ns/docbook">a value object or </ns1194:para>
+            </ns1193:listitem>
+            <ns1195:listitem xmlns:ns1195="http://docbook.org/ns/docbook">
+              <ns1196:para xmlns:ns1196="http://docbook.org/ns/docbook">a primitive data type</ns1196:para>
+            </ns1195:listitem>
+          </ns1190:itemizedlist>        
+        </ns1189:para>
+      </ns1187:formalpara></ns1186:listitem>
+      <ns1197:listitem xmlns:ns1197="http://docbook.org/ns/docbook"><ns1198:formalpara xmlns:ns1198="http://docbook.org/ns/docbook">
+        <ns1199:title xmlns:ns1199="http://docbook.org/ns/docbook"> FROM</ns1199:title>
+        <ns1200:para xmlns:ns1200="http://docbook.org/ns/docbook">
+           specifies the domain to which the query applies and
+        </ns1200:para>
+      </ns1198:formalpara></ns1197:listitem>
+      <ns1201:listitem xmlns:ns1201="http://docbook.org/ns/docbook"><ns1202:formalpara xmlns:ns1202="http://docbook.org/ns/docbook">
+        <ns1203:title xmlns:ns1203="http://docbook.org/ns/docbook">WHERE</ns1203:title>
+        <ns1204:para xmlns:ns1204="http://docbook.org/ns/docbook">
+          specifies constraints which restrict the result collection.
+        </ns1204:para>
+      </ns1202:formalpara></ns1201:listitem>
+    </ns1185:itemizedlist>  
+    <ns1205:literal xmlns:ns1205="http://docbook.org/ns/docbook"/> 
+   </ns1183:para> 
+   <ns1206:para xmlns:ns1206="http://docbook.org/ns/docbook">
+     For example, if we have an  
+    <ns1207:literal xmlns:ns1207="http://docbook.org/ns/docbook">Account</ns1207:literal> entity bean with a balance field, we can issue the
+    following query:
+<ns1208:programlisting xmlns:ns1208="http://docbook.org/ns/docbook">
+SELECT OBJECT(a) FROM Account AS a WHERE a.balance &gt; 0
+</ns1208:programlisting>    
+    </ns1206:para> 
+    <ns1209:para xmlns:ns1209="http://docbook.org/ns/docbook">
+      This is equivalent to the following SQL statement
+<ns1210:programlisting xmlns:ns1210="http://docbook.org/ns/docbook">
+SELECT * FROM Account WHERE balance &gt; 0
+</ns1210:programlisting>    
+   </ns1209:para> 
+   <ns1211:para xmlns:ns1211="http://docbook.org/ns/docbook">
+      As a short-hand notation, the <ns1212:literal xmlns:ns1212="http://docbook.org/ns/docbook">AS</ns1212:literal> clause can be dropped, but the 
+      variable name for the result must still be included. Thus
+<ns1213:programlisting xmlns:ns1213="http://docbook.org/ns/docbook">
+SELECT * FROM Account WHERE balance &gt; 0
+</ns1213:programlisting>    
+      is short for 
+<ns1214:programlisting xmlns:ns1214="http://docbook.org/ns/docbook">
+SELECT OBJECT(a) FROM Account a WHERE a.balance &gt; 0
+</ns1214:programlisting>    
+   </ns1211:para>
+  <ns1215:section xmlns:ns1215="http://docbook.org/ns/docbook">
+    <ns1216:title xmlns:ns1216="http://docbook.org/ns/docbook">Result Collections in EJB QL</ns1216:title>
+    <ns1217:para xmlns:ns1217="http://docbook.org/ns/docbook">
+      A core difference between EJB QL and SQL is that the result collection in EJB QL will
+      be a collection of references to one of 
+      <ns1218:itemizedlist xmlns:ns1218="http://docbook.org/ns/docbook">
+        <ns1219:listitem xmlns:ns1219="http://docbook.org/ns/docbook">
+          <ns1220:para xmlns:ns1220="http://docbook.org/ns/docbook">entity beans through either the local or the remote interface, </ns1220:para>
+        </ns1219:listitem>
+        <ns1221:listitem xmlns:ns1221="http://docbook.org/ns/docbook">
+          <ns1222:para xmlns:ns1222="http://docbook.org/ns/docbook">other Java objects, </ns1222:para>
+        </ns1221:listitem>
+        <ns1223:listitem xmlns:ns1223="http://docbook.org/ns/docbook">
+          <ns1224:para xmlns:ns1224="http://docbook.org/ns/docbook">Java primitives</ns1224:para>
+        </ns1223:listitem>
+      </ns1218:itemizedlist>
+      while in SQL the result is a new conceptual table with column entries sourced
+      potentially from different tables, i.e. it can contain elements from different tables and
+      hence elements extracted from different entity beans.
+    </ns1217:para>
+    <ns1225:para xmlns:ns1225="http://docbook.org/ns/docbook">
+      Ultimately the result collection will be either a standard  
+      <ns1226:literal xmlns:ns1226="http://docbook.org/ns/docbook">java.util.Collection</ns1226:literal> or a<ns1227:literal xmlns:ns1227="http://docbook.org/ns/docbook">java.util.Set</ns1227:literal>.
+    </ns1225:para>
+  </ns1215:section>
+  
+  <ns1228:section xmlns:ns1228="http://docbook.org/ns/docbook">
+    <ns1229:title xmlns:ns1229="http://docbook.org/ns/docbook">Selecting Entity Bean Attributes</ns1229:title>
+    <ns1230:para xmlns:ns1230="http://docbook.org/ns/docbook">We can use the element access operator to select specific attributes of an entity
+      bean. For example
+<ns1231:programlisting xmlns:ns1231="http://docbook.org/ns/docbook">
+SELECT a.balance FROM Account a
+</ns1231:programlisting>    
+      returns a collection of all
+      account balances. In this case the <ns1232:literal xmlns:ns1232="http://docbook.org/ns/docbook">Object(..)</ns1232:literal> phrase
+      is dropped. EJB QL specification requires that you wrap your result with an  
+      <ns1233:literal xmlns:ns1233="http://docbook.org/ns/docbook">Object()</ns1233:literal> phrase only in that case where a stand-alone variable
+      is returned without navigating along a path.
+    </ns1230:para>
+  </ns1228:section>
+  
+</ns1181:section>

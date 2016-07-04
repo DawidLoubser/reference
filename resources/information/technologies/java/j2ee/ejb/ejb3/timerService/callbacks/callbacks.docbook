@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    
+    <title>Timeout call-backs</title>
+    
+    <indexterm>
+        <primary>EJB</primary>
+        <secondary>Timer Service</secondary>
+        <tertiary>callbacks</tertiary>
+    </indexterm>
+    
+    <para>
+        When a timer that has been scheduled on a bean <quote>times out</quote>, it
+        notifies the bean by calling a <emphasis>call-back</emphasis> service. Though a bean
+        can have multiple active timers scheduled for it, it can only have one call-back
+        service. The call-back service can be specified, either by the bean implementing
+        the <literal>javax.ejb.TimedObject</literal> interface, which looks as follows:
+    </para>
+    <programlisting language="Java"><![CDATA[
+package javax.ejb;
+
+public interface TimedObject 
+{ 
+    public void ejbTimeout(Timer timer); 
+} 
+]]></programlisting>
+    <para>
+        With an example EJB implementing it as follows:
+    </para>
+    <programlisting language="Java"><![CDATA[
+@javax.ejb.Stateless
+public class MyBean implements MyBusinessInterface, javax.ejb.TimedObject 
+{ 
+    public void myBusinessService()
+    {
+        // Business logic, including scheduling of a new timer
+        // ...
+        ejbContext.getTimerService().createTimer( /* ... */ );
+    }
+    
+    public void ejbTimeout(Timer timer)
+    {
+        // React to time-out event
+        // ...
+    }
+    
+    @Resource
+    private EJBContext ejbContext;
+} 
+]]></programlisting>
+    <para>
+        Or, alternatively, by annotating any service (public, protected, or private) which returns
+        <literal>void</literal> and accepts a single argument of type <literal>javax.ejb.Timer</literal>
+        with the <literal>@javax.ejb.Timeout</literal> annotation. For example:
+    </para>
+    <programlisting language="Java"><![CDATA[
+@javax.ejb.Stateless
+public class MyBean implements MyBusinessInterface 
+{ 
+    public void myBusinessService()
+    {
+        // Business logic, including scheduling of a new timer
+        // ...
+        ejbContext.getTimerService().createTimer( /* ... */ );
+    }
+    
+    @javax.ejb.Timeout
+    public void timeIsUp(Timer timer)
+    {
+        // React to time-out event
+        // ...
+    }
+    
+    @Resource
+    private EJBContext ejbContext;
+} 
+]]></programlisting>
+    
+    <section>
+        <title>Controlling the timer</title>
+        <para>
+            As the call-back service receives the timer, it may (say, in the case of a recurring
+            timer) inspect it to see when it will next call again, or it may choose to cancel it
+            in order to no longer receive call-backs. For example:
+        </para>
+        <programlisting language="Java"><![CDATA[
+@javax.ejb.Stateless
+public class MyBean implements MyBusinessInterface 
+{ 
+    ...
+    
+    @javax.ejb.Timeout
+    public void timeIsUp(Timer timer)
+    {
+        // React to time event
+        doSomething();
+        
+        // Cancel further call-backs under some circumstance
+        if ( /* ... */ )
+        {
+            timer.cancel();
+        }
+    }
+} 
+]]></programlisting>
+    </section>
+    
+    
+    <section>
+        <title>Passing information through a timer</title>
+        <para>
+            Often it is convenient, when scheduling a timer, to provide it with
+            some information which it must reproduce when it calls back. This information
+            is passed as an argument during one of the <literal>createTimer(...)</literal>
+            service invocations. For example, a registration service might wish to schedule
+            a <quote>welcome</quote> e-mail to be sent to newly registered users one day
+            after they register: The timer may be provided with an e-mail address, which it will
+            provide to the call-back service.
+        </para>
+        <programlisting language="Java"><![CDATA[
+@javax.ejb.Stateless
+public class MyBean implements MyBusinessInterface 
+{ 
+    /* Registers a new client */
+    public void registerNewClient( Registration r )
+    {
+        // Perform business logic
+        // ...
+        
+        // Schedule a timer to send a welcome e-mail after 24 hours
+        // The client's e-mail address is passed to the timer
+        ejbContext.getTimerService().createTimer( 
+            1000 * 60 * 60 * 24, r.getEmailAddress() );
+    }
+    
+    @javax.ejb.Timeout
+    public void sendWelcomeEmail(Timer timer)
+    {
+        String emailAddress = (String)timer.getInfo();
+        
+        // Use JavaMail to send e-mail message
+        // ...
+    }
+    
+    @Resource
+    private EJBContext ejbContext;
+} 
+        ]]></programlisting>
+        <note>
+            <para>
+                The information passed to a timer must implement <literal>java.io.Serializable</literal>, as the
+                timer must be able to store it over a potentially long period of time (across app server
+                restarts, etc).
+            </para>
+        </note>
+    </section>
+    
+    <section>
+        <title>Understanding the call-back invocation</title>
+        <para>
+            Timer services can only be used to call-back stateless session beans, as well as message-driven
+            beans. This allows the incoming call to be treated like any other call to a stateless bean: The
+            application server will direct the call to any available bean from the method-ready pool, which results
+            in very high performance, as well as minimal interference of timer call-backs with normal business services.
+        </para>
+        <para>
+            The call-back service may, of course, use any of the facilities at its disposal (such as injecting
+            a <literal>javax.persistence.EntityManager</literal>) in order to look up or query information needed
+            to complete the call-back workflow. It usually uses information provided to it by the timer itself
+            to perform such lookups.
+        </para>
+    </section>
+
+</section>

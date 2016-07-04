@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"--><ns4394:section xmlns:ns4394="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.security.fileOwnership">
+
+  <ns4395:title xmlns:ns4395="http://docbook.org/ns/docbook">Changing file ownership via <ns4396:command xmlns:ns4396="http://docbook.org/ns/docbook">chown</ns4396:command></ns4395:title>
+  <ns4397:para xmlns:ns4397="http://docbook.org/ns/docbook">
+    Any file in Linux belongs to a user and to a group.  If a user creates a file without
+    specifying the file ownership, the file will be owned by the user, and the
+    group is set to a generic <ns4398:emphasis xmlns:ns4398="http://docbook.org/ns/docbook">users</ns4398:emphasis> group.
+  </ns4397:para>
+  <ns4399:para xmlns:ns4399="http://docbook.org/ns/docbook">
+    To change the ownership of a file, one uses the <ns4400:command xmlns:ns4400="http://docbook.org/ns/docbook">chown</ns4400:command>
+    command, which takes a user and a group name as argument separated
+    by a colon. For example, the following line changes the ownership of all files
+    in the current directory to the user <ns4401:emphasis xmlns:ns4401="http://docbook.org/ns/docbook">donald</ns4401:emphasis> and the
+    group <ns4402:emphasis xmlns:ns4402="http://docbook.org/ns/docbook">ducks:</ns4402:emphasis>
+    <ns4403:cmdsynopsis xmlns:ns4403="http://docbook.org/ns/docbook">
+<ns4404:command xmlns:ns4404="http://docbook.org/ns/docbook">chown donald:ducks *</ns4404:command>      
+    </ns4403:cmdsynopsis>
+  </ns4399:para>
+  <ns4405:para xmlns:ns4405="http://docbook.org/ns/docbook">
+    Very often you will have to be the superuser to change file permissions to what you
+    want.
+    User and/or group ids can be used instead of user and group names. Also, one
+    of the two can be omitted, changing only either the owner user or the owner group.
+    For example
+    <ns4406:cmdsynopsis xmlns:ns4406="http://docbook.org/ns/docbook"><ns4407:command xmlns:ns4407="http://docbook.org/ns/docbook">
+chown donald duckMenu.txt        
+    </ns4407:command></ns4406:cmdsynopsis>
+    changes the user owner for the file <ns4408:filename xmlns:ns4408="http://docbook.org/ns/docbook">duckMenu.txt</ns4408:filename> and
+    <ns4409:cmdsynopsis xmlns:ns4409="http://docbook.org/ns/docbook"><ns4410:command xmlns:ns4410="http://docbook.org/ns/docbook">
+chown :501 docs/*
+    </ns4410:command></ns4409:cmdsynopsis>
+    changes the owner group of all files in the <ns4411:filename xmlns:ns4411="http://docbook.org/ns/docbook">docs</ns4411:filename> subdirectory
+    of the current directory to the group with group id 501.
+  </ns4405:para>
+  <ns4412:para xmlns:ns4412="http://docbook.org/ns/docbook">
+    <ns4413:command xmlns:ns4413="http://docbook.org/ns/docbook">chown</ns4413:command> takes a number of command-line arguments. These
+    are explained in table <ns4414:xref xmlns:ns4414="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.security.fileOwnership.chownArgs"/>
+    <ns4415:table xmlns:ns4415="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.security.fileOwnership.chownArgs">
+      <ns4416:title xmlns:ns4416="http://docbook.org/ns/docbook">Command line flags for <ns4417:command xmlns:ns4417="http://docbook.org/ns/docbook">chown</ns4417:command></ns4416:title>
+      <ns4418:tgroup xmlns:ns4418="http://docbook.org/ns/docbook" cols="2">
+        <ns4419:thead xmlns:ns4419="http://docbook.org/ns/docbook">
+          <ns4420:row xmlns:ns4420="http://docbook.org/ns/docbook"><ns4421:entry xmlns:ns4421="http://docbook.org/ns/docbook">flag</ns4421:entry><ns4422:entry xmlns:ns4422="http://docbook.org/ns/docbook">description</ns4422:entry></ns4420:row>
+        </ns4419:thead>
+        <ns4423:tbody xmlns:ns4423="http://docbook.org/ns/docbook">
+          <ns4424:row xmlns:ns4424="http://docbook.org/ns/docbook">
+            <ns4425:entry xmlns:ns4425="http://docbook.org/ns/docbook">-R, --recursive</ns4425:entry>
+            <ns4426:entry xmlns:ns4426="http://docbook.org/ns/docbook">
+              Apply the ownership changes recursively across the directory hierarchy.
+            </ns4426:entry>
+          </ns4424:row>
+          <ns4427:row xmlns:ns4427="http://docbook.org/ns/docbook">
+            <ns4428:entry xmlns:ns4428="http://docbook.org/ns/docbook">--from=CURRENT_OWNER:CURRENT_GROUP</ns4428:entry>
+            <ns4429:entry xmlns:ns4429="http://docbook.org/ns/docbook">
+              This flag requests the ownership of only those files which are currently owned 
+              by a specified user and/or group is changed.
+            </ns4429:entry>
+          </ns4427:row>
+          <ns4430:row xmlns:ns4430="http://docbook.org/ns/docbook">
+            <ns4431:entry xmlns:ns4431="http://docbook.org/ns/docbook">--reference=REFERENCE_FILE</ns4431:entry>
+            <ns4432:entry xmlns:ns4432="http://docbook.org/ns/docbook">
+              Change the ownership of the target files to that of a specified reference file,
+              <ns4433:abbrev xmlns:ns4433="http://docbook.org/ns/docbook">i.e.</ns4433:abbrev> both the user and the group owner of the target files
+              will be the same as that of the reference file after the command has completed.
+            </ns4432:entry>
+          </ns4430:row>          
+          <ns4434:row xmlns:ns4434="http://docbook.org/ns/docbook">
+            <ns4435:entry xmlns:ns4435="http://docbook.org/ns/docbook">--dereference</ns4435:entry>
+            <ns4436:entry xmlns:ns4436="http://docbook.org/ns/docbook">
+              In the case where the file is a symbolic link to another file, change the permission
+              of the file the link refers to, instead of the symbolic link itself.
+            </ns4436:entry>
+          </ns4434:row>
+          <ns4437:row xmlns:ns4437="http://docbook.org/ns/docbook">
+            <ns4438:entry xmlns:ns4438="http://docbook.org/ns/docbook">-h, --no-dereference</ns4438:entry>
+            <ns4439:entry xmlns:ns4439="http://docbook.org/ns/docbook">
+              In the case where the file is a symbolic link to another file, change the permission
+              of the symbolic link itself, and not that of the file the link refers to.
+            </ns4439:entry>
+          </ns4437:row>          
+          <ns4440:row xmlns:ns4440="http://docbook.org/ns/docbook">
+            <ns4441:entry xmlns:ns4441="http://docbook.org/ns/docbook">-v, --verbose</ns4441:entry>
+            <ns4442:entry xmlns:ns4442="http://docbook.org/ns/docbook">
+              Output for each file what has been done (ownership changed or retained).
+            </ns4442:entry>
+          </ns4440:row>
+          <ns4443:row xmlns:ns4443="http://docbook.org/ns/docbook">
+            <ns4444:entry xmlns:ns4444="http://docbook.org/ns/docbook">-c, --changes</ns4444:entry>
+            <ns4445:entry xmlns:ns4445="http://docbook.org/ns/docbook">
+              A version of verbose which reports only on the changes made by 
+              <ns4446:command xmlns:ns4446="http://docbook.org/ns/docbook">chown</ns4446:command>.
+            </ns4445:entry>
+          </ns4443:row>
+          <ns4447:row xmlns:ns4447="http://docbook.org/ns/docbook">
+            <ns4448:entry xmlns:ns4448="http://docbook.org/ns/docbook">-f, --silent, --quiet</ns4448:entry>          
+            <ns4449:entry xmlns:ns4449="http://docbook.org/ns/docbook">
+              Suppress most error messages.
+            </ns4449:entry>
+          </ns4447:row>          
+        </ns4423:tbody>
+      </ns4418:tgroup>
+    </ns4415:table>
+  </ns4412:para>
+
+  <ns4450:section xmlns:ns4450="http://docbook.org/ns/docbook">
+    <ns4451:title xmlns:ns4451="http://docbook.org/ns/docbook">Changing the group owner of a file via <ns4452:command xmlns:ns4452="http://docbook.org/ns/docbook">chgrp</ns4452:command></ns4451:title>
+    <ns4453:para xmlns:ns4453="http://docbook.org/ns/docbook">
+      One can also use <ns4454:command xmlns:ns4454="http://docbook.org/ns/docbook">chgrp</ns4454:command> to change the group ownership only.
+      It works in the same way as <ns4455:command xmlns:ns4455="http://docbook.org/ns/docbook">chown</ns4455:command> except that it only takes 
+      a group name (no user name) and changes only the group ownership of the target files.
+    </ns4453:para>
+    <ns4456:para xmlns:ns4456="http://docbook.org/ns/docbook">
+      For example
+    <ns4457:cmdsynopsis xmlns:ns4457="http://docbook.org/ns/docbook"><ns4458:command xmlns:ns4458="http://docbook.org/ns/docbook">
+chgrp -R ducks docs/*
+    </ns4458:command></ns4457:cmdsynopsis>
+    changes recursively the group owner of all files in the <ns4459:filename xmlns:ns4459="http://docbook.org/ns/docbook">docs</ns4459:filename> 
+    subdirectory of the current directory to the group with name<ns4460:emphasis xmlns:ns4460="http://docbook.org/ns/docbook">ducks</ns4460:emphasis>.
+    </ns4456:para>
+  </ns4450:section>
+
+</ns4394:section>

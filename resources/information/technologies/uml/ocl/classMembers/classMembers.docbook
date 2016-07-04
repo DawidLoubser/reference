@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>
+        Accessing class members
+    </title>
+    <indexterm><primary>Object Constraint Language</primary><secondary>accessing class members</secondary></indexterm>
+    
+    <para>
+        Class members are accessed directly form the class name. For example, if we wanted to constrain the <literal>numInstances</literal>
+        class member of a <literal>Thread</literal> class, to below 500, then we could use the expression
+        <programlisting><![CDATA[
+context Thread       
+    inv: Thread.numInstances < 500
+       ]]></programlisting>
+    </para>
+    
+    <section>
+        <title>Pre-defined class members</title>
+        <para>
+            <indexterm><primary>allInstances</primary><secondary>OCL class service</secondary></indexterm>
+            OCL supports a number of pre-defined class members. One of these is the <literal>allInstances()</literal>
+            service which is available for any OCL or model class. We could use this service to specify the uniqueness
+            of account numbers as follows:
+            <programlisting><![CDATA[
+context Account
+    inv: Account.allInstances()->forAll(acc1, acc2 | acc1 <> acc2 implies acc1.accountNo <> acc2.accountNo
+                ]]></programlisting>
+        </para>
+    </section>
+</section>    
+    

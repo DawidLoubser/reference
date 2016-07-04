@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+    id="resources.information.technologies.java.j2se.collections.collections.collections.interfaces.comparableComparatorInterfaces"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title role="The Comparable and Comparator Interfaces">The Comparable and Comparator Interfaces</title>
+    <para>In order to support sorted collections of objects, there must be some way of specifying
+        how instances of your classes are compared (i.e. sorted).</para>
+    <para>The means to query the ordering between instances of classes is specified in the
+        <literal>Comparable</literal> and <literal>Comparator</literal> interfaces. The services
+        specified in these interfaces are used by sorting algorithms (e.g.
+        <literal>Collections.sort()</literal>) as well as by sorted collections (e.g.
+        <literal>TreeSet</literal> and <literal>TreeMap</literal>).</para>
+    <para/>
+    <section>
+        <title role="The Comparable Interface">The Comparable Interface</title>
+        <para>This interface should be implemented by classes for which there is a natural ordering.
+            For example, a natural ordering of persons could be their surname and first names (in
+            that order).</para>
+        <para>The <literal>Comparable</literal> interface thus specifies a way for obtaining the
+            natural ordering of instances of certain classes. The primitive data types as well as
+            quite a few standard Java classes (e.g. the <literal>Date</literal> and the
+            <literal>String</literal> classes) implement the <literal>Comparable</literal>
+            interface. For any other class one should specify that that class does implement this
+            interface. The interface is very simple indeed:</para>
+        <para/>
+        <para>
+            <programlisting>
+ public interface Comparable
+ {
+   public int compareTo(Object o);
+ }                
+                </programlisting>
+        </para>
+        <para>The <literal>compareTo(Object)</literal> method should return a negative number if the
+            argument object is before the <literal>this</literal> object within the ordering, zero
+            if one cannot decide which of the two object should be first in an ordered list and
+            positive otherwise.</para>
+        <para>For example, we might want to sort persons on their names, comparing first surnames
+            and then first names:</para>
+        <para/>
+        <para>
+            <programlisting>        
+<xi:include href="./src/Person.java" parse="text"/>
+            </programlisting>
+        </para>
+        <para> The <literal>compareTo()</literal> method does the required comparison using the
+            corresponding method of the <literal>String</literal> class. There is, however, one
+            unfortunate aspect about the Java language definition, namely that there are three
+            methods which have to be mutually consistent. These are the
+            <literal>compareTo()</literal>, <literal>equals()</literal> and verb+hashCode()+
+            methods. The requirement is that when the <literal>compareTo()</literal> method returns
+            zero for two objects, then the <literal>equals()</literal> method should return true and
+            the <literal>hashCode()</literal> method should return the same hash code for the two objects.</para>
+        <para>This is unfortunate because the responsibility for this consistency relies with the
+            developer. Furthermore, at least the first two methods supply the same information.
+            Fortunately one can (and should!) implement the <literal>equals()</literal> method in
+            terms of the <literal>compareTo()</literal> method as is done in our
+            <literal>Person</literal> class.</para>
+        <para>We can now insert persons randomly in one of the sorted collections. In the following
+            example we have chosen a <literal>TreeSet</literal>:</para>
+        <para/>
+        <para>
+            <programlisting>
+<xi:include href="./src/TreeSetOfPersons.java" parse="text"/>
+            </programlisting>
+        </para>
+        <para> The output of this program is shown below: </para>
+        <para>
+            <programlisting>
+ Mohammed Ali
+ Tandi Khumalo
+ Alfred Johannes Motaung
+ Francois Pieterse
+ Jenny Smith
+ Jenny Ellen Smith
+ Peter Smith              
+              </programlisting>
+        </para>
+        <para> The above method works fine for sorting algorithms but not necessarily for sorted
+            collections. The reason for this is that if two objects which are equal (i.e. for which
+            the <literal>compareTo()</literal> method returns zero) are inserted in a sorted
+            collection (e.g. <literal>TreeSet</literal> or <literal>TreeMap</literal>), then the
+            second insertion will be ignored because the collection assumes that that object is
+            already contained in the collection. To remedy this we need to create a unique ordering
+            such that two persons are never equal (except when they are physically the same object,
+            having the same identity or reference). This can be done by sorting on an additional,
+            unique field when the names are equal. The identity number would be a good candidate for this.</para>
+        <para/>
+    </section>
+    <section>
+        <title role="Comparators">Comparators</title>
+        <para>The above method of having your class implement <literal>Comparable</literal> works
+            fine as long as </para>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    <para>Your class either implements <literal>Comparable</literal> or you are in a
+                        position to define a subclass which does. </para>
+                </listitem>
+                <listitem>
+                    <para>You are happy with the natural ordering for that type and you do not want
+                        to order on some other criterion.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>Assume somebody wants to sort persons on first names instead of on surnames and assume
+            other services still have to use the natural ordering on surnames. In this case we have
+            to define the new ordering separately to the natural ordering. This is done in a
+            separate class which contains a <literal>compareTo()</literal> method receiving the two
+            objects (persons in our case) which have to be compared as arguments and returning again
+            a negative, zero or positive integer for the ordering information. The method is usually
+            implemented in another stand-alone class which implements the
+            <literal>Comparator</literal> interface:</para>
+        <para/>
+        <para>
+            <programlisting>
+ public interface Comparator
+ {
+   public int compare(Object object1, Object object2);
+ }              
+              </programlisting>
+        </para>
+        <para> We can now implement a <literal>FirstNameComparator</literal>:</para>
+        <para>
+            <programlisting>
+ ...
+ class MyApplication
+ {
+   ...
+   static final private class FirstNamesComparator implements Comparator
+   {
+     public int compareTo(Object object1, Object object2)
+     {
+       Person person1 = (Person)object1;
+       Person person2 = (Person)object2;
+ 
+       int firstNameComparison = person1.getFirstNames().compareTo
+                                   (person2.getFirstNames());
+       if (firstNameComparison != 0)
+         return firstNameComparison;
+       else
+         return person1.getIdentityNumber().compareTo
+                  (person2.getIdentityNumber());
+     }
+   }
+   ...
+ }
+                  
+      </programlisting>
+        </para>
+        <para> Note that this comparator was specifically created for
+            <literal>MyApplication</literal>. We are only going to use it from within instances of
+            <literal>MyApplication</literal>. Furthermore, it does not need to know the state of the
+            application. It really is only a utility function used by our application. We thus
+            declare the class a static nested class.</para>
+    </section>
+</section>

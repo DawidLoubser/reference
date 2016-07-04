@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.platforms.linux.processControl.priorities"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Process Priorities</title>
+  <para>
+    Linux supports scheduling priorities ranging from a maximum priority -20 (minimum niceness)
+    to the lowest scheduling priority of +19 (maximum niceness). 
+  </para>
+  
+  <section>
+    <title>Requesting a priority for a job via <command>nice</command></title>
+    <para>
+      If you start a process without requesting a particular priority, it gets the default priority, 0.          
+      Normal users can decrease the priority (increase the niceness) by starting a process with
+      the <command>nice</command> command:
+      <cmdsynopsis><command>
+nice -10 find / -name *.java > javaFiles.txt
+      </command></cmdsynopsis>
+    </para>
+    <para>
+      As a super-user, you can specify a priority which is higher than the default priority. For example,
+      to sort the files names found with the previous command in a process with a niceness of -5:
+      <cmdsynopsis><command>
+nice --5 srt javaFiles.txt javaFilesSorted.txt          
+      </command></cmdsynopsis>
+    </para>
+  </section>
+  
+  <section>
+    <title>Changing the priority of a running process with <command>renice</command></title>
+    <para>
+      Linux also enables you to modify the priority of a running process. For this you will need the
+      process id (PID). The process id may be obtained as usual via <command>ps</command>:
+      <cmdsynopsis><command>
+ps -e | grep srt      
+      </command></cmdsynopsis>
+      and the renice command is run with the new niceness and the process id via
+      <cmdsynopsis><command>
+renice +10 11111    
+      </command></cmdsynopsis>
+    </para>
+    <para>
+      There are a few constraints on <command>renice</command>:
+      <orderedlist>
+        <listitem><para>
+          Users can renice only the processes they own. Only super-users can renice
+          other processes.
+        </para></listitem>
+        <listitem><para>
+          Users can only decrease the priority of a process via renice. To increase a priority
+          (even after having decreased yourself), you need to be a super-user.
+        </para></listitem>
+      </orderedlist>
+      
+    </para>
+  </section>
+  
+  
+</section>

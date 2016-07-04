@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.lang.multiThreading.monitorsAndMutexes.javaMonitors"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="Java's Monitors">Java's Monitors</title>
+
+<para>In Java, monitors can be acquired by either objects or classes. Both,
+objects and classes acquire at most one monitor protecting any code
+which has a mutex assigned to it. One assigns a mutex via the
+<emphasis role="verb">synchronized</emphasis> keyword. Object monitors restrict access to all 
+synchronized instance services, while class monitors control access 
+to all class services.</para>
+
+<para>The following class shows a number of clients who access a common resource,
+an account.
+</para>
+    <para>
+        <programlisting>
+<xi:include parse="text"
+  href="source/AccountUsers.java"/>
+        </programlisting>
+    </para>
+    
+<para>The clients request a number of credits and debits from the account. For each 
+credit the clients make a corresponding debit and hence the account balance
+should, at the end of the day, be zero. However, if the <emphasis role="verb">credit()</emphasis> and 
+<emphasis role="verb">debit()</emphasis> services do not acquire the account's mutex by being
+<emphasis role="verb">synchronized</emphasis>, the final account balance is generally not zero.
+The account balance gets corrupted because between retrieving the balance,
+calculating the new balance and updating the balance, the threads is
+preempted. The interrupting thread still retrieves the old balance, 
+calculates the new balance and updates the balance. When the first thread
+gets a chance to complete its action it basically annuls the action of
+the other thread. The extra write statements to the file have been inserted
+to increase the likelihood of a thread being preempted while it is busy
+completing a <emphasis role="verb">credit()</emphasis> or <emphasis role="verb">debit()</emphasis> request.</para>
+
+<para>Notice the importance of the object having the monitor. This ensures
+that 
+    <orderedlist>
+        <listitem><para>None of the instance methods may be entered into by another thread
+        while one thread is still busy. Hence while one thread is busy
+        crediting the account no other thread can either credit or debit
+        the account.</para></listitem>
+        <listitem><para>Threads can freely use other methods like querying the account number
+        or balance (the latter would be a possible candidate for 
+        synchronization).</para></listitem>
+        <listitem><para>Threads can freely use the \verb+credit()+ and \verb+debit()+
+        services of any other account whose monitor is currently not
+        locked.</para></listitem>
+    </orderedlist>
+</para>
+
+<para>The acquisition of an object's monitor has of course further overheads upon
+method invocation. One should thus only declare those methods
+<emphasis role="verb">synchronized</emphasis> which really require it. This is most probably the reason
+why the Java 2 collection classes are non-synchronized. Java 2 supplies
+synchronization wrappers for those cases where one wants to share the same 
+collection among multiple threads.</para>
+
+<para>For some reason, this does not seem true for the Windows NT platform where
+the synchronized version of our application runs on average slightly faster
+than the non-synchronized version.</para>
+    
+</section>

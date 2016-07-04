@@ -1,0 +1,57 @@
+digraph serviceContract
+{
+	label="Business Logic Developer\n(Training stream, Solms TCD)";
+	rankdir=LR;
+	splines=true;
+	fontname = "Bitstream Vera Sans"
+    fontsize = 9
+	node [fontname = "Bitstream Vera Sans Bold", fontsize = 9, colorscheme=ylgn9, fontcolor=9,shape=folder,style=filled,color=9]
+    edge [fontname = "Bitstream Vera Sans",fontsize = 8, colorscheme=greys9, labelfloat=true, arrowsize=0.5]
+    
+
+	/* Courses */
+	{
+		rank=same;
+		xml[label="XML",fillcolor=1];	
+		itj[label="Introduction to Java",fillcolor=1];
+	}
+	
+	pij[label="Programming in Java",fillcolor=2];
+	
+	{
+		rank=same;
+		ejb[label="Enterprise JavaBeans (EJB)",fillcolor=3];
+		bpel[label="WS-BPEL",fillcolor=3];
+		spring[label="Spring",fillcolor=3];
+	}
+
+    /* Dependencies */
+    xml -> bpel;
+    itj -> pij -> ejb;
+    pij -> spring;
+    
+    /* Skils Enhancements */
+    subgraph clusterEnhancements
+	{
+		label="Skills Enhancement"
+		aj[label="Advanced Java",fillcolor=4];
+		jt[label="Java Tools",fillcolor=4];
+		ooad[label="Object-Oriented Analysis and Design using UML",fillcolor=1];
+		xwsj[label="XML and Web Services with Java",fillcolor=3];
+		ei[label="Enterprise Integration",fillcolor=3];
+	}
+    {
+    	edge[style=dotted]
+	    ejb -> aj;
+    	ejb -> jt;
+    	ejb -> ooad;
+    	ejb -> xwsj;
+    	ejb -> ei;
+    	bpel -> ooad;
+    	bpel -> ei;
+    	spring -> ooad;
+    	spring -> jt;
+    	spring -> aj;
+    	spring -> ei;
+    }   
+}

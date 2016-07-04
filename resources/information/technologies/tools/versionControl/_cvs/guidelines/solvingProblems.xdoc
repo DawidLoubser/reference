@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.guidelines.solvingProblems"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Solving some common problems</title>
+  <para>
+    In this section we discuss some common problems and provide suggestions for
+    solving them. You can also look at the CVS FAQ for further examples.
+  </para>
+  
+  <section>
+    <title>Waiting for locks</title>
+    <para>
+      CVS uses locks (monitors) to protect the information in the repository
+      from corruption due to concurrent access. 
+    </para>
+    <para>
+      For example, if you are requesting an update while CVS is busy writing
+      due to a commit, then your request is locked (will have to wait) until
+      the committal is complete. This ensures that 
+      <itemizedlist>
+        <listitem><para>
+          the information in the repository remains consistent and  
+        </para></listitem>
+        <listitem><para>
+          that the information you receive is valid.  
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      If the lock prevails for a longish time it is likely that CVS has failed
+      to release some of the locks after completing a process. This can 
+      typically occur if CVS crashes while performing certain operations.
+    </para>
+    
+    <section>
+      <title>CVS implements locks through lock files</title>
+      <para>
+        When starting a process which requires a lock on a file or directory, CVS
+        creates a lock file within the directory which hosts the file
+        or directory. When releasing the lock, the lock file is deleted.
+      </para>
+      <para>
+        The lock files are
+        <itemizedlist>
+          <listitem><para>
+            <literal><![CDATA[#cvs.lock]]></literal> for general locks,
+          </para></listitem>
+          <listitem><para>
+            <literal><![CDATA[#cvs.wlf]]></literal> for write locks and
+          </para></listitem>
+          <listitem><para>
+            <literal><![CDATA[#cvs.rlf]]></literal> for read locks.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Solving lock problems</title>
+      <para>
+        To solve a lock problem which arises due to a lock file not having
+        been deleted after a CVS process, you simply delete the file which
+        causes the problem. 
+      </para>
+      <para>
+        You should, however, make certain that the lock is a 
+        <emphasis><quote>lost lock</quote></emphasis> by comparing
+        the lock file creation date with the dates of the currently
+        running CVS processes. If the date-time is before the starting 
+        time of any of the currently running CVS processes you can
+        savely delete the lock file(s).
+      </para>
+    </section>
+  </section>
+
+  <section>
+    <title>CVS has corrupted binary files</title>
+    <para>
+      The files were not imported with the <option>-kb</option>.
+    </para>
+  </section>
+  
+  <section>
+    <title>Users are not using <command>cvs edit</command> for watched files</title>
+    <para>
+      In addition to requesting the watch, you need to switch watch on. This will
+      feed the files in read-only form. Tell all users that they should execute
+      <command>cvs edit</command> on the file to gain write-access and inform
+      others that they are starting to work on the file.
+    </para>
+  </section>
+
+  <section>
+    <title>Locks don't seem to be switched off</title>
+    <para>
+      After removing watches via <command>cvs watch remove</command>
+      you still need to switch watches off via <command>cvs watch off</command>.
+    </para>
+  </section>
+  
+  <section>
+    <title>CVS feeds files with incorrect end-of-file characters</title>
+    <para>
+      The text files may have been imported with the <option>-kb</option>
+      option.
+    </para>
+  </section>
+  
+  <section>
+    <title>Files need to be moved without losing the history</title>
+    <para>
+      You don't move files in CVS. Instead you copy them and remove the
+      old version. From your working directory do
+      <synopsis><![CDATA[
+mv <oldFile> <newFile>      
+cvs remove <oldFile>
+cvs add <newFile>
+cvs commit -m "Moved <oldFile> to <newFile>" <oldFile> <newFile>
+      ]]></synopsis>
+      This approach will maintain the full history since removing a file
+      from CVS neither deletes it nor its histroy.
+    </para>
+  </section>
+  
+  <section>
+    <title>Date/Time-based exports/updates miss certain commits</title>
+    <para>
+      This is usually caused by the difference between the UCT/GMT
+      clock used by CVS and the local time of the client machine. Add
+      a <quote>GMT</quote> specifier to the end of the date specification
+      or use relative times like  <quote>3 days ago</quote>.
+    </para>
+  </section>
+  
+  <section>
+    <title>Access via <literal>pserver</literal> fails</title>
+    <para>
+      The most common cause of this problem is that you forgot to
+      list the repository via 
+      <literal><![CDATA[--alow-root=/usr/local/cvs/repositoryName]]></literal>
+      in the <application>inetd</application> configuration file.
+    </para>
+  </section>
+  
+  
+</section>

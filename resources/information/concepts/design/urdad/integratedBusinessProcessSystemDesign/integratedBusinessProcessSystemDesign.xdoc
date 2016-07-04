@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.design.urdad.integratedBusinessProcessSystemDesign.integratedBusinessProcessSystemDesign"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Integrated business process and system design via URDAD</title>
+  <para>
+    In software engineering and business analysis, '''URDAD''' (''Use-Case Responsibility Driven Analysis and Design'') is an iterative 
+    design process. It provides an integrated design methodology for business process/system design which generates the 
+    platform-independent model in the spirit of OMG's Model Driven Architecture. 
+  </para>
+  <para>
+    URDAD aims to encourage/generate a 
+    design which satisfies accepted criteria for ''good design'' including
+    <itemizedlist>
+      <listitem><para>
+        good responsibility localization such that each object should have good cohesion and adheres to the single responsibility principle,
+      </para></listitem>
+      <listitem><para>
+        clean layers of granularity,    
+      </para></listitem>
+      <listitem><para>
+        decoupling via contracts,     
+      </para></listitem>
+      <listitem><para>
+        simplicity, and    
+      </para></listitem>
+      <listitem><para>
+        the core design should be architecture and technology neutral.  
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>The URDAD steps</title>
+    <para>
+      URDAD is an iterative design methodology which designs the realization of a use case across 
+      layers of finer and finer granularity, each layer with well defined responsibilities. URDAD provides 
+      an iterative algorithm for the design workflow. At each level of granularity URDAD requires the following steps
+      <itemizedlist>
+        <listitem><para>
+          Responsibility identification - the responsibilities fix the layer of granularity.
+        </para></listitem>
+        <listitem><para>
+          Responsibility allocation across core components of the context and external service providers.
+        </para></listitem>
+        <listitem><para>
+          Workflow specification.          
+        </para></listitem>
+        <listitem><para>
+          Projecting out the context of the collaboration.
+        </para></listitem>
+        <listitem><para>
+          Modeling the value objects.          
+        </para></listitem>
+        <listitem><para>
+          Specifying the contracts.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      The transition to the next lower level of granularity is done by selecting one of the objects from the 
+      previous level of granularity as new context. 
+      <itemizedlist>
+        <listitem><para>
+          The other objects which interfaced with it will become the actors at the next lower level of granularity.
+        </para></listitem>
+        <listitem><para>
+          The services of the previous level of granularity will become the use cases at the next lower level of granularity.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    <figure>
+      <title>Overview of URDAD steps</title>
+      <graphic fileref="urdadOverview.jp"/>
+    </figure>
+  </section>
+  
+  <section>
+    <title>A business modeling example</title>
+    <para>
+      The URDAD methodology can be illustrated with a simple example: designing a business process for realizing 
+      the ''process claim'' use case offered by insurers to policy holders. 
+    </para>
+    
+    <section>
+      <title>Responsibility identification step</title>
+      <para>
+        In the responsibility identification step one identifies core high-level responsibilities which need to be addressed 
+        when realizing the use case. The core components of the context (core business units of the insurer) together with 
+        potentially some external service providers will collaborate to realize the use case. URDAD requires that one first 
+        identifies responsibilities before identifying the entities (objects) which will collaborate to realize the use case. 
+      </para>
+      <para>
+        The figure shown below identifies responsibilities which need to be addressed when an insurer realizes the 
+        ''process claim'' use case offered to its policy holders.
+      </para>
+      
+      <figure
+        id="resources.information.concepts.design.urdad.integratedBusinessProcessSystemDesign.responsibilityIdentification_fig">
+        <title>Responsibility identification</title>
+        <graphic fileref="responsibilityIdentification.jpg"/>
+      </figure>
+
+      <para>
+        It is important the the responsibilities are core high-level responsibilities. In URDAD it is this responsibility 
+        identification step which fixes the level of granularity for the iteration. URDAD also requires that at each level 
+        there is one object which takes onwership of the workflow realizing the use case.
+      </para>
+    </section>
+    
+    <section>
+      <title>Responsibility allocation step</title>
+      <para>
+        The second step in the URDAD design process is to allocate each responsibility to a separate entity/object. 
+        The designer may be a business analyst designing a business process or a developer designing a system 
+        realizing the use case. 
+      </para>
+      <para>
+        For each responsibility the designer needs to question whether the responsibility 
+        should be addressed by the context (e.g. organization or system) itself or whether it is going to be 
+        outsourced to an external service provider (another organization or another system). If the responsibility 
+        is to be addressed within the context, then it will be assigned to a core component of the context. If not, 
+        it will be assigned to an external object (i.e. an actor).
+      </para>
+      <para>
+        In the insurer example, the context is an organization and the external service providers will be outsourcing 
+        partners. In the case where the context is a system, the components will be system components (e.g. high-level 
+        modules of the system) and the external service providers may be other systems.
+      </para>
+      
+      <figure
+        id="resources.information.concepts.design.urdad.integratedBusinessProcessSystemDesign.responsibilityAllocation_fig">
+        <title>Responsibility allocation</title>
+        <graphic fileref="responsibilityAllocation.jpg"/>         
+      </figure>
+
+      <para>
+        In the diagram below the respnsibility of valuing a claim has been outsourced to an external accessor, while the other 
+        respnsibilities have been assigned to core business units of the insurer.
+      </para>
+    </section>
+    
+    <section>
+      <title>Workflow specification</title>
+      <para>
+        In step 3 of URDAD one specifies workflow realizing the use case at the current level of granularity.
+      </para>
+      
+      <section>
+        <title>Documenting a typical scenario</title>
+        <para>
+          URDAD encourages specifying first a typical workflow scenario before looking at the workflow in general. 
+          The workflow scenario is usually documented using a UML sequence diagram.
+        </para>
+        <para>
+          A scenario for the process claim collaboration is shown below. Note that
+          the claims department remains throughout the workflow manager.
+        </para>
+
+        <figure
+          id="resources.information.concepts.design.urdad.integratedBusinessProcessSystemDesign.processClaimScenario_fig">
+          <title>Workflow scenario</title>
+          <graphic fileref="processClaimScenario.jpg"/>
+        </figure>
+      </section>
+      
+      <section>
+        <title>Specifying the workflow in general</title>
+        <para>
+          After having specified a workflow scenario, one specifies the workflow in general. To this end UML activity diagrams are used.
+        </para>  
+          
+        <figure
+          id="resources.information.concepts.design.urdad.integratedBusinessProcessSystemDesign.processClaimWorkflow_fig">
+          <title>General workflow</title>
+          <graphic fileref="processClaimWorkflow.jpg"/>
+        </figure>
+
+        <para>
+          Note that decision block, workflow forks and synchronization points in the workflow are all within the claims department 
+          which is responsible for managing the workflow.
+        </para>
+      </section>
+    </section>
+    
+    <section>
+      <title>Extracting the collaboration context</title>
+      <para>
+        The next step in URDAD requires extracting the collaboration context from the dynamic model. 
+        The collaboration context is that subset of the static model which, at the current level of granularity, 
+        supports the collaboration which realizes the use case. The colaboration context can, in principle be 
+        generated automatically by mapping the service requests from scenarios onto required message paths and services. 
+      </para>
+      
+      <figure
+        id="resources.information.concepts.design.urdad.integratedBusinessProcessSystemDesign.collaborationContext_fig">
+        <title>Collaboration context</title>
+        <graphic fileref="collaborationContext.jpg"/>
+      </figure>
+
+      <para>
+        Note that URDAD requires that one remains at the same level of granularity throughout the iteration 
+        before going down to the next lower level of granularity. Hence, throughout the iteration,
+        the only objects participating at that level of granularity in the collaboration are those to which the 
+        core responsibilities have been assigned.
+      </para>
+      <para>
+        Note also that the object from this level of granularity are related by association relationships and not 
+        by aggregation or composition relationships (otherwise they would not be from the same level of granularity). 
+        However, they are either actors or components from an object from the previous level of granularity. 
+        For example, all but the assessor are components of the insurer.
+      </para>
+    </section>
+    
+    <section>
+      <title>Modeling value objects</title>
+      <para>
+        During the next step of URDAD the value objects exchanged between the collaborating entities are modeled. 
+        In the case where we are designing a system, the value objects exchanged between the system and the user 
+        (primary actor) will most likely come from the requirements specification.     
+      </para>
+      <para>
+        In the insurance example the two information structures exchanged between the organization and the policy 
+        holder are the ''ClaimForm'', ''SettlementOffer''. These, as well as the value objects exchanged between the 
+        business units and between business units and external service providers, are modeled using UML class 
+        diagrams.     
+      </para>
+    </section>
+  
+    <section>
+      <title>Specifying the contracts</title>
+      <para>
+        During this step URDAD requires that the contracts are specified for each member of the collaboration.
+      </para>
+      <para>
+        In the insurance example this requires generating a contract for the external service provider as well 
+        as one for each business unit. The service provider contract would become the 
+        Service Level Agreement (SLA).     
+      </para>
+      
+      <figure
+        id="resources.information.concepts.design.urdad.integratedBusinessProcessSystemDesign.assessorContract_fig">
+        <title>Assessor contract</title>
+        <graphic fileref="assessorContract.jpg"/>
+      </figure>
+    </section>
+    
+    <section>
+      <title>Transition to next lower level of granularity</title>
+      <para>
+        Within an iteration URDAD looks at the workflow only at one level of granularity, 
+        <abbrev>i.e.</abbrev> the only objects participating in the workflow are those to which 
+        the core responsibilities were assigned during the responsibility allocation step.    
+      </para>
+      <para>
+        In URDAD one goes over to the next lower level by selecting one of the components from 
+        the current level of granularity as the new context for the next lower level of granularity. 
+        Those objects from the current level of granularity which interface with the new context 
+        will become actors of the context. The services from the previous level of granularity will 
+        become the use cases of the new context.    
+      </para>
+      <para>
+        One then starts the next lower level iteration by identifying the the responsibilities which 
+        need to be addressed when realizing the lower level use case. Each responsibility would in 
+        turn be assigned to  either,a component of the new context or to a service provider for the 
+        new context. The workflow specification would then lead to its context which resembles the 
+        static structure required to realize this lower level use case.
+      </para>
+      <para>
+        In the case of the insurer example, one could select the ''Policies'' department as the new 
+        context. In order to support the higher level process claim use case it would have to provide 
+        one use case for verifying the status  of a policy and another to assess to what extend the 
+        policy covers the claim.
+      </para>
+      <para>
+        The use case realizations will be designed iteratively. Selecting first the ''assessPolicyCoverage'' 
+        use case one would identify the core responsibilities which need to be addressed when realizing 
+        the lower level use case. This may include checking against exclusions, checking whether policy 
+        requirements have been adhered to (for example the policy may state that it will cover damage 
+        on a car only if the driver has a drivers license) and many other aspects. The policies department 
+        may choose to outsource some of these responsibilities to external service providers. In this case 
+        external means external to the new context which is the policy department. Thus, if some 
+        responsibilities are assigned to the legal department, the latter would become an external 
+        service provider (actor) to the policies department.     
+      </para>
+    </section>
+  </section>
+
+  <section>
+    <title>Integrating business process and system design</title>
+    <para>
+      URDAD aims to support business process and system design within a single integrated design 
+      process. The transition from business process to system design is within URDAD the transition 
+      between levels of granularity. At some level of granularity a specific responsibility may be assigned 
+      to a system. As that component becomes the new context (when zooming into a lower level of granularity), 
+      URDAD makes the transition between business process and system design.  
+    </para>
+  </section>
+
+  <section>
+    <title>URDAD and Architecture</title>
+    <para>
+      URDAD generates an architecture and technology neutral design. It generates the 
+      Platform Independent Model (PIM) of OMG's Model Driven Architecture (MDA). 
+      The design can be mapped onto manual processes or onto system processes. 
+      The design must thus be deployed within an architecture.
+    </para>
+    <para>
+      While the design realizes the functional (use case) requirements, architecture addresses the core quality 
+      requirements for a context. If the context is an organization, then the designed business process will be 
+      deployed in an organizational architecture which ensures that the core quality attributes of the organization 
+      will be realized across business processes. Similarly, if the context is a system, then the design will be 
+      deployed within a system architecture. It is the system architecture which will ensure that the core qualities 
+      of the system (e.g. scaleability, reliability, security, performance, ...) are realized across the use cases deployed 
+      within the system architecture.  
+    </para>
+  </section>
+  
+  <section>
+    <title>How does URDAD lead to good design?</title>
+    <para>
+      URDAD aims to provide a design process which inheritantly leads to a design which adheres to accepted 
+      requirements for a good design.    
+    </para>
+    <section>
+      <title>Responsibility localization</title>
+      <para>
+        URDAD aims to achieve responsibility localization by
+        <itemizedlist>
+          <listitem><para>
+            requiring responsibility identification should be done before identifying components or
+            modules, and by          
+          </para></listitem>
+          <listitem><para>
+            requiring that each responsibility is assigned to a separate component or service provider.    
+          </para></listitem>
+        </itemizedlist>
+      </para>
+      <para>
+        In this way URDAD aims to generate a design with high cohesion where each object has only a 
+        single responsibility (single responsibility principle).
+      </para>
+    </section>
+    
+    <section>
+      <title>Clean layers of granularity</title>
+      <para>
+        URDAD claims that it is important to be able to look at workflows at various levels of granularity. 
+        For example, the driver of a car needs to understand the car at a high level of granularity. A general  
+        service technician needs to understand the car at a lower level of granularity and a gearbox specialist 
+        needs to understand a sub-domain of the car at an even lower level of granularity. Each role player 
+        only needs to understand their level of granularity. A general service technicion need not be able to 
+        drive the car nor does he/she need to be able to service the gearbox.    
+      </para>
+      <para>
+        Similarly, different levels of management need to be able to look at a business process at their level 
+        of granularity (the CEO does not want to see all the finer details). The same holds true for different 
+        members of  a software development team (architects, lead designers, module develelopers, ...).    
+      </para>
+      <para>
+        URDAD directly generates these different levels of granularity projecting out workflows as well as 
+        static structures at various levels of granularity. Furthermore, URDAD requires that at each level of 
+        granularity there is a workflow controller which takes ownership of the workflows at that level of granularity.
+      </para>
+    </section>
+    
+    <section>
+      <title>Decoupling via contracts</title>
+      <para>
+        URDAD requires that one should specify a contract for each responsibility.  The contracts are interface 
+        specifications with pre- and post conditions on services and quality requirements on service providers 
+        as a whole (applicable across the various services offered) and potentially some service specific quality requirements.
+      </para>
+      <para>
+        These contracts provide requirements for the components and external service providers realizing the 
+        contract and also form the basis for  a testing framework. In the case of organizational modeling the 
+        contacts are Service Level Agreement's. 
+      </para>
+    </section>
+    
+    <section>
+      <title>Simplicity</title>
+      <para>
+        In URDAD the workflow is specified before the structure supporting the workflow. The structure required at a 
+        specific level of granularity is projected out automatically from the workflow specification for that level of 
+        granularity. URDAD thus claims that the structure generated by the design process is a simple structure which 
+        contains only those structural elements required to support the workflow realizing the use case. 
+      </para>
+      <para>
+        Another aspect of design simplicity is that URDAD generates the different layers of granularity. URDAD claims 
+        that such a layered design adds to the simplicity of the design.
+      </para>
+    </section>
+    
+    <section>
+      <title>Architecture/Technology neutral design</title>
+      <para>
+        URDAD generates the Platform Independent Model (PIM) in the spirit of the Model Driven Architecture (MDA). 
+        This model thus survives changes in architecture and technologies. Note that the mapping of the PIM onto 
+        MDA's Platform Specific Model (PSM) is not within the scope of URDAD. A separate process thus needs to be 
+        followed for this mapping step.    
+      </para>
+    </section>
+  </section>
+  
+</section>

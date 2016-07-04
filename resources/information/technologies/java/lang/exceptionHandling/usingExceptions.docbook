@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6538:section xmlns:ns6538="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.exceptionHandling.usingExceptions">
+  <ns6539:title xmlns:ns6539="http://docbook.org/ns/docbook">Using Exceptions</ns6539:title>
+  <ns6540:para xmlns:ns6540="http://docbook.org/ns/docbook">
+    When using exceptions one should look from a client server perspective. Ultimately exceptions enables
+    service providers to notify clients that the requested service is not going to be provided.
+  </ns6540:para>  
+  
+  <ns6541:section xmlns:ns6541="http://docbook.org/ns/docbook">
+    <ns6542:title xmlns:ns6542="http://docbook.org/ns/docbook">The Server Side</ns6542:title>
+    <ns6543:para xmlns:ns6543="http://docbook.org/ns/docbook">
+      Consider the <ns6544:literal xmlns:ns6544="http://docbook.org/ns/docbook">credit()</ns6544:literal> method of the following
+      <ns6545:literal xmlns:ns6545="http://docbook.org/ns/docbook">Account</ns6545:literal> class.
+      <ns6546:programlisting xmlns:ns6546="http://docbook.org/ns/docbook"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="src/Account1.java"/></ns6546:programlisting>
+    </ns6543:para>
+    <ns6547:para xmlns:ns6547="http://docbook.org/ns/docbook">
+      We only allow crediting the account with a positive amount. If somebody tries to credit
+      or debit an account with a negative amount an exception is thrown, notifying the user
+      that the request is an invalid request.
+    </ns6547:para>
+    <ns6548:para xmlns:ns6548="http://docbook.org/ns/docbook">
+      Similarly, if the user tries to withdraw funds beyond the balance limit assigned to
+      the account, the transaction is refused and an exception is thrown.
+    </ns6548:para>
+    <ns6549:para xmlns:ns6549="http://docbook.org/ns/docbook">
+      In summary, the server checks upon servicerequest whether it can provide the
+      service as requested or not. If it can, it does so. If it can't an exception is thrown.
+    </ns6549:para>
+    <ns6550:para xmlns:ns6550="http://docbook.org/ns/docbook">
+      Note that the server class notifies its users that the service is not provided
+      unconditionally, i.e. that an exception may be thrown. This is done in the method header
+      via a <ns6551:literal xmlns:ns6551="http://docbook.org/ns/docbook">throws</ns6551:literal> clause.
+    </ns6550:para>
+  </ns6541:section>
+  
+  <ns6552:section xmlns:ns6552="http://docbook.org/ns/docbook">
+    <ns6553:title xmlns:ns6553="http://docbook.org/ns/docbook">The Client Side</ns6553:title>
+    <ns6554:para xmlns:ns6554="http://docbook.org/ns/docbook">
+      The client makes use of a service. If the service is not provided unconditionally
+      the client must brace itself to the possibility of an exception being thrown. The client
+      may or may not be in a position to do something about the problem. In the case of
+      withdrawing funds from an account, the client might know that there is another account
+      which can be used if the first account runs dry. In that case the exception would be
+      caught and handled by trying to withdraw from the alternative account.
+    </ns6554:para>
+    <ns6555:para xmlns:ns6555="http://docbook.org/ns/docbook">
+      In many cases, however, the direct client is not in a position to handle the
+      exception. In that case he will not catch it and the exception is passed on to the next
+      higher level client. In this way the exception is passed up the calling hierarchy until
+      it reaches a level where the problem can be addressed.
+    </ns6555:para>
+    <ns6556:para xmlns:ns6556="http://docbook.org/ns/docbook">
+      Let us, however, first look at a client who is able to handle the exception:
+      <ns6557:programlisting xmlns:ns6557="http://docbook.org/ns/docbook"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="src/Account1Test.java"/></ns6557:programlisting>
+    </ns6556:para>
+    <ns6558:para xmlns:ns6558="http://docbook.org/ns/docbook">
+      The output of the application is as follows:
+      <ns6559:programlisting xmlns:ns6559="http://docbook.org/ns/docbook">
+debited by 300.0: A1: 200.0
+java.lang.IllegalArgumentException: Available funds = 100.0
+at AccountWithBalanceLimit.debit(AccountWithBalanceLimit.java:37)
+at AccountWithBalanceLimitTest.main(AccountWithBalanceLimitTest.java:29)
+debiting A2: 1000.0 by 200.0
+now: A2: 800.0
+      </ns6559:programlisting>
+    </ns6558:para>
+
+  </ns6552:section>
+  
+  <ns6560:section xmlns:ns6560="http://docbook.org/ns/docbook">
+    <ns6561:title xmlns:ns6561="http://docbook.org/ns/docbook">Java's Exception Classes</ns6561:title>
+    <ns6562:para xmlns:ns6562="http://docbook.org/ns/docbook">
+      Java has a rich class hierarchy of exception classes. These enable one to catch and
+      handle exceptions at various levels of abstraction. You can also derive your own
+      exception classes from these. For this one first will require understanding of
+    specialization/sub-classing in Java
+    </ns6562:para>
+  </ns6560:section>
+</ns6538:section>

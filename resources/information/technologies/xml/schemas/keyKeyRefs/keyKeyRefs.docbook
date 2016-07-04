@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+xml:id="resources.information.technologies.xml.schemas.keyKeyRefs.keyKeyRefs" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Keys and Key References</title>
+  <indexterm>
+    <primary>XML Schema</primary>
+    <secondary>keys and key references</secondary>
+  </indexterm>
+    <para> 
+      Using ID and IDRefs to implement links or association between entity objects
+      (analogous to links between rows in database tables) is a rather vague and
+      limited mechanism. Using keys and key references
+      has all the advantages the unique keys have over IDs including 
+      <itemizedlist>
+        <listitem>
+            <para>Both, attribute values and element contents can be used for both, keys and
+                key references. </para>
+        </listitem>
+        <listitem>
+            <para>Keys need only be unique within a specified scope. </para>
+        </listitem>
+        <listitem>
+            <para>Keys may be any XML Schema data type and may start with a numeral. </para>
+        </listitem>
+        <listitem>
+            <para>Unique keys can be assembled by combining multiple elements and/or attributes.</para>
+        </listitem>
+      </itemizedlist>
+    </para>  
+    <para>
+      Furthermore, because keys are scoped within a certain subtree (element) in the XML
+      document tree, they can provide a performance benefit over using IDs and IDREFs
+      because the entire document need not be searched for a map or for verifying uniqueness.
+    </para>
+  
+    <section>
+        <title>Defining Keys</title>
+        <para> 
+            The specification of a key is very similar to that of a uniqueness
+            constraint. The key is defined within the scope in which the uniqueness of the
+            key is enforced. Each key is given a name which is used to identify the
+            key,particularly in the context of key references, a selector path referring to
+            the element the key is to resolve, one or more fields which define a unique key.
+        </para>
+        <para> 
+          Assume, for example, that we have a parts catalog where the catalog 
+          contains many manufacturers, many parts
+            and many products. One of the associations we need to implement is the reference
+            from a part to a manufacturer. In this context we need to specify a key for
+            manufacturers. Let us define manufacturers via
+            <programlisting language="XML"><![CDATA[
+<xsd:complexType name="Manufacturer">
+  <xsd:sequence> 
+    <xsd:element name="name" type="xsd:string"/> 
+    ... 
+    </xsd:sequence> 
+    <xsd:attribute name="id" type="xsd:string"/> 
+</xsd:complexType>
+             ]]></programlisting>
+        </para>
+        <para> 
+          Then the key has to resolve a unique manufacturer from its id attribute.
+          A <literal>key</literal> can be placed anywhere in the XML schema,
+          in the scope to which it should apply.
+          <programlisting language="XML"><![CDATA[
+<xsd:key name="manufacturerID">  
+  <xsd:selector xpath="manufacturers/manufacturer"/> 
+  <xsd:field xpath="@id"/> 
+</xsd:key> 
+          ]]></programlisting>
+        </para>  
+        <para> 
+          Note that defining a key is analogous to defining a uniqueness constraint.
+          In fact a key always implies a uniqueness constraint.
+       </para>
+    </section>
+
+    <section>
+        <title>Defining Key References</title>
+        <para> 
+          Now we want to specify that each part has an association to a single
+          manufacturer. Let us define a part as follows:
+        <programlisting language="XML"><![CDATA[
+<xsd:complexType name="Part"> 
+  <xsd:sequence> 
+    <xsd:element name="name" type="xsd:string"/> 
+     ...
+    <xsd:element name="manufacturer" type="xsd:string" minOccurs="0"/> 
+  </xsd:sequence>  
+  <xsd:attribute name="code" type="xsd:string"/>  
+</xsd:complexType> 
+        ]]></programlisting>
+        </para>  
+        <para> 
+          Then the reference is the manufacturer field of the part which refers to a
+          manufacturer id (key):
+        <programlisting language="XML"><![CDATA[
+<xsd:keyref name="partManufacturerRef" refer="manufacturerID"> 
+  <xsd:selector xpath="parts/part"/>  
+  <xsd:field xpath="manufacturer"/>  
+</xsd:keyref> 
+        ]]></programlisting>
+      </para>    
+    </section>
+
+    <section>
+        <title>Implementing one-to-many and many-to-many Associations</title>
+        <para> 
+          Often we need to implement one-to-many or many-to-many associations. In these
+          cases we need to ensure that there is a unique element for each reference.
+        </para>
+        <para> 
+          For example, each manufacturer may refer to many parts. Each of these
+          references must be from within a unique element. Below we chose to localize the
+          reference in an attribute within a part child element of manufacturer:
+        <programlisting language="XML"><![CDATA[
+<xsd:complexType name="Manufacturer">
+  <xsd:sequence>  
+     <xsd:element name="name" type="xsd:string"/>     
+      ... 
+     <xsd:element name="part" minOccurs="0" maxOccurs="unbounded">
+       <xsd:complexType>   
+         <xsd:attribute name="ref" type="xsd:string"/> 
+       </xsd:complexType>
+     </xsd:element>  
+   </xsd:sequence> 
+ <xsd:attribute name="id" type="xsd:string"/>  
+</xsd:complexType> 
+        ]]></programlisting>
+          Of course the multiplicity of the element hosting the reference must reflect
+          the multiplicity of the association (in our case zero or more).
+        </para>
+    </section>
+
+    <section>
+        <title>An Example</title>
+        <para> 
+          Below we show the complete listing of our example parts catalog schema:
+          <programlisting language="XML">
+<xi:include parse="text" href="src/partsCatalog.xsd"/>
+          </programlisting>
+        </para>  
+        <para> 
+          A XML document which will be parsed by this schema is shown below:
+          <programlisting language="XML">
+<xi:include parse="text" href="src/partsCatalog.xml"/>
+          </programlisting>
+        </para>  
+    </section>
+
+</section>
+

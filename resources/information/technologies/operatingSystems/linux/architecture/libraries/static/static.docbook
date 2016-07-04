@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Statically linked libraries</title>
+    <para>
+        Statically linked libraries (Linux <literal>.a</literal> files) are linked into the application executables and become
+        part of the applications themselves.  A consequence of this is that if multiple programs use the same library, that
+        library is loaded into memory several times, once for each application.        
+    </para>
+    <para>
+        Static libraries are typically used for
+        small, very specialized libraries which whose functionality is unlikely to be reused across applications, i.e. for code
+        which is conceptually part of the application code.
+    </para>
+    
+    <section>
+        <title>Creating and installing static libraries</title>
+        <para>
+            Static libraries are created by archiving compiled <literal>.o</literal> files into a <literal>.a</literal> library file:
+            <programlisting><![CDATA[
+# gcc -Wall -c libSource1.c libSource2.c
+
+# ar -cvq mylib.a libSource1.o libSource2.o 
+]]></programlisting>
+            <note><para>
+                Since shared libraries are not meant for re-use and are linked into the application executable, they need not adhere
+                to as stringent naming requirements as what shared libraries need to.
+            </para></note>
+        </para>
+        <para>
+            The Linux <literal>install</literal> application which copies files into their appropriate Linux locations can be used to
+            install a static library:
+            <programlisting><![CDATA[
+# install -m 644 mylib.a /usr/lib                
+                ]]></programlisting>
+        </para>
+    </section>
+
+    <section>
+        <title>Using static libraries</title>
+        <para>
+            <literal>gcc</literal> is used to compile and link against a local static library:
+            <programlisting><![CDATA[
+# gcc -I. -o jvct jvct.c libjvc.a
+                ]]></programlisting>
+        </para>
+        <para>
+            Alternatively one may want to compile and link against an installed library:
+            <programlisting><![CDATA[
+# gcc --static -I. -o myapp myapp.c -lmylib 
+                ]]></programlisting>
+        </para>
+    </section>            
+</section>    

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns147:section xmlns:ns147="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.lang.ooMappings.specializationAlternatives.specializationAlternatives">
+  <ns148:title xmlns:ns148="http://docbook.org/ns/docbook">Alternatives to inheritance</ns148:title>
+  <ns149:para xmlns:ns149="http://docbook.org/ns/docbook">
+    Inheritance is used for two purposes
+    <ns150:orderedlist xmlns:ns150="http://docbook.org/ns/docbook">
+      <ns151:listitem xmlns:ns151="http://docbook.org/ns/docbook"><ns152:para xmlns:ns152="http://docbook.org/ns/docbook">
+        To facilitate pluggability (substitutability) of instances of specialized classes.
+      </ns152:para></ns151:listitem>
+      <ns153:listitem xmlns:ns153="http://docbook.org/ns/docbook"><ns154:para xmlns:ns154="http://docbook.org/ns/docbook">
+        To facilitate code and state reuse.
+      </ns154:para></ns153:listitem>
+    </ns150:orderedlist>
+  </ns149:para>
+  <ns155:para xmlns:ns155="http://docbook.org/ns/docbook">
+    However, designs based on inheritance hierarchies are often found to be very inflexible and
+    design practitioners have recommended for a long time to use delegation in preference to
+    inheritance or specialization.
+  </ns155:para>
+  
+  
+  
+  <ns156:section xmlns:ns156="http://docbook.org/ns/docbook">
+    <ns157:title xmlns:ns157="http://docbook.org/ns/docbook">Common problems of specialization hierarchies</ns157:title>
+    <ns158:para xmlns:ns158="http://docbook.org/ns/docbook">
+      One can find many examples where specialization may turn out to be a sub-optimal design
+      choice. In fact, it is no easy to find examples of classes with significant business logic for
+      which specialization cannot be shown to introduce significant problems.
+    </ns158:para>
+    <ns159:para xmlns:ns159="http://docbook.org/ns/docbook">
+      Inheritance usually results in very rigid designs which result in
+      <ns160:itemizedlist xmlns:ns160="http://docbook.org/ns/docbook">
+        <ns161:listitem xmlns:ns161="http://docbook.org/ns/docbook"><ns162:para xmlns:ns162="http://docbook.org/ns/docbook">
+          high maintenance cost, and
+        </ns162:para></ns161:listitem>
+        <ns163:listitem xmlns:ns163="http://docbook.org/ns/docbook"><ns164:para xmlns:ns164="http://docbook.org/ns/docbook">
+          a design which does not naturally support objects whose behaviour changes over time.
+        </ns164:para></ns163:listitem>
+      </ns160:itemizedlist>
+    </ns159:para>
+    
+    <ns165:section xmlns:ns165="http://docbook.org/ns/docbook">
+      <ns166:title xmlns:ns166="http://docbook.org/ns/docbook">Modeling roles via specialization</ns166:title>
+      <ns167:para xmlns:ns167="http://docbook.org/ns/docbook">
+        This is a common mistake made. For example, on first sight a design which has
+        <ns168:literal xmlns:ns168="http://docbook.org/ns/docbook">Employee</ns168:literal> as a subclass of <ns169:literal xmlns:ns169="http://docbook.org/ns/docbook">Person</ns169:literal> with various types of
+        employees like <ns170:literal xmlns:ns170="http://docbook.org/ns/docbook">Manager</ns170:literal>, <ns171:literal xmlns:ns171="http://docbook.org/ns/docbook">Developer</ns171:literal>,
+        <ns172:literal xmlns:ns172="http://docbook.org/ns/docbook">BusinessAnalyst</ns172:literal> as further subclasses, is not ideal. 
+      </ns167:para>
+      <ns173:para xmlns:ns173="http://docbook.org/ns/docbook">
+        To understand the inflexibility of such a design, consider what you would have to do if, for
+        example, a <ns174:literal xmlns:ns174="http://docbook.org/ns/docbook">Developer</ns174:literal> becomes a <ns175:literal xmlns:ns175="http://docbook.org/ns/docbook">Manager</ns175:literal>. We would have
+        to
+        <ns176:itemizedlist xmlns:ns176="http://docbook.org/ns/docbook">
+          <ns177:listitem xmlns:ns177="http://docbook.org/ns/docbook"><ns178:para xmlns:ns178="http://docbook.org/ns/docbook">
+            create a new employee which now is a manager,
+          </ns178:para></ns177:listitem>
+          <ns179:listitem xmlns:ns179="http://docbook.org/ns/docbook"><ns180:para xmlns:ns180="http://docbook.org/ns/docbook">
+            copy state information like the employment history and so on over into the new employee
+            object (which now is an instance of a <ns181:literal xmlns:ns181="http://docbook.org/ns/docbook">Manager</ns181:literal>),
+          </ns180:para></ns179:listitem>
+          <ns182:listitem xmlns:ns182="http://docbook.org/ns/docbook"><ns183:para xmlns:ns183="http://docbook.org/ns/docbook">
+            find all references to the original developer object and change them to refer to the
+            manager object, and
+          </ns183:para></ns182:listitem>
+          <ns184:listitem xmlns:ns184="http://docbook.org/ns/docbook"><ns185:para xmlns:ns185="http://docbook.org/ns/docbook">
+            delete the original employee, <ns186:abbrev xmlns:ns186="http://docbook.org/ns/docbook">i.e.</ns186:abbrev> the <ns187:literal xmlns:ns187="http://docbook.org/ns/docbook">Developer</ns187:literal>.
+          </ns185:para></ns184:listitem>
+        </ns176:itemizedlist>
+      </ns173:para>
+      <ns188:para xmlns:ns188="http://docbook.org/ns/docbook">
+        This is not only excessively complex and error prone, it also is all wrong since the object
+        identity has changed. We now have a new employee while it actually is still the same
+        employee who only plays another role within the organization.
+      </ns188:para>
+      <ns189:para xmlns:ns189="http://docbook.org/ns/docbook">
+        A much better approach would be to define for an employee that he or she <ns190:emphasis xmlns:ns190="http://docbook.org/ns/docbook">has a
+          current role</ns190:emphasis> which he/she plays within the organization. The current role for an
+        employee can now change without us having to create a new employee.
+        Furthermore, it is now also easy to keep track of any historic roles.
+      </ns189:para>
+    </ns165:section>
+    
+    <ns191:section xmlns:ns191="http://docbook.org/ns/docbook">
+      <ns192:title xmlns:ns192="http://docbook.org/ns/docbook">Modeling different service profiles via specialization</ns192:title>
+      <ns193:para xmlns:ns193="http://docbook.org/ns/docbook">
+        It may seem very natural to model different types of accounts within a class hierarchy which
+        introduces a base account encapsulating the concept of an account and all the commonalities
+        across the various types of accounts. We could then have card accounts, checking accounts
+        and loan accounts as specialization of <ns194:literal xmlns:ns194="http://docbook.org/ns/docbook">Account</ns194:literal>. These accounts would
+        have further specializations. For example, home loan, vehicle loan and personal loan
+        accounts could all be specializations of <ns195:literal xmlns:ns195="http://docbook.org/ns/docbook">LoanAccount</ns195:literal>.
+      </ns193:para>
+      <ns196:para xmlns:ns196="http://docbook.org/ns/docbook">
+        On first sight such a design may seem the obvious solution. However, the rigidness of the
+        class hierarchy may, once again, result in high maintenance costs due to its inflexibility.
+      </ns196:para>
+      <ns197:para xmlns:ns197="http://docbook.org/ns/docbook">
+        For example, one day the company may change the business model to allow checking, card and
+        loan services on a single account which has a single balance and a single transaction
+        history. The design based on a class hierarchy would not at all be able to cater for this
+        change in business model and the entire accounts framework would most probably have to be
+        re-implemented.
+      </ns197:para>
+      <ns198:para xmlns:ns198="http://docbook.org/ns/docbook">
+        A better solution would possibly be to have an account class which supports pluggable
+        services like loan services, checking services and card services. This design would still
+        cater for the traditional business model of having separate accounts which would be standard
+        some account templates with standard service packages. But such a design would be a lot more
+        flexible than an inheritance based design.
+      </ns198:para>
+    </ns191:section>
+    
+    <ns199:section xmlns:ns199="http://docbook.org/ns/docbook">
+      <ns200:title xmlns:ns200="http://docbook.org/ns/docbook">Using specialization when only substitutability is required</ns200:title>
+      <ns201:para xmlns:ns201="http://docbook.org/ns/docbook">
+        If only substitutability is required, one should use that relationship which provides only
+        this - realization. Using specialization instead forces all developers of plug-in components
+        to subclass a particular class where they may want to have a completely different
+        realization which could even be based on another superclass. 
+      </ns201:para>
+      <ns202:para xmlns:ns202="http://docbook.org/ns/docbook">
+        Using an abstract superclass for the base of the pluggable component would prevent any
+        developer from inheriting from any other superclass as Java only supports single
+        inheritance. Furthermore, even if this was not a problem,  using a abstract class instead of
+        an interface does incur significant unnecessary overheads as the abstract class would still
+        be instantiated and ultimately garbage collected -- unnecessary creation and deletion of
+        objects can be a major contributor to performance problems in object oriented systems.  
+      </ns202:para>
+    </ns199:section>
+    
+    <ns203:section xmlns:ns203="http://docbook.org/ns/docbook">
+      <ns204:title xmlns:ns204="http://docbook.org/ns/docbook">Using specialization for code reuse</ns204:title>
+      <ns205:para xmlns:ns205="http://docbook.org/ns/docbook">
+        If the reason for using specialization is code reuse, then one should most probably use
+        composition or even a weaker relationship like aggregation, association or a dependency
+        instead of specialization.
+      </ns205:para>
+    </ns203:section>
+  </ns156:section>
+  
+  <ns206:section xmlns:ns206="http://docbook.org/ns/docbook">
+    <ns207:title xmlns:ns207="http://docbook.org/ns/docbook">Use the weakest suitable relationship</ns207:title>
+    <ns208:para xmlns:ns208="http://docbook.org/ns/docbook">
+      Inheritance or specialization is the strongest object-oriented relationship. It is a special
+      form of composition which enforces full ownership of a superclass instance. 
+    </ns208:para>
+    <ns209:para xmlns:ns209="http://docbook.org/ns/docbook">
+      In general, designers will recommend to use the weakest relationship which realizes your
+      requirements. This results in looser couplings and more flexible systems. Inheritance, being
+      the strongest relationship, should thus only be used sparingly.
+    </ns209:para>
+  </ns206:section>
+  
+  
+  <ns210:section xmlns:ns210="http://docbook.org/ns/docbook">
+    <ns211:title xmlns:ns211="http://docbook.org/ns/docbook">Alternative solutions to inheritance</ns211:title>
+    <ns212:para xmlns:ns212="http://docbook.org/ns/docbook">
+       If specialization is in many cases undesirable, what should one use instead?   
+    </ns212:para>
+  
+  <ns213:section xmlns:ns213="http://docbook.org/ns/docbook">
+    <ns214:title xmlns:ns214="http://docbook.org/ns/docbook">Using realization instead of specialization</ns214:title>
+    <ns215:para xmlns:ns215="http://docbook.org/ns/docbook">
+      This buys one substitutability/pluggability without introducing implementation locking or
+      locking into a class hierarchy. Behind the scenes one may still use a class hierarchy, but the
+      user code would not lock into the class hierarchy.
+    </ns215:para>
+  </ns213:section>
+  
+  <ns216:section xmlns:ns216="http://docbook.org/ns/docbook">
+    <ns217:title xmlns:ns217="http://docbook.org/ns/docbook">Using delegation instead of specialization</ns217:title>
+    <ns218:para xmlns:ns218="http://docbook.org/ns/docbook">
+      Often, particularly when the main motivation behind using specialization has been code reuse,
+      one can and should use delegation in preference. This may be in the form of composition or in
+      the weaker forms of aggregation (if state, but not full ownership is required) or even
+      association (if neither ownership nor state is required).
+    </ns218:para>
+  </ns216:section>
+  
+  <ns219:section xmlns:ns219="http://docbook.org/ns/docbook">
+    <ns220:title xmlns:ns220="http://docbook.org/ns/docbook">Using a combination of realization and composition</ns220:title>
+    <ns221:para xmlns:ns221="http://docbook.org/ns/docbook">
+      If one requires the full behaviour of specialization without introducing the inflexibility
+      which class hierarchies introduce, one can use the solution the <ns222:emphasis xmlns:ns222="http://docbook.org/ns/docbook">decorator
+      pattern</ns222:emphasis> provides, <ns223:abbrev xmlns:ns223="http://docbook.org/ns/docbook">i.e.</ns223:abbrev> to use the combination of composition and
+      realization instead of specialization. In this way we get code reuse and ownership as well as
+      pluggability at the cost of not having the automatic request delegation to the superclass.
+    </ns221:para>
+    <ns224:para xmlns:ns224="http://docbook.org/ns/docbook">
+      However, now, we can dynamically (at-run-time) change the behaviour of objects and even
+      construct pipes and filters based workflows (as is, for example, done in the Java streaming
+      library).
+    </ns224:para>
+  </ns219:section>
+  </ns210:section>
+  
+  
+  <ns225:section xmlns:ns225="http://docbook.org/ns/docbook">
+    <ns226:title xmlns:ns226="http://docbook.org/ns/docbook">When and how should one use specialization and when should one not use it?</ns226:title>
+    <ns227:para xmlns:ns227="http://docbook.org/ns/docbook">
+      We would recommend following the following guidelines around the use of specialization:
+      <ns228:orderedlist xmlns:ns228="http://docbook.org/ns/docbook">
+        <ns229:listitem xmlns:ns229="http://docbook.org/ns/docbook"><ns230:para xmlns:ns230="http://docbook.org/ns/docbook">
+          For substitutability prefer realization.
+        </ns230:para></ns229:listitem>
+        <ns231:listitem xmlns:ns231="http://docbook.org/ns/docbook"><ns232:para xmlns:ns232="http://docbook.org/ns/docbook">
+          For code reuse, use the weakest relationship which buys you what you need,
+          <ns233:abbrev xmlns:ns233="http://docbook.org/ns/docbook">i.e.</ns233:abbrev> one of composition, aggregation, association or even only a dependency.
+        </ns232:para></ns231:listitem>
+        <ns234:listitem xmlns:ns234="http://docbook.org/ns/docbook"><ns235:para xmlns:ns235="http://docbook.org/ns/docbook">
+          If you need both, consider using the combination of realization and composition.
+        </ns235:para></ns234:listitem>
+        <ns236:listitem xmlns:ns236="http://docbook.org/ns/docbook"><ns237:para xmlns:ns237="http://docbook.org/ns/docbook">
+          Using class hierarchies for value objects is usually safe. 
+        </ns237:para></ns236:listitem>
+        <ns238:listitem xmlns:ns238="http://docbook.org/ns/docbook"><ns239:para xmlns:ns239="http://docbook.org/ns/docbook">
+          For classes which perform any
+          significant business logic, one should avoid exposing the class  hierarchy, and provide
+          access via an interface hierarchy instead. Using a class hierarchy behind the scenes may be
+          ok, since one can change this at a later stage without affecting the user code.
+        </ns239:para></ns238:listitem>
+      </ns228:orderedlist>
+    </ns227:para>
+  </ns225:section>
+</ns147:section>

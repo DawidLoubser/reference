@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.guidelines.permissionGuidelines"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Guidelines for setting permissions</title>
+  <para>
+    CVS is quite flexible about the permissions you use. Nevertheless
+    there are some minimum requirements you should adhere to.
+  </para>
+  
+  <section>
+    <title>Write access for all project participants</title>
+    <para>
+      All users need file-system write permissions to the directories they 
+      access, even if they only using CVS for read access. This is because 
+      CVS creates temporary lock files to ensure data consistence. 
+    </para>
+    <para>
+      This is
+      typically achieved by defining a group for each module, assigning the 
+      users of that module to that group and setting the directory access 
+      of the directory for that module recursive to <literal>rwX</literal>.
+        <note>
+          <para>
+            If these write permissions worry you, you can set the
+            <varname>LockDir</varname> parameter in the
+            <filename><![CDATA[CVSROOT/config]]></filename> file
+            to a directory to which all users have write access.
+            For example:
+            <synopsis><![CDATA[
+...
+# Put CVS lock files in this directory rather than directly in the repository.
+LockDir=/usr/local/cvslocks
+...            
+            ]]></synopsis>
+          </para>
+        </note>
+    </para>
+  </section>
+  
+  <section>
+    <title>Provide write-access to <filename><![CDATA[CVSROOT/history]]></filename></title>
+    <para>
+      If a history file which contains a log of CVS events, all users of the
+      entire repository should get write access to this file since most user
+      commands will result in a log entry.
+    </para>
+    
+  </section>
+  
+  <section>
+    <title>Do NOT provide write-access to <filename>CVSROOT</filename></title>
+    <para>
+      Giving users write access to <filename>CVSROOT</filename> can compromise
+      your security. Files like <filename>LogInfo</filename> act as trigger
+      files for commands. Users could alter these and effectively execute any
+      application of their choice on the system. They could even copy another 
+      application into the folder and trigger it through one of the trigger files.
+    </para>
+  </section>
+  
+</section>

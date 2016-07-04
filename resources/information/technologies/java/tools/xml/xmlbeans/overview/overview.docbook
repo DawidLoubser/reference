@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+xml:id="resources.information.technologies.java.tools.xml.xmlbeans.overview.overview"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>XMLBeans Overview</title>
+  
+  <indexterm>
+    <primary>Apache</primary>
+    <secondary>XMLBeans</secondary>
+    <tertiary>overview</tertiary>
+  </indexterm>
+    
+    <para>
+        XMLBeans is an open-source, XML-to-Java binding framework that supports the full feature-set of XML schema. Though
+        schema types are mapped to java types in a very natural and intuitive way, XMLbeans is a very XML-centric
+        framework, foregoing some elegance in the Java objects space in order to more directly expose the underlying
+        XML data, if needed.
+    </para>
+    <figure>
+        <title>XMLBeans Overview</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="xmlBeansOverview.jpg"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    
+    <para>
+        XMLBeans uses XML Schema to generate Java interfaces and classes that you can then use to access and modify XML 
+        instance data. Using XMLBeans is similar to using any other Java interface/class, with typical <literal>getXXX(...)</literal> 
+        and <literal>setXXX(...)</literal> services, as opposed to navigating an arbitrary tree structure (like with DOM). 
+        While a major use of XMLBeans is to access your XML instance data with strongly typed Java classes, 
+        there are also maintains and enables access to the full <emphasis>XML infoset</emphasis> (XMLBeans retains XML Infoset 
+        fidelity, i.e. exact formatting and structure information), as well as to allow you to <emphasis>reflect</emphasis> into the XML schema itself through 
+        an <emphasis>XML Schema Object model</emphasis>.
+    </para>
+    <para>
+        XMLBeans makes extensive use of contracts (interfaces), which are generated for all your schema types. It also implements the
+        <literal>Factory</literal> design pattern for all the generated types.
+    </para>
+    <para>
+        The three core types of XMLBeans are:
+        <itemizedlist>
+            <listitem>
+                <formalpara>
+                    <title>XmlObject</title>
+                    <para>
+                        The schema-generated types are all derived from the XMLbeans <literal>XmlObject</literal> class. 
+                        These provide strongly typed <emphasis>getters</emphasis> and <emphasis>setters</emphasis> for each of 
+                        the elements within the defined XML Schema type. Through XmlObject, many XML-centric features are
+                        inherited in all your types, such as access to the XML cursor (described below).
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>XmlCursor</title>
+                    <para>
+                        Though of less interest from an object-orientation (and typical business-use) perspective, this 
+                        provides low level access to the <emphasis>XML Infoset</emphasis>. A <emphasis>cursor</emphasis> represents 
+                        a position in the XML instance document. You can move the cursor around in the XML instance document,
+                        which means that in addition to accessing information only through the generated object methods, you can bypass
+                        the objects layer and still access the XML directly.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>SchemaType</title>
+                    <para>
+                        XMLBeans provides a full XML Schema object model that you can use to reflect on the underlying schema meta information. 
+                        For example, you might want to generate a sample XML instance for an XML schema, or perhaps find the enumerations 
+                        (legal values) for an element, in order to display them.
+                    </para>
+                </formalpara>
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>Typical XMLBeans usage pattern</title>
+        <para>
+
+            <orderedlist>
+                <listitem>
+                    <formalpara>
+                        <title>Compile Java types from your XML Schema</title>
+                        <para>
+                            Using the supplied <literal>scomp</literal> (schema compiler) program (which can also be
+                            used from within Java code, or Ant), a <emphasis>JAR</emphasis> archive is created, containing classes
+                            and interfaces representing the types in the XML Schema. This only needs to be performed once, unless
+                            the XML schema changes.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Include the generated library, and the XMLBeans-supplied JARS with your project</title>
+                        <para>
+                            These libraries must be on your <emphasis>classpath</emphasis> during compilation and
+                            runtime.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Use the types naturally</title>
+                        <para>
+                            The types are used natively, just like any other java object. They are typically constructed
+                            using a <literal>Factory</literal> which is packaged within each type. For example, to create
+                            a <emphasis>Person</emphasis>, one would call: <literal>Person p = Person.Factory.newInstance()</literal>
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Serializing / De-Serializing</title>
+                        <para>
+                            Easily accomplished by simply requesting <literal>parse(...)</literal> from
+                            the relevant Factory, or <literal>save(...)</literal> from an instance.
+                        </para>
+                    </formalpara>
+                </listitem>
+            </orderedlist>
+        </para>
+    </section>
+    
+</section>

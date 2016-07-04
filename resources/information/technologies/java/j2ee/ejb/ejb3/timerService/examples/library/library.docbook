@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+
+    <title>Library</title>
+
+    <para>
+        Consider a public library: when a member checks out an item
+        (such as a book), a timer is set for two weeks in the future.
+        When the timer expires, it means that the member has not yet checked the
+        borrowed item(s) back in - a fine should be levied, and a clerk should perhaps
+        be notified to give the member a call.
+    </para>
+
+    <para>
+        The service contract for the library service (purposefully simplified) looks
+        as follows:
+        <programlisting language="Java">
+            <xi:include href="source/za/co/solms/example/Library.java" parse="text"/>
+        </programlisting>
+    </para>
+    <para>
+        The exchanged value objects (with partially omitted implementations) are as follows:
+    </para>
+    <programlisting language="Java">
+        <xi:include href="source/za/co/solms/example/CheckoutRequest.java" parse="text"/>
+    </programlisting>
+    <programlisting language="Java">
+        <xi:include href="source/za/co/solms/example/Receipt.java" parse="text"/>
+    </programlisting>
+    <programlisting language="Java">
+        <xi:include href="source/za/co/solms/example/CheckInRequest.java" parse="text"/>
+    </programlisting>
+
+    <para>
+        The stateless session bean which implements the functionality to, upon
+        checkout, schedule a once-off timer, and to cancel the timer when the item
+        is checked back in, is as follows:
+        <programlisting language="Java">
+            <xi:include href="source/za/co/solms/example/impl/LibraryBean.java" parse="text"/>
+        </programlisting>
+    </para>
+    <para>
+        The entity which stores the timer handle in the database (an internal artifact,
+        never seen by the member which uses the library service) is as follows:
+        <programlisting language="Java">
+            <xi:include href="source/za/co/solms/example/impl/ItemTimer.java" parse="text"/>
+        </programlisting>
+    </para>
+
+</section>

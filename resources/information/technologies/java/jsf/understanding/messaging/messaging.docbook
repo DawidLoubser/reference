@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Messaging</title>
+    <para>
+        Messaging is particularly important for notifying a user that a particular
+        input is incorrect. Messages are instances of a <literal>FacesMessage</literal> 
+        class which defines the following severity levels:
+        <itemizedlist>
+            <listitem><para><literal>SEVERITY_INFO</literal></para></listitem>
+            <listitem><para><literal>SEVERITY_WARN</literal></para></listitem>
+            <listitem><para><literal>SEVERITY_ERROR</literal></para></listitem>
+            <listitem><para><literal>SEVERITY_FATAL</literal></para></listitem>
+        </itemizedlist>
+    </para>
+    <para>    
+        Messages are inserted in a message queue via the
+        <programlisting><![CDATA[
+facesContext.addMessage(String clientId, FacesMessage msg)            
+            ]]></programlisting>
+        <literal></literal>
+        services. The <literal>clientId</literal> refers to the id of the
+        <literal>UIComponent</literal> which is not the id specified in the
+        facelet, but which needs to be obtained by traversing the component
+        tree (see example).
+    </para>
+    <para>    
+        During rendering messages are shown either in a global
+        <programlisting><![CDATA[
+<h:messages/>            
+]]></programlisting>
+        or
+        <programlisting><![CDATA[
+<h:message/>            
+            ]]></programlisting>
+        field or in a component specific message field:
+        <programlisting><![CDATA[
+<h:message for="componentId"/>            
+        ]]></programlisting>
+    </para>
+    <para>
+        Every page should have a <literal><![CDATA[<h:messages/>]]></literal> field
+        on it. As of JSF 2, such a tag is automatically inserted should one ommit
+        to specify one.
+    </para>
+    
+    <xi:include href="examples/examples.docbook"/>
+</section>    

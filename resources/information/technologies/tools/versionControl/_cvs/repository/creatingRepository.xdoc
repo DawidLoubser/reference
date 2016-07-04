@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section
+  id="resources.information.technologies.tools.versionControl._cvs.repository.creatingRepository"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Creating a repository</title>
+  <para> When you want to host a CVS repository on your own machine, you will have to create it and
+    provide appropriate access to the users of the repository. The access is in the form of <itemizedlist>
+      <listitem>
+        <para>file permissions and</para>
+      </listitem>
+      <listitem>
+        <para>network access.</para>
+      </listitem>
+    </itemizedlist>
+  </para>
+  <section>
+    <title>How much disk space do you need?</title>
+    <para> Initially the disk space is not much more than the size of the files you are going to
+      host in the repository. However, with time the size will grow since CVS maintains the full
+      history of the file and also needs some space for administrative information. </para>
+    <para> Per Cerdequist in his definitive CVS user's manual recommends that budgeting for three
+      times the expected size of the files to be hosted in the repository will be sufficient for a
+      long time for most CVS projects. </para>
+  </section>
+  <section>
+    <title>Initializing a repository</title>
+    <para> You can create multiple CVS repositories on a machine. The initialization process creates
+      the initial directory structure and the administrative files required by CVS for a repository.
+      The initialization command is of the form
+      <synopsis>
+cvs -d 'full-path-to-repository-directory' init      
+      </synopsis> For example
+      <synopsis>
+cvs -d /usr/local/src/testRepository init
+      </synopsis> creates a test
+      repository in the directory <literal>/usr/local/src</literal>. If the repository exists
+      already, CVS will not overwrite any of the existing files. <note>
+        <para> The <literal>-d</literal> option should, in the context of the
+          <command>init</command>, actually have been a command option and not a CVS option.
+          However, the <literal>-d</literal> option is consistent with other CVS commands. </para>
+      </note>
+    </para>
+  </section>
+  <section>
+    <title>Controlling access to the repository</title>
+    <para> You will have to give users read and write access to the repository files. To this end
+      you will most probably want to create a group for the repository and add the users which
+      should get access to the repository to that group. On Linux-based systems the resultant
+        <filename>/etc/group</filename> file would contain a line similar to the following:
+      <synopsis>
+testRepository:x:504:alex,ernst,fritz
+      </synopsis>
+    </para>
+    <para> You will then have to provide read-write permissions for the group. First you will
+      typically change the group for the repository directory and all its sub-directories to the
+      repository group. On linux-based systems you can issue the following command from the
+      repository directory: 
+      <synopsis>
+chgrp -R testRepository .    
+      </synopsis>
+    </para>
+    <note>
+      <para> The command above assumes that you are in the root directory of the repository 
+        because the last argument <literal>.</literal> specifies the current directory. </para>
+    </note>
+    <para> Next you will give the group read, write and execute access to the repository directory
+      and its <filename>CVSROOT</filename> sub-directory. On Unix-based systems this is done via
+      <synopsis>
+chmod ug+rwx . CVSROOT     
+      </synopsis>
+    </para>
+    <note>
+      <para> In order to provide read access to anonymous remote users, you would typically create
+        an <literal>anonymous</literal> user and add it to the group. This implies that even users
+        which get read-access to the repository require write access to the repository directory.
+        This will enable CVS to update the administrative files. CVS uses its own mechanisms for
+        controlling read-only access. </para>
+    </note>
+  </section>
+  <section>
+    <title>Setting the CVSROOT environment variable</title>
+    <para> All CVS commands take the <literal>-d</literal> cvs-option which specifies the CVS
+      repository for which the command is meant. If the <literal>CVSROOT</literal> environment
+      variable is set to refer to a default repository directory, then the <literal>-d</literal> cvs
+      option can be omitted when working with the default repository. </para>
+    <para> In order to avoid accidental modifications to the wrong repository, it is generally
+      recommended that the environment variable, <literal>CVSROOT</literal> is only set if one only
+      hosts a single repository on the machine. </para>
+  </section>
+</section>

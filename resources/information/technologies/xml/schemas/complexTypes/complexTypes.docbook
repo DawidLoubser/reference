@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+xml:id="resources.information.technologies.xml.schemas.complexTypes.complexTypes"
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Complex Types</title>
+  
+  <indexterm>
+    <primary>XML Schema</primary>
+    <secondary>complex types</secondary>
+  </indexterm>
+  
+    <para> 
+      We have seen that complex types represent the <emphasis>classes</emphasis> in our data model. 
+      For example, the following listing contains the complex
+      types <literal>Order</literal>, <literal>Address</literal> and <literal>Item</literal>:
+      <programlisting language="XML">
+<xi:include parse="text" href="src/order.xsd"/>
+      </programlisting>
+      <note><para>
+        We use the Camel convention which is a widely used standard for object-oriented modeling
+        and development: class names start with capital letter, everything else with lower case
+        letter and word boundaries are capitalized either way.
+      </para></note>
+    </para>
+    
+    <section>
+        <title>Attributes</title>
+        <para> 
+          Attributes are specified via the <literal>xsd:attribute</literal> element. The
+          required attributes for attributes are a <literal>name</literal> and a
+          <literal>type</literal>. For example in the above listing we define an
+          <literal>placementDate</literal> attribute for orders via
+          <programlisting language="XML"><![CDATA[
+<xsd:complexType name="Order">    
+  ...
+  <xsd:attribute name="placementDate" type="xsd:date"/>
+</xsd:complexType> 
+          ]]></programlisting>
+          </para>
+        <section>
+            <title>Attribute Groups</title>
+            <para> 
+              If the same set of attributes is specified for different data types, then it
+              may be a good idea to group the attributes within an attribute group. Then, any
+              modification to the group will apply to all data types which have that
+              particular attribute group.
+            </para>
+            <para> 
+              XML Schemas support attribute groups via the
+                <literal>attributeGroup</literal> tag. For example, the following snippet
+                defines an attribute group, <literal>issued</literal>:
+            <programlisting language="XML"><![CDATA[  
+<xsd:attributeGroup name="issued">  
+  <xsd:attribute name="issuer" type="xsd:string"/>  
+  <xsd:attribute name="issueDate" type="xsd:date"/> 
+</xsd:attributeGroup> 
+            ]]></programlisting>
+               We can now go ahead and assign this attribute group to various data types.
+                For example:
+                <programlisting language="XML"><![CDATA[ 
+<xsd:complexType name="book">   
+  <sequence>  
+    <xsd:element name="author" type="xsd:string"/>  
+      ...    
+  </sequence> 
+  <xsd:attributeGroup ref="issued"/>
+</xsd:complexType> 
+
+<xsd:complexType name="DVD">  
+    <sequence>     
+      <xsd:element name="filmName"  type="xsd:string"/>     
+      ...   
+    </sequence>  
+    <xsd:attributeGroup ref="issued"/>  
+</xsd:complexType> 
+                ]]></programlisting>
+            </para>    
+        </section>
+
+    </section>
+
+    <section>
+        <title>Anonymous Types</title>
+        <para> 
+          When declaring elements of a particular type, we typically first write the
+          specification for the <literal>ComplexType</literal>, and then declare 
+          elements of that type using the <literal>type</literal> attribute. This is
+          similar to, in a programming language, writing a class, and then declaring
+          usage(s) of that class.
+        </para>
+        <para> 
+          Similar to <emphasis>anonymous classes</emphasis> in, for example, Java, XML Schema 
+          allows you to define a type <emphasis>within</emphasis> the context of an 
+          <literal>element</literal> definition. The data type itself is not given a 
+          name and is hence called an anonymous type.
+        <programlisting language="XML">
+<xi:include parse="text" href="src/travelLogAnonymous.xsd"/>
+        </programlisting>  
+        </para>
+        <para> 
+          If you compare the above listing to the schema listing,
+          <literal>travelLog.xsd</literal>, 
+            then you will note that we no longer define a <literal>Trip</literal> type, nor is
+            our <literal>trip</literal> element's type specified via a type attribute. Instead
+            we insert the actual type information into the element itself.
+        </para>
+        <para> 
+          Anonymous types are used frequently when a specific data type only makes sense
+          for a particular element and will not be used elsewhere. You have the advantage of
+          not polluting the type name space with names which are not generally useful.
+        </para>
+      <para>
+        However, in general use, it unfortunately seems common practise for users of XML schema
+        to create schemas that comprise almost entirely of anonymous types. Such types are
+        inherently not reusable, and this is discouraged. This is usually attributed to
+        a failure to design one's vocabulary according to good Object-Oriented principles,
+        using UML.
+      </para>
+    </section>
+
+    <section>
+        <title>Mixing Elements and Text</title>
+        <para> 
+          Standard types have elements, which in turn may have sub-elements, and so on 
+          until we reach the <emphasis>leaf</emphasis> elements. These leaf elements 
+          are always instances of simple types, and some of them may contain character data.
+        </para>
+        <para> 
+          So far we have not mixed text data and elements. However, it is not inconceivable
+          that you would like to do that. Have a look, for example, at the following snippet
+          from and XML document:
+        <programlisting language="XML">
+<xi:include parse="text" href="src/shippingConfirmation.xml"/>
+        </programlisting>  
+        </para>
+        <para> 
+          A schema for the above XML document has to specifically allow for elements with mixed
+          content (containing both character data and elements). 
+          The following schema uses anonymous types, together with <emphasis>mixed content</emphasis>, 
+          to achieve this:
+        <programlisting language="XML">
+<xi:include parse="text" href="src/shippingConfirmation.xsd"/>
+        </programlisting>  
+        </para>
+        <para> 
+          The <literal>mixed</literal> attribute (with a value of <literal>true</literal>) 
+          is used on the <literal>complexType</literal> to achieve this.
+        </para>
+    </section>
+
+    <section>
+        <title>Any Types</title>
+        <para> 
+          When defining complex types we had to decide on a simple or complex content
+          model. XML Schema defines an <literal>anyType</literal> which does not restrict
+          the content model in any way. The <literal>anyType</literal> is the base type
+          (or <quote>super type</quote>) from which all simple and complex types are derived.
+        </para>
+        <para> an element of type <literal>anyType</literal> can literally hold an instance of
+            any type whatsoever. For example
+        <programlisting language="XML"><![CDATA[ 
+ <xsd:element name="anything" type="xsd:anyType"/>
+        ]]></programlisting>
+            can be populated with anything.
+          </para>
+    </section>
+
+    <section>
+        <title>Specifying Elements with Empty Content</title>
+        <para> 
+          XML supports empty elements. For example, we could define a currency as follows:
+        <programlisting language="XML"> <![CDATA[
+<currency name="United States Dollar" code="USD"/> 
+        ]]></programlisting>
+        </para>
+        <para> 
+          The following schema defines a model for the above element type:
+        <programlisting language="XML"> 
+<xi:include parse="text" href="src/currencyEmpty.xsd"/>
+        </programlisting>  
+        with an XML instance file something like the following:
+        <programlisting language="XML"> 
+<xi:include parse="text" href="src/currencyEmpty.xml"/>
+        </programlisting>  
+        </para>
+    </section>
+  
+  <section>
+    <title>Any attributes</title>
+    <para>
+      The <literal><!--<anyAttribute>--></literal> enables one to extend XML document with
+      attributes not specified by the schema. These attributes are usually defined in other schemas
+      which are also imported into the XML instance document. The <literal>anyAttribute</literal> is
+      thus used to define extensible schemas.
+      <programlisting language="XML"><![CDATA[
+        <xs:complexType name="SomeType">
+          <xs:sequence>
+            <xs:element name="a" type="xs:string"/>
+            ...
+          </xs:sequence>
+          <xs:attribute name="x" type="xs:string" use="required"/>
+          <xs:anyAttribute/>
+        </xs:complexType>
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  
+</section>

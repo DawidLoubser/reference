@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Phase events</title>
+    <para>
+       In this section we show two phase listeners, one, the <literal>PhaseInvocationLogger</literal>
+        which listens to all phase events and logs the entry and exit of each phase and a second,
+        a <literal>RequestLogger</literal> which traverses the parameter map of the HTTP request
+        and logs all parameter values.
+    </para>
+
+    <section>
+        <title>PhaseInvocationLogger</title>
+        <para>
+            The phase invocation logger intercepts all phases and logs the start and completion of
+            each phase:
+            <programlisting language="java">
+<xi:include parse="text" href="../../../../examples/phaseListenerBasedDebugging/src/main/java/za/co/solms/ui/web/phaseListeners/PhaseInvocationLogger.java"/>            
+            </programlisting>
+        </para>
+    </section>
+
+    <section>
+        <title>RequestParameterLogger</title>
+        <para>
+            The phase invocation logger intercepts all phases and logs the start and completion of
+            each phase:
+            <programlisting language="java">
+<xi:include parse="text" href="../../../../examples/phaseListenerBasedDebugging/src/main/java/za/co/solms/ui/web/phaseListeners/RequestParameterLogger.java"/>            
+            </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Registering phase listeners</title>
+        <para>
+            Phase listeners need to be registered. This is usually done in the 
+            <literal>faces-config.xml</literal> configuration file:
+            <programlisting language="xml">
+<xi:include parse="text" href="../../../../examples/phaseListenerBasedDebugging/src/main/webapp/WEB-INF/faces-config.xml"/>            
+            </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Program output</title>
+        <para>
+            The output of the application for a particular HTTP request is something like
+            <programlisting><![CDATA[
+za.co.solms.ui.web.phaseListeners.PhaseInvocationLogger beforePhase
+Starting phase: RESTORE_VIEW(1)
+za.co.solms.ui.web.phaseListeners.PhaseInvocationLogger afterPhase
+Completed phase: RESTORE_VIEW(1)
+za.co.solms.ui.web.phaseListeners.PhaseInvocationLogger beforePhase
+Starting phase: APPLY_REQUEST_VALUES(2)
+za.co.solms.ui.web.phaseListeners.RequestParameterLogger beforePhase
+form:save => save
+form:surnameField => s
+form_SUBMIT => 1
+form:employedField => true
+form:employerTelNoField => f
+form:firstNameField => a
+form:employerNameField => d
+form:titleField => Miss
+javax.faces.ViewState => VlqxYGmgb9p6JAuSCloeZwsnfR72wFMoeCydpNTMG5jMF2Q7Bker/Bp6Bxtp/XlViuODAAp2wr6+/K6UMRx9crrNRpnSbIWiKQd+58zVCq6c6Jr08573BA==
+za.co.solms.ui.web.phaseListeners.PhaseInvocationLogger afterPhase
+Completed phase: APPLY_REQUEST_VALUES(2)
+za.co.solms.ui.web.phaseListeners.PhaseInvocationLogger beforePhase
+Starting phase: PROCESS_VALIDATIONS(3)
+za.co.solms.ui.web.phaseListeners.PhaseInvocationLogger afterPhase
+Completed phase: PROCESS_VALIDATIONS(3)
+za.co.solms.ui.web.phaseListeners.PhaseInvocationLogger beforePhase
+Starting phase: UPDATE_MODEL_VALUES(4)
+za.co.solms.ui.web.phaseListeners.PhaseInvocationLogger afterPhase
+Completed phase: UPDATE_MODEL_VALUES(4)
+za.co.solms.ui.web.phaseListeners.PhaseInvocationLogger beforePhase
+Starting phase: INVOKE_APPLICATION(5)
+za.co.solms.ui.web.phaseListeners.PhaseInvocationLogger afterPhase
+Completed phase: INVOKE_APPLICATION(5)
+za.co.solms.ui.web.phaseListeners.PhaseInvocationLogger beforePhase
+Starting phase: RENDER_RESPONSE(6)
+za.co.solms.ui.web.phaseListeners.PhaseInvocationLogger afterPhase
+Completed phase: RENDER_RESPONSE(6)
+            ]]></programlisting>
+        </para>
+    </section>
+</section>

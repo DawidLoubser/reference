@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+  <title>Regular expressions support built-in to java.lang.String</title>
+  <indexterm>
+    <primary>Regular expressions (Java)</primary>
+    <secondary>String's built-in support</secondary>
+  </indexterm>
+  
+  <para>
+    <literal>java.lang.String</literal> contains services that support
+    several use-cases based on regular expressions. These may conveniently
+    be invoked on any instance, and in many cases offer a simpler, more compact
+    alternative to the explicit usage of Patterns and Matchers in the 
+    <literal>java.util.regex</literal> package.
+  </para>
+  
+  <section>
+    <title>Testing whether a String matches a pattern</title>
+    <para>
+      <literal>java.lang.String</literal> provides the service
+      <programlisting language="Java">
+public boolean matches( String regex )
+      </programlisting>
+      which returns true if the String instance itself matches
+      the given pattern. For example,
+      <programlisting language="Java"><![CDATA[
+String carRegistration = "KLM 535 GP";
+
+boolean isGautengRegistration = 
+  carRegistration.matches("[A-Z]{3} [0-9]{3} GP");
+        ]]></programlisting>
+      will test whether the string is a Gauteng, South Africa
+      vehicle registration number.
+    </para>
+  </section>
+  
+  <section>
+    <title>Replacing patterns</title>
+    <para>
+      <literal>java.lang.String</literal> provides the services
+      <programlisting language="Java"><![CDATA[
+public String replaceAll( String regex, String replacement)
+public String replaceFirst( String regex, String replacement)
+        ]]></programlisting>
+      which allow the replacement of all, or the first, part of the string
+      which matches the given regular expression pattern respectively.
+    </para>
+    <para>
+      The following example replaces all vehicles with the word <quote>vehicle</quote>:
+      <programlisting language="Java"><![CDATA[
+String s = "John drove his blue car right into the " +
+    		"freight aircraft, causing a spectacular explosion that " +
+    		"severely damaged the tank.";
+
+String s2 = s.replaceAll("(car|aircraft|tank)", "vehicle");
+System.out.println( s2 );
+        ]]></programlisting>
+      to produce the following output:
+      <programlisting><![CDATA[
+John drove his blue vehicle right into the freight vehicle, 
+causing a spectacular explosion that severely damaged the vehicle.
+        ]]></programlisting>
+    </para>
+    <para>
+      The next example replaces only the first occurrence of <quote>en</quote>:
+      <programlisting language="Java"><![CDATA[
+String k = "The planned supported languages were 'af', 'en' " +
+    "and 'fr', although the contractor only managed to implement " +
+    "'en' in its entirety.";
+
+String k2 = k.replaceFirst("en", "English (en)");
+System.out.println( k2 );
+        ]]></programlisting>
+      to produce the following output:
+      <programlisting><![CDATA[
+The planned supported languages were 'af', 'English (en)' and 'fr', 
+although the contractor only managed to implement 'en' in its entirety.
+
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Splitting a String around a regular expression</title>
+    <para>
+      We can <emphasis>split</emphasis> (or <emphasis>tokenize</emphasis>) a
+      <emphasis>java.lang.String</emphasis> by breaking it up into an array of smaller strings around all
+      parts that match a given regular expression, through the services:
+      <programlisting language="Java"><![CDATA[
+public String[] split( String regex )
+public String[] split( String regex, int limit )
+        ]]></programlisting>
+    </para>
+    <para>
+      The overloaded version allows the developer to place an upper limit of the
+      number of tokens the string should be broken up into - after which all remaining
+      characters form part of the last token.
+    </para>
+    <para>
+      For example, the following list of colours are split around a range of possible
+      delimiters:
+      <programlisting language="Java"><![CDATA[
+String s = "Red,Green,Blue&Purple.";
+String[] colours = s.split("[,&\\.]");
+for (String colour : colours)
+{
+  System.out.println(">" + colour + "<");
+}
+        ]]></programlisting>
+      to producing the output:
+      <programlisting><![CDATA[
+>Red<
+>Green<
+>Blue<
+>Purple<
+        ]]></programlisting>
+    </para>
+    <note>
+      <para>
+        The double-backslash in the String literal regular expression is
+        necessary: One backslash to escape the period symbol, which has special meaning to
+        regular expressions (matches on any character), and another to escape the
+        backslash itself, which has special meaning to java (as an escape character).
+      </para>
+    </note>
+    <para>
+      As another example, a simplistic method to tokenize the two parts of an 
+      e-mail address is shown below:
+      <programlisting language="Java"><![CDATA[
+String e = "info@solms.co.za";
+if (e.matches(".*@.*"))
+{
+  String[] a = e.split("@");
+  System.out.println("User:   " + a[0]);
+  System.out.println("Domain: " + a[1]);
+}
+        ]]></programlisting>
+      which produces the output:
+      <programlisting><![CDATA[
+User:   info
+Domain: solms.co.za
+        ]]></programlisting>
+    </para>
+  </section>
+  
+</section>

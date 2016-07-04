@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns3576:section xmlns:ns3576="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.security.SSLClientAuthentication.CreateCA">
+
+	<ns3577:title xmlns:ns3577="http://docbook.org/ns/docbook">Creating your own Certificate Authority</ns3577:title>
+	<ns3578:para xmlns:ns3578="http://docbook.org/ns/docbook">
+		For our convenience some clever people have provided us with a perl script assisting us in the creation of our own CA,<ns3579:emphasis xmlns:ns3579="http://docbook.org/ns/docbook" role="strong">CA.pl</ns3579:emphasis>. This script is typically distributed with most unix flavors. 
+	</ns3578:para>
+	<ns3580:programlisting xmlns:ns3580="http://docbook.org/ns/docbook">
+[Butterfly:~] alex% locate CA.pl
+/System/Library/OpenSSL/misc/CA.pl
+	</ns3580:programlisting>
+	<ns3581:para xmlns:ns3581="http://docbook.org/ns/docbook">
+		Make a new directory and copy this script into it
+	</ns3581:para>
+	<ns3582:programlisting xmlns:ns3582="http://docbook.org/ns/docbook">
+[Butterfly:~] alex% mkdir CA
+[Butterfly:~] alex% cd CA/
+[Butterfly:~/CA] alex% cp /System/Library/OpenSSL/misc/CA.pl .
+	</ns3582:programlisting>
+	<ns3583:para xmlns:ns3583="http://docbook.org/ns/docbook">
+		To create a new certificate authority call the script with the <ns3584:emphasis xmlns:ns3584="http://docbook.org/ns/docbook" role="strong">-newca</ns3584:emphasis> parameter as follows.
+	</ns3583:para>
+	<ns3585:programlisting xmlns:ns3585="http://docbook.org/ns/docbook">
+[Butterfly:~/CA] alex% perl CA.pl -newca
+CA certificate filename (or enter to create)
+[ENTER]
+Making CA certificate ...
+Using configuration from /System/Library/OpenSSL/openssl.cnf
+Generating a 1024 bit RSA private key
+.....................++++++
+.....++++++
+writing new private key to './demoCA/private/cakey.pem'
+Enter PEM pass phrase: password
+Verifying password - Enter PEM pass phrase: password
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:ZA
+State or Province Name (full name) [Some-State]:Gauteng
+Locality Name (eg, city) []:Johannesburg
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:MyOrganization
+Organizational Unit Name (eg, section) []:workshop
+Common Name (eg, YOUR name) []:myorg.co.za
+Email Address []:admin@myorg.co.za
+[Butterfly:~/CA] alex% ls
+CA.pl  demoCA
+[Butterfly:~/CA] alex% 
+	</ns3585:programlisting>
+	<ns3586:para xmlns:ns3586="http://docbook.org/ns/docbook">
+		In the example the PEM password is set to <ns3587:emphasis xmlns:ns3587="http://docbook.org/ns/docbook" role="strong">password</ns3587:emphasis>. The result of this command is a new directory named <ns3588:emphasis xmlns:ns3588="http://docbook.org/ns/docbook" role="strong">demoCA</ns3588:emphasis>. The file cacerts.pem contains a self-signed certificate (including public key).  The private key resides in the private/cakey.pem file.
+	</ns3586:para>
+	<ns3589:figure xmlns:ns3589="http://docbook.org/ns/docbook">                                                      
+  	<ns3590:title xmlns:ns3590="http://docbook.org/ns/docbook">CA directory structure</ns3590:title>                       
+  	<ns3591:mediaobject xmlns:ns3591="http://docbook.org/ns/docbook">                                               
+    	<ns3592:imageobject xmlns:ns3592="http://docbook.org/ns/docbook">                                             
+      	<ns3593:imagedata xmlns:ns3593="http://docbook.org/ns/docbook" fileref="Graphics/demoCA_DirectoryStructure.jpg" format="JPG" align="center"/>
+    	</ns3592:imageobject>                                            
+    	<ns3594:textobject xmlns:ns3594="http://docbook.org/ns/docbook"><ns3595:phrase xmlns:ns3595="http://docbook.org/ns/docbook">CA directory structure</ns3595:phrase></ns3594:textobject>   
+  	</ns3591:mediaobject>                                              
+	</ns3589:figure>  
+</ns3576:section>

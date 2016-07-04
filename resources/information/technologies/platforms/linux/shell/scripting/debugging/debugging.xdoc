@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.platforms.linux.shell.scripting.debugging.debugging"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Debugging shell scripts</title>
+  <para>
+    To debug shell scripts, one can execute them by calling the command interpreter,
+    <command>sh</command> or <command>bash</command>, with one of the
+    following two options:
+    
+    <table id="resources.information.platforms.linux.shell.scripting.debugging.bashDebugOptions">
+      <title>Debugging options for bash command interpreter</title>
+      <tgroup cols="2">
+        <thead>
+          <row><entry>Flag</entry><entry>Description</entry></row>
+        </thead>
+        <tbody>
+          <row><entry>-v</entry><entry>Print shell input lines as they are read.</entry></row>
+          <row><entry>-x</entry><entry>Print commands and their arguments as they are executed.</entry></row>
+        </tbody>
+      </tgroup>
+    </table>
+  </para>
+  <para>
+    For example, consider the following shell script:
+    <programlisting>
+<xi:include href="../iteration/source/fileSizes_sh.xdoc" />    
+    </programlisting>
+    If we execute it with the <parameter>-x</parameter> debug option via
+    <cmdsynopsis><command>
+bash -v fileSizes.sh      
+    </command></cmdsynopsis>
+    we obtain the following output:
+    <programlisting><![CDATA[
+#!/bin/bash
+
+filter=''
+
+if [ $# -eq 1 ]
+then
+        filter=$1
+fi
+echo "Using filter: $filter"
+Using filter:
+
+files=`ls $filter`
+ls $filter
+
+totalSize=0
+for file in $files
+do
+  size=`filesize $file`
+  echo "$file -> $size"
+  let totalSize=$[totalSize+size]
+done
+filesize $file
+CVS -> 128
+filesize $file
+fileSizes.sh -> 300
+filesize $file
+guess.sh -> 185
+filesize $file
+runningPositiveSum.sh -> 328
+filesize $file
+runningSum.sh -> 228
+filesize $file
+testCFor.sh -> 97
+filesize $file
+testFor.sh -> 200
+filesize $file
+testWhile.sh -> 131
+echo "Total disk space required by all shell scripts = $totalSize"
+Total disk space required by all shell scripts = 1597
+    ]]></programlisting>
+  </para>
+  <para>
+    We obtain even more debug information, including the exact variable values, by executing it via
+    <cmdsynopsis><command>
+bash -x fileSizes.sh      
+    </command></cmdsynopsis>
+    The output looks as follows:
+    <programlisting><![CDATA[
++ filter=
++ '[' 0 -eq 1 ']'
++ echo 'Using filter: '
+Using filter:
+++ ls
++ files=CVS
+fileSizes.sh
+guess.sh
+runningPositiveSum.sh
+runningSum.sh
+testCFor.sh
+testFor.sh
+testWhile.sh
++ totalSize=0
+++ filesize CVS
++ size=128
++ echo 'CVS -> 128'
+CVS -> 128
++ let totalSize=128
+++ filesize fileSizes.sh
++ size=300
++ echo 'fileSizes.sh -> 300'
+fileSizes.sh -> 300
++ let totalSize=428
+++ filesize guess.sh
++ size=185
++ echo 'guess.sh -> 185'
+guess.sh -> 185
++ let totalSize=613
+++ filesize runningPositiveSum.sh
++ size=328
++ echo 'runningPositiveSum.sh -> 328'
+runningPositiveSum.sh -> 328
++ let totalSize=941
+++ filesize runningSum.sh
++ size=228
++ echo 'runningSum.sh -> 228'
+runningSum.sh -> 228
++ let totalSize=1169
+++ filesize testCFor.sh
++ size=97
++ echo 'testCFor.sh -> 97'
+testCFor.sh -> 97
++ let totalSize=1266
+++ filesize testFor.sh
++ size=200
++ echo 'testFor.sh -> 200'
+testFor.sh -> 200
++ let totalSize=1466
+++ filesize testWhile.sh
++ size=131
++ echo 'testWhile.sh -> 131'
+testWhile.sh -> 131
++ let totalSize=1597
++ echo 'Total disk space required by all shell scripts = 1597'
+Total disk space required by all shell scripts = 1597
+    ]]></programlisting>
+  </para>
+</section>

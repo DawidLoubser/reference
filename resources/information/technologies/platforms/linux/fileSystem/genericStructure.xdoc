@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.platforms.linux.fileSystem.genericStructure"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Generic Linux file system structure</title>
+  <para>
+    The general structure of most file system types used in Linux is the same. It is called
+    the <emphasis>Virtual File System</emphasis> (VFS) which does not, itself,
+    know of the file system specifics -- it is generic and abstracted from the concrete file
+    system used. 
+  </para>
+  <para>
+    The VFS communicates with the concrete file systems which in turn communicate through
+    buffers with th device drivers of the corresponding devices. This is illustrated in
+    <xref linkend="resources.information.platforms.linux.fileSystem.vfsToDrivers_gif"/>.
+    
+    <figure id="resources.information.platforms.linux.fileSystem.vfsToDrivers_gif">
+      <title>
+        The virtual file system abstracts applications from the concrete file system and the device.
+      </title>
+      <graphic fileref="vfsToDrivers.gif"/>      
+    </figure>
+  </para>
+  <para>
+    The core components of the VFS are
+    <itemizedlist>
+      <listitem><para>the superblock,</para></listitem>
+      <listitem><para>the inodes</para></listitem>
+      <listitem><para>the directory blocks and</para></listitem>
+      <listitem><para>data blocks.</para></listitem>
+    </itemizedlist>
+  </para>    
+
+<section>
+  <title>The superblock</title>
+  <para>
+    The <emphasis>superblock</emphasis> contains information about a mounted
+    file system, like the total size of the file system and the size of the inode table. It may also
+    contain information on when last the file system was checked and what the most recently
+    released data blocks are. The latter allows for rapid location of free data blocks when
+    allocating new ones. The exact details vary from file system to file system.
+    The kernel keeps a static array of superblocks, one superblock for each mounted file
+    system.       
+  </para>
+  <para>
+    Superblocks are objects which provide services for reading, writing and
+    deleting inodes (which are the file systems representation of a file),
+    as well as obtaining file system statistics and remounting and
+    unmounting the file system.
+  </para>
+</section>  
+
+ <section>
+   <title>The inode table</title>
+   <para>
+     For each file there is an <emphasis>inode</emphasis> which contains all the information
+     about a file except its name. It contains
+     <itemizedlist>
+       <listitem><para>the file type,</para></listitem>
+       <listitem><para>the access rights to the file,</para></listitem>
+       <listitem><para>the owner user and owner group,</para></listitem>
+       <listitem><para>the file size,</para></listitem>
+       <listitem><para>the date/time stamp for the last modification, and</para></listitem>
+       <listitem><para>the pointers to the data blocks.</para></listitem>
+     </itemizedlist>
+   </para>
+   <para>
+     Each <emphasis>inode</emphasis> can refer directly to only a limited number
+     of data blocks. This is because the inodes themselves are of fixed size.
+     The block size itself is dependent on the type of the file system. 
+     If the file is larger than what can be accommodated through direct links, the
+     inode refers to another table which itself refers to further blocks. This can go
+     to further levels (<abbrev>e.g.</abbrev> double indirect blocks).
+     
+     <figure id="resources.information.platforms.linux.fileSystem.inode_gif">
+       <title>Inodes refer to data blocks directly and indirectly.</title>
+       <graphic fileref="inode.gif"/>
+     </figure>
+     
+   </para>
+   <para>
+     The <emphasis>inode</emphasis> is an object representing a file and provides the
+     operations which may be performed on a file:
+     <programlisting><![CDATA[
+struct inode_operations {
+  struct file_operations * default_file_ops;
+  int (*create) (struct inode *,const char *,int,int,struct inode **);
+  int (*lookup) (struct inode *,const char *,int,struct inode **);
+  int (*link) (struct inode *,struct inode *,const char *,int);
+  int (*unlink) (struct inode *,const char *,int);
+  int (*symlink) (struct inode *,const char *,int,const char *);
+  int (*mkdir) (struct inode *,const char *,int,int);
+  int (*rmdir) (struct inode *,const char *,int);
+  int (*mknod) (struct inode *,const char *,int,int,int);
+  int (*rename) (struct inode *,const char *,int, struct inode *,
+             const char *,int, int); /* this from 2.0.1 onwards */
+  int (*readlink) (struct inode *,char *,int);
+  int (*follow_link) (struct inode *,struct inode *,int,int,struct inode **);
+  int (*readpage) (struct inode *, struct page *);
+  int (*writepage) (struct inode *, struct page *);
+  int (*bmap) (struct inode *,int);
+  void (*truncate) (struct inode *);
+  int (*permission) (struct inode *, int);
+  int (*smap) (struct inode *,int);
+};
+      ]]></programlisting>
+   </para>   
+ </section>
+ 
+ <section>
+   <title>Directories</title>
+   <para>
+     A directory is a file which associates file names to inodes (recall that a inode contained
+     all information of a file <emphasis>except</emphasis> the file name).
+     <note><title>Hard links</title>
+       <para>
+         The file name is thus detached from the file. This facilitates hard links, <abbrev>i.e.</abbrev>
+         that multiple file names can be associated with the same physical file.
+       </para>  
+     </note>
+   </para>
+ </section>
+ 
+ <xi:include href="virtualFileSystemDesign.xdoc" />
+
+  <section>
+    <title>Data blocks</title>
+    <para>
+      The <emphasis>data blocks</emphasis> contain the actual data. The size of a
+      data block is specific to the file system.
+    </para>
+  </section>
+  
+</section>

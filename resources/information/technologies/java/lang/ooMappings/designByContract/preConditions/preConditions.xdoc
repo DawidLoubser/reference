@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section
+  xmlns="http://docbook.org/ns/docbook" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Implementing preconditions in Java</title>
+  <para>
+    the preconditions are those conditions under which a service provider may refuse a service
+    without breaking the contract.
+    <note><para>
+      The contract is written from the client's perspective. It does not mean that eery service
+      provider realising the contract <emphasis>must</emphasis> refuse the service - only that the
+      service provider has the right to refuse the service.
+    </para></note>
+  </para>
+  <para>
+    The notification mechanism used by objects to notify a client that a requested service is not
+    going to be provided for some or other reason is notifiable exceptions, <abbrev>i.e.</abbrev>
+    any exception which is not a <literal>java.lang.RuntimeException</literal>. Hence, for every pre-condition one
+    introduces a notifiable exception class.
+    <note><para>
+      Java essentially has three types of throwable objects
+      <orderedlist>
+        <listitem><formalpara>
+          <title>java.lang.Error</title>
+          <para>
+            Errors are thrown by the Java Runtime Environment. They signal problems with the runtime
+            environment itself and should not be thrown, or caught, by application code.
+          </para>
+        </formalpara>
+        </listitem>
+        <listitem><formalpara>
+          <title>java.lang.RuntimeException</title>
+          <para>
+            Runtime exceptions are thrown if an application error occurs, <abbrev>i.e.</abbrev> if
+            the server is unable to meet the contractual obligations. This is usually attributable
+            to a coding mistake or insufficient testing.
+          </para>
+        </formalpara>
+        </listitem>
+        <listitem><formalpara>
+          <title>Notifiable (Checked) exceptions</title>
+          <para>
+            These are the pre-condition exceptions used to notify a client that a service request is
+            refused because a particular precondition has not been met. Since the contract allows
+            for service request refusal under such conditions, no application error has occured - at
+            least not at the level of the service provider class in question.
+          </para>
+        </formalpara>
+        </listitem>
+      </orderedlist>
+    </para></note>
+  </para>
+  <para>
+    For  example, if an account may refuse the <literal>debit</literal> 
+    service if either
+    <itemizedlist>
+      <listitem><para>
+        there are insufficient funds, or
+      </para></listitem>
+      <listitem><para>
+        if the daily withdrawal limit has been exceeded, 
+      </para></listitem>
+    </itemizedlist>
+    then one should introduce two exception classes, e.g. <literal>InsufficientFundsException</literal>
+    and <literal>DailyLimitExceededException</literal>. Both these exceptions would be notifiable
+    exceptions (i.e. extend <literal>java.lang.Exception</literal>).
+  </para>
+  <para>
+    Thus the service implementation would check whether all contractual preconditions the service
+    provider realisation would like to enforce are met, and if any of these is not met, the service
+    would throw a corresponding exception:
+    <programlisting language="Java"><![CDATA[
+public class AccountImpl implements Account
+{
+   ...      
+   public TransactionConfirmation debit(double amount)
+   throws InsufficientFundsException, DailyLimitExceededException
+   {
+      // Test preconditions
+      if (balance - amount < minimumBalance)
+        throw new InsufficientFundsException();
+      
+      if (getTotalDebits(today) + amount > dailyLimit)
+        throw new DailyLimitExceededException();
+      
+      // Now perform the debit
+      ...
+      
+      // Now we can check that business rules still hold. 
+      // If they fail now, then there was an application error.
+      
+      assert balance >= minimumBalance : 
+        "minimum balance invariance violated";
+        
+      assert getTotalDebits(today) <= dailyLimit : 
+        "daily debit limit violated";
+      
+      ...
+   }   
+      
+   ...
+}      
+      ]]></programlisting>
+  </para>
+</section>  

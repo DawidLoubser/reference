@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.platforms.linux.processControl.at"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Scheduling a job to run at some specified time via <command>at</command></title>
+  <para>
+    At times, one wants to schedule a job to run at some future time -- for example after hours.
+    To this end, Linux provides the <command>at</command> command which behaves as follows:
+    <itemizedlist>
+      <listitem><para>
+         Processes scheduled via <command>at</command> are spooled into the 
+         <filename>/var/spool/at</filename> directory. 
+      </para></listitem>
+      <listitem><para>
+         The processes are executed within the directory and environment from which 
+         the <command>at</command> command was issued.
+      </para></listitem>
+      <listitem><para>
+        If the output and error streams have not been redirected, then any output and error 
+        messages will be mailed to the user. Output redirection is done via the normal I/O
+        stream redirection operator, <literal><![CDATA[>]]></literal>.
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>Restricting access to <command>at</command></title>
+    <para>
+      Access to the <command>at</command> command is controlled through two files,
+      <filename>/etc/at.allow</filename> and <filename>/etc/at.deny</filename>.
+      If neither of the files exist, then only the super-user can schedule commands via
+      <command>at</command>.
+      Usually only one of the two files is used:
+      <itemizedlist>
+        <listitem><para>
+          If one wants to deny access by default, and only grant access to specified users,
+          then one uses <filename>/etc/at.allow</filename>. The users listed in that 
+          file will be able to schedule jobs via <command>at</command>. If the file
+          is empty, then only the super-user is able to use <command>at</command>.
+        </para></listitem>
+        <listitem><para>
+          If one wants to allow all users by default to be able to use <command>at</command>,
+          then one uses the <filename>/etc/at.deny</filename> file to list those users which
+          are explicitly prevented from using it. If the file is empty, all users can schedule
+          jobs via <command>at</command>.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Using <command>at</command></title>
+    <para>
+      The jobs to be scheduled to run <command>at</command> a particular time
+      can be specified interactively, via piping or within a file.
+    </para>
+    
+    <section>
+      <title>Specifying the jobs to be scheduled interactively</title>
+      <para>
+        The <command>at</command> command provides an interactive interface to
+        specify the jobs to be scheduled for the specified date/time. For example
+        <cmdsynopsis><command>
+at now + 2 minutes
+        </command></cmdsynopsis>
+        request a job to be scheduled for 2 minutes later. It comes up with an 
+        <literal><![CDATA[at>]]></literal> at which you enter the commands
+        one after the other. The list of commands is terminated via a 
+        <literal><![CDATA[<EOT>]]></literal> (end-of-transmission) signal
+        (issued from the keyboard via <literal><![CDATA[<CTRL> D]]></literal>):
+        <programlisting><![CDATA[
+at> ls > dir.lst
+at> srt dir.lst > dir.srt
+at> <EOT>
+job 7 at 2003-08-12 21:27
+          ]]></programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>Specifying the date/time when jobs are to be run</title>
+      <para>
+         The <command>at</command> command supports a wide range of date/time
+         specifications. The complete specification for date/time is available in
+         the file <filename>/usr/share/doc/packages/at/timespec</filename>.
+         Here we list a number of examples which will enable you to do most
+         of what you would want to do:
+         <itemizedlist>
+           <listitem><formalpara>
+             <title>at now + 1  hour</title>
+             <para>Specifying jobs to be scheduled 1 hour from the current time.</para>
+           </formalpara></listitem>
+           <listitem><formalpara>
+             <title>at 22:00 + 1 week</title>
+             <para>Specifying jobs to be scheduled for 22h00 one week later.</para>
+           </formalpara></listitem>
+           <listitem><formalpara>
+             <title>at 3:00 Aug 20 2003</title>
+             <para>Specifying jobs to be schedules at 3 AM on 20 August 2003.</para>
+           </formalpara></listitem>
+           <listitem><formalpara>
+             <title>at 21h00 today</title>
+             <para>
+               Specifying jobs to be scheduled for 21h00 later that day. If <literal>today</literal>
+               is not specified it will default to the current day.
+             </para>
+           </formalpara></listitem>
+           <listitem><formalpara>
+             <title>at 21h00 tomorrow</title>
+             <para>Specifying jobs to be scheduled for 21h00 on the next day.</para>
+           </formalpara></listitem>
+           <listitem><formalpara>
+             <title>at 3:30pm next fri</title>
+             <para>Specifying jobs to be scheduled at 15h00 on the next (first) Friday.</para>
+           </formalpara></listitem>
+         </itemizedlist>
+      </para>
+    </section>
+
+    <section>
+      <title>Using piping to specify the scheduled jobs</title>
+      <para>
+        Recall that the piping operator, <literal><![CDATA[|]]></literal>, feeds the
+        output of the first command into the input of the second. We can use the
+        piping operator together with the <command>echo</command> command
+        to specify the list of jobs to be scheduled directly from command line.
+        For example,
+        <cmdsynopsis><command>
+echo "sendEmails; rm mail.txt" | at 18:00      
+        </command></cmdsynopsis>
+        schedules the <command>sendEmails</command> job for 18h00 on the current day
+        followed by the removal of the file , <filename>mail.txt</filename>.
+      </para>
+    </section>
+    
+    <section>
+      <title>Scheduling a list of jobs specified in a file</title>
+      <para>
+        Lastly we can also provide <command>at</command> with a file containing the list
+        of jobs to be scheduled. This is done using the <literal><![CDATA[-f]]></literal> flag:
+        <cmdsynopsis><command>
+at -f ./jobsList now+4 days
+        </command></cmdsynopsis>
+      </para>
+    </section>
+    
+  </section>
+  
+  <section>
+    <title>Querying the <command>at</command> queue via <command>atq</command></title>
+    <para>
+      One can use the <command>atq</command> command to query the queue of jobs scheduled
+      via <command>at</command>. The output reports the  job number, the date and time, the job
+      class and the owner of the job:
+      <programlisting><![CDATA[
+15      2003-08-13 05:36 a fritz
+16      2003-08-19 22:36 a fritz
+      ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Removing jobs from the <command>at</command> queue via <command>atrm</command></title>
+    <para>
+       Jobs are removed from the <command>at</command> queue via the <command>atrm</command>
+       command which takes the job number as argument. For example, 
+       <cmdsynopsis><command>
+atrm 16         
+       </command></cmdsynopsis>
+       will remove the job with job number 16 from the at queue.
+    </para>
+  </section>
+  
+</section>

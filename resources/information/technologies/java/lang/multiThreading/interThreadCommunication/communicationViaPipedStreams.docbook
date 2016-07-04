@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.tecnologies.java.lang.multiThreading.interThreadCommunication.communicationViaPipedStreams">
+
+  <title>Communication via Piped Streams</title>
+
+  <para>A simple way for threads to communicate is to create a
+    stream between them. This is done via Java's <literal>java.io.PipedInputStream</literal> and 
+    <literal>java.io.PipedOutputStream</literal> classes. Such a communication scenario
+    is functionally identical to computers on a network communicating with each other via sockets.
+  </para>
+
+  <para>Typically, data is written to a <emphasis role="verb"
+      >PipedOutputStream</emphasis> by one thread and is read from a
+      <emphasis role="verb">PipedInputStream</emphasis> by some other
+    thread. Attempting to use both objects from a single thread is not
+    recommended, as it may deadlock the thread. The piped input stream
+    contains a buffer, decoupling read operations from write operations.
+    If a thread was providing data bytes to the connected piped output
+    stream, but the thread is no longer alive, then an
+      <emphasis>IOException</emphasis> is thrown. Similarly, an <emphasis
+      role="verb">IOException</emphasis> is also thrown if one thread
+    tries to write to a stream whose corresponding data extraction thread
+    has died.</para>
+
+  <para>The piped streams are specializations of Java's stream primitives,
+    the byte streams <emphasis role="verb">InputStream</emphasis> and
+      <emphasis role="verb">OutputStream</emphasis>. If one wants to write
+    anything else but bytes one simply attaches corresponding stream
+    filter to the stream. For example, to serialize objects to the pipe
+    the writing thread attaches an <emphasis role="verb"
+    >ObjectOuputStream</emphasis> to the <emphasis role="verb"
+      >PipedOutputStream</emphasis>. Similarly the reading thread attaches
+    a <emphasis role="verb">ObjectInputStream</emphasis> to the <emphasis
+      role="verb">PipedInputStream</emphasis>. The following application
+    illustrates the usage of piped streams using a standard
+    producer-consumer scenario: </para>
+
+  <para>
+    <programlisting><![CDATA[
+    ]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" href="source/TestPipes.java"/><![CDATA[
+    ]]></programlisting>
+  </para>
+
+  <para>In the following application we have a <emphasis role="verb"
+      >DataSource</emphasis> thread which pushes in intervals of roughly
+    one second random data points together with a date-time stamp into the
+    pipe. A second thread, the <emphasis>DataProcessor</emphasis> thread,
+    continually waits for data to arrive at the pipe and prints the result
+    onto the terminal. Note that an <emphasis>IOException</emphasis> is
+    used to notify the data processor the data source thread is no longer
+    alive. Below we show the sample output of the application</para>
+
+  <para>
+    <programlisting><![CDATA[
+received data: 18:39:55:65 on 03/04/99 => 0.2008
+received data: 18:39:56:42 on 03/04/99 => 0.2422
+received data: 18:39:56:42 on 03/04/99 => 0.2517
+received data: 18:39:56:42 on 03/04/99 => 0.1663
+received data: 18:39:56:42 on 03/04/99 => 0.1942
+received data: 18:39:56:42 on 03/04/99 => 0.7339
+received data: 18:39:56:42 on 03/04/99 => 0.3966
+received data: 18:39:56:42 on 03/04/99 => 0.2155
+received data: 18:39:56:43 on 03/04/99 => 0.2165
+received data: 18:39:56:43 on 03/04/99 => 0.8005
+Write end dead
+]]></programlisting>
+  </para>
+
+</section>

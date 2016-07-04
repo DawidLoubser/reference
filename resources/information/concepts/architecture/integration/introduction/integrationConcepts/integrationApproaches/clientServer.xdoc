@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.concepts.architecture.integration.integrationApproaches.clientServer"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Client-server based integration</title>
+  <para>
+    In a client-server scenario, clients send service request messages to service providers. The service request
+    messages may be sent synchronously or asynchronously. In the former case the client process will block
+    until the service provider response has been received, while in the latter case responses are returned
+    through a separate channel and processed through separate processes.
+  </para>  
+  
+  <section>
+    <title>Service provider API</title>
+    <para>
+      In client-server integration, service providers often publish their API (service contract) in an interface repository.
+      This could be in the form of a CORBA IDL published in a CORBA interface repository or
+      a web-services WSDL published in a ebXML or UDDI repository.
+    </para>
+  </section>
+  
+  <section>
+    <title>Service request message protocols</title>
+    <para>
+      For effective client/server integration service providers often need to be accessible
+      from a variety of technologies. To this end service providers are made accessible
+      by one or a number of standard protocols. 
+    </para>
+    <para>
+      For example, we may provide a SOAP portal or a CORBA IIOP portal to a 
+      system used by a number of other systems.
+    </para>
+    <section>
+      <title>The influence of transport-layer protocols</title>
+      <para>
+        Not all RPC protocols are supported by all transport layer protocols. For example,
+        binary protocols like CORBA cannot be carried by text-based transport layer protocols
+        like HTTP or SMTP. 
+      </para>
+      <para>
+        The choice of transport-layer protocol may hence affect the choice of RPC protocols.
+      </para>
+    </section>  
+  </section>
+  
+  <section>
+    <title>Service request and response channels</title>
+    <para>
+      The service requests and associated responses must be sent across a channel supporting
+      the RPC protocol employed.
+    </para>
+    
+    <section>
+      <title>Connection-based channels</title>
+      <para>
+      </para>
+      <section>
+        <title>Benefits of connection-based channels</title>
+        <para>
+          Connection-oriented channels like TCP/IP provide 
+          <itemizedlist>
+            <listitem><para>
+              direct, often rapid, access to service providers and            
+            </para></listitem>  
+            <listitem><para>
+              keep clients informed of whether the service request could be delivered or not.
+            </para></listitem>  
+          </itemizedlist>
+        </para>
+      </section>
+      
+      <section>
+        <title>Disadvantages</title>
+        <para>
+          There are, however, a number of disadvantages to connection-based channels:
+          <itemizedlist>
+            <listitem><para>
+              Clients are directly dependent on the location of the service provider.
+            </para></listitem>  
+            <listitem><para>
+              The client workflow may fail if a connection cannot be established.
+            </para></listitem>  
+          </itemizedlist>
+        </para>  
+      </section>
+    </section>
+    
+     <section>
+       <title>Broker-facilitated connections</title>
+       <para>
+         Broker facilitated connections typically transfer the entire communication with the
+         service provider to a broker. Brokers may be object request brokers (e.g. CORBA)
+         or services request brokers like web-services brokers (e.g. JAX-RPC).
+       </para>
+       <para>
+         Clients are no longer exposed to the RPC protocol, 
+         transport layer protocol or server location. The client workflow may, however,
+         still fail upon not being able to establish connection to the service provider.
+       </para>
+     </section>
+        
+    <section>
+      <title>Message queues</title>
+      <para>
+        Message queues provide a 
+        <emphasis>channel for asynchronous service request messages</emphasis>
+        which will be delivered by the queue when the service provider is ready to
+        accept service request messages.
+        <note><para>
+          Even though the message channel is asynchronous, the client may still request
+          a service synchronously, event when using a message queue, by blocking the
+          client workflow until a response has been received through some other channel 
+          (e.g. a response queue).
+        </para></note>  
+      </para>
+      <para>
+        Message queues typically support <emphasis>guaranteed delivery</emphasis> 
+        by persisting the message 
+        as it is received. If the queue itself falls over, the messages will still be delivered
+        when the queue comes back up again.
+      </para>
+      <para>
+        When using a message queue, <emphasis>clients are completely decoupled from
+        service providers</emphasis>. The service provider servicing the request messages
+        from a queue may be changed without affecting  the client. Furthermore, load can be
+        naturally balanced across multiple service request processors.
+      </para>
+      
+      <section>
+        <title>Priority queues</title>
+        <para>
+          Priority queues receive messages of different priorities which are ordered by the 
+          queue and hence processed by service providers in order of priority.
+        </para>
+      </section>
+      
+    </section>
+    
+    <section>
+      <title>Chains of responsibility</title>
+      <para>
+        Another delivery channel is a chain of responsibility. Here the decision of which 
+        service provider should process a particular request is transferred from the client
+        to the service providers themselves, <abbrev>i.e.</abbrev> it is the service
+        providers which decide whether they are willing or able to process a particular 
+        request. If not, the request is passed on along the chain to the next service 
+        provider until, hopefully, a service provider who is willing and able to process the
+        request is found.
+      </para>
+    </section>  
+  </section>
+ </section>
+ 
+  

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.entityBeans.defining.embeddableClasses"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Embeddable classes</title>
+  <para>
+    Entity beans may have as components finer grained objects which are
+    persisted, not as separate entity beans, but as persisted fields within the
+    owner entity. As such embedded objects have no persistent identity. Their
+    identity is the role in the context of the owner entity.
+    
+    <note><para>
+      Embedded classes are only used for composition relationships between
+      classes, <abbrev>i.e.</abbrev>, no other object may obtain a reference to
+      an embedded object.
+    </para></note>
+  </para>
+  
+  <section>
+    <title>Defining an embeddable class</title>
+    <para>
+      An class which is meant to be embeddable within entity beans must be
+      annotated as such using the <literal>@Embeddable</literal> annotation.
+      Furthermore, it must be serializable:
+      <programlisting>
+<xi:include parse="text"
+  href="../../../examples/friends/src/common/za/co/solms/ejb3/friends/Address.java"/>
+      </programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Embedding and embeddable class within an entity bean</title>
+    <para>
+      To embedd an embeddable class within an entity bean one has to
+      <orderedlist>
+        <listitem><para>
+          Add it as a field.
+        </para></listitem>
+        <listitem><para>
+          Map the attributes for the embedded class to columns within the owner
+          entity.
+        </para></listitem>
+      </orderedlist>
+    </para>
+  </section>
+
+  <section>
+    <title>Providing safe access to embedded components</title>
+    <para>
+      The getters and setters for embedded classes may only be
+      accessed by the application server itself. This is to ensure that clients
+      do not get direct access to the embedded object, <abbrev>i.e.</abbrev>,
+      that encapsulation is respected. For this reason these methods have been
+      declared <literal>protected</literal>.
+      <note><para>
+        Even if they are declared <literal>public</literal>, users may not use
+        them. Application servers should throw and exception if an attempt is
+        made to access the getters and setters for embedded objects externally.
+      </para></note>
+    </para>
+    <para>
+      We have added <literal>updateAddress()</literal> and
+      <literal>retrieveAddress</literal> which provide the user safe access to
+      the embedded object without breaking the ownership required by the
+      composition relationship, <abbrev>i.e.</abbrev> without ginving the user a
+      handle to the embedded object.
+    </para>
+  </section>
+  
+</section>

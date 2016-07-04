@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" 
+    xml:id="resources.information.technologies.xml.webServices.wsdl.structure.structure"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>The structure of a WSDL Document</title>
+  
+  <indexterm>
+    <primary>WSDL</primary>
+    <secondary>structure</secondary>
+  </indexterm>
+    
+    <para>
+        A WSDL document consists of an <literal>definitions</literal> element in the WSDL namespace:
+        <programlisting><![CDATA[
+http://schemas.xmlsoap.org/wsdl/
+        ]]></programlisting>
+      The XML schema which specifies the structure of WSDL 1.1 documents (the most widely used version) can be found at:
+      <programlisting>
+http://schemas.xmlsoap.org/wsdl/wsdl.xsd
+      </programlisting>
+    </para>
+    
+    <figure>
+        <title>The structure of a WSDL Document</title>
+        <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude"><imageobject><imagedata fileref="images/wsdlStructure.jpg"/></imageobject></mediaobject>
+    </figure>
+    <para>
+        A WSDL <emphasis>targets</emphasis> a particular XML name space - which is, of course, XML's packaging mechanism: All 
+        of the declared elements in the WSDL can thus by uniquely referenced through a combination of their local name and name space.
+    </para>
+    <para>
+        A typical WSDL document contains up to five top-level sections:
+    </para>
+    <para>
+        <orderedlist>
+            <listitem>
+                <formalpara>
+                    <title>types</title>
+                    <para>Contains (or imports from an external location) one or more schemas which
+                    specify the structure of exchanged value objects.</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>messages</title>
+                    <para>Declares all the exchanged value objects (request, response and fault messages)
+                    and binds them to a schema type or element reference.</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>portType</title>
+                    <para>The interface for the service. Indicates the operations (<emphasis>use cases</emphasis>)
+                    the service provides, and the messages exchanged for each.</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>binding</title>
+                    <para>Specifies how the abstract <literal>portType</literal> (and all the operations)
+                    is realised in a particular transport layer and messaging style.</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>service</title>
+                    <para>Indicates to clients where they can connect to start interacting
+                    with a particular binding of a particular portType, by means of
+                    a URL (in the case of HTTP).</para>
+                </formalpara>
+            </listitem>
+        </orderedlist>
+    </para>
+    <para>
+        <programlisting language="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+    targetNamespace="..."
+    
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://schemas.xmlsoap.org/wsdl/ 
+                        http://schemas.xmlsoap.org/wsdl/wsdl.xsd">
+    
+    
+    <!-- Define Types -->
+    <wsdl:types>
+        <xs:schema 
+            targetNamespace="..."
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+            ...
+        </xs:schema>
+    </wsdl:types>
+    
+    
+    <!-- List exchanged messages -->
+    <wsdl:message name="...">
+        <wsdl:part name="body" element="..."/>
+    </wsdl:message>
+    ...
+    
+    
+    <!-- Abstract Service Interface Definition -->
+    <wsdl:portType name="...">
+        <!-- Specify the use cases, and the messages exchanged -->
+        <wsdl:operation name="...">
+            <wsdl:input message="..."/>
+            <wsdl:output message="..."/>
+            <wsdl:fault name="..." message="..."/>
+        </wsdl:operation>
+        ...
+    </wsdl:portType>
+    
+    
+    <!-- Specify how our abstract service should be bound to a protocol
+    such as SOAP/HTTP -->
+    <wsdl:binding name="..." type="...">
+        ...
+    </wsdl:binding>
+    
+    
+    <!-- Concrete service endpoints -->
+    <wsdl:service name="...">
+        <wsdl:port name="..." binding="...">
+			...
+		</wsdl:port>
+    </wsdl:service>
+    
+</wsdl:definitions>
+            ]]></programlisting>
+    </para>
+    
+    <xi:include href="types.docbook"/>
+    <xi:include href="messages.docbook"/>
+    <xi:include href="portType.docbook"/>
+    <xi:include href="binding.docbook"/>
+    <xi:include href="service.docbook"/>
+    
+</section>

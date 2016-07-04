@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.architecture.referenceArchitectures.j2ee.whatDoesEjbContainerProvide.locationTransparency"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Component location transparency</title>
+  <para>
+    EJB Application Servers must provide a naming and directory service which
+    implements the Java Naming and Directory Interface (JNDI).
+    The JNDI is a generic API for interfacing with general naming and directory services (such as, for example, LDAP). 
+  </para>
+  
+  <figure id="resources.information.concepts.architecture.referenceArchitectures.j2ee.whatDoesEjbContainerProvide.jndiArchitecture_fig">
+    <title>The JNDI Architecture</title>
+    <graphic fileref="jndiArchitecture.jpg"/>
+  </figure>
+
+  <para>
+     As is shown can be seen in
+     <xref linkend="resources.information.concepts.architecture.referenceArchitectures.j2ee.whatDoesEjbContainerProvide.jndiArchitecture_fig"/>,
+     JNDI wraps concrete naming and directory services. Some of the naming and directory services which 
+     can currently be accessed through JNDI are
+     <itemizedlist>
+       <listitem><formalpara>
+         <title>Local File Systems</title>
+         <para>
+           Files and directories
+         </para>
+       </formalpara></listitem>
+       <listitem><formalpara>
+         <title>COSNaming</title>
+         <para>
+             CORBA's standard naming service is meant to enable CORBA clients
+             to look up a reference to a CORBA object from a name.
+         </para>
+       </formalpara></listitem>
+       <listitem><formalpara>
+         <title>RMI registry</title>
+         <para>
+            Java's RMI naming service which fulfills the same purpose as the
+            CORBA naming service for Java RMI objects.
+         </para>
+       </formalpara></listitem>
+       <listitem><formalpara>
+         <title>LDAP</title>
+         <para>
+            The <emphasis>Lightweight Directory Access Protocol</emphasis> was developed 
+            in the early 1990's as a standard directory protocol which would be used
+            by a wide range of applications. It facilitated, for example,
+            that the particulars (<abbrev>e.g.</abbrev> personal details, phone numbers,
+            e-mail addresses, network and device access particulars, ...)
+            of a new employee could be entered into one central location. Applications
+            like phone and e-mail number search applications, answering machine
+            services, network administration applications <abbrev>etc.</abbrev> would all
+            obtain the required information from one central LDAP. LDAP
+            data is structured as a hierarchical database which allows
+            multiple entries for a specific item. Sun's iPlanet directory
+            server and OpenLDAP are the most well known LDAP servers but most
+            other directory services provide an LDAP interface.
+            LDAP version has support for referrals -- <abbrev>i.e.</abbrev> it makes it possible
+            that LDAP service requests are referred on to other service providers. This enables large-scale
+            clustering and distribution.
+         </para>
+       </formalpara></listitem>
+       <listitem><formalpara>
+         <title>DNS</title>
+         <para>
+           Internet <emphasis>domain name servers</emphasis> which map a domain name
+           (the host name) onto a IP address (the message path) can also be accessed through
+           JNDI.
+         </para>
+       </formalpara></listitem>
+       <listitem><formalpara>
+         <title>NIS</title>
+         <para>
+           NIS, Sun's <emphasis>Network Information Service</emphasis>, which acts as a 
+           yellow pages service for network resources.
+         </para>
+       </formalpara></listitem>
+       <listitem><formalpara>
+         <title>NDS</title>
+         <para>
+           The <emphasis>Novell Directory service</emphasis>.
+         </para>
+       </formalpara></listitem>
+     </itemizedlist>
+  </para>
+  <para>
+    JNDI thus provides a standard interface which decouples the application from the
+    physical naming and directory service provided by the environment. Naming
+    services are typically used to obtain a reference to an object in a distributed
+    environment. Directory services are really sophisticated naming services which
+    include metadata describing the objects they reference. This enables clients to make 
+    more sophisticated searches for objects -- <abbrev>i.e.</abbrev> for example to 
+    query all printers in a particular building which can print color onto A3 sized paper.
+  </para>
+</section>

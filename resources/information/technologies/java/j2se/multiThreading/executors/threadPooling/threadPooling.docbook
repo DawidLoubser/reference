@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.technologies.java.j2se.multiThreading.executors.threadPooling.threadPooling">
+  <title>Thread pooling</title>
+  <para> Spawning new threads is an expensive task. Furthermore, even
+    though increasing the number of threads will initially improve the
+    performance of most applications and will enable you to process
+    multiple requests concurrently, there is a upper limit after which
+    increasing the number of threads will reduce performance and
+    throughput as the thread management overheads (<abbrev>e.g.</abbrev>
+    thread switching, lock management and memory overheads.) will outweigh
+    any benefits obtained from the concurrency and may effectively even
+    bring down a machine. </para>
+
+  <section>
+    <title>ThreadPoolExecutor</title>
+    <para> Writing your own monitorable and manageable thread pool is a
+      non-trivial task. Fortunately Java comes with a powerful thread pool
+      implementation, <literal>ThreadPoolExecutor</literal>. <note>
+        <para> The class and its interface a quite complex as it allows
+          for a lot of customization of a thread pool. Normally one would
+          create vanilla instances of this class via the factory methods
+          provided in the <literal>Executors</literal> utility class.
+        </para>
+      </note>
+    </para>
+
+    <section>
+      <title>Thread pool parameters</title>
+      <para> The constructor parameters for a
+        <literal>ThreadPoolExecutor</literal> are as follows: <programlisting language="Java"><![CDATA[
+ThreadPoolExecutor(int corePoolSize, 
+                   int maximumPoolSize, 
+                   long keepAliveTime, 
+                   TimeUnit unit, 
+                   BlockingQueue<Runnable> workQueue,
+                   ThreadFactory threadFactory, 
+                   RejectedExecutionHandler rejectedExecutionHandler)
+        ]]></programlisting> Of these the last two are optional --
+          <abbrev>i.e.</abbrev> there are alternative constructors which
+        do not require these parameters. The meaning of the parameters is
+        as follows: <itemizedlist>
+          <listitem>
+            <formalpara>
+              <title>corePoolSize</title>
+              <para> This parameter specifies the desired number of
+                threads in the thread pool. Initially the thread will
+                create a new thread for each task until the core pool size
+                has been reached. New threads will during this stage be
+                created irrespective of whether threads are available for
+                reuse or not. Only when the core pool size has been
+                reached will threads from the thread pool be reused.
+              </para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>maximumPoolSize</title>
+              <para> If a task is submitted and all threads in the thread
+                pool are currently in use, a new thread will be created
+                provided the maximum pool size has not been reached, If
+                the maximum pool size has been reached, the thread will be
+              </para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>keepAliveTime and timeUnits</title>
+              <para> A threads which have been kept alive (without
+                processing a task) for more than the
+                  <literal>keepAliveTime</literal> (in the specified time
+                units) will be terminated except if there are fewer than
+                  <literal>corePoolSize</literal> threads currently in the
+                pool. </para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>workQueue</title>
+              <para> This is a queue for all the tasks which have not yet
+                been assigned to a thread for processing. </para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>threadFactory</title>
+              <para> If one wants to use some subclass of thread instead
+                of the default thread class, one can provide the executor
+                service one's own thread factory. Normally this parameter
+                is ommited and a default thread factory is used. </para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>rejectedExecutionHandler</title>
+              <para> The rejected execution handler will be notified of
+                any tasks (<literal>Runnable</literal>s) which were
+                rejected for execution, most likely because the executor
+                was shut down. </para>
+            </formalpara>
+          </listitem>
+        </itemizedlist>
+      </para>
+    </section>
+
+    <section>
+      <title>Thread pool services</title>
+      <para> The thread pool provides the standard executor services
+        including <itemizedlist>
+          <listitem>
+            <para> standard services for submiting tasks, </para>
+          </listitem>
+          <listitem>
+            <para> standard services for shutting down executors, </para>
+          </listitem>
+        </itemizedlist> as well as a range of services enabling users to
+        inspect the state of the thread pool. </para>
+
+      <section>
+        <title>On demand verus up-front construction</title>
+        <para> By default thread pools use on demand construction,
+            <abbrev>i.e.</abbrev> the thread pool is not initialized with
+          a number of threads representing the
+          <literal>corePoolSize</literal>, but threads are created as they
+          are required until the core pool size has been reached and then
+          only are threads reused if they are available. </para>
+        <para> On demand construction will incur a performance lag for the
+          first few threads. If this is a problem, the thread pool
+          provides services to prestart threads up front with, for
+          example, the <literal>preStartAllThreads</literal> method.
+        </para>
+      </section>
+
+      <section>
+        <title>Interception</title>
+        <para> The thread pool provides a mechanism to intercept the
+          starting and termination of threads with some application code.
+          This is achieved by defining a subclass of
+            <literal>ThreadPoolExecutor</literal> and overriding the
+          protected services <itemizedlist>
+            <listitem>
+              <para>
+                <literal>void beforeExecute(Thread t, Runnable
+                r)</literal> and </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>void afterExecute(Thread t, Runnable r)</literal>
+                methods.</para>
+            </listitem>
+          </itemizedlist> Either should first delegate the request to the
+          superclass to perform the standard pre and opst processing of
+          tasks required to manage the thread pool, <abbrev>i.e.</abbrev>
+          they should first call <literal>super.beforeExecute</literal>
+          and <literal>super.afterExecute</literal> before applying any
+          customized pre nd post processing. </para>
+      </section>
+    </section>
+  </section>
+</section>

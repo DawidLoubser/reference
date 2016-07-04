@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.technologies.java.j2se.multiThreading.lockClasses.lockClasses">
+  <title>Lock classes</title>
+  <para> Java has support for locking built into the core programming
+    language via the <literal>synchronized</literal> keyword. This simple
+    mechanism enables one to write thread safe code which executes with
+    relatively low locking everheads. </para>
+
+  <section>
+    <title>Benefits of using lock classes over synchronization</title>
+    <para> Java 5 introduced alternative locking mechanism based on
+      locking classes. The reason for this is that the simple locking
+      mechanism based on synchronization has a number of functional
+      limitations including <orderedlist>
+        <listitem>
+          <para> One <emphasis>cannot poll</emphasis> for a lock in order
+            to determine whether a lock is available before grabbing it.
+          </para>
+        </listitem>
+        <listitem>
+          <para> One cannot specify <emphasis>finite waiting
+            period</emphasis> for a lock before abandoning the request for
+            the lock -- once one waits one has to wait until the lock
+            becomes available. </para>
+        </listitem>
+        <listitem>
+          <para> One <emphasis>cannot interrupt a thread which is waiting
+              for a lock</emphasis>. </para>
+        </listitem>
+        <listitem>
+          <para>
+            <emphasis>Locks must be released within the same stack
+            frame</emphasis> in which they were acquired, in other words
+            within the same method at some level of granularity. <note>
+              <para> In most cases this is not a problem and would
+                actually be desirable. There are, however, exceptional
+                cases where this is really beneficial. </para>
+            </note>
+          </para>
+        </listitem>
+      </orderedlist>
+    </para>
+    <para> In adition to addressing the above functional limitations, lock
+      classes also have the following benefits <itemizedlist>
+        <listitem>
+          <para> One can use <emphasis>different locks to protect
+              different independent areas of a class</emphasis>. The lock
+            is thus no longer tightly coupled to an entire object or to an
+            entire class, but we can have multiple locks protecting
+            different areas of a class. </para>
+        </listitem>
+        <listitem>
+          <para> One may provide <emphasis>different lock
+            implementations</emphasis> with varying functionality and
+            performance profiles. </para>
+        </listitem>
+        <listitem>
+          <para> When not requiring fair lock distribution (that locks are
+            allocated in the same order as they were requested),
+              <emphasis>performance</emphasis> is typically significantly
+            better than what it would be if one used synchronization. <note>
+              <para> The synchronization mechanism did not issue locks
+                faily either. </para>
+            </note>
+          </para>
+        </listitem>
+        <listitem>
+          <para> You can request <emphasis>fair lock
+            distribution</emphasis> (you couldn't with synchronization)
+            and if you do so the performance is slightly worse to about
+            equal to that of the synchronization mechanism. </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+  </section>
+
+  <section>
+    <title>Locks</title>
+    <para> Locks provide services to <itemizedlist>
+        <listitem>
+          <para>
+            <emphasis>acquire a lock</emphasis> in a blocking or
+            non-blocking way </para>
+        </listitem>
+        <listitem>
+          <para> to <emphasis>release the lock,</emphasis>
+          </para>
+        </listitem>
+        <listitem>
+          <para> and to <emphasis>request a condition</emphasis> through
+            which one can communicate to other threads that a resource has
+            become avaulable. </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+    <para> The Lock interface looks as follows: 
+      <programlisting language="Java"><![CDATA[
+package java.util.concurrent;
+
+public interface Lock 
+{
+
+    /**
+     * Acquires the lock. It will block until the lock is obtained. 
+     */
+    void lock();
+
+    /**
+     * Acquires the lock if it is available and returns immediately.
+     * If the lock is not available then
+     * the current thread becomes disabled for thread scheduling 
+     * purposes and lies dormant until one of two things happens:
+     * <ul>
+     * <li> the lock is acquired by the current thread; or
+     * <li> some other thread interrupts the current
+     * thread via thread.interrupt().
+     */
+    void lockInterruptibly() throws InterruptedException;
+
+
+    /**
+     * Acquires the lock only if it is free at the time of invocation.
+     * This method returns immediately with either true or false 
+     * depending on whether the lock could be acquired or not.
+     */
+    boolean tryLock();
+
+    /**
+     * Acquires the lock if it is free within the given waiting time and the
+     * current thread has not been interrupted. 
+     *   
+     * @return true if the lock was required within the timeout period and
+     *  false othrewise.
+     *
+     */
+    boolean tryLock(long timeout, TimeUnit granularity) 
+        throws InterruptedException;
+
+    /**
+     * Releases the lock.
+     */
+    void unlock();
+
+    /**
+     * Returns a Condition instance that is bound to this Lock
+     * instance.
+     */
+    Condition newCondition();
+
+}
+        ]]></programlisting>
+    </para>
+  </section>
+
+  <section>
+    <title>Using locks</title>
+    <para> Unlike the synchronized mechanism which automatically releases
+      any locks acquired within a stack frame when that stack frame is
+      released, locks acquired through lock classes must be explicitly
+      released. This must be done in a finally block to ensure that the
+      lock is released, not matter what: <programlisting language="Java"><![CDATA[
+lock.lock();
+try 
+{
+  //access the resource protected by this lock
+} 
+catch ( ... ) 
+{
+ // ensure consistency before releasing lock
+} 
+finally 
+{
+    lock.unlock();
+}
+        
+        ]]></programlisting>
+    </para>
+  </section>
+
+
+  <section>
+    <title>Reentrant locks</title>
+    <para> Java' <literal>ReentrantLock</literal> implementation has the
+      same core behaviour as that of the synchronization mechanism in that
+      both maintain an acquisition count such that if a lock has been
+      obtained twice by a thread (in the context of a callback, for
+      example), then that lock will have to be released twice before it
+      becomes available to other threads. </para>
+    <para> However, <literal>ReentrantLock</literal> also provides some
+      additional functionality on top of the extra functionality obtained
+      with all lock classes (<abbrev>e.g.</abbrev> the ability to poll the
+      availability of a lock) including services enabling users to query <itemizedlist>
+        <listitem>
+          <para> the queue length, </para>
+        </listitem>
+        <listitem>
+          <para> whether the lock is fair or not. </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+  </section>
+
+  <section>
+    <title>Read and write locks</title>
+    <para> In addition to <literal>ReentrantLock</literal> which
+      effectively behave like the synchronization mechanism with extra
+      lock acquisition, polling and querying services, Java also provides
+      a <literal>ReentrantReadWriteLock</literal> which allows threads to
+      request either a read lock or a write lock. </para>
+    <para> Read-write locks provide a basic mechanism to reduce the
+      isolation level of a resource with respect to threads, enabling
+      multiple threads to read concurrently as long as no thread is
+      writing. However, while one one thread is holding the write lock, no
+      other thread can acquire either a read or a write lock for that
+      object. <note>
+        <para> This is particularly useful for large collections with many
+          threads reading and few threads modifying the collection.
+        </para>
+      </note>
+    </para>
+    <para> Read and write threads are acquired via the
+      <literal>readLock()</literal> and <literal>writeLock()</literal>
+      methods on the lock class. They are released in the usual way via
+        <literal>unlock()</literal>. </para>
+  </section>
+
+  <section>
+    <title>Conditions</title>
+    <para> Conditions provide a flexible class-based wait-notify
+      signalling mechanism used to communicate either that a thread is
+      waiting for the state of a resource to change or that a thread has
+      modified the state of a resource such that waiting threads could
+      potentially be able to continue. The state dependency would be on
+      that part of the state of an object which is protected by a
+      particular lock. </para>
+    <para> Condition encapsulates the Object monitor methods (wait, notify
+      and notifyAll) within a separate object (the
+      <literal>Condition</literal>). The condition is tightly coupled to a
+      lock and not to the resource. There may be multiple locks on the
+      same resource and a condition would apply to only one of these. </para>
+    <section>
+      <title>Using conditions</title>
+      <para> Conditions are obtained from locks via
+          <literal>lock.newCondition()</literal>. Once we have a condition
+        we can use <itemizedlist>
+          <listitem>
+            <para>
+              <emphasis>await()</emphasis> to wait until the thread
+              receives a signal from another thread, </para>
+          </listitem>
+          <listitem>
+            <para>
+              <emphasis>signal()</emphasis> to signal the next thread
+              awaiting on the condition associated with that lock that the
+              state protected by that lock has changed and that the thread
+              could potentially be able to continue, </para>
+          </listitem>
+          <listitem>
+            <para>
+              <emphasis>signalAll()</emphasis> will signal all threads
+              awaiting on the condition that they may be in a position to
+              continue. </para>
+          </listitem>
+        </itemizedlist> There are further <literal>await(...)</literal>
+        services which support waiting up to some specified period. </para>
+
+      <section>
+        <title>Spin locks</title>
+        <para> To avoid race conditions, the await should be placed in a
+          spin-lock which rechecks the state of the object before
+          continuing as another thread may already have changed the state
+          of the object back into a state which does not enable your
+          thread to continue processing: <programlisting language="Java"><![CDATA[
+while (conditionForContinuationNotSatisfied)
+{ 
+   condition.await();
+}
+            ]]></programlisting>
+        </para>
+      </section>
+    </section>
+  </section>
+</section>

@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.platforms.linux.networking.networking"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Networking</title>
+	
+	<section>
+		<title>TCP/IP basics</title>
+		<para>
+			Each workstation participating on a TCP/IP network has an IP address. An IP address consist of 4 blocks of numbers, each ranging from 0 to 254. Typically, workstations participating in an intranet are allocated from the 192.168.0.x or 192.168.1.x range, with a subnet mask of 255.255.255.0. Workstations on a network are also assigned names which are mapped to their respective IP addresses either by a DNS, or name server, or by an entry on the hosts file on the workstation. IP addresses outside, as well as broadcasts, are forwarded to the gateway. Gateways thus forward requests further up the chain, until the request is either delivered, or rejected / timedout.
+		</para>
+		<para>
+			Broadcast addresses are within the range 224.0.0.x. A ping to 224.0.0.1 is submitted to all workstations within the same subnet.
+		</para>
+
+		<figure>
+			<title>Network Diagram</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="../../../../../resources/information/platforms/linux/images/NetworkDiagram.jpg" format="JPEG" align="center"/>
+				</imageobject>
+				<textobject>
+					<phrase>Network Diagram</phrase>
+				</textobject>
+			</mediaobject>	
+		</figure>
+	</section>
+
+	<section>
+		<title>Basic configuration using a wizard</title>
+		<para>
+			Most distributions provide a user-friendly wizard to configure the network parameters, such as IP address, gateway and name server. Redhat offers <quote>redhat-config-network</quote>. This tools allows for minimal hardware adjustments, as the modules supporting the network card are loaded by the kernel. 	
+		</para>
+		<screen>
+			<userinput>
+				<command>redhat-config-network</command> 
+			</userinput>
+		</screen>
+
+		<figure>
+			<title>Network Configuration Wizard</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="../../../../../resources/information/platforms/linux/images/redhat_network_1.jpg" format="JPEG" align="center"/>
+				</imageobject>
+				<textobject>
+					<phrase>Network Configuration wizard (redhat-config-network)</phrase>
+				</textobject>
+			</mediaobject>	
+		</figure>
+		<figure>
+			<title>Network Configuration Wizard - IP configuration</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="../../../../../resources/information/platforms/linux/images/redhat_network_2.jpg" format="JPEG" align="center"/>
+				</imageobject>
+				<textobject>
+					<phrase>Configuration of ip address, netmask and gateway</phrase>
+				</textobject>
+			</mediaobject>	
+		</figure>
+
+		<figure>
+			<title>Network Configuration Wizard - DNS configuration</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="../../../../../resources/information/platforms/linux/images/redhat_network_dns.jpg" format="JPEG" align="center"/>
+				</imageobject>
+				<textobject>
+					<phrase>Nameserver configuration</phrase>
+				</textobject>
+			</mediaobject>	
+		</figure>
+
+		<figure>
+			<title>Network Configuration Wizard - Hosts configuration</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="../../../../../resources/information/platforms/linux/images/redhat_network_hosts.jpg" format="JPEG" align="center"/>
+				</imageobject>
+				<textobject>
+					<phrase>Hosts configuration</phrase>
+				</textobject>
+			</mediaobject>	
+		</figure>
+	</section>
+
+	<section>
+		<title>Basic configuration - doing it the hard way</title>
+		<para>
+			Displays current configuration, as well as configures a network interface's ip address and netmask. 
+		</para>
+		<screen>
+			<userinput>
+				<command>ifconfig</command> <replaceable>flags</replaceable>  
+			</userinput>
+		</screen>
+		
+		<table frame="all">
+			<title>ifconfig Flags</title>
+			<tgroup cols="2">
+				<thead>
+					<row><entry>Flag</entry><entry>Description</entry></row>
+				</thead>	
+				<tbody>
+					<row><entry>-a</entry><entry>displays all network interfaces</entry></row>
+				</tbody>
+			</tgroup>
+		</table>
+		
+		<table frame="all">
+			<title>ifconfig Command Syntax</title>
+			<tgroup cols="2">
+				<thead>
+					<row><entry>Parameter</entry><entry>Description</entry></row>
+				</thead>	
+				<tbody>
+					<row><entry>network interface</entry><entry>the network interface to be configured (eth0, eth1, etc)</entry></row>
+					<row><entry>netmask</entry><entry>the netmask for the subnet</entry></row>
+				</tbody>
+			</tgroup>
+		</table>
+		<!--Congiration of aliases-->
+		
+		<screen>
+			<userinput>
+				<command>route</command> <replaceable>flags</replaceable> <replaceable>command</replaceable> <replaceable>modifiers</replaceable>
+			</userinput>
+		</screen>
+		
+		<table frame="all">
+			<title>route Commands</title>
+			<tgroup cols="2">
+				<thead>
+					<row><entry>Command</entry><entry>Description</entry></row>
+				</thead>	
+				<tbody>
+					<row><entry>add</entry><entry>Adds a routing entry to the routing table</entry></row>
+					<row><entry>del</entry><entry>Removes a routing entry from the routing table</entry></row>
+					<row><entry>flush</entry><entry>Flushes the routing table</entry></row>
+				</tbody>
+			</tgroup> 
+		</table>
+		
+		<section>
+			<title>add / del Command</title>
+			<para>
+			Routing entries allow traffic for a specific host, or an entire subnet, to be redirected to a defined gateway. 	
+			</para>
+			<programlisting>
+route add default gw 192.168.1.1
+route del default gw 192.168.1.1
+route add -net 128.32.0.0 10.41.205.61
+route add -host 10.33.3.21 10.41.205.62
+			</programlisting>
+		</section>	
+		
+		<section>
+			<title>flush Command</title>
+			<para>
+			Removes entries from the routing table.
+			</para>
+		</section>	
+		
+		<section>
+			<title>Display routing table</title>
+			<para>
+			When the <emphasis role="strong">route</emphasis>	command is invoked without any arguments, 
+			  the entire routing table is displayed on the terminal window.
+			</para>
+		  <para>
+		    If you would like to see numeric addresses instead of symbolic names, you would typically use
+		    <programlisting><![CDATA[
+		      route -nee
+		      ]]></programlisting>
+		  </para>
+		</section>	
+	</section>	
+	<section>
+		<title>hostname Command</title>
+		<para>
+		Displays and changes the hostname of the workstation. 
+		</para>
+		<para>
+		Name server configuration resides in /etc/resolv.conf. The file contains a set of parameter names and values. The following parameters can be used : <emphasis role="strong">nameserver</emphasis> indicating in sequential order the name servers to contact to resolve names, <emphasis role="strong">domain</emphasis> specifies the domain the workstation belongs to. Typically this is the url suffix. And the <emphasis role="strong">search</emphasis> parameter containing a list of domains to search.
+		</para>
+		
+		<screen>
+			<userinput>
+				<command>hostname</command> <replaceable>new hostname</replaceable>  
+			</userinput>
+		</screen>
+	
+		<table frame="all">
+			<title>hostname Flags</title>
+			<tgroup cols="2">
+				<thead>
+					<row><entry>Flag</entry><entry>Description</entry></row>
+				</theaild>	
+				<tbody>
+					<row><entry>newhostname</entry><entry>The new hostname</entry></row>
+				</tbody>
+			</tgroup> 
+		</table>
+	</section>
+  
+  <section>
+    <title>netstat command</title>
+    <para>
+      The netstat command shows network connections, routing tables and interface statistics. It is
+      typically used as
+    </para>
+		
+	<section>
+		<title>Configuration example</title>
+		<para>
+		To map a name to an ip address, add an entry to your hosts (<emphasis role="strong">/etc/hosts</emphasis>) file. Note however that this will only affect your workstation. It is always better to add the mapping to the DNS server in which case it would affect all users of the same DNS server. If you don't have a DNS server on your network, or you don't have a network, this is the place to map a name to the workstations ip address.
+ 		</para>
+		
+		<programlisting><![CDATA[
+[root@teddy root]# ifconfig -a          
+eth0      Link encap:Ethernet  HWaddr 00:C0:DF:02:E9:C1  
+          inet addr:192.168.0.1  Bcast:192.168.0.255  Mask:255.255.255.0
+          EtherTalk Phase 2 addr:65280/69
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:8334 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:9021 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:2092 
+          RX bytes:3760840 (3.5 Mb)  TX bytes:2392280 (2.2 Mb)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          EtherTalk Phase 2 addr:0/0
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:3025 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:3025 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 
+          RX bytes:695887 (679.5 Kb)  TX bytes:695887 (679.5 Kb)
+
+[root@teddy root]#  
+[root@teddy root]# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.0.0     *               255.255.255.0   U     0      0        0 eth0
+127.0.0.0       *               255.0.0.0       U     0      0        0 lo
+default         teddy           0.0.0.0         UG    0      0        0 eth0
+[root@teddy root]#
+[root@teddy root]# cat /etc/resolv.conf 
+nameserver 192.168.0.1
+search earth
+[root@teddy root]# 
+[root@teddy root]# cat /etc/hosts
+# Do not remove the following line, or various programs
+# that require network functionality will fail.
+127.0.0.1               localhost.localdomain localhost
+192.168.0.1             teddy   teddy.earth
+192.168.0.127           bear    bear.earth
+[root@teddy root]# 
+[root@teddy root]# ifconfig eth0 192.168.0.1 netmask 255.255.255.0
+[root@teddy root]# route add default gw 192.168.0.1
+			]]></programlisting>
+	</section>
+	
+	<section>
+		<title>Configuration files</title>
+		<para>
+		The configuration files described in this section contain the network configuration.
+		</para>
+		<programlisting><![CDATA[
+[root@teddy sysconfig]# cat /etc/sysconfig/network
+NETWORKING=yes
+HOSTNAME=teddy.earth
+[root@teddy sysconfig]# 
+[root@teddy sysconfig]# cat /etc/sysconfig/network-scripts/ifcfg-eth0 
+DEVICE=eth0
+ONBOOT=yes
+BOOTPROTO=static
+IPADDR=192.168.0.1
+NETMASK=255.255.255.0
+GATEWAY=192.168.0.1
+[root@teddy sysconfig]# 
+		]]></programlisting>	
+	</section>	
+	
+	
+	<section>
+		<title>Configuring dialup networking</title>
+		<para>
+		The network configuration wizard also allows for the creation of dial up interfaces. On linux, dialup interfaces are named ppp0, ppp1 etc. The wizard requires some information on the modem being used, as well as the serial port connection details, to make a connection to the modem.  
+		</para>
+		<figure>
+			<title>Dialup Configuration Wizard - Modem configuration</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="../../../../../resources/information/platforms/linux/images/redhat_network_dial_1.jpg" format="JPEG" align="center"/>
+				</imageobject>
+				<textobject>
+					<phrase>Network Configuration wizard (redhat-config-network)</phrase>
+				</textobject>
+			</mediaobject>	
+		</figure>
+		<para>
+		On the next step the ISP dialup number and authentication information (username / password) are required.
+		</para>
+		<figure>
+			<title>Dialup Configuration Wizard - ISP configuration</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="../../../../../resources/information/platforms/linux/images/redhat_network_dial_2.jpg" format="JPEG" align="center"/>
+				</imageobject>
+				<textobject>
+					<phrase>Network Configuration wizard (redhat-config-network)</phrase>
+				</textobject>
+			</mediaobject>	
+		</figure>
+		<!--para>
+		Dialup configuration on linux can prove tricky when done manually, but a number of wizards are available to assist. 
+		<itemizedlist>
+		<listitem>
+		<para>
+		wvdial 
+		</para>
+		</listitem>
+		<listitem>
+		<para>
+		dip
+		</para>
+		</listitem>
+		</itemizedlist>
+		
+		</para-->
+	</section>
+  
+      <xi:include href="mappingPorts.xdoc"/>
+  
+       
+  
+</section>

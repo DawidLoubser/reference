@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.lang.multiThreading.threadLocal.threadLocal"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>ThreadLocal variables</title>
+      <para>
+        Thread-local variables provide effectively a mechanism for threads to cache local variables.
+      </para>
+       <para>
+        A thread-local variable provides a separate copy of its value for each thread that uses it. 
+        Each thread can see only the value associated with that thread, and is unaware that other threads 
+        may be using or modifying their own copies. 
+       </para>
+  
+      <section>
+        <title>The thread-local class</title>
+        <para>
+          In the <literal>java.lang package</literal> you will find a class,
+          <literal>ThreadLocal</literal>, with the following mathods:
+          <programlisting><![CDATA[
+public class ThreadLocal 
+{ 
+  /**
+    * Returns the value in the current thread's copy of 
+    * this thread-local variable.
+    */        
+  public Object get();
+            
+  /**
+    * Returns the current thread's initial value for 
+    * this thread-local variable.
+    */        
+  public void set(Object newValue);
+            
+  /**
+    * Sets the current thread's copy of this 
+    * thread-local variable to the specified value.        
+    */        
+  public Object initialValue();
+}            
+            ]]></programlisting>
+        </para>
+        <para>
+          Usually this class is used as a wrapper of another class for which you would like to
+          maintain a single instance per thread. 
+        </para>
+      </section>
+      
+  <section role="example">
+    <title>Example: Maintaing one database connection per thread</title>
+    <para>
+      The following is a typical application of ThreadLocal. We use it to ensure that we
+      maintain a single database connection per thread:
+    <programlisting><![CDATA[
+public class DBConnectionPerThreadSource
+{ 
+  public static Connection getConnection() 
+  {
+    return connectionSource.get();
+  }
+      
+  private static class ConnectionPerThread extends ThreadLocal<Connection> 
+  {
+    public Connection initialValue() 
+    {
+      return DriverManager.getConnection(dbURL);
+    }
+  }
+
+  private static ThreadLocalConnection connectionSource = 
+      new ThreadLocalConnection();
+}      
+      ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Benefits of using thread-local variables</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>
+          It is easy to make a stateful class thread-safe. One simply bypasses the complexity of
+          having to determine which methods should be declared synchronized by ensuring that each
+          thread has its own instance at the cost of not being able to exchange information between
+          threads via that object.
+          <note><para>
+            Typically one would encapsulate a class you want to make thread safe within a
+            thread-local class.
+          </para></note>
+        </para></listitem>
+        <listitem><para>
+          Avoiding the need for synchronization may make your system more scalable.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Dangers of using thread-local variables</title>
+    <para>
+      Stateful thread-local variables are not not save to be used in the context of thread pooling.
+    </para>
+  </section>
+  
+  
+</section>
+    

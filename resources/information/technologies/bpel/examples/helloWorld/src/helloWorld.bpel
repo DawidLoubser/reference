@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="helloWorld" 
+    targetNamespace="http://www.mycomp.org/bpel/helloWorld"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:wsdl="http://www.solms.co.za/wsdl/helloWorld"
+    xmlns:bpel="http://www.mycomp.org/bpel/helloWorld"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://docs.oasis-open.org/wsbpel/2.0/process/executable 
+    http://docs.oasis-open.org/wsbpel/2.0/CS01/process/executable/ws-bpel_executable.xsd">
+    
+    <!-- Import contracts and/or schemas, which contain partner link definitions -->
+    <import 
+        namespace="http://www.solms.co.za/bpel/helloWorld"
+        location="helloWorld.wsdl"
+        importType="http://schemas.xmlsoap.org/wsdl/"/>
+        
+    <!-- Specify the role this process lays in each of these partner links -->
+    <partnerLinks>
+        <partnerLink name="HelloWorldProviderLink"
+                     partnerLinkType="wsdl:HelloWorldPartnerLinkType"
+                     myRole="helloWorldProvider"/>
+    </partnerLinks>
+
+    <!-- The state of the business process -->
+    <variables>
+        <variable name="helloWorldInput" messageType="wsdl:hello"/>
+        <variable name="helloWorldOutput" messageType="wsdl:helloResponse"/>
+    </variables>
+
+   <!-- The business process -->
+   <sequence>
+
+        <receive name="helloReceipt"
+                 partnerLink="HelloWorldProviderLink"
+                 portType="wsdl:HelloWorldPortType"
+                 operation="helloWorld"
+                 variable="helloWorldInput"
+                 createInstance="yes"/>
+
+        <assign name="Assign">
+            <copy>
+                <from>$helloWorldInput.msg/text</from>
+                <to>$helloWorldOutput.orgMessage/txt</to>
+            </copy>
+            <copy>
+                <from>Sawubona</from>
+                <to>$helloWorldOutput.response/txt</to>
+            </copy>
+        </assign>
+        
+        <reply name="helloWorld.Response"
+               partnerLink="HelloWorldProviderLink"
+               portType="wsdl:HelloWorldPortType"
+               operation="helloWorld"
+               variable="helloWorldOutput"/>
+   </sequence>
+   
+</process>
+

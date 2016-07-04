@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.j2se.java2D.paintStyles.paintStyles"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/Docs/re_schema/solmsDoc.xsd" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="Paint Styles">Paint Styles</title>
+    
+   
+    <figure id="resources.information.tecnologies.java.j2se.java2D.paintStyles.paintStyles.shapeTest_gif">
+    <title>ShapeTest</title>
+   <graphic fileref="ShapeTest.gif"/> 
+</figure>
+    <para> 
+        Arc closures, general shapes with quad curve components and 
+           various filling methods are illustrated in this demonstration
+           application. The arc types are OPEN, CHORD and PIE and the
+           filling methods are solid color, color-gradient and texture.
+</para>
+<para>
+Paint styles are used to fill shapes. One can fill shapes with solid colors,
+    color gradients or textures. This is illustrated in figure 
+    <xref linkend="resources.information.tecnologies.java.j2se.java2D.paintStyles.paintStyles.shapeTest_gif"/>.
+Below we list the complete application:
+<programlisting>
+<xi:include parse="text" href="ShapeTest.java"/>
+</programlisting>
+</para>
+
+<para>    The paint style is specified via an object of a class which implements the
+<emphasis role="verb">Paint</emphasis> interface. Java 2D supplies three classes which implement this
+interface, <emphasis role="verb">Color</emphasis>, <emphasis role="verb">GradientPaint</emphasis> and <emphasis role="verb">TexturePaint</emphasis>.
+</para>
+<para>    
+Gradient paints are defined by specifying two colors at two anchor points.
+Between the two anchor points the color varies continuously, of course 
+subject to device capabilities. Thus
+
+<programlisting><![CDATA[
+GradientPaint blueToYellow 
+  = new GradientPaint(x1, y1, Color.blue, x2, y2, Color.yellow);
+gc2D.setPaint(blueToYellow);
+]]></programlisting>
+
+selects a blue-to-yellow gradient for the device context.
+</para>
+    
+<para>Texture paints are usually created from <emphasis role="verb">BufferedImage</emphasis>s. These
+can be either constructed manually by drawing onto the device context
+of the buffered image or it can be constructed from an image read in from
+a file. Below we do the former, <abbrev>i.e.</abbrev> we create a texture of blue rectangles
+and gray ellipses by drawing these onto the device context of the buffered
+image.
+
+<programlisting><![CDATA[
+int blockSize = 5;                                       
+BufferedImage bufferedImage
+  = new BufferedImage(blockSize, blockSize, BufferedImage.TYPE_INT_RGB);
+                    
+Graphics2D bufferedImageGC = bufferedImage.createGraphics();
+bufferedImageGC.setColor(Color.blue);
+bufferedImageGC.fillRect(0, 0, blockSize, blockSize);
+bufferedImageGC.setColor(Color.lightGray);
+bufferedImageGC.fillOval(0, 0, blockSize, blockSize);
+Rectangle rectangle = new Rectangle(0, 0, blockSize, blockSize);
+gc2D.setPaint(new TexturePaint(bufferedImage, rectangle));
+]]></programlisting>
+</para>    
+</section>

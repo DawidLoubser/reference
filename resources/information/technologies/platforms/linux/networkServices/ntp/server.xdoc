@@ -1,0 +1,22 @@
+<section id="resources.information.platforms.linux.networkServices.ntp.server"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Network Time Server</title>
+	<para>
+	To configure an offline independent time server, which can be used to synchronize other workstations on the same network, but which has no connection to another time server, use the configuration file below. This off course requires that this system's time is configured accurately. Accurate time configuration also ensures that the entries in log files are correctly timed, and thus allow you to build up a timeline of events. 
+	/etc/ntp.conf
+	</para>
+	<programlisting>
+server 127.127.1.1 
+fudge 127.127.1.1 stratum 1 refid LCL
+restrict 192.168.0.1 mask 255.255.255.0 notrust nomodify notrap
+driftfile /etc/ntp/drift
+	</programlisting>
+	<note>
+	<para>
+	During startup, the server checks for the existence of the frequency file (<emphasis role="strong">ntp.drift</emphasis>) which contains the clock's frequency errors. When this file does not exist, the server will try to estimate the nominal frequency error value, which takes approximately 15 mins. Thereafter, it will operate for another hour, until the file is created. During subsequent startups, the file is read and the NTP server is operational immediately. 
+	</para>
+	</note>
+</section>	

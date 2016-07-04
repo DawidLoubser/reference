@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns5869:section xmlns:ns5869="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.variables.commandLineArguments">
+
+  <ns5870:title xmlns:ns5870="http://docbook.org/ns/docbook">Command-line arguments</ns5870:title>
+  <ns5871:para xmlns:ns5871="http://docbook.org/ns/docbook">
+    Many commands take command-line arguments which specify
+    <ns5872:itemizedlist xmlns:ns5872="http://docbook.org/ns/docbook">
+      <ns5873:listitem xmlns:ns5873="http://docbook.org/ns/docbook"><ns5874:para xmlns:ns5874="http://docbook.org/ns/docbook">options and</ns5874:para></ns5873:listitem>
+      <ns5875:listitem xmlns:ns5875="http://docbook.org/ns/docbook"><ns5876:para xmlns:ns5876="http://docbook.org/ns/docbook">resources</ns5876:para></ns5875:listitem>
+    </ns5872:itemizedlist>
+    to be used when the command is executed.
+  </ns5871:para>
+  <ns5877:para xmlns:ns5877="http://docbook.org/ns/docbook">
+    In a similar way, shell scripts themselves can be provided with command-line
+    arguments, and within a shell script you can access these via
+    <ns5878:itemizedlist xmlns:ns5878="http://docbook.org/ns/docbook">
+      <ns5879:listitem xmlns:ns5879="http://docbook.org/ns/docbook"><ns5880:para xmlns:ns5880="http://docbook.org/ns/docbook">
+        <ns5881:literal xmlns:ns5881="http://docbook.org/ns/docbook">$0</ns5881:literal> for the name of the shell script,
+      </ns5880:para></ns5879:listitem>
+      <ns5882:listitem xmlns:ns5882="http://docbook.org/ns/docbook"><ns5883:para xmlns:ns5883="http://docbook.org/ns/docbook">
+        <ns5884:literal xmlns:ns5884="http://docbook.org/ns/docbook">$1 ... $9</ns5884:literal> the first 9 command-line arguments and
+      </ns5883:para></ns5882:listitem>
+      <ns5885:listitem xmlns:ns5885="http://docbook.org/ns/docbook"><ns5886:para xmlns:ns5886="http://docbook.org/ns/docbook">
+        <ns5887:literal xmlns:ns5887="http://docbook.org/ns/docbook">${10}, ${11}, ...</ns5887:literal> for any further command-line arguments.
+          <ns5888:note xmlns:ns5888="http://docbook.org/ns/docbook">
+            <ns5889:para xmlns:ns5889="http://docbook.org/ns/docbook">
+              The command-line arguments number 10 and higher have to be accessed by
+              putting the command-line argument number within curly brackets.
+            </ns5889:para>
+          </ns5888:note>
+      </ns5886:para></ns5885:listitem>
+    </ns5878:itemizedlist>
+  </ns5877:para>
+  
+  <ns5890:section xmlns:ns5890="http://docbook.org/ns/docbook">
+    <ns5891:title xmlns:ns5891="http://docbook.org/ns/docbook">Finding out how many command-line arguments were passed</ns5891:title>
+    <ns5892:para xmlns:ns5892="http://docbook.org/ns/docbook">
+      To find out how many command line arguments there are, use <ns5893:literal xmlns:ns5893="http://docbook.org/ns/docbook">$#</ns5893:literal>.
+      For example,
+      <ns5894:programlisting xmlns:ns5894="http://docbook.org/ns/docbook">
+echo "You entered $# command-line arguments."
+      </ns5894:programlisting>
+    </ns5892:para>
+  </ns5890:section>
+ 
+  <ns5895:section xmlns:ns5895="http://docbook.org/ns/docbook">
+    <ns5896:title xmlns:ns5896="http://docbook.org/ns/docbook">The collection of all command-line arguments</ns5896:title>
+    <ns5897:para xmlns:ns5897="http://docbook.org/ns/docbook">
+      Bash shell scripts support a variable, <ns5898:varname xmlns:ns5898="http://docbook.org/ns/docbook">$*</ns5898:varname>,
+      for the collection of all command-line arguments. This may be useful if you
+      want to pass these on to other applications called from the script. For example
+      we can intercept the copy command via a shell script, <ns5899:filename xmlns:ns5899="http://docbook.org/ns/docbook">cp</ns5899:filename>,
+      which calls the <ns5900:command xmlns:ns5900="http://docbook.org/ns/docbook">rm</ns5900:command> command with all command-line
+      arguments, but adding the <ns5901:parameter xmlns:ns5901="http://docbook.org/ns/docbook">-i</ns5901:parameter> forcing a confirmation
+      on removal of a file:
+      <ns5902:programlisting xmlns:ns5902="http://docbook.org/ns/docbook">
+#!/bin/bash
+rm -i $*
+      </ns5902:programlisting>      
+    </ns5897:para>
+  
+  <ns5903:section xmlns:ns5903="http://docbook.org/ns/docbook">
+    <ns5904:title xmlns:ns5904="http://docbook.org/ns/docbook">A simple example</ns5904:title>
+    <ns5905:para xmlns:ns5905="http://docbook.org/ns/docbook">
+      As a simple example, consider the following shell script which adds up 12 numbers. 
+      The user has to provide exactly 12 parameters every time. In the next example we
+      will use the <ns5906:command xmlns:ns5906="http://docbook.org/ns/docbook">shift</ns5906:command> command to provide a better implementation
+      of the <ns5907:application xmlns:ns5907="http://docbook.org/ns/docbook">sum</ns5907:application> application:      
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/sumBasic_sh.docbook"/>
+    </ns5905:para>
+    
+  </ns5903:section>
+  
+  <ns5908:section xmlns:ns5908="http://docbook.org/ns/docbook">
+    <ns5909:title xmlns:ns5909="http://docbook.org/ns/docbook">The <ns5910:command xmlns:ns5910="http://docbook.org/ns/docbook">shift</ns5910:command> command</ns5909:title>
+    <ns5911:para xmlns:ns5911="http://docbook.org/ns/docbook">
+      The <ns5912:command xmlns:ns5912="http://docbook.org/ns/docbook">shift</ns5912:command> command is used to shift the command-line arguments
+      to the left, <ns5913:abbrev xmlns:ns5913="http://docbook.org/ns/docbook">i.e.</ns5913:abbrev> command line argument number <ns5914:constant xmlns:ns5914="http://docbook.org/ns/docbook">n+1</ns5914:constant>
+      becomes command-line argument number <ns5915:constant xmlns:ns5915="http://docbook.org/ns/docbook">n</ns5915:constant>.
+    </ns5911:para>
+    <ns5916:para xmlns:ns5916="http://docbook.org/ns/docbook">
+      The following application adds up all supplied command-line arguments and prints
+      the sum. It uses a for-loop. For loops are discussed in
+      <ns5917:xref xmlns:ns5917="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.shell.scripting.iteration.for"/>.
+      
+    </ns5916:para>
+  </ns5908:section>
+  
+  
+  </ns5895:section>
+</ns5869:section>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Variable assignment</title>
+  <para>
+    BPEL supports the copying and construction of XML based data types via assignment statements.
+    One can either 
+    <itemizedlist>
+      <listitem><para>
+        assign a complete data structure by initializing it from another variable or
+        aspects from another variable, or one can  
+      </para></listitem>
+      <listitem><para>
+        modify aspects of a variable with an assignment to aspects of another variable or to
+        constant values. 
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>General structure of an assignment statement</title>
+    <para>
+      The assignment statement always copies from some source data into the data structure of a
+      variable. Within an assignment statement there may be multiple copy instructions.
+      The general form is
+      <programlisting><![CDATA[
+<assign>
+    <copy>
+        <from .../>
+        <to .../>
+    </copy>
+    <copy>
+        <from .../>
+        <to .../>
+    </copy>
+</assign>        
+        ]]></programlisting>
+    </para>
+    <para>
+      In its simplest form we simply copy the contents of one variable into the data structure of
+      another variable:
+      <programlisting><![CDATA[
+<assign>
+  <from variable="assessmentResponse"/>
+  <to variable="selectedAssessment"/>
+</assign>        
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Copying aspects from a structure</title>
+    <para>
+      Commonly one may want to copy an element from a larger data structure into another variable.
+    </para>
+    <para>
+      For example, if we have the following data structure
+      <programlisting><![CDATA[
+<complexType name="Claim">
+  <element name="policyNumber" type="xs:string"/>
+  <element name="claimItem" type="ClaimItem" maxOccurs="unbounded"/>
+  ...
+</complexType>        
+        ]]></programlisting>
+      and we have a variable, <literal>claim</literal>, of that type,      
+      then we could extract, for example, the policy number into another variable
+      <programlisting><![CDATA[
+<assign>
+  <from variable="claim" part="policyNumber"/>
+  <to variable="policyId"/>
+</assign>        
+        ]]></programlisting>  
+    </para>
+  </section>
+  
+  <section>
+    <title>Assigning parts of a variable</title>
+    <para>
+      In a similar way we could assign parts of a variable via, for example 
+      <programlisting><![CDATA[
+<assign>
+  <from variable="policyNo"/>
+  <to variable="claim" part="policyNumber"/>
+</assign>        
+        ]]></programlisting>  
+    </para>
+  </section>
+  
+  <section>
+    <title>Using a query language  for resolving data structure components</title>
+    <para>
+      the <literal><![CDATA[part]]></literal> construct provides a very limited way of selecting
+      aspects of a data structure from which data is to be extracted or into which data is to be
+      copied. In general one would one to use a more powerful query language for this purpose.
+    </para>
+    <para>
+      BPEL enables one to select the query language one would like to use in order to resolve
+      elements of a more complex data structure. The default used by BPEL is
+      <literal>XPath</literal>.
+      <programlisting><![CDATA[
+<assign>
+  <from variable="client"
+          part="address"
+          query="/address/country"/>
+  <to variable="shippingCountry"/>
+</assign>        
+        ]]></programlisting>  
+    </para>
+    
+  </section>
+  
+  
+  <section>
+    <title>Initialization with constant data</title>
+    <para>
+      One can also assign a BPEL variable to constant XML data. This is illustrated by the following
+      example
+      <programlisting><![CDATA[
+<assign>
+    <copy>
+         <from>
+            <loc:address xmlns:loc="http://www.solms.co.za/domainObjects/locations">
+              <loc:streetAddress> 113 Barry Hertzog Ave</loc:streetAddress>
+              <loc:suburb>Emmarentia</loc:suburb>
+              <loc:city>Johannesburg</loc:city>
+              <loc:country>South Africa</loc:country>
+            </loc:address>
+        </from>
+        <to>
+          <variable="ourContactDetails" part="physicalAddress"/>
+        </to>
+    </copy>
+</assign>        
+        ]]></programlisting>
+    </para>
+  </section>
+  
+</section>  

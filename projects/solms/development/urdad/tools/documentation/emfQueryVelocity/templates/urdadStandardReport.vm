@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+#*
+	This is a Apache Velocity template which generates the standard URDAD compliant use case documentation
+	for a specified use case from an URDAD compliant UML model. It contains the requirements analysis and
+	business process design for the current level of granularity.
+	
+	Author: fritz@solms.co.za on 2009-07-07 
+
+	Template parameters:
+	====================
+		urdadModelQueryInterface - a VelocityUrdadModelQueryAdapter interface through which access 
+									to the URDAD compliant UML model is obtained.
+		qualifiedUseCaseName - the fully qualified name of the use case for which documentation is 
+								to be generated.
+*#
+
+#* ************************************************************************************ *#
+#*                                 MACRO DEFINITIONS                                    *#
+#*                                                                                      *#
+#* These rendering macros contain only rendering logic nd no  logic around obtaining    *#
+#* information from the URDAD model                                                     *#
+#* ************************************************************************************ *#
+
+## insertAnnotations
+## -----------------
+#macro( insertAnnotations $element)
+#set($annotations = $urdadModelQueryInterface.getAnnotations($element).result)
+#if ($annotations != $null)
+#foreach($annotation in $annotations)
+$annotation
+#end
+#end   
+#end
+
+## renderConstraint
+## ----------------
+#macro( renderConstraint $constraint)
+<literal><!--CDATA[#foreach ($constraintElement in $constraint.specification.bodies) $constraintElement #end]--></literal>
+#end
+
+
+#* ************************************************************************************* *#
+#*                             TEMPLATE START                                            *#
+#* ************************************************************************************* *#
+<!--
+This report was generated from a URDAD compliant UML model using the standard
+URDAD documentation generation template.
+-->
+
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+#set($useCaseResult = $urdadModelQueryInterface.getUseCase($qualifiedUseCaseName))
+#if ($useCaseResult.getResult() != $null)
+#set($targetUseCase = $useCaseResult.getResult()) 
+
+<title>Use case: $targetUseCase.name</title> 
+<subtitle>URDAD based Analysis and Design)</subtitle>
+    
+#parse("templates/introduction/introduction.vm")
+
+#parse("templates/analysis/analysis.vm")
+
+## #parse("design/design.txt")
+	
+#else
+<title>Use case: $qualifiedUseCaseName</title> 
+<note>
+  <title>Error: Use case does not exist</title>
+  <para>
+  	The model does not contain a use case with the specified qualified use case name.
+  </para>
+</note>  
+#end
+
+</article>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.messageDrivenBeans.introduction.whyMdbs"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Why Message Driven Beans?</title>
+  <para>
+    Message driven beans provide a level of decoupling and reliability which is useful for
+    many business applications. Furthermore, they may improve the perceived
+    performance of client applications by performing certain services in the background.
+  </para>
+  
+  <section>
+    <title>Typical Applications of Message-Driven Beans</title>
+    <para>
+      Below we list a few applications which may be suitable for implementation as
+      message-driven beans: 
+      <itemizedlist>
+        <listitem>
+          <para>
+            <emphasis>Supplying information</emphasis> to information processors, such as
+            <itemizedlist>
+              <listitem>
+                <para>Weather stations supplying information to Weather bureaus. </para>
+              </listitem>
+              <listitem>
+                <para>Financial information providers supplying market information to be used for
+                  valuation and pricing purposes. </para>
+              </listitem>
+              <listitem>
+                <para>Entertainment providers supplying information to booking organisations 
+                  such as Computicket.</para>
+              </listitem>
+            </itemizedlist>
+          </para>  
+        </listitem>
+        <listitem>
+          <para>
+            <emphasis>Loan applications</emphasis> like home-loan applications 
+            which require a number of steps to
+            be processed like credit checks, property valuation and others. The response may be
+            sent at a later stage via an e-mail or a call-back through some other technology. 
+          </para>
+      </listitem>
+      <listitem>
+        <para>
+          The <emphasis>ordering of items</emphasis> from an on-line vendor like amazon. 
+          The client does not need
+          to wait for credit-card verification and product availability checks and may, once
+          again, be notified via e-mail or a call-back. 
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          General <emphasis>action messages</emphasis> requesting certain actions to be 
+          performed like 
+          <itemizedlist>
+            <listitem>
+              <para>Payment orders. </para>
+            </listitem>
+            <listitem>
+              <para>Requests for suppliers to deliver supplies to refresh stock. </para>
+            </listitem>
+            <listitem>
+              <para>
+                Instructions to a stock broker to purchase shares in a stock (company) at some
+                specified price.
+              </para>
+            </listitem>
+          </itemizedlist>
+        </para>  
+      </listitem>
+      </itemizedlist>
+    </para>  
+  </section>
+  
+  <section>
+    <title>When Should You Consider Using MDBs?</title>
+    <para>
+      There many scenarios which may prompt you to consider using a message-driven bean:
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>Non-blocking clients</title>
+          <para>
+             Clients simply send the service request message and continue processing. 
+             This may improve the performance and usability quality attributes of client applications.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Reliability</title>
+          <para>
+            Clients can issue service requests even if the service provider is currently not available. When
+            using guaranteed service delivery the message is delivered when the service provider
+            becomes available again. If, furthermore, the client itself maintains a message spool with
+            messages stored and forwarded to the messaging service and removed from the spool on
+            receipt of message delivery from the messaging service, then system reliability is very
+            solid indeed. Failure will only occur in the very unlikely event of all three tiers
+            failing.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Decoupling clients from service providers</title>
+          <para>
+             Clients do not interface directly with service providers and the latter 
+             may be replaced by alternative service providers without affecting 
+             client applications. 
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Smooth load balancing</title>
+          <para>
+             In the case of application servers supplying service requests to clusters of servers 
+             the application server guesses from the service requests delivered thus far which 
+             server is the least burdened and then pushes the next service request to that 
+             server. When using a messaging-driven beans, the JMS allows for both, the beans 
+             themselves (the service providers) pull the next message from the messaging service. 
+             This results in smoother load balancing.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Prioritised processing of service requests</title>
+          <para>
+            The message queue itself may provide messages in a different order to
+            that in which the messages arrived. It can re-order messages to achieve 
+            some form of prioritisation, based perhaps on some business rules.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Easier integration with legacy systems</title>
+          <para>
+            Many legacy systems used messaging middle ware like IBM MQSeries, BEA's Tuxedo Q, 
+            Progress SonicMQ, Tibco Rendezvous or Microsoft MSMQ. These vendors typically 
+            provide JMS drivers for these systems, facilitating easy integration of EJB systems 
+            with legacy message-based systems.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>  
+      </para>
+  </section>
+  
+  <section>
+    <title>When Should You Consider Avoiding MDBs?</title>
+    <para>
+      The following scenarios, on the other hand, are typically not ideally implemented using
+      message-driven beans:
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>When the subsequent client logic depends on a deliverable of the service request</title>
+          <para>
+             If the client can only sensibly continue after having received a return value from the
+             service, it does not make sense to use a MDB. In other words, of the service is naturally
+             a <emphasis>synchronous</emphasis> one.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>When performance on the request processing is important</title>
+          <para>
+             Though clients may experience a perceived performance benefit due to not having to wait
+             for a response from the server, request processing as such will be slower due to the
+             service request being delivered over a messaging service. (i.e. higher latency)
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>When you need transaction control across the service request</title>
+          <para>
+             Though the service provided by the MDB may itself be under transaction control, 
+             it cannot be part of a transaction which has elements outside the asynchronous 
+             service request. (i.e. the activities performed by a message-driven bean cannot
+             form part of the same transaction as the activities of the component that placed the
+             message on the queue).
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>When you need to propagate the client's security identity to the server</title>
+          <para>
+             Security context propagation is a part of the <emphasis>enterprise services layer</emphasis>
+             generated for session beans and, like transaction control, cannot be automatically
+             conveyed across a messaging service.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>When the client wants to process failures via exception mechanisms</title>
+          <para>
+            Failures, like responses, would have to be sent to the the client using either another
+            message queue, or some other mechanism.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>When you want to minimise system complexity</title>
+          <para>
+            The client (message producer) contains more code to post a message, than what is required
+            for simple synchronous service request (java method call). Debugging is also 
+            more complex for MDBs than when a service request is directly delivered via RMI/IIOP.
+            However, the benefits of messaging services as an enabler of asynchronous communication
+            usually outweigh the additional complexity.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+</section>

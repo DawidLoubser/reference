@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Web Services Standards for SOA</title>
+    <para>
+        Although SOA is not bound into any particular integration technology, the most prominent integration
+        technology used is Web Services. Furthermore, many aspects of an SOA can be standardized by using
+        appropriate web services standards.
+    </para>
+    
+    <section>
+        <title>Standards for service registries</title>
+        <para>
+            Standards are particularly important for service registries. Traditionally UDDI has been used
+            but more and more service registries support the ebXML-Registry specification.
+        </para>
+    </section>
+    
+    <section>
+        <title>Standards for contract specification</title>
+        <para>
+            Services contracts are usually encoded in the <emphasis>Web Services Description Language</emphasis>,
+            WSDL. WSDL enables one to specify both, 
+            <itemizedlist>
+                <listitem><para>an abstract service definition, as well as</para></listitem>
+                <listitem><para>a concrete service definition.</para></listitem>
+            </itemizedlist>
+        </para>
+        <section>
+            <title>Abstract service definitions</title>
+            <para>
+                Abstract service definitions focus on the web service's interface characteristics.
+                They have no reference to the technology used to communicate with the web service or to
+                where the web service is hosted or the technologies used to realize the web service.
+            </para>
+            <para>
+                The abstract definition of a web service is thus able to survive changes in the location
+                of the web service, the protocols used to access it and its technology platform.
+            </para>
+        </section>
+        <section>
+            <title>Concrete service definitions</title>
+            <para>
+                Concrete service definitions specify the concrete binding details for a service including 
+                <itemizedlist>
+                    <listitem><para>
+                        the protocol used o communicate with the service, and
+                    </para></listitem>
+                    <listitem><para>
+                        the physical address of the service provider,
+                    </para></listitem>
+                    <listitem><para>
+                        the message types exchanged, and
+                    </para></listitem>
+                    <listitem><para>
+                        the data types exchanged with those messages.
+                    </para></listitem>
+                </itemizedlist>
+                The binding technology used is usually the <emphasis>Simple Object Access Protocol</emphasis>,
+                SOAP.
+            </para>
+        </section>
+    </section>
+    
+    <section>
+        <title>WS-addressing</title>
+        <para>
+            WS-Addressing allows web services to communicate addressing information independent of the transport
+            mechanism used. It effectively provides a the ability to pass web service references across technologies.
+        </para>
+        <para>
+            It essentially consists of two parts:
+            <orderedlist>
+                <listitem><para>
+                    a structure for communicating a reference to a Web service endpoint, and        
+                </para></listitem>
+                <listitem><para>
+                    a set of Message Addressing Properties which associate addressing information with a particular message.        
+                </para></listitem>
+            </orderedlist>
+        </para>
+        <para>
+            An end-point reference is a simple, technology neutral reference to a service location, similar to a CORBA
+            stringified reference.
+        </para>
+        <para>
+            When providing addressing information to a web service endpoint, one provides the following information
+            <itemizedlist>
+                <listitem><para>
+                    Message destination URI     
+                </para></listitem>
+                <listitem><para>
+                    an endpoint reference for
+                    <itemizedlist>
+                        <listitem><para>
+                            the source endpoint -- the endpoint of the service that dispatched this message.   
+                        </para></listitem>
+                        <listitem><para>
+                            reply endpoint -- the endpoint to which reply messages should be dispatched.     
+                        </para></listitem>
+                        <listitem><para>
+                            fault endpoint -- the endpoint to which fault messages should be dispatched.
+                        </para></listitem>
+                    </itemizedlist>    
+                </para></listitem>    
+                <listitem><para>
+                    a URI for the action, <abbrev>i.e.</abbrev> 
+                    an action value indicating the semantics of the message.     
+                </para></listitem>
+                <listitem><para>
+                   a URI for the unique message ID     
+                </para></listitem>
+                <listitem><para>
+                    Relationship to the previous message as a pair of URIs, one for the previous message and one for
+                    the semantic relationship.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+
+    <section>
+        <title>Standards for data structure specification</title>
+        <para>
+            Business analysts would typically specify data structure requirements for exchanged value objects 
+            using UML class diagrams. These data structure specifications would be mapped onto either
+            <itemizedlist>
+                <listitem><para>XML schemas,</para></listitem>
+                <listitem><para>RDF or OWL schemas, or</para></listitem>
+                <listitem><para>Relax NG schemas.</para></listitem>
+            </itemizedlist>
+            XML schemas provide a rich vocabulary for specifying rigid static structures. RDF and OWL schemas
+            provide a more flexible approach using semantic relationships between data elements. Relax NG
+            is only used infrequently.
+        </para>
+        <para>
+            The data itself would typically be encoded in XML.
+        </para>
+    </section>
+    
+    <section>
+        <title>Standards for data transformation</title>
+        <para>
+            XSLT provides a convenient and powerful language for specifying data transformations which are
+            applied to XML based data. Alternatively one can use a programming language like
+            Java, Ruby or C# to define data transformations.
+        </para>
+    </section>
+    
+    <section>
+        <title>Standards for coordination</title>
+        <para>
+            Business analysts typically specify coordinations using a diagrammatic language like UML 
+            (particularly UML sequence and activity diagrams) or BPMN. At the SOA level there are also
+            a range of standards used to specify such coordinations. These more technical specifications
+            would typically be generated using a suitable mapping tool.
+        </para>
+        <para>
+            When a collection of services interact to realize a higher level business process, it is usually
+            necessary for the services to share a common context. The standards to address these issues
+            are 
+            <itemizedlist>
+                <listitem><formalpara>
+                    <title>WS-Coordination</title>
+                    <para>
+                        <emphasis>WS-Coordination</emphasis> defines an extensible framework for defining
+                        coordination types for coordinations across heterogeneous services. 
+                        It contains the definition of a common context for a specific coordination
+                        which may span part of or an entire business process.
+                    </para>                    
+                </formalpara></listitem>
+                <listitem><para>
+                    <emphasis>WS-AtomicTransaction</emphasis> targets short-running coordinations for which
+                    it is feasible to lock resources. It is used to encapsulate atomic processes and supports
+                    the two-phase commit protocol for distributed transactions.
+                </para></listitem>
+                <listitem><para>
+                    <emphasis>WS-BusinessActivity</emphasis> targets long-running coordinations which may contain
+                    atomic coordinations. It includes concepts for handling faults via compensating activities.
+                </para></listitem>
+                <listitem><para>
+                    <emphasis>WS-BPEL</emphasis> is perhaps the most widely used language to define business
+                    processes. BPEL facilitates the specification of both
+                    <itemizedlist>
+                        <listitem><para>
+                            abstract business processes specifying the mutually visible message exchanges for
+                            each of the parties participating in the coordination without
+                            specifying the internal behaviour, and
+                        </para></listitem>
+                        <listitem><para>
+                            executable business processes with specified behaviour for each participant which can be compiled
+                            into executable scripts.
+                        </para></listitem>
+                    </itemizedlist>
+                    WS-BPEL is a large specification which covers
+                    <itemizedlist>
+                        <listitem><para>
+                            sequencing of business process activities including sequential and concurrent flows of activities,
+                            decision and synchronization points in a business process and so on.
+                        </para></listitem>
+                        <listitem><para>
+                            correlation of messages and process instances, and
+                        </para></listitem>
+                        <listitem><para>
+                            recovery behaviour in the case of exceptions and errors.
+                        </para></listitem>
+                    </itemizedlist>
+                    However, even executable business process specifications in BPEL-WS contain no binding information
+                    -- these are contained in the WSDL files. This makes BPEL business process specifications more portable
+                    and reusable.
+                </para></listitem>
+                <listitem><para>
+                    The <emphasis>WS Choreography Definition Language</emphasis> (WS-CDL) is an 
+                    XML-based language that describes peer-to-peer collaborations of Web Services participants 
+                    by defining their common and complementary observable behavior. It provides a more flexible 
+                    approach where service providers can decide themselves which roles they would like to play
+                    within a business process by adhering to a specified  
+                    ordered message exchange which lead to acommplishing a specific business goal. 
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Policies</title>
+        <para>
+            WS-Policy defines a simple framework for associating meta-data to services. It is used to, for example,
+            associate security requirements or reliability requirements to a service. 
+        </para>
+        <para>
+            WS-Policy provides the infrastructure to associate a service with a policy. The different types of policies are defined
+            through different specifications.
+        </para>
+    </section>
+    
+    <section>
+        <title>Standards for Security</title>
+        <para>
+            The <emphasis>Web Services Security Framework</emphasis> provides support for identification,
+            authentication, authorization, confidentiality and integrity. The relevant standards are
+            <table>
+                <title>Web Services Security Standards</title>
+                <tgroup cols="2">
+                    <thead>
+                        <row>
+                            <entry><para>Security domain</para></entry>
+                            <entry><para>Applicable standard</para></entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        <row>
+                            <entry><para>Authentification</para></entry>
+                            <entry><para>Extensible Access Control Markup Language (XACML)</para></entry>
+                        </row>
+                        <row>
+                            <entry><para>Authorization</para></entry>
+                            <entry><para>Extensible Rights Markup Language (XrML),
+                                XML Key Management (XKMS),
+                                Security Assertion Markup Language (SAML)</para></entry>
+                        </row>
+                        <row>
+                            <entry><para>Confidentiality</para></entry>
+                            <entry><para>
+                                XML-Encryption,
+                                Secure Sockets Layer (SSL)
+                            </para></entry>
+                        </row>
+                        <row>
+                            <entry><para>Inegrity</para></entry>
+                            <entry><para>
+                                XML-Digital Signatures
+                            </para></entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </table>
+        </para>
+    </section>
+    
+    <section>
+        <title>Standards for messaging</title>
+        <para>
+            The <emphasis>WS-ReliableMessaging</emphasis> specification enables one to specify
+            the required delivery behaviour. It supports
+            <itemizedlist>
+                <listitem><para>at least once,</para></listitem>
+                <listitem><para>at most once, and</para></listitem>
+                <listitem><para>in order delivery.</para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+</section>    

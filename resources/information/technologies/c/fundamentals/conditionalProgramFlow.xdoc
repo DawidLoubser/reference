@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.c.fundamentals.conditionalProgramFlow"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Conditional program flow</title>
+  <para>
+    <emphasis>C</emphasis> provides 2 constructs for conditional program flow, 
+    <command>if</command> statements and <command>switch</command> statements.
+  </para>
+  <section><title>The if statement</title>
+    <para>
+      The <command>if</command> statement takes an expression as argument. If
+      that expression evaluates to <constant>0</constant> (<constant>false</constant>)
+      then the corresponding block of code is not executed and potentially an
+      alternative block of code specified in an <command>else</command> clause
+      is executed.
+    </para>
+    <para>
+      Any non-zero value is, however, interpreted as <constant>true</constant>. Hence,
+      if the expression in the <command>if</command> clause evaluates to anything else
+      but <constant>0</constant>, the associated block of code is run.
+    </para>
+    <example id="ifStatement.c"><title>ifStatement.c</title>
+      <programlisting role="C" linenumbering="numbered"><xi:include href="source/ifStatement.c" parse="text" /></programlisting>
+    </example>   
+    <para>
+      Consider <xref linkend="ifStatement.c"/>. Here we first use
+      a relational operator which will evaluate to a boolean (0 or 1)
+      for our first <command>if</command> clause. That <command>if</command>
+      clause has a <command>else</command> clause containing a statement
+      which is executed if the <command>if</command> clause evaluates to
+      <constant>0</constant> (false).
+    </para>
+    <para>
+      Note that we only need to use curly brackets if a group of statements
+      which have to be executed conditionally. For a single conditional
+      statement we can ommit the curly brackets.
+    </para>
+  </section>
+  
+  <section><title>The conditional operator</title>
+    <para>
+      <emphasis>C</emphasis> also supports a ternary conditional operator, 
+      <command>? :</command>. Its usage is illustrated in 
+      <xref linkend="conditionalOperator.c"/>. If the expression in the left-most
+      operand evaluates to <constant>true</constant> (non-zero), then the 
+      values of the second expression (the one before the colon). Otherwise
+      the third expression is returned. In our example we assign 
+      <token>max</token> to the return value of the conditional operator.
+    </para>
+    <example id="conditionalOperator.c"><title>conditionalOperator.c</title>
+      <programlisting role="C" linenumbering="numbered"><xi:include href="source/conditionalOperator.c" parse="text" /></programlisting>
+    </example>   
+  </section>
+  
+  <section><title>The switch statement</title>
+    <para>
+      The <command>switch</command> statement is like the 
+      <emphasis>case</emphasis> statement found in some other languages.
+      It takes an expression of argument and has different labels for
+      different constant values. Consider <xref linkend="switchStatement.c"/>.
+      Here we jump to statements with different labels depending on
+      the value of the expression in the <command>switch</command>
+      statement.
+      <warning>
+        <para>
+          You need to put a <command>break</command> statement after 
+          each conditional group statements in the  <command>switch</command>
+          statement if you don't want the con secutive statements
+          for the other clauses to be executed as well, i.e. a 
+          <command>switch</command> statement is really a glorified 
+          <command>goto</command> statement.
+        </para>  
+      </warning>
+    </para>
+    <example id="switchStatement.c"><title>switchStatement.c</title>
+      <programlisting role="C" linenumbering="numbered"><xi:include href="source/switchStatement.c"  parse="text" /></programlisting>
+    </example>   
+  </section>
+</section>

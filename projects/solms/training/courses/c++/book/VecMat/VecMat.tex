@@ -1,0 +1,1085 @@
+\chapter{Classes using Dynamic Memory: Vectors and Matrices 
+             \label{chapVecmat}}
+
+\section{Introduction}
+
+Among the most important data types in science and engineering are
+vectors and matrices. Traditionally one defined an array of floating
+point or complex numbers and separately a set of subroutines or 
+functions which manipulate these arrays. In this chapter we build 
+complete abstract data types for vectors and matrices which allow
+us to simplify our programs considerably. Consider, for example,
+the following code extract:
+{\footnotesize \begin{verbatim}
+void main()
+{
+  Matrix<double> A(3,4), B(4,3), C(3,3);  // defining 3 matrices of differing dimensions
+  Vector<double> v1(3);
+  ...
+  Vector<double> v2 = (A*B-3*C)*v1;
+  cout << "resultant vector = " << v2 << endl;
+}
+\end{verbatim}}
+will be legal code once we have defined our vector and matrix classes.
+We shall also see how the various data types interlink. For example,
+we shall use our vector class to define vectors of rational numbers
+which we can add, multiply, \dots.
+
+Naturally, we would like our vectors and matrices to use dynamic memory. 
+We want to be able to define vectors and matrices of any size (within the
+hardware limits) and we want to be able to release this memory as
+soon as we no longer need these data structures. 
+
+%=========================================================
+
+\section{The Vector Class}
+
+\subsection{Introduction}
+We shall develop a vector class which supports (among other things)
+all the standard vector operations like vector addition, dot products, 
+Kronecker and Hadamard products, normalization and the calculation 
+of various vector norms.
+
+%---------------------------------------------------------------
+
+\subsection{Static Members of a Class \label{vec_static}}
+
+Usually we want to encapsulate variables within an object. For example,
+each instance of the class \verb+Rational+ has a numerator and a
+denominator. These data members are encapsulated within an object
+by declaring them private data members.
+
+Sometimes we want to have all instances of a certain class share a
+single class constant or class variable. We want to encapsulate 
+such data members within a class --- we do not want to use global
+variables or constants.
+
+For example, one might want to know how many instances of a certain
+class (e.g.\ the number of clients a bank) exist at certain instant during 
+program execution. In such a case one could define a static class variable:
+{\footnotesize \begin{verbatim}
+class Client
+{
+  public:
+    ...
+    static long numberofinstances() const;
+
+  private:
+    static long _numberofinstances;
+}
+\end{verbatim}}
+Here \verb+_numberofinstances+ is a static class variable --- there exists only
+one such variable shared by all instances of the class. Of course we cannot 
+initialize static variables in the constructors of the class --- the variable
+would be initialized every time we create a new instance of that class.
+The initialization can be in the implementation file, say VECTOR.CPP, 
+as a free-standing declaration
+{\footnotesize \begin{verbatim}
+template<class T> const int Vector<T>::_defaultprecision = 4;
+template<class T> const int Vector<T>::_defaultwidth     = 7;
+\end{verbatim}}
+If we had declared  the static variable public, we could have accessed it either 
+via an instance of the class or directly, i.e.\ the following code would be legal:
+{\footnotesize \begin{verbatim}
+void main()
+{
+  cout << "Currently there are " << Vector<double>::_numberofinstances
+       << "instances of the Vector<double> class." << endl;
+
+  Vector<double> v1;
+
+  cout << "Currently there are " << v1._numberofinstances
+       << "instances of the Vector<double> class." << endl;
+}
+\end{verbatim}}
+For obvious reasons of encapsulation we have declared this static variable
+private instead --- otherwise we could not really be sure that it holds the
+value of the number of instances of that class (user-code could have 
+modified it directly). Instead we give access via a public static function
+\verb+numberofinstances()+. Again, we can call this function even if there
+does not exist an instance of the class as is shown in the code below
+{\footnotesize \begin{verbatim}
+void main()
+{
+  cout << "Currently there are " << Vector<double>::numberofinstances()
+       << "instances of the Vector<double> class." << endl;
+
+  Vector<double> v1;
+
+  cout << "Currently there are " << v1.numberofinstances()
+       << "instances of the Vector<double> class." << endl;
+}
+\end{verbatim}}
+
+In the case of the vector and especially the matrix class, we want the user to
+be able to control the precision and width with which the elements are written
+onto an output stream. We thus include methods which allow the user to query 
+or set the output-precision and output-width. We define class constants 
+\verb+_defaultprecision+ and \verb+_defaultwidth+ for the default output format.
+If we had not declared these class constants as static members of the class, every
+instance of that class would have a copy of these constants and we would initialize
+these class constants via the parameter list. It is, however, very wasteful that each
+instance of the class contains a copy of the identical constants. Instead we declare 
+them as static class constants
+{\footnotesize \begin{verbatim}
+template <class T> class Vector
+{
+  public:
+    ...
+    int  outputprecision    () const;  // returns output precision
+    int  outputwidth        () const;  // returns output width
+    void setoutputprecision (const int precisn);
+    void setoutputwidth     (const int wdth);
+
+  private:
+    ...
+    T* _v;
+    long _length;
+    int _precision, _width;
+    static const int _defaultprecision;
+    static const int _defaultwidth;
+}
+\end{verbatim}}
+and we initialize them with free-standing declarations in the file
+VECTOR.CPP:
+{\footnotesize \begin{verbatim}
+//=========================================================
+// Initializing Static Class Constants
+//------------------------------------
+template<class T> const int Vector<T>::_defaultprecision = 4;
+template<class T> const int Vector<T>::_defaultwidth     = 7;
+//=========================================================
+// CONSTRUCTORS and DESTRUCTOR
+//----------------------------
+template <class T> Vector<T>::Vector ()
+  : _v(NULL), _length(0),
+    _precision(_defaultprecision), _width(_defaultwidth) {}
+...
+\end{verbatim}}
+Note that each objects own output precision and width (which can be
+altered by the user) are initialized to their default values in the
+parameter list of the constructors.
+ 
+Any member of a class can be declared a static member, i.e. we can have
+static data members, static member functions and even static member objects.
+
+%------------------------------------------------------------
+
+\subsection{Constructors, Destructor, Assignment Operator}
+For classes using dynamic memory one must be particularly careful 
+when developing constructors and assignment operators. One can no
+longer rely on the compiler to write these functions --- the
+compiler supplied versions will lead to catastrophe.
+
+Furthermore, once an instance of such a class goes out of scope,
+the memory which has been claimed by the constructors and
+assignment operators must be released. This is done by defining
+a destructor for the class. Again, the compiler supplied version will
+only lead to grief. 
+
+
+In the previous section we saw that the default 
+constructor of the vector class initializes the
+
+%---------------------------------------------------------------
+
+\subsubsection{Constructors}
+
+From the excerpt of the class interface shown in section
+\ref{vec_static}
+ we see that the vector class has a pointer \verb+v+
+to the template type and a long integer \verb+_length+ as
+private variables of the class. We also showed in the previous 
+section that the default constructor initializes the pointer
+variable to the \verb+NULL+ pointer and \verb+_length+ to zero.
+Below we give the implementation details for the remaining
+two constructors of the vector class:
+{\footnotesize \begin{verbatim}
+template <class T> Vector<T>::Vector (const Vector<T>& v)
+  : _v(NULL), _length(0),_precision(_defaultprecision),
+    _width(_defaultwidth)  {*this=v;}
+
+template <class T> Vector<T>::Vector (const long lngth)
+  : _precision(_defaultprecision), _width(_defaultwidth)
+{
+  #if EXCEPTIONHANDLING
+    if (lngth<0) throw Exception("Vector(lngth) => lngth<0");
+  #endif
+  _v = new T[lngth];
+  _length=lngth;
+}
+\end{verbatim}}
+Note that the copy 
+constructor is used every time you pass or return a vector by
+value. Should you omit to define one yourself, your C++ compiler
+will write one for you. The compiler-supplied version makes a
+byte-for-byte copy of the data members of the class. Thus the
+value of the pointer variable would simply be copied, without 
+reserving separate memory for the new vector. Both vectors 
+would use the same memory area with obvious catastrophical
+consequences. The reservation of new memory and the copying
+of the vector elements is done correctly in the assignment
+operator defined in the following section. The copy constructor
+simply calls our assignment operator.
+
+In the final constructor we first check that it is called with legal
+arguments, i.e. that the requested length of the vector is equal to
+or greater than zero. If that is not the case we throw an exception.
+This sanity checking is only done if the global variable 
+\verb+EXCEPTIONHANDLING+ is on (=1). We use conditional compilation
+for this purpose. (See chapter \ref{chapErrorhnd} for a detailed
+discussion of exception handling).
+
+We then reserve enough memory of \verb+lngth+ variables of the
+template type \verb+T+ and set the private variable \verb+_length+
+to the length of the vector.
+%---------------------------------------------------------------
+
+\subsubsection{The Assignment Operator}
+
+As for the copy constructor, if you omit to define an assignment
+operator for your class, your compiler will write one for you.
+The compiler-version will simply make a byte-for-byte copy
+of the vector fields and thus of the pointers \verb+_v+. Consequently
+the two vectors would point to the same memory area and setting
+an element of the one vector would also change the relevant
+element of the second vector. If one vector goes out of scope,
+its memory is released, and the second vector will use illegal
+memory. 
+
+Our vector class allows assigning one vector to another of different
+length. In this case we first release the memory of the first vector,
+grab enough memory from the heap for a copy of the second vector
+and only then we copy the vector elements. The resizing of the
+vector is done by a private member function \verb+resize+
+{\footnotesize \begin{verbatim}
+template <class T> void Vector<T>::resize (const long lngth)
+{
+  #if EXCEPTIONHANDLING
+    if (lngth<0)
+      throw IllegalArguments("Vector::resize(lngth) => lngth<0");
+  #endif
+  delete[] _v;
+  if (lngth>0)
+   {
+     _v = new T[lngth];
+     _length = lngth;
+   }
+  else
+  {
+   _v = NULL;
+   _length = 0;
+  }
+}
+\end{verbatim}}
+If the requested vector length is negative we throw and exception.
+Otherwise we release the heap-memory currently occupied by the
+vector and reserve enough memory for a vector of length \verb+lngth+.
+
+Below we give the implementation details of our
+assignment operator:
+
+{\footnotesize \begin{verbatim}
+template <class T>      // assignment operator
+Vector<T>& Vector<T>::operator= (const Vector<T>& v)
+{
+  if (this != &M)
+  {
+    if (_length != v._length)
+      resize(v._length);
+    for (long i=0; i<_length; i++)
+      _v[i] = v._v[i];
+  }
+  return *this;
+}
+\end{verbatim}}
+
+It is critical to check for self-assignment. Self-assignment can be
+more subtle than simply \verb+v1=v1+. For example, \verb+v2+ could be a
+reference variable which has been set equal to \verb+v1+ and at a later
+stage one could have a camouflaged self-assignment of the for \verb+v1=v2+.
+The check for self-assignment is not only recommended for reasons of efficiency.
+If we wouldn't check whether the two vectors are of the same length, we would
+first release the memory, of the vector, then grab new memory and finally copy
+the value of the elements from memory which no longer belongs to the vector
+and which quite possibly is used elsewhere. In the case of self-assignment
+we simply return the object itself by reference (allowing concatenations
+of assignment statements). If the lengths of the two vectors differ, we resize the
+first vector and then we copy the actual vector elements.
+
+
+%---------------------------------------------------------------
+
+\subsubsection{The Destructor}
+
+The destructor of a class is called automatically as soon as an instance
+of that class goes out of scope. For example, if one declares a vector
+locally in a function, then as soon as one returns from the function,
+the destructor is called for that object. The function of a destructor is to
+perform any clean-up operation like releasing memory which was
+grabbed by the object from the heap.
+
+In the constructors and the assignment operator
+we reserve memory from the heap for our vector.
+As soon as an instance of \verb+Vector+ goes out of scope this
+memory should be released again. If one does not define a destructor,
+your overly-eager C++ compiler will go ahead and write one with an
+empty body for you. This is of course no good if your class allocates
+memory dynamically from the heap. In this case you will have to supply
+your own constructor. In the body for the destructor for the vector class
+we simply release the memory allocated in the constructor or the
+assignment operator
+{\footnotesize \begin{verbatim}
+inline template <class T> Vector<T>::~Vector ()
+{delete[] _v;}
+\end{verbatim}}
+
+Note that destructors are methods which have no arguments and
+no return values and which carry the name of the class
+preceded by a tilda.
+
+Destructors can be called manually:
+{\footnotesize \begin{verbatim}
+Vector<double> v(100);
+...
+delete v;
+\end{verbatim}}
+
+
+%---------------------------------------------------------------
+
+\subsection{Element Access}
+
+In standard C and C++ arrays, elements of an array are
+accessed via the subscription operator \verb+[]+. We define
+the subscription operator for the vector class to do the same:
+{\footnotesize \begin{verbatim}
+template <class T>
+inline T& Vector<T>::operator[] (const long i) const
+{
+  #if EXCEPTIONHANDLING
+    if ((i<0) || (i>=_length))
+      throw Range("Vector::operator[]:");
+  #endif
+  return _v[i];
+}
+\end{verbatim}}
+If exception handling is switched on (see chapter \ref{chapErrorhnd}
+for a detailed discussion on exception handling) we perform range
+checking and throw the relevant exception if the check fails.
+Otherwise we return the relevant element by reference. This is
+a very important point. If we had returned the element by value
+we would not be able to assign an element to a value, i.e.\ the 
+following code would not compile
+{\footnotesize \begin{verbatim}
+Vector<double> v(3);
+...
+double x = v[0];    // no problem
+v[0] = 1.3;         // compiler error if not returned by reference
+\end{verbatim}}
+If the template type is a huge data type (we could, for
+example, have a vector of matrices) returning the element by reference
+has the further advantage of efficiency.
+
+%---------------------------------------------------------------
+
+\subsection{User's Guide to the Vector Class}
+
+Below we discuss some useful methods we included in the vector
+class. For most of these methods we do not discuss the implementation
+details. These can be found in section \ref{vec_listing} where we
+give a complete listing of the vector class. 
+
+%---------------------------------------------------------------
+
+\subsubsection{Arithmetic Operations}
+
+Vector addition and subtraction, together with the related
+operators \verb&+=&, \verb&-=&, are defined in a standard fashion.
+We use the multiplication operator \verb+*+ to denote the vector dot product
+(scalar or inner product)
+\begin{eqnarray}
+  \verb&a*b& \Longrightarrow
+  {\bf a} \cdot {\bf b} := \sum_{i} a_i b_i  
+\end{eqnarray}
+and the modulo or remainder operator \verb+%+ to denote the Kronecker
+product 
+\begin{eqnarray}
+  \verb+a%b+ \Longrightarrow
+  {\bf A} = {\bf a} \otimes {\bf b} := \{a_i b_j \}  
+\end{eqnarray}
+--- the result of the Kronecker product between two vectors is a matrix
+whose $ij$'th element is equal to $a_i b_j$. Recall that C++ restricts us
+to overloading only the built-in operators (used for the standard data
+types like \verb+float+ or \verb+int+) and that we cannot alter the
+precedence level or the syntax of these operators. This does not leave
+us much choice when searching for an operator for the Kronecker product.
+The only operator available with the correct syntax and precedence level
+(same precedence level as multiplication) is the modulo operator --- see
+table \ref{basiccppCppops}.
+
+For element-for-element multiplication of two vectors we use the function 
+\verb+hadamardproduct+
+\begin{eqnarray}
+  \verb+a.hadamardproduct(b)+ \Longrightarrow
+   {\bf c} = {\bf a} \otimes {\bf b} := \{a_i b_i \}  
+\end{eqnarray}
+We have no suitable operators left to choose from and hence we use
+a member function instead.
+We have defined the arithmetic operations such that we maximize consistence 
+between the vector and matrix classes.
+
+We also support mixed-type arithmetic, allowing the user to add a scalar 
+to a vector or a vector to a scalar. The same holds for subtraction,
+multiplication or division of a vector by a scalar.
+
+%---------------------------------------------------------------
+
+\subsubsection{Vector functions}
+
+Our class supports vector functions. For example \verb+v1.func(exp)+
+returns a vector where each element is the exponent of the
+relevant element in \verb+v1+. we define two version of the func method
+{\footnotesize \begin{verbatim}
+template <class T> class Vector
+{
+  public:
+    ...
+    Vector<T> func (T (*f)(const T&)) const;  // returns f(vec)
+    Vector<T> func (T (*f)(T)) const;  // returns f(vec)
+}
+\end{verbatim}}
+one of which the argument of the function is declared constant. The
+implementation details are quite simple:
+{\footnotesize \begin{verbatim}
+template <class T>            // returns f(vec)
+Vector<T> Vector<T>::func (T (*f)(const T&)) const
+{
+  Vector<T> result(_length);
+  for (long i=0; i<_length; i++)
+    result._v[i] = f(_v[i]);
+  return result;
+}
+\end{verbatim}}
+
+%---------------------------------------------------------------
+
+\subsection{Vector Norms, Normalization, Mean, \dots}
+
+We define two methods \verb+norm+, one for the euclidean norm
+\begin{eqnarray}
+  ||{\bf x}|| := \left( \sum_i |x_i|^2 \right)^\frac{1}{2}  
+\end{eqnarray}
+(which returns the length of a vector in euclidean space) and a
+generalized norm called the $p$-norm
+\begin{eqnarray}
+  ||{\bf x}||_p := \left( \sum_i |x_i|^p \right)^\frac{1}{p}  
+\end{eqnarray}
+Naturally the euclidean norm is a special case of the $p$-norm. The reason
+for supplying two methods, instead of a single method with default
+value 2 for $p$ is that we can implement the euclidean norm with
+more efficiency than the $p$-norm with $p=2$. Below we give the
+signatures of the two \verb+norm+ methods
+{\footnotesize \begin{verbatim}
+template <class T> class Vector
+{
+  public:
+    ...
+    T    norm      () const;       // Euclidean norm
+    T    norm      (const double& p) const;  // p-norm => (sum(|v_i|^p))^(1/p)
+}
+\end{verbatim}}
+The implementations are very simple and can be found in the program listing
+in section \ref{vec_listing}. The method \verb+normalize()+ divides the vector
+elements by the euclidean norm of the vector resulting in a normalized vector
+--- a vector with unit length.
+
+The arithmetic mean of the elements of a vector 
+\begin{eqnarray}
+  \overline{\bf x} := \frac{1}{n} \sum_{i=1}^n x_i  
+\end{eqnarray}
+is returned by the method \verb+mean()+ and the sum of all vector elements
+by the method \verb+sumels()+. The largest, smallest, largest absolute and
+smallest absolute element is returned by the methods \verb+maxel()+,
+\verb+minel()+, \verb+maxabsel()+ and \verb+minabsel()+ respectively.
+Alternatively one can obtain the index of the largest, smallest, largest absolute and
+smallest absolute element via the methods \verb+maxindx()+,
+\verb+minindx()+, \verb+maxabsindx()+ and \verb+minabsindx()+ respectively.
+
+%---------------------------------------------------------------
+
+\subsubsection{Stream Access}
+
+The input and output stream operators which take a stream as first 
+argument and a vector as second argument are declared friends of 
+the class --- hence they have direct access to the private members of 
+the vector class. The function uses a chaotic mapping with uniform 
+density.
+
+The method \verb+insert(const Vector<T>& v, const long before)+ 
+returns a vector where the vector \verb+v+ is inserted before 
+element no \verb+before+. Consider the statement
+{\footnotesize \begin{verbatim}
+Vector<double> v3 = v1.insert(v2,n);
+\end{verbatim}}
+\noindent
+If \verb+n=0+ then v2 is inserted in front of v2. If \verb+n=v1.length()+, 
+then \verb+v2+ is appended to \verb+v1+.
+The member function 
+{\footnotesize \begin{verbatim}
+Vector<T> Vector<T>::slice (const long istart, const long noelements,
+                            const long stride=1);
+\end{verbatim}}
+extracts \verb+noelements+ elements from the vector, starting
+from element no \verb+istart+, selecting every \verb+stride+
+elements. If the argument \verb+stride+ is not supplied, it is 
+set equal to its default value $1$. Consider for example the 
+vector ${\bf v} = [0 1 2 3 \dots 19 20]$.
+Then \verb+v.slice(5,6)+ returns the vector $[5 6 7 8 9 10]$ and
+\verb+v.slice(3,4,2)+ returns the vector $[3 5 7 9]$.
+
+As we discussed before, the member function \verb+resize(const long lngth)+
+resizes the vector to the required length. Note that all elements will be
+lost. The main purpose for \verb+resize()+ was to allow the user to
+create an array of vectors using the default constructor and then to
+resize each vector to the required size. This will be discussed further
+in the matrix class. If the user wants to resize a vector without losing
+the elements he could for example use the following statement
+{\footnotesize \begin{verbatim}
+v1 = v1.insert(Vector<double>(3),v1.length());
+\end{verbatim}}
+This will increase the size of \verb+v1+by 3 elements, keeping the
+the old elements of \verb+v1+ unchanged.
+
+Finally we supply a function \verb+swap(const long i, const long j)+
+which simply swaps elements \verb+i+ and \verb+j+.
+
+%--------------------------------------------------------------
+
+\subsubsection{Vectors of user-defined data types}
+
+Note that the vector class is defined on a template. Hence we define
+one class for any underlying data type and the compiler will generate 
+the relevant type-specific classes himself. For example, in the following
+listing we define 3 vectors
+{\footnotesize \begin{verbatim}
+Vector<int> vi(5);
+Vector<double> vd;
+Vector<Rational<long> > vr1, vr2;
+Vector<Rational<long> > vr3 = vr1 + vr2;
+\end{verbatim}}
+
+Note that one of the vectors is a vector of rational numbers --- a user 
+defined data type (see previous chapter). When adding two vectors
+of rational numbers the appropriate addition operator of the \verb+Rational+
+class is used when adding elements. Similarly,when sending a vector of
+rational numbers to an output stream, the relevant output stream operator 
+for rational numbers is automatically used for sending the individual elements
+to the output stream.
+
+%---------------------------------------------------------------
+
+\subsubsection{The Demonstration Program}
+
+On the disk accompanying this book we supply the following demonstration 
+program TVECTOR.CPP which illustrates the usage and power of the vector 
+class:
+\noindent
+{\footnotesize \input{VecMat/Programs/TVector.cpp} }
+
+%---------------------------------------------------------------
+
+\subsection{Listing of the Vector Class \label{vec_listing}}
+
+The interface for the vector class is defined in the header file
+VECTOR.H:
+{\footnotesize \input{VecMat/Programs/Vector.h} }
+
+The implementation details are given in the file VECTOR.CPP
+{\footnotesize \input{VecMat/Programs/Vector.cpp} }
+
+%=========================================================
+
+\section{Matrix Class}
+
+\subsection{Introduction}
+
+%---------------------------------------------------------------
+
+\subsection{Arrays of Objects}
+
+The underlying data structure for the matrix is an array of vectors.
+Below we show the private data members of the class:
+{\footnotesize \begin{verbatim}
+template <class T> class Matrix
+{
+    ...
+  private:
+    Vector<T>*       _M;
+    long             _nrows, _ncols;
+    int              _precision, _width;
+    static const int _defaultprecision;
+    static const int _defaultwidth;
+};
+\end{verbatim}}
+\verb+_M+ is the array of vectors which holds the actual matrix elements,
+\verb+_nrows+ and \verb+_ncols+ hold the dimension of the matrix and
+the remaining data members are identical to those used in the vector
+class for setting the output format of a matrix object.
+
+When declaring an array of objects C++ always uses the default constructor
+of the class --- it is thus recommended that you always define a default
+constructor for your class except if you have good reasons to disallow
+the user to define an array of a certain class.
+
+We define three constructor for the matrix class, the default constructor,
+the copy constructor and a constructor allowing the user to declare
+a matrix of a certain size. The first two of these are virtually identical to 
+their counterparts in the vector class and the reader can look at their
+implementation in the class listing given in section \ref{mat_listing}.
+The implementation details of the third constructor are given below:
+{\footnotesize \begin{verbatim}
+template <class T>
+Matrix<T>::Matrix (const long nrows, const long ncols)
+  : _precision(_defaultprecision), _width(_defaultwidth)
+{
+  #if EXCEPTIONHANDLING
+    if ((nrows<0) || (ncols<0))
+      throw InvalidArguments("Matrix(nrows,ncols) => nrows<0 or ncols<0");
+  #endf
+  _M = new Vector<T>[nrows];
+  for (long nr=0; nr<nrows; nr++)
+    _M[nr].resize(ncols);
+  _nrows = nrows;  _ncols = ncols;
+}
+\end{verbatim}}
+
+First we perform sanity-checking on the required size of the matrix.
+Then we reserve memory for \verb+nrows+ vectors of the template 
+type via the \verb+new+ operator and we set the pointer variable
+\verb+_M+ equal to the start of this memory area. It is at this point
+where C++ calls the default constructor of the vector class for
+each of the array elements. Consequently the vectors (the rows
+of the matrix) have all zero length. To set the size of these vectors
+equal to the number of columns, we use the \verb+resize+ method
+of the vector class. Finally we set the private data fields for the
+number of rows and number of columns of the matrix.
+
+%---------------------------------------------------------------
+
+\subsection{Using the Functionality of the Underlying Vector Class}
+
+Many methods of the matrix class look particularly simple
+because we use the functionality of the underlying vector
+class. Consider, for example, matrix addition:
+{\footnotesize \begin{verbatim}
+template <class T>
+Matrix<T> Matrix<T>::operator+ (const Matrix<T>& M) const
+{
+  #if EXCEPTIONHANDLING
+    if ((_nrows!=M._nrows) || (_ncols!=M._ncols))
+      throw InvalidOperation("Matrix::operator+(Matrix)");
+  #endif
+  Matrix<T> result(*this);
+  for (long nr=0; nr<_nrows; nr++)
+    result._M[nr] += M._M[nr];
+  return result;
+}
+\end{verbatim}}
+If the matrices are of different sizes, we throw an 
+\verb+InvalidOperation+ exception. Otherwise we
+make a local copy of the matrix itself (using the
+copy constructor) and use vector addition to
+add the matrices row-for-row.
+
+Similarly, the method random which fills the matrix
+with random numbers chosen between \verb+upper+ 
+and \verb+lower+ limits requests each of its rows
+(each of its vectors) to fill itself with random numbers:
+{\footnotesize \begin{verbatim}
+template <class T>
+void Matrix<T>::random (const T& upper=1, const T& lower=0)
+{
+  for (long nr=0; nr<_nrows; nr++)
+    _M[nr].random(lower,upper);
+}
+\end{verbatim}}
+
+%---------------------------------------------------------------
+
+\subsection{Matrix Multiplication, Kronecker and Hadamard Products
+                 \label{mat_products}}
+
+As for vectors, we define three different types of products for
+matrices. For standard matrix multiplication we use the multiplication
+operator \verb+*+. The Kronecker product (also known as direct
+product) is defined by
+\begin{eqnarray}
+{\bf A} \otimes {\bf B} = 
+\left[ \begin{array}{cccc}
+  a_{11} {\bf B} & a_{12} {\bf B} & \cdots & a_{1n} {\bf B} \\
+  a_{21} {\bf B} & a_{22} {\bf B} & \cdots & a_{2n} {\bf B} \\
+  \vdots & \vdots & \ddots & \vdots \\
+  a_{m1} {\bf B} & a_{m2} {\bf B} & \cdots & a_{mn} {\bf B} \label{mat_kronprod}
+\end{array} \right] 
+ \end{eqnarray}
+It will be used extensively in the sections on neural networks
+and on non-linear programming. 
+
+Unlike for normal matrix multiplication
+where we have a reversal of order upon taking the transpose of a
+an ordinary product
+\begin{eqnarray}
+  ({\bf A} {\bf B})^{\rm T} = {\bf B}^{\rm T} {\bf A}^{\rm T}
+\end{eqnarray}
+we have no such reversal when taking the transpose of a Kronecker
+product of matrices
+\begin{eqnarray}
+  ({\bf A} \otimes {\bf B})^{\rm T} = {\bf A}^{\rm T} \otimes {\bf B}^{\rm T}
+    \label{mat_krontransp}
+\end{eqnarray}
+ It can also be shown (see exercise ??) that the Kronecker product
+is distributive
+\begin{eqnarray}
+  {\bf A} \otimes ({\bf B} + {\bf C}) = {\bf A} \otimes {\bf B} + {\bf A} \otimes {\bf B}
+   \label{mat_krondistr}
+\end{eqnarray}
+and associative
+\begin{eqnarray}
+  {\bf A} \otimes ({\bf B} \otimes {\bf C}) = ({\bf A} \otimes {\bf B}) \otimes {\bf C}
+  \label{mat_kronassoc}
+\end{eqnarray}
+Neither the ordinary nor the Kronecker product are commutative
+\begin{eqnarray}
+  {\bf A} {\bf B} \neq {\bf B} {\bf A} \hspace{12mm} 
+  {\bf A} \otimes {\bf B} \neq {\bf B} \otimes {\bf A} \nonumber
+\end{eqnarray}
+The implementation of the Kronecker product (\ref{mat_kronprod})
+is given below
+{\footnotesize \begin{verbatim}
+template <class T>     // Kroneckerproduct
+Matrix<T> Matrix<T>::operator% (const Matrix<T>& M) const
+{
+  Matrix<T> result(_nrows*M._nrows,_ncols*M._ncols);
+
+  for (long nr1=0; nr1<_nrows; nr1++)
+    for (long nc1=0; nc1<_ncols; nc1++)
+      for (long nr2=0; nr2<M._nrows; nr2++)
+        for (long nc2=0; nc2<M._ncols; nc2++)
+          result._M[nr1*M._nrows+nr2][nc1*M._ncols+nc2]
+            = _M[nr1][nc1]*M._M[nr2][nc2];
+  return result;
+}
+\end{verbatim}}
+
+The second special product which is particularly useful in statistics is
+the Hadamard or Schur product. If two matrices, ${\bf A}$ and ${\bf B}$,
+both have dimension $(m \times n)$, then ${\bf A} \circ {\bf B}$ yields
+a $(m \times n)$ matrix whose elements are simply the product
+of the corresponding elements in ${\bf A}$ and ${\bf B}$:
+\begin{eqnarray}
+  {\bf A} \circ {\bf B} = 
+\left[ \begin{array}{cccc}
+  a_{11} b_{11} & a_{12} b_{12} & \cdots & a_{1n} b_{1n} \\
+  a_{21} b_{21} & a_{22} b_{22} & \cdots & a_{2n} b_{2n} \\
+  \vdots & \vdots & \ddots & \vdots \\
+  a_{m1} b_{m1} & a_{m2} b_{m2} & \cdots & a_{mn} b_{mn} 
+\end{array} \right] 
+\end{eqnarray}
+The Hadamard product is distributive and associative. The 
+implementation of the Hadamard product is trivial and can
+be found in the program listing (see section \ref{mat_listing}).
+
+%---------------------------------------------------------------
+
+\subsection{Users Guide to the Matrix Class}
+
+Besides the assignment operator, the destructor, default constructor,
+copy constructor and a constructor allowing the user to create a 
+matrix of specific dimensions via for example
+{\footnotesize \begin{verbatim}
+Matrix<double> M(3,4));
+\end{verbatim}}
+we supply a wide range of operators, query and manipulation functions 
+with the matrix class.
+
+%---------------------------------------------------------------
+
+\subsubsection{Element, Row and Column Access}
+
+Row access is provided via the subscription operator \verb+[]+.
+Hence \verb+M[0]+ returns the first row of the matrix as a vector.
+The access is very fast (especially when exception handling is
+switched off) --- this inline function simply returns the relevant row
+by reference:
+{\footnotesize \begin{verbatim}
+template <class T>
+inline Vector<T>& Matrix<T>::operator[] (const long& nrow) const
+{
+  #if EXCEPTIONHANDLING
+    if ((nrow<0) || (nrow >= _nrows))
+      throw Range("Matrix::operator[] (nrow)");
+  #endif
+  return _M[nrow];
+}
+\end{verbatim}}
+Concatenating subscription operators gives matrix elements access.
+Hence \verb+M[0][0]+ returns the 1-1-element of the matrix. The
+first subscription operator acts on the matrix \verb+M+ returning a 
+vector. The second subscription operator now acts on a vector object
+(the subscription operator of the vector class is called) returning
+the 0'th element of the vector representing the 0'th row.
+
+Column access carries significantly higher computational overheads.
+We use the function call operator \verb+()+. Hence \verb+M(1)+
+returns the second column as a vector. The implementation details
+are given below:
+{\footnotesize \begin{verbatim}
+Vector<T> Matrix<T>::operator() (const long ncol) const
+{
+  #if EXCEPTIONHANDLING
+    if ((ncol<0) || (ncol >= _ncols))
+      throw Range("Matrix::operator() (ncol)");
+  #endif
+  Vector<T> result(_nrows);
+  for (long nr=0; nr<_nrows; nr++)
+     result[nr] = _M[nr][ncol];
+  return result;
+}
+\end{verbatim}}
+After range checking we create a local vector \verb+result+ into which 
+we copy the matrix elements of the relevant column. The vector is a local
+variable and has to be returned by reference.
+%---------------------------------------------------------------
+
+\subsubsection{Query Functions}
+
+The member functions \verb+rows()+ and \verb+cols()+ return the
+number of rows and columns of the matrix, \verb+diag()+ returns
+the diagonal elements as a vector and \verb+trace()+ returns the
+trace of the matrix --- the sum of the diagonal elements. The
+query functions \verb+outputwidth()+ and \verb+outputprecision()+
+return the current choice of output format for the matrix elements.
+
+%---------------------------------------------------------------
+
+\subsubsection{Arithmetic Operators}
+
+Support for matrix addition, subtraction and multiplication is provided
+by the relevant operators, \verb&+&, \verb+-+ and \verb+*+. 
+Hence all of the following statements are legal
+{\footnotesize \begin{verbatim}
+Matrix<double> A(4,4), B(4,4), C(4,4);
+A = B+C;     // matrix addition
+A = B-C;     // matrix subtraction
+A = B*C;     // matrix product
+A = B%C;     // Kronecker product
+\end{verbatim}}
+We use the modulo operator
+\verb+%+ for the Kronecker product and we define a member function
+\verb+hadamardproduct(const Matrix<T>& M)+ for the Hadamard-product
+between two matrices. The different matrix products are discussed in more
+detail in section \ref{mat_products}.
+
+Our matrix class supports mixed type arithmetic. The user can add/subtract 
+a vector to/from a matrix or a matrix to/from a vector (in the second case 
+the friend operator is used). The operators are implemented such that
+a diagonal matrix with the vector elements on the diagonal is added or subtracted
+from the matrix.
+\begin{eqnarray}
+\verb&M+v;& \hspace{10mm} \Longrightarrow \hspace{10mm}
+\left[ \begin{array}{cccc}
+  m_{11} & m_{12} & \cdots & m_{1n} \\
+  m_{21} & m_{22} & \cdots & m_{2n} \\
+  \vdots & \vdots & \ddots & \vdots \\
+  m_{n1} & m_{n2} & \cdots & m_{nn} \\
+\end{array} \right] +
+\left[ \begin{array}{cccc}
+  v_1 & 0 & \cdots & 0 \\
+  0 & v_2 & \cdots & 0 \\
+  \vdots & \vdots & \ddots & \vdots \\
+  0 & 0 & \cdots & v_n \\
+\end{array} \right]  
+\end{eqnarray}
+
+We also allow the user to add a scalar to a matrix. In this case a diagonal
+matrix with the scalar value n the diagonal is added to the matrix. 
+\begin{eqnarray}
+\verb&M+x;& \hspace{10mm} \Longrightarrow \hspace{10mm}
+\left[ \begin{array}{cccc}
+  m_{11} & m_{12} & \cdots & m_{1n} \\
+  m_{21} & m_{22} & \cdots & m_{2n} \\
+  \vdots & \vdots & \ddots & \vdots \\
+  m_{n1} & m_{n2} & \cdots & m_{nn} \\
+\end{array} \right] +
+\left[ \begin{array}{cccc}
+  x & 0 & \cdots & 0 \\
+  0 & x & \cdots & 0 \\
+  \vdots & \vdots & \ddots & \vdots \\
+  0 & 0 & \cdots & x \\
+\end{array} \right]  
+\end{eqnarray}
+The same holds for subtraction, multiplication and division of a matrix by a scalar.
+
+The corresponding assignment operators, \verb&+=&, \verb&-=&, \dots
+are also defined for the matrix class.
+
+%---------------------------------------------------------------
+
+\subsubsection{Matrix Manipulation Functions}
+
+The method \verb+unit()+ sets a square matrix to a unit matrix.
+The method \verb+fill(const T& x)+ sets all elements of the matrix
+equal to x. The method \verb+random(const T& upper=1, const T& lower=0)+
+fills the matrix with random numbers between \verb+lower+ and \verb+upper+.
+The method is very similar to the corresponding method of the vector class.
+The following two methods 
+{\footnotesize \begin{verbatim}
+template <class T> class Matrix
+{
+  public:
+    ...
+    void setcol    (const long ncol, const Vector<T>& v);
+    void setrow    (const long nrow, const Vector<T>& v);
+}
+\end{verbatim}}
+allow the user to set a certain row or column to the values contained
+in the vector \verb+v+. The method \verb+setdiag(const Vector<T>& v)+
+sets the diagonal elements equal to the elements of the vector, while
+the method \verb+setdiag(const T& x)+ sets all diagonal elements equal 
+to \verb+x+.
+
+The method \verb+transpose()+ returns a matrix which is the transpose 
+of the matrix itself. Hence \verb+A = B.transpose+ sets the elements
+of \verb+A+ such that \verb+A[i][j]+ is equal to \verb+B[j][i]+.
+
+%---------------------------------------------------------------
+
+\subsubsection{Inserting and Removing  Rows and Columns}
+
+The methods \verb+removerow(const long nrow)+ and
+\verb+removecol(const long ncol)+ allow the user to remove
+a specific row or column of a matrix. For example 
+\verb+A.removerow(1)+ removes the second row from the
+matrix \verb+a+.
+
+The following two methods allow the user to insert a row or
+column before a certain row or column:
+{\footnotesize \begin{verbatim}
+template <class T> class Matrix
+{
+  public:
+    ...
+    void insertrow (const long beforerow, const Vector<T>& v);
+    void insertcol (const long beforecol, const Vector<T>& v);
+}
+\end{verbatim}}
+For example
+{\footnotesize \begin{verbatim}
+A.insertcol(A.cols(),v);
+\end{verbatim}}
+appends a column vector \verb+v+ to the matrix \verb+a+.
+
+%---------------------------------------------------------------
+
+\subsubsection{Stream Access}
+
+We provide input and output stream access via the standard stream
+extraction and stream output operators, \verb+>>+ and \verb+<<+.
+The two operators can be used as follows:
+{\footnotesize \begin{verbatim}
+void main()
+{
+  Matrix<int> M(2,3);
+  cin >> M;
+  M.setoutputprecision(2);
+  M.setoutputwidth(3);
+  cout << "You have just read in the following matrix:" << endl << M;
+}
+\end{verbatim}}
+After declaring a $(2 \times 3)$ matrix of integers, \verb+M+ we extract
+the matrix from the standard input stream. The stream extraction
+operator simply extract 6 integers from the stream and reads them
+row-for-row into the matrix.
+ 
+We then set the output format for the matrix elements and send the
+matrix to the standard output stream via the operator \verb+>>+.
+Both, the stream extraction and stream output operators are declared
+friends of the class and hence they do have access to the private
+data members of the class. The implementation details for the output 
+stream operator are given below:
+{\footnotesize \begin{verbatim}
+template <class T>
+ostream& operator<< (ostream& os, const Matrix<T>& M)
+{
+  for (long nr=0; nr<M._nrows; nr++)
+  {
+    os << "| ";
+    for (long nc=0; nc<M._ncols; nc++)
+    {
+      os.precision(M._precision); os.width(M._width);
+      os << M._M[nr][nc] << ' ';
+    }
+    os << "|" << endl;
+  }
+  return os;
+}
+\end{verbatim}}
+and the resultant output for the matrix \verb+M+ could be
+{\footnotesize \begin{verbatim}
+|  1  2  3 |
+|  4  5  6 |
+\end{verbatim}}
+
+%---------------------------------------------------------------
+
+\subsubsection{The Demonstration Program}
+
+On the disk accompanying this book we supply the following demonstration 
+program TMATRIX.CPP which illustrates the usage and power of the matrix
+class:
+\noindent
+{\footnotesize \input{VecMat/Programs/TMatrix.cpp} }
+\noindent
+Again, we recommend that the reader runs this program.
+
+%---------------------------------------------------------------
+
+\subsection{Listing of the Matrix Class \label{mat_listing}}
+
+The interface for the matrix class is defined in the header file
+MATRIX.H:
+{\footnotesize \input{VecMat/Programs/Matrix.h} }
+
+The implementation details are given in the file MATRIX.CPP
+{\footnotesize \input{VecMat/Programs/Matrix.cpp} }
+
+%---------------------------------------------------------------
+
+\section{Exercises}
+
+\begin{exercises}
+
+  \item Write a linear regression program (linear least squares fit)
+          which fits a straight line through a set of data points.
+          Use the vector class where appropriate.
+
+  \item Show that the Kronecker product (\ref{mat_kronprod}) obeys 
+          equations (\ref{mat_krontransp}), (\ref{mat_krondistr}) and
+          (\ref{mat_kronassoc}). Show further that
+          \begin{eqnarray}
+            ({\bf A} \otimes {\bf B})({\bf C} \otimes {\bf D}) = {\bf Ac} \otimes {\bf BD}
+          \end{eqnarray}
+          by comparing both sides of the equation. What are the required
+          relationships between the dimensions of the matrices?
+
+  \item Add a method \verb+kroneckerpower(n)+ to the matrix class
+          which returns the $n$'th Kronecker power of the matrix.
+          The 2'nd and 3'rd Kronecker powers are for example given by
+          \begin{eqnarray}
+            {\bf A}^{[2]} = {\bf A} \otimes {\bf A} \hspace{12mm}
+            {\bf A}^{[3]} = {\bf A} \otimes {\bf A} \otimes {\bf A}  
+          \end{eqnarray}
+          and prove that $({\bf AB})^{[k]} = {\bf A}^{[k]} {\bf B}^{[k]}$.
+ 
+\end{exercises}

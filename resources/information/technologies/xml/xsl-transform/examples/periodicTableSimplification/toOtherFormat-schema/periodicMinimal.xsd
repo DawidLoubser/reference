@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:p="urn:physics:elements"
+    targetNamespace="urn:physics:elements"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xs:annotation><xs:documentation>
+        This schema contains types which could be used to construct
+        a minimal, but strict, periodic table of the elements.
+    </xs:documentation></xs:annotation>
+    
+    <xs:complexType name="Element">
+        <xs:annotation><xs:documentation>
+            A minimal representation of a periodic element, including its
+            state at room temperature or ('natural state'), assumed as
+            a temperature of 300 Kelvin.
+        </xs:documentation></xs:annotation>
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="symbol" type="p:AtomicSymbol"/>
+            <xs:element name="atomicNumber" type="xs:positiveInteger"/>
+            <xs:element name="atomicWeight" type="xs:decimal" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="naturalState" type="p:MaterialState" use="optional"/>
+    </xs:complexType>
+        
+    <xs:complexType name="CollectionOfElements">
+        <xs:annotation><xs:documentation>
+            A sequence of elements that could represent a periodic table
+        </xs:documentation></xs:annotation>
+        <xs:sequence>
+            <xs:element name="element" type="p:Element" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+        
+    <xs:simpleType name="MaterialState">
+        <xs:annotation><xs:documentation>
+            The state of an element: 'gas', 'liquid' or 'solid'.
+        </xs:documentation></xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="gas"/>
+            <xs:enumeration value="liquid"/>
+            <xs:enumeration value="solid"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="AtomicSymbol">
+        <xs:annotation><xs:documentation>
+            The symbol of an element, e.g. 'Al' or 'H'.
+        </xs:documentation></xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z][a-z]{0,2}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:element name="periodicTable" type="p:CollectionOfElements">
+        <xs:annotation><xs:documentation>
+            A periodic table of elements
+        </xs:documentation></xs:annotation>
+    </xs:element>
+</xs:schema>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.architecture.referenceArchitectures.j2ee.enterpriseBeans.beanSpecies.sessionBeans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Session Beans</title>
+  <para>
+    Session beans are objects which perform some operations on behalf of a 
+    single client. They are really like objects delivering use cases to 
+    clients. Session beans are only accessible by one client at a time, 
+    <abbrev>i.e.</abbrev> they are not shared between clients.
+  </para>
+  <para>
+    In response to client service requests the container creates a new instance. 
+    The new instance is a new object for the new session and has a unique identity
+    from the client's perspective. 
+    <note><para>
+      In actual fact one of the session bean instances in the method ready pool is activated
+      and assigned to process a service request for the new conceptual object. Based on
+      CORBA, enterprise beans <emphasis>separate the client view of the object from the 
+      physical realization of the object</emphasis>.
+    </para></note>
+  </para>
+  <para>
+    Conceptually a session bean lives as long as the client maintains the session
+    -- hence the name <emphasis>session bean</emphasis>. They can 
+    be seen as a server object which exists only to serve a single 
+    client over the period of a session.
+  </para>
+  <para>
+    The EJB specification requires support for two flavors of session beans, 
+    stateless and  stateful session beans. 
+  </para>  
+
+  <section>
+    <title>Stateless Session Beans</title>
+    <para>
+      Stateless session beans <emphasis>do not maintain state across service 
+      requests</emphasis>, even if those requests were made from the same
+      client session. For example, the tasks of crediting one account,
+      querying the balance of another and making a payment from a third do
+      not require any information to be held across these service requests.
+      A stateless session bean could provide these services.
+    </para>
+    <note><para>
+      Stateless session beans facilitate <emphasis>very simple object pooling</emphasis>. 
+      Any bean instance can be used from the method-ready pool. No state needs to
+      be persisted across de- and re-activaions.
+    </para></note>
+  </section>
+
+  <section>
+    <title>Stateful Session Beans</title>
+    <para>
+      Stateful session beans <emphasis>maintain state information across service requests
+      within a single session</emphasis>. For example, a bean handling a customer during an
+      on-line shopping spree would typically be a stateful session bean with
+      the shopping cart content as well as later on the payment method and delivery
+      address details being part of the state of the session bean.
+    </para>
+    <note><para>
+      <emphasis>To preserve state and identity across deactivations and reactivations, 
+      stateful session beans must be serializable</emphasis>. The state is typically 
+      serialized onto a file or onto a blob in a database.
+    </para></note>
+  </section>
+    
+</section>

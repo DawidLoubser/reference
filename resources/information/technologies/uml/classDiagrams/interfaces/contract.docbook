@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2006-03-10 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Using a UML interface to specify a services contract</title>
+
+    <para> One can view an interface as the core of a services contract. To complete the services
+        contract one needs to specify the pre- and post-conditions for each service as well as the
+        quality requirements (either at a per-service level or for the
+        service provider as a whole)
+        and the requirements for the exchanged value objects. These can all be packaged within a
+        single contract package. </para>
+
+    <para> In order not to violate substitutability, a service provider who claims to realize the
+        contract must <itemizedlist>
+            <listitem>
+                <para> provide realizations for all services specified in the contract, </para>
+            </listitem>
+            <listitem>
+                <para> may not add further pre-conditions other than those allowed in the contract
+                    specification (pre-conditions may be reduced but not increased), </para>
+            </listitem>
+            <listitem>
+                <para> must realize at least the post-conditions as specified in the contract
+                    (post-conditions may be increased, but not reduced), and </para>
+            </listitem>
+            <listitem>
+                <para> must provide the services with at least the minimum qualities required by the
+                    contract. </para>
+            </listitem>
+        </itemizedlist>
+        <note>
+            <para> If no pre-conditions are specified, then the service needs to be provided
+                unconditionally. </para>
+        </note>
+    </para>
+
+    <section>
+        <title>Example: a services contract for a caterer</title>
+        <para> As an example, consider the simple services contract for a caterer shown in <xref
+                linkend="technology.uml.classDiagram.interface.caterer_fig"/>. </para>
+
+        <figure xml:id="technology.uml.classDiagram.interface.caterer_fig">
+            <title>A simple services contract for a caterer</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="./caterer.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+
+        <para> The caterer must be able to provide lunch orders and account statements. The business
+            processes of the client are such that the lunch requests are obtained at least 3 hours
+            before delivery is required and the client pays invoices weekly. Hence, the client is
+            happy to accept the if the order is not placed at least 3 hours prior to delivery or if
+            invoices older than 7 days have not been settled, the caterer may refuse the service
+            request and it would not imply a breach of contract. </para>
+        <para> Furthermore, the client requires lunches for up to 40 people and that at least 95% of
+            the orders placed are delivered within 15 minutes of the requested delivery time. </para>
+        <para> Any service provider which can realize the caterer contract, guaranteeing that the
+            specified pre- and post-conditions and quality requirements are met would be pluggable.
+            The client can switch from one to another without having to make any changes to their
+            business or system processes. </para>
+    </section>
+    
+    <section>
+        <title>Example: a message sender</title>
+        <para> 
+           The message sender service cpontract shown in <xref
+           linkend="technology.uml.classDiagram.interface.messageSenderServiceContract_fig"/>
+            requires two services to be provided by message senders. The <literal>sendMessage</literal>
+            service has a number of pre and post-conditions as well as quality requirements. The second,
+            reporting service needs to be provided unconditionally. It has no post conditions beyond that of
+            having to provide the return value which contains the report and no quality requirements
+            are specified.
+        </para>
+        
+        <figure xml:id="technology.uml.classDiagram.interface.messageSenderServiceContract_fig">
+            <title>A services contract for a message sender</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="./messageSenderServiceContract.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    </section>    
+
+</section>

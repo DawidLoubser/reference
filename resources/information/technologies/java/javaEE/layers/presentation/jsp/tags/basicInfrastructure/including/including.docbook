@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Including Page Content</title>
+    <indexterm>
+        <primary>JSP</primary>
+        <secondary>including</secondary>
+    </indexterm>
+    
+    <para>
+        A very common requirement for all but the most basic web applications is that of <emphasis>including</emphasis>
+        the content of common, shared pages across multiple other pages. This includes:
+        <itemizedlist>
+            <listitem>
+                <para>Site menus</para>
+            </listitem>
+            <listitem>
+                <para>Headers and Footers</para>
+            </listitem>
+            <listitem>
+                <para>Common regions of text, documentation, or other content</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        There are two mechanisms for including local content in a JSP,
+        <itemizedlist>
+            <listitem>
+                <formalpara>
+                    <title>jsp:include</title>
+                    <para>Includes (at runtime) the <emphasis>output</emphasis> of a resource (such as a JSP fragment, Servlet, or static content)</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>jsp:directive.include</title>
+                    <para>Statically includes (at compile time) the source of another page (Rarely used)</para>
+                </formalpara>
+            </listitem>
+            
+            <!-- external URL -->
+            
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>The Include Action</title>
+        <para>
+            The Include Action is commonly used to componentise (and re-use) common page elements. At runtime, each include
+            results in a <literal>RequestDispatcher.include(...)</literal> call:
+        </para>
+        <programlisting language="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.w3.org/1999/xhtml 
+      http://www.w3.org/MarkUp/SCHEMA/xhtml11.xsd"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page">
+    
+    <jsp:directive.page contentType="application/xhtml+xml" />
+    
+    <head>
+        <title>Order Confirmation</title>
+    </head>
+    <body>
+        <jsp:include page="/common/header.jspx"/>
+        <jsp:include page="/common/menu.jspx"/>
+        
+        <h1>Thank you</h1>
+        
+        <p>Thank you for placing your order. Your tracking 
+        number is ${orderConfirmation.trackingNo}, and we 
+        estimate that it will arrive at your shipping location 
+        on ${orderConfirmation.shipping.arrivalEstimate}.</p>
+        
+        <jsp:include page="/common/footer.jspx"/>
+    </body>
+</html>
+]]></programlisting>
+        <note>
+            <para>
+                In the example above, the menu may dynamically alter its own output based on the security role of the
+                requestor, or Servlet Filters may intercept the calls to the header, menu or footer.
+            </para>
+        </note>
+    </section>
+    
+    <!-- TODO: Discuss whether this sort of include ever makes sense over the run-time include
+    <section>
+        <title>The Include Page Directive</title>
+        <para>
+            The include directive (often referred to as a <quote>static include</quote>) is used to include the <emphasis>source</emphasis>
+            of an indicated page into a higher-level JSP at compilation time. This inclusion thus only happens once - at run-time, no further
+            requests are made to the included resources, as they have effectively been <quote>copied</quote> to the containing page.
+        </para>
+        <programlisting language="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.w3.org/1999/xhtml 
+      http://www.w3.org/MarkUp/SCHEMA/xhtml11.xsd"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page">
+    
+    <jsp:directive.page contentType="application/xhtml+xml" />
+    
+    <head>
+        <title>Order Confirmation</title>
+    </head>
+    <body>
+    
+        <jsp:directive.include file="/common/header.jspx"/>
+        
+        <h1>Thank you</h1>
+        
+        <p>Thank you for placing your order. Your tracking 
+        number is ${orderConfirmation.trackingNo}, and we 
+        estimate that it will arrive at your shipping location 
+        on ${orderConfirmation.shipping.arrivalEstimate}.</p>
+    </body>
+</html>
+            ]]></programlisting>
+    </section>
+    -->
+</section>

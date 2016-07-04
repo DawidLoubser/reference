@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE chapter SYSTEM "file:/usr/share/sgml/db42xml/docbookx.dtd"-->
+<section id="resources.information.technologies.c.fundamentals.yourFirstCApp"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Your first C application</title>
+   <para>
+        In this section we write a simple HelloWorld application in C, compile it and run it.
+   </para>
+   <example><title>helloWorld.c</title>
+       <programlisting role="C" linenumbering="numbered">
+           <xi:include href="source/helloWorld.c" parse="text"/>
+       </programlisting>
+   </example>   
+  
+   <para>
+     We shall discuss some of the elements in more detail later but for now our application has the following
+     elements:
+     <itemizedlist>
+       <listitem><formalpara><title>A comment block.</title>
+         <para>
+           Comment blocks start with a <command>/*</command> and ends with a 
+           <command>*/</command>.
+           Note that some compilers support the <command>//</command> remainder-of-line comment
+           introduced in <emphasis>C++</emphasis> and supported in languages like <emphasis>Java</emphasis>,
+           but this is not part of the ANSI-<emphasis>C</emphasis> standard and should hence be avoided.
+         </para>  
+       </formalpara></listitem>
+       <listitem><formalpara><title>Importing the standard I/O library.</title> 
+         <para>
+           This is done via an <command>include</command> statement which includes the
+           header files providing the compiler with the information of the functions 
+           exported by that library. We shall discuss header files in more
+           detail later in the book.
+         </para></formalpara></listitem>
+      <listitem><formalpara><title>The function main.</title>
+         <para>
+           The first line in the <command>main</command> function is is the starting point 
+           of the application.  The function which has to take an integer reporting the
+           number of command-line parameters and a pointer to a character array for the
+           actual command line parameters as arguments.
+         </para></formalpara></listitem>  
+     </itemizedlist>
+   </para>
+   
+   <section><title>Compiling the application</title>
+     <para>
+       To compile the application under <emphasis>Linux</emphasis> you simply type
+   <programlisting>
+cc -ansi -Wall -o helloWorld helloWorld.c
+   </programlisting>
+         which invokes the GNU-<emphasis>C</emphasis> compiler with the language option, 
+         <command>-x</command>, set to <command>c</command> specifying 
+         <emphasis>C</emphasis>source code, the option, <command>-ansi</command>
+         requesting validation against the ANSI-C spec, the option <command>-Wall</command>
+         which requests that all warning should be reported and the <command>-o helloWorld</command> option
+         which requests that the compiled and linked application should be stored in the executable 
+         <command>helloWorld</command>.  The final command-line argument is the source file itself.
+     </para>  
+     
+     <para>
+       A shorthand alternative is
+   <programlisting>
+cc -ansi -Wall -o helloWorld helloWorld.c
+   </programlisting>
+       <figure>
+           <title>The steps of the compilation process.</title>
+           <graphic format="JPG"  fileref="compilation.jpg"/>
+       </figure>  
+         
+       By default the compiler will perform the following steps
+       <itemizedlist>
+         <listitem><para>
+                     a <emphasis>pre-processing step</emphasis> which expands any macros,
+                     including the <command>#include</command> pre-compiler directives.
+                   </para></listitem>
+         <listitem><para>a <emphasis>compilation step</emphasis> which typically includes at least two parses
+                          in order to resolve forward references and generates the mapping of the <emphasis>C</emphasis>
+                          code onto assembly language,</para></listitem>
+         <listitem><para>an <emphasis>assembly step</emphasis> which translates the assembler code into
+                          machine code generating and object file and finally</para></listitem>                              
+          <listitem><para>a <emphasis>linkage step</emphasis> which links the binary code fragments 
+                          icluding system and user libraries and user object files into a single
+                          executable.</para></listitem>                
+       </itemizedlist>
+     </para>   
+   </section>
+   
+   <section><title>Running the application</title>
+     <para>
+         To run the compiled application on <emphasis>Linux</emphasis> or <emphasis>Unix</emphasis>-based
+         systems you simply type <command>./helloWorld</command> and
+         to run the executable on <emphasis>Windows</emphasis> type in <command>helloWorld</command>
+         followed by the <command>enter</command> key.
+     </para>
+   </section>
+</section>

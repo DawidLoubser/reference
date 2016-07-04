@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.design.patterns.classical.creational.abstractFactory.implementationGuidelines"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Implementation guidelines</title>
+  <para>
+    The implementation of the abstract factory pattern is a straight forward mapping of the
+    UML diagrams onto the implementation language of your choice.
+    <itemizedlist>
+      <listitem><formalpara>
+        <title>The factory itself should be made a singleton.</title>
+        <para>
+          Typically it is sufficient and often desirable that all instantiation of classes from
+          a particular family of classes is done through a single instance of a concrete realization 
+          of an abstract factory.
+        </para>
+      </formalpara></listitem>
+      <listitem><formalpara>
+        <title>You can specify the factory to be used in a properties file</title>
+        <para>
+          To exchange one family of classes with another (<abbrev>e.g.</abbrev> one
+          concrete realization of a framework with another) it may be sufficient to
+          to read the name of the concrete family to be used from a properties file. The
+          concrete factory which produces the concrete products can then be instantiated
+          via something like
+          <programlisting><![CDATA[
+ java.lang.reflect.Method getInstance
+   = Class.forName("concreteFactoryName").getMethod("getInstance", null);          
+   
+// No invoke getInstance on a null object with no arguments in order
+// to request obtain a handle to the singleton for the factory:
+AbstractFactory factory = (AbstractFactory)getInstance.invoke(null,null);
+          ]]></programlisting>
+          The above code extract
+          <orderedlist>
+            <listitem><para>
+              instantiates a class descriptor for the concrete factory from the class name 
+              which may have been provided in a properties file,
+            </para></listitem>
+            <listitem><para>
+              Requests the <literal>getInstance</literal>  method as an object
+              via Java's reflection mechanism
+              (this method is the class service for obtaining a handle to the singleton, see
+              <xref linkend="resources.information.concepts.design.patterns.classical.creational.singleton.singleton"/>),
+            </para></listitem>
+            <listitem><para>
+              invokes that service directly without providing a handle to an instance (after all, 
+              this is a class service) and without providing any parameters,
+            </para></listitem>
+            <listitem><para>
+              and keeps an abstract factory interface handle  to the concrete factory instance
+              obtained in this way.
+            </para></listitem>
+          </orderedlist>
+          <note>
+            <para>
+              No code changes need to be made to switch between concrete realizations
+              of a framework.  It is sufficient to change the class name for the concrete factory
+              of choice in a properties file.
+            </para>
+          </note>
+          
+        </para>
+      </formalpara></listitem>
+    </itemizedlist>  
+  </para>
+</section>

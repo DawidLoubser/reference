@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author Dawid Loubser -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.newIO.channels.file.exercises.basic">
+    
+    <title>Basic FileChannel Exercises</title>
+    
+ 
+    <section>
+        <title>Buffer Re-use</title>
+        <para>
+            Use channels and one small buffer to make a copy of a file. The buffer size should be
+            smaller than the file being copied, i.e. use a 100-byte buffer to copy a large file.
+            An understanding of the Buffer fields (<literal>size</literal>, <literal>position</literal>,
+            <literal>limit</literal>) is essential. The basic sequence will be along the following lines:
+            <itemizedlist>
+                <listitem><para>Establish the two channels, and the single buffer</para></listitem>
+                <listitem><para>Repeatedly fill the buffer with source data, flip it,
+                and write it to the destination</para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>File Doubler</title>
+        <para>
+            Write a small program that takes two filenames. It should write the contents
+            of the first file into the second file two times, thereby doubling the file.
+            (For some file formats, of course, the second file will no longer be valid)
+            The program should also time how long the operation takes internally.
+            ( <literal>System.currentTimeMillis()</literal> may be useful).
+        </para>
+    </section>
+    
+    <section>
+        <title>Sound file amplification</title>
+        <para>
+            As an unrealistic simplification, consider an uncompressed PCM audio file (CD Audio) being stored simply as a sequence numbers.
+            Write a program which, using channels and buffers, generates a "random" audio file. It should consist
+            of an arbitrary number of <literal>double</literal> values (samples), each one between <literal>0.0</literal> and 
+            <literal>1.0</literal> in value.
+        </para>
+        <para>
+            Let's presume the audio file can be amplified by increasing the value of the samples. Write a program to process
+            your fictitious audio file, raising the volume by a given factor. The values may never exceed 1.0, however. Make
+            use of the following:
+            <itemizedlist>
+                <listitem>
+                    <para>A read/write memory-mapped file for the audio file</para>
+                </listitem>
+                <listitem>
+                    <para>A <literal>DoubleBuffer</literal> as a "view" onto the audio data, obtained
+                    via <literal>ByteBuffer.asDoubleBuffer()</literal></para>
+                </listitem>
+                <listitem>
+                    <para>Use <literal>mark()</literal>, <literal>reset()</literal>, and other related
+                    methods to process the sound file with a single pass through the data.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Write a small music player application to play back your audio file in stereo. (No, just kidding)
+        </para>
+    </section>
+</section>

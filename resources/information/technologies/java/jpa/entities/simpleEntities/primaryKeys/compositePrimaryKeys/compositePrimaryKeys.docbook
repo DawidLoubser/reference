@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Primary key classes (composite keys)</title>
+    <para>
+        The JPA specification supports composite keys via primary key classes. A primary key class is
+        defined as an embeddable class whose properties form the primary key fields. It must have a
+        default constructor as well as setters and getters for the primary key fields.
+    </para>
+    
+    <section>
+        <title>Interface for the primary key class</title>
+        <para>
+            <programlisting language="Java"><![CDATA[
+package za.co.solms.partsCatalog;
+
+/**
+ * Interface for a part identifier.
+ */
+public interface PartId
+{
+  public String getCode();
+  
+  public String getManufacturerId();
+  
+  public interface Mutable extends PartId
+  {
+    public void setCode(String newCode);
+    
+    public void setManufacturerId(String newManufacturer);
+  }
+}            
+         ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Implementation of a primary key class</title>
+        <para>
+            <programlisting language="Java"><![CDATA[
+package za.co.solms.partsCatalog;
+
+import java.io.Serializable;
+import javax.persistence.Embeddable;
+import za.co.solms.partsCatalog.PartId;
+
+/**
+ * Primary key class for part id which has been annotated as
+ * embeddable such that it can be used as the primary key class
+ * for an entity persisted via an JPA entity manager.
+ */
+@Embeddable
+public class PartPK implements PartId.Mutable, Serializable
+{
+  public PartPK(String code, String manufacturerId)
+  {
+    setCode(code);
+    setManufacturerId(manufacturerId);
+  }
+  
+  protected PartPK(){}
+  
+  public void setCode(String newCode)
+  {
+    this.code = newCode;
+  }
+
+  public void setManufacturerId(String newManufacturer)
+  {
+    this.manufacturerId = newManufacturer;
+  }
+
+  public String getCode()
+  {
+    return code;
+  }
+
+  public String getManufacturerId()
+  {
+    return manufacturerId;
+  }
+  
+  private String code, manufacturerId;
+  private static final long serialVersionUID=200609211600L;
+}
+         ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Entity bean using the primary key class</title>
+        <para>
+            <programlisting language="Java"><![CDATA[
+package za.co.solms.partsCatalog;
+
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+
+@Entity
+public class PartBean implements Part.Mutable
+{
+  
+  public PartPK getPartId() {return partPk;}
+
+  public String getDescription() {return description;}
+
+  public String getName() {return name;}
+
+  public void setDescription(String newDescription)
+  {
+    this.description = newDescription;
+  }
+
+  public void setName(String newName) {this.name = newName;}
+
+  public void setPartId(PartId newPartId)
+  {
+    this.partPk = new PartPK(newPartId.getCode(), newPartId.getManufacturerId());
+  }
+
+  @EmbeddedId
+  private PartPK partPk;
+  private String name, description;
+}
+         ]]></programlisting>
+        </para>
+    </section>
+    
+</section>
+

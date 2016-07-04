@@ -1,0 +1,48 @@
+<project name="unitConverterService">
+	
+	<!-- The WSDL contract which our provider implements -->
+	<property name="wsdl" value="wsdl/unitconverter-soap.wsdl"/>
+	
+	<!-- The client test app to run -->
+	<property name="server.start.app" value="my.service.StartServer"/>
+	
+	<!-- Class path for running e.g. test apps -->
+	<path id="class.path.run">
+		<fileset dir="resources/runtime" includes="*.jar"/>
+		<pathelement location="build"/>
+	</path>
+	<!-- Class path for compilation -->
+	<path id="class.path.build">
+		<fileset dir="resources/build" includes="*.jar"/>
+		<path refid="class.path.run"/>
+	</path>
+	
+	<!-- Declare JAX-WS WSDL-to-Java compiler task -->
+	<taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport"
+		classpathref="class.path.build"/>
+	
+	
+	<target name="import-wsdl" 
+		description="Generates Java artifacts from the web srvices contract">
+		<wsimport wsdl="${wsdl}" sourcedestdir="source"
+			xnocompile="true" verbose="true"/>
+	</target>
+	
+	<target name="run-server" description="Starts up a simple lightweight endpoint"
+		depends="compile">
+		<java classname="${server.start.app}" fork="true" classpathref="class.path.run"/>
+	</target>
+	
+	<target name="compile">
+		<mkdir dir="build"/>
+		<javac srcdir="source" destdir="build" debug="true" classpathref="class.path.build"/>
+		<copy todir="build">
+			<fileset dir="source" excludes="**/*.java"/>
+		</copy>
+	</target>
+	
+	<target name="clean" description="Removes generated resources">
+		<delete dir="build"/>
+	</target>
+	
+</project>

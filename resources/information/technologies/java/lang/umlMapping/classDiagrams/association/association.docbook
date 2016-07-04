@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-01-16 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>Mapping UML Association to Java</title>
+
+    <figure>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="RetailOutlet.png"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+
+    <para>An association is usually implemented in Java as a simple object reference.
+        Thus, if each retail outlet has an association to a region, then we simply have
+        <programlisting language="Java">
+<xi:include parse="text" href="RetailOutlet.java"/>
+        </programlisting>
+    </para>
+    <para>
+        We may also call this form of association <quote>Strong association</quote>, as we have
+        a strongly-typed reference that we can immediately navigate across.
+    </para>
+
+    <section>
+        <title>Weak association</title>
+        <para>
+            In certain cases, we want to represent an even weaker association to an object that is not
+            immediately available in the Java VM. In such cases, we cannot simply navigate to the object
+            by following the object reference - we would first need to <emphasis>look up</emphasis> the
+            object. The typical way of handling this would be to have an object reference to the
+            <emphasis>unique identifier</emphasis> of the object that we have an association to,
+            for example:
+            <programlisting language="Java">
+<xi:include parse="text" href="RetailOutletWithWeakAssociation.java"/>
+            </programlisting>
+        </para>
+        <para>
+            The best strategy needs to be evaluated on a case-by-case basis, depending on the
+            nature of the implementation architecture. As with most strongly-typed languages, when
+            we use a weak association, we completely lose the <emphasis>type</emphasis> information
+            of the class that we have an association to.
+        </para>
+        <para>
+            With a normal object reference, to get the name of the region we can simply write
+            <programlisting language="Java">
+RetailOutlet outlet = getFromSomewhere();
+String regionName = outlet.getRegion() != null ?
+                         outlet.getRegion().getName() :
+                         null;
+            </programlisting>
+        </para>
+        <para>
+            If we implemented a weak association, we would have to perform a lookup (and deal with the
+            service being refused, etc) like so:
+            <programlisting language="Java">
+RetailOutlet outlet = getFromSomewhere();
+String regionName = null;
+try
+{
+  // Lookup region
+  regionName = regions.getRegion( outlet.getRegionId() ).getName();
+}
+catch (NoSuchRegion e)
+{
+  // Decide what to do...
+}
+            </programlisting>
+        </para>
+    </section>
+
+</section>

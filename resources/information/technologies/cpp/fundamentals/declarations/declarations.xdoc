@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE section SYSTEM "file:/usr/share/sgml/docbook/xml-dtd-4.1.2/docbookx.dtd">
+<section id="resources.information.technologies.cpp.fundamentals.declarations.declarations"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title> Declarations</title>
+  <para> There are 5 basic data types<indexterm role="printindex"/> and 5 qualifiers in <informalequation>
+      <graphic fileref="cpp2x.gif"/>
+    </informalequation>. These are shown in figure<ulink url="#x1-70021"/>. </para>
+  <figure>
+    <title/>
+    <blockquote>
+      <para/>
+      <section role="center">
+        <title/>
+        <para>
+          <graphic width="72.26999pt" fileref="BasicCPP/Figures/Primitives.pdf"/>
+        </para>
+      </section>
+      <blockquote role="caption">
+        <title role="caption"> Figure 1.1</title>
+        <para>The qualifiers can be combined with the primitive types to specify new primitive types.</para>
+      </blockquote>
+    </blockquote>
+  </figure> The data type <literal>char</literal> is a single byte, big enough to hold a single
+  character. The qualifiers and the basic types can be combined. For example, one can have
+    <![CDATA[
+ unsigned int i = 120, j;
+ 
+ int k;
+ 
+ long double  x, y, z = 21.2345677;
+ 
+ enum vehicle {bicycle, car, bus, truck, unknown=99} verhicle1, verhicle2;
+]]><para>Here
+    <literal>i</literal> and <literal>j</literal> are unsigned integer variables and
+    <literal>i</literal> is initialized to <informalequation>
+      <graphic fileref="cpp3x.gif"/>
+    </informalequation>. <literal>k</literal> is an integer variable (per default <literal> unsigned
+    short</literal>), and <literal>x, y</literal> and <literal>z</literal> are long double precision
+    variables (on the IBM-PC usually 80 bits long ranging between <informalequation>
+      <graphic fileref="cpp4x.gif"/>
+    </informalequation> to <informalequation>
+      <graphic fileref="cpp5x.gif"/>
+    </informalequation> with an accuracy of about 21 decimal digits). The size of any data type can
+    be obtained with the <informalequation>
+      <graphic fileref="cpp6x.gif"/>
+    </informalequation>-function<literal>sizeof(datatype)</literal>. <indexterm role="printindex"/>
+  </para>
+  <para>
+    <literal>verhicle1</literal> and <literal>verhicle2</literal> are enumeration variables
+      <indexterm role="printindex"/> which can only take one of the values
+    <literal>bicycle</literal>, <literal>car</literal>, <literal>bus</literal> and
+    <literal>truck</literal> or unknown. Enumeration types <indexterm role="printindex"/> are really
+    named integer constants. In the above example the compiler assigns <literal>bicycle=0</literal>,
+    <literal>car=1</literal>, <literal>bus=2</literal>,<literal>truck=3</literal> and
+    <literal>unknown=99</literal>. Note that <literal>vehicle</literal> is a new data type and
+    variables of that type can be declared like any other variable type:
+    </para><![CDATA[
+ vehicle verhicle3;
+]]><para>Variables of any data type can be declared
+    constant: </para><![CDATA[
+ const long double  pi = 3.1415926535897932;
+]]><para>If a certain
+    variable should always remain constant it should be declared so. This enables the compiler to
+    report any violation of the constantness and thus enhances program integrity. </para>
+  <section>
+    <title> Type-casting</title>
+    <para/>
+    <section>
+      <title> Implicit type-casting</title>
+      <para> The fundamental data types can be mixed freely in assignments and expressions. In
+        arithmetic expressions the types are converted as to loose as little information as
+        possible. If either of the operands has higher resolution, then the other operand is
+        automatically converted to the higher resolution. For example adding a
+        <literal>float</literal> and a <literal>long double</literal> causes
+        the<literal>float</literal> to be converted to a <literal>long double</literal> and the
+        result is a <literal>long double</literal>. Similarly, integral data types are promoted to
+        the type with the largest range and if mixing integral and floating point data types then
+        the integral data type is promoted to a floating point. Hence, adding
+        an<literal>int</literal> to a <literal>double</literal> causes the <literal>int</literal> to
+        be converted to a <literal>double</literal> and the result is a<literal>double</literal>.</para>
+      <para> We can also assign any fundamental data type to any other fundamental data type. If we
+        assign a <literal>float</literal> to a <literal>double</literal> the extra resolution is
+        simply padded by zeros. The other way around we will, of course, necessarily loose
+        resolution (the least significant digits will be truncated).</para>
+      <para> Similarly, assigning an integral data type to a floating point data type is no problem.
+        The decimal digits are simply set to zero. The other way around results in the truncation of
+        the decimal digits.</para>
+      <para/>
+    </section>
+    <section>
+      <title> Explicit type casting</title>
+      <para> In some cases it is necessary to type-cast explicitly. For example
+        </para><![CDATA[
+ double x = 2/3;
+]]><para>sets <literal>x</literal> to zero since division
+        has presedence over assignment and the two data types participating in the division are both
+        integral data types -- hence integer division is used, yielding zero. In this case one would
+        explicitely type-cast one of the integers to a<literal>double</literal>:
+        </para><![CDATA[
+ double x = (double)x/3;
+]]><para>C++ supports two notations for
+        type-casting. The traditional <informalequation>
+          <graphic fileref="cpp7x.gif"/>
+        </informalequation>-cast shown above and the functional notation
+        </para><![CDATA[
+ double x = double(x)/3;
+]]><para> The <informalequation>
+          <graphic fileref="cpp8x.gif"/>
+        </informalequation> type-casting notation has the advantage that it also works with
+        non-simple type names:
+        </para><![CDATA[
+ long double x = long double(x)/3;   // compiler generates error
+ 
+ long double x = (long double)x/3;   // no problem
+]]><para>
+        Similarly, pointers (see later in this chapter) have to type-cast with the <informalequation>
+          <graphic fileref="cpp9x.gif"/>
+        </informalequation>-cast.</para>
+      <para> In later chapters we shall show how you can support implicit and explicit type-casting
+        for your own data types (classes).</para>
+      <para/>
+    </section>
+    <section>
+      <title> Identifier names</title>
+      <para> The name of an identifier (e.g. a variable, a constant or a function) consists of a
+        sequence of letters, digits and underscore-characters. The first character may not be a
+        digit. C++ does not impose a limit on the name-length. Some compiler may however impose such
+        a limit. A C++ keyword may of course not be used for an identifier name.</para>
+      <para> Examples of legal identifier names are
+        </para><![CDATA[
+ street_name    x    X    _X    x_    OS_2
+]]><para>On the other hand, the
+        following names are not legal identifier names: </para><![CDATA[
+ street-name    1x    OS/2    $system    first.name
+]]><para/>
+    </section>
+    <section>
+      <title> Reference types</title>
+      <para> Reference types allow us to access the same object by different names -- i.e. a
+        reference is an alias for an object of a specified type. Consider the following code
+        snippet:
+        </para><![CDATA[
+ int  i = 3;
+ int&amp; ir = i;   // Reference to the variable i
+ ir = 5;
+ cout << i;     // Prints 5 on the screen
+]]><para>After
+        assigning the reference variable <literal>ir</literal> to <literal>i</literal>, bot
+        <literal>i</literal> and <literal>ir</literal> use the same memory location. Changing the
+        one will change the other.</para>
+      <para> We can make the reference as such a constant via <literal>const int&amp; ir =
+        i;</literal>. This will fix <literal>ir</literal> such that it will always use the same
+        memory area as the object <literal>i</literal>. Alternatively, we can have a reference to a
+        constant object:
+        </para><![CDATA[
+ const double pi = 3.1415926;
+ double&amp; ref = pi;   // Reference to the variable i
+]]><para>Now,
+        as long as <literal>ref</literal> is a reference to <literal>pi</literal>, neither
+        <literal>pi</literal> nor <literal>ref</literal> may be changed. We can of course reassign
+        the reference variable to be an alias for another <literal>double</literal> object via, for
+          example,<literal>ref = x;</literal>. Finally we can have a constant reference point to a
+        constant object as in the following example
+        </para><![CDATA[
+ const double pi = 3.1415926;
+ const double&amp; pi2 = pi;   // Reference to the variable i
+]]><para>
+        We shall see that reference types are closely related to pointer types. Furthermore,
+        reference variables are very important for function arguments (see section ??).</para>
+      <para/>
+    </section>
+  </section>
+</section>

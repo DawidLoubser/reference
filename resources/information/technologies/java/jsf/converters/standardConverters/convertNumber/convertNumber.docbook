@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The number converter</title>
+    <para>
+        Number converters provide a flexible converter for converting numbers including
+        percentages, currencies and numbers with thousands separators to floating point
+        numbers.
+    </para>
+    <para>
+        For example, if one wants to specify that the ticket price for a show is in
+        South African Rand, one could specify the following number converter
+        <programlisting language="xml"><![CDATA[
+<h:inputText value="#{bookTicketsBinding.presentation.price}">
+    <f:convertNumber currencySymbol="R" type="currency"
+        groupingsUsed="#{true}" maxFractionDigits="2"/>
+</h:inputText>
+            ]]></programlisting>
+    </para>
+    <para>
+        The <literal><![CDATA[<f:convertNumber>]]></literal> tag has the following potential
+        attributes:
+        <itemizedlist>
+            <listitem><formalpara>
+                <title>type</title>
+                <para>
+                    The default is <literal>number</literal>, but it can be changed to
+                    either <literal>percentage</literal> or <literal>currency</literal>.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>minIntegerDigits and maxIntegerDigits</title>
+                <para>
+                    The minimum and maximum number of digits before the decimal point.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>minFractionDigits and maxFractionDigits</title>
+                <para>
+                    The minimum and maximum digits after the decimal point.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>currenctSymbol and currencyCode</title>
+                <para>
+                    The symbol and code used for the currency like <literal>$</literal> or
+                    <literal>R</literal> and <literal>USD</literal> or <literal>ZAR</literal>.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>groupingUsed</title>
+                <para>
+                    This boolean attribute specifying whether grouping symbols like commans or spaces
+                    are used - the default value for this attribute is <literal>true</literal>.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>locale</title>
+                <para>
+                    The locale to be used for the number pattern. It can be specified as a locale
+                    string like <literal>en-za</literal> or <literal>fr-ca</literal> or via an
+                    expression which resolves a locale object, e.g.
+                    <literal><![CDATA[#{session.locale}]]></literal>.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>pattern</title>
+                <para>
+                    Instead of a combination of the above attributes, one can also specify the
+                    number format via a number format pattern. For example
+                    <literal>pattern="#.##0.00"</literal>
+                </para>
+            </formalpara></listitem>
+        </itemizedlist>
+    </para>
+</section>    

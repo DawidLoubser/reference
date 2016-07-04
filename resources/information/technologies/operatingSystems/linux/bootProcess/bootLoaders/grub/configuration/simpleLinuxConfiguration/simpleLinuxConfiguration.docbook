@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Simple Linux configuration</title>
+    <para>
+        A simple linux configuration is straight-forward. You simply have an entry block per kernel you are booting.
+        Each boot record will specify
+        <itemizedlist>
+            <listitem><para>
+                a title under which it will be published in the GRUB boot menu,
+            </para></listitem>
+            <listitem><para>
+                the boot disk and partition, 
+            </para></listitem>
+            <listitem><para>
+                the kernel hosted on that boot partition which should be loaded for this entry, and
+            </para></listitem>
+            <listitem><para>
+                the Linux root directory which should be used.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        A boot partition is specified within brackets with the type of disk followed by the disk number followed by a comma and the
+        and the partition number on that disk with both, the disk and partition numbers being zero based.
+    </para>
+    <para>    
+        . For example
+        <programlisting><![CDATA[
+(hd2,0)            
+]]></programlisting>
+         specifies the first partition of the third physical drive which is a hard disk.      
+         The brackets are a must; all devices listed in GRUB menu must be enclosed in brackets. Instead of <literal>(hd)</literal>
+        you can use <literal>(fd)</literal> for floppy disks, <literal>(cd)</literal> for cdroms and <literal>(nd)</literal> for a 
+        network card (when booting of the flash drive hosted on the network card). Flash drives are also mapped onto a hard drive
+        number, e.g. <literal>(hd2)</literal>.
+        <note><para>
+            In GRUB-2 the partition numbering start with 1 while the disk numbering still start with zero.
+        </para></note>    
+    </para>
+    <para>
+        A typical GRUB-1 configuration file looks as follows:
+        <programlisting><![CDATA[
+default 0  # boot first entry by default
+timeout 30  # Wait 10 secs before booting default entry
+
+title Gentoo Linux 2.6.31-r6
+root (hd0,0)  #1st disk, 1st partition
+kernel /boot/kernel-2.6.31-gentoo-r6 root=/dev/sda3
+
+title Gentoo Linux 2.6.31-r6 (rescue)
+root (hd0,0)
+kernel /boot/kernel-2.6.31-gentoo-r6 root=/dev/sda3 init=/bin/bb
+
+title Windows XP
+rootnoverify (hd0,4)  # Windows on partition 5 of disk 1
+makeactive
+chainloader +1
+            ]]></programlisting>
+    </para>
+</section>

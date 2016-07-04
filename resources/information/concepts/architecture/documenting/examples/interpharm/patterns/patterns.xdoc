@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.concepts.architecture.documenting.examples.interpharm.architecture.patterns.patterns"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title role="Architectural patterns">Architectural patterns</title>
+  <para>
+    The proposed architecture aims to use proven architectural patterns in order to simplify the
+    high-level structure, achieving clean responsibility allocations, and realizing the quality
+    requirements.
+  </para>
+  
+  <section>
+    <title>Layering</title>
+    <para>
+      In order to reduce the dependencies within the system and provide a high level responsibility
+      allocation, the proposed architecture is in its core a layered architecture with the following
+      layers software layers:
+      <orderedlist>
+        <listitem><para>
+          Socket based connections layer which accepts raw socket connections and transforms the
+          transport layer protocol to HTTP. 
+        </para></listitem>
+        <listitem><para>
+          An HTTP request processor which extracts the XML messages and passes these on to the
+          business logic layer.
+        </para></listitem>
+        <listitem><para>
+          A business logic layer which
+          <itemizedlist>
+            <listitem><para>
+              demarshals the Superformat messages onto Java objects,
+            </para></listitem>
+            <listitem><para>
+              interfaces with persistent storage, and
+            </para></listitem>
+            <listitem><para>
+              applies the claim processing rules.
+            </para></listitem>
+          </itemizedlist>
+        </para></listitem>
+        <listitem><para>
+            a persistence layer with redundancy,         
+        </para></listitem>
+        <listitem><para>
+          a connectivity layer containing the connectors to the various medical aid
+          administrators which manage the connections and the administrator specific protocol
+          marshalling/demarshalling.
+        </para></listitem>
+      </orderedlist>
+    </para>
+    
+    <para>
+      These software layers are deployed across the following hardware layers:
+      <itemizedlist>
+        <listitem><para>
+          A layer of front-end socket connection acceptors supporting fail-over safety via redundant
+          machines which bring themselves up with the same IP address.
+        </para></listitem>
+        <listitem><para>
+          The HTTP request processing, business logic and connectivity layers are deployed onto a
+          single clustered hardware layer.
+        </para></listitem>
+        <listitem><para>
+          The persistence layer is  deployed onto a separate hardware layer supporting database
+          redundancy.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Pipes and filters</title>
+    <para>
+      The claims processing work flows are meant to be realized within a pipes and filters
+      architecture which supports easy customizations/changes and assembling of work flows from
+      processing elements. This aspect of the intended architecture is out of scope for this
+      iteration.
+    </para>
+  </section>
+  
+  <section>
+    <title>Broker</title>
+    <para>
+      The connector layer itself is architected around the broker architectural pattern which
+      ensures
+      <itemizedlist>
+        <listitem><para>
+          decoupling of clients from service providers,  and
+        </para></listitem>
+        <listitem><para>
+          encapsulating of network specific functionality within a bridge.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  
+</section>  

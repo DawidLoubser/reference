@@ -1,0 +1,107 @@
+\begin{verbatim}
+<project name="Loan Calculator Servlet" default="deploy" basedir=".">
+  <target name="init">
+    <tstamp/>
+  </target>
+
+  <!-- System environment valriables namespace -->
+  <property environment="env"/>
+
+  <!-- Application parameters -->
+  <property name="app.name" value="LoanCalculator"/>
+  <property name="app.version" value="1.0"/>
+
+  <!-- directories and classes-->
+  <property name="src.home" value="${basedir}/src"/>
+  <property name="web.home" value="${basedir}/web"/>
+  <property name="build.home" value="${basedir}/build"/>
+  <property name="dist.home" value="${basedir}/dist"/>
+  <property name="classes.home" value="${build.home}/WEB-INF/classes"/>
+  <property name="deploy.home" value="${env.JWSDP_HOME}/webapps/"/>
+<!--  <property name="deploy.home" value="${env.JWSDP_HOME}/webapps/${app.name}"/>-->
+
+  <property name="war-file" value="${app.name}.war"/>
+  <!-- Compiler options: -->
+  <property name="compile.debug" value="true"/>
+  <property name="compile.deprecation" value="true"/>
+  <property name="compile.optimize" value="true"/>
+
+  <path id="compile.classpath">
+    <fileset dir="${env.JWSDP_HOME}/common/lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <!-- Deleting application deployment and build directories. -->
+  <target name="clean" description="Delete old build and deploy directories">
+    <echo message="Deleting build and deploy directories...." />
+    <delete dir="${build.home}"/>
+    <delete dir="${dist.home}"/>
+  </target>
+
+  <!-- Compiles java source files to build dir and adds properties files -->
+  <target name="compile" depends="clean" description="Compile Java files">
+    <mkdir dir="${classes.home}"/>
+    <echo message="Compiling source files ..."/>
+    <javac srcdir="${src.home}" destdir="${classes.home}"
+           debug="compile.debug" deprecation="compile.deprecation"
+            optimize="compile.optimize">
+      <include name="**/*.java"/>
+      <classpath refid="compile.classpath"/>
+    </javac>
+    <!-- Copy any associated properties files -->
+    <copy todir="${classes.home}">
+      <fileset dir="${src.home}" includes="**/*.properties"/>
+    </copy>
+  </target>
+
+  <!-- adds static web pages, JSPs and web.xml deployment descriptor to build.dir -->
+  <target name="build" depends="compile" description="Deploy application to web container">
+    <echo message="Copying JSP and HTML files ..."/>
+    <copy todir = "${build.home}">
+      <fileset dir="${web.home}">
+        <include name="*.html"/>
+        <include name="*.jsp"/>
+      </fileset>
+    </copy>
+    <echo message="Copying deployment descriptor ..."/>
+    <copy todir="${build.home}/WEB-INF">
+      <fileset dir="${basedir}">
+        <include name="web.xml"/>
+      </fileset>
+    </copy>
+  </target>
+<!--
+  <target name="deploy" depends="build"
+           description="Deploy application resources to webapps">
+    <mkdir dir="${deploy.home}"/>
+    <echo message="Deploying to ${deploy.home} ..."/>
+    <copy todir="${deploy.home}">
+      <fileset dir="${build.home}"/>
+    </copy>
+  </target>
+-->
+  <target name="package" depends="build"
+      description="Packages the WAR file">
+      <echo message="Packaging the WAR...."/>
+      <delete dir="${dist.home}" />
+      <mkdir dir="${dist.home}" />
+      <jar jarfile="${dist.home}/${war-file}" >
+        <fileset dir="${build.home}" includes="WEB-INF/**" />
+        <fileset dir="${web.home}" includes="*.html" />
+        <fileset dir="${web.home}" includes="*.jsp" />
+      </jar>
+  </target>
+
+  <target name="deploy" depends="package"
+           description="Deploy application resources to webapps">
+    <mkdir dir="${deploy.home}"/>
+    <echo message="Deploying war to ${deploy.home} ..."/>
+    <copy file="${dist.home}/${war-file}" todir="${deploy.home}"/>
+    <chmod file="${deploy.home}/${war-file}" perm="ugo+rx" includes="*"/>
+    <!-- Makes WAR file in the ${deploy-dir} readable and
+         executable for anyone on a UNIX system. -->
+  </target>
+
+  </project>
+\end{verbatim}

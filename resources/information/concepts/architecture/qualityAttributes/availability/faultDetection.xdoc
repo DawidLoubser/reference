@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.architecture.qualityAttributes.availability.faultDetection"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Fault detection</title>
+  <para>
+    The tactics commonly used to detect faults include exceptions, ping/echo and
+    heartbeat and dead-lock detection.
+  </para>
+  
+  <section>
+    <title>Exceptions</title>
+    <para>
+      Exceptions are generally used by service providers to inform their clients
+      that a service they requested is not going to be provided. This may be because
+      <itemizedlist>
+        <listitem><para>
+          the preconditions for that service were not met, or  
+        </para></listitem>
+        <listitem><para>
+          that the service provider encountered a problem which prevented it to
+          provide the service.
+        </para></listitem>
+      </itemizedlist>
+      Exceptions provide thus a communication mechanism which enables service providers to
+      notify clients of a fault, <abbrev>i.e.</abbrev> to enable clients to detect faults.
+    </para>
+  </section>
+  
+  <section>
+    <title>Ping/echo</title>
+    <para>
+      This is often used by clients to probe whether a remote component is available. 
+      The client sends a signal expecting a response. If no response is obtained within a
+      predefined timeout period, a fault is detected.
+      </para>
+      <para>
+        In order to reduce the communication overheads a 
+        <emphasis>hierarchical ping/echo strategy</emphasis>
+        is often deployed which mirrors the layers of the client-server hierarchy. One object
+        pings thus only its immediate service providers which in turn pings its lower-level
+        service providers.
+        <note><para>
+          This approach also does not contribute to the complexity of the communication
+          network, <abbrev>i.e.</abbrev> no further communication paths are required
+          tan what were needed anyway to send the service request messages.
+        </para></note>
+      </para>
+  </section>
+  
+  <section>
+    <title>Heartbeat</title>
+    <para>
+      In the ping/echo approach the client actively sends signals to probe service providers
+      and waits for a response. The heartbeat tactic lets service providers send signals in
+      regular intervals which are detected by clients. If a signal is not received within a 
+      specific period, the client assumes that the service provider is down.
+    </para>
+    <note><para>
+      The heartbeat signal may carry further information like, for example, the current workload.
+    </para></note>
+  </section>
+  
+  <section>
+    <title>Deadlock detection</title>
+    <para>
+      A deadlock occurs when threads of wait on each other to release resource locks. It can
+      occur only if at least one thread requires the locks of multiple resources at the same time.
+    </para>
+  </section>
+  
+  
+  
+</section>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.tecnologies.java.lang.multiThreading.commonProblemsAndSomeSolutions.deadLocks">
+
+  <title>Deadlocks</title>
+
+  <para>A dead lock is a situation where two or more threads are blocked,
+    waiting for each other. A simple example is that of two threads trying
+    to acquire a monitor already owned by the other thread. This is
+    illustrated in the following example:</para>
+  <para>
+    <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" href="source/DeadLock.java"/><![CDATA[
+]]></programlisting>
+  </para>
+
+  <para>Here we have two threads, the one transferring from account 1 to
+    account 2, the other transferring from account 2 to account 1. The
+    dead lock arises when the first thread who has acquired the monitor
+    for account 1 is preempted before it acquires the monitor for account
+    2. The second thread then acquires the monitor for account 2 but
+    cannot continue because the monitor for account 1 is owned by thread
+    1. At this stage neither of the threads can continue because they are
+    waiting for each other to release the monitor.</para>
+
+  <para>Deadlocks arise when the monitor of one resource is acquired
+    before the monitor for any other resources is released. For example,
+    we can prevent the deadlock problem in our example by replacing the
+    client's <emphasis role="verb">run()</emphasis> method by the
+    following code:</para>
+
+  <para>
+    <programlisting><![CDATA[
+public void run()
+{
+  int i = 0;
+  while(true)
+  {
+    ++i;
+    synchronized(source) {source.debit(amount);}     
+    System.out.println(i + " #" + no + ": transferring " + amount);
+    synchronized(destination) {destination.credit(amount);}
+  }      
+}
+]]></programlisting>
+  </para>
+
+  <para>Now the monitor for account 1 is released before the monitor for
+    account 2 is acquired and no deadlock arises.</para>
+  
+  <xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    href="whenCanDeadLocksOccur.docbook"/>
+  
+  <xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    href="avoidingDeadlocksThroughAcquiringOnlyOneMonitorAtATime.docbook"/>
+  
+  <xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    href="avoidingDeadlocksThroughResourceOrdering.docbook"/>
+
+</section>

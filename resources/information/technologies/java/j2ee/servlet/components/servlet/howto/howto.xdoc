@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>How to write a Servlet</title>
+    <section>
+        <title>Writing the class</title>
+        <para>
+            If an HTTP Servlet is being written, simply extend <literal>javax.servlet.http.HttpServlet</literal> class, and
+            implement the life cycle methods you are interested in handling. Package the compiled Servlet in your web application's 
+            <literal>/WEB-INF/classes</literal> directory.
+          <programlisting language="java"><![CDATA[
+public class ProductSearchServlet extends javax.servlet.http.HttpServlet
+{
+  	  	  	    
+}
+            ]]></programlisting>
+        </para>
+      <para>
+        For example, to implement a Servlet which can handle both HTTP <literal>GET</literal>
+        and <literal>POST</literal> requests, the following services could be implemented:
+        <programlisting language="java"><![CDATA[
+public class ProductSearchServlet extends javax.servlet.http.HttpServlet
+{
+	public void doGet( HttpServletRequest request, HttpServletResponse response ) 
+	throws ServletException, IOException 
+	{
+	  // Logic to handle GET request
+	  //...
+	}
+	
+  public void doPost( HttpServletRequest request, HttpServletResponse response ) 
+	throws ServletException, IOException 
+	{
+	  // Logic to handle POST request
+	  //...
+	}  	  	  	  	  	    
+}
+          ]]></programlisting>
+      </para>
+    </section>
+    <section>
+        <title>Configuring the deployment descriptor</title>
+        <para>
+            A Servlet requires two entries in <literal>web.xml</literal> - one to declare the Servlet using a logical name,
+            and another to map URL path(s) to your Servlet. This decoupling allows one to change the implementation class
+            without having to reconfigure path mappings, or to map multiple paths to the same Servlet. Declaring a Servlet
+            is done as follows:
+            <programlisting><![CDATA[
+<servlet>
+    <servlet-name>productSearch</servlet-name>
+    <servlet-class>com.company.ProductSearchServlet</servlet-class>
+</servlet>
+            ]]></programlisting>
+        </para>
+        <para>
+            Thereafter, URIs (relative to the context root of the web application) can be mapped to the servlet, as
+            follows:
+            <programlisting><![CDATA[
+<servlet-mapping>
+    <servlet-name>productSearch</servlet-name>
+    <url-pattern>/products/search</url-pattern>
+</servlet-mapping>
+            ]]></programlisting>
+            In addition to literal URLs, wildcards can be used, such as:
+            <programlisting><![CDATA[
+<servlet-mapping>
+    <servlet-name>productSearch</servlet-name>
+    <url-pattern>/search/*</url-pattern>
+</servlet-mapping>
+            ]]></programlisting>
+            or
+            <programlisting><![CDATA[
+<servlet-mapping>
+    <servlet-name>svgRenderer</servlet-name>
+    <url-pattern>*.svg</url-pattern>
+</servlet-mapping>
+            ]]></programlisting>
+        </para>
+    </section>
+</section>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The business logic module</title>
+    <para>
+        The business logic module contains the domain objects and session-bean based services layers as well as
+        the unit testing for the business services. 
+    </para>
+    <para>
+        The POM specifies
+        <itemizedlist>
+            <listitem><para>
+                the module artifact id and packaging,
+            </para></listitem>
+            <listitem><para>
+                the parent project,
+            </para></listitem>
+            <listitem><para>
+                additional depedencies on <emphasis>Embedded Glassfish</emphasis> and
+                <emphasis>JUnit</emphasis>, both with <literal>test</literal> scope as both 
+                are required for unit testing the business logic layer, and
+            </para></listitem>
+            <listitem><para>
+                a specification requesting that the module should be built against the EJB 3.1 specification.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        In addition, we have a fudge which uses the Apache Ant plugin to copy the persistence descriptors.
+        This is required to make certain that we are using the persistence descriptor for the embedded
+        Derby database during unit testing and to copy the persistence descriptor for the production system
+        which is run against a PostgreSQL server back after unit testing:
+        <programlisting>
+<xi:include href="../../weatherBuro/businessLogic/pom.xml" parse="text"/>            
+        </programlisting>
+    </para>
+</section>    

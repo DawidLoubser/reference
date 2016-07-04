@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.messageDrivenBeans.introduction.introduction">
+
+    <title>Introduction</title>
+    <para>
+      For many application domains the synchronous service request-response model is unsatisfactory.
+      For example, when you place an order with one of your business partners you may be content
+      to submit the order to a message queue for processing at your business partner's convenience.
+      Your business process may now continue imemdiately, irrespective of whether the order has been
+      processed already (even if your business partner's systems are currently unavailable.)
+    </para>
+
+    <section>
+      <title>Support for JMS as a Managed Resource</title>
+      <para>
+        To address this the EJB specification requires that access to messaging
+        services which implement the Java Messaging Service (JMS) API must be supported via JMX --
+        <abbrev>i.e.</abbrev> the JMS must be managed by application servers as a 
+        managed resource. The messaging service is then looked up via JNDI, or injected via dependency
+        injection, just as would be any other resource, such as a database connection or an EJB.
+      </para>
+    </section>
+    
+    <section>
+      <title>Message-Driven Beans</title>
+      <para>
+        The EJB specification requires that application servers
+        support message driven beans (MDB)s. Message Driven Beans are enterprise beans which
+        process asynchronous service requests coming in from a JMS compliant messaging
+        service.
+      </para>
+    </section>
+    
+    <section>
+      <title>How does a Message-Driven Bean Work</title>
+      <para>
+        Unlike with typical service providers such as Session beans, clients do not send service requests directly to a
+        Message-driven bean. Instead, a message is sent to a messaging service which takes over the 
+        responsibility of delivering the service request to a service provider.
+      </para>
+      <para>
+        A message-driven bean (a Java class implementing the <literal>javax.jms.MessageListener</literal>
+        interface) is configured to receive messages from one or more messaging services, either
+        through configuration in a XML deployment descriptor, or (more commonly) by annotating it
+        with the <literal>javax.ejb.MessageDriven</literal> annotation.
+      </para>
+      <para>
+        All the benefits of the EJB component model, such as object pooling for high concurrency, 
+        continue to be applied.
+      </para>
+    </section>
+    
+    <section>
+      <title>Robustness features</title>
+      
+      <section>
+        <title>Guaranteed Message Delivery</title>
+        <para>
+          With guaranteed message delivery the MOM (Message-Oriented Middle ware) persists
+          your message to a database or some other persistent storage resource until 
+          <itemizedlist>
+               <listitem>
+                  <para>the message has been sent AND </para>
+               </listitem>
+               <listitem>
+                  <para>the message consumer has acknowledged consumption and successful processing of a
+                message OR </para>
+               </listitem>
+               <listitem>
+                  <para>until the message expires.</para>
+               </listitem>
+            </itemizedlist>
+        </para>  
+        <para>
+          If acknowledgement of receipt is not received within some set time period the
+          message is re-delivered.
+        </para>
+      </section>
+      
+      <section>
+        <title>Certified Message Delivery</title>
+        <para>
+          Certified message delivery is a special case of guaranteed message delivery where,
+          in addition to the steps followed for guaranteed message delivery, the message
+          originator is notified of the consumption of a message.
+        </para>
+      </section>
+      
+    </section>
+    
+    
+      
+  </section>

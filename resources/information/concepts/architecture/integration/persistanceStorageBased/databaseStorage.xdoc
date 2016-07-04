@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- FIXME: Needs substantial rework to fit within the conceptual framework laid out in the beginning of the course -->
+<section
+    id="resources.information.concepts.architecture.integration.persistanceStorageBased.databaseStorage"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Database Storage Integration</title>
+    <para>One of the best descriptions of database storage integration is that of triggers in a
+        database. These triggers are set to fire when a certain event occurs. The trigger can be
+        used to alert users that an event has taken place for example, or it could also be used to
+        dump a newer copy of the database to a specific location as well. This is entirely
+        customisable by the user for his/her specific enterprise requirements. 
+    </para>
+    <section>
+        <title>Database Triggers</title>
+        <para>Triggers offer database developers and administrators a tremendous degree of
+            flexibility. They are, quite simply, stored procedures that may be configured to
+            automatically execute when certain events take place.</para>
+        <para>All enterprise-level relational databases support triggers in one form or another.
+            We'll take a brief look at the syntax used by Microsoft SQL Server, but the basic
+            concepts in this article apply equally to Oracle databases. There are only some slight
+            differences in keywords and formatting. </para>
+        <figure>
+            <title>Triggers</title>
+            <graphic fileref="./triggers.gif"/>
+        </figure>
+        <para>Notice that triggers are stored in the database separate from their associated tables.
+            Triggers can be defined only on tables, not on views. However, triggers on the base
+            table(s) of a view are fired if an INSERT, UPDATE, or DELETE statement is issued against
+            a view. </para>
+        <para>The basic command used to create a new trigger is the CREATE TRIGGER statement. This
+            statement is followed by the details of when the trigger should fire. Triggers may be
+            associated with INSERT, UPDATE and DELETE events and may be used either INSTEAD OF or
+            AFTER the specified operation. Once you've specified the trigger criteria, you supply
+            the SQL statement that contains the trigger's payload. For example, if we wanted to
+            configure a simple trigger to send an e-mail to the president each time a record is
+            removed from the Orders table, we would use the following syntax: <programlisting><![CDATA[
+            CREATE TRIGGER OrderRemoved ON Orders
+            AFTER DELETE
+            AS
+            EXEC xp_sendmail 'info@solms.co.za','A record has been deleted.' 
+            ]]></programlisting>
+        </para>
+        <para>If you later get an angry phone call from someone on the info mailing list asking you
+            to stop sending him e-mail and decide to redirect your messages to the just the db
+            administrator, you could modify the trigger using the ALTER TRIGGER command, which has
+            the same basic syntax: <programlisting><![CDATA[
+                
+                
+                
+            ALTER TRIGGER OrderRemoved ON Orders
+            AFTER DELETE
+            AS
+            EXEC xp_sendmail 'dbAdmin@solms.co.za','A record has been deleted.' 
+            ]]></programlisting>
+        </para>
+        <para> If you forget the name of your trigger, you may obtain a list of all of the triggers
+            that fire based upon the Orders table by using the command: <programlisting><![CDATA[
+           sp_helptrigger Orders 
+            ]]></programlisting>
+        </para>
+        <para>If you'd like to view the SQL behind a specific trigger, you may view it by issuing
+            the command:<programlisting><![CDATA[
+            sp_helptrigger Orders 
+            ]]></programlisting>
+        </para>
+        <para>Finally, if you later decide that you want to completely remove a trigger, the syntax is:<programlisting><![CDATA[
+            DROP TRIGGER OrderRemoved 
+            ]]></programlisting>
+        </para>
+        <para>Triggers add a tremendously powerful capability to database servers. The examples
+            mentioned above are relatively trivial, but you should keep in mind that triggers are
+            indeed stored procedures and you may use them to perform any action that a stored
+            procedure can perform. This includes calling other stored procedures, accessing
+            information from other data sources and modifying the contents of other database
+        tables.</para>
+    </section>
+    <section>
+        <title>Backing up Databases to the enterprise</title>
+        <para>Very often we would want to backup a database stored remotely and there are many ways
+            to do this. Should we choose to do this we can make use of simple scripts bash or batch
+            for example. Lets have a look at a simple way of doing this using a bash script. <programlisting><![CDATA[
+             #!/bin/bash
+                         
+             # Export the database to a flat file
+             su - postgres  -c 'pg_dump jboss > jboss_data.sql'
+              
+              # Mail the flat file
+              #cat /var/lib/postgresql/jboss_data.sql |mail -s "Backup" \
+                        internal@solms.co.za
+                
+              #Create a compressed backup file
+              rm /var/lib/postgresql/jboss_data.sql.bz2
+              bzip2 /var/lib/postgresql/jboss_data.sql
+                
+              #Now send the backup file
+              metasend -b -m "binary/bzip" -f /var/lib/postgresql/    \
+                jboss_data.sql.bz2 -s "Backup : `date`" -t internal@solms.co.za
+            ]]></programlisting>
+        </para>
+        <para>This is for a postgres database. The file is backed up on the remote side and then
+            emailed to the user.This script can be executed at whatever interval you reuire and this
+            is set up in a cron job or a windows scheduler depending on the operating system at
+        hand</para>
+    </section>
+</section>

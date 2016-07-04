@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="projects.solms.training.courses.ejb3.exams.trafficOffense.trafficOffense">
+    
+    <info>
+        <title>Competency Examination</title>
+        <subtitle>Enterprise JavaBeans</subtitle>
+    </info>
+    
+    <section>
+        <title>Introduction</title>
+    
+        <para>
+            This document contains questions to test your competency. The nature of these questions
+            are a mixture of <emphasis>theoretical</emphasis>, and <emphasis>practical</emphasis>.
+            Either may be done in any technology you feel best suits your needs. However, after
+            completing the examination, it is your responsibility to provide the examinator with
+            all of your answers (or the location(s) thereof).
+        </para>
+        <para>
+            You may use any resources at your disposal 
+            (such as course notes, books, the world wide web)
+            but please ensure that your work is your own. There is no time limit, as long as the
+            examination is completed in a single session during office hours.
+        </para>
+    </section>
+    
+
+    <section>
+        <title>Theory</title>
+        <para>
+            <orderedlist>
+                <listitem>
+                    <para>
+                        Describe, in your own words, how the EJB container supports high concurrency
+                        (i.e. how it is made possible that multiple clients can safely make use of the services
+                        in a singe EJB at the same time) 
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Discuss a business scenario where you would want to employ a message-driven bean. Rationalise
+                        your choice, and discuss whether you would use a Queue or a Topic.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Discuss all the advantages, and the disadvantages, you can think of in using a <emphasis>Java Persistence API</emphasis>
+                        (<quote>entity beans</quote>) to model your application's persistent domain.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Name one advantage, and one disadvantage, in using each of the following methods to
+                        (as a client) interact with your EJBs:
+                        <itemizedlist>
+                            <listitem>
+                        <para>Stand-alone Java client, using RMI/IIOP</para>
+                     </listitem>
+                            <listitem>
+                        <para>Web-based presentation layer</para>
+                     </listitem>
+                            <listitem>
+                        <para>SOAP (Web Services)</para>
+                     </listitem>
+                        </itemizedlist>
+                    </para>
+                </listitem>
+            </orderedlist>
+        </para>
+    </section>
+
+    <section>
+        <title>Practical</title>
+        
+        <para>
+            Consider a simplistic system that is used by the traffic department to manage traffic offences.
+            Instances of traffic offense may be <emphasis>submitted</emphasis> (for example, by an officer from a mobile device),
+            as well as recalled later. A <literal>TrafficOffence</literal> contains the following information:
+            <itemizedlist>
+                <listitem>
+               <para>Registration number of the vehicle with which the offence has been committed</para>
+            </listitem>
+                <listitem>
+               <para>A text description of the offence</para>
+            </listitem>
+                <listitem>
+               <para>Date/Time of the offense</para>
+            </listitem>
+                <listitem>
+               <para>Case Number (automatically assigned, unique - pick your own suitable type, such as <literal>int</literal>)</para>
+            </listitem>
+                <listitem>
+               <para>The details of the driver (a link)</para>
+            </listitem>
+            </itemizedlist>
+            The driver's details (<literal>Person</literal>) contain the following:
+            <itemizedlist>
+                <listitem>
+               <para>Name and Surname</para>
+            </listitem>
+                <listitem>
+               <para>ID Number</para>
+            </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            The traffic offence service itself (services facade) provides the following services
+            (expressed here in pseudocode):
+            <itemizedlist>
+                <listitem>
+                    <para>
+                  <literal>public int submitIncident( incident:TrafficOffence ) throws InvalidOffenceException</literal>
+                        - which submits a new offence to the system and returns a generated case number.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                  <literal>public TrafficOffence getIncident( caseNumber:int ) throws NoSuchOffenceException</literal>
+                        - which finds a particular traffic offence by case number (id).
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                  <literal>public List&lt;TrafficOffence&gt; getOffencesForDriver( driver : Person )</literal>
+                        - which finds all the offences committed by a particular person
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                  <literal>public List&lt;Person&gt; findDriver( ??? )</literal>
+                        - provide one or more methods of finding a driver, e.g. by name, or id number
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        
+        <section>
+            <title>Core Business Infrastructure</title>
+            <para>
+                Create a self-contained project, built with <literal>ant</literal>, with the following:
+                <orderedlist>
+                    <listitem>
+                        <para>
+                            A clearly defined service interface for the TrafficOffenceService
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            An implementation of the service as a stateless session bean, which persistently
+                            stores incidents as entities (using the Java Persistence API). This implementation
+                            should ensure that all contractual rules are enforced, such as valid offences 
+                            (e.g. enforces all required data is present), non-duplicate messages, etc. 
+                            Failure of any of these preconditions must be correctly communicated to the 
+                            client through the declared exceptions.
+                        </para>
+                    </listitem>
+                </orderedlist>
+            </para>
+        </section>
+        
+        <section>
+            <title>Simple Client</title>
+            <para>
+                Using any suitable integration and deployment technology (e.g. Java client via RMI or Web Services,
+                Web Interface, etc), create a client that can:
+                <itemizedlist>
+                    <listitem>
+                        <para>allow a user to submit a new traffic offence</para>
+                    </listitem>
+                    <listitem>
+                        <para>allow a user to find all traffic offences committed by a particular person</para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+        </section>
+        
+        <section>
+            <title>Value-added business services</title>
+            <para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            For the benefit of interested parties, every
+                            time a new traffic offence is submitted, it should be published 
+                            on a JMS message queue (Topic) using any chosen message type. Write a message-driven bean that
+                            reacts to new offences being published (logs this fact to standard output, 
+                            sends e-mail, etc).
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            It appears that a large proportion of offences
+                            in Gauteng are caused by arrogant drivers with personalised
+                            number plates (i.e. registration numbers that do not conform to the regular expression pattern
+                            <literal>[A-Z]{3} [0-9]{3} GP</literal>).
+                          Write an EJB interceptor that, when a new
+                          offence with such a number plate is submitted, <emphasis>adds</emphasis> the following text to the beginning of the 'description' text of the traffic offence:
+                            <quote>(WARNING: Potentially deviant driver)</quote>
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+        </section>
+        
+    </section>
+</article>

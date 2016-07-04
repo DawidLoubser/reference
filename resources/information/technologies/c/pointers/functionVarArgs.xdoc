@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.c.pointers.functionVarArgs"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Functions with variable number of arguments</title>
+  <para>
+    At times it may be useful to define functions which take a variable number of 
+    arguments. The <function>main</function> is an example. There may be a variable
+    number of command-line arguments. Other examples are <function>scanf</function>
+    and <function>printf</function>.
+  </para>  
+  <para>
+    Function which receive a variable number of arguments need to be told how many 
+    arguments there are. This is typically done by supplying an <type>int</type>
+    with the number of arguments as first argument (in the case of 
+    <function>printf</function> and <function>scanf</function> it is inferred from
+    the number of format specifiers).
+  </para>  
+  
+  <section><title>Declaring functions with variable number of arguments</title>
+    <para>
+      The syntax for declaring a function with a variable number of arguments
+      is
+      <programlisting>
+returnType func(int numArgs, ...);        
+      </programlisting>
+      We thus simply use 3 dots to indicate that there are a variable number of 
+      arguments.
+    </para>
+  </section>
+  
+  <section><title>Implementing a function with variable number of arguments</title>
+    <para>
+     Within the function implementation we need to access the individual arguments.
+     To this end <emphasis>C</emphasis> supplies the following variable argument
+     support constructs:
+     <itemizedlist>
+       <listitem><formalpara><title>va_list</title>
+         <para>
+           This is a type for a pointer for the arguments list.
+         </para>
+       </formalpara></listitem>
+       <listitem><formalpara><title>va_start(va_list argsPointer, int numArgs)</title>
+         <para>
+           This macro initializes the arguments list.           
+         </para>
+       </formalpara></listitem>
+       <listitem><formalpara><title>dataTypeOfArguments va_arg(va_list argsPointer, dataTypeOfArgument)</title>
+         <para>
+           This macro return the argument to which the arguments-list pointer
+           currently points to and then increments the pointer to point to the
+           next element.
+         </para>
+       </formalpara></listitem>
+       <listitem><formalpara><title>va_end(va_list argsPointer)</title>
+          <para>
+            This macro should be called after all arguments have been retrieved
+            to clean up the memory and free the arguments-list array.
+          </para> 
+       </formalpara></listitem>
+     </itemizedlist>
+    </para>
+    <example id="varArgsAverage.c"><title>varArgsAverage.c</title>
+      <para>
+        The following defines a function, <function>average</function>,
+        which takes a variable number of arguments and calculates the
+        average across them:
+      </para>
+      <programlisting><xi:include href="varArgsAverage.c" parse="text"/></programlisting>
+      <para>
+        If you run this application your output will be:
+        <programlisting>
+average(2, 1.1, 2.2) = 1.650000
+average(5, 1.1, 1.5, 2.0, 2.1, 7.3) = 2.800000
+        </programlisting>
+      </para>
+    </example>
+  </section>
+</section>

@@ -1,0 +1,2874 @@
+    
+        <section id="resources.knowledge.technologies.cpp.fundamentals.material.txt"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+          <title> The scope and lifespan of variables</title>
+          <para> In C++ blocks are delimited by curly brackets. For example the function body is a
+            block delimited by curly brackets. Within the function body we can declare further
+            blocks (nested blocks). The scope of a variable is bounded by the block in which it is
+            defined. Consider, for example, the following program listing:</para>
+
+          <para/><![CDATA[
+ #include <iostream>
+ 
+ using namespace std;
+ 
+ const float version = 2.11;
+ 
+ double y;
+ 
+ double f(const double x)
+ {
+   double y = x*x;
+   return y;
+ }
+ 
+ int main()
+ {
+   double a;
+   cout << "a = ";  cin >> a;
+   y = f(a);
+ 
+   if (y > 5)
+   {
+     double y = a*a - a;
+     cout << "y = " << y << endl;
+   }
+   cout << "y = " << y << endl;
+ 
+   char k; cin >> k;
+ 
+   return 0;
+ }
+]]><para>Here
+            <literal>version</literal> is a global floating point constant which has the scope of
+            the file, i.e. it can be used anywhere in the file. Similarly, we define a global
+            variable <literal>y</literal>. In the function <literal>f</literal> we declare a local
+            variable <literal>y</literal> which hides the global <literal>y</literal>. The scope of
+            this variable is within curly brackets -- hence within the body of the function.</para>
+          <para> In the main program we use <literal>cout</literal> to write to the terminal and
+            <literal>cin</literal> to read in the value of<literal>a</literal> from the keyboard.
+            The assignment statement <literal>y = f(a)</literal> assigns the global
+            <literal>y</literal> to the result of the function call.</para>
+          <para> We then check whether <literal>y</literal> is greater then <literal>5</literal> and
+            if this is the case we perform a collection of statements enclosed in a block (within
+            curly brackets). The <literal>if</literal> statement will be discussed in detail later
+            in this chapter. Within the block we declare a local variable, <literal>y</literal>,
+            which hides the global <literal>y</literal>. The scope of this variable is limited to the<literal>if</literal>-block.</para>
+          <para> Generally it is a good idea to define variables as close to the point where they
+            are used as is possible. This makes maintenance usually a lot easier. The use of global
+            variables should be minimized. In fact, it is a good idea to define your variables such
+            that they have the minimum required scope. It is even possible to restrict the scope of
+            a variable to a subset of sequential statements by enclosing this subset of statements
+            simply within curly brackets.</para>
+          <para/>
+          <section>
+            <title> Lifespan of static variables</title>
+            <para> Except for the case where you declare a variable as <literal>static</literal>,
+              it's life-time is the same as its scope. For example, in the previous listing, the
+              variable <literal>y</literal>, whose scope is the <literal>if</literal>-block, is
+              created and initialized with the statement <literal>double y = a*a-a;</literal> and is
+              destroyed at the when the execution thread leaves the <literal>if</literal>-block.</para>
+            <para> A <literal>static</literal> variable has the life-time of the program, i.e. it is
+              created when the program is started and destroyed only when the program terminates.
+              They are initialized the first time the execution thread passes through the declaration.</para>
+            <para> For example, say you want to monitor the number of times a certain function
+              <literal>f</literal> has been called. You can define a static local variable
+              <literal>ncalls</literal> as follows:
+              </para><![CDATA[
+ double f(const double x)
+ {
+   static int ncalls = 0;
+ 
+   ++ncalls;
+   cout << "f has been called " << ncalls << " times." << endl;
+ 
+   return x*x;
+ }
+]]><para>Here
+              <literal>ncalls</literal> is initialized to zero the first time the function is
+              called. Then <literal>ncalls</literal> is incremented and its value is printed onto
+              the terminal. The next time <literal>f</literal> is called, the function remembers the
+              value of <literal>ncalls</literal> from its previous run, increments it and prints out
+              the correct no of function calls.</para>
+            <para/>
+          </section>
+        </section>
+      </section>
+      <section>
+        <title>
+          <informalequation>
+            <graphic fileref="cpp10x.gif"/>
+          </informalequation> operators</title>
+        <para> Table <ulink url="#x1-150031">
+          </ulink> shows a summary of <informalequation>
+            <graphic fileref="cpp11x.gif"/>
+          </informalequation> operators <indexterm role="printindex"/>
+          <indexterm role="printindex"/> in order of decreasing precedence. Hence<literal> u = x + y
+            % z; </literal> evaluates first the remainder of <informalequation>
+            <graphic fileref="cpp12x.gif"/>
+          </informalequation>, then adds this to <literal>x</literal> and then assigns the result
+          to<literal>u</literal> (note that <literal>10%4</literal> returns <literal>2</literal>).</para>
+        <para/>
+        <para/>
+        <section role="center">
+          <title/>
+          <para/>
+          <informaltable>
+            <tgroup cols="3">
+              <tbody>
+                <row>
+                  <entry>
+                    <para>Operator </para>
+                  </entry>
+                  <entry>
+                    <para>operator name </para>
+                  </entry>
+                  <entry>
+                    <para>example </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>::</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>scope resolution </para>
+                  </entry>
+                  <entry>
+                    <para>class_name<literal>::</literal>member </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>::</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>global </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>::</literal>name </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>.</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>member selection </para>
+                  </entry>
+                  <entry>
+                    <para>object<literal>.</literal>name </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>-&gt;</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>member selection </para>
+                  </entry>
+                  <entry>
+                    <para>pointer<literal>-&gt;</literal>member </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>[]</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>subscription </para>
+                  </entry>
+                  <entry>
+                    <para>pointer<literal>[</literal>expr<literal>]</literal>
+                    </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>()</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>function call </para>
+                  </entry>
+                  <entry>
+                    <para>expr<literal>(</literal>expr_list<literal>)</literal>
+                    </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>()</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>value construction </para>
+                  </entry>
+                  <entry>
+                    <para>type<literal>(</literal>expr_list<literal>)</literal>
+                    </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>sizeof</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>size of object </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>sizeof</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>sizeof</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>size of type </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>sizeof(</literal>type<literal>}</literal>
+                    </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>++</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>post or pre increment </para>
+                  </entry>
+                  <entry>
+                    <para>lvalue<literal>++</literal> or <literal>++</literal>lvalue </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>--</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>post or pre decrement </para>
+                  </entry>
+                  <entry>
+                    <para>lvalue<literal>--</literal> or <literal>--</literal> lvalue </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>~</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>complement </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>~</literal>expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>!</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>not </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>!</literal>expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal/> , -+ </para>
+                  </entry>
+                  <entry>
+                    <para>unary plus and minus </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>-</literal>expr and <literal>+</literal>expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>&amp;</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>address of </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>&amp;</literal>lvalue </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>*</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>dereferencing </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>*</literal>expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>new</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>create (allocate memory) </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>new</literal> type </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>delete</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>deallocate pointer memory </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>delete</literal> pointer </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>delete[]</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>free array memory </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>delete[]</literal> pointer </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>()</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>cast (type conversion) </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>(</literal>type<literal>)</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>.*</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>member section </para>
+                  </entry>
+                  <entry>
+                    <para>object<literal>.*</literal>pointer-to-member </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>-&gt;*</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>member section </para>
+                  </entry>
+                  <entry>
+                    <para>pointer<literal>-&gt;*</literal>pointer-to-member</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal> * , / , % </literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>multiply, divide, modulo (remainder)</para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal>/</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>+ , -</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>add, subtract </para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal>+</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal><![CDATA[< , >]]></literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>shift left , shift right </para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal><![CDATA[<<]]></literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal><![CDATA[< , <= , > , >=]]></literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>relational operators </para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal><![CDATA[<]]></literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>==</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>equal </para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal>==</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>!=</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>not equal </para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal>!=</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>&amp;</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>bitwise AND </para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal>&amp;</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>&#x02C6;</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>bitwise exclusive OR </para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal>&#x02C6;</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>|</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>bitwise inclusive OR </para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal>|</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>&amp;&amp;</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>logical AND </para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal>&amp;&amp;</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>||</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>logical inclusive OR </para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal>||</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>? :</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>conditional expression </para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal>?</literal> expr <literal>:</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>=</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>simple assignment </para>
+                  </entry>
+                  <entry>
+                    <para>lvalue <literal>=</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>*= , /= , </literal>= , -=+</para>
+                  </entry>
+                  <entry>
+                    <para>multiply and assign, ... </para>
+                  </entry>
+                  <entry>
+                    <para>lvalue <literal>*=</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal><![CDATA[<<= , >>=]]></literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>shift left (right) and assign </para>
+                  </entry>
+                  <entry>
+                    <para>lvalue <literal><![CDATA[<<=]]></literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>&amp;= , |= , &#x02C6;=</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>AND (OR, XOR) and assign </para>
+                  </entry>
+                  <entry>
+                    <para>lvalue <literal>&amp;=</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>throw</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>throw exception </para>
+                  </entry>
+                  <entry>
+                    <para>
+                      <literal>throw</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <literal>,</literal>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>comma (sequencing) </para>
+                  </entry>
+                  <entry>
+                    <para>expr <literal>,</literal> expr </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para/>
+                  </entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </informaltable>
+        </section>
+        <blockquote role="caption">
+          <title role="caption"> Table 1.1</title>
+          <para>
+            <informalequation>
+              <graphic fileref="cpp13x.gif"/>
+            </informalequation> operators in order of decreasing precedence. Each box holds
+            operators of the same level of precedence.</para>
+        </blockquote>
+        <para> The use of these operators will be illustrated with example programs throughout this text.</para>
+        <para> All operators can be overloaded <indexterm role="printindex"/> (see discussion on
+          operator overloading later in the text) except for
+          </para><![CDATA[
+ .    .*    ::    ?:
+]]><para>When overloading operators, one should bare
+          in mind that the order of precedence and the syntax remains the same as that for the
+          built-in data types.</para>
+        <para/>
+      </section>
+      <section>
+        <title> Control statements</title>
+        <para> Control statements control the program flow. For example, selection statements such
+            as<literal>if ... else</literal> and <literal>switch</literal> use certain criteria to
+          select a course of action within a program. Iterative control statements (like
+          <literal>for</literal>, <literal>while ... do</literal>, <literal>do ... while</literal>
+          on the other hand see to it that under certain conditions control is passed from the last
+          statement in a block to the first statement.</para>
+        <para/>
+        <section>
+          <title> Selection statements</title>
+          <para/>
+          <section>
+            <title> The if-statement</title>
+            <para> The following examples illustrate the <literal>if</literal> statement:
+              </para><![CDATA[
+ int isPositive (const int x)
+ {
+   if (x>=0) return 1;
+   return 0;
+ }
+]]><para>The
+              condition is defined as false if the argument is equal to zero and true otherwise. The
+              else statement is similar to that of other programming languages:
+              </para><![CDATA[
+ void isZero (const double x)
+ {
+   if (x)
+     cout << "Argument is non-zero." << endl;
+   else
+    cout << "Argument is zero" << endl;
+ }
+]]><para>The
+              condition <literal>if (x)</literal> is equivalent to the condition <literal>if
+              (x==0)</literal>. Note the difference between the "is equal" operator
+              <literal>==</literal> and the assignment operator <literal>=</literal>.</para>
+            <para> Instead of executing a single statement conditionally, we can also execute a
+              block of statements conditionally:
+              </para><![CDATA[
+ if ((x>0 &amp;&amp; x*x<2) || (x==-1))
+   {
+     cout << "case 1: x = " << x << endl;
+     x *= 3;
+   }
+ else
+  {
+     cout << "case 2: x = " << x << endl;
+     x /= 3;
+  }
+]]><para>Note
+              that multiplication takes presedence over the relational operator
+              <literal><![CDATA[<]]></literal> and that the relational operators take presedence
+              over the logical and operator <literal>&amp;&amp;</literal>.</para>
+            <para/>
+          </section>
+          <section>
+            <title> The switch-statement</title>
+            <para> One can nest <literal>if ... else</literal> statements to test for a number of
+              conditions. In cases where the conditions are integral constants, it is, however, more
+              convenient to use the <literal>switch</literal> statement (the equivalent of
+              <literal>case</literal> statement of Modula-2 or Ada).
+              </para><![CDATA[
+ char c;  cin >> c;
+ 
+ switch(c)
+ {
+   case 'a':  cout << "case a" << endl;
+   case 'b':  cout << "case b" << endl;  break;
+   case 'c':  cout << "case c" << endl;  break;
+   default:  cout << "default code." << endl;
+ }
+]]><para>The
+              switch statement compares a variable of an integral type with an integral constant
+              defined at the <literal>case</literal> labels. Execution jumps to the first match
+              found and will continue sequentially. The case statements act like labeled statements.
+              Hence if the user presses the key<literal>'a'</literal>, the output will be
+              </para><![CDATA[
+ case a
+ case b
+]]><para>Execution continues to the next statement
+              (another <literal>case</literal> statement) until a <literal>break</literal> is
+              reached. The <literal>break</literal> statement can be used only in iteration
+              statements and in <literal>switch</literal> statements. In the case of the
+              <literal>switch</literal> statement it causes execution to jump out of the
+              <literal>switch</literal> block. In the case of iteration statements it causes
+              execution to jump out of the innermost iterative loop.</para>
+            <para> If the user presses key 'b', or 'c' the screen output will be <literal>case
+              b</literal> and <literal>case c</literal> respectively. Execution jumps to the default
+              label if no match is found. Hence if the user pressses any ther key than
+              <literal>a</literal>, <literal>b</literal> or <literal>c</literal>, the output will be
+                <literal>default code</literal>.</para>
+            <para/>
+          </section>
+        </section>
+        <section>
+          <title> Iterative statements</title>
+          <para> There are three different iterative statements in C++, namely the
+            <literal>for</literal> statement , the<literal>while</literal> and the <literal>do ...
+            while</literal> statements.</para>
+          <para> The <literal>for</literal> statement receives an initialization expression, a test
+            expression and an arithmatic expression and performs a statement (or a block of
+            statements) while the test condition evaluates to <literal>true</literal> (non-sero).
+            For example, the following function calculates the faculty of a number iteratively:
+            </para><![CDATA[
+ long int faculty (const long int n)
+ {
+   long int result = 1;
+   for (long int i=2; i<=n; i++)
+     result *= i;
+   return result;
+ }
+]]><para>The
+            variable <literal>i</literal> is initialized to 2 and the statement <literal>result *=
+            i;</literal> is performed while <literal><![CDATA[i<=n]]></literal> and after each loop
+            <literal>i</literal> is incremented. Note that we declare <literal>i</literal> in the
+            <literal>for</literal> statement itself. Also we could have performed any other
+            arithmetic operation (instead of incrementing). For example, we could have added
+            <literal>3</literal> to the value of <literal>i</literal> after each iteration by
+            replacing the expression <literal>i++</literal> with the expression <literal>i+=3</literal>.</para>
+          <para> Furthermore, we do not need to supply all three expressions. If we omit any of the
+            expressions we do have to include the semicolons though. For example, the following
+            <literal>for</literal> statement is an infinte loop.
+            </para><![CDATA[
+ for (;;niter++)
+ {
+   ...
+   if (x<y) break;
+ }
+]]><para>Here we have
+            no initialization statement and no test statement. After each iteration the variable
+            <literal>niter</literal> is incremented. If <literal>x</literal> remains always smaller
+            then <literal>y</literal> we will be in an infinite loop. Only if <literal>x</literal>
+            becomes greater or equal to <literal>y</literal>, do we break out of the loop.</para>
+          <para> The <literal>while</literal> loop performs a statement or block of statements while
+            a condition is true. The only difference between the <literal>while</literal> and
+              <literal>do .. while</literal> statements is that the latter performs the test at the
+            end of the loop and hence always goes through at least one iteration. Both of these
+            statements are illustrated in the following two example programs.</para>
+          <para/>
+        </section>
+        <section>
+          <title> Example program: Celsius <informalequation>
+              <graphic fileref="cpp14x.gif"/>
+            </informalequation> Fahrenheit</title>
+          <para> Consider first the following program which can be used to convert between degrees
+            celsius and degrees Fahrenheit and which can also print a table of comparison:<indexterm role="printindex"/>
+
+          </para><![CDATA[
+ //                         CELSIUS.CPP
+ //-------------------------------------------------------------------
+ //  This program converts degrees celsius to degrees Fahrenheit
+ //  and vise versa. It can also print a table of comparison
+ //  for a certain temperature range.
+ 
+ #include <ctype.h>       // for toupper (convert to upper case)
+ #include <iostream>      // for cin and cout
+ 
+ #include <fstream>
+ 
+ using namespace std;
+ 
+ const double a1 = 1.8;             // Constants required for conversions
+ const double a0 = 32;              // between 'C and 'F.
+ 
+ double Fahrenheit(const double celsius)    // Function converting 'C to 'F.
+ {
+   return a1*celsius+a0;
+ }
+ 
+ double Celsius(const double fahrenheit)    // Function converting 'F to 'C.
+ {
+   return (fahrenheit-a0)/a1;
+ }
+ 
+ int main()                       // Main program
+ {
+   char choice;
+   bool happy;
+   do
+   {
+     cout << "C  ->  convert degrees celsius to degrees fahrenheit"
+          << endl;
+     cout << "F  ->  convert degrees fahrenheit to degrees celsius"
+          << endl;
+     cout << endl << "Enter choice (C/F) : ";
+     cin  >> choice;
+ 
+     choice = (char)toupper(choice);  // convert to upper case
+     happy  = ((choice == 'C') || (choice == 'F'));
+ 
+     if (!happy)
+       cout << "*** ERROR *** : Illegal choice: ReEnter." << endl;
+ 
+   } while (!happy);
+
+ 
+   char table;
+   cout << "Do you want a table of degrees celsius "
+        << "versus degrees fahrenheit (y/n)? ";
+   cin  >> table;
+ 
+   if ((table == 'n') || (table == 'N'))
+     {
+       switch (choice)
+       {
+         case 'C': double celsius;
+                   cout << "Enter degrees celsius : ";
+                   cin  >> celsius;
+                   cout << celsius << " degrees celsius = "
+                        << Fahrenheit(celsius)
+                        << " degrees fahrenheit." << endl;
+                   break;
+ 
+         case 'F': double fahrenheit;
+                   cout << "Enter degrees fahrenheit : ";
+                   cin  >> fahrenheit;
+                   cout << fahrenheit << " degrees fahrenheit = "
+                        << Celsius(fahrenheit) << " degrees celsius."
+                        << endl;
+                   break;
+       }
+     }
+   else
+     {
+       double lower, upper, step;
+       cout << "Enter lower limit of range : ";
+       cin  >> lower;
+       cout << "Enter upper limit of range : ";
+       cin  >> upper;
+       cout << "Enter increment : ";
+       cin  >> step;
+ 
+       double temp = lower;
+ 
+       while (temp <= upper)
+       {
+         switch (choice)
+         {
+           case 'C': cout << temp << " <-> " << Fahrenheit(temp)
+                          << endl;
+                     break;
+ 
+           case 'F': cout << temp << " <-> " << Celsius(temp)
+                          << endl;
+
+                     break;
+         }
+         temp += step;
+       }
+     }
+     char c; cin >> c;
+     return 0;
+ }
+]]><para>
+            The two simple functions <literal>Celsius</literal> and <literal>Fahrenheit</literal>
+            perform the conversions between the two temperature scales. Note that the input
+            variables (<literal>fahrenheit</literal> in the case of the
+            function<literal>Celsius</literal>) are declared constant<indexterm role="printindex"/>
+            <indexterm role="printindex"/> , since the routine does not and should not change this
+            variable. If something should remain constant it is a good to declare it such and the
+            compiler will enforce this constraint.</para>
+          <para> We defined an enumeration type <literal>boolean</literal> which can take the values
+            <literal>false</literal> and <literal>true</literal> mapped onto zero and one. We
+            declared <literal>happy</literal> as a variable of our boolean data type. It is set to
+            <literal>true</literal> if the upper case of the input character
+            <literal>choice</literal> is equal to either <literal>C</literal> or
+            <literal>F</literal>. The<literal>do ... while</literal>
+            <indexterm role="printindex"/> loop continues until <literal>happy</literal> is
+            <literal>true</literal> (nonzero).</para>
+          <para>
+            <literal>cout</literal> is the standard output stream (usually the screen). The
+              <literal> &gt;&gt; </literal>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/> operator means "push onto output stream". When defining
+            our own classes we shall see how we can overload this operator <indexterm
+            role="printindex"/> to push whole matrices or records with a single statement onto any
+            output stream.</para>
+          <para/>
+        </section>
+        <section>
+          <title> Compound Interest</title>
+          <para> The second example, which calculates the compound interest earned from an
+              investment.<indexterm role="printindex"/>
+
+          </para><![CDATA[
+ //                        INTRST1.CPP
+ //---------------------------------------------------------------
+ 
+ /* Calculates the return of an investment after being invested at
+    a fixed interest rate (either compounded daily or compounded
+    monthly). */
+ 
+ #include <iostream>  // for cin and cout
+ #include <stdlib.h>    // for exit()
+ 
+ using namespace std;
+ 
+ int main()
+ {
+   double invest, rate;  // declaring 2 doubleing point variables
+ 
+   enum CompoundingType {daily,monthly,unknown} compounding;
+ 
+    /* CompoundType is an enumeration type which can take the values
+       daily and monthly and compounding is declared as a variable of
+       that type. */
+ 
+   char inputchar;  // declaring a character (byte) variable
+ 
+   cout << "Enter amount invested: R";
+   cin  >> invest;
+ 
+   if (invest < 0)
+   {
+     cout << "*** ERROR *** : negative amount invested" << endl;
+     exit(0);
+       /* exit terminates the process. Before termination all files
+          are closed and all buffered output is written. */
+   }
+ 
+   cout << "Enter interest rate (%/year) : ";
+   cin  >> rate;
+ 
+   if (rate < 0)
+     cout << "*** Warning *** : entered negative interest rate" << endl;
+ 
+   compounding = unknown;
+ 
+   while (compounding == unknown)
+   {
+     cout << "Enter the compounding period (d for daily or m for monthly): ";
+
+     cin  >> inputchar;
+     switch (inputchar)
+     {
+       case 'm': compounding = monthly;
+                 break;
+       case 'd': compounding = daily;
+                 break;
+       default:  compounding = unknown;
+                 cout << "unknown compounding period entered" << endl;
+                 break;
+     }
+   }
+ 
+   if (compounding == monthly)
+     {
+       int nomonths;  // declared local to this block { ... }
+ 
+       cout << "Enter number of months invested : ";
+       cin  >> nomonths;
+ 
+       for (int nm=1; nm <= nomonths; nm++)
+         invest += invest * rate/(100.0*12.0);
+           // typecasting to double (Visual C++ defaults to double)
+ 
+       cout << "The investment after " << nomonths
+            << " months is R" << invest << endl;
+     }
+   else
+     {
+       long int nodays;
+       cout << "Enter number of days invested : ";
+       cin >> nodays;
+ 
+       for (int nd=1; nd <= nodays; nd++)
+         invest += invest * rate/(100.0*365.0);
+ 
+       cout << "The investment after " << nodays
+            << " days is R" << invest << endl;
+    }
+   char c; cin >> c;
+ 
+   return 0;
+ }
+ 
+]]><para>
+            Note that if the <literal>switch</literal>
+            <indexterm role="printindex"/> statement does not find a match, the control is
+            transferred to the statements following the <literal>default</literal> label. <indexterm role="printindex"/>
+          </para>
+          <para> Note <indexterm role="printindex"/> that we declare the variables where they are
+            required. For example, the loop iterators, <literal>nd</literal> and
+            <literal>nm</literal>, for the <literal>for</literal> loops are declared in the loop
+            itself. Similarly, <literal>nomonths</literal> is declared within the loop block and it
+            is local to that loop, i.e. it is not known outside the loop. This is a primitive form
+            of encapsulation. <indexterm role="printindex"/>
+          </para>
+          <para> In case of invalid input the program exits via the <literal>exit()</literal>
+            function defined <indexterm role="printindex"/> in <literal>stdlib.h</literal>. This
+            function terminates the calling process after emptying all buffered output streams,
+            closing all files and calling any registers exit routines (defined by
+            <literal>atexit</literal>). <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+          </para>
+          <para> The data is read in from the standard input stream (usually the keyboard) via
+            <literal>cin</literal>+ and pushed into the relevant variables via the <literal>
+              &gt;&gt; </literal> operator. <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+          </para>
+          <para> Note that there is a much easier way to calculate compound interest. Assume the
+            daily interest rate is given by <informalequation>
+              <graphic fileref="cpp15x.gif"/>
+            </informalequation> and that the initial capital is given by <informalequation>
+              <graphic fileref="cpp16x.gif"/>
+            </informalequation>. After one day the accumulated capital <informalequation>
+              <graphic fileref="cpp17x.gif"/>
+            </informalequation> is given by</para>
+          <para>
+            <informalequation role="math-display">
+              <graphic fileref="cpp18x.gif" role="math-display"/>
+            </informalequation> After <informalequation>
+              <graphic fileref="cpp19x.gif"/>
+            </informalequation> days the accumulated capital is by</para>
+          <para>
+            <informalequation role="math-display">
+              <graphic fileref="cpp20x.gif" role="math-display"/>
+            </informalequation> Similarly after <informalequation>
+              <graphic fileref="cpp21x.gif"/>
+            </informalequation> days the accumulated capital is given by</para>
+          <para>
+            <informalequation role="math-display">
+              <graphic fileref="cpp22x.gif" role="math-display"/>
+            </informalequation>
+          </para>
+          <para/>
+        </section>
+      </section>
+      <section>
+        <title> Interfacing with functions</title>
+        <para> A function communicates with other parts of the program via its arguments and its
+          return value.</para>
+        <para/>
+        <section>
+          <title> Passing arguments by value or by reference? </title>
+          <para> In <informalequation>
+              <graphic fileref="cpp23x.gif"/>
+            </informalequation> a procedure <indexterm role="printindex"/> is treated as a function
+              <indexterm role="printindex"/> without a return value (return value
+            <literal>void</literal>). Consider the following trivial program
+            </para><![CDATA[
+ #include <iostream.h>
+ 
+ void f(double x, double&amp; y)
+ {
+   y = x*x;    // y <- 2*2 = 4
+   x++;        // x <- x+1 = 3
+ }
+ 
+ void main()
+ {
+   double x=2, y=0;
+   f(x,y);
+   cout << "y = " << y << endl;    // writes 4
+   cout << "x = " << x << endl;    // writes 2 !!!
+ }
+]]><para>The
+            first argument (<literal>x</literal>) is passed by value. In this case a local copy of
+            the <indexterm role="printindex"/> variable is made. Changing this variable within the
+            procedure has no effect on the value of that variable in the calling program. Hence
+            <literal>x</literal> remains equal to <literal>2</literal> after calling
+            <literal>f(x,y)</literal> in <literal>main</literal>. The second argument
+            (<literal>y</literal>) is passed by reference <indexterm role="printindex"/> . A
+            reference is an alias to the actual variable passed and hence the actual object passed
+            is used (no local copy is made).</para>
+          <para> If the function is to return a new value for one of its arguments, this argument
+            should be passed by reference. It is often ineffcient to pass large objects (e.g. large
+            matrices or large records) by value. Making a copy of a large object may waste both,
+            computing and memory resources. <indexterm role="printindex"/> Instead one can pass them
+            by reference and declare them constant <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+          </para><![CDATA[
+ void f (const matrix&amp; A)
+ { ... }
+]]><para>The compiler will
+            give an error message if the programmer attempts to change any of the array elements of
+            the constant matrix <literal>A</literal>.</para>
+          <para/>
+          <section>
+            <title> Function return values</title>
+            <para> The return value of a function may also be passed by either value or reference.
+              There is a golden rule you should always keep in mind. Never, ever return a non-static
+              local object (or variable) by reference. Recall that a non-static object is destroyed
+              as soon as it goes out of scope. Hence, a variable declared local within a function is
+              destroyed as soon as you leave the function and youu would be returning a handle to
+              something which no longer exists. For example,
+              </para><![CDATA[
+ double&amp; sqr (const double&amp; x)
+ {
+   double y = x*x;
+   return y;
+ }
+]]><para>would
+              yield unpredictable results, since you return a handle to <literal>y</literal> which
+              will no longer exist outside the function. Instead we have to remove the
+              <literal>&amp;</literal> after the<literal>double</literal> so that the result is
+              returned by value (i.e. that a copy is made).</para>
+            <para> On the other hand, in some cases it might be a good idea or even essential that
+              the functions result is returned by reference. Consider, for example, the following
+              code
+              </para><![CDATA[
+ double&amp; max (const double&amp; x, const double&amp; y)
+ {
+   if (x>=y)
+     return x;
+   else
+     return y;
+ }
+]]><para>In
+              this case, both <literal>x</literal> and <literal>y</literal> exist in the calling
+              routine (they are not local to our function), and it is quite safe to return the
+              greater of the two by reference. In fact, it might be the method of choice because it
+              avoids the overheads of making a copy of that object. This might be especially
+              important if we defined the <literal>max</literal> function for larger data types or
+              if we defined a generic <literal>max</literal> function (see the section on function
+              templates later in this chapter).</para>
+            <para/>
+          </section>
+        </section>
+        <section>
+          <title> Function overloading</title>
+          <para> In C++ we can give different functions the same name. The linker resolves the
+            correct function by the function signature. The function signature is the name of the
+            function and the types of its arguments. These are used to define a unique function.
+            Hence
+            </para><![CDATA[
+ float f(int x);
+ 
+ float f(float x);
+ 
+ float f(const float x);
+ 
+ float f(float x, int n);
+]]><para>are
+            all unique functions. We can thus have several functions with the same identifier
+            (name). An argument matching process determines which function is to be called. The
+            matching process allows for type conversions between the actual arguments with which the
+            function is called and the formal arguments expected by the function. If more than one
+            function matches the function call, then the compiler complaines about ambiguities
+            between these functions. Certain conversions are considered trivial conversions and
+            these do not define unigue function signatures. These are conversions from pass-by-value
+            to pass-by-reference (e.g. from <literal>float</literal> to
+            <literal>float&amp;</literal>) and from a built-in array type to a pointer (we shall
+            discuss arrays and pointers shortly). Hence <literal>int f(int&amp; a)</literal>
+            would clash with the first of the functions defined above (the compiler would report an ambiguity).</para>
+          <para> On the other hand, C++ does distinguish between passing an argument by reference
+            and passing it by constant reference. If the function is called with a constant argument
+            the const-reference version is used, since the other version would not guarantee the
+            constantness of the argument.</para>
+          <para> Note that the return value is not used when matching function calls. For example,
+            the following two functions
+            </para><![CDATA[
+ int f(int x);
+ 
+ float f(int x);
+]]><para>would result in an
+            ambiguity, since C++ does not force you to use the return value. C++ would not be able
+            to match the calls </para><![CDATA[
+ int n = 7;
+ f(n);
+]]><para>and
+            </para><![CDATA[
+ int n=7;
+ cout << f(n);
+]]><para>to a unique function.</para>
+          <para/>
+        </section>
+        <section>
+          <title> Functions matching by type conversion</title>
+          <para> C++ supports type conversions from one integral type to another which uses the same
+            number of bytes or more. Hence there is a sequence of type conversion from
+            <literal>char</literal> to<literal>short int</literal> or <literal>enum</literal> to
+              <literal>long int</literal>. A <literal>int</literal> can be converted to a
+              <literal>long int</literal>, but not vice versa.</para>
+          <para> Similarly, there exists a series of type conversions for floating point numbers
+            from <literal>float</literal> to <literal>double</literal> and <literal>long double</literal>.</para>
+          <para> This can be used if one wants to define two versions of a function, one for
+            integral types and one for floating point variables. For example, the gamma function is
+            defined by</para>
+          <para>
+            <informalequation role="math-display">
+              <graphic fileref="cpp24x.gif" role="math-display"/>
+            </informalequation> and when <informalequation>
+              <graphic fileref="cpp25x.gif"/>
+            </informalequation> is an integer it is simply the factorial function offset by one</para>
+          <para>
+            <informalequation role="math-display">
+              <graphic fileref="cpp26x.gif" role="math-display"/>
+            </informalequation> It would be natural to define one implementation for integral data
+            types and another for floating point arguments. This could be done by defining
+            </para><![CDATA[
+ long double Gamma (const long double&amp; x);
+ 
+ long int Gamma (const long int x)
+]]><para>If
+            we called <literal>Gamma</literal> with a <literal>float</literal> the first function
+            would be used and if we called it with an int, type conversion would result in a call to
+            the second function.</para>
+          <para> In later chapters we shall see how we can define type conversions for our own data
+            types (e.g. from an array to linked list). C++ would use our type conversions in the
+            same way as it uses the type conversion for built-in data types when trying to match functions.</para>
+          <para/>
+        </section>
+        <section>
+          <title> Default Values: Optional Arguments</title>
+          <para> C++ has also the facility to assign default values to arguments which have been
+            omitted when the function is called. For example, a function might expect two argument,
+            but the user might call it with only one argument. Usually this would result in a linker
+            error (no function with the correct signature would be found by the linker). If, on the
+            other hand, you give the second argument a default value, C++ will call the function
+            with two argument, using the default value for the second argument.</para>
+          <para> For example, you might want to write a function <literal>root</literal>, which by
+            default calculates the square root of a floating point number, <literal>x</literal>. If,
+            on the other hand, the user supplies a second integer argument, <literal>n</literal>,
+            then it returns the <literal>n</literal>'th root of <literal>x</literal>. Such a
+            function is shown in the following listing:</para>
+
+          <para/><![CDATA[
+ #include <iostream>
+ #include <math.h>
+ 
+ using namespace std;
+ 
+ double root(const double&amp; x, const int n=2)
+ {
+   return pow(x,(1.0/n));
+ }
+ 
+ int main ()
+ {
+   cout << "root(3.0)    = " <<  root(3.0)   << endl;
+   cout << "root(3.0,3) = " << root(3.0,3) << endl;
+ 
+   char c; cin >> c;
+ 
+   return 0;
+ }
+]]><para>Here
+            the first call to <literal>root</literal> calculates the square root of 3, while the
+            second call calculates the cubic root. Naturally, you can only omit trailing arguments.
+            In other words, if you give one function argument a default value all the following
+            function arguments must also be given default values.</para>
+          <para/>
+        </section>
+        <section>
+          <title> Functions with Variable Number of Arguments</title>
+          <para> In adition to supporting optional arguments, C++ also supports functions which
+            receive a variable number of arguments of possibly varying and unspecified types. They
+            are used at times for functions which sum up, calculate the product, or find the minimum
+            or maximum of a varying number of arguments. In most practical cases one would, however,
+            use arrays in preference.</para>
+          <para> The format of the C++ header of a function which receives a variable number of
+            arguments is one integer argument for the number of remaining arguments followed by a
+            comma and 3 dots:</para>
+          <para/><![CDATA[
+ int f(int argCount, ...)
+]]><para> The processing of variable arguments
+            functions is facilitated through a header file,<literal>stdarg.h</literal>, which
+            contains the following elements:</para>
+          <para/>
+          <itemizedlist>
+            <listitem>
+              <para>
+                <literal>va_list </literal> represents a pointer to the arguments. </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>va_start </literal> is a mathod used to initialize the pointer to the
+                variable length argument list. </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>va_arg </literal> is a method used to retrieve the next argument. </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>va_end </literal> is a clean-up function which should be called before the
+                function returns.</para>
+            </listitem>
+          </itemizedlist>
+          <para> Below is a little example <literal>sum</literal>-function which sums up a variable
+            number of floating point arguments and returns the result.</para>
+
+          <para/><![CDATA[
+ #include <stdarg.h>
+ #include <iostream>
+ 
+ using namespace std;
+ 
+ double sum(int argCount, ...)  // header for variable argument list
+ {
+   va_list ap;
+   double result = 0;
+   va_start(ap, argCount);
+ 
+   while (argCount-- > 0)
+     result += va_arg(ap, double);
+ 
+   va_end(ap);
+ 
+   return result;
+ }
+ 
+ int main()
+ {
+   double s = sum(2, 1.2,2.1);
+   cout << "sum = " << s << endl;
+ 
+   s = sum(5, 1.3,2.1,3.3,2.1,2.2);
+   cout << "sum = " << s << endl;
+ 
+   char c; cin >> c;
+ 
+   return 0;
+ }
+]]><para>
+            The output of the application is</para>
+          <para/><![CDATA[
+ sum = 3.3
+ sum = 11
+]]><para/>
+        </section>
+        <section>
+          <title> Command-line parameters</title>
+          <para> Command line parameters are traditionally used when running you program from a
+            command line (e.g. DOS) and supplying arguments to the program. For example,
+            the<literal>copy</literal> program of DOS can take a source and a destination file name
+            as arguments. Entering </para><![CDATA[
+ copy file1.dat file2.dat
+]]><para> copies the
+            file file1.dat onto the file file2.dat, creating the latter if it does not exist. Here
+            file1.dat and file2.dat are the command-line parameters -- command line parameters are
+            seperated by spaces.</para>
+          <para> You might think that in this day and age of GUI environments (e.g. OS/2, X-Windows
+            or Windows) command-line parameters have become superfluous. This is not the case. For
+            starters, OS/2 and Unix still allow you to work from a command line if you wish.
+            Furthermore, even if you are working only in the GUI-environment, the command line
+            parameters are still used for drag-and-drop or for setting command line parameters in
+            your settings of your program icon.</para>
+          <para> In the following program we have a function <literal>ToPolar(...)</literal> which
+            receives the rectangular coordinates by value (since they are not altered) and the polar
+            coordinates <literal>r</literal>, <literal>theta</literal> and <literal>phi</literal> by reference.</para>
+
+          <para/><![CDATA[
+ //                    ToPolar.CPP
+ //-------------------------------------------------------------
+ //       Converts rectangular to polar coordinates
+ 
+ #include <iostream>   // for cout and cin
+ #include <stdlib.h>     // for exit()
+ #include <math.h>       // for sin, acos, sqrt and atof
+ 
+ using namespace std;
+ 
+ //--------------------------------------------------------------
+ 
+ void ToPolar (const double x, const double y, const double z,
+                     double&amp; r, double&amp; theta, double&amp; phi)
+ {
+        // x, y and z do not changed and are sent as a variable
+        // (a local copy is made)
+        // r, theta and phi are to be changed and are hence sent
+        // via reference (the same memory area is used as in the
+        // calling program)
+ 
+   r = sqrt(x*x+y*y+z*z);
+ 
+   if (r != 0)
+     theta = acos(z/r);
+   else
+     theta = 0;
+ 
+   if ((theta != 0) &amp;&amp; (r != 0))
+     phi   = acos(x/(r*sin(theta)));
+   else
+     phi = 0;
+ }
+ 
+ //--------------------------------------------------------------
+ 
+ void ReadCoordinates(double&amp; x, double&amp; y, double&amp; z)
+ {
+   cout << "Enter x coordinate : ";  cin >> x;
+   cout << "Enter y coordinate : ";  cin >> y;
+   cout << "Enter z coordinate : ";  cin >> z;
+ }
+ 
+ int main(int argc, char* argv[])
+ {
+         // argc holds the no of command line parameters and
+
+         // the array of strings argv[] holds the command line
+         // parameters itself. The name of the program is
+         // passed in argv[0]
+ 
+   double x, y, z;
+ 
+   cout << "::" << argv[0] << "::" << endl;
+ 
+   switch (argc-1)
+   {
+     case 0:  ReadCoordinates(x, y, z);  // when no command line
+              break;                     // parameters, read x,y,z
+ 
+     case 3:  x = atof(argv[1]);  // converts first string to double
+              y = atof(argv[2]);
+              z = atof(argv[3]);
+              break;
+ 
+     default: cout << "*** ERROR *** : invalid number of command "
+                   << "line parameters." << endl;
+              exit(0);
+   }
+ 
+   double r, theta, phi;
+ 
+   ToPolar(x,y,z,r,theta,phi);  // calculate polar coordinates
+ 
+   cout << "(" << x << "," << y << "," << z << ")  => " << r
+        << " r  + " << theta << " theta + " << phi << " phi." << endl;
+ 
+   char c; cin >> c;
+ 
+   return 0;
+ }
+]]><para>
+            Note also that the function <literal>main</literal> has two arguments, an integer
+            variable <literal>argc</literal> which holds the number of command line parameters and
+            an array of strings <literal>argv[]</literal> which holds the actual command line
+            parameters. <indexterm role="printindex"/>
+            <indexterm role="printindex"/> If you start the program from the command line by typing </para><![CDATA[
+ ToPolar 1.0 3.0 1.2 <ENTER>
+]]><para>
+            <literal>argc</literal> will be set to three and <literal>argv[1] = "1.0"</literal>,
+              <literal>argv[1] = "3.0"</literal> and <literal>argv[1] = "1.2"</literal>.
+            The<literal>argv[0]</literal> will hold the name of the program
+            (<literal>"ToPolar.exe"</literal>). The <literal>switch</literal>
+            <indexterm role="printindex"/> statement checks for the number of command-line
+            parameters. If there are 3 command-line parameters <indexterm role="printindex"/> it
+            uses these for the rectangular coordinates. If there are no command-line parameters, the
+            rectangular coordinates are read from the standard input stream (the keyboard) and
+            otherwise the program aborts with an error message.</para>
+          <para/>
+        </section>
+      </section>
+      <section>
+        <title> Pointers</title>
+        <para>
+          <indexterm role="printindex"/>
+        </para>
+        <figure>
+          <title/>
+          <blockquote>
+            <para/>
+            <section role="center">
+              <title/>
+              <para>
+                <graphic width="72.26999pt" fileref="BasicCPP/Figures/Pointer.pdf"/>
+              </para>
+            </section>
+            <blockquote role="caption">
+              <title role="caption"> Figure 1.2</title>
+              <para>A value of a pointer to an int (int*) is the adress of a memory location which
+                has the size and is interpreted as an integer.</para>
+            </blockquote>
+          </blockquote>
+        </figure> Pointers a simply addresses in memory. They are used extensively in C and C++ and
+        a thorough understanding of pointers is essential for good programming skills. Typically
+        pointers in C++ are typed, i.e. they point to a memory location which contains a certain
+        specified data type. For example, in the following listing we define a pointer
+        <literal>p</literal> to an integer and an integer variable <literal>k</literal>.
+          <![CDATA[
+ int* p;                 // Defining a pointer to a 2 byte
+                         //   (sizeof(int)) memory location.
+ int k = 17;             // Defining an integer variable.
+ 
+ p = &amp;k;                 // Pointer p now points to address of k.
+ 
+ cout << p;              // Writes the address of p.
+ 
+ cout << (*p);           // Pushes 17 onto the output stream
+                         //   (the pointer p is dereferenced).
+]]><para>We
+          then use the address operator <literal>&amp;</literal> to set the pointer
+          <literal>p</literal> to the address of <literal>k</literal>. The result is graphically
+          depicted in figure <ulink url="#x1-310022">
+          </ulink>. We can <indexterm role="printindex"/> either print the contents of the pointer
+          variable itself which will be an address or we can dereference the pointer, using the
+          dereferencing operator<literal>*</literal>. The result of the dereferencing <indexterm
+          role="printindex"/> operation is the contents of the memory position to which the pointer
+          <literal>p</literal> points. </para>
+        <section>
+          <title> The NULL pointer</title>
+          <para> Commonly a NULL pointer is used when the address to which the <indexterm
+            role="printindex"/> pointer should point is not yet determined (NULL implies undefined).
+            </para><![CDATA[
+ T* p = NULL;
+]]><para>Here we defined a pointer to data type
+            <literal>T</literal> and initialized it to the NULL-pointer. It is good programing
+            practice to initialize all pointers which do not yet point to valid memory locations to
+            the NULL pointer.</para>
+          <para/>
+        </section>
+        <section>
+          <title> Pointers and strong typing</title>
+          <para> Similarly, if we want to keep the data type to which the pointer points unspecified
+            we can use a <literal>void*</literal>. ANSI C allows pointer <indexterm
+            role="printindex"/> of type <literal>void*</literal> to be assigned to any pointer and
+            also any pointer to be assigned to <literal>void*</literal>. In C++ we can still assign
+            a pointer of any type to <literal>void*</literal>, but if we want to assign a
+            <literal>void*</literal> to any other pointer type we must make an explicit <indexterm
+            role="printindex"/> type casting. This is illustrated in the following listing </para><![CDATA[
+ void* pvoid;
+ char* str;
+ 
+ pvoid = str;            // quite legal in C++
+ str = pvoid;            // illegal in C++
+ str = (char*)pvoid      // legal with type-casting
+]]><para/>
+        </section>
+        <section>
+          <title> Constant pointers and pointers to constants</title>
+          <para> In C++ one can declare either the pointer itself constant (i.e. the memory location
+            it points to may not change), or the item it points to as constant or both. This is
+            illustrated in the following demostration code: </para><![CDATA[
+ int k=17, l=5;
+ 
+       int*       ip   = &amp;k;
+ const int*       cip  = &amp;k;
+       int* const ipc  = &amp;k;
+ const int* const cipc = &amp;k;
+ 
+    ip = &amp;l;     //     legal, pointer value may change.
+   *ip = 32;     //     legal, what ip points to may change.
+ 
+   cip = &amp;l;     //     legal, pointer value may change.
+  *cip = 32;     // not legal, what cip points to may not change.
+ 
+   ipc = &amp;l;     // not legal, pointer value may not change.
+  *ips = 32;     //     legal, what ipc points to may change.
+ 
+  cipc = &amp;l;     // not legal, pointer value may not change.
+ *cips = 32;     // not legal, what cipc points to may not change.
+]]><para/>
+        </section>
+        <section>
+          <title> Pointer arithmetic</title>
+          <para> Pointer arithmetic calculates memory addresses. One can increment, decrement, add
+            an integer to a pointer, subtract an integer from a pointer or subtract one pointer from
+            another pointer.</para>
+          <para> Pointers in C++ are generally typed. For example, a <literal>double*</literal>
+            points to a memory location of the size of a double precision variable. Adding an
+            integer <literal>n</literal> to the pointer adds <literal>n</literal> times the size of
+            the data type it points to to the address it points to.
+            </para><![CDATA[
+ int *ip = new int[10];
+ 
+ int* ip2 = ip = ip+2;
+ 
+ cout << " ip2 = " <<  ip2 << endl;  // prints address of ip[2];
+ cout << "*ip2 = " << *ip2 << endl;  // print ip[2];
+]]><para>
+            Similarly we can subtract a pointer, increment a pointer (adding 1 times the size of its
+            data type to the address it points to) and decrement a pointer. Subtracting two pointers
+            of the same type from one another returns the distance in memory between the two
+            pointers in multiples of the size of the data type they point to.</para>
+          <para/>
+        </section>
+        <section>
+          <title> Pointers to functions: passing a function as a function argument</title>
+          <para> For science and engineering applications it is quite common that one wants to pass
+            a function to another function as an argument. Functions in C++ are passed as a and
+            executed from a pointer. For example
+            </para><![CDATA[
+ double (*f)(const double&amp;)
+]]><para>defines a pointer variable
+            <literal>f</literal> of type function-pointer. We can assign this function pointer to
+            any function which is type-compatible with the above signature. Consider the following
+            listing:
+            </para><![CDATA[
+ #include <iostream.h>
+ #include <math.h>
+ 
+ double sqr (double x)
+ {return x*x;}
+ 
+ void main()
+ {
+   double x = 1.7;
+   double (*f)(double) = NULL;
+   f = sin;
+   cout << "sin(x) = " << f(x) << endl;
+   f = sqr;
+   cout << "sqr(x) = " << f(x) << endl;
+ }
+]]><para>We
+            declare and initialize a double precision variable <literal>x</literal> and a pointer
+            variable <literal>f</literal> which points to a function which receives a
+            <literal>double</literal> as argument and returns a <literal>double</literal>. We first
+            assign <literal>f</literal> to the function <literal>sin</literal> defined in the
+            standard C++ library <literal>math.h</literal>. Calling <literal>f(x)</literal> returns
+            <literal>sin(x)</literal>. We then assign the function pointer <literal>f</literal> to
+            our own function <literal>sqr</literal>. Now <literal>f(x)</literal> returns<literal>x*x</literal>.</para>
+          <para> In a similar way we pass a fuction to another function as an argument. Consider,
+            for example, that you want to write a numerical integration routine which evaluates the
+            integral of any given function between given integration boundaries. In other words,we
+            want to evaluate</para>
+          <para>
+            <informalequation role="math-display">
+              <graphic fileref="cpp27x.gif" role="math-display"/>
+            </informalequation> for any given <informalequation>
+              <graphic fileref="cpp28x.gif"/>
+            </informalequation>, <informalequation>
+              <graphic fileref="cpp29x.gif"/>
+            </informalequation> and <informalequation>
+              <graphic fileref="cpp30x.gif"/>
+            </informalequation>. The function header could look like this:
+            </para><![CDATA[
+ double Integrate (double (*func)(double), const double a,
+                   const double b, const double eps);
+]]><para>where
+            <literal>eps</literal> is the accuracy with which we want to approximate the exact integral.</para>
+          <para> A simple, yet quite robust integration rule is Simpson's integration rule:</para>
+          <para>
+            <informalequation role="math-display">
+              <graphic fileref="cpp31x.gif" role="math-display"/>
+            </informalequation> Here <informalequation>
+              <graphic fileref="cpp32x.gif"/>
+            </informalequation> is the stepsize on which the function is evaluated, i.e. the
+            integration interval <informalequation>
+              <graphic fileref="cpp33x.gif"/>
+            </informalequation> is subdevided into <informalequation>
+              <graphic fileref="cpp34x.gif"/>
+            </informalequation> equally sized subintervals with width</para>
+          <para>
+            <informalequation role="math-display">
+              <graphic fileref="cpp35x.gif" role="math-display"/>
+            </informalequation> Below we give a simple implementation of the Simpson integration rule:</para>
+
+          <para/><![CDATA[
+ #include <iostream>
+ #include <math.h>
+ 
+ using namespace std;
+ 
+ double f(const double&amp; x) {return exp(x*x);}
+ 
+ double Simpson (double (*func)(const double&amp;),
+                 const double&amp; a, const double&amp; b, const int nintvl)
+ {
+   double dx = (b-a)/nintvl;
+   double x  = a+dx;
+ 
+   double sumeven = 0;
+   double sumodd  = func(x);
+ 
+   for (int n=2; n<nintvl; n=n+2)
+   {
+     x += dx;
+     sumeven += func(x);
+     x += dx;
+     sumodd += func(x);
+   }
+   return (func(a) + func(b) + 2*sumeven + 4*sumodd)*dx/3;
+ }
+ 
+ int main()
+ {
+   int nintvl;
+   double a, b;
+ 
+   cout << "Enter no of intervals = ";            cin  >> nintvl;
+   cout << "Enter integration range a b : ";    cin  >> a >> b;
+ 
+   cout << "Simpson: "   << Simpson(f,a,b,nintvl) << endl;
+ 
+   char k; cin>>k;
+ 
+   return 0;
+ }
+]]><para>
+            If we run the example program which integrates <informalequation>
+              <graphic fileref="cpp36x.gif"/>
+            </informalequation> with 100 intervals integrating over the range <informalequation>
+              <graphic fileref="cpp37x.gif"/>
+            </informalequation>, we obtain the following result:</para>
+          <para/><![CDATA[
+ Enter no of intervals = 40
+ Enter integration range a b : 0 1
+ Simpson: 1.46265
+]]><para/>
+        </section>
+      </section>
+      <section>
+        <title> Arrays</title>
+        <para> An array <indexterm role="printindex"/> is a contiguous region of storage, large
+          enough to hold all its elements. The array elements are thus ordered in memory and can be
+          accessed via numeric subscripts.</para>
+        <para/>
+        <section>
+          <title> Arrays in static memory</title>
+          <para> We can declare an array of a fixed size by using the element access operator
+            <literal>[]</literal>. For example, <literal>int iArray[5]</literal> reserves a memory
+            for 5 integer variables which are <indexterm role="printindex"/> accessed
+            via<literal>iArray[0]</literal>, ..., <literal>iArray[4]</literal>. Arrays can be
+            multi-dimensional. For example, in the listing below we define a (3x3) array
+            <literal>M</literal> of double precision variables. <indexterm role="printindex"/> The
+            elements are accessed via<literal>M[i][j]</literal> where <literal>i</literal> and
+            <literal>j</literal> run from 0 to 2. The function <literal>sizeof(M)</literal>
+            <indexterm role="printindex"/> returns the size of the entire memory block of 9 double
+            precision floating point numbers. Note that <literal>nrows</literal> and
+            <literal>ncols</literal> are defined as constants. This is essential, because the size
+            of an array in static memory must be known at compile time.</para>
+
+          <para/><![CDATA[
+ //                    StaticArray.cpp
+ //------------------------------------------------------
+ //    Creating arrays whose size is known at compile time.
+ 
+ #include <iostream>
+ 
+ using namespace std;
+ 
+ int main()
+ {
+   const int nrows = 3;
+   const int ncols = 3;
+ 
+   double M[nrows][ncols];
+ 
+   cout << "Enter (" << nrows << "x" << ncols << ") matrix M:" << endl;
+ 
+   for (int nr=0; nr<nrows; nr++)
+   {
+     for (int nc=0; nc<ncols; nc++)
+     {
+       cout << "M[" << (nr+1) << "," << (nc+1) << "] = ";
+       cin >> M[nr][nc];
+     }
+   }
+   cout << "sizeof(M) = " << sizeof(M) << endl;
+       // returns size of 9 double precision
+       // floating point variables.
+ 
+   char k; cin >> k;
+ 
+   return 0;
+ }
+]]><para>
+            An array can also be declared and initialized in a single statement. <indexterm
+            role="printindex"/> For example
+            </para><![CDATA[
+ int intArray[] = {1, 78, 12, 5};
+]]><para>allocates memory for 4
+            integer variables, initializes these memory positions the relevant integer values and
+            sets the pointer <literal>intArray</literal> to the start of that memory block.
+              <indexterm role="printindex"/> Similarly
+            </para><![CDATA[
+ double matrix[3][3] = { {1.0, 1.7, 2.3},
+                         {3.2, 7.9, 0.4},
+                         {0.1, 9.9, 4.2} };
+]]><para>declares
+            and initializes a 3x3 array o floating point variables. <indexterm role="printindex"/>
+            while
+            </para><![CDATA[
+ double matrix[3][3] = { {1.0},
+                         {3.2},
+                         {0.1} };
+]]><para>declares
+            a 3x3 array and initializes the first column. Note that unlike FORTRAN, C++ stores its
+            arrays in row-major order.</para>
+          <para/>
+        </section>
+        <section>
+          <title> Arrays in dynamic memory</title>
+          <para> Static allocation of arrays has, however, a few severe disadvantages. If one, for
+            example, writes a function for least squares fitting of a set of data points to a
+            function, the number of data points are mot generally known beforehand. One could make
+            the assumption that the user will never use more than say 200 data points. Then the user
+            could never supply more than 200 data points. Furthermore, if he supplies only 5 data
+            points the program would still use memory for 200 points. Finally, the meory cannot be
+            released while the array is in scope, even if it is no longer needed.</para>
+          <para> An alternative approach is to reserve memory at run-time. This is done in <informalequation>
+              <graphic fileref="cpp38x.gif"/>
+            </informalequation> via the<literal>new</literal> operator. If we want to reserve memory
+            for an array of <literal>n</literal> integer variables we can do this by
+            </para><![CDATA[
+ int *vector = new int[n];
+]]><para>This statement declares an integer
+            pointer <literal>vector</literal>, reserves a block of contiguous memory space, large
+            enough for <literal>n</literal> integer variables, and sets the address of the pointer
+            variable <literal>vector</literal> to the start of the memory block. The representation
+            in memory is illustrated in figure<ulink url="#x1-390013">
+            </ulink> (we replaced the name of the pointer variable by <literal>v</literal> to
+            achieve a more compact notation). </para>
+          <figure>
+            <title/>
+            <blockquote>
+              <para/>
+              <section role="center">
+                <title/>
+                <para>
+                  <graphic width="72.26999pt" fileref="BasicCPP/Figures/DynamicArray1D.pdf"/>
+                </para>
+              </section>
+              <blockquote role="caption">
+                <title role="caption"> Figure 1.3</title>
+                <para>Memory structure for a one-dimensional dynamic array.</para>
+              </blockquote>
+            </blockquote>
+          </figure> Note that <literal>n</literal> need not be constant and can be read in from the
+          terminal. When we no longer require the vector we can free the memory and thereby conserve
+          our hardware resources. This is done by the following statement
+            <![CDATA[
+ delete[] vector;
+]]><para> The following program shows how one could
+            dynamically allocate a two-dimensional array (which can be used to represent the data of
+            a matrix).</para>
+
+          <para/><![CDATA[
+ //                   DynamicArray.cpp
+ //---------------------------------------------------------
+ //                Dynamic Memory Arrays
+ 
+ #include <iostream>
+ 
+ using namespace std;
+ 
+ int main()
+ {
+   int nrows, ncols;
+ 
+   cout << "Enter number of rows : ";
+   cin >> nrows;
+   cout << "Enter number of columns : ";
+   cin >> ncols;
+ 
+   double **M = NULL;  // it is usually a good idea to initialize
+                       // pointers to NULL.
+ 
+   int nr, nc;
+ 
+   M = new double*[nrows];
+   for (nr=0; nr<nrows; nr++)
+     M[nr] = new double[ncols];
+ 
+   cout << "Now enter the elements of the (" << nrows << "x"
+        << ncols << ") matrix M :" << endl;
+ 
+   for (nr=0; nr<nrows; nr++)
+   {
+     for (nc=0; nc<ncols; nc++)
+     {
+       cout << "M[" << (nr+1) << "," << (nc+1) << "] = ";
+       cin >> M[nr][nc];
+     }
+   }
+ 
+   cout << "sizeof(M)    = " << sizeof(M)
+        << endl;  // returns size of a pointer variable
+   cout << "sizeof(M[1]) = " << sizeof(M[1])
+        << endl;  // returns size of a pointer variable
+   cout << "sizeof(M[1][1]) = " << sizeof(M[1][1])
+        << endl;  // returns size of a double precision
+                  // floating point variable
+ 
+
+   for (nr=0; nr<nrows; nr++)
+     delete[] M[nr];
+ 
+   delete[] M;
+ 
+   char k; cin >> k;
+ 
+   return 0;
+ }
+]]><para>
+            An example output of the program is shown below:</para>
+          <para/><![CDATA[
+ Enter number of rows : 2
+ Enter number of columns : 3
+ Now enter the elements of the (2x3) matrix M :
+ M[1,1] = 1
+ M[1,2] = 2
+ M[1,3] = 3
+ M[2,1] = 2
+ M[2,2] = 3
+ M[2,3] = 1
+ sizeof(M)    = 4
+ sizeof(M[1]) = 4
+ sizeof(M[1][1]) = 8
+]]><para>
+            <literal>M</literal> is defined as a pointer <indexterm role="printindex"/> to a pointer
+            to a double precision variable. <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/> We first reserve memory for <literal>nrows</literal>
+            pointers and set the pointer <literal>M</literal> to the start of that memory block. For
+            each of the <literal>nrows</literal> pointers we reserve enough memory for
+            <literal>ncols</literal> double precision variables. The memory arrangement is
+            illustrated in figure <ulink url="#x1-390084">
+            </ulink>. </para>
+          <figure>
+            <title/>
+            <blockquote>
+              <para/>
+              <section role="center">
+                <title/>
+                <para>
+                  <graphic width="72.26999pt" fileref="BasicCPP/Figures/DynamicArray2D.pdf"/>
+                </para>
+              </section>
+              <blockquote role="caption">
+                <title role="caption"> Figure 1.4</title>
+                <para>Memory structure for a two-dimensional dynamic array.</para>
+              </blockquote>
+            </blockquote>
+          </figure> Note that <literal>sizeof(M)</literal> and <literal>sizeof(M[1])</literal> both
+          return the memory required for a pointer variable while <literal>sizeof(M[1][1])</literal>
+          returns the memory required for a double precision variable.<indexterm role="printindex"/>
+          <para> When using dynamic memory allocation, one should be careful that there are no
+              <indexterm role="printindex"/>
+            <indexterm role="printindex"/> memory leaks (i.e. that all memory which is allocated
+            during run-time is deallocated again -- preferably as soon as it is no longer required)
+            and that the integrity of pointers is ensured (i.e. that pointers do not end up pointing
+            to memory areas which are reserved for other purposes). It is a good programming
+            practice to set all pointers for which there is no memory reserved equal to NULL
+              <indexterm role="printindex"/> (known as the null pointer). </para>
+          <section>
+            <title> Example program: Linear regression</title>
+            <para> We demonstrate the usefulness of dynamic memory with a general linear regression
+                <indexterm role="printindex"/> program. In this case an experimentalist has measured
+              a set of data points and he wants to fit the "best" straight line through these data points.</para>
+            <para> Consider a set of data points <informalequation>
+                <graphic fileref="cpp39x.gif"/>
+              </informalequation>. By minimizing the sum of the squares of the error (least-squares
+              fit) one obtains the following expressions for the slope of the straight line and its <informalequation>
+                <graphic fileref="cpp40x.gif"/>
+              </informalequation>-intercept:</para>
+            <para>
+              <informalequation role="math-display">
+                <graphic fileref="cpp41x.gif" role="math-display"/>
+              </informalequation>
+            </para>
+            <para> The following little program will ask for the number of data points and it will
+              determine the best straight-line fit to these points:</para>
+
+            <para/><![CDATA[
+ //                 LinearRegression.cpp
+ //---------------------------------------------------------------
+ // Asks for a collection of 2-dimensional data points
+ // and then fits the "best" straight line through these
+ // data points using the linear regression algorithm
+ 
+ #include <iostream>
+ 
+ using namespace std;
+ 
+ void readDataPoints(double*&amp; x, double*&amp; y, int&amp; numDataPoints)
+ {
+   cout << "Enter number of data points: ";  cin >> numDataPoints;
+ 
+   x = new double[numDataPoints];
+   y = new double[numDataPoints];
+ 
+   for (int i=0; i<numDataPoints; ++i)
+   {
+     cout << "x[" << (i+1) << "] y[" << (i+1) << "] = ";
+     cin >> x[i] >> y[i];
+   }
+ }
+ 
+ //----------------------------------------------------------------
+ 
+ void linearRegression (double x[], double y[], const int numDataPoints,
+                        double&amp; slope, double&amp; y_intercept)
+ {
+   double sum_x=0, sum_x2=0, sum_y=0, sum_xy=0;
+ 
+   for (int i=0; i<numDataPoints; ++i)
+   {
+     sum_x  += x[i];
+     sum_y  += y[i];
+     sum_x2 += x[i]*x[i];
+     sum_xy += x[i]*y[i];
+   }
+ 
+   slope = (sum_x*sum_y - numDataPoints*sum_xy)
+              / (sum_x*sum_x - numDataPoints*sum_x2);
+ 
+   y_intercept = (sum_y - slope*sum_x) / numDataPoints;
+ }
+ 
+ //----------------------------------------------------------------
+
+ 
+ int main()
+ {
+   int numDataPoints;
+ 
+   double *x, *y;
+ 
+   readDataPoints(x, y, numDataPoints);
+ 
+   double slope, y_intercept;
+ 
+   linearRegression(x, y, numDataPoints, slope, y_intercept);
+ 
+   char* sign = " + ";
+   if (y_intercept < 0)
+     sign = " - ";
+ 
+   cout << "Straight line fit obtained from linear regression: "
+         << " y = " << slope << "x " << sign << y_intercept << endl;
+ 
+   delete[] x;
+   delete[] y;
+ 
+   char k; cin >> k;
+ 
+   return 0;
+ }
+]]><para>
+              Note that we declare the pointer variables in the main program and that we reserve
+              memory for the arrays and assign the pointer variables to the starting address of
+              these arrays in the function <literal>readDataPoints</literal>. We thus have to pass
+              the pointers by reference. Note also that <literal>double* x</literal> and
+                <literal>double x[]</literal> are type compatible. Once we now longer require the
+              arrays, the memory is released via the array-delete operator,<literal>delete[]</literal>.</para>
+            <para> As an example we ran the program with the five data points indicated by asterisks
+              in figure <ulink url="#x1-400045">
+              </ulink> and have plotted the linear regression result onto the same figure.
+                <indexterm role="printindex"/>
+            </para>
+            <figure>
+              <title/>
+              <blockquote>
+                <para/>
+                <section role="center">
+                  <title/>
+                  <para> _1 __1.5 __2 __2.5 __3 __3.5 __4 __4.5 __5 _1 1.5 2 2.5 3 3.5 4 4.5
+                    5______________________________________________________________________________________________________________________________ <informalequation>
+                      <graphic fileref="cpp42x.gif"/>
+                    </informalequation>
+                    <informalequation>
+                      <graphic fileref="cpp43x.gif"/>
+                    </informalequation>
+                    <informalequation>
+                      <graphic fileref="cpp44x.gif"/>
+                    </informalequation>
+                    <informalequation>
+                      <graphic fileref="cpp45x.gif"/>
+                    </informalequation>
+                    <informalequation>
+                      <graphic fileref="cpp46x.gif"/>
+                    </informalequation>
+                  </para>
+                </section>
+                <blockquote role="caption">
+                  <title role="caption"> Figure 1.5</title>
+                  <para>Linear regression result.</para>
+                </blockquote>
+              </blockquote>
+            </figure>
+          </section>
+        </section>
+        <section>
+          <title> Array versus vectors and matrices</title>
+          <para> We will differentiate between C and C++ arrays (static or dynamic) and vectors and
+            matrices. Arrays can represent the data structure of a vector or a matrix, but vectors
+            and matrices have associated with them certain operations like the vector addition or
+            the vector dot product or matrix multiplication. Also, when using C-type arrays (via
+            pointers) there is no automatic range checking.</para>
+          <para> Later in this book we shall discuss array and vector and matrix classes which do
+            support controlled element access and data-type specific functionality. This will allow
+            us to write code which is very similar to Matlab or Mathematica code in that we will be
+            able to, for example, directly multiply matrices in very simple and very powerful code
+            like the code extract shown below: </para><![CDATA[
+ matrix<double> A(n,n), B(n,n), C(n,n)
+ A = B*C;
+ cout << "matrix B x matrix C = " << A;
+]]><para/>
+        </section>
+        <section>
+          <title> Character arrays as strings</title>
+          <para> C++ has no predefined string data type. Instead one uses arrays to <indexterm role="printindex"/>
+            <indexterm role="printindex"/> characters, which behave many, but not in all ways
+            identical to any other array type. There are, however, some important differences which
+            are illustrated in the following code:
+            </para><![CDATA[
+ #include <iostream.h>
+ 
+ void main()
+ {
+   char str[20] = "This is a string";
+   char* pchar = str;
+   cout << str    << endl;         // prints "This is a string"
+   cout << pchar << endl;          // prints "This is a string"
+ 
+   int ivec[5] = {1, 2, 3, 4, 5};
+   int* pvec = ivec;
+   cout << pvec << endl;           // prints the address of ivec[0]
+   cout << (*pvec) << endl;        // prints its contents, 1
+ 
+   ++ pvec;
+   cout << (*pvec) << endl         // prints the second element, 2
+ }
+]]><para>In
+            the above listing, both <literal>str</literal> and <literal>p</literal> are effectively
+            pointers to characters. The first statement does a lot of things in the background. It
+            first defines <literal>str</literal> as a pointer to <literal>char</literal>, reserves
+            20 bytes (for 19 characters <indexterm role="printindex"/> and the terminating
+            <literal>/0</literal> character) in memory, initializes these memory positions with the
+            string characters and the terminating NULL character and finally it sets the pointer
+            <literal>str</literal> to the starting position of this memory area. The second
+            statement simply defines a pointer <literal>pchar</literal> to <literal>char</literal>
+            and initializes this pointer to the memory position <indexterm role="printindex"/> of
+            <literal>str</literal>. Pushing <literal>pchar</literal> onto the output stream prints
+            not only the first character <literal>'T'</literal>, but the entire string. <indexterm
+            role="printindex"/> This behavior is not usual for pointers. In fact, it only works like
+            this for pointers to the data type <literal>char</literal>. The reason for this is
+            historical -- it simulates some functionality of a string data type. <indexterm
+            role="printindex"/> If we do the same for an array of integers then things look quite
+            differently. We first define a vector of 5 integers which are initialized to 1--5. We
+            then define a pointer <literal>pvec</literal> and set it to the starting address of this
+            vector. Now printing out <literal>pvec</literal> results <indexterm role="printindex"/>
+            in the more standard behavior, i.e. the address of the first element of the vector is
+            printed. Dereferencing the pointer results in the <indexterm role="printindex"/>
+            contents of this memory position which is the first element in the array. Since the
+            vector is typed (of type <literal>int*</literal>) we can increment the vector using the
+            standard pre- or post-fix incrementation <indexterm role="printindex"/>
+            <indexterm role="printindex"/> operator. The result is that the pointer now points to
+            the next memory area of size<literal>sizeof(int)</literal> and dereferencing the pointer
+            now yields the second element of the vector.</para>
+          <para> Since <informalequation>
+              <graphic fileref="cpp47x.gif"/>
+            </informalequation> supports most aspects of <informalequation>
+              <graphic fileref="cpp48x.gif"/>
+            </informalequation> one can define a string on a <literal>char</literal>-pointer and use
+            the ANSI-<informalequation>
+              <graphic fileref="cpp49x.gif"/>
+            </informalequation> string manipulation functions like <literal>strcpy</literal> for
+            string copy, <literal>strcat</literal> for string concatenation,
+            <literal>strcmp</literal> for string comparison and so forth.</para>
+          <para> Note that strings are really data types with their own functionality (e.g. addition
+            would imply string concatenation). It is hence usually a good idea to either write your
+            own string class or to use a string class supplied with your compiler or by an
+            independant vendor.</para>
+          <para/>
+        </section>
+      </section>
+      <section>
+        <title> Function templates</title>
+        <para>
+          <indexterm role="printindex"/>
+        </para>
+        <para> Templates are the way in which C++ implements generic functions. Traditionally, if
+          you define a function <indexterm role="printindex"/> you would have to define it for every
+          data type with which you would want to be able to call that function. If you would write a
+          mathematical library containing Bessel functions you would have to define the Bessel
+          functions for <literal>int</literal>,<literal>float</literal>, <literal>double</literal>,
+            <literal>long double</literal> and <literal>complex</literal>. If you want to improve
+          your algorithm at a later stage you would have to search for all definitions of the Bessel
+          function and make the relevant changes. This is cumbersome and prone to errors. Similarly,
+          you would typically have to write a Simpson integrator function for functions of type
+          <literal>float</literal>, <literal>double</literal> and <literal>long double</literal> and
+          possibly also for your own data types like, for example, <literal>Rational</literal>. By
+          defining the Simpson integrator on a template<indexterm role="printindex"/>
+
+        </para><![CDATA[
+ template <class T>
+ T Simpson (T (*f)(const T&amp;), const T&amp; a, const T&amp; b, const int nintvl);
+]]><para>the
+          compiler will automatically generate the code for the data types required in the code. The
+          phrase <literal><![CDATA[ template <class T>]]></literal> in front of the function
+            <indexterm role="printindex"/> definition specifies that the function is defined on a
+          template. Here <literal>T</literal> is a type-variable (you can use your own variable
+          name, if you like. At least one of the arguments of the function must refer to type
+          <literal>T</literal>. <indexterm role="printindex"/> Since the return value of a function
+          does not participate in defining a unique signature (since the user need not use the
+          return value), it is not suffcient that the template type is referred to only in the
+          return value of the function.</para>
+        <para> Now, if you call <literal>Simpson</literal> twice, once with a function of the form
+          </para><![CDATA[
+ double func(const double&amp; x);
+]]><para>and once with a function
+          of the form </para><![CDATA[
+ Rational fr(const Rational&amp; r)
+]]><para>then the
+          compiler will write for you two functions, one with every occurance of
+          <literal>T</literal> replaced by<literal>double</literal> and one with every occurance of
+          <literal>T</literal> replaced by <literal>Rational</literal>.</para>
+        <para> It is interesting to note that the template argument <literal>T</literal> can refer
+          to object types, function names, constant expressions or character strings.</para>
+        <para/>
+        <section>
+          <title> Example program: Bubble-sort</title>
+          <para>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+          </para>
+          <para> We illustrate function templates via a simple bubble-sort program. Since the
+            program will be defined on a template, it will be able to sort arrays of any data type,
+            as long as there is a greater-as operator, <literal>&gt;</literal>, and an assignment
+            operator, <literal>=</literal>, defined for the data type (or the class). In <indexterm
+            role="printindex"/> our example program we sort an array of <literal>float</literal> and
+            an array of <literal>char</literal> with the same Bubble sort routine.</para>
+
+          <para/><![CDATA[
+ //                        BubbleSort.cpp
+ //----------------------------------------------------------------
+ // A Bubble sort algorithm defined on a template. It can hence sort
+ // an array of any class, e.g. integers, floating point numbers, characters,
+ // or any user-defined class (e.g. a data base of employees)
+ 
+ #include <iostream>
+ 
+ using namespace std;
+ 
+ template <class T>                             // T is determined by the
+ void BubbleSort (T vec[], const int length)    // calling program
+ {
+   int exchanged, nleft = length;
+ 
+   do
+   {
+     exchanged = 0;
+     nleft--;
+     for (int n=0; n<nleft; n++)
+     {
+       if (vec[n] > vec[n+1])  // if next element smaller: exchange
+       {
+         T dummy  = vec[n+1];
+         vec[n+1] = vec[n];
+         vec[n]   = dummy;
+         exchanged++;
+       }
+     }
+   } while (exchanged);  // if no exchanges in previous loop: done
+ }
+ 
+ int main()
+ {
+   int lngth=5;
+   float* fvec = new float[lngth];    // create an array of floats
+ 
+   fvec[0]=8.1; fvec[1]=3.7;  fvec[2]=4.2; fvec[3]=9.0; fvec[4]=7.2;
+ 
+   BubbleSort (fvec, lngth);      // bubble sort this vector
+ 
+   for (int i=0; i<lngth; i++)    // show result on screen
+     cout << "fvec[" << i << "] = " << fvec[i] << endl;
+ 
+   delete[] fvec;   // vector no longer needed => discard
+ 
+
+   cout << endl;
+ 
+   lngth=6;                       // the same for vector of chars
+   char* cvec = new char[lngth];
+ 
+   cvec[0]='s'; cvec[1]='d'; cvec[2]='r'; cvec[3]='a'; cvec[4]='z';
+   cvec[5]='m';
+ 
+   BubbleSort (cvec, lngth);
+ 
+   for (int i=0; i<lngth; i++)
+     cout << "cvec[" << i << "] = " << cvec[i] << endl;
+ 
+   delete[] cvec;
+ 
+   char k; cin >> k;
+ 
+   return 0;
+ }
+]]><para>
+            The applicability of this sorting routine is, however, not limited to predefined data
+            types. It can also be used for user defined data types (e.g. an array of <indexterm
+            role="printindex"/> rational numbers or an array of employee records).</para>
+          <para/>
+        </section>
+        <section>
+          <title> Multiple templates</title>
+          <para> We can also define a function (or a class) on multiple templates. For example, you
+            might want to sort an associative array (also called a dictionary or a map). An
+            associative array keeps for each element a key. Given the key, we can access the value
+            (this is an abstraction of accessing the array elements via integers).</para>
+          <para> A simple, non-object-oriented way of defining a sorting algorithm for an
+            associative array would be to use two template types: </para><![CDATA[
+ template <class K, class V>
+ void quickSort (K keys[], V values[], const int length);
+]]><para/>
+        </section>
+        <section>
+          <title> Overloading template functions</title>
+          <para>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+          </para>
+          <para> Template functions can be overloaded just like any other function. Consider, for
+            example, the following program listing</para>
+
+          <para/><![CDATA[
+ #include <iostream>
+ 
+ using namespace std;
+ 
+ template <class T>
+ T Max(const T&amp; x, const T&amp; y)
+ {
+   if (x > y)
+     return x;
+   else
+     return y;
+ }
+ 
+ template <class T>
+ T Max(const T* const vec, const int length)
+ {
+   T largest = vec[0];
+   for (int i=1; i<length; i++)
+     if (vec[i] > largest)
+       largest = vec[i];
+   return largest;
+ }
+ 
+ int main()
+ {
+   double a=5.1, b=1.23;
+   cout << "a, b = " << a << ", " << b << endl;
+   cout << "Max(a,b) = " << Max(a,b) << endl << endl;
+ 
+   int v[5];
+   v[0]=9; v[1]=2; v[2]=11; v[3]=7; v[4]=8;
+   cout << "v = [";
+   for (int i=0; i<4; ++i)
+     cout << v[i] << ", ";
+   cout << v[4] << "]" << endl;
+ 
+   cout << "Max(v,4) = " << Max(v,4) << endl;
+ 
+   char k; cin >>k;
+ 
+   return 0;
+ }
+]]><para>
+            The output of the above program is shown below:</para>
+
+          <para/><![CDATA[
+ a, b = 5.1, 1.23
+ Max(a,b) = 5.1
+ 
+ v = [9, 2, 11, 7, 8]
+ Max(v,4) = 11
+]]><para>Here
+            we defined two version of the function <literal>Max</literal>. Both versions are defined
+            on a template. <indexterm role="printindex"/> The first version takes two scalar
+            arguments (for example two floating point numbers) and returns the larger of the two.
+            The second version, which carries the same name as the first takes, a pointer variable
+            (for an array) as the first argument and an integer argument specifying the number of
+            elemnts in the array. This function returns the largest of the array elements. Note that
+            the first argument, <literal>vec</literal>, is defined as
+            </para><![CDATA[
+ const T* const vec
+]]><para>In this case both, the pointer variable
+            <literal>vec</literal>, and the <indexterm role="printindex"/> memory locations it
+            points to (the array elements) are treated <indexterm role="printindex"/> as <literal>const</literal>.</para>
+          <para/>
+        </section>
+      </section>
+      <section>
+        <title> Recursion</title>
+        <para> Recursion occurs when a function calls itself, either directly or indirectly. Many
+          mathematical problems can be defined very elagently using recursion. We have direct
+          recursion when a function calls itself. Indirect recursion involves, for example, a
+          function <literal>f1</literal> calling another function <literal>f2</literal> which calls
+          again <literal>f1</literal>. For example the right-hand side calling hierarchy in figure
+          ?? contains both direct (<literal>f2</literal> calling itself) and indirect recursion (for
+          example, <literal>f6</literal> calls <literal>f8</literal> calls <literal>f9</literal>).</para>
+        <para> Often one finds simple functions, like the factorial function, implemented
+          recursively:
+          </para><![CDATA[
+ long int factorial(const long int n)
+ {
+   long int local = n;
+   if (n>=2)
+     local *= factorial(n-1);
+   return local;
+ }
+]]><para>Note,
+          however, that if we calculate <informalequation>
+            <graphic fileref="cpp50x.gif"/>
+          </informalequation> the function, <literal>factorial</literal>, is called <informalequation>
+            <graphic fileref="cpp51x.gif"/>
+          </informalequation> times and hence<informalequation>
+            <graphic fileref="cpp52x.gif"/>
+          </informalequation> stack frames are created, each frame containing a copy of the local
+          variable <literal>local</literal>, the function argument <literal>n</literal> and the
+          calling address. Finally the stack has to be unwound before the final result is passed to
+          the function calling <literal>factorial</literal>. A good proportion of these overheads is
+          avoided by mapping the recursive algorithm onto a non-recursive one:
+          </para><![CDATA[
+ long int factorial(const long int n)
+ {
+   long int local = n;
+ 
+   for (int i=n-1; i>=2; i--)
+     local *= i;
+ 
+   return local;
+ }
+]]><para>
+          Furthermore, recursive cycles in a function calling diagram complicate the analysis,
+          design and testing significantly. In Figure ?? a function calling lattice (a lattice is a
+          tree for which branches can share descendents) is compared to a function calling diagram
+          which contains direct and indirect recursion. The lattice structure is not only simpler to
+          comprehend, but it has the additional advantage that the leaves of the tree (f6, f9 and
+          f10) can be tested independetly, and once it is established that these work correctly, the
+          next level of functions can be tested. These functions (f5,f7 and f8) call only functions
+          which have been tested already. On the other hand, if the function diagram contains
+          indirect recursion (f4--f6 and f6--f8--f9), then the function making up the recursive
+          cycle cannot be tested independetly. </para>
+        <figure>
+          <title/>
+          <blockquote>
+            <para/>
+            <section role="center">
+              <title/>
+              <para>
+                <graphic width="72.26999pt" fileref="BasicCPP/Figures/Recursion.pdf"/>
+              </para>
+            </section>
+            <blockquote role="caption">
+              <title role="caption"> Figure 1.6</title>
+              <para>A lattice function calling hierarchy (left) compared to a more general function
+                calling diagram containing direct and indirect recursion.</para>
+            </blockquote>
+          </blockquote>
+        </figure> Hence, both direct and indirect recursion havesignificant disadvantages and it is
+        generally a good idea to try and map recursive dependancy cycles onto lattice structures.
+        This may, of course not always be a reasonable option. </section>
+      <section>
+        <title> Simple file I/O and simple strings</title>
+        <para>
+          <indexterm role="printindex"/>
+          <indexterm role="printindex"/>
+        </para>
+        <para> The following program illustrates simple file input and output as well as simple
+          strings. As is the case for vectors and matrices, strings in <informalequation>
+            <graphic fileref="cpp53x.gif"/>
+          </informalequation> are best handled by defining for them an abstract data type (a class).
+            <indexterm role="printindex"/>
+          <indexterm role="printindex"/> This will be done in the coming chapters. Here we use the
+          standard <informalequation>
+            <graphic fileref="cpp54x.gif"/>
+          </informalequation> strings which are defined as arrays of characters with a terminating
+          <literal>NULL</literal> character (<literal>/0</literal>). <indexterm role="printindex"/>
+          <indexterm role="printindex"/> Hence the string variable <literal>inputfilename</literal>
+          is defined as an array of 60 characters (the string can be no longer than that length with
+          the actual length determined by the position of the <literal>NULL</literal> character in
+          that array of characters). <indexterm role="printindex"/> The function<literal>strlen()</literal>
+          <indexterm role="printindex"/> returns the length of the string by determining the
+          position of the <literal>NULL</literal> character.</para>
+        <para> A string can also be declared and initialized in a single statement
+          </para><![CDATA[
+   char* myname = "Peter Smith";
+]]><para>In this case the compiler
+          allocates enough memory to hold the relevant string (including the terminating
+          <literal>'/0'</literal>-character) <indexterm role="printindex"/>
+          <indexterm role="printindex"/> and sets the pointer <indexterm role="printindex"/> to the
+          start of that memory space.</para>
+        <para/>
+        <section>
+          <title> Example program: Replacing all occurances of a string in a file</title>
+
+          <para/><![CDATA[
+ //                    Replace.CPP
+ //---------------------------------------------------------
+ // Search the contents of a file and replace all occurances
+ // of oldstr with the string newstr writing the result into
+ // a new file.
+ 
+ #include <stdlib.h>            // for exit()
+ #include <string>            // for strlen()
+ #include <fstream>           // for fileIO
+ #include <iostream>          // for console IO
+ 
+ using namespace std;
+ 
+ void replace(ifstream&amp; infile, ofstream&amp; outfile,
+              char oldStr[], char newStr[], long int&amp; numSubstitutions)
+ {
+   char c;
+   unsigned int k=0;
+   numSubstitutions = 0;
+   while (!infile.eof())   // while not end of input file
+   {
+      infile.get(c);  // read next character from input file
+ 
+      if (c==oldStr[k])    // if character conforms to next
+      {                    // character of string to be replaced
+        ++k;               // increment pointer which points to
+                           // number of chars which aggree.
+        if (k==strlen(oldStr))  // If entire string aggrees with
+        {                       // string to be replaced, write
+          outfile << newStr;    // replacement string to output
+          k = 0;                // file &amp; reset substring pointer.
+          ++numSubstitutions;   // Counting no of replacements.
+        }
+      }
+      else                  // if next character does not aggree:
+      {
+        for (unsigned int kk=0; kk<k; ++kk) // First write substring which
+        outfile << oldStr[kk];     // did aggree, then
+        outfile << c;              // the char which didnt aggree
+        k=0;                       // and reset substring pointer
+      }
+   };
+ }
+ 
+ 
+ int main()
+
+ {
+   char inputfilename[60];
+   cout << "Enter name of input file: "; cin  >> inputfilename;
+ 
+   ifstream infile (inputfilename);  // opening input stream
+   if (!infile)                      // fromfile inputfilename
+   {
+      cout << "*** ERROR *** :  cannnot open " << inputfilename
+           << endl;
+      exit(1);  // Flushes output buffers, closes files,
+   };           // aborts program
+ 
+   char outputfilename[60];
+   cout << "Enter name of output file: "; cin  >> outputfilename;
+   ofstream outfile (outputfilename); // open output file stream
+ 
+   char oldStr[80], newStr[80];
+ 
+   cout << "Enter string to be replaced throughout file: ";
+   cin  >> oldStr;
+   cout << "Enter replacement string: ";
+   cin  >> newStr;
+ 
+   long int numSubstitutions = 0;
+   replace(infile, outfile, oldStr, newStr, numSubstitutions);
+ 
+   infile.close();
+   outfile.close();
+ 
+   cout << "The string <" << oldStr << "> has been replaced by <"
+        << newStr << "> " << numSubstitutions << " times." << endl;
+ 
+   char k; cin >> k;
+ 
+   return 0;
+ }
+]]><para>An
+            input file is opened by creating an object of class <literal>ifstream</literal>
+            <indexterm role="printindex"/> with <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/>
+            <indexterm role="printindex"/> the file name as parameter. The statement
+            </para><![CDATA[
+ if (!infile) ...
+]]><para>checks whether the file
+            <literal>infile</literal> was opened successfully. We use the stream method
+            <literal>get()</literal> instead of the <literal>&gt;&gt;</literal> operator, since the
+            latter <indexterm role="printindex"/>
+            <indexterm role="printindex"/> filters out spaces, carriage return and line feed
+            characters. When the files are no longer required they are closed via the stream
+            method<literal>close()</literal>. <indexterm role="printindex"/>
+          </para>
+          <para> When running the program on its own source code, replacing
+            <literal>oldStr</literal>, we obtain the following output:</para>
+          <para/><![CDATA[
+ Enter name of input file: Replace.cpp
+ Enter name of output file: Replace.out
+ Enter string to be replaced throughout file: oldStr
+ Enter replacement string: THE_VERY_OLD_STRING
+ The string <oldStr> has been replaced by <THE_VERY_OLD_STRING> 8 times.
+]]><para/>
+        </section>
+      </section>
+      <section>
+        <title> Constants and inline functions instead of macros</title>
+        <para> For <informalequation>
+            <graphic fileref="cpp55x.gif"/>
+          </informalequation>-programmers it was common to define constants <indexterm
+          role="printindex"/> via the macros <indexterm role="printindex"/>
+          <indexterm role="printindex"/> . For example, one would define
+          </para><![CDATA[
+ #define eps 1.0e-8
+]]><para>In this case the <informalequation>
+            <graphic fileref="cpp56x.gif"/>
+          </informalequation> or <informalequation>
+            <graphic fileref="cpp57x.gif"/>
+          </informalequation> preprocessor <indexterm role="printindex"/> replaces every occurance
+          of <literal>eps</literal> with <literal>1.0e-8</literal> before the source code is
+          forwarded to the compiler. This has several disadvantages. Firstly any compiler error
+          involving <literal>eps</literal> will refer to <literal>1.0e-8</literal> and not to
+          <literal>eps</literal>. If the code is long it might take the programmer a very long time
+          before he finds the error. The same problem is encountered when one uses a symbolic
+          debugger, since <literal>eps</literal> is never entered into the programs symbol table.
+          Furthermore, the constant <literal>eps</literal> cannot be given an explicit type.</para>
+        <para> All these problems can be solved in <informalequation>
+            <graphic fileref="cpp58x.gif"/>
+          </informalequation> by replacing the above macro by <indexterm role="printindex"/>
+        </para><![CDATA[
+ const double 1.0e-8
+]]><para>
+          <indexterm role="printindex"/> The constant can be defined either locally or globally
+          (preferably locally).</para>
+        <para> An even bigger sin is to use macros <indexterm role="printindex"/> in order to define
+          inline functions. <indexterm role="printindex"/>
+          <indexterm role="printindex"/> Consider the following commonly used macro
+          </para><![CDATA[
+ #define SQR(x) x*x
+ #define MAX(x,y) ((x) > (y) ? (x) : (y))
+]]><para>One
+          needs the parenthesis around <literal>x</literal> and <literal>y</literal> in order to
+          allow the user to use the macro with expressions. The macros look harmless enough.
+          Consider, however, the following pitfalls:
+          </para><![CDATA[
+ y = SQR(1+2);     // result: 5 instead of 9
+ z = MAX(x++,y);
+]]><para>In
+          the first case the macro expansion results in <indexterm role="printindex"/>
+        </para><![CDATA[
+ y = 1+2 * 1+2;
+]]><para>which evaluates to 5 (since multiplication has
+          higher precedence than addition). In the second case <literal>x</literal> will be
+          incremented either once or twice, depending on whether <literal>(x+1)</literal> is greater
+          than <literal>y</literal> or not. It should be clear that macros like the above are not
+          only bad style but downright dangerous. Again there is an elegant alternative available in<informalequation>
+            <graphic fileref="cpp59x.gif"/>
+          </informalequation>:</para>
+        <para/><![CDATA[
+ //                NoMacro.cpp
+ //-------------------------------------
+ #include <iostream>
+ 
+ using namespace std;
+ 
+ template <class T>
+ inline T sqr(const T&amp; x) {return x*x;}
+ 
+ template <class T>
+ inline T&amp; max(T&amp; x, T&amp; y)
+ {
+   if (x > y)
+     return x;
+   else
+     return y;
+ }
+ 
+ int main()
+ {
+   cout << "sqr(2+1) = " << sqr(2+1) << endl;
+ 
+   double a=2.1, b=1.7;
+   cout << "max(a,b) = " << max(a,b) << endl;
+ 
+   char k; cin >> k;
+ 
+   return 0;
+ }
+ 
+]]><para>
+          <indexterm role="printindex"/>
+          <indexterm role="printindex"/>
+          <indexterm role="printindex"/>
+        </para>
+        <para> The output of the program is:</para>
+        <para/><![CDATA[
+ sqr(2+1) = 9
+ max(a,b) = 2.1
+]]><para>Declaring these functions as <literal>inline</literal>
+          <indexterm role="printindex"/> avoids the function call overheads. Note, however,
+          that<literal>inline</literal> is a request to the compiler which might be ignored if the
+          compiler feels it is not a good idea (e.g. for example for recursive functions and complex functions).</para>
+        <para> Defining the functions on a template <indexterm role="printindex"/> ensures that
+          <literal>sqr</literal> and <literal>max</literal> can be used for several data types (e.g.
+          for integers, floating point numbers, or your own classes -- say a class of rational
+          numbers). In contrast to the macro <indexterm role="printindex"/> definitions, the inline
+          functions <indexterm role="printindex"/> are type-safe.</para>
+        <para/>
+        <orderedlist>
+          <listitem>
+            <para>The rules for leap years are a little convoluted: every 4'th year is a leap year
+              except every century which isn't except every 4'th century which is. Write a function
+              <literal>leapyear</literal> which takes an integer as argument and returns 1 if its is
+              a leap year and zero otherwise. In you main program, read in years in a loop until the
+              user enters a zero for the year. For each year enetered, the program should report
+              whether it is a leap year or not. (Hint: use the remainder operator
+              <literal>%</literal> in your leap year function). </para>
+          </listitem>
+          <listitem>
+            <para>Write a program which reads in the parameters <informalequation>
+                <graphic fileref="cpp60x.gif"/>
+              </informalequation>, <informalequation>
+                <graphic fileref="cpp61x.gif"/>
+              </informalequation> and <informalequation>
+                <graphic fileref="cpp62x.gif"/>
+              </informalequation> of a parabola <informalequation>
+                <graphic fileref="cpp63x.gif"/>
+              </informalequation> and gives as output the roots of the parabola as well as its
+              turning point. The roots of a parabola are given by </para>
+            <para>
+              <informalequation role="math-display">
+                <graphic fileref="cpp64x.gif" role="math-display"/>
+              </informalequation> and its turning point is given by </para>
+            <para>
+              <informalequation role="math-display">
+                <graphic fileref="cpp65x.gif" role="math-display"/>
+              </informalequation> (there is a <literal>sqrt</literal> function in the standard C++
+              library math.h). </para>
+          </listitem>
+          <listitem>
+            <para>Write a program which reads in a series of floating point numbers (use dynamic
+              memory allocation), calculates their mean and their <indexterm role="printindex"/>
+              standard deviation from that mean (declare functions <literal>mean</literal> and
+              <literal>stddeviation</literal>). <indexterm role="printindex"/>
+              <indexterm role="printindex"/> The mean and the standard deviation are defined as
+              follows: </para>
+            <para>
+              <informalequation role="math-display">
+                <graphic fileref="cpp66x.gif" role="math-display"/>
+              </informalequation>
+            </para>
+          </listitem>
+          <listitem>
+            <para>Write a program which reads in a string <indexterm role="printindex"/> of up to 80
+              characters and which gives as output the upper case version of that string together
+              with the number of characters in that string. For the case where the input string is
+              upper case already, let it print a message to that effect. (The standard <informalequation>
+                <graphic fileref="cpp67x.gif"/>
+              </informalequation> functions <literal>int toupper(int chr)</literal> and <indexterm role="printindex"/>
+              <indexterm role="printindex"/>
+              <literal>int isupper(int chr)</literal> are defined in the library
+              <literal><![CDATA[ctype.h]]></literal>. <indexterm role="printindex"/>
+              <literal>isupper</literal> returns nonzero if <literal>chr</literal> is an upper case
+              character (<literal>A</literal> to <literal>Z</literal>). </para>
+          </listitem>
+          <listitem>
+            <para>Write a procedure <literal>swap</literal> which swaps any two objects
+              <literal>x</literal> and <literal>y</literal> (Hint: use function templates).
+                <indexterm role="printindex"/>
+              <indexterm role="printindex"/> Write a short main program which illustrates how this
+              procedure can be used to swap two floating point numbers, two characters, two strings
+              and two arrays of floating point numbers (declare any two strings and arrays). Explain
+              what happens in the latter two cases (what happens to the pointer variables and to the
+              memory they point to?). </para>
+          </listitem>
+          <listitem>
+            <para>Write a program which reads the source code of a <informalequation>
+                <graphic fileref="cpp68x.gif"/>
+              </informalequation> program and removes all the comments from it. </para>
+          </listitem>
+          <listitem>
+            <para>Write a series of functions calculating the circumference of various geometrical
+              shapes. Each of the functions should be called <literal>circumference</literal>
+              (function overloading). If it is called with a single parameter it is to assume that
+              the shape whose circumference you want to calculate is a circle and the parameter is
+              the radius. If you call it with two parameters it should assume that the shape is a
+              rectangular with the two parameters being the width and height of the rectangular. If
+              you call it with 3 parameters it should assume the shape is a triangle with the
+              parameters being the three side lengths.</para>
+          </listitem>
+        </orderedlist>
+        <para/>
+      </section>

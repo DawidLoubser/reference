@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/samples/docbook/xml/docbookx.dtd">
+-->
+<section id="resources.information.technologies.java.j2me.introduction.configs"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Configurations</title>
+    <para>We'll be looking at the two current configurations in the J2ME specs, namely CDC and
+        CLDC. CLDC being the <emphasis>C</emphasis>onected <emphasis>L</emphasis>imited
+        <emphasis>D</emphasis>evice <emphasis>C</emphasis>onfiguration. And CDC the <emphasis>C</emphasis>onected
+        <emphasis>D</emphasis>evice
+        <emphasis>C</emphasis>onfiguration.
+    </para>
+    <para>Configurations use a virtual machine to implement a certain
+        amount of functionality for a specific device. The smaller ones are subsets of larger more
+        capable configurations, so software is upward compatible. Configurations are essentially a
+        Virtual machine with a certain set of class libraries. Lets start with the smaller of the
+        two then; CLDC</para>
+    <section>
+        <title>CLDC(Conected Limited Device Configuration)</title>
+        <para>As you can derive from it's name, it's architected for devices with limited resources
+            that has some kind of network connection. Essentially CLDC boils down to a specific set
+            of class libraries with a virtual machine.CLDC uses KVM as it's virtual machine</para>
+        <para>Devices that will utilise CLDC are typically cell-phones, pagers, PDAs, televisions,
+            other inteligent domestic devices and even small point of sale devices. It is however
+            not limmited to these devices.</para>
+        <para>CLDC needs at least <emphasis>160 kilobytes non-volatile</emphasis> memory. And then
+                <emphasis>32 kilobytes volatile</emphasis> memory for it's runtime.The volatile to
+            non-volatile ratio might differ between different devices and different applications. </para>
+        <para>Hardware requirements increased with the new spec (1.1) to include use of floating
+            point numbers. </para>
+        <para>The configuration will be extended with Profiles that will take care of certain device
+            requirements. The idea of the configuration is to cater for as large a scope of devices
+            as possible.</para>
+        <para>CLDC assumes that the device has a basic operating system through which it can access
+            the required hardware.</para>
+        <para>CLDC applications will have a<methodname>public static void main(String
+            args[])</methodname> method which is the method that will be called. Profiles built on top
+            of CLDC can implement their own application structure. CLDC applications are assumed to
+            be downloadable but not neccasarily persistable on the device. But application
+            management will be device device spesific and outside the scope of the spec.</para>
+        <section>
+            <title>Security</title>
+            <para>CLDC has a much smaller memmory budget than J2SE's security library and the
+                security challenges were met apropriately.</para>
+            <para>Low level security is addressed with a preverifier. Where classes are usually
+                verified at runtime in J2SE, it is preverified for CLDC and unverified classes will
+                be rejected. This is to protect systems from potentially harmfull code.</para>
+            <para>Applications execute in what is known as a sandbox, which has the neccesary
+                restrictions to protect the system libraries and other applications on the device
+                from executing code.</para>
+            <para>End to end transaction secutiy is considered outside the scope of the CLDC spec and 
+            left to the different profiles to address.</para>
+        </section>
+        <section>
+            <title>Limitations</title>
+            <para>As you would expect certain limitations would be unavoidable</para>
+            <para>First of all; Object class in CLDC has no finalize() method and finalize will not
+                be called when an Object is garbage collected.</para>
+            <para>Exception handling in CLDC only supports a subset of the J2SE exception classes.
+                Devices and their application managers will deal with exceptions in their own way and 
+                consequently some exception handling is considdered to be outside the scope of the spec.</para>
+            <para>Asynchronous exceptions and some Error classes have also not been included in the spec.</para>
+            <para>User defined class loaders have also been ommited since it requires security that
+                will bloat the system beyond it's memmory budget.</para>
+            <para>Thread groups and thread demons are not included although the CLDC VM is thread
+                capable. Object collections can be used to handle a collection of threads.</para>
+        </section>
+        <section>
+            <title>Class Libraries</title>
+            <para>Class libraries included in the spec can be subdived into two main categories.
+                Classes which are also available in J2SE and J2ME spesific classes which ultimately
+                maps onto J2SE classes.</para>
+            <itemizedlist>
+                <title>Classes in CLDC</title>
+                <listitem>
+                <itemizedlist>
+                    <title>J2SE </title>
+                    <listitem>
+                    <itemizedlist>
+                        <title>System Classes</title>
+                        <listitem><para>java.lang.Object</para></listitem> 
+                        <listitem><para>java.lang.Class</para></listitem>
+                        <listitem><para>java.lang.Runtime</para></listitem>
+                        <listitem><para>java.lang.System</para></listitem>
+                        <listitem><para>java.lang.Thread</para></listitem>
+                        <listitem><para>java.lang.Runnable (interface)</para></listitem>
+                        <listitem><para>java.lang.String</para></listitem>
+                        <listitem><para>java.lang.StringBuffer</para></listitem>
+                        <listitem><para>java.lang.Throwable</para></listitem>
+                    </itemizedlist>
+                    <itemizedlist>
+                        <title>Data type classes</title>
+                        <listitem><para> java.lang.Boolean</para></listitem>
+                        <listitem><para>java.lang.Byte</para></listitem>
+                        <listitem><para>java.lang.Short</para></listitem>
+                         <listitem><para> java.lang.Integer</para></listitem>
+                         <listitem><para>java.lang.Long</para></listitem>
+                         <listitem><para>java.lang.Float</para></listitem>
+                         <listitem><para>java.lang.Double</para><para>Note that Floating points are only supported as of the new CLDC spec.</para></listitem>
+                         <listitem><para>java.lang.Character</para></listitem>
+                    </itemizedlist>
+                    <itemizedlist>
+                        <title>Collection classes</title>
+                        <listitem><para> java.util.Vector</para></listitem>
+                        <listitem><para>java.util.Stack</para></listitem>
+                        <listitem><para>java.util.Hashtable</para></listitem>
+                        <listitem><para>java.util.Enumeration (interface)</para></listitem>
+                    </itemizedlist>
+                    <itemizedlist>
+                        <title>I/O classes</title>
+                        <listitem><para>java.io.InputStream</para></listitem>
+                        <listitem><para>java.io.OutputStream</para></listitem>
+                        <listitem><para>java.io.ByteArrayInputStream</para></listitem>
+                        <listitem><para>java.io.ByteArrayOutputStream</para></listitem>
+                        <listitem><para>java.io.DataInput (interface)</para></listitem>
+                        <listitem><para>java.io.DataOutput (interface)</para></listitem>
+                        <listitem><para>java.io.DataInputStream</para></listitem>
+                        <listitem><para>java.io.DataOutputStream</para></listitem>
+                        <listitem><para>java.io.Reader</para></listitem>
+                        <listitem><para>java.io.Writer</para></listitem>
+                        <listitem><para>java.io.InputStreamReader</para></listitem>
+                        <listitem><para>java.io.OutputStreamWriter</para></listitem>
+                        <listitem><para>java.io.PrintStream</para></listitem>
+                    </itemizedlist>
+                    <itemizedlist>
+                        <title>Calendar and time classes</title>
+                        <listitem><para>java.util.Calendar</para></listitem>
+                        <listitem><para>java.util.Date</para></listitem> 
+                            <listitem><para>java.util.TimeZone</para></listitem>
+                    </itemizedlist>
+                    <itemizedlist>
+                        <title>Additional utility classes</title>
+                        <listitem><para>java.util.Random</para></listitem>
+                        <listitem><para>java.lang.Math</para></listitem>
+                    </itemizedlist>
+                    <itemizedlist>
+                        <title>Exception classes</title>
+                        <listitem><para>java.lang.Exception</para></listitem>
+                        <listitem><para>java.lang.ArithmeticException</para></listitem>
+                        <listitem><para>java.lang.ArrayIndexOutOfBoundsException</para></listitem>
+                        <listitem><para>java.lang.ArrayStoreException</para></listitem>
+                        <listitem><para>java.lang.ClassCastException</para></listitem>
+                            <listitem><para>java.lang.ClassNotFoundException</para></listitem>
+                            <listitem><para>java.lang.IllegalAccessException</para></listitem>
+                            <listitem><para>java.lang.IllegalArgumentException</para></listitem>
+                            <listitem><para>java.lang.IllegalMonitorStateException</para></listitem>
+                            <listitem><para>java.lang.IllegalThreadStateException</para></listitem>
+                            <listitem><para>java.lang.IndexOutOfBoundsException</para></listitem>
+                            <listitem><para>java.lang.InstantiationException</para></listitem>
+                           <listitem><para>java.lang.InterruptedException</para></listitem>
+                           <listitem><para>java.lang.NegativeArraySizeException</para></listitem>
+                            <listitem><para>java.lang.NullPointerException</para></listitem>
+                            <listitem><para>java.lang.NumberFormatException</para></listitem>
+                            <listitem><para>java.lang.RuntimeException</para></listitem>
+                            <listitem><para>java.lang.SecurityException</para></listitem>
+                            <listitem><para>java.lang.StringIndexOutOfBoundsException</para></listitem>
+                            <listitem><para>java.util.EmptyStackException</para></listitem>
+                            <listitem><para>java.util.NoSuchElementException</para></listitem>
+                            <listitem><para>java.io.EOFException</para></listitem>
+                            <listitem><para>java.io.InterruptedIOException</para></listitem>
+                            <listitem><para>java.io.IOException</para></listitem>
+                            <listitem><para>java.io.UnsupportedEncodingException</para></listitem>
+                            <listitem><para>java.io.UTFDataFormatException</para></listitem>
+                    </itemizedlist>
+                    <itemizedlist>
+                        <title>Error classes</title>
+                        <listitem><para>java.lang.Error</para></listitem>
+                        <listitem><para>java.lang.NoClassDefFoundError</para></listitem>
+                        <listitem><para>java.lang.OutOfMemoryError</para></listitem>
+                        <listitem><para>java.lang.VirtualMachineError</para></listitem>
+                    </itemizedlist>
+                    <itemizedlist>
+                        <title>Weak References</title>
+                        <listitem><para>java.lang.ref.Reference</para></listitem>
+                        <listitem><para>java.lang.ref.WeakReference</para></listitem>
+                    </itemizedlist>
+                    </listitem>
+                </itemizedlist>
+                </listitem>
+            </itemizedlist>
+            <section>
+                <title>Properties</title>
+            <para><classname>java.util.Properties</classname> does not exist in the CLDC spec. Some of the convenience is
+                available in the following classes. Take into consideration that different platforms
+                might implement this functionality different:</para>
+            <para>You can use <classname>microedition.platformName</classname>to get the host platform/device.</para>
+            <para>
+                <classname>microedition.encodingDefault</classname>to get the character encoding. The
+                Default is: ISO-8859-1</para>
+            <para>
+                <classname>microedition.configuration</classname> for the name and version of the
+                supported configuration.</para>
+            <para>
+                <classname>microedition.profilesNames</classname> to see which profiles are supported.</para>
+        </section>
+        <section>
+            <title>CLDC Spesific classes</title>
+            <para> J2SE has a very rich class library. Unfortunately it's not possible to crunch all
+                these classes into a couple a hudred kilobytes. For upward compatibilty puposes
+                classes was created that maps onto J2SE classes but they are spesific to CLDC.
+                Generic frameworks has also been utilized to overcome some of the challenges. </para>
+                <section>
+            <title>Connection framework:</title>
+            <para>Needles to say. The rich network library available in Java 2 second edition is not
+                available in CLDC. Instead they implemented as a generic network framework</para>
+            <para> The framework consists of Interfaces that lay down the requirements of network io
+                classes for limited devices. Using interfaces abstracts the implementations to
+                fullfill the generic needs they have to meet.</para>
+            <para>Connections are opened with the generic static
+                Connector.open(&quot;&lt;protocol>:&lt;address>;&lt;parameters>&quot;); method</para>
+            <para>No protocols are defined in CLDC and it's up to the different profiles to
+                implement the protocols they require. The format of the string passed as argument to
+                the method must adhere to the IETF standard RFC2396.</para>
+            <para>A open request could look like: <methodname>Connector.open(&quot;http://www.SolmsTraining.co.za&quot;);</methodname>
+            </para>
+            <para>The framework basically consists of interfaces for the following: 
+                <itemizedlist>
+                    <title>Connection Framework</title>
+                    <listitem>
+                        <para>Serial input connection</para>
+                    </listitem>
+                    <listitem>
+                        <para>Serial output connection</para>
+                    </listitem>
+                    <listitem>
+                        <para>Datagram connection</para>
+                    </listitem>
+                    <listitem>
+                        <para>Circuit connection</para>
+                    </listitem>
+                    <listitem>
+                        <para>Client connection notification</para>
+                    </listitem>
+                    <listitem>
+                        <para>Webserver connection</para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+            <section>
+                <title>Connection interface</title>
+                <para> The very basic interface. SInce you allready use the
+                    static <methodname>Connector.open(...)</methodname> it only specifies one Method:
+                        <methodname>public void close() throws IOException;</methodname>
+                </para>
+            </section>
+            <section>
+                <title>InputConnection interface </title>
+                <para>An interface to a device from which an input stream can be opened. Specifies
+                    the following two methods: <methodname>public InputStream openInputStream()
+                        throws IOException;</methodname>
+                    <methodname>public DataInputStream openDataInputStream() throws IOException;</methodname>
+                </para>
+            </section>
+            <section>
+                <title>OutputConnection interface</title>
+                <para>Interface to a device to which an output stream can be opened. Implementations
+                    has to implement: <methodname>public OutputStream openOutputStream() throws IOException;</methodname>
+                    <methodname>public DataOutputStream openDataOutputStream() throws IOException;</methodname>
+                </para>
+            </section>
+            <section>
+                <title>StreamConnection</title>
+                <para>This interface extends the two preceding interfaces, InputConnection and
+                    OutputConnection. You end up with an interface for two way communication. </para>
+            </section>
+            <section>
+                <title>ContentConnection interface</title>
+                <para>Extends StreamConnection and adds some metdata methods typically usable with a
+                    protocol like http. These meta data methods are: <methodname>public String getType();</methodname>
+                    <methodname> public String getEncoding();</methodname>
+                    <methodname> public long getLength();</methodname>
+                </para>
+            </section>
+            <section>
+                <title>StreamConnectionNotifier Interface</title>
+                <para>An Iterface that sets the specification for incoming connections. Like with
+                    any other io stream you have to close the the StreamConnection opened with
+                        <methodname>public StreamConnection acceptAndOpen() throws
+                    IOException;</methodname> when you are finnished with it.</para>
+            </section>
+            <section>
+                <title>DatagramConnection interface</title>
+                <para>A connection is opened to an address but the destination address is a part of
+                    the Datagram object. The following methods are specified:
+                    <itemizedlist>
+                        <listitem><para>
+                    <methodname>public int getMaximumLength() throws IOException;</methodname></para></listitem>
+                    <listitem><para><methodname>public int getNominalLength() throws IOException;</methodname></para></listitem>
+                    <listitem><para><methodname>public void send(Datagram datagram) throws IOException;</methodname></para></listitem>
+                    <listitem><para><methodname>public void receive(Datagram datagram) throws IOException;</methodname></para></listitem>
+                    <listitem><para><methodname>public Datagram newDatagram(int size) throws IOException;</methodname></para></listitem>
+                    <listitem><para><methodname>public Datagram newDatagram(int size, String addr) throws IOException;</methodname></para></listitem>
+                    <listitem><para><methodname>public Datagram newDatagram(byte[] buf, int size) throws IOException;</methodname></para></listitem>
+                    <listitem><para><methodname>public Datagram newDatagram(byte[] buf, int size, String addr)
+                        throws IOException;</methodname></para></listitem>
+                        </itemizedlist>
+                </para>
+                <para>A Datagram Object adheres to DataInput and DataOutput interfaces. The Datagram
+                    interface spesifies some convenience methods, the Datagram can be used as a
+                    stream object, whith the address as additional data field.</para>
+            </section>
+        </section>
+        <section>
+            <title>CDC (Connected Device Configuration)</title>
+            <para>CDC is a superset of CLDC and is a full java 2 platform implementation as
+                specified by the The Java Virtual Machine Specification.</para>
+            <para>Any CLDC implementation with it's asociated profile will be able to run on CDC.
+                Further profiles can be used to extend CDC up to complete J2SE functionality.</para>
+            <para>CDC excludes the following java security features: 
+                <itemizedlist>
+                    <listitem>
+                        <para>Secure code signing. </para>
+                    </listitem> 
+                    <listitem>
+                        <para>Certificates. </para>
+                    </listitem>
+                <listitem>
+                    <para>Keystore.</para>
+                </listitem>
+                <listitem>
+                    <para>java.security.Identity</para>
+                </listitem>
+<listitem>
+                    <para>java.security.IdentityScope</para>
+                </listitem></itemizedlist>
+                It's left to the profiles to implement these.
+            </para>
+        </section>
+    </section>
+</section>
+</section>
+</section>

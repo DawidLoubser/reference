@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+    <title>Setting up a JDBC security realm for container based authentication</title>
+    <para>
+        Typically you would want to configure your enterprise application such that the application server
+        will request authentication as soon as a user tries to access a protected resource,
+        e.g. a service which should only be accessible by users who have certain security roles assigned
+        to them. 
+    </para>
+    <para>
+        To this end the application server will have to compare the provided authentication credentials
+        (e.g. username and password) against those stored either in your system or in some other
+        organization wide user repository.  
+    </para>
+    <para>
+        In JavaEE you would typically configure a security realm for your system. In Glassfish this can be done
+        from the administration console by selecting
+        <programlisting><![CDATA[
+Configuration -> Security -> Realms
+]]></programlisting>
+        and selecting to add a new security realm. For a JDBC realm which authenticates users against a relational
+        database containing usernames, passwords and roles you will have to specify
+        <itemizedlist>
+            <listitem><programlisting>
+                <literal>jdbcRealm</literal> as JAASContext,
+            </programlisting></listitem>
+            <listitem><para>
+                a JNDI name,
+            </para></listitem>
+            <listitem><para>
+                the usertable name and the column names containing the usernames and passwords,
+            </para></listitem>
+            <listitem><para>
+                the group table and the column name containing the group or role names (this table must also
+                contain a username column which is a foreign key to the user table), and
+            </para></listitem>
+            <listitem><para>
+                the digest algorithm (use <literal>none</literal> if you store the passwords non-encrypted in
+                your database.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+</section>    

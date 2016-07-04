@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-03-10 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Mapping specialization relationships onto Java</title>
+    <para> 
+        UML specialization relationships map directly onto Java sub-classing. Consider, for
+        example, the UML diagram shown in <xref
+        linkend="technology.java.lang.umlMappings.classDiagram.specialization.accounts_fig"/>. 
+    </para>
+    <figure xml:id="technology.java.lang.umlMappings.classDiagram.specialization.accounts_fig">
+        <title>A simple example of a UML specialization relationship</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="400" fileref="./accounts.jpg"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+    <para> Assuming that the <literal>Account</literal> class is defined elsewhere, the
+            <literal>CreditCardAccount</literal> class may look something like this:
+        <programlisting language="Java">
+<xi:include parse="text" href="CreditCardAccount.java"/>        
+        </programlisting>
+        Credit card accounts will inherit a balance and a default implementation for the credit
+        service which has not been overridden in the sub-class,
+        <literal>CreditCardAccount</literal>. Thus having a credit card account, we can request the
+        credit service and the balance, even though there is no credit service nor a balance field
+        nor a query method for the balance defined in the <literal>CreditCardAccount</literal>
+        class.
+        <programlisting language="Java">
+<xi:include parse="text" href="CreditCardAccountInheritance.java"/>        
+        </programlisting>
+    </para>
+
+    <section>
+        <title>Substitutability in Java</title>
+        <para> Substitutability is directly supported in Java, <abbrev>i.e.</abbrev> when an
+            instance of some or other class is required any instance of that class or any of its
+            sub-classes may be provided. For example, the <literal>raiseSubscriptionFee</literal>
+            service, provided by the <literal>SubscriptionManager</literal> class
+            <programlisting language="Java">
+<xi:include parse="text" href="SubscriptionManager.java"/>            
+            </programlisting>
+            may be called providing a <literal>CreditCardAccount</literal> instead of an account:
+            <programlisting language="Java">
+<xi:include parse="text" href="CreditCardAccountSubstitutability.java"/>            
+            </programlisting>
+        </para>
+    </section>
+
+    <section>
+        <title>Polymorphism in Java</title>
+        <para> Java supports polymorphism on message recipient, but not polymorphism on message
+            arguments. Thus, while
+            <programlisting language="Java">
+ <xi:include parse="text" href="SubscriptionManagerPolymorphism.java"/>            
+            </programlisting>
+            will call a different debit service depending on the type of account received, different
+            methods will not be resolved upon providing different specializations as method
+            parameter. </para>
+        <para> To see the latter, consider a loan processor for which different business processes
+            have been defined depending on whether the client applies for a home loan or some other
+            loan:
+            <programlisting language="Java">
+<xi:include parse="text" href="LoanProcessor.java"/>
+            </programlisting>
+            Now, assume that a loan application is submitted for processing which happens to be a
+            home loan application:
+            <programlisting>
+LoanApplication loanApplication = new HomeLoanApplication(...);
+
+loanProcessor.process(loanApplication);								
+				</programlisting>
+            The code will unfortunately follow the business process for general loan applications
+            and not the business process defined for home loan applications, even though the loan
+            application provided is in fact a home loan application. </para>
+    </section>
+
+    <section>
+        <title>Abstract classes in Java</title>
+        <para> Abstract classes and services are nativly supported in Java. One simply adds the
+                <literal>abstract</literal> keyword to the respective declaration. The compiler and
+            run-time environments will prevent the instantiation of an abstract class. Furthermore
+            the developer will be forced to declare any subclass of an abstract class itself
+            abstract if implementations have not been provided for all inherited abstract methods. </para>
+        <figure xml:id="technology.java.lang.umlMappings.classDiagrams.specialization.graphicsObject_fig">
+            <title>An abstract graphics object class</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="./graphicsObject.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para> For example, <xref
+                linkend="technology.java.lang.umlMappings.classDiagrams.specialization.graphicsObject_fig"
+            /> specifies an abstract graphics object class with an abstract <literal>draw</literal>
+            service, but a concrete <literal>move</literal> service. The code mapping would be
+            something like the following:
+            <programlisting language="Java">
+<xi:include parse="text" href="GraphicsObject.java"/>            
+            </programlisting>
+        </para>
+    </section>
+
+    <section>
+        <title>Multiple inheritance in Java</title>
+        <para> Multiple inheritence is not supported in Java. This is particularly problematic if
+            instances of one class should be substitutable for multiple other classes. </para>
+        <para> Java does, however, allow for one interfaces to be an extension of multiple other
+            interfaces. This mechanism enables one to have instances of one class be substitutable
+            for different interfaces. </para>
+        <para> Consider the example of a personal card being substitutable for both, an identity
+            card and a driver's license. To achieve substitutability on both ends when mapping onto
+            Java, we need to make both, <literal>IdentityCard</literal> and
+            <literal>DriversLicense</literal> an interface. We might as well then define an
+            interface for <literal>PersonalCard</literal> too. <literal>PersonalCard</literal> will
+            be defined as an extension of both, the <literal>IdentifyCard</literal> and the
+                <literal>DriversLicense</literal> interfaces. </para>
+
+        <figure>
+            <title>Mapping multiple inheritance relationships onto Java</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="./personalCard.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+
+        <para> Now any implementation of a personal card is indeed substitutable for both, an
+            identity card and a driver's license. To reduce the code duplication, we still let
+                <literal>PersonalCard</literal> inherit from <literal>IdentityCard</literal>.
+            However, since Java does not support multiple inheritance of classes, we cannot also
+            inherit from <literal>DriversLicense</literal>. The consequence of this is that there
+            will be code duplication across the <literal>DriversLicense</literal> and the
+                <literal>PersonalCard</literal> classes. <note>
+                <para> The code duplication can be reduced by encapsulating the commonalities within
+                    a class which is used by both, <literal>DriversLicense</literal> and
+                        <literal>PersonalCard</literal>. However, at least the code delegating the
+                    responsibilities to that class would have to be duplicated. </para>
+            </note>
+        </para>
+    </section>
+
+    <section>
+        <title>Avoid overusing sub-classing</title>
+        <para> Sub-classing is often overused. Design experts have continuously recommended to
+            favour both, delegation and interfaces above sub-classing. But, why is subclassing often
+            undesirable. </para>
+        <para> In order to illustrate some of the problems encountered with sub-classing, consider
+            the employee hierarchy in <xref
+                linkend="technology.java.lang.umlMapping.classDiagram.specialization.personHierarchy_fig"
+            />. </para>
+        <figure xml:id="technology.java.lang.umlMapping.classDiagram.specialization.personHierarchy_fig">
+            <title>A class hierarchy for persons</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="personHierarchy.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para> The question on whether the class hierarchy represents "good" design or not is not
+            necesarily easy to answer, particular if we do not have an insight into the use cases
+            within which the classes will be used. It is not, however, unreasonable to expect that
+            some developers may become managers or vice versa. Let us have a look at how well the
+            design would support such a use case. </para>
+        <para> When a developer becomes a manager we will have to <itemizedlist>
+                <listitem>
+                    <para> delete the developer object, </para>
+                </listitem>
+                <listitem>
+                    <para> create a manager, </para>
+                </listitem>
+                <listitem>
+                    <para> reconstruct the full state including employment history, ... (complex,
+                        error prone and a recipe for a maintenance nightmare), and </para>
+                </listitem>
+                <listitem>
+                    <para> find all the objects which had a reference to the developer and change
+                        there reference to point to the newly created manager (good luck). </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para> Furthermore, how would we facilitate a scenario where the same person is both, a
+            client and an employee or even a developer and a manager? We would have to create
+            multiple instances of the person, even though there is only a single person. </para>
+        <para> Looking at the above, one may wonder whether using sub-classing was that good an idea
+            after all. One may want to move over to an aggregation and interfaces based design which
+            facilitates multiple roles for the same person as well as the changing of roles and
+            responsibilities (see ). </para>
+        <figure>
+            <title>Using aggregation and interfaces for person roles and employee responsibilities</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="personDelegation.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para> These types of problems are not confined to some selected examples. Take another
+            example, that of various types of accounts. </para>
+
+        <para> Once again, the design may look good until the bank decides to change their account
+            offerings such that the client may pay, on a single account, via cheque or via credit
+            card and that the client may also have a loan facility on that same account. Suddenly
+            the design which uses sub-classing becomes a lot less attractive. Instead one may want
+            to change the design to one where a cient can buy multiple services for an account. </para>
+        <figure>
+            <title>A class hierarchy for accounts</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="accountHierarchy.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+
+        <para> It is difficult to anticipate requirements changes. In general class hierarchies tend
+            to be very rigid and are not particularly maintenance friendly. </para>
+        <figure>
+            <title>Using a delegation based model for accounts</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="accountDelegation.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+
+    </section>
+
+</section>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns2442:section xmlns:ns2442="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.exceptions.systemExceptions.systemExceptions">
+
+  <ns2443:title xmlns:ns2443="http://docbook.org/ns/docbook">System Exceptions</ns2443:title>
+  <ns2444:para xmlns:ns2444="http://docbook.org/ns/docbook">
+    A system exception communicates that a problem occured with the services which support
+    an application. It is typically handled by the container. Examples of system exceptions are 
+    <ns2445:itemizedlist xmlns:ns2445="http://docbook.org/ns/docbook">
+      <ns2446:listitem xmlns:ns2446="http://docbook.org/ns/docbook">
+        <ns2447:para xmlns:ns2447="http://docbook.org/ns/docbook">Cannot connect to database. </ns2447:para>
+      </ns2446:listitem>
+      <ns2448:listitem xmlns:ns2448="http://docbook.org/ns/docbook">
+        <ns2449:para xmlns:ns2449="http://docbook.org/ns/docbook">Lookup method fails because requested object does not exist. </ns2449:para>
+      </ns2448:listitem>
+      <ns2450:listitem xmlns:ns2450="http://docbook.org/ns/docbook">
+        <ns2451:para xmlns:ns2451="http://docbook.org/ns/docbook">Cannot insert another record because the space allocated to the database has been
+          exhausted. </ns2451:para>
+      </ns2450:listitem>
+      <ns2452:listitem xmlns:ns2452="http://docbook.org/ns/docbook">
+        <ns2453:para xmlns:ns2453="http://docbook.org/ns/docbook">Cannot connect to CORBA server.</ns2453:para>
+      </ns2452:listitem>
+    </ns2445:itemizedlist>
+    When you want to throw a system exception you should wrap it in a
+    <ns2454:literal xmlns:ns2454="http://docbook.org/ns/docbook">javax.ejb.EJBException</ns2454:literal>. The container will wrap the EJBException in a
+    <ns2455:literal xmlns:ns2455="http://docbook.org/ns/docbook">java.rmi.RemoteException</ns2455:literal> and the client will receive a handle to that.
+    <ns2456:note xmlns:ns2456="http://docbook.org/ns/docbook"><ns2457:para xmlns:ns2457="http://docbook.org/ns/docbook">
+      Note also the <ns2458:literal xmlns:ns2458="http://docbook.org/ns/docbook">EJBException</ns2458:literal> is a specialization of <ns2459:literal xmlns:ns2459="http://docbook.org/ns/docbook">
+      java.lang.RuntimeException</ns2459:literal> and hence one does not have to notify it (i.e. one does
+      not have to declare it in the <ns2460:literal xmlns:ns2460="http://docbook.org/ns/docbook">throws</ns2460:literal> clause).
+    </ns2457:para></ns2456:note>
+  </ns2444:para>
+  <ns2461:para xmlns:ns2461="http://docbook.org/ns/docbook">
+    The container takes over the responsibility of handling system exceptions -- they should
+    not be handled by the client. If a system exception is thrown from within the context of a
+    transaction, the transaction is rolled back. Furthermore, the container may even choose to
+    destroy the enterprise bean which threw the system exception.
+  </ns2461:para>
+</ns2442:section>

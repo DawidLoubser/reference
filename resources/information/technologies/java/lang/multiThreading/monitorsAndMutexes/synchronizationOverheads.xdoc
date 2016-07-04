@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+    id="resources.information.tecnologies.java.lang.multiThreading.monitorsAndMutexes.synchronizationOverheads"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title role="Synchronization Overheads">Synchronization Overheads</title>
+    <para>Of course the acquisition and releasing of an object's monitor comes at a price. However,
+        the price is generally small and in most cases the overheads are negligible. Only be
+        exceptional cases should you consider sacrificing thread-safety for performance. Later in
+        this chapter we shall discuss some design patterns which support thread-safe and
+      non-thread-safe usage of your objects.</para>
+  
+    <para>Reconsider the previous example of account users transferring funds between two accounts.
+        Let us have a look at the overheads of synchronization by comparing the execution time
+        required in the case where the methods have been declared synchronized with those where the
+        methods do not force the threads to acquire the account's monitor during crediting and
+        debiting.</para>
+    <table>
+        <tgroup cols="3">
+            <thead>
+                <row>
+                    <entry>
+                        <para> </para>
+                    </entry>
+                    <entry>
+                        <para>With stream I/O</para>
+                    </entry>
+                    <entry>
+                        <para>Without stream I/O</para>
+                    </entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry>
+                        <para>synchronized</para>
+                    </entry>
+                    <entry>
+                        <para>13.6034 seconds</para>
+                    </entry>
+                    <entry>
+                        <para>3.4711 seconds</para>
+                    </entry>
+                </row>
+                <row>
+                    <entry>
+                        <para>non-synchronized</para>
+                    </entry>
+                    <entry>
+                        <para>13.0225 seconds</para>
+                    </entry>
+                    <entry>
+                        <para>3.4048 seconds</para>
+                    </entry>
+                </row>
+            </tbody>
+        </tgroup>
+    </table>
+    <para>Synchronization overheads are typically between 2% and 5% for short methods and decrease
+        with method size</para>
+</section>

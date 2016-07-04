@@ -1,0 +1,113 @@
+<section id="resources.information.platforms.linux.networkServices.dns.server"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>DNS Server</title>
+	<para>
+ 	The server is configured via a set of configuration files. The <emphasis role="strong">/etc/named.conf</emphasis>	contains the server configuration, including the server behaviour, it's forwarding policy, a list of domain names hosted on this server, and some details pertaining to security.
+	</para>
+	<programlisting>
+	<![CDATA[
+options {
+	directory "/var/named";
+};
+
+zone "." IN {
+	type hint;
+	file "named.ca";
+};
+
+zone "localhost" IN {
+	type master;
+	file "localhost.zone";
+};
+
+zone "0.0.127.in-addr.arpa" IN {
+	type master;
+	file "named.local";
+};
+
+zone "0.168.192.in-addr.arpa" IN {
+	type master;
+	file "0.168.192.in-addr.arpa";
+};
+
+zone "earth" IN {
+	type master;
+	file "earth";
+};
+	]]>
+	</programlisting>
+	<para>
+	The directory parameter indicates the directory in which the domain specific configuration files are stored. Each zone section contains the configuration for the uni directional mapping (name->address or address->name). The type parameter indicates either master for the primary server, or slave for the secondary (or ternary) server. For zones with type slave, a list of master servers has to be specified via a <emphasis role="strong">masters { 127.0.0.1; }</emphasis>. The file parameter specifies a file residing in the directory specified with the directory parameter. Once the server has been configured, each of the domain records hosted on the DNS server has to be configured. For each domain record, a mapping has to be configured for mapping a name to an address, as well as a reverse mapping which maps the address to a name. 
+	</para>
+	
+	<para>
+	Zone : Maps names to addressed
+	</para>
+	<programlisting>
+		<![CDATA[
+$TTL 3D 
+@          IN   SOA  earth. alex.earth. ( 
+                        200302231   ; serial, todays date + todays serial # 
+                        28800      ; Refresh
+                        14400      ; Retry
+                        3600000    ; Expire
+                        86400 )    ; Minimum
+;
+                NS   teddy.earth.  ; Inet Address of name server 
+                MX   10   butterfly.earth.  ; Primary Mail Exchanger 
+;
+teddy           A     192.168.0.1
+butterfly  IN   A     192.168.0.2
+bumblebee  IN   A     192.168.0.3
+arb1       IN   A     192.168.0.4
+arb2       IN   A     192.168.0.5
+arb3       IN   A     192.168.0.6
+bug        IN   CNAME  teddy
+		]]>
+	</programlisting>
+	
+	<para>
+	Reverse Zone : Maps addressed to names.
+	</para>
+	<programlisting>
+		<![CDATA[
+$TTL  3D
+@       IN      SOA     earth. alex.earth.  (
+                        200302231  ; Serial
+                        28800      ; Refresh
+                        14400      ; Retry
+                        3600000    ; Expire
+                        86400 )    ; Minimum
+         IN      NS      teddy.earth.
+      
+1        IN      PTR     teddy.earth.
+2        IN      PTR     butterfly.earth.
+3        IN      PTR     bumblebee.earth.
+4        IN      PTR     arb1.earth.
+5        IN      PTR     arb2.earth.
+6        IN      PTR     arb3.earth.
+		]]>
+	</programlisting>
+	<para>
+Both configuration files have to begin with a line containing <emphasis role="strong">$TTL 3D</emphasis>, which is followed by the SOA record. There can only be a single SOA record per zone configuration file. The SOA record contains information on the administrator (alex@earth), the version of the zone file, and caching information. The serial number traditionally consists of the date, plus a number usually starting at 1, and is used to compare the records residing on the master server with those on the slave server. Should the master server have a higher number than the slave server, then the zone is transferred. The NS record contains a list of name servers for this domain record. The MX record lists the mail servers, which are configured to receive email for this domain. Each MX record also contains the priority, lowest first starting from 10. The A record is used to map authoritively a name to an address. The PTR record (Domain Name Pointer) in the reverse zone mapping, maps an address to a name.
+	</para>
+	<para>
+	Once the configuration parameters are set, and the bind packages are installed, the name server can be started via <emphasis role="strong">/etc/init.d/named start</emphasis>.
+	</para>
+	<section>
+		<title>Forwarding requests to another DNS server</title>
+		<para>
+		Optionally, a forward configuration can be added to the option section in <emphasis role="strong">/etc/named.conf</emphasis>. This will forward requests to another DNS server, thus reducing traffic on the local network. Should the target server not be able to resolve the request, the server itself will perform an attempt.
+		</para>
+		<programlisting>
+forward first;
+forwarders {
+	192.168.1.1;
+	192.168.1.2;
+};
+		</programlisting>
+	</section>	
+</section>	

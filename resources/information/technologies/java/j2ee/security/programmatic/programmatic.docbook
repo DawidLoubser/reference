@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <title>Programmatic security</title>
+    <para>
+        For many cases declarative security is sufficient. However, for more complex security rules like that a particular
+        role may only authorize purchases up to some amount, one may need to use programmatic authorization.
+    </para>
+    <para>
+        To this end the EJB session context provides two services
+        <itemizedlist>
+            <listitem><formalpara>
+                <title>boolean sessionContext.isCallerInRole(String roleName)</title>
+                <para>
+                    which returns true if the user of the service has been assigned the specified security role, and
+                </para>
+            </formalpara>
+            </listitem>
+            <listitem><formalpara>
+                <title>java.security.Principal sessionContext.getCallerPrincipal()</title>
+                <para>
+                    which returns the the caller principal which enables one to
+                    <itemizedlist>
+                        <listitem><para>
+                            retrieve the name of the caller principal, and
+                        </para></listitem>
+                        <listitem><para>
+                            verify whether the principal is equal to another principal.
+                        </para></listitem>
+                    </itemizedlist>
+                </para>
+            </formalpara>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        Upon security breaches one should throw a <literal>java.lang.SecurityException</literal>.
+        For example
+        <programlisting><![CDATA[
+@Stateless
+public class ProcurementBean
+{
+    public AuthorizeProcurementResult authorizeProcurement(AuthorizeProcurementRequest request)
+    {
+       if ((request.getTotal() > departementalLimit) 
+           && (!sessionContext.isCallerInRole("organizationLevelAuthorizer"))
+               throw new SecurityException("RequireOrganizationLevelAuthorization
+
+      ...
+   }
+
+   @Resource
+   private SessionContext sessionContext;
+}
+]]></programlisting>
+        <note>
+            <para>
+                The session context is injected by the application server.
+            </para>
+        </note>    
+    </para>
+    
+    <para>
+        In exceptional situations one might even need to check whether a user is a particular authenticated principal:
+        <programlisting><![CDATA[
+if (sessionContext.getCallerprincipal().getName().equals("ThaboKhumalo"))
+   ...
+            ]]></programlisting>
+    </para>
+</section>    
+    

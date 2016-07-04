@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2se.multiThreading.executors.basicExecutors.basicExecutors"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Basic executors</title>
+  <para>
+    Below we look at two very basic executors, that of 
+    <itemizedlist>
+      <listitem><para>
+        executing a task within the calling thread, and  
+      </para></listitem>
+      <listitem><para>
+        that of executing a task within a new thread spawned for that task. 
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  
+  
+  <section>
+    <title>An executor which executes tasks sequentially</title>
+    <para>
+      To implement an executor which simply executes the tasks within the current thread, one
+      simply calls the tasks <literal>run</literal> method within the <literal>execute</literal>
+      service of the executor:
+      <programlisting><![CDATA[
+ class InlineExecutor implements Executor {
+     public void execute(Runnable r) {
+         r.run();
+     }
+ }        
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>An executor which executes each task in a separate thread</title>
+    <para>
+      If one wants to have a task executed in a new thread, one simply spawns that new thread in the
+      executor's <literal>execute</literal> method which calls the task's <literal>run</literal>
+      method:
+      <programlisting><![CDATA[
+ class ThreadSpawningExecutor implements Executor {
+     public void execute(Runnable r) {
+         new Thread(r).start();
+     }
+ }        
+        ]]></programlisting>
+    </para>
+  </section>
+  
+</section>  

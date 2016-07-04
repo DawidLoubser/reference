@@ -1,0 +1,43 @@
+   
+<!--  USER WORKFLOW SPECIFICATION -->
+<!-- ********************************* -->        
+#getDiagramForUseCase($targetUseCase,$urdad_userWorkflowDiagram)    
+#set($diagram = $result)
+#if($diagram && ($diagram != ""))
+#set($diagramId = $diagram.qualifiedName.replaceAll('::','.').replaceAll(' ','_'))
+        
+    <section>
+        <title>User work flow: $targetUseCase.name</title>
+        <para>
+            The user work flow diagram shown in 
+            <xref linkend="$diagramId"/>
+            specifies how users interact with the service provider in the context of
+            making use of the $targetUseCase.name use case. It shows the messages exchanged
+            in the various scenarios.
+        </para>
+        #set($diagramComment = $report.getComment($diagram).body)
+        #if ($diagramComment && ($diagramComment != ""))            
+            <para>
+                $diagramComment
+            </para>
+        #end            
+
+        <figure xml:id="$diagramId">
+            <title>The user work flow for the $targetUseCase.name use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="$diagram.image"/>
+            </imageobject></mediaobject>
+        </figure>
+   
+        #parse("analysis/userWorkflow/services/services.txt")
+
+    </section> ## end of user workflow section
+    #*
+#else
+    <note>
+        <para>
+            The user work flow was not specified.
+        </para>
+    </note>
+    *#
+#end

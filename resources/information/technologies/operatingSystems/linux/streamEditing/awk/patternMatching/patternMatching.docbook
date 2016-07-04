@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Pattern matching in <command>awk</command></title>
+    <para>
+        <command>Awk</command> supports 
+        <itemizedlist>
+            <listitem><para>regular expressions and</para></listitem>
+            <listitem><para>relational expressions,</para></listitem>
+            <listitem><para>matching on the beginning or end of a stream,</para></listitem>
+            <listitem><para>matching on all records,</para></listitem>
+            <listitem><para>and combining patterns.</para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>Matching on regular expressions</title>
+        <para>
+            In <command>awk</command>, regular expressions are delimited by forward slashes.
+            For example, 
+            <programlisting><![CDATA[
+awk '/^ *[tT]andi /  { print $3*$4 }' orders.txt
+      ]]></programlisting>
+            matches on all records which start with either <quote>Tandi</quote> or <quote>tandi</quote>
+            preceded by an arbitrary number of spaces and, if a match is found, prints the product of
+            fields 3 and 4.
+        </para>
+        <para>
+            If we apply the above <command>awk</command> transformation to the following data
+            file, <filename>orders.txt</filename>
+            <programlisting><![CDATA[
+  Jim jam 20 11.30
+     Tandi tomatoes 3 28.78
+  Alfred apples 7 7.89
+   tandi mangoes 15.6 1
+  Tandi pears 7 6.50 
+ Ellen oranges 22 10.00  # bought for Tandi
+      ]]></programlisting>
+            we obtain the following output
+            <programlisting>
+86.34
+15.6
+45.5  
+    </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Matching on relational expressions</title>
+        <para>
+            <command>Awk</command> also supports matching on relational expressions. For
+            example, if we want to extract the client name and total value of the order for all
+            orders of more than 100, we can use
+            <programlisting><![CDATA[
+awk '$3*$4>=100 { print $3*$4,$1 }' orders.txt
+      ]]></programlisting>
+            Applying this again to our <filename>orders.txt</filename> file, we obtain
+            <programlisting><![CDATA[
+226 Jim
+220 Ellen
+      ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Matching on a combination of patterns</title>
+        <para>
+            In <command>awk</command>, we can use the logical
+            AND (<literal><![CDATA[&&]]></literal>) and OR (<literal><![CDATA[||]]></literal>)
+            operators to combine matching patterns. Furthermore, we can also apply
+            logical NOT (<literal><![CDATA[!]]></literal>) operators to matching patterns.
+        </para>
+        <para>
+            For example, 
+            <programlisting><![CDATA[
+ awk '/ [a-zA-z]* [a-z]*oes/ && $3*$4<20' orders.txt
+      ]]></programlisting>
+            matches on all records where the product field ends with <quote>oes</quote>
+            and where the total amount is less than 20. Applying this again to our
+            <filename>orders.txt</filename> data file we obtain
+            <programlisting><![CDATA[
+   tandi mangoes 15.6 1
+      ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Matching on the beginning and end of a stream and on all records</title>
+        <para>
+            The keywords <varname>BEGIN</varname> and <varname>END</varname>
+            are used to match on the start and end of a stream respectively. To match on all
+            records we simply ommit the match. If we specify an action which is not preceded
+            by a match, that action is performed for all records.
+        </para>
+        <para>
+            For example,
+            <programlisting><![CDATA[
+awk '/^ *[tT]andi / { sum += $3*$4 } END { print "total = " sum " (incl VAT)"}' orders.txt
+      ]]></programlisting>
+            matches on all records starting with <quote>Tandi</quote> or <quote>tandi</quote>
+            and sums up the product of fields 3 and 4. When matching on the end of the file it
+            prints out the accumulated sum. Applying this to our <filename>order.txt</filename>
+            we obtain the result
+            <programlisting><![CDATA[
+total = 147.44 (incl VAT)
+      ]]></programlisting>
+        </para>
+        <para>
+            Let us now look at an example of specifying actions
+            <itemizedlist>
+                <listitem><para>
+                    which should be performed when matching on the beginning of a file,
+                </para></listitem>
+                <listitem><para>
+                    actions which are to be performed for all records.
+                </para></listitem>
+                <listitem><para>
+                    and an action which should be performed when matching on the end of the file.  
+                </para></listitem>
+            </itemizedlist>
+            <programlisting><![CDATA[
+awk ' BEGIN { print "Client Total" } 
+         BEGIN { print "============" } 
+         { print $1,$3*$4 } 
+         { sum += $3*$4 } 
+         END { print "total = " sum " (incl VAT)"}' orders.txt
+      ]]></programlisting>
+            Applying this script once again to <filename>orders.txt</filename>, we now obtain
+            <programlisting><![CDATA[
+Client Total
+============
+Jim 226
+Tandi 86.34
+Alfred 55.23
+tandi 15.6
+Tandi 45.5
+Ellen 220
+total = 648.67 (incl VAT)
+       ]]></programlisting>
+        </para>
+    </section>
+</section>

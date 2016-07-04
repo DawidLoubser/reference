@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Custom converters</title>
+    <para>
+      In addition to supporting the range of standard converters, JSF also allows one to
+      plug in custom converters.
+    </para>
+    <para>
+        Custom converters need to implement the <literal>Converter</literal> interface which
+        requires one to implement the conversion methods for the conversions to and from
+        text:
+        <programlisting language="java">
+@FacesConverter(value="myConverter")
+public class MyConverter implements Converter
+{
+    public Object getAsObject(FacesContext ctx, UIComponent cmp, String value)
+    {
+       ...
+    }
+
+    public String getAsString(FacesContext ctx, UIComponent cmp, Object value)
+    {
+       ...
+    }  
+}    
+        </programlisting>
+    </para>
+    <para>
+        Once the converter has been defined, it can be assigned as the converter
+        for input and output fields:
+        <programlisting language="xml"><![CDATA[
+<h:inputText value="myBindingBean.myAttribute1">
+    <f:converter converterId="myConverter"/>
+</h:inputText>    
+
+<h:outputText value="myBindingBean.myAttribute2">
+    <f:converter converterId="myConverter"/>
+</h:outputText>    
+        ]]></programlisting>
+    </para>
+</section>    

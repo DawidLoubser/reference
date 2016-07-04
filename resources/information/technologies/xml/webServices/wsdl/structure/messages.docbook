@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.technologies.xml.webServices.wsdl.messages">
+
+  <title>The 'message' section</title>
+
+  <para> Messages consist of one or more logical parts. Each part is
+    associated with a type from some type system using a message-typing
+    attribute. The set of message-typing attributes is extensible. WSDL
+    defines several such message-typing attributes for use with XML
+    Schema: <itemizedlist>
+      <listitem>
+        <formalpara>
+          <title>element</title>
+          <para>Refers to an schema element using a
+            <emphasis>QName</emphasis>. This is the WS-I recommended
+            method for tying a message to its schema type, and it implies that the XML schema
+          must contain element declarations for all high-level messages.</para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>type</title>
+          <para>Refers to an schema <literal>simpleType</literal> or
+              <literal>complexType</literal> using a
+            <emphasis>QName</emphasis>. This is the conceptually better
+          approach, but not WS-I recommended for interoperability reasons.</para>
+        </formalpara>
+      </listitem>
+    </itemizedlist> The syntax for defining a message is as follows. The
+      <emphasis>message-typing</emphasis> attributes (which may vary
+    depending on the type system used) are <quote>element</quote> or
+      <quote>type</quote>. <programlisting language="XML"><![CDATA[
+<definitions .... >
+    <message name="nmtoken"> *
+        <part name="nmtoken" element="qname"? type="qname"?/> *
+    </message>
+</definitions>
+        ]]></programlisting>
+  </para>
+  <para> The message <literal>name</literal> attribute provides a unique
+    name among all messages defined within the enclosing WSDL document. </para>
+  <para> The <literal>part</literal> name attribute provides a unique name
+    among all the parts of the enclosing message. (usually not relevant,
+    since Document/Literal SOAP messages only have one part.) </para>
+
+</section>

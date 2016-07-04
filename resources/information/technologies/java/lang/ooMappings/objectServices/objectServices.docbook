@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns26:section xmlns:ns26="http://docbook.org/ns/docbook"
+              xml:id="resources.information.technologies.java.lang.ooMappings.objectServices.objectServices"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+
+    <ns27:title xmlns:ns27="http://docbook.org/ns/docbook">Standard Object Services</ns27:title>
+
+    <ns28:para xmlns:ns28="http://docbook.org/ns/docbook">
+        All Java classes either directly or indirectly extend<ns29:literal xmlns:ns29="http://docbook.org/ns/docbook">
+        java.lang.Object</ns29:literal>, through
+        which a number of services are inherited (often referred to as the<ns30:quote
+            xmlns:ns30="http://docbook.org/ns/docbook">standard object services</ns30:quote>).
+    </ns28:para>
+    <ns31:para xmlns:ns31="http://docbook.org/ns/docbook">
+        These services are widely relied upon by different frameworks, yet are often neglected by developers.
+        The different UML relationships a class has with its attributes has a significant impact on how these
+        object services should be written, and in this section we clarify the exact meaning of these object
+        services.
+    </ns31:para>
+
+    <ns32:section xmlns:ns32="http://docbook.org/ns/docbook">
+        <ns33:title xmlns:ns33="http://docbook.org/ns/docbook">Obtaining a simple String representation</ns33:title>
+        <ns34:para xmlns:ns34="http://docbook.org/ns/docbook">
+            The
+            <ns35:literal xmlns:ns35="http://docbook.org/ns/docbook">public String toString()</ns35:literal>
+            service is meant to return a concise but informative representation
+            that is easy for a person to read. It typically represents all important aspects of the state of an object,
+            in order for a human being to, at a glance, identify the object.
+        </ns34:para>
+        <ns36:para xmlns:ns36="http://docbook.org/ns/docbook">
+            This service should never be relied upon in any <ns36:quote>technical</ns36:quote> manner, by, for example, using it to
+            externalise or persist the state of the object.
+            <ns37:emphasis xmlns:ns37="http://docbook.org/ns/docbook">Unexpectedly changing the format of
+                the return value should never affect any aspect of the system.
+            </ns37:emphasis>
+        </ns36:para>
+    </ns32:section>
+
+    <ns38:section xmlns:ns38="http://docbook.org/ns/docbook">
+        <ns39:title xmlns:ns39="http://docbook.org/ns/docbook">Performing a logical equality test</ns39:title>
+        <ns40:para xmlns:ns40="http://docbook.org/ns/docbook">
+            As part of the set of basic java operators, the<ns41:literal xmlns:ns41="http://docbook.org/ns/docbook">
+            ==</ns41:literal>, when used with
+            two object references, is used to determine whether the two operands<ns42:literal
+                xmlns:ns42="http://docbook.org/ns/docbook">refer to
+            the same object (instance)</ns42:literal>.
+        </ns40:para>
+        <ns43:para xmlns:ns43="http://docbook.org/ns/docbook">
+            To compliment the capability to test for<ns44:emphasis xmlns:ns44="http://docbook.org/ns/docbook">instance
+            equality</ns44:emphasis>, all objects provide the
+            <ns45:literal xmlns:ns45="http://docbook.org/ns/docbook">public boolean equals( Object o )</ns45:literal>
+            service to determine whether the state
+            of given object is
+            <ns46:emphasis xmlns:ns46="http://docbook.org/ns/docbook">logically equal</ns46:emphasis>
+            to the state of another object,
+            according to the business/design rules of the system.
+        </ns43:para>
+        <ns47:para xmlns:ns47="http://docbook.org/ns/docbook">
+            The typical strategy for implementing
+            <ns48:literal xmlns:ns48="http://docbook.org/ns/docbook">equals(...)</ns48:literal>
+            is to simply compare
+            all the attributes which are, according to business rules, to be considered in such a test.
+            For example, a person whose state consists of a name and a birth date, both of which are important
+            in comparing state for logical equality:
+            <ns49:programlisting xmlns:ns49="http://docbook.org/ns/docbook" language="Java">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="equality/src/Person.java"
+                            parse="text"/>
+            </ns49:programlisting>
+            The manner in which the attributes are compared depends on the UML relationship through which
+            they are related to the owner object.
+        </ns47:para>
+
+        <ns50:section xmlns:ns50="http://docbook.org/ns/docbook">
+            <ns51:title xmlns:ns51="http://docbook.org/ns/docbook">Comparing attributes</ns51:title>
+            <ns52:para xmlns:ns52="http://docbook.org/ns/docbook">
+                Attributes related through
+                <ns53:emphasis xmlns:ns53="http://docbook.org/ns/docbook">association</ns53:emphasis>
+                and
+                <ns54:emphasis xmlns:ns54="http://docbook.org/ns/docbook">aggregation</ns54:emphasis>
+                should be tested for
+                <ns55:emphasis xmlns:ns55="http://docbook.org/ns/docbook">instance equality</ns55:emphasis>
+                (i.e. whether the attribute of each
+                object points to the same instance). This means that they should be tested using<ns56:literal
+                    xmlns:ns56="http://docbook.org/ns/docbook">==</ns56:literal>,
+                and not using<ns57:literal xmlns:ns57="http://docbook.org/ns/docbook">equals(...)</ns57:literal>.
+            </ns52:para>
+            <ns58:para xmlns:ns58="http://docbook.org/ns/docbook">
+                Attributes related through<ns59:emphasis xmlns:ns59="http://docbook.org/ns/docbook">
+                composition</ns59:emphasis>, on the other hand, should be tested
+                for<ns60:emphasis xmlns:ns60="http://docbook.org/ns/docbook">logical equality</ns60:emphasis>, as the
+                attribute of each object could not refer to the
+                same object instance (because only the owner of a component may directly refer to it).
+                <ns61:programlisting xmlns:ns61="http://docbook.org/ns/docbook" language="Java">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="equality/src/Client.java"
+                                parse="text"/>
+                </ns61:programlisting>
+            </ns58:para>
+        </ns50:section>
+    </ns38:section>
+
+    <ns62:section xmlns:ns62="http://docbook.org/ns/docbook">
+        <ns63:title xmlns:ns63="http://docbook.org/ns/docbook">Obtaining the hash code</ns63:title>
+        <ns64:para xmlns:ns64="http://docbook.org/ns/docbook">
+            The
+            <ns65:literal xmlns:ns65="http://docbook.org/ns/docbook">public int hashCode()</ns65:literal>
+            service is somewhat unfortunate (though necessary) in that
+            it dictates that, for any class, the following rule should always hold:
+            <ns66:blockquote xmlns:ns66="http://docbook.org/ns/docbook">
+                <ns67:para xmlns:ns67="http://docbook.org/ns/docbook">
+                    If two instances are considered logically equal, based on the equals() service, then those two
+                    instances should always report the same hash code.
+                </ns67:para>
+            </ns66:blockquote>
+        </ns64:para>
+        <ns68:para xmlns:ns68="http://docbook.org/ns/docbook">
+            The
+            <ns69:emphasis xmlns:ns69="http://docbook.org/ns/docbook">intent</ns69:emphasis>
+            of the hashCode() service is somewhat poorly explained by the official
+            Java documentation, but in use, it is most commonly used to improve the performance of various
+            data structures used to store object instances (such as<ns70:literal
+                xmlns:ns70="http://docbook.org/ns/docbook">java.util.Set</ns70:literal>, which
+            only stores logically distinct objects). In this regard, a data structure may make use of the service
+            to test if two objects are
+            <ns71:literal xmlns:ns71="http://docbook.org/ns/docbook">definitely not logically equals</ns71:literal>
+            (because they report
+            different hash codes), or whether they
+            <ns72:emphasis xmlns:ns72="http://docbook.org/ns/docbook">might be equal</ns72:emphasis>
+            (because they report
+            the same hash code, and the potentially more expensive
+            <ns73:literal xmlns:ns73="http://docbook.org/ns/docbook">equals(...)</ns73:literal>
+            service
+            may be called to confirm this).
+        </ns68:para>
+        <ns74:para xmlns:ns74="http://docbook.org/ns/docbook">
+            As such, the hash code service may be considered as a high-performance
+            <ns75:quote xmlns:ns75="http://docbook.org/ns/docbook">pre-check</ns75:quote>
+            for logical equality.
+            The nature of the relationships do not play an important role in generating a hash code, and the
+            simplest strategy is to pick one (or more, if you like) of the attributes that is used in the
+            state comparison performed in<ns76:literal xmlns:ns76="http://docbook.org/ns/docbook">
+            equals(...)</ns76:literal>, and generate a hash code from it (ideally by delegating
+            to it's
+            <ns77:literal xmlns:ns77="http://docbook.org/ns/docbook">hashCode()</ns77:literal>
+            service.) It is important to ensure that this service is much
+            less expensive than the logical equality test (by eliminating casting or several service invocations),
+            for example:
+            <ns78:programlisting xmlns:ns78="http://docbook.org/ns/docbook" language="Java">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="hashCode/src/Client.java"
+                            parse="text"/>
+            </ns78:programlisting>
+        </ns74:para>
+    </ns62:section>
+
+    <ns79:section xmlns:ns79="http://docbook.org/ns/docbook">
+        <ns80:title xmlns:ns80="http://docbook.org/ns/docbook">Creating a copy (clone) of an object</ns80:title>
+        <ns81:para xmlns:ns81="http://docbook.org/ns/docbook">
+            To enable clients to externally request a clone (a logically identical copy) of your
+            objects, the class should implement the
+            <ns82:literal xmlns:ns82="http://docbook.org/ns/docbook">java.lang.Cloneable</ns82:literal>
+            marker
+            interface (to indicate to the inherited
+            <ns83:literal xmlns:ns83="http://docbook.org/ns/docbook">clone()</ns83:literal>
+            service that it
+            is indeed legal to request such a clone), and the class should override the
+            <ns84:literal xmlns:ns84="http://docbook.org/ns/docbook">protected Object clone()</ns84:literal>
+            service, and in most cases you would want to change the access level modifier to<ns85:literal
+                xmlns:ns85="http://docbook.org/ns/docbook">public</ns85:literal>.
+        </ns81:para>
+        <ns86:para xmlns:ns86="http://docbook.org/ns/docbook">
+            The default (inherited) behaviour of the clone service is for Java to create a
+            <ns87:emphasis xmlns:ns87="http://docbook.org/ns/docbook">shallow copy</ns87:emphasis>
+            of your object, which means that a new instance of the same class is created, and that all attributes are
+            simply
+            copied across (i.e. by reference). The inherited behaviour is thus sufficient, if all the attributes
+            are either<ns88:emphasis xmlns:ns88="http://docbook.org/ns/docbook">primitive types</ns88:emphasis>, or
+            related through<ns89:emphasis xmlns:ns89="http://docbook.org/ns/docbook">association</ns89:emphasis>.
+        </ns86:para>
+        <ns90:section xmlns:ns90="http://docbook.org/ns/docbook">
+            <ns91:title xmlns:ns91="http://docbook.org/ns/docbook">Cloning attributes</ns91:title>
+            <ns92:para xmlns:ns92="http://docbook.org/ns/docbook">
+                The logic written in the
+                <ns93:literal xmlns:ns93="http://docbook.org/ns/docbook">clone()</ns93:literal>
+                service is mostly concerned
+                with correctly cloning aggregate and component objects, and does not have to be concerned
+                with associate objects, nor with primitive types (both of which automatically
+                are correctly dealt with).
+            </ns92:para>
+            <ns94:section xmlns:ns94="http://docbook.org/ns/docbook">
+                <ns95:title xmlns:ns95="http://docbook.org/ns/docbook">Aggregation</ns95:title>
+                <ns96:para xmlns:ns96="http://docbook.org/ns/docbook">
+                    Aggregate attributes are also simply copied by reference, but if any of the mechanisms to fully
+                    realise aggregation (such as state change notification) are employed, the clone should be
+                    registered as an observer in order to also receive state change events from the (now shared)
+                    aggregate object.
+                </ns96:para>
+            </ns94:section>
+            <ns97:section xmlns:ns97="http://docbook.org/ns/docbook">
+                <ns98:title xmlns:ns98="http://docbook.org/ns/docbook">Composition</ns98:title>
+                <ns99:para xmlns:ns99="http://docbook.org/ns/docbook">
+                    Attributes related through
+                    <ns100:emphasis xmlns:ns100="http://docbook.org/ns/docbook">Composition</ns100:emphasis>
+                    should<ns101:emphasis xmlns:ns101="http://docbook.org/ns/docbook">each also be cloned and
+                    handed to the cloned object</ns101:emphasis>, in order to maintain the requirement that component
+                    objects
+                    should be fully encapsulated, and that no object except the owner may maintain a reference
+                    to the component. In this regard,<ns102:emphasis xmlns:ns102="http://docbook.org/ns/docbook">all
+                    components of cloneable objects must also
+                    be cloneable</ns102:emphasis>. For example:
+                    <ns103:programlisting xmlns:ns103="http://docbook.org/ns/docbook" language="Java">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="cloning/src/Client.java"
+                                    parse="text"/>
+                    </ns103:programlisting>
+                </ns99:para>
+            </ns97:section>
+        </ns90:section>
+
+    </ns79:section>
+
+
+</ns26:section>

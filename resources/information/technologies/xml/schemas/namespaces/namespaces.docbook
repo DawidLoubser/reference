@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+xml:id="resources.information.technologies.xml.schemas.namespaces.namespaces"
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>NameSpace handling in XML Schemas</title>
+  
+  <indexterm>
+    <primary>XML Schema</primary>
+    <secondary>namespace handling</secondary>
+  </indexterm>
+  
+    <para> 
+      Namespaces are XML's form of packaging. Typically you always want to assign your
+      vocabularies to name spaces so that they the elements of that vocabulary can be uniquely
+      distinguished from any other elements of the same name defined in other schemas 
+      (XML documents can import multiple schemas).
+    </para>
+    
+    <!-- ALREADY COVERED section>
+        <title>Specifying location of schemas not assigned to a NameSpace</title>
+        <para> 
+          Though one would typically want to assign vocabularies to namespaces, XML does
+          support schemas which are not assigned to some target namespace. The following
+          schema is such an example:
+          <programlisting>  
+<xi:include parse="text" href="src/clientContactsNoNamespace.xsd"/>
+          </programlisting>
+        </para>
+        
+        <para> 
+          When using elements from this schema, we have to specify the location of the
+          schema which hosts the elements not assigned to a namespace. This is done via the
+          <emphasis>noNameSpaceSchemaLocation</emphasis> attribute defined in the
+          schema-instance namespace:
+        <programlisting> 
+<xi:include parse="text" href="src/clientContactsNoNamespace.xml"/>
+        </programlisting>
+      </para>    
+    </section>
+
+    <section>
+        <title>Assigning Vocabulary to a NameSpace</title>
+        <para> 
+          Typically we then would like to assign our domain-specific vocabularies to unique
+          namespaces reserved for us. To this end one specifies a value for
+          the<emphasis>targetNameSpace</emphasis> attribute of the schema element:
+          <programlisting>
+<xi:include parse="text" href="src/clientContactsNamespace.xsd"/>
+          </programlisting>  
+        </para>  
+        <para> 
+            As soon as we assign the elements to a namespace, the namespace has to be
+            imported in instance documents: either into a namespace prefix or into the default namespace. In the above
+            listing we imported our target namespace into the <emphasis>t</emphasis>-prefix and
+            any global elements, attributes or types (which are not owned/encapsulated within
+            higher level elements or types) have to be accessed via the namespace prefix.
+            <programlisting>
+<xi:include parse="text" href="src/clientContactsNamespace.xml"/>
+            </programlisting>  
+        </para>
+        
+        <section>
+            <title>Using globally unique namespaces</title>
+            <para> 
+              To ensure that one defines globally unique namespaces one usually uses a
+              hierarchical naming starting with your domain name space which is supposed
+              guarantee uniqueness. For example, a typical name used for a namespace
+              specifying the structure of XML data sets which report course results would be
+              <literal>http://www.solms.co.za/schemas/courses/results</literal>
+            </para>  
+        </section>
+    </section -->
+
+    <section>
+        <title>Qualification</title>
+      <indexterm>
+        <primary>XML Schema</primary>
+        <secondary>qualification</secondary>
+      </indexterm>
+        <para> 
+          If, in an instance document, one aliases a namespace to a prefix, the elements from that namespace
+          are accessed through that prefix. However, we can specify (in the Schema) how 
+          namespaces are <quote>inherited</quote> by non-prefixed sub-elements.
+        </para>
+        
+        <section>
+            <title>Unqualified Locals</title>
+            <para> 
+              When specifying unqualified locals in the schema, then only the global
+              elements need to be qualified in the XML instance document. Unqualified locals
+              are specified via an<emphasis>elementFormDefault</emphasis> attribute with 
+              value<emphasis>unqualified</emphasis>:
+              <programlisting language="XML">  
+<xi:include parse="text" href="src/nameSpaceSchemaUnqualified.xsd"/>
+              </programlisting>  
+            </para>  
+            <para> 
+              When the <emphasis>elementFormDefault</emphasis> and
+              <emphasis>attributeFormDefault</emphasis> attributes are set then only the
+              global elements need to be accessed through the namespace prefix - child
+              elements assume the qualification of their parents:
+              <programlisting language="XML">  
+<xi:include parse="text" href="src/nameSpaceSchemaUnqualified.xml"/>
+              </programlisting>  
+            </para>  
+            <note><para> 
+              The qualification specified via the <emphasis>elementFormDefault
+              </emphasis> and<emphasis>attributeFormDefault</emphasis> resembles a global
+              setting which applies to all elements from that namespace.
+            </para></note>
+        </section>
+
+        <section>
+            <title>Qualified Locals</title>
+            <para> 
+              Setting the <emphasis>elementFormDefault</emphasis> and
+              <emphasis>attributeFormDefault</emphasis> attributes to the
+              value<emphasis>qualified</emphasis> requires that local elements are also
+              accessed through the namespace prefix. For example, if we modify the above
+              schema to
+            <programlisting language="XML">  
+<xi:include parse="text" href="src/nameSpaceSchemaQualified.xsd"/>
+            </programlisting>  
+            requires us to resolve local elements also via the namespace prefix:
+            <programlisting language="XML">  
+<xi:include parse="text" href="src/nameSpaceSchemaQualified.xml"/>
+            </programlisting>  
+          </para>  
+        </section>
+
+    </section>
+
+    <section>
+        <title>Qualification Requirements at Element/Attribute Level</title>
+        <para> 
+          Qualification requirements can also be set at a per element or per attribute
+          level by specifying a <emphasis>form</emphasis> attribute for the element or
+          attribute which once again can be set to<emphasis>qualified</emphasis> or
+          <emphasis>unqualified</emphasis>. This is rarely done, however, as it may cause
+          unnecessary confusion when writing instance documents.
+        </para>
+    </section>
+
+</section>
+

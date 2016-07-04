@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1603:section xmlns:ns1603="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.examples.cofLoader.generating.selectingCoreArchitecturalPattern">
+
+  <ns1604:title xmlns:ns1604="http://docbook.org/ns/docbook">Selecting the core architectural pattern</ns1604:title>
+  <ns1605:para xmlns:ns1605="http://docbook.org/ns/docbook">
+     The pattern which immediately jumps to mind is the <ns1606:emphasis xmlns:ns1606="http://docbook.org/ns/docbook">pipes and filters</ns1606:emphasis>
+     pattern. Let us have a look how it can accommodate the tactics selected for realizing the
+     quality attributes required by the system.
+  </ns1605:para>
+  
+  <ns1607:section xmlns:ns1607="http://docbook.org/ns/docbook">
+    <ns1608:title xmlns:ns1608="http://docbook.org/ns/docbook">Realizing modifiability in the pipes and filters pattern</ns1608:title>
+    <ns1609:para xmlns:ns1609="http://docbook.org/ns/docbook">
+      We selected a number of modifiability tactics which we would like to employ
+      within our chosen architecture. Let us see how well a pipes and filters based
+      architecture can realize these tactics:
+      <ns1610:itemizedlist xmlns:ns1610="http://docbook.org/ns/docbook">
+        <ns1611:listitem xmlns:ns1611="http://docbook.org/ns/docbook"><ns1612:formalpara xmlns:ns1612="http://docbook.org/ns/docbook">
+          <ns1613:title xmlns:ns1613="http://docbook.org/ns/docbook">Minimizing component complexity</ns1613:title>
+          <ns1614:para xmlns:ns1614="http://docbook.org/ns/docbook">
+            The components are the filters. We can design filters such that each filter 
+            performs only one specific task. This should assist in reducing component
+            complexity.
+          </ns1614:para>
+        </ns1612:formalpara></ns1611:listitem>
+        <ns1615:listitem xmlns:ns1615="http://docbook.org/ns/docbook"><ns1616:formalpara xmlns:ns1616="http://docbook.org/ns/docbook">
+          <ns1617:title xmlns:ns1617="http://docbook.org/ns/docbook">Minimizing dependencies</ns1617:title>
+          <ns1618:para xmlns:ns1618="http://docbook.org/ns/docbook">
+            A pipes and filters based architecture is particularly well suited to reduce dependencies
+            between components. Each filter makes use of the pipes into which it feeds the output.
+            There is no direct dependencies between the filters at all.
+          </ns1618:para>
+        </ns1616:formalpara></ns1615:listitem>
+        <ns1619:listitem xmlns:ns1619="http://docbook.org/ns/docbook"><ns1620:formalpara xmlns:ns1620="http://docbook.org/ns/docbook">
+          <ns1621:title xmlns:ns1621="http://docbook.org/ns/docbook">Semantic coherence</ns1621:title>
+          <ns1622:para xmlns:ns1622="http://docbook.org/ns/docbook">
+            Each filter will perform only a single task (a single processing step) which should ensure
+            a high level of semantic coherence.
+          </ns1622:para>
+        </ns1620:formalpara></ns1619:listitem>
+        <ns1623:listitem xmlns:ns1623="http://docbook.org/ns/docbook"><ns1624:formalpara xmlns:ns1624="http://docbook.org/ns/docbook">
+          <ns1625:title xmlns:ns1625="http://docbook.org/ns/docbook">Decoupling</ns1625:title>
+          <ns1626:para xmlns:ns1626="http://docbook.org/ns/docbook">
+            The decoupling is excellent because each filter is coupled only to output
+            pipes and does not have any knowledge or direct dependence on the next filter.
+          </ns1626:para>
+        </ns1624:formalpara></ns1623:listitem>
+        <ns1627:listitem xmlns:ns1627="http://docbook.org/ns/docbook"><ns1628:formalpara xmlns:ns1628="http://docbook.org/ns/docbook">
+          <ns1629:title xmlns:ns1629="http://docbook.org/ns/docbook">Generalization</ns1629:title>
+          <ns1630:para xmlns:ns1630="http://docbook.org/ns/docbook">
+             Common interface implemented across different realizations of same type of filter.
+          </ns1630:para>
+        </ns1628:formalpara></ns1627:listitem>
+        <ns1631:listitem xmlns:ns1631="http://docbook.org/ns/docbook"><ns1632:formalpara xmlns:ns1632="http://docbook.org/ns/docbook">
+          <ns1633:title xmlns:ns1633="http://docbook.org/ns/docbook">Late binding via configuration files</ns1633:title>
+          <ns1634:para xmlns:ns1634="http://docbook.org/ns/docbook">
+            The actual confidence level checking algorithms to be used are specified in
+            a configuration file.
+          </ns1634:para>
+        </ns1632:formalpara></ns1631:listitem>
+      </ns1610:itemizedlist>
+    </ns1609:para>
+  </ns1607:section>
+  
+  <ns1635:section xmlns:ns1635="http://docbook.org/ns/docbook">
+    <ns1636:title xmlns:ns1636="http://docbook.org/ns/docbook">Realizing performance in the pipes and filters pattern</ns1636:title>
+    <ns1637:para xmlns:ns1637="http://docbook.org/ns/docbook">
+      <ns1638:itemizedlist xmlns:ns1638="http://docbook.org/ns/docbook">
+        <ns1639:listitem xmlns:ns1639="http://docbook.org/ns/docbook"><ns1640:formalpara xmlns:ns1640="http://docbook.org/ns/docbook">
+          <ns1641:title xmlns:ns1641="http://docbook.org/ns/docbook">Replication</ns1641:title>
+          <ns1642:para xmlns:ns1642="http://docbook.org/ns/docbook">
+            The data was replicated into a database hosted on the local box and no load other
+            than that of the confidence-level uploading of clients was on the database. After
+            the update the data is merged back into the production database.
+          </ns1642:para>
+        </ns1640:formalpara></ns1639:listitem>
+        
+        <ns1643:listitem xmlns:ns1643="http://docbook.org/ns/docbook"><ns1644:formalpara xmlns:ns1644="http://docbook.org/ns/docbook">
+          <ns1645:title xmlns:ns1645="http://docbook.org/ns/docbook">Supporting concurrencies</ns1645:title>
+          <ns1646:para xmlns:ns1646="http://docbook.org/ns/docbook">
+              The application is multi-threaded with individual threads performing independent 
+              work flows. While one thread is, for example, waiting for a response from the
+              database, another can start cleaning the data. The number of threads was
+              performance tuned.
+          </ns1646:para>
+        </ns1644:formalpara></ns1643:listitem>
+        
+        <ns1647:listitem xmlns:ns1647="http://docbook.org/ns/docbook"><ns1648:formalpara xmlns:ns1648="http://docbook.org/ns/docbook">
+          <ns1649:title xmlns:ns1649="http://docbook.org/ns/docbook">Improving the efficiency of resource usage</ns1649:title>
+          <ns1650:para xmlns:ns1650="http://docbook.org/ns/docbook">
+            A pool of client objects is used and every time a new client is extracted an existing
+            <ns1651:emphasis xmlns:ns1651="http://docbook.org/ns/docbook">client object is repopulated</ns1651:emphasis> preventing the overhead of 
+            unnecessary object  creation and destruction. Similarly, a <ns1652:emphasis xmlns:ns1652="http://docbook.org/ns/docbook">pool of 
+            threads</ns1652:emphasis> is used and database connections are obtained from a 
+            <ns1653:emphasis xmlns:ns1653="http://docbook.org/ns/docbook">connection pool</ns1653:emphasis>.
+          </ns1650:para>
+        </ns1648:formalpara></ns1647:listitem>
+        
+        <ns1654:listitem xmlns:ns1654="http://docbook.org/ns/docbook"><ns1655:formalpara xmlns:ns1655="http://docbook.org/ns/docbook">
+          <ns1656:title xmlns:ns1656="http://docbook.org/ns/docbook">Managing the event rate</ns1656:title>
+          <ns1657:para xmlns:ns1657="http://docbook.org/ns/docbook">
+            Recursively short lists were created from individual single queries on the database.
+            The selection from the short list was done at application level without further database 
+            queries. From the short-list the best match was found and checked against the
+            acceptable confidence level.
+          </ns1657:para>
+        </ns1655:formalpara></ns1654:listitem>
+        
+        <ns1658:listitem xmlns:ns1658="http://docbook.org/ns/docbook"><ns1659:formalpara xmlns:ns1659="http://docbook.org/ns/docbook">
+          <ns1660:title xmlns:ns1660="http://docbook.org/ns/docbook">Scheduling</ns1660:title>
+          <ns1661:para xmlns:ns1661="http://docbook.org/ns/docbook">
+             Scheduling was only implicitly used for the processor resource in the context of threading.
+          </ns1661:para>
+        </ns1659:formalpara></ns1658:listitem>
+        
+        <ns1662:listitem xmlns:ns1662="http://docbook.org/ns/docbook"><ns1663:formalpara xmlns:ns1663="http://docbook.org/ns/docbook">
+          <ns1664:title xmlns:ns1664="http://docbook.org/ns/docbook">Queuing</ns1664:title>
+          <ns1665:para xmlns:ns1665="http://docbook.org/ns/docbook">
+            The data cleansing, probability matching and update filters are decoupled via
+            message queues. This allows for separate thread pools with their sizes optimized 
+            for overall application performance.
+          </ns1665:para>
+        </ns1663:formalpara></ns1662:listitem>
+      </ns1638:itemizedlist>
+    </ns1637:para>
+  </ns1635:section>
+  
+</ns1603:section>

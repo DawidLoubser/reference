@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2009-2-4 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Functional requirements validation</title>
+    <para>
+        
+        <orderedlist>
+            <listitem>
+                <formalpara>
+                    <title>User role/contract</title>
+                    <para>
+                        The is a single association between a concrete use case and user role/contract represented by an interface.        
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem><formalpara>
+                <title>Use case/functional requirement is required</title>
+                <para>
+                    Each concrete use case/functional requirement is linked via one or more <literal><![CDATA[<<requires>>]]></literal> dependencies
+                    to the stake holder(s) who require it.
+                </para>
+            </formalpara></listitem>
+            <listitem>
+                <formalpara>
+                    <title>Stake holder is represented by an interface or a use case</title>
+                    <para>
+                        Each stake holder is represented by an interface or a use case.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>
+                        
+                    </title>
+                </formalpara>
+                <para>
+                Only a single level of granularity is shown - i.e. there are no functional requirements of functional requirements shown.
+                <note><para>
+                    This is a restriction on the view only.
+                </para></note>
+            </para></listitem>
+        </orderedlist>
+    </para>
+    
+    <section>
+        <title>Each concrete use case/functional requirement is required</title>
+        <para>
+            URDAD requires that for each concrete use case or functional requirement one specifies which stake holder requires it, 
+            <abbrev>i.e.</abbrev> that there is a <literal><![CDATA[<<requires>>]]></literal> dependency from a stake holder
+            to the concrete use case.
+        </para>
+        
+        <para>
+            The OCL constraint which validates that looks like this:
+            <programlisting><![CDATA[
+supplierDependency->collect(g|g.oclIsKindOf(Generalization))->isEmpty() 
+or  
+supplierDependency->exists (d|d.appliedStereotypeInstance.classifier->exists(name='requires'))
+]]></programlisting>
+            </para>
+            <para>
+                In this expression we first check whether the use case is an abstract use case. If so, we return <literal>true</literal> signalling
+                that the test is passed. In order to determine whether a use case is an abstract use case we query whether the use case is the
+                supplier of a generalization dependency:
+                <programlisting><![CDATA[
+if (                    
+                    ]]></programlisting>
+            The rules applied are the following
+            <itemizedlist>
+                <listitem><programlisting>
+                    All abstract use cases pass the test. This is done by specifying that <literal>true</literal> should be returned
+                    for each use case which is the supplier of a generalization dependency:
+                    
+                </programlisting></listitem>
+            </itemizedlist>
+        </para>
+    </section>    
+</section>    

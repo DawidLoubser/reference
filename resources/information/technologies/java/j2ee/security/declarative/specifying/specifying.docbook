@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <title>Specifying authorization requirements</title>
+    <para>
+        Commonly one uses the <literal>@RolesAllowed</literal> annotation on sesion beans and session bean services to specify
+        that certain services should only be accesible by authenticated principals who have been assigned the required security roles.
+    </para>
+    
+    <section>
+        <title>Specifying the authorization requirements for a service</title>
+        <para>
+            To specify that a particular service should be available only to authenticated principals who have one of a number
+            of security roles assigned to them, one annotated the respective service with a list of roles:
+            <programlisting><![CDATA[
+@Stateless
+public class CourseServices
+{
+    @RolesAllowed({"user", "trainingAdministrator", "standardsManager"})
+    public CourseDetails provideCourseDetails(CourseDetailsRequest request)
+    {
+       ...
+    }
+}
+]]></programlisting>
+            This specifies that the <literal>provideCourseDetails</literal> service is available to users who have any of the
+            three specified security roles.
+        </para>
+        
+    </section>
+
+    <section>
+        <title>Default authorization requirements</title>
+        <para>
+            By anotating a bean with a <literal>@RolesAllowed</literal> annotation, one specifies the default role requirements
+            for services offered by that bean.
+            <programlisting><![CDATA[
+@Stateless
+@RolesAllowed({"user", "trainingAdministrator", "standardsManager"})
+public class CourseServices
+{
+    public CourseDetails provideCourseDetails(CourseDetailsRequest request)
+    {
+       ...
+    }
+    
+    public PrerequisitesList provideCoursePrerequisites(CoursePrerequisitesRequest request)
+    {
+       ...
+    }   
+}
+                ]]></programlisting>
+            This specifies that all services of the <literal>CourseServices</literal> bean are by default available to users who have any of the
+            three specified security roles.
+        </para>
+        
+        <section>
+            <title>Overriding default authorization requirements</title>
+            <para>
+                One can override the default authorization requirements for a bean by specifying different authorization requirements for certain of
+                the bean services. For example
+                <programlisting><![CDATA[
+@Stateless
+@RolesAllowed({"user", "trainingAdministrator", "standardsManager"})
+public class CourseServices
+{
+    public CourseDetails provideCourseDetails(CourseDetailsRequest request)
+    {
+       ...
+    }
+    
+    public PrerequisitesList provideCoursePrerequisites(CoursePrerequisitesRequest request)
+    {
+       ...
+    }   
+    
+    @RolesAllowed("trainingAdministrator")
+    public void updateCourseDetails(CourseDetails courseDetails)
+    {
+       ...
+    }   
+}
+]]></programlisting>
+                specifies that the bean services are by default accessible by all 3 roles, but that the <literal>updateCourseDetails</literal> service
+                is accessible only to the <literal>trainingAdministrator</literal> role.                
+            </para>
+        </section>
+    </section>
+
+</section>

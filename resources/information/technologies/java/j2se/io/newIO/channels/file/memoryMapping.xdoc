@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author Dawid Loubser -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.newIO.channels.file.memoryMappings">
+    
+    <title>Memory-Mapping Files</title>
+    <para>
+        Most operating systems support the concept of <literal>memory mapping</literal>. This involves
+        mapping the contents of a file (or part of it) to physical memory. Changes to the bytes in physical memory
+        can automatically be committed to the file.
+    </para>
+    <para>
+        <literal>FileChannel</literal> supports memory mapping by calling the <literal>map()</literal> service.
+        A <literal>MemoryMappedByteBuffer</literal> is returned. This buffer can be used like any normal byte buffer,
+        as the underlying byte storage is abstracted from a user perspective. Memory-mapping provides
+        a very simple and efficient method of manipulating large files in a non-streaming way.
+    </para>
+    <para>
+         A region of a file may be mapped into memory in one of three modes:
+        <itemizedlist>
+            <listitem>
+                <formalpara>
+                    <title>Read-only</title>
+                    <para>Any attempt to modify the resulting buffer will cause a <literal>ReadOnlyBufferException</literal> 
+                    to be thrown. (<literal>MapMode.READ_ONLY</literal>)</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Read/write</title>
+                    <para>Changes made to the resulting buffer will eventually be propagated to the file; 
+                    they may or may not be made visible to other programs that have mapped the same file. 
+                    (<literal>MapMode.READ_WRITE</literal>)</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Private</title>
+                    <para>Changes made to the resulting buffer will not be propagated to the file and 
+                    will not be visible to other programs that have mapped the same file; instead, they 
+                    will cause private copies of the modified portions of the buffer to be created. 
+                        (<literal>MapMode.PRIVATE</literal>)</para>
+                </formalpara>
+            </listitem>
+        </itemizedlist>
+        
+        For example:
+        <programlisting language="Java"><![CDATA[
+// Create a standard read/write file channel
+FileChannel channel = ... ;
+
+// Map the file contents to memory
+MappedByteBuffer buf = channel.map( FileChannel.MapMode.READ_WRITE, 
+                       0, channel.size() );
+
+// View the data as doubles
+DoubleBuffer numbers = buf.asDoubleBuffer();
+        ]]></programlisting>
+        If any changes are made to the <literal>numbers</literal> buffer, for example by calling
+        <literal>put()</literal> methods, the changes will automatically be persisted to the file
+        system.
+    </para>
+    <para>
+        As an example, consider the following program. It inverts the text of any UTF-16 encoded
+        text file by simply manipulating the characters in the buffer.
+        <programlisting language="Java">
+<xi:include href="src/InvertCase.java" parse="text"/>
+        </programlisting>
+    </para>
+    <note>
+        <para>
+            UTF-16 (Unicode) is the default supported text encoding of <literal>ByteBuffer</literal>. If another encoding
+            (such as ASCII) is used in the text file, additional steps are necessary to decode it, using NIO's 
+            <literal>CharsetDecoder</literal> classes, in the <literal>java.nio.charset</literal> package.
+        </para>
+    </note>
+    
+</section>

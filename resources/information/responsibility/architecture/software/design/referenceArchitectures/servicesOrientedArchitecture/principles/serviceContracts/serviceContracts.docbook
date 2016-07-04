@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Service contracts</title>
+  
+  <indexterm>
+    <primary>service contracts (SOA)</primary>
+  </indexterm>
+  
+  <para>
+    Each service should realise a well-defined contract. This contract
+    should publish
+    <itemizedlist>
+      <listitem>
+        <para>the operations (use cases) offered by the service,</para>
+        <para>the functional requirements and behaviour of the operations,</para>
+        <para>(preferably) the non-functional aspects (the qualities) of
+          the service</para>
+      </listitem>
+    </itemizedlist>
+    The service contract should be freely accessible by the clients of a
+    service, and would typically be published in a naming service or
+    registry (in order for clients to discover them).
+  </para>
+  
+  <section>
+    <title>Design-by-contract approach</title>
+    <para>
+      SOA contracts should follow the standard
+      <!-- TODO: Cite design-by-contract --> 
+      <emphasis>design-by-contract</emphasis> approach, in
+      that the following should be specified for each operation (use-case):
+      <itemizedlist>
+        <listitem>
+          <para>
+            the <emphasis>preconditions</emphasis> which must hold in
+            order for the operation to be performed. This may make statements
+            about the input provided by the client (the request message),
+            or about the state of the business. A contract will typically
+            define an <emphasis>exception</emphasis> or <emphasis>fault</emphasis>
+            message for each precondition, to be raised (and the
+            service thus refused) should a precondition not be satisfied.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            the <emphasis>post-conditions</emphasis> (deliverables) upon
+            successful completion of the operation. This may make statements
+            about response message(s), or the state of the business after
+            completion.
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      Service realisations must ensure that the invariants (rules) of the
+      system always hold before, during, or after an operation.
+    </para>
+    <para>
+      SOA services should thus intrinsically benefit from the
+      design-by-contract approach, such as plug-ability (services
+      are de-coupled from one another) and test-ability.
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Rich, self-describing contracts</title>
+    <indexterm>
+      <primary>service contracts (SOA)</primary>
+    </indexterm>
+    <para>
+      In an environment such as SOA, which is ultimately meant to enable
+      large-scale automation (including the discovery and usage of
+      services) it is very important that the contracts contain as much
+      meta-information about the service as possible.
+    </para>
+    
+    <section>
+      <title>Non-functional (quality) requirements</title>
+      <indexterm>
+        <primary>service contracts (SOA)</primary>
+        <secondary>quality requirements</secondary>
+      </indexterm>
+      <para>
+        The technology used to define contracts in an SOA environment
+        should be flexible enough to allow for the specification of the
+        non-functional requirements (the quality requirements, such as
+        security, reliability, performance) for each use-case.
+      </para>
+      <para>
+        Without this, prospective clients would not be able to use the
+        contract as the sole source of information to interacting with a
+        service, and further (manual) communication would be required
+        between the providers, and consumers, of services.
+      </para>
+    </section>
+    
+    <section>
+      <!-- TODO: Crap title ? -->
+      <title>Technical information</title>
+      <indexterm>
+        <primary>service contracts (SOA)</primary>
+        <secondary>technical information</secondary>
+      </indexterm>
+      <para>
+        In most SOA realisations (e.g. based on web services), the contracts
+        published by services include full information regarding
+        message exchange patterns, the transport layer (protocol) to be used to
+        communicate with the service, as well as the physical location(s) of
+        the service.
+      </para>
+      <para>
+        The contract thus contains <emphasis>complete</emphasis> information
+        in order to become a client of the service it describes, or to
+        develop a new realisation of the service.
+      </para>
+    </section>
+  </section>
+  
+</section>    

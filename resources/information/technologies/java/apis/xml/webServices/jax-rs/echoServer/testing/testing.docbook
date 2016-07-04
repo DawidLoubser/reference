@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: fritz@solms.co.za -->
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+    <title>Building, running and testing the Echo Server</title>
+    <para>
+        The war file is generated via 
+        <programlisting><![CDATA[
+mvn clean package            
+]]></programlisting>
+        and the embedded Jetty web container is launched via
+        <programlisting><![CDATA[
+mvn jetty:run            
+            ]]></programlisting>
+    </para>
+    <para>
+        To test this simple JAX-RS web service, use a browser of your choice and
+        access the following URL:
+        <programlisting><![CDATA[
+http://localhost:8080/jax-rs/echo?msg=Hi Ho            
+]]></programlisting>
+            <note><para>
+                    The URL is assembled from the server URL, the context root for the web application
+                    as set in the pom and the relative path set of the Java resource class and the
+                    URL pattern for the Jersey web application set in the <literal>web.xml</literal>
+                    file.
+            </para></note>
+        Depending on the ACCEPT preferences used by the browser, the response should be either 
+        plain text like
+        <programlisting><![CDATA[
+Echo: Hi Ho            
+]]></programlisting>
+        or XML like 
+            <programlisting language="xml"><![CDATA[
+<responseMessage>
+   <key>Echo</key>
+   <value>Mollo</value>
+</responseMessage>          
+]]></programlisting>
+    </para>
+</section>    

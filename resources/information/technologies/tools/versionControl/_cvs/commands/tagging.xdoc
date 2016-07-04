@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.commands.tagging"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Tagging</title>
+  <para>
+    CVS provides three mechanisms for obtaining the historic contents of
+    a repository:
+    <orderedlist>
+      <listitem><formalpara>
+        <title>Revision numbers as internal identifiers for historic
+               versions of a file.</title>
+        <para>
+          Revision numbers are assigned by CVS itself and can be viewed
+          as an internal mechanism used by CVS to keep track of historic
+          information. Historic information can be obtained by specifying
+          the revision number in an <command>update</command> command:
+          <synopsis><![CDATA[
+cvs update -r 1.5 LoanCalculator.java          
+          ]]></synopsis>
+          This mechanism is typically only useful when extracting the
+          historic state of individual files.
+        </para>
+      </formalpara></listitem>
+      <listitem><formalpara>
+        <title>Obtaining historic snapshots by date</title>
+        <para>
+          Dates can be used as milestones. You can request to obtain the state
+          of a project on a specific date. This provides a more meaningful mechanism
+          for obtaining the historic state of an entire project than revision
+          numbers do.
+          One has to, however, maintain information separately about what
+          date-times resemble stable versions of the system.
+        </para>
+      </formalpara></listitem>
+      <listitem><formalpara>
+        <title>Tagging</title>
+        <para>
+          Tagging provides a mechanism to give a name to a snapshot in time. The
+          snapshot typically resembles a particular release of the project (it
+          need not be a public release, <abbrev>i.e.</abbrev> it could, for
+          example resemble a testing release.
+        </para>
+      </formalpara></listitem>
+    </orderedlist>
+  </para>
+  
+  <section>
+    <title>Tagging the current revision set</title>
+    <para>
+      Tagging does not affect the content of the file. It only attaches a label
+      to a set of files.
+      To tag the current (latest) set of revisions in the repository you simply
+      run the command
+      <synopsis><![CDATA[
+cvs tag <releaseName>       
+      ]]></synopsis>
+      For example, to tag the current set of files as <quote>release_0-9</quote>
+      <synopsis><![CDATA[
+cvs tag release_0-9       
+      ]]></synopsis>
+    </para>
+    <note>
+      <para>
+        Typically you only want to tag the files which have been committed into
+        the repository. Work copies typically contain files with uncompleted or 
+        untested modifications.
+      </para>
+    </note>
+    
+    <section>
+      <title>Valid tag names</title>
+      <para>
+        Tag names must start with a letter and may contain further letters,
+        numerals, underscore characters and dashes. Tag names are case
+        sensitive.
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>Tagging the state of the project on a specified date</title>
+    <para>
+      At times one wants to tag in hind-sight. In such cases one may want to
+      specify that a release is assembled from the state of the files at
+      a particular instant in time. To this end the <command>rtag</command>
+      command is used:
+      <synopsis><![CDATA[
+cvs rtag -D "2003-06-17 23:59:59 GMT" release_0-9       
+      ]]></synopsis>
+      (see <xref linkend="resources.information.technologies.tools.versionControl._cvs.commands.dateTimes"/>
+       for valid CVS date specifications).
+    </para>
+    <section>
+      <title>Including files which were added after the snapshot date
+             for the release</title>
+      <para>
+        This will, of course, ignore all those files which where not present
+        at the date-time specified for the release. One can add the 
+        <option>-f</option> to the <command>rtag</command> command. This
+        specifies that for those files which were
+        not present at the time specified for the release, the latest (current)
+        revision should be used.
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>Checking out a release</title>
+    <para>
+      To check out a specific release one specifies the tag name in the
+      <option>-r</option> command option (in a way which is analogous
+      to checking out particular revisions):
+      <synopsis><![CDATA[
+cvs checkout -r release_0-9 LoanCalculator
+      ]]></synopsis>
+    </para>
+  </section>
+  
+  <section>
+    <title>Updating the working copy with a particular release</title>
+    <para>
+      In a similar way one may want to update a working copy file with 
+      its state at a specified release:
+      <synopsis><![CDATA[
+cvs -q update -r release_0-9 LoanCalculator.java
+      ]]></synopsis>
+      or simply recursively from the position in the working directory
+      onwards via
+      <synopsis><![CDATA[
+cvs -q update -r release_0-9 
+      ]]></synopsis>
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Removing sticky tags</title>
+    <para>
+      If one starts working from a release by checking out a particular
+      tagged version of the project, then one obtains files with
+      sticky tags in the working directory. Since they are marked as
+      <emphasis>tagged</emphasis>, one cannot commit any changes applied
+      to these files -- after all, a tagged version is a sealed version.
+    </para>
+    <para>
+      In order to be able to continue working one has to remove these
+      tags via the <option>-A</option> command option:
+      <synopsis><![CDATA[
+cvs -q update -A     
+      ]]></synopsis>
+    </para>
+  </section>
+  
+  <section>
+    <title>Renaming tags</title>
+    <para>
+      At times one may want to change the tag label, <abbrev>i.e.</abbrev>
+      the release name. This may be because the tag name was mis-spelled
+      originally, or perhaps, because a release has undergone extensive 
+      testing which justifies an upgrade in the release label:
+      <synopsis><![CDATA[
+cvs rtag -r release_0-9 stable_1-0 LoanCalculator
+      ]]></synopsis>
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Deleting tags</title>
+    <para>
+      Generally tags should not be deleted or moved since they capture specific
+      meaning around historic information in the repository. At times one may,
+      however, have tagged at a time where one should not have tagged. To remove
+      a tag from a project in the repository, one uses the <command>rtag</command>
+      command with the <option>-d</option> option:
+      <synopsis><![CDATA[
+cvs rtag -d release_0-9 LoanCalculator      
+      ]]></synopsis>
+    </para>
+  </section>
+  
+  <section>
+    <title>Moving tags</title>
+    <para>
+      Moving tags should be generally avoided, but may prove useful
+      in some exceptional situations where a bad copy of a file was
+      accidentally tagged. To change the revision of a file which is
+      linked to a tag we can use the following command:
+      <synopsis><![CDATA[
+cvs tag -r 1.2 -F stable_1-0 LoanCalculator.java
+      ]]></synopsis>
+      CVS will acknowledge the tag request via
+      <synopsis><![CDATA[
+T za/co/stcd/finance/calculators/businessLogic/LoanCalculator.java      
+      ]]></synopsis>
+    </para>  
+  </section>
+  
+  
+</section>

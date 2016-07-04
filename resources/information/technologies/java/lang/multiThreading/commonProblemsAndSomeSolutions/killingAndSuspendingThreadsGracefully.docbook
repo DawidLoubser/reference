@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.tecnologies.java.lang.multiThreading.commonProblemsAndSomeSolutions.killingAndSuspendingThreadsGracefully">
+
+  <title role="Killing and Suspending Threads Gracefully">Killing and
+    Suspending Threads Gracefully</title>
+
+  <para>The first two versions of Java supplied <emphasis role="verb"
+      >stop()</emphasis>, <emphasis role="verb">suspend()</emphasis> and
+      <emphasis role="verb">resume()</emphasis> services. These have been
+    deprecated in later versions.</para>
+
+  <para>There are basically two reasons. For starters, killing a thread
+    externally is a rather hard-handed, dictatorial approach. This goes
+    against the general spitir Object-orientation, where the idea is to
+    delegate responsibility as far downwards as is sensible. In this
+    approach, the responsibility of how a thread terminates should be left
+    to the thread itself. </para>
+
+  <para>The preferred approach is to provide your own service, such
+    as <literal>terminate()</literal>, in which thread sets a <emphasis role="verb">stopRequested</emphasis> flag.
+    The thread itself will checks this flag, and if it is set the
+    thread terminates in a controlled manner.
+  </para>
+
+  <para>
+    <programlisting language="Java"><![CDATA[
+...    
+public void run() 
+{
+  stopRequested = false;
+  
+  while(!stopRequested)
+  {
+    synchronized(dataSource)
+    {
+      while ((list.size() == 0) && (!stopRequested))
+        try {dataSource.wait(50);}
+          catch (InterruptedException e) {}
+    
+      if (!stopRequested)
+      {
+        Date dateTime = (Date)list.removeFirst();
+        System.out.print("received data: " 
+                         + dateFormat.format(dateTime) + " => ");
+        Double data   = (Double)list.removeFirst();
+        System.out.println(dataFormat.format(data.doubleValue()));
+      }  
+    }    
+  }
+}
+    
+]]></programlisting>
+  </para>
+
+  <para>The thread will, for example, not terminate between extracting
+    data from the source and printing it or between printing the date and
+    the associated data. It will complete the cycle and then terminate.</para>
+
+  <para>The same holds true for <emphasis role="verb">suspend()</emphasis>
+    and <emphasis role="verb">resume()</emphasis>. You can send a suspend
+    request for suspension to a thread but the point where a thread is
+    ready to suspend should be left to the thread (since the client
+    cannot know).</para>
+
+  <para>Another reason why <emphasis role="verb">stop()</emphasis> and
+      <emphasis role="verb">suspend()</emphasis> have been declared
+    deprecated is that they can be a major source of dead-locks. Here we
+    illustrate how a hard-handed <emphasis role="verb">stop()</emphasis>
+    service can easily result in a dead-lock. This is illustrated in the
+    following code snippet:</para>
+
+  <para>
+    <programlisting><![CDATA[
+class SomeSharedResource
+{
+  ...
+  public synchronized void someService()
+  {
+    ...
+    Thread.currentThread().stop();
+  }
+}    
+]]></programlisting>
+  </para>
+  <para> When a thread uses the synchronized service it stops
+      <emphasis>without releasing the monitor</emphasis>. Allen Holub in
+    his JavaWorld series of articles on <emphasis>"Programming Java
+      threads in the real world''</emphasis> makes the very visual analogy
+    of somebody going into the bathroom, locking the door and flushing
+    themselves down the toilet. The lock on the resource (the bathroom) is
+    never released for other desperate threads to enter. Compare this to
+    the controlled stopping service of our <emphasis role="verb"
+      >DataProcessor</emphasis> thread. When the
+    <emphasis>stopRequested</emphasis> flag is found set the thread
+    releases the monitor (leaves the <emphasis role="verb"
+    >synchronized</emphasis> block) and then terminates.</para>
+
+  <para>As before, the same problem holds for the <emphasis role="verb"
+      >suspend()</emphasis> method. If a thread is suspended while owning
+    the monitor for that resource which blocks the thread which
+    potentially calls <emphasis role="verb">resume()</emphasis>, the
+    thread can never be resumed.</para>
+
+</section>

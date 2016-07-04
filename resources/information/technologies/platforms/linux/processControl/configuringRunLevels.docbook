@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"--><ns3704:section xmlns:ns3704="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.processControl.configuringRunLevels">
+
+  <ns3705:title xmlns:ns3705="http://docbook.org/ns/docbook">Configuring run-levels</ns3705:title>
+  <ns3706:para xmlns:ns3706="http://docbook.org/ns/docbook">
+      You may want to add, remove or modify processes which are launched for a particular
+      run level. 
+  </ns3706:para>
+  <ns3707:section xmlns:ns3707="http://docbook.org/ns/docbook">
+    <ns3708:title xmlns:ns3708="http://docbook.org/ns/docbook">The start and kill scripts</ns3708:title>
+    <ns3709:para xmlns:ns3709="http://docbook.org/ns/docbook">
+       For each run-level there is a subdirectory of <ns3710:filename xmlns:ns3710="http://docbook.org/ns/docbook">/etc/init.d</ns3710:filename> with
+       name <ns3711:filename xmlns:ns3711="http://docbook.org/ns/docbook">rcX.d</ns3711:filename> where <ns3712:literal xmlns:ns3712="http://docbook.org/ns/docbook">X</ns3712:literal> is the run-level
+       (between 0 and 6).
+    </ns3709:para>
+    
+    <ns3713:section xmlns:ns3713="http://docbook.org/ns/docbook">
+      <ns3714:title xmlns:ns3714="http://docbook.org/ns/docbook">The run-level script directories</ns3714:title>
+      <ns3715:para xmlns:ns3715="http://docbook.org/ns/docbook">
+        These directories contain <ns3716:emphasis xmlns:ns3716="http://docbook.org/ns/docbook">symbolic links to shell scripts in the 
+        <ns3717:filename xmlns:ns3717="http://docbook.org/ns/docbook">init.d</ns3717:filename> directory</ns3716:emphasis> which are executed when a
+        particular run-level is initialized. 
+      </ns3715:para>
+      <ns3718:para xmlns:ns3718="http://docbook.org/ns/docbook">
+        There are <ns3719:emphasis xmlns:ns3719="http://docbook.org/ns/docbook">kill scripts</ns3719:emphasis> and
+        <ns3720:emphasis xmlns:ns3720="http://docbook.org/ns/docbook">start</ns3720:emphasis> scripts. The <ns3721:command xmlns:ns3721="http://docbook.org/ns/docbook">init</ns3721:command> process
+        first runs all the <ns3722:emphasis xmlns:ns3722="http://docbook.org/ns/docbook">kill scripts</ns3722:emphasis> and then all the
+        <ns3723:emphasis xmlns:ns3723="http://docbook.org/ns/docbook">start</ns3723:emphasis> scripts.
+      </ns3718:para>
+      <ns3724:para xmlns:ns3724="http://docbook.org/ns/docbook">
+        For example, the script directory for run-level 2, <ns3725:filename xmlns:ns3725="http://docbook.org/ns/docbook">rc2.d</ns3725:filename>,
+        contains the following symbolic links (use <ns3726:command xmlns:ns3726="http://docbook.org/ns/docbook">ls -l</ns3726:command>):
+        <ns3727:programlisting xmlns:ns3727="http://docbook.org/ns/docbook">
+lrwxrwxrwx 1 root root   9 2003-06-26 22:50 K05hwscan -&gt; ../hwscan
+lrwxrwxrwx 1 root root   9 2003-06-26 22:50 K06splash -&gt; ../splash
+lrwxrwxrwx 1 root root  14 2003-08-06 10:49 K06splash_late -&gt; ../splash_late
+lrwxrwxrwx 1 root root  12 2003-06-26 22:50 K07alsasound -&gt; ../alsasound
+lrwxrwxrwx 1 root root   6 2003-08-06 10:49 K07atd -&gt; ../atd
+lrwxrwxrwx 1 root root   7 2003-08-06 10:49 K07cron -&gt; ../cron
+lrwxrwxrwx 1 root root   7 2003-08-04 11:17 K07cups -&gt; ../cups
+lrwxrwxrwx 1 root root   8 2003-06-26 22:50 K07fbset -&gt; ../fbset
+lrwxrwxrwx 1 root root  17 2003-06-26 22:50 K07rpmconfigcheck -&gt; ../rpmconfigcheck
+lrwxrwxrwx 1 root root   9 2003-07-04 11:43 K07smpppd -&gt; ../smpppd
+lrwxrwxrwx 1 root root  15 2003-06-24 21:44 K11splash_early -&gt; ../splash_early
+lrwxrwxrwx 1 root root   9 2003-06-24 21:44 K13pcmcia -&gt; ../pcmcia
+lrwxrwxrwx 1 root root   9 2003-06-24 21:44 K13resmgr -&gt; ../resmgr
+lrwxrwxrwx 1 root root  10 2003-06-24 21:44 K14hotplug -&gt; ../hotplug
+lrwxrwxrwx 1 root root   9 2003-06-24 21:44 K15syslog -&gt; ../syslog
+lrwxrwxrwx 1 root root  10 2003-06-24 21:44 K16network -&gt; ../network
+lrwxrwxrwx 1 root root   7 2003-06-24 21:28 K20isdn -&gt; ../isdn
+lrwxrwxrwx 1 root root   9 2003-06-24 21:28 K20random -&gt; ../random
+lrwxrwxrwx 1 root root   7 2003-06-24 21:28 S01isdn -&gt; ../isdn
+lrwxrwxrwx 1 root root   9 2003-06-24 21:28 S01random -&gt; ../random
+lrwxrwxrwx 1 root root  10 2003-06-24 21:44 S05network -&gt; ../network
+lrwxrwxrwx 1 root root    9 2003-06-24 21:44 S06syslog -&gt; ../syslog
+lrwxrwxrwx 1 root root  10 2003-06-24 21:44 S07hotplug -&gt; ../hotplug
+lrwxrwxrwx 1 root root    9 2003-06-24 21:44 S08pcmcia -&gt; ../pcmcia
+lrwxrwxrwx 1 root root    9 2003-06-24 21:44 S08resmgr -&gt; ../resmgr
+lrwxrwxrwx 1 root root  15 2003-06-24 21:44 S10splash_early -&gt; ../splash_early
+lrwxrwxrwx 1 root root  12 2003-06-26 22:50 S14alsasound -&gt; ../alsasound
+lrwxrwxrwx 1 root root    6 2003-08-06 10:49 S14atd -&gt; ../atd
+lrwxrwxrwx 1 root root    7 2003-08-06 10:49 S14cron -&gt; ../cron
+lrwxrwxrwx 1 root root    7 2003-08-04 11:17 S14cups -&gt; ../cups
+lrwxrwxrwx 1 root root    8 2003-06-26 22:50 S14fbset -&gt; ../fbset
+lrwxrwxrwx 1 root root  17 2003-06-26 22:50 S14rpmconfigcheck -&gt; ../rpmconfigcheck
+lrwxrwxrwx 1 root root   9 2003-07-04 11:43 S14smpppd -&gt; ../smpppd
+lrwxrwxrwx 1 root root   6 2003-06-26 22:50 S15kbd -&gt; ../kbd
+lrwxrwxrwx 1 root root   9 2003-06-26 22:50 S15splash -&gt; ../splash
+lrwxrwxrwx 1 root root  14 2003-08-06 10:49 S15splash_late -&gt; ../splash_late
+lrwxrwxrwx 1 root root   9 2003-06-26 22:50 S16hwscan -&gt; ../hwscan
+        </ns3727:programlisting>
+      </ns3724:para>
+      <ns3728:para xmlns:ns3728="http://docbook.org/ns/docbook">
+        All start scripts link files start with the letter <ns3729:literal xmlns:ns3729="http://docbook.org/ns/docbook">S</ns3729:literal> followed by a number 
+        and then by the name of the shell script they symbolically link to. Similarly,
+        all kill scripts link files start with the letter <ns3730:literal xmlns:ns3730="http://docbook.org/ns/docbook">K</ns3730:literal> followed by a number 
+        and then by the name of the shell script they symbolically link to. 
+      </ns3728:para>
+      <ns3731:para xmlns:ns3731="http://docbook.org/ns/docbook">
+        The scripts are executed in the order of the numbering of the symbolic link files. If 
+        multiple link files have the same number they are executed one after the other, but
+        the order in which they are executed is not guaranteed.
+      </ns3731:para>
+      <ns3732:para xmlns:ns3732="http://docbook.org/ns/docbook">
+        You can add further script files to the <ns3733:filename xmlns:ns3733="http://docbook.org/ns/docbook">/etc/init.d</ns3733:filename> directory
+        and further symbolic links with a number specifying the point at which that script
+        is to be executed to the appropriate run-level script directory. You can also renumber
+        the symbolic link files if you want to modify the order in which the run-level 
+        initialization scripts are executed.
+      </ns3732:para>
+    </ns3713:section>
+    
+    <ns3734:section xmlns:ns3734="http://docbook.org/ns/docbook">
+      <ns3735:title xmlns:ns3735="http://docbook.org/ns/docbook">Starting and stopping the run-level scripts</ns3735:title>
+      <ns3736:para xmlns:ns3736="http://docbook.org/ns/docbook">
+        The scripts typically take <ns3737:command xmlns:ns3737="http://docbook.org/ns/docbook">start</ns3737:command> and <ns3738:command xmlns:ns3738="http://docbook.org/ns/docbook">stop</ns3738:command>
+        command-line arguments and the processes they launch can thus also be controlled
+        manually by running these scripts with either option.
+      </ns3736:para>
+    </ns3734:section>
+  </ns3707:section>
+</ns3704:section>

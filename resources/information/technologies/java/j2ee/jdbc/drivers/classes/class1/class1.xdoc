@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  
+<section id="resources.information.technologies.java.j2ee.jdbc.drivers.classes.class1.class1"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+        
+  <title>Class 1 JDBC drivers</title>
+  <para>
+    Class 1 drivers use a client-side JDBC/ODBC bridge which communicates with an ODBC
+    server typically (though not necessarily) hosted on the database server (see
+    <xref linkend="resources.information.technologies.java.j2ee.jdbc.drivers.classes.class1.class1_fig"/>).
+    ODBC is a Windows API standard for SQL developed by Microsoft. Other companies
+    (<abbrev>e.g.</abbrev> Visigenic) have developed ODBC software development kits for 
+    other platforms.
+  </para>
+  
+  <figure id="resources.information.technologies.java.j2ee.jdbc.drivers.classes.class1.class1_fig">
+    <title>Class 1 JDBC driver</title>
+    <graphic fileref="class1.jpg"/>
+  </figure>
+  
+  <para>
+    The JDBC/ODBC bridge maps JDBC calls onto ODBC calls which are sent to the ODBC
+    server. The ODBC server translates the ODBC service requests to native database calls. 
+  </para>
+
+  <section>
+    <title>Problems with Drivers using a JDBC/ODBC bridge</title>
+    <para>
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>Performance:</title>
+          <para>
+            Going through the various layers (and particularly the JDBC-ODBC
+            mapping) can degrade performance significantly.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Security:</title>
+          <para>
+            Java byte code can be sent
+            accross the network to dynamically supply client database functionality. If the code makes
+            use of native routines (as would be the case for class 1 and 2 drivers) the Java security
+            manager has to assume that the code is insecure and will have to lock you into the sandbox
+            security model.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Portability:</title>
+          <para>
+            Using a native JDBC/ODBC bridge compromises the portability
+            of the client side significantly.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+      Furthermore, ODBC drivers require that the ODBC
+      datasource is registered with the operating system.
+    </para>
+  </section>
+</section>  

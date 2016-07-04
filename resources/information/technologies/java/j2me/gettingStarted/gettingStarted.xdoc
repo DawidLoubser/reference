@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- To do:
+     ======
+             1. Discuss MIDlet suites.
+-->             
+
+<!--
+<!DOCTYPE chapter SYSTEM "file:/opt/share/xml/Oxygen/samples/docbook/xml/docbookx.dtd" [
+
+  <!ENTITY HelloWorldMIDlet SYSTEM 'file:/home/solms/Documents/courses/J2ME/book/code/HelloWorld/src/HelloWorldMIDlet.java'>
+  <!ENTITY helloWorldManifest SYSTEM 'file:/home/solms/Documents/courses/J2ME/book/code/HelloWorld/dist/MANIFEST.MF'>
+  <!ENTITY helloWorldJad SYSTEM 'file:/home/solms/Documents/courses/J2ME/book/code/HelloWorld/dist/HelloWorldMIDlet.jad'>
+  <!ENTITY UpdateJadWithJarSizeTask SYSTEM 
+    'file:/home/solms/Documents/courses/J2ME/book/code/utils/updateJad/UpdateJadWithJarSizeTask.java'>
+  <!ENTITY envProperties SYSTEM 'file:/home/solms/Documents/courses/J2ME/book/code/common/env.properties'>
+  <!ENTITY commonBuildProperties SYSTEM 'file:/home/solms/Documents/courses/J2ME/book/code/common/build.properties'>
+  <!ENTITY commonBuildTargets SYSTEM 'file:/home/solms/Documents/courses/J2ME/book/code/common/targets.xml'>
+  <!ENTITY helloWorldBuildProperties SYSTEM 'file:/home/solms/Documents/courses/J2ME/book/code/HelloWorld/build.properties'>
+  <!ENTITY helloWorldBuild SYSTEM 'file:/home/solms/Documents/courses/J2ME/book/code/HelloWorld/build.xml'>
+  <!ENTITY antCrashCourse SYSTEM 'file:/home/solms/Documents/courses/J2ME/book/gettingStarted/antCrashCourse.xml'>
+
+]>
+-->
+<chapter id="resources.information.technologies.java.j2me.gettingStarted.gettingStarted"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Getting Started with MIDP</title>
+  
+  <section>
+    <title>Introduction</title>
+    <para>
+      In this chapter we 
+      <itemizedlist>
+        <listitem><para>
+          discuss the life cycle of a MIDlet,
+        </para></listitem>
+        <listitem><para>
+          develop a simple <application>HelloWorld</application>MIDlet,
+        </para></listitem>
+        <listitem><para>
+          compile, archive and run it from the emulator,
+        </para></listitem>
+        <listitem><para>
+          install the MIDlet onto a device and run it from the device and finally 
+        </para></listitem>
+        <listitem><para>
+          we develop an Ant script for generating the MIDlet and running it
+          from the emulator.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section><title>Required software</title>
+    <para> 
+      First of all we'll have to get all the required software in place. So what do we
+      need to get started? All the software we use is on the D coming with the course.
+      Minimally you will need the <application>Java 2 Software Development Kit (J2SDK)
+      </application> and the <application>Wireless toolkit</application>.
+    </para>
+    
+    <section><title>Obtaning and installing the J2SDK</title>
+      <para>
+        The J2SDK can be downloaded from <ulink url="http://java.sun.com">java.sun.com</ulink>.
+        You can download versions for various operating systems. Additionally you will want
+        to download the documentation which is platform-neutral.
+      </para>
+      <para>
+        To install the J2SDK you simply run the executable for your platform.
+        After having installed the development kit you will typically want to put its
+        <filename>bin</filename> directory in the path. How this is done differs from
+        operating system to operating system and on <application>Windows</application>
+        it differs even from version to version. On most modern 
+        <application>Windows</application> versions you can edit the environment
+        variables from one of the panels of the system properties editor found in
+        the control panel. You can also typically access the system properties editor
+        by right-clicking on the <application>My Computer</application> icon and
+        selecting the <command>properties</command> tag.
+      </para>
+      <para>
+        On <application>Linux</application> distributions you add the following export 
+        statements to the <filename>.bashrc</filename> in your home directory (or in the
+        <filename>/etc/bashrc</filename> file if you want to apply these settings
+        to all users)
+        <programlisting>
+export JAVA_HOME=/opt/share/java/j2sdk1.4.1_01
+export PATH=$JAVA_HOME/bin:$PATH
+        </programlisting>
+      </para>
+    
+    </section>
+
+    <section><title>Obtaining and installing the Wireless Toolkit</title>
+      <para>
+        The Java Community Process has been kind enough to supply us with the 
+        <application>Wireless toolkit</application>. 
+        It's downloadable from java.sun.com.
+      </para>  
+      <para>
+        To install the Wireless Toolkit you once again simply run the executable for
+        your platform. It will be useful to define an environment variable,
+        <varname>WTK_HOME</varname>, containing
+        the location where the wireless toolkit is installed. You may also want to
+        include the <filename>bin</filename> directory of the wireless toolkit in
+        you path. This is done in the same way as above.
+      </para>  
+    </section>
+  </section>
+  
+  <section>
+    <title>The life-cycle of a MIDlet</title>
+    <para>
+      A <acronym>MIDlet</acronym> has 3 states:
+      <itemizedlist>
+        <listitem><para>
+           <emphasis>active:</emphasis> In this state the <acronym>MIDlet</acronym>
+             is running, i.e. it has an active execution thread.
+        </para></listitem>
+        <listitem><para>
+          <emphasis>paused:</emphasis> The application is in an idle state, i.e. no
+          execution thread is processing instructions from the <acronym>MIDlet</acronym>. 
+          The application will resume at the position it was paused.
+        </para></listitem>
+        <listitem><para>
+          <emphasis>destroyed:</emphasis>  The application has been terminated.
+        </para></listitem>
+      </itemizedlist>
+      
+    </para>
+    
+    <figure id="figMidletLifeCycle">
+      <title>The life-cycle of a <acronym>MIDlet</acronym>.</title>
+      <graphic format="JPG" align="center"
+      fileref="../../../../../resources/information/technologies/java/j2me/gettingStarted/MIDletLifeCycle.jpg"/>
+   </figure>  
+    
+    <para>
+      The life cycle of a <acronym>MIDlet</acronym> is shown in the state diagram
+      of figure <xref linkend="figMidletLifeCycle"/>. Note that start can be
+      called multiple times.
+    </para>
+  </section>  
+  <section>
+    <title>The methods of a MIDlet</title>
+    <para>
+      A <classname>javax.microedition.midlet.MIDlet</classname> is a direct subclass 
+      of <classname>java.lang.Object</classname>. It adds the following methods to
+      those inherited from <classname>java.lang.Object</classname>.
+      <itemizedlist>
+        <listitem><para><literal>void startApp()</literal>:
+          Requests the <acronym>MIDlet</acronym> to enter the <emphasis>active</emphasis>
+          state. This method is an abstract method which has to be overwritten in
+          the <acronym>MIDlet</acronym> implementation class.
+          <note><title><literal>startApp</literal> may be called multiple times</title>
+            <para>
+              Hence you should not create you user interface or any other objects
+              your application requires everytime <literal>startApp</literal>
+              is called. Instead you should check if the required objects exist
+              already.
+            </para>
+          </note>
+        </para></listitem>
+        <listitem><para><literal>void pauseApp()</literal>:
+          Requests the <acronym>MIDlet</acronym> to stop procesing and enter the 
+          <emphasis>paused</emphasis> state. This method is an abstract method which has 
+          to be overwritten in the <acronym>MIDlet</acronym> implementation class.
+        </para></listitem>
+        <listitem><para><literal>void destroyApp(boolean unconditional)</literal>:
+            Requests the <acronym>MIDlet</acronym> to terminate and enter the 
+            <emphasis>destroyed</emphasis> state.  This method is an abstract method which has 
+            to be overwritten in the <acronym>MIDlet</acronym> implementation class.
+          </para>
+          <para>
+            If the arguments, <varname>unconditional</varname> is set to <constant>true</constant>
+            the <acronym>MIDlet</acronym> must cleanup and release all resources. If the
+            parameter is set to <constant>false</constant>, the <acronym>MIDlet</acronym>
+            may throw <classname>MIDletStateChangeException</classname> to indicate it does 
+            not want to be destroyed at this time.
+          </para>
+        </listitem>
+        <listitem><para><literal>void notifyPaused()</literal>:
+          Notifies the application management software that the <acronym>MIDlet</acronym> does not want to be <emphasis>active</emphasis> and has entered the <emphasis>paused</emphasis> state.
+        </para></listitem>
+        <listitem><para><literal>void resumeRequest()</literal>:
+        	Indication the the MIDlet would like to enter <emphasis>active</emphasis> state.
+				</para></listitem>
+        <listitem><para><literal>void notifyDestroyed()</literal>:
+          Provides a MIDlet with a mechanism to indicate that it is has entered into the <emphasis>destroyed</emphasis> state.
+        </para></listitem>
+        <listitem><para><literal>String getAppProperty(String propertyName)</literal>:
+          Provides a <acronym>MIDlet</acronym> with a mechanism to retrieve named properties from the application management software.  
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+
+
+  <section>
+    <title>Developing a HelloWorld application</title>
+    <para>
+      In this section we develop <emphasis>HelloWorld</emphasis> application,
+      and run it from both, the <emphasis>MIDP emulator</emphasis> and 
+      from a device itself.
+    </para>
+    
+    
+    <section><title>Writing the HelloWorld application</title> 
+      <para>
+        In example <xref linkend="HelloWorldMIDlet.java"/> we have a simple hello-world
+        <classname>MIDlet</classname> which simply 
+        <itemizedlist>
+          <listitem><para>
+           sets the title of the <classname>MIDlet</classname>,
+          </para></listitem>
+          <listitem><para>
+            defines the exit command and  
+          </para></listitem>
+          <listitem><para>
+            exits the application upon receiving an exit comment.  
+          </para></listitem>
+        </itemizedlist>
+      
+      </para>
+    
+      <example id="HelloWorldMIDlet.java"><title>HelloWorldMIDlet</title>
+        <programlisting role="java" linenumbering="numbered">
+				
+				&halloWorldMIDlet;
+				
+				</programlisting>
+      </example>   
+    
+    </section>
+    <section><title>Compiling the MIDlet</title>
+      <para>
+        To compile the MIDlet we have to replace the standard J2SE classes with
+        the MIDP classes. This we do via the <command>-bootclasspath</command>
+        command-line flag of the <command>javac</command> compiler.
+        
+				<programlisting>
+javac -bootclasspath $WTK_HOME/lib/midpapi20.jar HalloWorldMIDLet.java
+        </programlisting>  
+        
+				where <varname>$WTK_HOME</varname> is an environment variable set for the path of the wireless toolkit. 
+				
+        Here we specified that all the <filename>java</filename> files from the
+        <filename>src</filename> directory should be compiled into the target
+        directory, <filename>unverifiedClasses</filename>. The reason for this
+        is that the classes still need to be verified by the pre-verifier.
+      </para>
+    </section>  
+    <section><title>Preverifying </title>
+      <para>
+        The class verification is typically a computationally expensive process. For
+        this reason one does not want to perform this on the device. Instead the class
+        verification is done on the desktop. The preverified classes are loaded onto
+        the device where the verification process is only validated.
+      </para>
+      <para>
+        The MIDP reference implementantion provides a tool, <command>preverify</command>,
+        which performs the preverification step. To preverify the classes of our
+        <classname>HelloWorld</classname> application enter
+				
+        <programlisting>
+preverify -classpath $WTK_HOME/lib/midpapi20.jar:$WTK_HOME/lib/cldcapi11.jar 
+Directory/ClassFiles        
+        </programlisting>
+        
+				where <varname>$WTK_HOME</varname> is an environment variable set for the path of the wireless toolkit. 
+      </para> 
+		 	<para>
+			During the <emphasis>verification</emphasis> process confirmance to the specified version is verified. Check for floating point operations can also be performed during this step with the <emphasis>-nofp</emphasis> flag.
+			</para>	
+    </section>
+    
+    <section><title>Writing the Manifest file</title>
+      <para>
+        A MIDlet must be part of a MIDlet suite wich is a container for MIDlets. The
+        suite may contain only a single MIDlet or multiple MIDlets. The MIDlet suite 
+        is packaged within a jar file (a Java archive file which is a special type of
+        zip file) and the contents of the jar file is published in a 
+        <filename>Manifest</filename> file. 
+      </para>
+      <para>
+        For our <classname>HelloWorldMIDlet</classname> we have to write a 
+        <filename>Manifest</filename> file publishing our MIDlet as a component of
+        the jar file we are going to generate in the next step. It looks like this:
+        <programlisting>
+&halloWorldManifest;     
+        </programlisting>
+      </para>
+    </section>
+    
+    <section><title>Creating the jar file</title>
+      <para>
+        The MIDlet, together with the Manifest file and any other resources it may
+        us (other ava classes, icons,...) have to be archived into a
+        jar file. This is done via the <command>jar</command> utility supplied
+        with the Java development kit:
+      </para>
+      <programlisting>
+jar cfm dist/HelloWorldMIDlet.jar dist/MANIFEST.MF -C resources . -C classes . 
+      </programlisting>
+    </section>
+    
+    <section><title>The MIDlet application descriptor</title>
+      <para>
+        We have to add one more file in order to have a fully functioning MIDlet.
+        We need a MIDlet application descriptor which publishes the jar file itself.
+        This file contains largely the same information as the Manifest file, but adds
+        the name of the jar file and the version of the manifest file used:
+      </para>
+        <programlisting>
+&halloWorldJad;       
+        </programlisting>
+    </section>
+    
+    
+    <section>
+      <title>Running the MIDlet in the emulator</title>
+      <para>
+        To run the application from the emulator simply enter       
+        <programlisting>
+emulator -classpath HelloWorldMIDlet.jar -Xdescriptor HelloWorldMIDlet.jad
+        </programlisting>
+        where we assume that the emulator is in the path. On Windows replace the 
+        forward slashes by backward slashes.
+      </para>
+    
+      <figure id="figHelloWorldEmulator">
+        <title>Running the HelloWorld MIDlet from the wireless toolkit emulator.</title>
+        <graphic depth="12cm" format="JPG" align="center" 
+        fileref="../../../../../resources/information/technologies/java/j2me/gettingStarted/Phone.jpg"/>
+      </figure>  
+      <para>
+        At this stage you should see an image similar to that shown in 
+        <xref linkend="figHelloWorldEmulator"/> on your screen.
+      </para>
+    </section>
+    
+    <section>
+      <title>Deploying the application onto a device</title>
+      <para>
+        Each device will typically have some proprietary software enabling you to install
+        the MIDP applications on the device. Very typically the data exchange software
+        will enable you to mount the devices file system on the operating system (e.g.
+        Windows or Linux) and then to simply copy the <filename>jar</filename> and 
+        <filename>jad</filename> files onto the device, either from command line or by
+        using the file manager supplied by the operating system (e.g.\  
+        <application>KDE Konquerer</application>, <application>Gnome Nautilus</application> 
+        or <application>Windows Explorer</application>.
+      </para>
+    </section>
+    <section>
+      <title>Running the application on the device</title>
+      <para>
+        This too will typically differ from device to device and you will have to consult
+        your device manual.
+      </para>  
+    </section>
+		
+		<section>
+			<title>Overview of development and deployment process</title>
+      <figure id="DevDeployProcess">
+        <title>Overview over development and deployment process</title>
+        <graphic depth="19cm" format="JPG" align="center" 
+        fileref="../../../../../resources/information/technologies/java/j2me/gettingStarted/DevDeployProcess.jpg"/>
+      </figure>  
+			
+		</section>
+  </section>  
+
+	&antCrashCourse;
+   
+  <section><title>Exercises</title>
+    <para>
+      <orderedlist>
+        <listitem><para>
+          Write your own HelloWorld application and build and run it, first manually,
+          and then with the supplied ant build files.
+        </para></listitem>
+      </orderedlist>  
+    </para>
+  </section>  
+   
+</chapter>
+

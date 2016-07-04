@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.staticNestedClasses.staticNestedClasses"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+  <title role="Static Nested Classes">Static Nested Classes</title>
+  <para>
+    Static nested classes (or simply <emphasis role="em"> nested classes</emphasis>) are classes defined
+    within another class. Being static, they have only access to the class
+    methods and attributes of the outer class, not the instance members.
+<programlisting><![CDATA[
+public class OuterClass
+{
+  protected static class InnerClass
+  {
+    public InnerClass() {}
+
+    public void doSomething()
+    {
+      // can access classMember
+      // cannot access instanceMember
+    }
+  }
+
+  private InstanceMember instanceMember;
+  private static ClassMember classMember;
+}
+]]></programlisting>
+</para>
+<para>Depending on the scope with which they are defined, they can be instantiated
+either from within the outer class in whose context the inner class is
+defined (<emphasis role="verb">private</emphasis>), or only from within the outer class and its
+subclasses <emphasis role="bf">protected</emphasis>, from within all classes in the package
+or from within any class which has access to the outer class (<emphasis role="verb">public</emphasis>).</para>
+
+<para>Except if one has some strange reason for not wanting to nest the package
+hierarchy any further, static nested classes are only really useful when
+they are declared <emphasis role="verb">private</emphasis> or <emphasis role="verb">protected</emphasis>. In these cases one
+restricts the objects/classes which can see and/or instantiate the nested
+class to either the class itself or to the class and its subclasses.</para>
+
+<para>If the nested class is declared private in the above example other classes
+cannot obtain a handle to the nested class. If, on the other hand, the
+nested class implements some interface then the outer class can give a
+handle for the inner to some external class. The external class can then
+make use of those services of the inner class whose message signatures
+have been specified in the corresponding interface. Assume we have the
+following interface
+
+<programlisting><![CDATA[
+public Interface SomeInterface
+{
+  public void doSomething();
+}
+]]></programlisting>
+</para>
+<para><programlisting><![CDATA[
+public class OuterClass
+{
+  public OuterClass() {inner = new InnerClass();}
+
+  protected static class InnerClass implements SomeInterface
+  {
+    public InnerClass() {}
+
+    public void doSomething()
+    {
+      // can access classMember
+      // cannot access instanceMember
+    }
+
+    public doSomethingElse() {...}
+  }
+
+  public SomeInterface getInner() {return inner;}
+
+  private InnerClass inner;
+  private InstanceMember instanceMember;
+  private static ClassMember classMember;
+}
+]]></programlisting>
+</para>
+<para>
+  Now objects which have a reference to an instance of <emphasis role="verb">OuterClass</emphasis>
+  can obtain a reference to the instance of outer's <emphasis role="verb">InnerClass</emphasis>
+  (as a reference to <emphasis role="verb">SomeInterface</emphasis>) and can request the
+  <emphasis role="verb">doSomething()</emphasis> service from that object:
+   <programlisting><![CDATA[
+public class Test
+{
+  public static void main(String[] args)
+  {
+    OuterClass outer = new OuterClass();
+
+    SomeInterface inner = outer.getInner();
+
+    inner.doSomething(); // no problem
+
+    inner.doSomethingElse(); // XXX no access.
+  }
+}
+]]>
+   </programlisting>
+</para>
+    
+  <section>
+    <title>Nesting interfaces and classes</title>
+    <para>
+      One can also 
+      <itemizedlist>
+        <listitem><para>
+          nest one interface within another,   
+        </para></listitem>
+        <listitem><para>
+          a class within an interface, 
+        </para></listitem>
+        <listitem><para>
+          or an interface within a class.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>When would one want to use static nested classes?</title>
+    <para>
+      Static nested classes provide essentially a packaging construct. The rational for using
+      static nested classes or nested interfaces is thus usually that of convenient packaging.
+      Examples include
+      <itemizedlist>
+        <listitem><para>
+          Packaging a default implementation with an interface.
+        </para></listitem>
+        <listitem><para>
+          Packaging a default concrete class with an abstract class.
+        </para></listitem>
+        <listitem><para>
+          Packaging extended interfaces with more basic interfaces.
+        </para></listitem>
+        <listitem><para>
+          Packaging exception classes relevant for a particular contract (interface) with that
+          interface.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      Static nested classes reduce the class clutter by packaging classes or interfaces within
+      classes or interfaces.
+    </para>
+  </section>
+</section>

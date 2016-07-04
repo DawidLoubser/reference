@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.entityBeans.usingQueries.usingQueries"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Using EJB-QL queries</title>
+  
+  <section>
+    <title>Creating queries</title>
+    <para>
+      Queries are created using the entity manager. For example
+      <programlisting><![CDATA[
+@Stateless
+public class ProductDAOImpl
+{
+   @PersistenceContext
+   EntityManager entityManager;
+   ...
+   public List findByDescription(String description, int page)
+   {
+     return 
+      entityManager.createQuery
+        ("SELECT p FROM Product p WHERE p.description like :descr")
+          .setParameter("descr", description)
+          .setMaxResults(30)
+          .setFirstResult(pageNo*30)
+          .getResultList();
+  }
+  ...
+}        
+        ]]></programlisting>      
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Named queries</title>
+    <para>
+      Named queries can be defined at the package or class level. Their
+      definition is, however, global to the session factory/entity manager
+      scope.
+    </para>
+    
+    <section>
+      <title>Defining a named query</title>
+      <para>
+        <programlisting><![CDATA[
+javax.persistence.NamedQueries
+{
+  @javax.peristence.NamedQuery(name="bonds.getAllAbove" 
+     query="select b from Bond b where b.balance >= :amount")
+  ...
+}
+        ]]></programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>Using named queries</title>
+      <para>
+        Named queries are instantiated like any other class. Parameters can be
+        set on the query object before getting the results list:
+        <programlisting><![CDATA[
+public class SomeBean
+{
+  @PersistenceContext
+  EntityManager entityManager;
+          
+  public void doSomething()
+  {
+    Query query = entityManager.createNamedQuery("bonds.getAllAbove");
+    query.setParameter(0, new Double(500000));
+    List list = query.getResultList() ;
+    ...
+  }
+}
+          ]]></programlisting>        
+      </para>
+    </section>
+    
+    <section>
+      <title>Defining named queries with the corresponding entity beans</title>
+      <para>
+        One may use the <literal>@NamedQuery/ies</literal> annotations (in <literal>javax.persistence)</literal>
+        to specify named queries in the entities themselves.
+      <programlisting><![CDATA[
+@Entity        
+@NamedQueries({
+  @NamedQuery(name="bonds.getAllAbove" 
+     query="select b from Bond b where b.balance >= :amount")
+})
+public class Bond
+{
+  ...
+}        
+        ]]></programlisting></para>
+    </section>
+    
+  </section>
+  
+  
+</section>

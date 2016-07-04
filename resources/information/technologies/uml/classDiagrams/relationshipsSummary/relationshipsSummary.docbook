@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-2-19 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Summary of UML relationships</title>
+  <indexterm>
+    <primary>UML</primary>
+    <secondary>relationships</secondary>
+    <tertiary>summary</tertiary>
+  </indexterm>
+    <para>
+        <xref
+            linkend="technology.uml.classDiagrams.relationshipsSummary.relationshipsSummary_fig"
+        /> summarizes the UML relationships. It shows that these are conceptually specializations of
+        each other and that we have weak and strong variants of <quote>
+            <emphasis>is a</emphasis>
+        </quote>, <quote>
+            <emphasis>has a</emphasis>
+        </quote> and <quote>
+            <emphasis>uses</emphasis>
+        </quote>. </para>
+
+    <figure xml:id="technology.uml.classDiagrams.relationshipsSummary.relationshipsSummary_fig">
+        <title>Summary of UML relationships</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="400" fileref="relationshipsSummary.jpg"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+
+    <section>
+        <title>Dependency</title>
+        <para> Instances of the one class, the user, make, at times, use of instances of the other
+            class, the service provider. The latter is often modelled as an interface in order to
+            decouple the user from any particular implementation of a service provider. For example,
+            clients of the bank, upon spotting an ATM, may decide to use it in order to withdraw
+            some cash from their account, but they do not maintain a message path to any particular
+            ATM. </para>
+        <para> A dependency is called a <quote>
+                <emphasis>weak uses</emphasis>
+            </quote> because the user does not maintain a message path an is not in a position to,
+            at any stage, send further service requests to the service provider. </para>
+    </section>
+
+    <section>
+        <title>Association</title>
+        <para> Association is used for two purposes. On the one side it is used purely for
+            navigability. In the second case it is used for a client server relationship (or
+            peer-to-peer in the case of binary associations). In either case, the object which has
+            the association maintains a message path to the associated object. </para>
+        <para> It is conceptually a special form of dependency where the client still, at times,
+            makes use of the service provider, but now the client maintains a message path to the
+            service provider. For example, an amplifier has a message path to the speakers (the
+            cables) in order to send service requests to them. </para>
+        <para> An association is called a <quote>
+                <emphasis>strong uses</emphasis>
+            </quote> because the client maintains the relationship and is in a position to send, at
+            any stage, further service requests to the service provider. </para>
+    </section>
+
+    <section>
+        <title>Aggregation</title>
+        <para> Aggregation is a special form of association. The aggregate object still maintains a
+            message path to the component. It still can make use of the components. For example, in
+            the context of a portfolio calculating its value, it will request the value of each
+            asset and sum them up. </para>
+        <para> However, in aggregation a state transition in the component may imply a state
+            transition in the aggregate object, <abbrev>i.e.</abbrev> aspects of the component state
+            are part of the state of the aggregate object. In our example, a change in the value of
+            any of the assets results in a change in the value of the portfolio. </para>
+        <para> Aggregation is a weak has a relationship because it does not take exclusive control
+            of the component. The component can be accessed directly and may be part of other
+            aggregate objects. Furthermore, the asset can survive the portfolio. For example, a
+            particular asset may be part of a number of different portfolios. A change in its value
+            results in the value of multiple portfolios changing. Furthermore, one may decide to
+            remove a portfolio (a particular grouping view onto one's assets), but the assets would
+            still survive. </para>
+    </section>
+
+    <section>
+        <title>Composition</title>
+        <para> Composition is a special type of aggregation (and hence also a special type of
+            association and a special type of a dependency). If the component state changes, the
+            state of the owner also changes. The owner also maintains the message path and may, at
+            any stage, issue further service requests to the component. </para>
+        <para> Now we have, however, a <quote>
+                <emphasis>strong has a</emphasis>
+            </quote> relationship where the owner takes full responsibility for the component and
+            encapsulates the component. If a user of the DVD player wants to send a service request
+            to its laser, it will have to do so via the services offered by the DVD player itself.
+            If the laser is broken, the DVD player is broken too (it is responsible for the laser).
+            Finally, should we decide to scrap the DVD player, the laser will be scrapped also.
+        </para>
+    </section>
+
+    <section>
+        <title>Realisation</title>
+        <para> Realisation is a weak is a relationship. It is used to show that a service provider
+            implements an interface (and often a complete contract). This facilitates
+            substitutability of one service provider with any other realising the same contract.
+        </para>
+    </section>
+
+    <section>
+        <title>Specialisation</title>
+        <para> Specialisation is a very strong relationship which should be used with care. It is
+            commonly used for data or value objects. Specialisation can be conceptually seen as
+            special form of realisation in that the sub-class is a specialised realisation of the
+            super-class. One can say, specialisation inherits substitutability from realisation. </para>
+        <para> It can also be seen as a special form of composition as every sub-class instance will
+            create an encapsulated super-class instance through which it obtains the superclass
+            attributes, services and relationships. The super-class instance for the sub-class
+            cannot be accessed directly from outside the sub-class instance. It will also not
+            survive the sub-class instance. </para>
+        <para> The superclass instance is part of the state of the sub-class instance. If the state
+            of the superclass instance changes, the state of the sub-class instance changes too. For
+            example, assume a home loan application inherits a loan amount from loan application. If
+            the loan amount changes the state of the home loan application changes. </para>
+        <para> The sub-class instance also maintains a message path to the super class instance
+                (<emphasis>super</emphasis> in Java and <emphasis>base</emphasis> in C#). It is thus
+            also a special for of association. It may, for example make use of a superclass service
+            via <emphasis>super.serviceRequest()</emphasis>. </para>
+    </section>
+
+    <section>
+        <title>Containment</title>
+        <para> Containment is a separate relationship where instances of one class can only exist in
+            instances of another There are examples of such relationships in nature. </para>
+    </section>
+
+
+    <section>
+        <title>Shopping for relationships</title>
+        <para> In order to determine the correct relationship between two classes one can take a
+            requirements driven approach - similar to a shopping list for relationships. In either
+            case one should <emphasis>always choose the weakest relationship</emphasis> which
+            fulfils one's requirements. </para>
+        <para> The process of determining the correct relationship goes along two legs. On the one
+            side you are trying to establish the type of dependency between the two classes. On the
+            other side you will assess the level of substitutability and inheritance required. </para>
+
+        <para> First we assess whether there is a dependency between the classes. If instances of
+            one class, A, never make use of instances of another class, B, and if one also does not
+            need to be able to navigate from an A to a B, then there is not much of a relationship
+            between these classes. Otherwise there is at least a dependency of A on B. </para>
+
+        <para> Next ask yourself whether instances of A should maintain a message path to instances
+            of B. If so, upgrade the dependency to an association. If not, leave the relationship as
+            a dependency. </para>
+        <para> If we reached this point, we have at least an association from A to B. Next you can
+            ask yourself whether any change in the state of an instance of B results in a change of
+            state in the instance of A which maintains an association to it. If the answer is yes,
+            then upgrade the association to an aggregation relationship. Otherwise leave it as an
+            association. </para>
+
+        <para> If we reached this point we have at least an aggregation relationship from A to B.
+            Next, you can ask yourself whether the aggregate object needs to take full control of
+            the component, or whether other objects should be allowed to access the component
+            directly. If full control is required, then upgrade the relationship to a composition
+            relationship. Otherwise leave it as an aggregation relationship. <note>
+                <para> If you decided on composition, you can do the following test to check whether
+                    you perhaps made an error. Check whether it would make sense for the component
+                    to outlast (survive) the owner. If the answer is yes, then the relationship
+                    could not have been a composition relationship. </para>
+            </note>
+        </para>
+
+        <para> Next let us look at the plug-ability requirements. If the class should be pluggable
+                (<abbrev>i.e.</abbrev> if the service provider should be substitutable), then one
+            should introduce a contract for the service requirements. In the bare form, the contract
+            is simply an interface and we have a realisation relationship. </para>
+        <para> In order to assess whether you should upgrade the realisation relationship to a
+            specialisation relationship, assess whether you want to inherit common properties and
+            services. <note>
+                <para> In general we would recommend to favour interfaces and realisation above
+                    inheritance and specialisation. The latter tends to result in very rigid designs
+                    which are difficult to modify. One may choose to use specialisation only for
+                    value or data objects which do not perform significant functionality. </para>
+            </note>
+        </para>
+    </section>
+
+
+</section>

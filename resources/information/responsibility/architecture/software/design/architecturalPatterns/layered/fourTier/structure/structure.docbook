@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The structure of typical four-tier systems</title>
+    <para>
+        A typical modern four-tier architecture has the following layers,
+        <itemizedlist>
+            <listitem><para>
+                a presentation layer, <indexterm><primary>layer</primary><secondary>presentation</secondary></indexterm>
+            </para></listitem>
+            <listitem><para>
+                a services or business processes layer,
+                <indexterm><primary>layer</primary><secondary>services</secondary></indexterm>
+                <indexterm><primary>layer</primary><secondary>business processes</secondary></indexterm>
+            </para></listitem>
+            <listitem><para>
+                a domain objects layer, and an
+                <indexterm><primary>layer</primary><secondary>domain objects</secondary></indexterm>
+            </para></listitem>
+            <listitem><para>
+                infrastructure layer.
+                <indexterm><primary>layer</primary><secondary>infrastructure</secondary></indexterm>
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>The presentation layer</title>
+        <para>
+            <indexterm><primary>layer</primary><secondary>presentation</secondary></indexterm>
+            The presentation layer publishes the services to the user. This may include 
+            <itemizedlist>
+                <listitem><para>
+                    web clients,
+                    <indexterm><primary>client</primary><secondary>web</secondary></indexterm>
+                </para></listitem>
+                <listitem><para>
+                    thick clients,
+                    <indexterm><primary>client</primary><secondary>thick</secondary></indexterm>
+                </para></listitem>
+                <listitem><para>
+                    mobile clients, ...
+                    <indexterm><primary>client</primary><secondary>mobile</secondary></indexterm>
+                </para></listitem>
+            </itemizedlist>
+        </para>
+        
+        <section>
+            <title>Thick versus thin clients</title>
+            <para>
+                <indexterm><primary>client</primary><secondary>thick versus thin</secondary></indexterm>
+                A thick client is an application based client which looks like a local application but delegates the
+                business logic to a remote server. The integration is typically done via standard integration frameworks
+                like web services. Being technically a full application, the thick client can contain significant amount
+                of user interface logic.
+            </para>
+            <para>
+                A thin client, on the other hand, is a client which is typically forms based. A thin client has only very
+                minimal logic (like some simple data validation logic). Virtually all processing including presentation
+                layer logic processing is delegated to the server side.
+                <note><para>
+                    Using modern standards like XForms transfers reduces the coding overheads, facilitates more
+                    <indexterm><primary>XForms</primary></indexterm>
+                    dynamic thin clients and supports automatic data binding and XML marshalling/demarshalling.
+                    The support for XForms is, however, not yet universal. This limits the use of such technologies.
+                </para></note>
+            </para>
+            <para>
+                Advantages of thin clients include
+                <itemizedlist>
+                    <listitem><para>
+                        simplicity,<indexterm><primary>simplicity</primary><secondary>thin clients</secondary></indexterm>
+                    </para></listitem>
+                    <listitem><para>
+                        time to market,<indexterm><primary>time-to-market</primary><secondary>thin clients</secondary></indexterm>
+                    </para></listitem>
+                    <listitem><para>
+                        that no data needs to be maintained on the client side,
+                    </para></listitem>
+                    <listitem><para>
+                        the ability to easily distribute clients which are automatically at the latest version.
+                    </para></listitem>
+                </itemizedlist>
+            </para>
+            <para>
+                Thick clients, on the other hand, are able to
+                <itemizedlist>
+                    <listitem><para>
+                        provide a richer user experience,
+                        <indexterm><primary>user experience</primary></indexterm>
+                    </para></listitem>
+                    <listitem><para>
+                        may require less client-server communication due to the ability to perform more local processing,
+                        <indexterm><primary>communication</primary><secondary>client-server</secondary></indexterm>
+                    </para></listitem>
+                    <listitem><para>
+                        may require that more data is maintained on the client side and that this data needs to be kept synchronized
+                        with the server,
+                    </para></listitem>
+                    <listitem><para>
+                        and may, for some technologies, result in significant installation, distribution and maintenance costs.
+                        <indexterm><primary>cost</primary><secondary>installation</secondary></indexterm>
+                        <indexterm><primary>cost</primary><secondary>distribution</secondary></indexterm>
+                        <indexterm><primary>cost</primary><secondary>maintenance</secondary></indexterm>
+                        <note><para>
+                            Some technologies like Java WebStart facilitate automatic installation, distribution and updating of
+                            thick clients.
+                            <indexterm><primary>Java</primary><secondary>WebStart</secondary></indexterm>
+                        </para></note>
+                    </para></listitem>
+                </itemizedlist>
+            </para>
+        </section>
+    </section>
+    
+    <section>
+        <title>The services/business processes layer</title>
+        <para>
+            <indexterm><primary>layer</primary><secondary>services</secondary></indexterm>
+            <indexterm><primary>layer</primary><secondary>business processes</secondary></indexterm>
+            
+            The services layer publishes the services or use cases. It contains the business processes. These can be
+            expected to change quite frequently.
+        </para>
+    </section>
+    
+    <section>
+        <title>The domain objects layer</title>
+        <para>
+            <indexterm><primary>layer</primary><secondary>domain objects</secondary></indexterm>
+            The domain objects layer contains the core domain objects like account, order, invoice, ... These
+            domain objects are typically automatically persisted through to the infrastructure layer.
+        </para>
+    </section>
+    
+    <section>
+        <title>The infrastructure layer</title>
+        <para>
+            <indexterm><primary>layer</primary><secondary>infrastructure</secondary></indexterm>
+            The infrastructure layer contains the core infrastructure like
+            <itemizedlist>
+                <listitem><para>
+                    persistence servers (including databases and object-relational mappers),
+                    <indexterm><primary>server</primary><secondary>persistence</secondary></indexterm>
+                    <indexterm><primary>database</primary></indexterm>
+                    <indexterm><primary>object-relational mapper</primary></indexterm>
+                </para></listitem>
+                <listitem><para>
+                    request brokers like object request brokers and web services brokers, and
+                    <indexterm><primary>broker</primary><secondary>request</secondary></indexterm>
+                    <indexterm><primary>broker</primary><secondary>object request</secondary></indexterm>
+                    <indexterm><primary>broker</primary><secondary>web services</secondary></indexterm>
+                </para></listitem>
+                <listitem><para>
+                    message queues and topics for the dispatching and receipt of asynchronous messages.
+                    <indexterm><primary>message queue</primary></indexterm>
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+</section>    

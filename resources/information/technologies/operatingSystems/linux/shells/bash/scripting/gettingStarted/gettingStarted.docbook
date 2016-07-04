@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Getting started with shell scripts</title>
+    <para>
+        A shell script is simply a sequence of bash commands. Assume you want to
+        write a bash script which performs the following tasks
+        <orderedlist>
+            <listitem><para>
+                Delete the previous backup file for your logs.
+            </para></listitem>
+            <listitem><para>
+                Zip the messages log into <filename>previousMessages.zip</filename>.
+            </para></listitem>
+            <listitem><para>
+                Clear out the messages log.  
+            </para></listitem>
+        </orderedlist>
+    </para>
+    
+    <section>
+        <title>The bash script</title>
+        <para>
+            Consider the following shell script, <filename>clearLogs.sh</filename>:
+            <programlisting><![CDATA[
+#!/bin/bash
+#
+# This script must be run as root.
+#
+cd /var/log
+rm previousMessages.zip
+echo "removed previousMessages.zip"
+zip previousMessages.zip messages
+echo "zipped current log messages"
+cat /dev/null > messages   
+echo "cleared messages log."
+                ]]></programlisting>
+        </para>
+        
+        <section>
+            <title>The sha-bang</title>
+            <para>
+                The first line in the script declares the file-type. The first 2 character (bytes) are the
+                magic number for an executable shell script. The remainder of the line specifies which
+                command interpreter should be used.
+                <note>
+                    <para>
+                        The file type declaration line can be omitted if the script only contains generic 
+                        commands which can be interpreted with any shell command interpreter.
+                    </para>  
+                </note>
+            </para>
+            <para>
+                Examples of executable shell script file types are shown in the following table:
+            </para>  
+            <table>
+                <title>Some command interpreters for executable shell scripts</title>
+                <tgroup cols="2">
+                    <thead>
+                        <row><entry>file declarator</entry><entry>command interpreter</entry></row>
+                    </thead>
+                    
+                    <tbody>
+                        <row>
+                            <entry><![CDATA[!#/bin/sh]]></entry>
+                            <entry>Bourne (generic) shell script.</entry>
+                        </row>
+                        <row>
+                            <entry><![CDATA[#!/bin/bash]]></entry>
+                            <entry>Bourne Again (Bash) shell script.</entry>
+                        </row>
+                        <row>
+                            <entry><![CDATA[#!/bin/csh]]></entry>
+                            <entry>Berkeley Unix C shell script.</entry>
+                        </row>
+                        <row>
+                            <entry><![CDATA[#!/bin/bcsh]]></entry>
+                            <entry>Enhanced Berkeley Unix C shell script.</entry>
+                        </row>
+                        <row>
+                            <entry><![CDATA[#!/bin/sed]]></entry>
+                            <entry>
+                                Executable script for the <command>sed</command> 
+                                text processing utility.
+                            </entry>
+                        </row>
+                        <row>
+                            <entry><![CDATA[#!/bin/awk]]></entry>
+                            <entry>
+                                Executable script for the <command>awk</command> 
+                                text processing utility.
+                            </entry>
+                        </row>
+                        <row>
+                            <entry><![CDATA[#!/usr/bin/perl]]></entry>
+                            <entry>A perl script.</entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+                
+            </table>
+        </section>
+        
+    </section>
+    
+    <section>
+        <title>Making the script executable</title>
+        <para>
+            Once you have created the shell script, you need to set the file ownership and permissions 
+            such that it can be executed by whom it needs to be executed. Our shell script should be
+            executed by the <emphasis>superuser</emphasis> only. To this end we use
+            <cmdsynopsis><command><![CDATA[
+chown root:root ./clearLogs.sh
+chmod 700 clearLogs.sh
+      ]]></command></cmdsynopsis>
+        </para>
+    </section>
+    
+    <section>
+        <title>Executing the script</title>
+        <para>
+            To execute the script, you can go to the directory containing the script and enter
+            <cmdsynopsis><command>
+                ./clearLogs.sh       
+            </command></cmdsynopsis>
+            Alternatively, you can run it from anywhere specifying the full path.
+        </para>
+        
+        <section>
+            <title>Making the script globally available</title>
+            <para>
+                To make the script globally available, one typically copies it into either
+                <filename>/usr/sbin</filename> (scripts for the <emphasis>root</emphasis>
+                user), or <filename>/usr/bin</filename> (scripts for general users).
+            </para>
+            <para>
+                Since our script is meant for superusers only, we place it in <filename>/usr/sbin</filename>.
+            </para>
+        </section>
+    </section>
+    
+</section>

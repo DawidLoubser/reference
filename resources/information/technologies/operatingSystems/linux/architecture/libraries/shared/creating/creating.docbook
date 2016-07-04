@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Creating shared libraries</title>
+    <para>
+        Shared libraries are created using <literal>gcc</literal>, the GNU C/C++ compiler:
+        <programlisting><![CDATA[
+gcc -Wall -fPIC -c *.c
+            
+gcc -shared -Wl,-soname,libxxx.so.1 -o libxxx.so.1.0   *.o
+]]></programlisting>
+    </para>
+    <para>
+        The first step compiles the source files with the <literal>fPIC</literal> compiler directive which requests to output
+        position independent code which is, of course, required for shared libraries as they are not embedded at a particular
+        position within the application executable. The output are position independent binary (<literal>.o</literal>)
+        files.
+    </para>
+    <para>
+        The second step creates from all object files (<literal>*.o</literal>)
+        a shared library with <emphasis>"soname"</emphasis> <literal>libxxx.so.1</literal>
+        and <emphasis>"real name"</emphasis> <literal>libbxxx.so.1.0</literal>.
+    </para>
+</section>    
+    

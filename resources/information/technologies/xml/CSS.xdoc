@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="resources.information.technologies.xml.CSS"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+        
+    <title>Rendering via Cascading Style Sheets</title>
+    <section>
+        <title>Introduction</title>
+        <para> Cascading Style Sheets (CSSs) are widely used to separate some of the presentation
+            information from HTML documents, making the latter a lot cleaner and simpler. They are
+            the W3C recommendation for specifying presentation characteristics for HTML documents
+            and can also be used for XML documents.</para>
+        <para> The W3C has published two versions of CSS, CSS1 and the more powerful CSS2. CSS2 is
+            in most browsers (including Netscape and Internet Explorer version 6) only partially supported.</para>
+        <para> It is important to realize that cascading style sheets cannot alter the order of the
+            objects displayed. It simply applies styling information to an XML document which
+            contains the information to be displayed in the correct order. Thus one may first use
+            XSLT to transform the document into a structure suitable for presentation.</para>
+    </section>
+
+    <section>
+        <title>Specifying the Target-Media</title>
+        <para> The target medium is in most cases screen and/or print. Often one specifies that a
+            style sheet is meant for rendering on both of these media.</para>
+        <para> To specify that a set of rules applies to certain media, one encapsulates the rules
+            in a <emphasis>@media</emphasis> block:</para>
+        <programlisting>@media screen, print {... } </programlisting>
+        <para> The media types defined for CSS are screen A screen device - typically a browser.
+            print for printer. aural for aural devices like speach synthesizers, Braille for braile
+            devices with tactile feedback. embossed for embossed devices as created by Braille
+            printers. projection A projection device like a data projector. tv if the target device
+            is a television. tty for teletype devices.</para>
+    </section>
+
+    <section>
+        <title>CSS Boxes</title>
+        <para> A box is the smallest unit in CSS. Every element is ultimately rendered within a box.
+            CSS supports three types of boxes: A Block Box is a box which is delimited by line
+            breaks. To specify a block box, one sets the <emphasis>display</emphasis> property to
+            <emphasis>block</emphasis>. An Inline Object is a box which flows within blocks in the
+            direction of reading (from left to right and top to bottom for english text). It can be
+            specified by setting the <emphasis>display</emphasis> property to
+            <emphasis>inline</emphasis>. This is the default and hence is usually not set
+            explicitly. Anonymous Boxes are created automatically by the browser when needed.</para>
+        <para> A browser thus breaks the drawing canvas up into blocks stacked one on top of the
+            other containing flow objects which themselves are boxes. Each box has the structure
+            shown in figure <xref linkend="cssBox"/>. Around the content there is a padding followed
+            by a border whose properties may be set followed by a transparent margin. </para>
+        <figure id="cssBox">
+            <title>The basic element in CSS is a box which has content, padding, a border and a
+                transparent margin.</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../../../components/technologies/xml/CSS/CSSBox.gif"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    </section>
+
+    <section>
+        <title>Specifying Rules in CSS</title>
+        <para> CSS enables one to select elements from the source document and specify rules or
+            properties for that element. The general structure of a CSS rule is</para>
+        <programlisting>  SELECTOR { PROPERTIES } </programlisting>
+        <para> The selector thus selects one or more elements and specifies properties which are to
+            be applied to the element(s). The syntax for specifying a property is</para>
+        <programlisting>PROPERTY-NAME: VALUE;</programlisting>
+        <para> For example, below we specify that the <emphasis>title</emphasis> and
+            <emphasis>paragraph</emphasis> elements should be displayed in blocks (, i.e. delimited
+            by line feeds) and that titles should be set in 14pt bold-face:</para>
+        <programlisting> 
+@media screen, print 
+{ 
+    title, paragraph 
+    { 
+        display: block; 
+    } 
+    title 
+    {
+        font-size: 14pt; font-weight: bold; 
+    } 
+} 
+        </programlisting>
+    </section>
+
+    <section>
+        <title>A simple example</title>
+        <para>To illustrate the creation of block and inline boxes and the application of some very
+            simple rules, consider the following XML document:</para>
+        <programlisting>
+        <xi:include href="CSS/simpleShippingConfirmation.xml" parse="text"/>
+        </programlisting>
+        <para> Note that we assigned a CSS style sheet to the XML document. The style sheet is
+            listed below:</para>
+        <programlisting> 
+        <xi:include href="CSS/simpleShippingConfirmation.css" parse="text"/>
+        </programlisting>
+        <para> Note that the style sheet, puts a border around the block boxes used for titles and
+            paragraphs and sets the background color for some of the inline boxes (dateShipped,
+            orderID and trackingNumber) to yellow. This enables us to visually see the boxes as they
+            are rendered by the browser (see figure <xref linkend="simpleShippingConfirmation"/>). </para>
+        <figure id="simpleShippingConfirmation">
+            <title>The figure shows how browsers create both, block-boxes (for the title and
+                paragraphs) and inline boxes (for the shipping date, order ID and tracking number).</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="CSS/simpleShippingConfirmation.gif"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    </section>
+
+    <section>
+        <title>Selectors</title>
+        <para> All CSS rules start with a selector which specifies the elements to which the rules
+            apply. Recall the CSS rule syntax:</para>
+        <programlisting> SELECTOR {/* block of property statements */} </programlisting>
+        <table id="css2StandardSelections">
+            <title>Selection patterns for standard selections in CSS2.</title>
+            <tgroup cols="2">
+                <tbody>
+                    <row>
+                        <entry>
+                            <para>Selection Pattern</para>
+                        </entry>
+                        <entry>
+                            <para>The Selection </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>*</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on all elements. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on all elements of type <emphasis>e</emphasis>. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e1, e1</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches any element of type <emphasis>e1</emphasis> or
+                                <emphasis>e2</emphasis>. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e1 + e2</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on any element <emphasis>e2</emphasis> which follows an
+                                element <emphasis>e1</emphasis>. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e1 e2</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on any element <emphasis>e2</emphasis> which is a
+                                descendant of an element <emphasis>e1</emphasis>. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e1 > e2</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on any element <emphasis>e2</emphasis> which is a child
+                                element of <emphasis>e1</emphasis>. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e:first-child</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on any element <emphasis>e</emphasis> which is the first
+                                child of its parent element.</para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e[a]</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on any element <emphasis>e</emphasis> which has an
+                                attribute with name <emphasis>a</emphasis>. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e[a=&quot;val&quot;]</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on any element <emphasis>e</emphasis> which has an
+                                attribute with name <emphasis>a</emphasis> which has value
+                                <emphasis>val</emphasis>. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e[a-=&quot;val&quot;]</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on any element <emphasis>e</emphasis> which has an
+                                attribute with name <emphasis>a</emphasis> which has a space
+                                seperated value list with one of the values equal to
+                                <emphasis>val</emphasis>. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e:lang[l]</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on element <emphasis>e</emphasis> if the document language
+                                is <emphasis>l</emphasis>. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e[lang|=&quot;en&quot;]</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on any element <emphasis>e</emphasis> which has a
+                                <emphasis>lang</emphasis> attribute starting with
+                                <emphasis>en</emphasis> followed by a hyphen. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e:idValue</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on element <emphasis>e</emphasis> with an
+                                <emphasis>id</emphasis> attribute which has value
+                                <emphasis>idValue</emphasis>. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry/>
+                    </row>
+                </tbody>
+            </tgroup>
+        </table>
+        <para> <xref linkend="css2StandardSelections"/> lists the standard selectors specified
+            in CSS2. In addition there are a number of context sensitive selectors which match not
+            only on document information, but also on the context in which the document is currently
+            viewed. These are listed in <xref linkend="contextSelections"/>.</para>
+        <table id="contextSelections">
+            <title>Context sensitive CSS2 selection patterns.</title>
+            <tgroup cols="2">
+                <tbody>
+                    <row>
+                        <entry>
+                            <para>Selection Pattern</para>
+                        </entry>
+                        <entry>
+                            <para>The Selection </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e:link</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on element <emphasis>e</emphasis> if it is a source anchor
+                                for a non-traversed hyperlink. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e:visited</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on element <emphasis>e</emphasis> if it is a source anchor
+                                for a traversed hyperlink.</para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e:hover</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on element <emphasis>e</emphasis> if the user mouse hovers
+                                over that element. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e:focus</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on element <emphasis>e</emphasis> if the element has the
+                                focus. </para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry>
+                            <para>
+                                <emphasis>e:active</emphasis>
+                            </para>
+                        </entry>
+                        <entry>
+                            <para>Matches on element <emphasis>e</emphasis> if the element is
+                                active. </para>
+                        </entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </table>
+    </section>
+
+    <section>
+        <title>Properties</title>
+        <para> CSS defines a wide range of properties covering </para>
+        <itemizedlist>
+            <listitem>
+                <para>box properties, </para>
+            </listitem>
+            <listitem>
+                <para>text and font properties and </para>
+            </listitem>
+            <listitem>
+                <para>color and background properties.</para>
+            </listitem>
+        </itemizedlist>
+    </section>
+
+    <section>
+        <title>Inheriting Properties</title>
+        <para> Boxes inherit many properties from their parents. These properties may be overridden.</para>
+        <para> For example, all boxes for the child elements of
+            the<emphasis>&lt;shippingConfirmation></emphasis> element inherit the
+            <emphasis>font-size</emphasis> property while the block boxes (title and paragraph)
+            inherit the margin. The<emphasis>font-size</emphasis> is overridden
+            for<emphasis>&lt;title></emphasis> elements while the<emphasis>margin</emphasis>
+            property is overridden for<emphasis>&lt;paragraph></emphasis> elements.</para>
+        <section>
+            <title>Box Properties</title>
+            <para> display: The <emphasis>display</emphasis> property may acquire the values
+                <emphasis>block</emphasis>,<emphasis>inline</emphasis>,<emphasis>none</emphasis>,
+                <emphasis>table</emphasis> or <emphasis>list</emphasis>.
+                Here<emphasis>none</emphasis> hides the box, while<emphasis>table</emphasis>
+                and<emphasis>list</emphasis> render the box as a table or list. These are discussed
+                below. The display property is not inherited. margin: The margin can be set for the
+                4 sides individually
+                via<emphasis>margin-top</emphasis>,<emphasis>margin-bottom</emphasis>,<emphasis>margin-left</emphasis>
+                and<emphasis>margin-right</emphasis> or via a single<emphasis>margin</emphasis>
+                property given either one width value which is applied to all 4 sides or by
+                supplying the 4 width values in the order top, right, bottom and left separated by
+                spaces: </para>
+            <programlisting>
+selector 
+{ 
+    margin 10px, 5px, 10px, 5px; 
+}
+            </programlisting>
+            <para>Width and length units may be supplied as px pixels in, cm, mm for inches,
+                centimetres or milimeters, pt, pc for points (1/72 inch) or picas (12 points). em if
+                the units are in multiples of the the elements font. ex if the units are supplied as
+                multiples of the<emphasis>x</emphasis>-character of the elements font. % if the
+                units are supplied as a percentage of the content dimension. padding: The padding
+                for the box is defined in the same way as the margin. border-style: may be
+                <emphasis>solid</emphasis>,<emphasis>dotted</emphasis>,<emphasis>double</emphasis>,<emphasis>inset</emphasis>
+                or<emphasis>none</emphasis> (the default). border-width: may be specified ain any of
+                the length units. Alternatively one may
+                specify<emphasis>thin</emphasis>,<emphasis>medium</emphasis>,
+                or<emphasis>thick</emphasis>. border-color: may be specified as </para>
+            <itemizedlist>
+                <listitem>
+                    <para>An RGB value in hex (<abbrev>e.g.</abbrev>
+                        <emphasis>#00FF00</emphasis> for pure green. </para>
+                </listitem>
+                <listitem>
+                    <para>as an RGB value via<emphasis>rgb(0, 255, 0)</emphasis>. </para>
+                </listitem>
+                <listitem>
+                    <para>the RGB values as percentages, <abbrev>e.g.</abbrev>
+                        <emphasis>rgb(0%, 100%,
+                        0%)</emphasis>. </para>
+                </listitem>
+                <listitem>
+                    <para>as a color name which may
+                        be<emphasis>aqua</emphasis>,<emphasis>black</emphasis>,<emphasis>blue</emphasis>,
+                        <emphasis>fuchsia</emphasis>,<emphasis>gray</emphasis>,<emphasis>green</emphasis>,
+                        <emphasis>lime</emphasis>,<emphasis>maroon</emphasis>,<emphasis>olive</emphasis>,
+                        <emphasis>red</emphasis>,<emphasis>teal</emphasis>,<emphasis>white</emphasis>
+                        or <emphasis>yellow</emphasis>.</para>
+                </listitem>
+            </itemizedlist>
+            <para>
+                <emphasis>border:</emphasis> This property may be used as a shorthand notation specifying the
+            border style, width and color of the border. For example:</para>
+            <programlisting> 
+selector 
+{
+    border thin dashed blue; 
+}
+            </programlisting>
+        </section>
+
+        <section>
+            <title>Text and Font Properties</title>
+            <para> text-align: specifies the text alignment for the match. One may specify
+                <emphasis>left</emphasis>,<emphasis>right</emphasis>,<emphasis>center</emphasis>,<emphasis>justify</emphasis>
+                or<emphasis>none</emphasis>. vertical-align: specifies the vertical alignment for
+                the text. One may specify<emphasis>baseline</emphasis>,<emphasis>top</emphasis>,
+                <emphasis>bottom</emphasis>, <emphasis>middle</emphasis>,<emphasis>text-top</emphasis>, 
+                <emphasis>text-bottom</emphasis>
+                <emphasis>sub</emphasis> and<emphasis>super</emphasis> (the latter two for vertical
+                alignment with the super- and sub-scripts respectively. text-indent: Specifies the
+                indentation of the first line in a box. line-height: The line height may be
+                specified as </para>
+            <itemizedlist>
+                <listitem>
+                    <para>a number which specifes the factor relative to the font height.</para>
+                </listitem>
+            </itemizedlist>
+            <para>font-family: Specifies the font family to be used. Usually one specifies
+            from more specific to more generic. For example</para>
+            <programlisting> 
+selector 
+{  
+    font-family: Palatino, Garamond, &quot;Time New Roman&quot;, serif; 
+}
+            </programlisting>
+            <para>where the latter is a generic name which should hopefully allways be resolved. The
+                generic names are </para>
+            <itemizedlist>
+                <listitem>
+                    <para>serif, </para>
+                </listitem>
+                <listitem>
+                    <para>sans-serif, </para>
+                </listitem>
+                <listitem>
+                    <para>cursive, </para>
+                </listitem>
+                <listitem>
+                    <para>fantasy and </para>
+                </listitem>
+                <listitem>
+                    <para>monospace.</para>
+                </listitem>
+            </itemizedlist>
+            <para> font-size: The size of the font may be specified as a length or as
+            <emphasis>xx-small</emphasis>,<emphasis>x-small</emphasis>, <emphasis>small</emphasis>,
+            <emphasis>medium</emphasis>,<emphasis>large</emphasis>, <emphasis>x-large</emphasis>,
+            <emphasis>xx-large</emphasis> or relative to the inherited size as
+            <emphasis>smaller</emphasis> or<emphasis>larger</emphasis>. font-style: may
+            be<emphasis>normal</emphasis>, <emphasis>italic</emphasis> or
+            <emphasis>oblique</emphasis>. font-weight: may be 
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <emphasis>normal</emphasis> or <emphasis>bold</emphasis>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>100, 200, 300, 400, 500, 600, 700, 800 or 900
+                        with<emphasis>normal</emphasis> equal to<emphasis>400</emphasis>
+                        and<emphasis>bold</emphasis> equal to 700. </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>lighter</emphasis> or<emphasis>bolder</emphasis> relative to the
+                        inherited weight.</para>
+                </listitem>
+            </itemizedlist>
+            <para>font: a short-hand notation for text and font properties. For example;</para>
+            <programlisting>
+selector 
+{
+    font: italic bold 12pt/14pt Garamond, serif; 
+}
+            </programlisting>
+        </section>
+
+        <section>
+            <title>Color and Background Properties</title>
+            <para> color: specifies the text foreground color in standard rgb format.
+                background-color: specifies the text background color. One may specify a RGB value
+                or the keyword <emphasis>transparent</emphasis>. background-image: receives a URL as
+                argument which contains the image to be used for the background of the box.</para>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Comments</title>
+        <para> Comments in Cascading Style Sheets are enclosed in comment blocks similar to those
+            used in programming languages like Java and C++. A comment starts with a forward-slash
+            followed by a star, <emphasis>/*</emphasis>, and is terminated by a star followed by a
+            forward slash,<emphasis>*/</emphasis>. For example</para>
+        <programlisting>
+/* The following specifies that the title element should be set
+ *  in bold-face and a larger font. */ 
+title 
+{
+   font-size: larger;  
+   font-weight: bold; 
+}
+        </programlisting>
+    </section>
+
+    <section>
+        <title>Table Rendering</title>
+        <para> CSS2 also supports table rendering. This feature is not yet well supported (Internet
+            Explorer version 6 does not yet support it, though the latest version of Mozilla does).</para>
+        <para> Consider, for example, the following XML document containing contact details of your
+            favourite people:</para>
+        <programlisting>
+            <xi:include href="CSS/contacts.xml" parse="text" />
+        </programlisting>
+        <para> We can set the contacts as a table via the following style sheet:</para>
+        <programlisting>
+            <xi:include href="CSS/contacts.css" parse="text" />
+        </programlisting>
+        <para> The rendering of the XML file in Mozilla is shown in figure 
+            <xref linkend="mozillaTableRender"/>. </para>
+
+        <figure id="mozillaTableRender">
+            <title>A CSS level 2 table rendered in Mozilla.</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="CSS/ContactsTable.gif"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    </section>
+
+    <section>
+        <title>Positioning</title>
+        <para> Normally CSS boxes are positioned relative to the normal flow (either adjacent to or
+            below the previous box). CSS does support other positioning algorithms specified via the
+            <emphasis>position</emphasis> property which can be set to one of the following values:
+            static: Positioned within normal flow (default). relative: The box is positioned within
+            normal flow with a relative offset specified by the
+            <emphasis>left</emphasis>,<emphasis>right</emphasis>, <emphasis>top</emphasis> and
+            <emphasis>bottom</emphasis> properties. absolute: Specifies absolute positioning of a
+            box relative to the containing block. Once again the properties
+            <emphasis>left</emphasis>,<emphasis>top</emphasis>, <emphasis>bottom</emphasis> and
+            <emphasis>right</emphasis> are used to supply the positioning details. fixed: The box is
+            positioned at the supplied absolute position relative to the drawing canvas. The box
+            will thus not move as the client scrolls down in, say, a browser window.</para>
+    </section>
+
+    <section>
+        <title>Layering</title>
+        <para> In addition to the two-dimensional positioning, CSS also supports the concept of
+            layers. One can specify the layer into which a box is inserted via
+            a<emphasis>z-index</emphasis> property:</para>
+        <programlisting>
+ContextElement 
+{ 
+    display: block; z-index: -2; /* ... */ 
+}
+        </programlisting>
+        <para> The layer may be any positive or negatibve integer with boxes with a higher z-index
+            drawn above those with a lower z-index. Often the background color of the upper boxes is
+            set to transparent.</para>
+    </section>
+
+    <section>
+        <title>Importing CSS Rules from other Style Sheets</title>
+        <para> To import one style sheet into another one uses the<emphasis>@import</emphasis>
+            statement specifying the style sheet which is to be imported as a URL:</para>
+        <programlisting> 
+@import url(http://www.solms.co.za/css/genericRules.css);
+        </programlisting>
+        <para> One can also import rules meant for specific media targets. For example,</para>
+        <programlisting> 
+@import url(http://www.solms.co.za/css/lecture2.css) projection, tv;
+        </programlisting>
+    </section>
+
+</chapter>

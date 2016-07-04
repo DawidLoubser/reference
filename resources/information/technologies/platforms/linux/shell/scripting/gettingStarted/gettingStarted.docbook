@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"--><ns5470:section xmlns:ns5470="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.gettingStarted.gettingStarted">
+
+  <ns5471:title xmlns:ns5471="http://docbook.org/ns/docbook">Getting started with shell scripts</ns5471:title>
+  <ns5472:para xmlns:ns5472="http://docbook.org/ns/docbook">
+    A shell script is simply a sequence of bash commands. Assume you want to
+    write a bash script which performs the following tasks
+    <ns5473:orderedlist xmlns:ns5473="http://docbook.org/ns/docbook">
+      <ns5474:listitem xmlns:ns5474="http://docbook.org/ns/docbook"><ns5475:para xmlns:ns5475="http://docbook.org/ns/docbook">
+          Delete the previous backup file for your logs.
+      </ns5475:para></ns5474:listitem>
+      <ns5476:listitem xmlns:ns5476="http://docbook.org/ns/docbook"><ns5477:para xmlns:ns5477="http://docbook.org/ns/docbook">
+        Zip the messages log into <ns5478:filename xmlns:ns5478="http://docbook.org/ns/docbook">previousMessages.zip</ns5478:filename>.
+      </ns5477:para></ns5476:listitem>
+      <ns5479:listitem xmlns:ns5479="http://docbook.org/ns/docbook"><ns5480:para xmlns:ns5480="http://docbook.org/ns/docbook">
+        Clear out the messages log.  
+      </ns5480:para></ns5479:listitem>
+    </ns5473:orderedlist>
+  </ns5472:para>
+  
+  <ns5481:section xmlns:ns5481="http://docbook.org/ns/docbook">
+    <ns5482:title xmlns:ns5482="http://docbook.org/ns/docbook">The bash script</ns5482:title>
+    <ns5483:para xmlns:ns5483="http://docbook.org/ns/docbook">
+      Consider the following shell script, <ns5484:filename xmlns:ns5484="http://docbook.org/ns/docbook">clearLogs.sh</ns5484:filename>:
+        <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/clearLogs_sh.docbook"/>
+    </ns5483:para>
+    
+    <ns5485:section xmlns:ns5485="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.gettingStarted.shaBang">
+      <ns5486:title xmlns:ns5486="http://docbook.org/ns/docbook">The sha-bang</ns5486:title>
+      <ns5487:para xmlns:ns5487="http://docbook.org/ns/docbook">
+        The first line in the script declares the file-type. The first 2 character (bytes) are the
+        magic number for an executable shell script. The remainder of the line specifies which
+        command interpreter should be used.
+        <ns5488:note xmlns:ns5488="http://docbook.org/ns/docbook">
+          <ns5489:para xmlns:ns5489="http://docbook.org/ns/docbook">
+            The file type declaration line can be omitted if the script only contains generic 
+            commands which can be interpreted with any shell command interpreter.
+          </ns5489:para>  
+        </ns5488:note>
+      </ns5487:para>
+      <ns5490:para xmlns:ns5490="http://docbook.org/ns/docbook">
+        Examples of executable shell script file types are shown in 
+        <ns5491:xref xmlns:ns5491="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.shell.scripting.fileTypes"/>.
+        
+        <ns5492:table xmlns:ns5492="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.fileTypes">
+          <ns5493:title xmlns:ns5493="http://docbook.org/ns/docbook">Some command interpreters for executable shell scripts</ns5493:title>
+          <ns5494:tgroup xmlns:ns5494="http://docbook.org/ns/docbook" cols="2">
+            <ns5495:thead xmlns:ns5495="http://docbook.org/ns/docbook">
+              <ns5496:row xmlns:ns5496="http://docbook.org/ns/docbook"><ns5497:entry xmlns:ns5497="http://docbook.org/ns/docbook">file declarator</ns5497:entry><ns5498:entry xmlns:ns5498="http://docbook.org/ns/docbook">command interpreter</ns5498:entry></ns5496:row>
+            </ns5495:thead>
+            
+            <ns5499:tbody xmlns:ns5499="http://docbook.org/ns/docbook">
+              <ns5500:row xmlns:ns5500="http://docbook.org/ns/docbook">
+                <ns5501:entry xmlns:ns5501="http://docbook.org/ns/docbook">!#/bin/sh</ns5501:entry>
+                <ns5502:entry xmlns:ns5502="http://docbook.org/ns/docbook">Bourne (generic) shell script.</ns5502:entry>
+              </ns5500:row>
+              <ns5503:row xmlns:ns5503="http://docbook.org/ns/docbook">
+                <ns5504:entry xmlns:ns5504="http://docbook.org/ns/docbook">#!/bin/bash</ns5504:entry>
+                <ns5505:entry xmlns:ns5505="http://docbook.org/ns/docbook">Bourne Again (Bash) shell script.</ns5505:entry>
+              </ns5503:row>
+              <ns5506:row xmlns:ns5506="http://docbook.org/ns/docbook">
+                <ns5507:entry xmlns:ns5507="http://docbook.org/ns/docbook">#!/bin/csh</ns5507:entry>
+                <ns5508:entry xmlns:ns5508="http://docbook.org/ns/docbook">Berkeley Unix C shell script.</ns5508:entry>
+              </ns5506:row>
+              <ns5509:row xmlns:ns5509="http://docbook.org/ns/docbook">
+                <ns5510:entry xmlns:ns5510="http://docbook.org/ns/docbook">#!/bin/bcsh</ns5510:entry>
+                <ns5511:entry xmlns:ns5511="http://docbook.org/ns/docbook">Enhanced Berkeley Unix C shell script.</ns5511:entry>
+              </ns5509:row>
+              <ns5512:row xmlns:ns5512="http://docbook.org/ns/docbook">
+                <ns5513:entry xmlns:ns5513="http://docbook.org/ns/docbook">#!/bin/sed</ns5513:entry>
+                <ns5514:entry xmlns:ns5514="http://docbook.org/ns/docbook">
+                  Executable script for the <ns5515:command xmlns:ns5515="http://docbook.org/ns/docbook">sed</ns5515:command> 
+                  text processing utility.
+                </ns5514:entry>
+              </ns5512:row>
+              <ns5516:row xmlns:ns5516="http://docbook.org/ns/docbook">
+                <ns5517:entry xmlns:ns5517="http://docbook.org/ns/docbook">#!/bin/awk</ns5517:entry>
+                <ns5518:entry xmlns:ns5518="http://docbook.org/ns/docbook">
+                  Executable script for the <ns5519:command xmlns:ns5519="http://docbook.org/ns/docbook">awk</ns5519:command> 
+                  text processing utility.
+                </ns5518:entry>
+              </ns5516:row>
+              <ns5520:row xmlns:ns5520="http://docbook.org/ns/docbook">
+                <ns5521:entry xmlns:ns5521="http://docbook.org/ns/docbook">#!/usr/bin/perl</ns5521:entry>
+                <ns5522:entry xmlns:ns5522="http://docbook.org/ns/docbook">A perl script.</ns5522:entry>
+              </ns5520:row>
+            </ns5499:tbody>
+          </ns5494:tgroup>
+          
+        </ns5492:table>
+      </ns5490:para>  
+    </ns5485:section>
+    
+  </ns5481:section>
+  
+  <ns5523:section xmlns:ns5523="http://docbook.org/ns/docbook">
+    <ns5524:title xmlns:ns5524="http://docbook.org/ns/docbook">Making the script executable</ns5524:title>
+    <ns5525:para xmlns:ns5525="http://docbook.org/ns/docbook">
+      Once you have created the shell script, you need to set the file ownership and permissions 
+      such that it can be executed by whom it needs to be executed. Our shell script should be
+      executed by the <ns5526:emphasis xmlns:ns5526="http://docbook.org/ns/docbook">superuser</ns5526:emphasis> only. To this end we use
+      <ns5527:cmdsynopsis xmlns:ns5527="http://docbook.org/ns/docbook"><ns5528:command xmlns:ns5528="http://docbook.org/ns/docbook">
+chown root:root ./clearLogs.sh
+chmod 700 clearLogs.sh
+      </ns5528:command></ns5527:cmdsynopsis>
+    </ns5525:para>
+  </ns5523:section>
+  
+  <ns5529:section xmlns:ns5529="http://docbook.org/ns/docbook">
+    <ns5530:title xmlns:ns5530="http://docbook.org/ns/docbook">Executing the script</ns5530:title>
+    <ns5531:para xmlns:ns5531="http://docbook.org/ns/docbook">
+      To execute the script, you can go to the directory containing the script and enter
+      <ns5532:cmdsynopsis xmlns:ns5532="http://docbook.org/ns/docbook"><ns5533:command xmlns:ns5533="http://docbook.org/ns/docbook">
+./clearLogs.sh       
+      </ns5533:command></ns5532:cmdsynopsis>
+      Alternatively, you can run it from anywhere specifying the full path.
+    </ns5531:para>
+    
+    <ns5534:section xmlns:ns5534="http://docbook.org/ns/docbook">
+      <ns5535:title xmlns:ns5535="http://docbook.org/ns/docbook">Making the script globally available</ns5535:title>
+      <ns5536:para xmlns:ns5536="http://docbook.org/ns/docbook">
+        To make the script globally available, one typically copies it into either
+        <ns5537:filename xmlns:ns5537="http://docbook.org/ns/docbook">/usr/sbin</ns5537:filename> (scripts for the <ns5538:emphasis xmlns:ns5538="http://docbook.org/ns/docbook">root</ns5538:emphasis>
+        user), or <ns5539:filename xmlns:ns5539="http://docbook.org/ns/docbook">/usr/bin</ns5539:filename> (scripts for general users).
+      </ns5536:para>
+      <ns5540:para xmlns:ns5540="http://docbook.org/ns/docbook">
+        Since our script is meant for superusers only, we place it in <ns5541:filename xmlns:ns5541="http://docbook.org/ns/docbook">/usr/sbin</ns5541:filename>.
+      </ns5540:para>
+    </ns5534:section>
+  </ns5529:section>
+  
+</ns5470:section>

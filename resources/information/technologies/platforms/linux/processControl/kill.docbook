@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+--><ns3922:section xmlns:ns3922="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.processControl.kill">
+
+  <ns3923:title xmlns:ns3923="http://docbook.org/ns/docbook">Killing processes</ns3923:title>
+  <ns3924:para xmlns:ns3924="http://docbook.org/ns/docbook">
+    To terminate one or more processes given their process ids (ids), one uses
+    <ns3925:cmdsynopsis xmlns:ns3925="http://docbook.org/ns/docbook"><ns3926:command xmlns:ns3926="http://docbook.org/ns/docbook">
+kill &lt;PID1&gt; &lt;PID2&gt; ...      
+    </ns3926:command></ns3925:cmdsynopsis>
+    command which sends a <ns3927:emphasis xmlns:ns3927="http://docbook.org/ns/docbook">termination signal</ns3927:emphasis> to the
+    respective processes. The above is actually shorthand for
+    <ns3928:cmdsynopsis xmlns:ns3928="http://docbook.org/ns/docbook"><ns3929:command xmlns:ns3929="http://docbook.org/ns/docbook">
+kill -SIGTERM &lt;PID1&gt; &lt;PID2&gt; ...      
+    </ns3929:command></ns3928:cmdsynopsis>
+  </ns3924:para>
+    <ns3930:para xmlns:ns3930="http://docbook.org/ns/docbook">
+      There are a number of signals one can send to terminate a process including
+      <ns3931:itemizedlist xmlns:ns3931="http://docbook.org/ns/docbook">
+        <ns3932:listitem xmlns:ns3932="http://docbook.org/ns/docbook"><ns3933:para xmlns:ns3933="http://docbook.org/ns/docbook">
+          the interruption signal, <ns3934:literal xmlns:ns3934="http://docbook.org/ns/docbook">SIGINT</ns3934:literal> sent to the process upon 
+          interrupting it from the terminal via <ns3935:literal xmlns:ns3935="http://docbook.org/ns/docbook">&lt;CTRL&gt; C</ns3935:literal>,
+        </ns3933:para></ns3932:listitem>
+        <ns3936:listitem xmlns:ns3936="http://docbook.org/ns/docbook"><ns3937:para xmlns:ns3937="http://docbook.org/ns/docbook">
+          the quit signal, <ns3938:literal xmlns:ns3938="http://docbook.org/ns/docbook">SIGQUIT</ns3938:literal>, sent when quitting a process from
+          the keyboard  via <ns3939:literal xmlns:ns3939="http://docbook.org/ns/docbook">&lt;CTRL&gt; D</ns3939:literal> and
+        </ns3937:para></ns3936:listitem>
+        <ns3940:listitem xmlns:ns3940="http://docbook.org/ns/docbook"><ns3941:para xmlns:ns3941="http://docbook.org/ns/docbook">
+          the hangup signal, <ns3942:literal xmlns:ns3942="http://docbook.org/ns/docbook">SIGHUP</ns3942:literal>  sent to a process when
+          the terminal from which the process was launched is closed, or when the user which 
+          started a process logs off (when the <ns3943:emphasis xmlns:ns3943="http://docbook.org/ns/docbook">nohup</ns3943:emphasis>
+          option is specified, a process will ignore the hangup signal, and continue processing
+          after the terminal from which it was started is closed).
+        </ns3941:para></ns3940:listitem>
+      </ns3931:itemizedlist>
+      The main example of explicitly specifying a terminal signal other than <ns3944:literal xmlns:ns3944="http://docbook.org/ns/docbook">SIGTERM</ns3944:literal>
+      is that of terminating a process unconditionally.
+    </ns3930:para>
+  
+  <ns3945:section xmlns:ns3945="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.processControl.sigkill">
+    <ns3946:title xmlns:ns3946="http://docbook.org/ns/docbook">Terminating background processes unconditionally</ns3946:title>
+    <ns3947:para xmlns:ns3947="http://docbook.org/ns/docbook">
+      At times termination signals are ignored and one needs to force an unconditional
+      termination of a process. This is done via the kill signal, <ns3948:literal xmlns:ns3948="http://docbook.org/ns/docbook">SIGKILL</ns3948:literal>,
+      which has the numerical value 9.
+    </ns3947:para>
+    <ns3949:para xmlns:ns3949="http://docbook.org/ns/docbook">
+      For example
+      <ns3950:cmdsynopsis xmlns:ns3950="http://docbook.org/ns/docbook"><ns3951:command xmlns:ns3951="http://docbook.org/ns/docbook">
+kill -SIGKILL 11111
+      </ns3951:command></ns3950:cmdsynopsis>
+      kills the process with PID=11111 unconditionally.
+      <ns3952:note xmlns:ns3952="http://docbook.org/ns/docbook">
+        <ns3953:para xmlns:ns3953="http://docbook.org/ns/docbook">
+          The <ns3954:literal xmlns:ns3954="http://docbook.org/ns/docbook">SIGKILL</ns3954:literal> signal does not give the process a chance to do any
+          clean up before it is terminated, and should only be used in exceptional cases.
+        </ns3953:para>
+      </ns3952:note>
+    </ns3949:para>
+   </ns3945:section>
+  
+  <ns3955:section xmlns:ns3955="http://docbook.org/ns/docbook">
+    <ns3956:title xmlns:ns3956="http://docbook.org/ns/docbook">Terminating all background processes</ns3956:title>
+    <ns3957:para xmlns:ns3957="http://docbook.org/ns/docbook">
+      To kill all background processes of a terminal, one uses
+      <ns3958:cmdsynopsis xmlns:ns3958="http://docbook.org/ns/docbook"><ns3959:command xmlns:ns3959="http://docbook.org/ns/docbook">
+kill 0        
+      </ns3959:command></ns3958:cmdsynopsis>
+      This is particularly useful if a background process spawns a series of further processes,
+      and you would like to kill them all.
+    </ns3957:para>
+  </ns3955:section>
+  
+  <ns3960:section xmlns:ns3960="http://docbook.org/ns/docbook">
+    <ns3961:title xmlns:ns3961="http://docbook.org/ns/docbook">Killing all processes for a particular command via <ns3962:command xmlns:ns3962="http://docbook.org/ns/docbook">killall</ns3962:command></ns3961:title>
+    <ns3963:para xmlns:ns3963="http://docbook.org/ns/docbook">
+      So far we have use ids to terminate processes. Often it is more convenient to specify
+      a process by the command which launched it. For this, the <ns3964:command xmlns:ns3964="http://docbook.org/ns/docbook">killall</ns3964:command>
+      command can be used. For example, to kill all java processes via the termination signal
+      <ns3965:literal xmlns:ns3965="http://docbook.org/ns/docbook">SIGTERM</ns3965:literal>, you can use
+      <ns3966:cmdsynopsis xmlns:ns3966="http://docbook.org/ns/docbook"><ns3967:command xmlns:ns3967="http://docbook.org/ns/docbook">
+killall java        
+      </ns3967:command></ns3966:cmdsynopsis>
+    </ns3963:para>
+  </ns3960:section>
+  
+  
+</ns3922:section>

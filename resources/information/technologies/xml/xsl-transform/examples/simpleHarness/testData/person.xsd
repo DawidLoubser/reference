@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" > 
+
+    <xs:simpleType name="TelNo">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="0[1-9]{2,4} [1-9][0-9]{2} [0-9]{1,4}"/>
+        </xs:restriction>    
+    </xs:simpleType>
+    
+    <xs:simpleType name="EmailAddress">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9a-zA-Z]+@([0-9a-zA-Z][-\w]*[0-9a-zA-Z].)+[a-zA-Z]{2,9}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="Person">
+        <xs:sequence>
+            <xs:element name="names">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="firstName" type="xs:string"/>
+                        <xs:element name="otherName" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="surname" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="contactDetails">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="businessTel" type="TelNo"/>
+                        <xs:element name="businessEmail" type="EmailAddress"/>
+                        <xs:element name="privateTelNo" type="TelNo"/>
+                        <xs:element name="privateEmail" type="EmailAddress"/>                            
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- The root element is either a single person or a collection of persons -->
+
+    <xs:element name="person" type="Person"/>
+    
+    <xs:element name="persons">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="person" type="Person" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.concepts.design.patterns.classical.structural.composite.implementationGuidelines">
+
+  <title>Implementation guidelines</title>
+  <para>
+    The composite pattern is very easy to implement. The core decision to be made is whether one should
+    use composition, aggregation or association for the containment relationship (where the latter extends
+    the original intent of the composite pattern).
+  </para>
+  
+  <section>
+      <title>Implementing composition relationships</title>
+      <para>
+      When implementing a composition relationship you need to enforce <emphasis>access
+      control</emphasis>. To this end make certain that the container is the only
+      object which has a reference to any mutable component. This may require cloning the 
+      component when it is added to the container as well as when the component is queried
+      from the container.
+    </para>  
+      <para>
+      Composition also implies that the state of the component forms part of the state of the
+      composite object. Hence, if your system supports state change notification, then you will
+      have to implement <emphasis>state transition propagation</emphasis>. 
+    </para>
+      <para>
+      For example, if you make use of the JavaBeans state change propagation framework, your
+      container will have to 
+      <orderedlist>
+            <listitem>
+               <para>
+          register as <literal>ChangeListener</literal> with the components,  
+        </para>
+            </listitem>
+            <listitem>
+               <para>
+          generate a <literal>ChangeEvent</literal>  for every 
+          <literal>ChangeEvent</literal> received from any of its components.
+        </para>
+            </listitem>
+         </orderedlist>
+      </para>
+  </section>
+
+  <section>
+      <title>Implementing aggregation relationships</title>
+      <para>
+      Aggregation does not require access control and hence containers may share the same components.
+      It does, however, still imply that the component state is part of the state of the aggregate object and 
+      hence <emphasis>state transition propagation</emphasis> must still be implemented.
+    </para>
+  </section>
+  
+  <section>
+      <title>Implementing associative composite patterns</title>
+      <para>
+      Here the container simply keeps a reference to each of its components. When the composite service
+      is requested the container will provide the generic realisations of the services and then
+      forward the service request to each of the components so that they can address the additional
+      responsibilities assigned to the service.
+    </para>
+  </section>
+  
+  <section>
+      <title>Simple implementation of asset/portfolio example</title>
+      <para>
+      Let us, as an example, look at a very simple Java implementation of the asset/portfolio
+      example.
+    </para>
+      <section>
+         <title>Valuable.java</title>
+         <para>
+            <programlisting language="Java">
+               <xi:include parse="text" href="source/Valuable.java"/>      
+            </programlisting>
+        </para>
+      </section>
+      <section>
+         <title>Asset.java</title>
+         <para>
+            <programlisting language="Java">
+               <xi:include parse="text" href="source/Asset.java"/>      
+            </programlisting>
+        </para>
+      </section>
+      <section>
+         <title>PurchasedAsset.java</title>
+         <para>
+            <programlisting language="Java">
+               <xi:include parse="text" href="source/PurchasedAsset.java"/>      
+            </programlisting>
+        </para>
+      </section>
+      <section>
+         <title>Vehicle.java</title>
+         <para>
+            <programlisting language="Java">
+               <xi:include parse="text" href="source/Vehicle.java"/>      
+            </programlisting>
+        </para>
+      </section>
+      <section>
+         <title>Property.java</title>
+         <para>
+            <programlisting language="Java">
+               <xi:include parse="text" href="source/Property.java"/>      
+            </programlisting>
+        </para>
+      </section>
+      <section>
+         <title>Portfolio.java</title>
+         <para>
+            <programlisting language="Java">
+               <xi:include parse="text" href="source/Portfolio.java"/>      
+            </programlisting>
+        </para>
+      </section>
+      <section>
+         <title>PortfolioTest.java</title>
+         <para>
+        Now we can add assets to portfolios. Some of these may be portfolios themselves.
+        The portfolios are recursively valuated down to leaf-asset level:
+        <programlisting language="Java">
+               <xi:include parse="text" href="source/PortfolioTest.java"/>      
+            </programlisting>
+         </para>
+      </section>
+  </section>
+</section>

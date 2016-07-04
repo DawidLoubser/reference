@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.technologies.java.j2se.xml.apis.jaxp.transform.using.using">
+  <title>Using JAXP Transformation</title>
+
+  <para> Using transformation usually involves these steps: <itemizedlist>
+      <listitem>
+        <formalpara>
+          <title>Get a TransformerFactory based on the installed service
+            provider</title>
+          <para> Invoking the static
+              <literal>Transformerfactory.newInstance()</literal> service.
+          </para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>Locate your XSLT</title>
+          <para>Create a concrete <literal>Source</literal> (e.g. a
+              <literal>StreamSource</literal> from a
+            <literal>File</literal>) that points to your style
+          sheet.</para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>Create a Transformer (compile your style sheet)</title>
+          <para> Invoke <literal>newTransformer( Source )</literal> on
+            your factory, which compiles the XSLT, or throws
+              <literal>TransformerConfigurationException</literal> if the
+            XSLT could not be used (e.g. it's invalid, or non-existent).
+          </para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>Set up transformation Source and Result</title>
+          <para> Decide what your input document is, and where the result
+            should go. Create corresponding <literal>Source</literal> and
+              <literal>Result</literal> objects. For example, you could
+            transform directly to a DOM tree, or to file. </para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>Perform transformation</title>
+          <para> Invoke the <literal>transform( Source, Result )</literal>
+            service on your transformer. This may be done repeatedly.
+            Throws <literal>TransformerException</literal> if
+            transformation fails. </para>
+        </formalpara>
+      </listitem>
+    </itemizedlist>
+  </para>
+  <para> The following example code illustrates these steps: 
+    <programlisting language="Java">
+      <xi:include 
+        xmlns:xi="http://www.w3.org/2001/XInclude" 
+        href="src/TransformExample.java" parse="text"/>
+    </programlisting>
+  </para>
+  <note>
+    <para> JAXP <literal>Transformer</literal> objects are not
+      thread-safe. They can be re-used, but should not be used
+      concurrently by multiple threads. An alternative class,
+        <literal>Templates</literal>, is provided to cater for
+      multi-threading more efficiently. </para>
+  </note>
+
+</section>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: fritz@solms.co.za -->
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+    <title>@OneWay</title>
+    <para>
+        This annotation specifies that the WSDL for that service should have an
+        input message but no output message, Implementing services typically return control
+        prior to the actual execution of the service implementation.
+    </para>
+    <para>
+        For example,
+        <programlisting language="java"><![CDATA[
+@WebService(name="ShareService")
+public class ShareServicesBean 
+{
+    @WebMethod
+    @Oneway
+    public void sharePriceChangeNotification(SharePriceChange sharePriceChange) 
+    {
+        ...
+    }
+};            
+    ]]></programlisting>
+    maps onto the following WSDL
+    <programlisting language="xml"><![CDATA[
+<definitions>
+    <message name="sharePriceChangeNotification"/>
+    <portType name="ShareService">
+        <operation name="sharePriceChangeNotification">
+            <input message="sharePriceChangeNotification"/>
+        </operation>
+    </portType>
+</definitions>        
+    ]]></programlisting>
+    </para>
+</section>

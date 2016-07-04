@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+<!-- A complex specialisation of a simple type -->
+  <xsd:complexType name="Currency">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:decimal">
+        <xsd:attribute name="currency" type="CurrencyCode"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:simpleType name="CurrencyCode">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[A-Z]{3}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <xsd:complexType name="ListOfPayments">
+    <xsd:sequence>
+      <xsd:element name="payment" type="Currency" 
+        minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:element name="payments" type="ListOfPayments"/>
+</xsd:schema>  

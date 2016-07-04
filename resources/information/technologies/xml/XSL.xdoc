@@ -1,0 +1,1663 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="resources.information.technologies.xml.XSL"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>XSL Transformations</title>
+    <section>
+        <title>Introduction</title>
+        <para> XSLT is an XML-based programming language which enables one to specify
+            transformations from an XML document to some text document which may be another type of
+            XML document, an HTML document or a text file representing, for example, Java source code.</para>
+        <section>
+            <title>What is XSL?</title>
+            <para> XSL is the XML Stylesheet language. It is composed of two parts: XSLT which
+                stands for XSL Transformation and is used to transform from an XML document to
+                another format which may be, for example, </para>
+            <itemizedlist>
+                <listitem>
+                    <para>Another XML data type. </para>
+                </listitem>
+                <listitem>
+                    <para>HTML. </para>
+                </listitem>
+                <listitem>
+                    <para>Any format like HTML, PDF or LaTeX.</para>
+                </listitem>
+            </itemizedlist>
+            <para>XSLFO which stands for XSL Formatting which is the native XML equivalent of
+                Cascading Style Sheets (CSS). XSLFO is thus responsible for rendering information in
+                a visual way.</para>
+            <para> Note, however, XML also supports traditional Cascading Style Sheets (CSS) for formatting.</para>
+        </section>
+
+        <section>
+            <title>What do I have to do to Transform an XML Document?</title>
+            <para> In this chapter we shall focus on XSLT. In order to transform from an XML
+                document to another format we have to </para>
+            <itemizedlist>
+                <listitem>
+                    <para>Create a style sheet containing the tranformation specification. </para>
+                </listitem>
+                <listitem>
+                    <para>Use an XSL processor to apply the style sheet to an XML document and do
+                        the transformation.</para>
+                </listitem>
+            </itemizedlist>
+        </section>
+
+        <section>
+            <title>Where do you get an XSLT Processor?</title>
+            <para> XSL processors are freely available from a number of sources. Jim Clark, Unicorn,
+                Apache, Microsoft and IBM all make XSLT processors available for download.</para>
+        </section>
+
+        <section>
+            <title>Why Transform a Document?</title>
+            <itemizedlist>
+                <listitem>
+                    <para>You might want to transform an XML document implementing your DTD or
+                        schema to a format complying to somebody elses (<abbrev>e.g.</abbrev> your
+                        client&quot;s) DTD or schema. </para>
+                </listitem>
+                <listitem>
+                    <para>You might want to convert your XML document to HTML or to any other
+                        publishing format like PDF or LaTex. </para>
+                </listitem>
+                <listitem>
+                    <para>You might want to extract information from your XML document. This could
+                        be, for example, </para>
+                    <itemizedlist>
+                        <listitem>
+                            <para>A table of contents. </para>
+                        </listitem>
+                        <listitem>
+                            <para>All the payments received from a particular entity. </para>
+                        </listitem>
+                        <listitem>
+                            <para>All species of fish found in the Mediterannean.</para>
+                        </listitem>
+                    </itemizedlist>
+                </listitem>
+                <listitem>
+                    <para>You might want to modify your own DTD or schema and want to transform your
+                        documents to comply to your new specification. </para>
+                </listitem>
+                <listitem>
+                    <para>You might want to transform your document from one character set to another.</para>
+                </listitem>
+            </itemizedlist>
+        </section>
+
+    </section>
+
+    <section>
+        <title>The Transformation Process</title>
+        <para> In order to be proficient in developing XSL style sheets for XSL transformations it
+            helps to have an understanding of how the transformation process is done.</para>
+        <section>
+            <title>The Internal Model</title>
+            <para> In order for an XSLT engine to be able to transform an XML document, it must
+                first be converted into a tree structure. This tree structure is the internal model
+                (or grove) for the document.</para>
+            <para> This internal model is then manipulated through an API. The W3C recommends DOM,
+                the Document Object Model for the API which is used to process the internal model. </para>
+            <figure>
+                <title>The internal structure of an XML document which has a root node, element
+                    nodes, attribute nodes, value nodes and comment nodes. There may also be
+                    namespace nodes and processing instruction nodes. </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../../../../../resources/information/technologies/xmlXSLT/StructureTree.gif"/>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+            <para> Consider, for example, the following XML document:</para>
+            <programlisting>  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?> 
+                &lt;!-- Solms Training &amp; Consulting order.xml -->  &lt;order
+                date=&quot;2001-10-20&quot; priority=&quot;high&quot;>  &lt;item>
+                &lt;name>sugar&lt;/name> &lt;quantity>2.5&lt;/quantity>
+                &lt;units>kilogram&lt;/units>  &lt;/item>  &lt;item
+                preferredSupplier=&quot;CornerGrocer&quot;>    &lt;name>Muesli&lt;/name>   
+                &lt;quantity>500&lt;/quantity>    &lt;units>gram&lt;/units>  &lt;/item>
+                &lt;/order> </programlisting>
+            <para> The structure tree has </para>
+            <itemizedlist>
+                <listitem>
+                    <para>one root node, </para>
+                </listitem>
+                <listitem>
+                    <para>element nodes, </para>
+                </listitem>
+                <listitem>
+                    <para>attribute nodes, </para>
+                </listitem>
+                <listitem>
+                    <para>value nodes, </para>
+                </listitem>
+                <listitem>
+                    <para>namespace nodes and </para>
+                </listitem>
+                <listitem>
+                    <para>processing instruction nodes.</para>
+                </listitem>
+            </itemizedlist>
+            <para> The internal structure for the document is illustrated in figure ??. Note that
+                the root node of this internal structure is the XML document itself. </para>
+        </section>
+
+        <section>
+            <title>How does XSLT Work?</title>
+            <para> The XSL style sheet is itself an XML document. The XSLT engine builds an internal
+                tree for both, the XML source document and the XSL style sheet and constructs the
+                destination document by matching nodes and performing whatever mapping is specified
+                in the XSL style sheet for that node type.</para>
+            <para> The XSLT processor starts with the root node of the source document and searches
+                for a matching template in the style sheet tree. The matching template specifies how
+                the node should be mapped onto the source document.</para>
+        </section>
+
+    </section>
+
+    <section>
+        <title>XPaths</title>
+        <para> The actual transformation process is driven by matching the internal structure of the
+            XML document to templates specified in the XSL. Recall that the root of the internal
+            structure is the XML document itself and not the root element.</para>
+        <para> XSL uses XPaths to resolve nodes. XPaths support a path description similar to the
+            one used on Unix operating systems for directory referencing.</para>
+        <section>
+            <title>Adressing Nodes via XPath</title>
+            <para> XPath enables one to refer to individual nodes within the XML tree of nodes. One
+                can use either absolute or relative addressing.</para>
+            <section>
+                <title>Absolute Paths</title>
+                <para> The root node is referenced via the XPath <emphasis>/</emphasis>. Recall that
+                    the root node is the actual XML document and not the node for the root element.
+                    The node separating character is also a forward slash. Thus </para>
+                <programlisting> /jobs/job/annualSalary</programlisting>
+                <para> refers to <emphasis>annualSalary</emphasis> which is a sub node of
+                    <emphasis>job</emphasis> which is a sub node of <emphasis>jobs</emphasis> which
+                    is a sub node of the root node, <emphasis>/</emphasis>.</para>
+            </section>
+
+            <section>
+                <title>Relative Paths</title>
+                <para> Any path not starting with a forward slash is a relative path. For example </para>
+                <programlisting>title</programlisting>
+                <para> refers to all<emphasis>title</emphasis> nodes resolved from the current path.</para>
+                <para> If one wants to resolve only those <emphasis>title</emphasis> nodes which are
+                    subnodes ofthe current path, then one can use a single dot: </para>
+                <programlisting> ./title</programlisting>
+                <para> refers to the <emphasis>title</emphasis> sub node of the current node.</para>
+                <para> In a similar way one can refer to all title nodes of the owner node of the
+                    current node using double dots. For example, </para>
+                <programlisting> ../title</programlisting>
+                <para> refers to the <emphasis>title</emphasis> sub node of the parent node of the
+                    current node.</para>
+            </section>
+
+        </section>
+
+        <section>
+            <title>Referring to Different Types of Nodes</title>
+            <para> We have seen that our internal structure has 4 core types of types of nodes: </para>
+            <orderedlist>
+                <listitem>
+                    <para>the root node, </para>
+                </listitem>
+                <listitem>
+                    <para>element nodes, </para>
+                </listitem>
+                <listitem>
+                    <para>attributes nodes, </para>
+                </listitem>
+                <listitem>
+                    <para>value nodes (text nodes), </para>
+                </listitem>
+                <listitem>
+                    <para>comment nodes, </para>
+                </listitem>
+                <listitem>
+                    <para>namespace nodes and </para>
+                </listitem>
+                <listitem>
+                    <para>processing instruction nodes.</para>
+                </listitem>
+            </orderedlist>
+            <para> We can refer to each one of these nodes. We have already seen how we reference
+                the root node (via <emphasis>/</emphasis>) and the element nodes. For example,</para>
+            <programlisting>/jobs/job/title</programlisting>
+            <para>refers to the <emphasis>title</emphasis> element node which is a sub node of
+                <emphasis>job</emphasis> which is a sub node of <emphasis>jobs</emphasis> which is a
+                sub node of the root node, <emphasis>/</emphasis>.</para>
+            <section>
+                <title>Referring to attribute nodes</title>
+                <para> Attribute nodes are specified by inserting an ampersand,
+                    <emphasis>@</emphasis>, in front of the node (or attribute) name. Thus</para>
+                <programlisting>./job/@type</programlisting>
+                <para>refers to the <emphasis>type</emphasis> attribute node of the
+                    <emphasis>job</emphasis> node hosted by the current node.</para>
+            </section>
+
+            <section>
+                <title>Referring to value nodes</title>
+                <para> The XSL <emphasis>text()</emphasis> function is used to reference value
+                    nodes. For example</para>
+                <programlisting>../title/text()</programlisting>
+                <para>refers to the value node of <emphasis>title</emphasis> which is a sub-node
+                    parent node of the current node.</para>
+            </section>
+
+        </section>
+
+        <section>
+            <title>XPath Expressions</title>
+            <para> XPath expressions allows one to resolve nodes more specifically. One can </para>
+            <itemizedlist>
+                <listitem>
+                    <para>resolve nodes by their value, </para>
+                </listitem>
+                <listitem>
+                    <para>use wild cards, </para>
+                </listitem>
+                <listitem>
+                    <para>refer to the n&quot;th match found (element access)</para>
+                </listitem>
+            </itemizedlist>
+            <para>and many more things.</para>
+            <section>
+                <title>Matching on the node value</title>
+                <para> The following syntax is used to match on the text value of a node:</para>
+                <programlisting> /nodeName[subNodeName=&quot;text-value&quot;]</programlisting>
+                <para> For example, below we match on all</para>
+                <programlisting> /job[title=&quot;XML Developer&quot;]</programlisting>
+                <para>we match on all <emphasis>job</emphasis> nodes which have a subnode,
+                    <emphasis>title</emphasis> with value <emphasis>XML Developer</emphasis>.</para>
+            </section>
+
+            <section>
+                <title>Matching on the attribute value</title>
+                <para> The syntax formatching on attribute value is:</para>
+                <programlisting> /nodeName[@attributeName=&quot;text-value&quot;]</programlisting>
+                <para>Note that the attribute name is preceded by an ampersand.</para>
+                <para> For example, below we match on all jobs whose <emphasis>type</emphasis>
+                    attribute is <emphasis>Developer</emphasis>: </para>
+                <programlisting> /job[@type=&quot;Developer&quot;]</programlisting>
+            </section>
+
+            <section>
+                <title>Using wild cards</title>
+                <para> XPath supports wild cards for element nodes, attribute nodes and for nodes of
+                    any type. Often wild cards are not needed because XPaths match by definition on
+                    sets of nodes. For example, <emphasis>/job</emphasis> returns the set of ofall
+                    <emphasis>job</emphasis> nodes, while <emphasis>job[2]</emphasis> resolves the
+                    second <emphasis>job</emphasis> in that set.</para>
+                <para> XPath supports the following wildcards:</para>
+                <para> * matches all element nodes (not any other nodes like, for example,
+                    attribute, comment or value (text) nodes. @* matches all attribute nodes. node()
+                    matches all nodes of any kind including namespace, comment and
+                    processing-instruction nodes.</para>
+            </section>
+
+            <section>
+                <title>Matching on all nodes which have a specified child element</title>
+                <para> XPath also supports matching on elements which have certain child elements.
+                    The syntax is:</para>
+                <programlisting> /elementNode[childElement]</programlisting>
+                <para> For example, if you reonly interested in resolving those jobs for which there
+                    is an annual salary quoted you can use the following XPath:</para>
+                <programlisting> /job[annualSalary]</programlisting>
+            </section>
+
+            <section>
+                <title>Resolving the n&quot;th occurance of a match</title>
+                <para> If there are multiple matches to a xpath, one can use square brackes to
+                    resolve the<informalequation>
+                        <graphic fileref="../../../../../resources/information/technologies/xmlXML1x.gif"/>
+                    </informalequation>&quot;th match:</para>
+                <programlisting> somePath[n]</programlisting>
+                <para> For example, to resolve the 5&quot;th match of a developer&quot;s job we can
+                    use the following xpath:</para>
+                <programlisting> /job[@type=&quot;Developer&quot;][5]</programlisting>
+                <para> Note that</para>
+                <programlisting> /job[5][@type=&quot;Developer&quot;]</programlisting>
+                <para>will resolve the 5&quot;th job if it is of type
+                    <emphasis>Developer</emphasis>. If not, no match is found.</para>
+            </section>
+
+        </section>
+
+        <section>
+            <title>Extended Paths</title>
+            <para> Up to now we specified the level in the tree atwhich the matching is to be done.
+                XPath also supports syntax where matching can occurat various levels. This is done
+                via extended paths.</para>
+            <para> If you want to specify a potentially variable number of intermediate levels, you
+                use a double-slash. For example</para>
+            <programlisting>//name</programlisting>
+            <para>resolves all <emphasis>name</emphasis> nodes, no matter at which level. Similarly,</para>
+            <programlisting>/*/*//name</programlisting>
+            <para>resolves all <emphasis>name</emphasis> nodes which areat least 2 levels below the root.</para>
+        </section>
+
+        <section>
+            <title>Multiple Matches Along a Path</title>
+            <para> In XSL one can apply multiple matching criteria along a path. For example,</para>
+            <programlisting>//job[@location=&quot;Johannesburg&quot;]/title[text()=&quot;Java developer&quot;]</programlisting>
+            <para>resolves all job nodes (at any level) which have a location attribute with value
+                Johannesburg and a job title of Java developer.</para>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Template Matching</title>
+        <para> The actual transformation process is driven by matching the internal structure of the
+            XML document to templates specified in the XSL. Matching is done via
+            the<emphasis>xsl:template</emphasis> tag.</para>
+        <para> The following code matches the root (the XML document) and upon finding the match
+            (which it will if it finds the document) it generates some HTML:</para>
+        <programlisting> &lt;xsl:template match=&quot;/&quot;>  &lt;html> &lt;head>
+            &lt;title>Java Developer Jobs in Johannesburg&lt;/title> &lt;/head>   
+            &lt;body>      &lt;center>   &lt;h1>Java Developer Jobs in
+            Johannesburg&lt;/h1> &lt;/center>  These jobs were extracted from a public XML
+            file and we take no responsibility for the accuracy of the information.   
+                ....  &lt;/body> &lt;/html> &lt;/xsl:template> </programlisting>
+        <section>
+            <title>Recursive Template Matching</title>
+            <para> XSL templates are usually applied recursively via the</para>
+            <programlisting>&lt;xsl:apply-templates/></programlisting>
+            <para>element. For example, assume we have a XML book document with chapters, sections
+                and paragraphs as shown in figure <xref linkend="xsl.bookStructure"/>. </para>
+            <figure id="xsl.bookStructure">
+                <title>The structure of a simple XML document for a book.</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../../../../../resources/information/technologies/xmlXSLT/book.gif"/>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+            <para> We may first want to match on the root element, <emphasis>book</emphasis>, set
+                its title, say, as a level 1 HTML header and then apply further templates on the
+                individual sections. We could do this as follows:</para>
+            <programlisting> &lt;xsl:template match=&quot;book&quot;>  &lt;H1>&lt;xsl:value-of
+                select=&quot;title&quot;/>&lt;/H1> &lt;xsl:apply-templates
+                match=&quot;section&quot;/> &lt;/xsl:template> </programlisting>
+            <para> Alternatively, and perhaps more commonly, one simply applies any further
+                applicable templates recursively, not specifying section templates explicitely:</para>
+            <programlisting>  &lt;xsl:template match=&quot;book&quot;>  
+                &lt;H1>&lt;xsl:value-of select=&quot;title&quot;/>&lt;/H1>  
+                &lt;xsl:apply-templates/>  &lt;/xsl:template> </programlisting>
+            <para> In this case their may be templates for various child elements of
+                <emphasis>book</emphasis>, e.g. sections and authors. </para>
+        </section>
+
+    </section>
+
+    <section>
+        <title>XSL Variables</title>
+        <para> XSLT enables you to declare variables which reference a node or a collection of nodes
+            which match a specified selection. The syntax is;</para>
+        <programlisting>  &lt;xsl:variable name=&quot;variableName&quot;
+            select=&quot;anXPath&quot;/> </programlisting>
+        <para> For example</para>
+        <programlisting>  &lt;xsl:variable name=&quot;jobs&quot; select=&quot;//jobs/job&quot;/> </programlisting>
+        <para>collects all matching nodes (all <emphasis>//jobs/job</emphasis> nodes) and references
+            the collection by the variable jobs.</para>
+        <para> We can refer to the variable which references this collection of matching nodes later
+            on by inserting a dollar sign (<emphasis>$</emphasis>) in front of the variable name,
+            i.e. via<emphasis>$jobs</emphasis>.</para>
+        <section>
+            <title>Selecting on Attribute Values</title>
+            <para> We saw that we can match on attributes of a node. This is often used in select
+                statements. For example, below we match on the <emphasis>location</emphasis>
+                attribute of <emphasis>job</emphasis> which is a sub-node of the root node (the XML
+                document itself) via </para>
+            <programlisting> select=&quot;//job[@location=&quot;Johannesburg&quot;]&quot;</programlisting>
+        </section>
+
+        <section>
+            <title>Selecting on Element Content</title>
+            <para> XSL defines a <emphasis>text()</emphasis> function which returns the text content
+                (the value node) of an element. This can be used to match elements. The following
+                XSL snippet matches all jobs which have as title <emphasis>Java developer</emphasis>:</para>
+            <programlisting>&lt;xsl:variable name=&quot;javaJobTitles&quot;
+                select=&quot;//job/title[text()=&quot;Java developer&quot;]&quot;/></programlisting>
+        </section>
+
+    </section>
+
+    <section>
+        <title>XSL Functions</title>
+        <para> XSL defines a number of useful functions. So far we have encountered only
+            the<emphasis>text()</emphasis> function which returns the text content of a specified
+            element. Beyond this XSLT supports functions for string manipulations, functions for
+            performing boolean and numeric operations as well as type conversions, functions which
+            operate on collections (result sets) of nodes and functions for determining name space characteristics.</para>
+        <section>
+            <title>String functions</title>
+            <para> Table <xref linkend="stringFunctions"/> summarizes the functions XSL offers for
+                string manipulation and querying.</para>
+            <table id="stringFunctions">
+                <title>XSL string functions.</title>
+                <tgroup cols="2">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>XSL Function </para>
+                            </entry>
+                            <entry>
+                                <para>Description </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>concat(s1,s2,...)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns concatenated string. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>starts-with(s1,s2)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns <emphasis>true</emphasis> if <emphasis>s1</emphasis>
+                                    starts with s2. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>contains(s1,s2)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns <emphasis>true</emphasis> if <emphasis>s1</emphasis>
+                                    contains <emphasis>s2</emphasis>. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>substring-before(s1,s2)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns <emphasis>s1</emphasis> up to the occurance of
+                                    <emphasis>s2</emphasis> in <emphasis>s1</emphasis>. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>substring-after(s1,s2)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns remainder of <emphasis>s1</emphasis> after occurance
+                                    of <emphasis>s2</emphasis>. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>substring(s,idx)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns substring from index to end. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>substring(s,idx,lngth)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns substring from index including maximum of
+                                    <emphasis>length</emphasis> characters.</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>string-length(s)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns the length of <emphasis>s</emphasis>. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>string-length()</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns the length of the context node&quot;s text value. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>normalize-space(s)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns <emphasis>s</emphasis> with leading,training and
+                                    repeated white spaces removed. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>normalize-space()</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns normalized string value of current node. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>translate(s,s1,s2)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns <emphasis>s</emphasis> with all occurances of
+                                    <emphasis>s1</emphasis> replaced by <emphasis>s2</emphasis>. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry/>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </table>
+        </section>
+
+        <section>
+            <title>Functions operating on node collections</title>
+            <para> XSLT also defines 3 functions operating on node collections (result sets). These
+                result sets are typically obtained via selection statements. The 3 functions are
+                summarized in table <xref linkend="nodeSetFunctions"/>
+            </para>
+            <table id="nodeSetFunctions">
+                <title>XSL node set functions.</title>
+                <tgroup cols="2">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>XSL Function</para>
+                            </entry>
+                            <entry>
+                                <para>Description </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>position() </para>
+                            </entry>
+                            <entry>
+                                <para>returns the position of the current node in the node set. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>last() </para>
+                            </entry>
+                            <entry>
+                                <para>returns the position of the last node in the current node set.</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>count() </para>
+                            </entry>
+                            <entry>
+                                <para>returns the current number of nodes in the node set. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry/>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </table>
+        </section>
+
+        <section>
+            <title>Numeric and Boolean Functions</title>
+            <para> XSL specifies some very basic numeric and bolean functions which operate either
+                on node sets (result sets) or on the return value of other functions. These
+                functions are summarized in table <xref linkend="xslNumericFunctions"/>.</para>
+            <table id="xslNumericFunctions">
+                <title>XSL numeric functions.</title>
+                <tgroup cols="2">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>XSL Function</para>
+                            </entry>
+                            <entry>
+                                <para>Description </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>sum(nodeSet)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns sum of numeric values of nodes in node set.</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>floor(x)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns largest integer not greater than
+                                    <emphasis>x</emphasis>. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>ceiling(x)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns smallest integer greater than <emphasis>x</emphasis>. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>round(x)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns integer closest to <emphasis>x</emphasis>. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>not(x)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>inverts a supplied boolean value. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>true()</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns <emphasis>true</emphasis>. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>false()</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns <emphasis>true</emphasis>. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry/>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </table>
+        </section>
+
+        <section>
+            <title>Conversion Functions</title>
+            <para> The basic data types in XSL are strings, numbers and booleans. XSL provides
+                simple conversion functions enabling one to convert one primitive to another. These
+                are summarized in table <xref linkend="xslConversionFunctions"/>.</para>
+            <table id="xslConversionFunctions">
+                <title>XSL conversion functions.</title>
+                <tgroup cols="2">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>XSL Function</para>
+                            </entry>
+                            <entry>
+                                <para>Description </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>string(nx)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns string value of number, boolean or node set. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>boolean(nx)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns boolean equivalent of number, boolean or node set.</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>number(nx)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns numeric value of number, boolean or node set. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry/>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </table>
+        </section>
+
+        <section>
+            <title>NameSpace Functions</title>
+            <para> Finally XSL supports a number of functions enabling one to query various
+                namespace aspects. These are summarized in table <xref linkend="xslNamespaceFunctions"/>.</para>
+            <table id="xslNamespaceFunctions">
+                <title>XSL namespace functions.</title>
+                <tgroup cols="2">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>XSL Function </para>
+                            </entry>
+                            <entry>
+                                <para>Description </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>local-name()</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns name of current node without namespace prefix. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>local-name(nodeSet)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns name of first node in node set without namespace prefix.</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>namespace-uri()</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns namespace URI of current node. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>namespace-uri(nodeSet)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns namespace URI of first node in node set. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>name()</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns fully qualified name (URI + local name) of current node.</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>name(nodeSet)</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns fully qualified name of first node in node set. </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry/>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </table>
+        </section>
+
+        <section>
+            <title>A Simple Example</title>
+            <para> Consider the following XML example document which contains a collection of
+                weather readings, each with a date, a temperature and a rainfall measurement:</para>
+            <programlisting> &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>
+                &lt;?xml-stylesheet type=&quot;text/xsl&quot;
+                href=&quot;./WeatherReadings.xslt&quot;?> &lt;weatherReadings>  
+                &lt;weatherReading>     &lt;date>2002-03-20&lt;/date>    
+                &lt;rainfall>25&lt;/rainfall>     &lt;temperature>21.7&lt;/temperature>  
+                &lt;/weatherReading>   &lt;weatherReading>    
+                &lt;date>2002-03-21&lt;/date>     &lt;rainfall>0&lt;/rainfall>    
+                &lt;temperature>26.2&lt;/temperature>   &lt;/weatherReading>  
+                &lt;weatherReading>     &lt;date>2002-03-22&lt;/date>    
+                &lt;rainfall>12&lt;/rainfall>     &lt;temperature>23.1&lt;/temperature>  
+                &lt;/weatherReading>   &lt;weatherReading>    
+                &lt;date>2002-03-23&lt;/date>     &lt;rainfall>45&lt;/rainfall>    
+                &lt;temperature>18.7&lt;/temperature>   &lt;/weatherReading>
+                &lt;/weatherReadings> </programlisting>
+            <para> The schema for this document is shown below:</para>
+            <programlisting>  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>
+                &lt;xs:schema targetNamespace=&quot;http://www.WeatherReporter.co.za/Readings&quot;
+                xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+                xmlns=&quot;http://www.WeatherReporter.co.za/Readings&quot;
+                elementFormDefault=&quot;qualified&quot;> &lt;xs:element
+                name=&quot;weatherReadings&quot;>    &lt;xs:complexType>     
+                &lt;xs:sequence>       &lt;xs:element name=&quot;weatherReading&quot;
+                type=&quot;WeatherReading&quot;   maxOccurs=&quot;unbounded&quot;/>    
+                &lt;/xs:sequence>   &lt;/xs:complexType>  &lt;/xs:element> 
+                &lt;xs:complexType name=&quot;WeatherReading&quot;> &lt;xs:sequence>
+                &lt;xs:element name=&quot;date&quot; type=&quot;xs:date&quot;/> &lt;xs:element
+                name=&quot;rainfall&quot; type=&quot;xs:nonNegativeInteger&quot;/> &lt;xs:element
+                name=&quot;temperature&quot; type=&quot;xs:decimal&quot;/> &lt;/xs:sequence> 
+                &lt;/xs:complexType>  &lt;/xs:schema> </programlisting>
+            <figure id="weatherReadings">
+                <title>Viewing the WestherReadings XML document (with associated XSLT style sheet)
+                    from Internet Explorer 6.</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../../../../../resources/information/technologies/xmlXSLT/WeatherReadings.gif"/>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+            <para> Assume now we want to provide a view which reports the average temperature and
+                rainfall over the period (as shown in figure <xref linkend="weatherReadings"/>). The
+                XSLT file listed below uses the <emphasis>sum()</emphasis> and
+                <emphasis>count()</emphasis> functions as well as a <emphasis>div</emphasis>
+                operator to this end:</para>
+            <programlisting>  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>
+                &lt;xsl:stylesheet version=&quot;1.0&quot;
+                xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot;>  &lt;xsl:output
+                method=&quot;xml&quot; version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;
+                indent=&quot;yes&quot;/> &lt;xsl:template match=&quot;/&quot;>  &lt;html> 
+                &lt;body>   &lt;h1>Average Weather Readings&lt;/h1>  &lt;xsl:variable
+                name=&quot;temperatures&quot; select=&quot;//temperature&quot;/> &lt;xsl:variable
+                name=&quot;rainfallReadings&quot; select=&quot;//rainfall&quot;/>  &lt;p>
+                Average temperature: &lt;xsl:value-of select=&quot;sum($temperatures) div
+                count($temperatures)&quot;/>     &lt;/p>    &lt;p> Average daily
+                rainfall: &lt;xsl:value-of select=&quot;sum($rainfallReadings) div
+                count($rainfallReadings)&quot;/>     &lt;/p>  &lt;/body>   &lt;/html>
+                &lt;/xsl:template> &lt;/xsl:stylesheet> </programlisting>
+        </section>
+
+        <section>
+            <title>XSL Operators</title>
+            <para> XSL expressions and functions evaluate to either text (a string), a number or a
+                boolean. XSL also supports a number of operators which can be used within epressions
+                on the results of sub-expressions. The list of operators is shown in table <xref linkend="xslOperators"/>
+            </para>
+            <table id="xslOperators">
+                <title>XSL operators.</title>
+                <tgroup cols="2">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Operator</para>
+                            </entry>
+                            <entry>
+                                <para>Function </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>|</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>or operation on alternative matches </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>or</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>or between boolean operands </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>and</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>and between boolean operands </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>=</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns true if the two operands have equal value </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>!=</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>returns true if the two operands have equal value </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>>,&lt;,>=,&lt;=</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>standard relational operators for numbers </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>+,-,*</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>adding, subtracting and multiplication of numbers</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>
+                                    <emphasis>div,mod</emphasis>
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>floating point division and remainder </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry/>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </table>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Controlling Statements</title>
+        <para> XSLT supports iterations, branching, sorting and numbering.</para>
+        <section>
+            <title>Branching via xsl:if</title>
+            <para> XSL also supports simple if statements via a <emphasis>xsl:if</emphasis> tag. For
+                example, the following<emphasis>if</emphasis> clause generates the output contained
+                in the <emphasis>if</emphasis> clause only if the test is satisfied, i.e. only if
+                the number of elements in the current collection of nodes is greater to or equal to two:</para>
+            <programlisting>  &lt;xsl:if test=&quot;count($javaJobTitlesJhb)>=2&quot;>  &lt;p> 
+                  &lt;center>    &lt;em>Wow, what a choice!!&lt;/em>   &lt;/center> 
+                &lt;/p>  &lt;/xsl:if> </programlisting>
+        </section>
+
+        <section>
+            <title>Branching via xsl:choose</title>
+            <para> The <emphasis>xsl:choose></emphasis> tag enables is XML&quot;s version of a
+                switch or case statement or<emphasis>if ... elseif</emphasis> type constructs. The
+                <emphasis>choose</emphasis> tag is always accompanied by one or typically more
+                    <emphasis>xsl:when test=&quot;testCondition&quot;></emphasis> tags. In addition
+                one can define an <emphasis>otherwise</emphasis> clause which will match on all
+                unmatched tests.</para>
+            <para> For example, below we use a XSL <emphasis>choose</emphasis> tag to specify
+                different output for no jobs in selection, 1 job in selection or 2-or-more jobs in selection:</para>
+            <programlisting>  &lt;xsl:choose>   &lt;xsl:when
+                test=&quot;count($javaJobTitlesJhb)=0&quot;> Sorry, no Java jobs currently
+                available in Johannesburg. &lt;/xsl:when> &lt;xsl:when
+                test=&quot;count($javaJobTitlesJhb)=1&quot;> There is 1 Java job currently
+                available in Johannesburg.  &lt;/xsl:when>     &lt;xsl:when
+                test=&quot;count($javaJobTitlesJhb)>1&quot;> There are &lt;xsl:value-of
+                select=&quot;count($javaJobTitlesJhb)&quot;/> Java jobs currently available in
+                Johannesburg.  &lt;/xsl:when>   &lt;xsl:otherwise> How can there be a
+                negative number of jobs????  &lt;/xsl:otherwise>   &lt;/xsl:choose> </programlisting>
+            <para> Note also that in the last <emphasis>when</emphasis> clause we print the note
+                count out.</para>
+        </section>
+
+        <section>
+            <title>Iterating via xsl:for-each</title>
+            <para> The <emphasis>xsl:for-each</emphasis> tag is used for iteration. The iteration
+                may be over a node list specified by a variable referencing a collection of nodes,
+                e.g. </para>
+            <programlisting> &lt;xsl:for-each select=&quot;$javaJobTitlesJhb&quot;>    </programlisting>
+            <para> over matching nodes For example we might iterate over all job titles via
+                    <programlisting>&lt;xsl:for-each select=&quot;job/title&quot;></programlisting>
+            </para>
+            <programlisting>  &lt;xsl:for-each select=&quot;$javaJobTitlesJhb&quot;> &lt;tr>   
+                 &lt;td> &lt;xsl:value-of select=&quot;../eMail&quot;/> &lt;/td> &lt;td>
+                &lt;xsl:value-of select=&quot;../description&quot;/> &lt;/td> &lt;td>
+                &lt;xsl:value-of select=&quot;../annualSalary&quot;/>  &lt;/td>  &lt;/tr>
+                &lt;/xsl:for-each> </programlisting>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Sorting</title>
+        <para> The XSL <emphasis>sort</emphasis> function enables one to sort the output. By default
+            it will sort in UNICODE order on the current element. Consider, for example, the
+            following clients file:</para>
+        <programlisting>  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>
+            &lt;clients>  &lt;company>Standard Corporate and Merchant Bank&lt;/company>
+            &lt;company>Prism Technologies&lt;/company> &lt;company>Rand Merchant
+            Bank&lt;/company> &lt;company>First National Bank&lt;/company>
+            &lt;company>eBucks&lt;/company> &lt;company>LAW&lt;/company> &lt;company>Standard
+            Bank&lt;/company> &lt;company>Software Futures&lt;/company> 
+            &lt;company>Scion&lt;/company> &lt;company>Didata&lt;/company> &lt;company>Impress
+            Software&lt;/company> &lt;company>UNISA&lt;/company> &lt;company>Peregrine
+            Consulting&lt;/company> &lt;company>Paracon&lt;/company>  &lt;/clients> </programlisting>
+        <para> The following XSL style sheetpresents the clients in natural sorting order:</para>
+        <programlisting>  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?>
+            &lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot;
+            version=&quot;1.0&quot;> &lt;xsl:output method=&quot;html&quot;/> &lt;xsl:template
+            match=&quot;//clients&quot;>
+            &lt;xsl:apply-templates>&lt;xsl:sort/>&lt;/xsl:apply-templates> &lt;/xsl:template>
+            &lt;xsl:template match=&quot;company&quot;>  &lt;P>&lt;xsl:apply-templates/>&lt;/P>
+            &lt;/xsl:template>  &lt;/xsl:stylesheet> </programlisting>
+        <section>
+            <title>Specifying the Sorting Direction</title>
+            <para> The <emphasis>sort</emphasis> element has an <emphasis>order</emphasis> attribute
+                whose value can be ascending (the default) or descending:</para>
+            <programlisting>  &lt;xsl:sort order=&quot;descending&quot;/> </programlisting>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Case and Sorting</title>
+        <para> XSLT enables one to specify the case-order when sorting via the
+            <emphasis>case-order</emphasis> attribute (<emphasis>upper-first</emphasis> or
+            <emphasis>lower-first</emphasis>) of the <emphasis>sort</emphasis> element:</para>
+        <programlisting>&lt;xsl:sort case-order=&quot;upper-first&quot;/></programlisting>
+        <section>
+            <title>Language Specific Sorting</title>
+            <para> By default the sorting is done simply on Unicode character numbers. On the other
+                hand, if the language parameter has been set via the <emphasis>xml:lang</emphasis>
+                attribute, the XSLT engine can do language-specific sorting.</para>
+        </section>
+
+        <section>
+            <title>Numerical Sorting</title>
+            <para> If one sorted the numbers 123, 65, 9 using standard lexicographical sorting, the
+                order would remain the same. However, when sorting numerically, the order would be
+                exactly reversed. To request numerical sorting, one sets the
+                <emphasis>data-type</emphasis> attribute of the <emphasis>sort</emphasis> element to <emphasis>number</emphasis>:</para>
+            <programlisting> &lt;xsl:template match=&quot;temperature&quot;> 
+                &lt;xsl:apply-templates> &lt;xsl:sort data-type=&quot;number&quot;/> 
+                &lt;/xsl:apply-templates>    </programlisting>
+        </section>
+
+        <section>
+            <title>Sorting on Node Collections and Selecting a Sort Target</title>
+            <para> If we have a collection of nodes, we can use the <emphasis>sort</emphasis>
+                function of XSL to sort the collection before we extract information from the
+                collection for our output document. Furthermore, we can specify the target on which
+                the sorting is performed. For example, below we sort the collection of Java job
+                titles in Johannesburg on the annual salary for the job of that job title:</para>
+            <programlisting>  &lt;xsl:for-each select=&quot;$javaJobTitlesJhb&quot;> 
+                &lt;xsl:sort select=&quot;../annualSalary&quot; data-type=&quot;number&quot;/> 
+                 &lt;tr> &lt;td>  &lt;xsl:value-of select=&quot;../eMail&quot;/>  &lt;/td>
+                &lt;td> &lt;xsl:value-of select=&quot;../description&quot;/>  &lt;/td> &lt;td>
+                &lt;xsl:value-of select=&quot;../annualSalary&quot;/>  &lt;/td> &lt;/tr>
+                &lt;/xsl:for-each> </programlisting>
+        </section>
+
+        <section>
+            <title>Multiple Search Criteria</title>
+            <para> Assume we wanted to sort </para>
+            <itemizedlist>
+                <listitem>
+                    <para>first on annual salaries, if they are equal </para>
+                </listitem>
+                <listitem>
+                    <para>on job descriptions and if they are equal </para>
+                </listitem>
+                <listitem>
+                    <para>on e-mail addresses.</para>
+                </listitem>
+            </itemizedlist>
+            <para>This could be achieved with the following statements:</para>
+            <programlisting>  &lt;xsl:for-each select=&quot;$javaJobTitlesJhb&quot;>   
+                &lt;xsl:sort select=&quot;../annualSalary&quot; data-type=&quot;number&quot;/> 
+                  &lt;xsl:sort select=&quot;../description&quot;/>    &lt;xsl:sort
+                select=&quot;../eMail&quot;/>    &lt;tr>       &lt;td> &lt;xsl:value-of
+                select=&quot;../eMail&quot;/> &lt;/td>       &lt;td> &lt;xsl:value-of
+                select=&quot;../description&quot;/> &lt;/td>       &lt;td>
+                &lt;xsl:value-of select=&quot;../annualSalary&quot;/> &lt;/td>    &lt;/tr>
+                &lt;/xsl:for-each> </programlisting>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Numbering</title>
+        <para> We mentioned that the XSL <emphasis>position()</emphasis> function returns the
+            position of the current node within the current collection of nodes. We can use this to
+            number elements in a collection.</para>
+        <para> For example, the following XSLT block creates a collection of
+            <emphasis>//jobs/job/@location</emphasis> attribute nodes and then for each attribute
+            node it creates a table row with the node number, the value of the attribute and the
+            value of the <emphasis>annualSalary</emphasis> element node which is a sub-node of the
+            parent node of the current node:</para>
+        <programlisting>  &lt;xsl:for-each select=&quot;//jobs/job/@location&quot;>   &lt;tr> 
+               &lt;td align=&quot;center&quot;>&lt;xsl:number value=&quot;position()&quot;
+            format=&quot;1.&quot;/>&lt;/td>     &lt;td
+            align=&quot;center&quot;>&lt;xsl:value-of select=&quot;.&quot;/>&lt;/td>    
+            &lt;td align=&quot;center&quot;>&lt;xsl:value-of
+            select=&quot;../annualSalary&quot;/>&lt;/td>   &lt;/tr> &lt;/xsl:for-each> </programlisting>
+        <section>
+            <title>Using the count function for numbering</title>
+            <para> We can use the count function for numbering. For example, below we have an XML
+                document complying to the DocBook DTD:</para>
+            <programlisting>  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>
+                &lt;!DOCTYPE book SYSTEM
+                &quot;file:/usr/java/Oxygen/samples/docbook/xml/docbookx.dtd&quot;> &lt;book> 
+                &lt;title>XML&lt;/title> &lt;subtitle>An object-oriented approach&lt;/subtitle> 
+                  &lt;chapter>  &lt;title>The XML Styling Language&lt;/title>  &lt;sect1> 
+                 &lt;title>Introduction&lt;/title>     &lt;para> The XML Styling Language
+                (XSL) has two main aspects to it. XSLT is used for transforming an XML
+                document to another tree-like structure which may be, for example, 
+                another XML document structure, HTML, a text document.     &lt;/para>  
+                  &lt;para> XSL-FO, on the other hand, focuses on specifying formating
+                information for the XML document.     &lt;/para>   &lt;/sect1>  
+                &lt;sect2>     &lt;title>Why XSL?&lt;/title>    &lt;para> XSL supplies an
+                open and non-proprietary XML-based scripting language for transforming XML
+                information streams into other XML formats or even non-XML formats.   
+                &lt;/para>   &lt;/sect2>   &lt;sect1>     &lt;title>Assigning Style
+                Sheets to XML Documents&lt;/title>     &lt;para>To assign ...&lt;/para> 
+                 &lt;/sect1>  &lt;/chapter>  &lt;/book> </programlisting>
+            <para> We can now use an XSLT stylesheet to render the book in HTML format (the view as
+                rendered by a browser is shown in figure <xref linkend="generatedHTML"/>):</para>
+            <programlisting>  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?>
+                &lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot;
+                version=&quot;1.0&quot;> &lt;xsl:output method=&quot;html&quot;/> &lt;xsl:template
+                match=&quot;/&quot;> &lt;HTML> &lt;BODY> &lt;xsl:apply-templates/> &lt;/BODY>
+                &lt;/HTML> &lt;/xsl:template> &lt;xsl:template match=&quot;/book&quot;>  
+                &lt;CENTER>  &lt;H1>&lt;xsl:value-of select=&quot;./title&quot;/> &lt;/H1>
+                &lt;H2>&lt;xsl:value-of select=&quot;./subtitle&quot;/> &lt;/H2> &lt;/CENTER>
+                &lt;P/> &lt;xsl:apply-templates/> &lt;/xsl:template> &lt;xsl:template
+                match=&quot;//chapter&quot;>   &lt;HR/>   &lt;CENTER>     &lt;H2>Chapter
+                &lt;xsl:number count=&quot;chapter&quot;/>: &lt;xsl:value-of
+                select=&quot;./title&quot;/>&lt;/H2> &lt;/CENTER> &lt;xsl:apply-templates/>
+                &lt;/xsl:template>  &lt;xsl:template match=&quot;//sect1&quot;>  
+                &lt;H3>&lt;xsl:number
+                count=&quot;chapter&quot;format=&quot;1&quot;/>.&lt;xsl:number
+                count=&quot;sect1&quot;/> &lt;xsl:value-of select=&quot;./title&quot;/>&lt;/H3>
+                &lt;xsl:apply-templates/> &lt;/xsl:template>  &lt;xsl:template
+                match=&quot;//sect2&quot;>   &lt;H4>&lt;xsl:number count=&quot;chapter&quot;
+                format=&quot;1.&quot;/> &lt;xsl:number count=&quot;sect1&quot;
+                format=&quot;1.&quot;/>&lt;xsl:number count=&quot;sect2&quot; format=&quot;1&quot;/>
+                 &lt;xsl:value-of select=&quot;./title&quot;/>&lt;/H4> &lt;xsl:apply-templates/>
+                &lt;/xsl:template>  &lt;xsl:template match=&quot;para&quot;> &lt;P>
+                &lt;xsl:value-of select=&quot;.&quot;/>  &lt;/P>  &lt;/xsl:template> 
+                &lt;xsl:template match=&quot;*&quot;> &lt;!-- not shown --> &lt;/xsl:template>
+                &lt;/xsl:stylesheet> </programlisting>
+            <figure id="generatedHTML">
+                <title>The gen erated HTML file as viewed from Mozilla.</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../../../../../resources/information/technologies/xmlXSLT/XMLBook.gif"/>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        </section>
+
+    </section>
+
+    <section>
+        <title>XSL Style Sheet and Output Tags</title>
+        <para> Since the XSL style sheet is an XML document, it requires, like any other XML
+            document, a single root element. The root element is the stylesheet element defined in
+            the XSL transform name space. As attributes we specify the XSL version used as well as
+            the XSL transform namespace which is associated with the <emphasis>xsl</emphasis> prefix
+            and the XHTML1 namespace which is included as the default namespace. The latter contains
+            the tags for extended HTML as defined by the W3C.</para>
+        <programlisting>  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?> 
+            &lt;xsl:stylesheet version=&quot;1.0&quot; 
+            xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; 
+            xml:space=&quot;http://www.w3.org/TR/xhtml1/strict&quot;>  &lt;xsl:output
+            method=&quot;html&quot; version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;
+            indent=&quot;yes&quot;/>    ...   &lt;/xsl:stylesheet>  </programlisting>
+        <para>The second XSL tag, <emphasis>xsl:output</emphasis> specifies that the output
+            format is HTML.</para>
+    </section>
+
+    <section>
+        <title>XSLT Syntax via a Simple Example</title>
+        <para> In this section we shall look at an example where we use XSLT to extract selected
+            information from a simple XML document and generate an HTML document from that information.</para>
+        <section>
+            <title>The XML document</title>
+            <para> Our XML document contains a collection of jobs. Each job has two attributes, one
+                attribute specifying whether it is a permanent job or a contract position and the
+                other specifying the location of the position. In addition each job has sub-elements
+                for the job title, description and annual salary:</para>
+            <programlisting>  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>
+                &lt;?xml-stylesheet href=&quot;jobs.xslt&quot; type=&quot;text/xsl&quot;
+                media=&quot;screen&quot;?> &lt;!-- Solms Training &amp; Consulting: jobs.xml
+                -->  &lt;!DOCTYPE jobs SYSTEM &quot;jobs.dtd&quot;> &lt;jobs>   &lt;job
+                type=&quot;contract&quot; location=&quot;Johannesburg&quot;>    
+                &lt;title>Java developer&lt;/title>    
+                &lt;annualSalary>180000&lt;/annualSalary>     &lt;description>Company
+                requires dynamic and enthusiastic person with at least          1
+                year Java experience.&lt;/description>    
+                &lt;eMail>hr@fastSolutions.co.za&lt;/eMail>   &lt;/job>   &lt;job
+                type=&quot;permanent&quot; location=&quot;Cape Town&quot;>    
+                &lt;title>CORBA specialist&lt;/title>    
+                &lt;annualSalary>260000&lt;/annualSalary>     &lt;description>Must have
+                extensive CORBA skills with at least 3 years experience in        
+                 system integration. Must be proficient in Java and C++.&lt;/description>
+                    &lt;eMail>hr@theIntegrator.co.za&lt;/eMail>   &lt;/job>   &lt;job
+                type=&quot;contract&quot; location=&quot;Johannesburg&quot;>    
+                &lt;title>Business analyst&lt;/title>    
+                &lt;annualSalary>270000&lt;/annualSalary>     &lt;description>Good
+                communication skills. Proficient in UML. 2 years              
+                  experience.&lt;/description>    
+                &lt;eMail>hr@requirementsSpecialist.co.za&lt;/eMail>   &lt;/job>   &lt;job
+                type=&quot;contract&quot; location=&quot;Johannesburg&quot;>    
+                &lt;title>Java developer&lt;/title>    
+                &lt;annualSalary>345000&lt;/annualSalary>     &lt;description>Three years
+                Java experience. Proficient in UML, CORBA System              
+                 Requirements Analysis.&lt;/description>    
+                &lt;eMail>hr@theExperts.co.za&lt;/eMail>   &lt;/job>   &lt;job
+                type=&quot;contract&quot; location=&quot;Johannesburg&quot;>    
+                &lt;title>Java developer&lt;/title>    
+                &lt;annualSalary>345000&lt;/annualSalary>     &lt;description>Two years Java
+                experience. Proficient in UML, CORBA System                 
+                Requirements Analysis.&lt;/description>    
+                &lt;eMail>hr@theExperts.co.za&lt;/eMail>   &lt;/job>   &lt;job
+                type=&quot;contract&quot; location=&quot;Johannesburg&quot;>    
+                &lt;title>Java developer&lt;/title>    
+                &lt;annualSalary>345000&lt;/annualSalary>     &lt;description>Three years
+                Java experience. Proficient in UML, CORBA System              
+                   Requirements Analysis.&lt;/description>    
+                &lt;eMail>kr@theExperts.co.za&lt;/eMail>   &lt;/job>   &lt;job
+                type=&quot;permanent&quot; location=&quot;Johannesburg&quot;>    
+                &lt;title>Java developer&lt;/title>    
+                &lt;annualSalary>230000&lt;/annualSalary>     &lt;description>2 years Java
+                experience. Proficient in UML. CORBA or EJB experience           
+                      a plus.&lt;/description>    
+                &lt;eMail>hr@softHouse.co.za&lt;/eMail>   &lt;/job> &lt;/jobs> </programlisting>
+        </section>
+
+        <section>
+            <title>The Document Type Definition (DTD)</title>
+            <para> The above document implements the following DTD:</para>
+            <programlisting> &lt;?xmlversion=&quot;1.0&quot;encoding=&quot;UTF-8&quot;?> 
+                &lt;!-- Solms Training &amp; Consulting CC: jobs.dtd -->  &lt;!ELEMENT jobs
+                (job+)> &lt;!ELEMENT job (title, annualSalary, description, eMail)> &lt;!ATTLIST
+                job type (contract |permanent) #REQUIRED   location CDATA #REQUIRED>  
+                &lt;!ELEMENT title (#PCDATA)> &lt;!ELEMENT eMail (#PCDATA)> &lt;!ELEMENT
+                annualSalary (#PCDATA)> &lt;!ELEMENT description (#PCDATA)> </programlisting>
+        </section>
+
+        <section>
+            <title>The HTML file we want to generate</title>
+            <para> Our XSL style sheet should specify a transformation to an HTML file, The
+                transformation should only extract the Java developer positions in Johannesburg and
+                it should display them in an HTML table sorted on salary. Additionally we also
+                extract a table of location via salaries. The resultant HTML file should look
+                something like the following(figure <xref linkend="jobResultsHTML"/> shows a browser
+                view of the document): </para>
+            <figure id="jobResultsHTML">
+                <title>The generated HTML file as viewed from Internet Explorer.</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../../../../../resources/information/technologies/xmlXSLT/JobsHTML.gif"/>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+            <programlisting>  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?> 
+                &lt;!-- Solms Training &amp; ConsultingCC: jobs.dtd-->  &lt;!ELEMENT jobs
+                (job+)> &lt;!ELEMENT job (title, annualSalary, description, eMail)> &lt;!ATTLIST
+                job type (contract | permanent)#REQUIRED location CDATA #REQUIRED> &lt;!ELEMENT
+                title(#PCDATA)> &lt;!ELEMENTeMail(#PCDATA)> &lt;!ELEMENT annualSalary (#PCDATA)>
+                &lt;!ELEMENT description (#PCDATA)> </programlisting>
+        </section>
+
+        <section>
+            <title>The XSLT Style Sheet</title>
+            <para> Below is a complete listing of our example style sheet. We shall discuss the
+                elements of this style sheets in the following sections</para>
+            <programlisting>  <![CDATA[
+<?xml  version="1.0"  encoding="UTF-8"?>   
+                  <xsl:stylesheet  version="1.0"  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                         <xsl:output  method="html"/>   
+                      <xsl:template  match="/">           <html>               <head>
+                                  <title>Java  Developer  Jobs  in  Johannesburg</title>
+                              </head>               <body>                   <center>
+                                      <h1>Java  Developer  Jobs  in  Johannesburg</h1>
+                                  </center>   
+                                  These  jobs  were  extracted  from  a  public  XML  file  and  we  take  no  responsibility
+                                  for  the  accuracy  of  the  information.   
+                                  <xsl:variable  name="javaJobTitlesJhb"
+                                      select="/jobs/job[@location="Johannesburg"]/title[text()="Java  developer"]"/>
+                                     <p>                       <xsl:choose>   
+                                          <xsl:when  test="count($javaJobTitlesJhb)=0">
+                                              Sorry,  no  Java  jobs  currently  available  in  Johannesburg.
+                                          </xsl:when>   
+                                          <xsl:when  test="count($javaJobTitlesJhb)=1">
+                                              There  is  1  Java  job  currently  available  in  Johannesburg.
+                                          </xsl:when>   
+                                          <xsl:when  test="count($javaJobTitlesJhb)>1">
+                                              There  are  <xsl:value-of  select="count($javaJobTitlesJhb)"/>  Java  jobs
+                                              currently  available  in  Johannesburg.
+                                          </xsl:when>                          </xsl:choose>
+                                  </p>   
+                                  <xsl:if  test="count($javaJobTitlesJhb)>=2">
+                                      <p>                           <center>
+                                              <em>Wow,  what  a  choice!!</em>
+                                          </center>                       </p>
+                                  </xsl:if>   
+                                  <table  border="1"  cellspacing="0"  cellpading="5">
+                                      <tr>                           <th>Contact</th>
+                                          <th>Description</th>
+                                          <th>Annual  Salary</th>
+                                      </tr>   
+                                      <xsl:for-each  select="$javaJobTitlesJhb">
+                                          <xsl:sort  select="../annualSalary"  data-type="number"/>
+                                          <xsl:sort  select="../description"/>
+                  <!--                        <xsl:sort  select="../eMail"/>-->
+                                          <tr>                               <td>
+                                                  <xsl:value-of  select="../eMail"/>
+                                              </td>                               <td>
+                                                  <xsl:value-of  select="../description"/>
+                                              </td>                               <td>
+                                                  <xsl:value-of  select="../annualSalary"/>
+                                              </td>                           </tr>
+                                      </xsl:for-each>                   </table>   
+                                  <h3>Location  Salary  Comparison</h3>   
+                                  <p>
+                                      Next  we    simply  show  a  table  with  location  versus  salary.
+                                      This  should  tell  you  whether  you  should  be  packing  your
+                                      bags  in  order  to  relocate  to  greener  pastures:   
+                                      <p><center>
+                                          <table  border="1"  cellspacing="0"  cellpading="5">
+                                              <tr>
+                                                  <th>Job  No</th>
+                                                  <th>Location</th>
+                                                  <th>Annual  Salary</th>
+                                              </tr>   
+                                              <xsl:for-each  select="/jobs/job/@location">
+                                                  <tr>
+                                                      <td  align="center"><xsl:number  value="position()"  format="1."/></td>
+                                                      <td  align="center"><xsl:value-of  select="."/></td>
+                                                      <td  align="center"><xsl:value-of  select="../annualSalary"/></td>
+                                                  </tr>
+                                              </xsl:for-each>
+                                          </table>                       </center></p>
+                                  </p>                  </body>           </html>
+                      </xsl:template>   </xsl:stylesheet>
+                  ]]></programlisting>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Performing the Transformation</title>
+        <para> Often one performs the transformation from within other applications like within an
+            XML editor or within the presentation layer of your own web-based applications.</para>
+        <section>
+            <title>Client vs Server Side Rendering</title>
+            <para> Most modern browsers (e.g. Internet Explorer 6, Mozilla 1 and Netscape 6) support
+                XML parsers and XSLT engines. This makes it possible for information providers to
+                publish their information in XML with an associated style sheet. Information
+                consumers can either process the information directly from the XML stream, typically
+                via some application, or can look at the information from a browser. The browser
+                will automatically aply the style sheet on the XML stream and render it for human consumption.</para>
+            <para> The rendering need not be optical rendering. XML information can also be rendered
+                in other ways, for example as sound or as brail text.</para>
+            <para> Currently, however, one cannot rely on the general public using a browser which
+                can do the rendering on the client side. For general consumption one has to, for
+                now, do the transformation on the server side.</para>
+        </section>
+
+        <section>
+            <title>Using Apache&quot;s Xalan Manually</title>
+            <para> Here we show how you can apply the transformation manually via a parser. In order
+                to perform the transformation you will require a XSLT engine. The XSLT engine will
+                use a parser which you may or may not have to obtain separately.</para>
+            <para> A very nice XSLT engine which is suitable for production systems is Xalan which
+                is available from <emphasis>www.apache.org</emphasis>. You can download Java and C++
+                versions from Apache. This engine is also shipped as default XSLT engine with the
+                Java XML pack. Here we assume that you are using the Java version. In order to run
+                it, you have to include <emphasis>xalan.jar</emphasis> in your class path. This can
+                be done by either adding it to the <emphasis>classpath</emphasis> environment
+                variable in your user domain or by specifying it in a <emphasis>classpath</emphasis>
+                command line argument passed to the Java run-time environment.</para>
+            <para> Assuming you copied the <emphasis>xalan.jar</emphasis> archive file in a
+                directory <emphasis>c:\java\libs</emphasis>, you can run <emphasis>Xalan</emphasis>via</para>
+            <programlisting> java -classpath c:\java\libs\xalan.jar org.apache.xalan.xslt.Process
+                -in inputFile -xsl transformFile -out resultFile </programlisting>
+            <para> For example, to perform the transformation specified the
+                <emphasis>jobs.xslt</emphasis> style file you can run</para>
+            <programlisting> java -classpath c:\java\libs\xalan.jar org.apache.xalan.xslt.Process
+                -in jobs.xml -xsl jobs.xslt -out jobs.html </programlisting>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Modular Style Sheets</title>
+        <para> One can import XSL style sheets into other XSL style sheets via the import statement:</para>
+        <programlisting> &lt;include href=&quot;http://www.SolmsTraining.co.za/stylesheets/table.xsl&quot;/></programlisting>
+        <para> The reference can be any URI/URL including relative URLs:</para>
+        <programlisting> &lt;include href=&quot;../generic /table.xsl&quot;/></programlisting>
+    </section>
+
+    <section>
+        <title>Embedded Stlesheets</title>
+        <para> At times one may want to package a stylesheet wuithin an XML document so that the
+            content and presentation information is supplied within a single package. In order to
+            package an XSL style sheet within an XML document one has to do two things </para>
+        <orderedlist>
+            <listitem>
+                <para>insert and <emphasis>&lt;xsl:stylesheet></emphasis> element with an id which
+                    contains the style sheet as content. </para>
+            </listitem>
+            <listitem>
+                <para>an <emphasis>&lt;?xml- stylesheet /></emphasis> processing insstruction
+                    which refers to the embedded style sheet.</para>
+            </listitem>
+        </orderedlist>
+        <para> For example, below we show how you could have embedded the jobs style sheet in the
+            jobs xml document:</para>
+        <programlisting><![CDATA[
+        <?xml  version="1.0"  encoding="UTF-8"?>
+              <?xml-stylesheet  href="jobs.xslt"  type="text/xsl"  href="#jobsStyleSheet"  media="screen"?>
+              <!--  Solms  Training  &  Consulting:  jobs.xml  -->   
+              <!DOCTYPE  jobs  SYSTEM  "jobs.dtd">      <jobs>   
+                  <xsl:stylesheet  version="1.0"  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                         <xsl:output  method="html"/>              ...
+                </xsl:stylesheet>      
+                  <job  type="contract"  location="Johannesburg">
+                      <title>Java  developer</title>
+                      <annualSalary>180000</annualSalary>
+                      <description>Company  requires  dynamic  and  enthusiastic  person  with  at  least
+                                                1  year  Java  experience.</description>
+                      <eMail>hr@fastSolutions.co.za</eMail>       </job>          ...   </jobs>
+              ]]></programlisting>
+    </section>
+
+    <section>
+        <title>Resolving References</title>
+        <para> Often one has linked information. This is similar to links between tables of a
+            relational data base. For example, a video store might transfer a collection of rentals
+            according to data types defined by the following schema:</para>
+        <programlisting><![CDATA[
+        <?xml  version="1.0"  encoding="UTF-8"?>
+              <xsd:schema  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                  <xsd:annotation>           <xsd:documentation>
+                          Simple  schema  for  video  rentals.           </xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:element  name="videoStore"  type="VideoStore"/>
+                  <xsd:complexType  name="VideoStore">           <xsd:sequence>
+                          <xsd:element  name="client"  type="Client"  maxOccurs="unbounded"/>
+                          <xsd:element  name="video"  type="Video"  maxOccurs="unbounded"/>
+                          <xsd:element  name="rental"  type="Rental"  maxOccurs="unbounded"/>
+                      </xsd:sequence>
+                      <xsd:attribute  name="placementDate"  type="xsd:date"/>
+                  </xsd:complexType>       <xsd:complexType  name="Client">
+                      <xsd:sequence>
+                          <xsd:element  name="name"  type="xsd:string"/>
+                      </xsd:sequence>
+                      <xsd:attribute  name="id"  type="xsd:ID"/>
+                  </xsd:complexType>       <xsd:complexType  name="Video">
+                      <xsd:sequence>
+                          <xsd:element  name="name"  type="xsd:string"/>
+                      </xsd:sequence>
+                      <xsd:attribute  name="id"  type="xsd:ID"/>
+                  </xsd:complexType>       <xsd:complexType  name="Rental">
+                      <xsd:sequence>
+                          <xsd:element  name="client"  type="xsd:IDREF"/>
+                          <xsd:element  name="video"  type="xsd:IDREF"/>
+                          <xsd:element  name="dueDate"  type="xsd:date"/>
+                      </xsd:sequence>       </xsd:complexType>   </xsd:schema>
+            ]]></programlisting>
+        <para> Note that the client and video fields of the rental data type are references. We thus
+            have an association and not a composition relationship between rental and client/video.
+            This is as it should be because the video and client both exist, even if the rental no
+            longer exists.</para>
+        <para> Note that our <emphasis>Client</emphasis> and <emphasis>Video</emphasis> data types
+            each define an attribute, <emphasis>id</emphasis> of type<emphasis>xsd:ID</emphasis>.
+            These are like the primary keys in relational database tables.</para>
+        <para> Our <emphasis>Rental</emphasis> data type specifies that each rental has one
+            association (<emphasis>IDREF</emphasis>) to a client and one association to a video.
+            These are similar to having links between the rentals table and the client and video tables.</para>
+        <para> Note also that we have used the standard OO naming convention here, i.e. data types
+            (classes) are named with capital letters, word boundaries capitalized and element
+            (instance) names start with lower case letters (word boundaries still be capitalized).</para>
+        <para> Below we show a simple XML document which implements this schema:</para>
+        <programlisting><![CDATA[
+        <?xml  version="1.0"  encoding="UTF-8"?>
+              <!--  Solms  Training  &  Consulting:  videoStore.xsd  -->
+              <videoStore  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                      xsi:noNamespaceSchemaLocation="videoStore.xsd">
+                  <client  id="cl1">           <name>Jack</name>       </client>
+                  <client  id="cl2">           <name>Jill</name>       </client>
+                  <client  id="cl3">           <name>Joan</name>       </client>
+                  <video  id="vid3">           <name>Sweet  16</name>       </video>
+                  <video  id="vid1">
+                      <name>Amazing  life  of  Sahoi  Tundai</name>       </video>
+                  <video  id="vid2">           <name>Polish  Wedding</name>
+                  </video>       <video  id="vid4">           <name>Smoke</name>
+                  </video>       <rental>           <client>cl2</client>
+                      <video>vid3</video>           <dueDate>2001-03-18</dueDate>
+                  </rental>       <rental>           <client>cl3</client>
+                      <video>vid1</video>           <dueDate>2001-03-16</dueDate>
+                  </rental>       <rental>           <client>cl3</client>
+                      <video>vid2</video>           <dueDate>2001-03-21</dueDate>
+                  </rental>       <rental>           <client>cl1</client>
+                      <video>vid4</video>           <dueDate>2001-02-28</dueDate>
+                  </rental>   </videoStore>
+              ]]></programlisting>
+        <para> We would no like to write an XSLT style sheet which can extract the rentals from an
+            XML document implementing the <emphasis>videoStore</emphasis> schema and for each rental
+            it should resolve the name of the client and video associated with it. It should then
+            create an HTML file containing a table with the client name, video name and due date as
+            columns. The desired result is shown in figure <xref linkend="xsl.videoStoreHTMLResult"/>. </para>
+        <figure id="xsl.videoStoreHTMLResult">
+            <title>The HTML file generated by the transformation.</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../../../../../resources/information/technologies/xmlXSLT/videoStoreHTML.gif"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para> To do this we have to navigate the references, <abbrev>i.e.</abbrev> from a rental
+            we obtain a reference to a client and a video. These references have to be navigated and
+            the name of each has to be obtained. The appropriate XSLT file is shown below:</para>
+        <programlisting><![CDATA[
+              <xsl:stylesheet  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                                              version="1.0">   
+                  <xsl:output  method="html"                               version="4.0"
+                                          doctype-public="-//W3C//DTD  HTML  4.0  Transitional//EN"
+                                          doctype-system="http://www.w3.org/TR/REC-html40/loose.dtd"
+                                          encoding="ISO-8859-1"/>   
+              <xsl:template  match="/">      <html>       <body>
+                      <h1>VideoStore</h1>            <h3>Outstanding  rentals:</h3>
+                    <table  border="1">
+                        <tr>  <th>client</th>  <th>video</th><th>Date  due</th></tr>
+                      <xsl:for-each  select="/videoStore/rental">
+                            <xsl:variable  name="rentalsClientID"  select="./client"/>
+                            <xsl:variable  name="rentalsVideoID"  select="./video"/>
+                            <tr>
+                                <xsl:for-each  select="/videoStore/client">
+                                            <xsl:if  test="./@id=$rentalsClientID">
+                                                <td>  <xsl:value-of  select="./name"/>  </td>
+                                            </xsl:if>                   </xsl:for-each>   
+                                <xsl:for-each  select="/videoStore/video">
+                                            <xsl:if  test="./@id=$rentalsVideoID">
+                                                <td>  <xsl:value-of  select="./name"/>  </td>
+                                            </xsl:if>                   </xsl:for-each>   
+                              <td><xsl:value-of  select="./dueDate"/></td>   
+                            </tr>           </xsl:for-each>         </table>   
+                  </body>   </html>   </xsl:template>   </xsl:stylesheet>]]></programlisting>
+    </section>
+
+</chapter>

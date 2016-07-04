@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns2961:section xmlns:ns2961="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.ldap.server">
+
+	<ns2962:title xmlns:ns2962="http://docbook.org/ns/docbook">LDAP Server</ns2962:title>
+	<ns2963:para xmlns:ns2963="http://docbook.org/ns/docbook">
+	The LDAP server is configured in the <ns2964:emphasis xmlns:ns2964="http://docbook.org/ns/docbook" role="strong">/etc/openldap/slapd.conf</ns2964:emphasis> file.
+	</ns2963:para>
+	<ns2965:programlisting xmlns:ns2965="http://docbook.org/ns/docbook">
+	
+include		/etc/openldap/schema/core.schema
+include		/etc/openldap/schema/cosine.schema
+include		/etc/openldap/schema/inetorgperson.schema
+include		/etc/openldap/schema/nis.schema
+include		/etc/openldap/schema/redhat/rfc822-MailMember.schema
+include		/etc/openldap/schema/redhat/autofs.schema
+include		/etc/openldap/schema/redhat/kerberosobject.schema
+
+database	ldbm
+suffix		"o=solms,c=za"
+rootdn		"cn=Manager,o=solms,c=za"
+rootpw	 ********	
+directory	/var/lib/ldap
+index	objectClass,uid,uidNumber,gidNumber,memberUid	eq
+index	cn,mail,surname,givenname			eq,subinitial
+	
+	</ns2965:programlisting>
+	<ns2966:para xmlns:ns2966="http://docbook.org/ns/docbook">
+	The <ns2967:emphasis xmlns:ns2967="http://docbook.org/ns/docbook" role="strong">include</ns2967:emphasis> directive included a list of LDAP schema. LDAP schema contain the layout of the datatypes stored in the directory. The database parameter specifies the type of database to be used. LDBM is a file based database, although other backend alternatives such as a relational database are available. The <ns2968:emphasis xmlns:ns2968="http://docbook.org/ns/docbook" role="strong">suffix</ns2968:emphasis> specifies the base of the directory. <ns2969:emphasis xmlns:ns2969="http://docbook.org/ns/docbook" role="strong">rootdn</ns2969:emphasis> and <ns2970:emphasis xmlns:ns2970="http://docbook.org/ns/docbook" role="strong">rootpw</ns2970:emphasis> are the userid and password of the root user, which is used to modify the directory. The directory specifies the physical directory on the filesystem in which the database resides. Finally the <ns2971:emphasis xmlns:ns2971="http://docbook.org/ns/docbook" role="strong">index</ns2971:emphasis> contains a list of attributes which are indexed.
+	</ns2966:para>
+	<ns2972:para xmlns:ns2972="http://docbook.org/ns/docbook">
+	Once the configuration files is correctly setup, the LDAP server can be started by invoking the startup scripts. <ns2973:emphasis xmlns:ns2973="http://docbook.org/ns/docbook" role="strong">/etc/init.d/ldap start</ns2973:emphasis> or <ns2974:emphasis xmlns:ns2974="http://docbook.org/ns/docbook" role="strong">/etc/init.d/slapd start</ns2974:emphasis>. Once the directory server has been started for the first time, the initial directory structure as specified in the suffix parameter has to be created. The easiest method of populating the initial directory is by importing a LDIF file containing the structure.
+	</ns2972:para>
+	<ns2975:programlisting xmlns:ns2975="http://docbook.org/ns/docbook">
+version: 3
+
+#
+# filter: (objectclass=*)
+# requesting: ALL
+#
+
+# solms, za
+dn: o=solms, c=za
+objectClass: organization
+o: solms
+
+# people, solms, za
+dn: ou=people, o=solms, c=za
+objectClass: organizationalUnit
+ou: people
+
+# Alexander Hartner, people, solms, za
+dn: cn=Alexander Hartner,ou=people,o=solms,c=za
+initials: A
+sn: Hartner
+objectClass: inetOrgPerson
+mail: alexh@solmstraining.co.za
+telephoneNumber: 
+givenName: Alexander
+cn: Alexander Hartner
+displayName: Alexander Hartner
+userPassword:: ajJhbnl3aGVyZQ==
+businessCategory: intranet
+businessCategory: manager
+businessCategory: intranetAdmin
+businessCategory: admin
+businessCategory: tomcat
+uid: alex
+	</ns2975:programlisting>
+	<ns2976:para xmlns:ns2976="http://docbook.org/ns/docbook">
+	The <ns2977:emphasis xmlns:ns2977="http://docbook.org/ns/docbook" role="strong">ldapadd</ns2977:emphasis> command covered in the client section in more details is used to import the file.
+	</ns2976:para>
+	<ns2978:programlisting xmlns:ns2978="http://docbook.org/ns/docbook">
+ldapadd -c -F -v -x -D "cn=Manager,o=solms,c=za" -w secret -f import.ldif		
+	</ns2978:programlisting>
+</ns2961:section>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.overview.overview">
+    
+      <title>Overview of Java's I/O Libraries</title>
+  
+  <indexterm>
+    <primary>I/O</primary>
+    <secondary>streaming</secondary>
+    <tertiary>overview</tertiary>
+  </indexterm>
+    
+      <para>
+        Java's IO support is rich and well designed. The responsibilities have been
+        well localised resulting in a class library of compact classes which can be combined in a
+        <quote>plug-and-play</quote> fashion to obtain the desired functionality.
+      </para>
+      <para>
+        The key elements are:
+      </para>
+    
+      <formalpara>
+          <title>Low-Level Streams:</title>
+          <para>
+              These are simple streams which can only read or write bytes or arrays of bytes. They may be 
+              connected to physical I/O elements like files, network sockets or memory.
+          </para>
+      </formalpara>
+    
+      <formalpara>
+          <title>High-Level Filter Streams:</title>
+          <para>
+            These filters form an intermediary processing stage between the low-level streams (which read and 
+            write bytes) and the user. They could transform between user data types like primitives 
+              (<literal>int</literal>, <literal>double</literal>, ...), Strings or Objects. Alternatively they 
+              could provide some other functionality like providing buffering, encryption or monitoring support.
+          </para>
+      </formalpara>    
+
+    <para>
+        Typically a low-level stream is attached to the data source and one or more high-level
+        filter streams is attached to the low-level stream, each providing one further processing
+        stage. For example, in the illustration, a <literal>java.io.FileInputStream</literal> is attached to a physical
+        file. A <literal>java.io.BufferedInputStream</literal> is used to provide buffering support (for increased 
+        performance) and a <literal>java.io.DataInputStream</literal> is
+      used to translate bytes into basic data types. This method of attaching several streams to each other is 
+        called <emphasis>chaining</emphasis>, and is key to understanding the flexibility of Java's 
+        I/O libraries.
+    </para>
+    <para>
+        The conceptual separation of low-level, and filter, streams means that the same filter streams (or chain thereof)
+        can be attached to <emphasis>any</emphasis> low-level streams (files, network sockets, keyboard, printer). This means
+        that in order to perform compression, encryption, monitoring, or any other service for any of the low-level streams,
+        a single implementation (and a single understanding) is required. This gives Java a tremendous advantage over other languages,
+        which require different libraries for different I/O domains.
+    </para>
+    
+        <figure>
+            <title>Conceptual Example of Stream Chaining</title>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="overview.jpg"/>
+            </imageobject>
+          </mediaobject>
+        </figure>    
+</section>

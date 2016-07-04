@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Errors versus exceptions</title>
+    <para>
+        In principle one should distinguish between errors and exceptions where
+        <itemizedlist>
+            <listitem><para>
+                an error is a scenario where the service provider does not fulfill its contractual
+                obligations and
+            </para></listitem>
+            <listitem><para>
+                an exception is a scenario where the service provider refuses a service because
+                one or more of the preconditions for that service are not met. 
+            </para></listitem>
+        </itemizedlist>
+        One thus has to consult the contract (interface with preconditions and postconditions
+        and quality requirements) in order to determine whether the non-provision of a service
+        resembles an error or an exceptional situation.
+        <note><title>Example of an exception</title>
+            <para>
+                A bank may provide a debit service subject to there being sufficient funds in 
+                the account. Should there be insufficient funds in the account, the bank may
+                refuse the service without braking the contract. This would not be an error 
+                as the service provider (the bank) does not violate the contract.
+            </para>
+        </note>
+    </para>
+    <para>
+        BPEL does not natively differentiate between a exceptions and errors. Either are signalled as faults.
+        Generally one would specify in the WSDL for a service provider
+        <itemizedlist>
+            <listitem><para>
+                one fault for each precondition under which the service provider may refuse the service (these
+                are the exceptions), and
+            </para></listitem>
+            <listitem><para>
+                one fault which signals an error, <abbrev>i.e.</abbrev> the inability of the service provider to
+                meet its contractual obligations.
+            </para></listitem>
+        </itemizedlist>
+        In order to enable the definition of cleaner business processes, one could introduce 
+        different base fault types for exceptions and errors.
+    </para>
+</section>    

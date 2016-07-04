@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <title>Eliminating point-to-point integration</title>
+    
+    <indexterm>
+        <primary>point-to-point integration</primary>
+        <secondary>eliminating</secondary>
+        <tertiary>with JBI</tertiary>
+    </indexterm>
+    
+    <para>
+        Even though modern contract-driven software development de-couples clients
+        from service implementations in terms of functionality, when it comes to certain scenarios
+        - such as several of our internal systems using an external web service - we still face the
+        risk of incurring a great deal of cost when, for example, the external services changes
+        address, or (worse yet) when it ceases to exist, and we have to find an alternative (or
+        build our own).
+    </para>
+    <para>
+        Instead of locking our internal systems to the one external address, we may instead
+        <itemizedlist>
+            <listitem>
+                <para>deploy a proxy service unit (in a binding component such as SOAP/HTTP) that
+                plugs the external service provider into our ESB, making it available to our internal systems.
+                It thus <emphasis>provides</emphasis> a service, as per the provider's service contract.</para>
+            </listitem>
+            <listitem>
+                <para>deploy a service unit that exposes a web service endpoint at a stable, known internal address.
+                This service unit <emphasis>consumes</emphasis> a service that implements the service provider's
+                contract.</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <figure>
+        <title>Eliminating point-to-point integration</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="eliminatingPointToPoint.png"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+    <para>
+        Should the external service change or disappear (forcing us to use another) we are guaranteed to only
+        have to change the configuration of a single JBI service unit, referring to the new address. This scenario
+        is particularly effective when the service clients themselves are not deployed in service engines
+        plugged in to the ESB (such as web-based or stand-alone application clients, or even legacy systems).
+    </para>
+    <para>
+        Routing all requests through a single channel has the additional side benefit of being easily
+        monitorable, or applying compression (to use less bandwidth), performing message validation,
+        or gathering statistics. These may easily be added in the future, without the service, nor its clients,
+        being directly aware.
+    </para>
+    
+</section>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns5693:section xmlns:ns5693="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.operators.arithmetic">
+
+  <ns5694:title xmlns:ns5694="http://docbook.org/ns/docbook">Arithmetic operators</ns5694:title>
+  <ns5695:para xmlns:ns5695="http://docbook.org/ns/docbook">
+    Shell scripts only support integer arithmetic, <ns5696:abbrev xmlns:ns5696="http://docbook.org/ns/docbook">i.e.</ns5696:abbrev> no floating point
+    arithmetic. The erithmetic operators supported are shown in
+    <ns5697:xref xmlns:ns5697="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.shell.scripting.operators.arithmeticOperators"/>
+
+    <ns5698:table xmlns:ns5698="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.operators.arithmeticOperators">
+      <ns5699:title xmlns:ns5699="http://docbook.org/ns/docbook">Arithmetic operators suported in shell scripts</ns5699:title>
+      <ns5700:tgroup xmlns:ns5700="http://docbook.org/ns/docbook" cols="2">
+        <ns5701:thead xmlns:ns5701="http://docbook.org/ns/docbook">
+          <ns5702:row xmlns:ns5702="http://docbook.org/ns/docbook"><ns5703:entry xmlns:ns5703="http://docbook.org/ns/docbook">Operator</ns5703:entry><ns5704:entry xmlns:ns5704="http://docbook.org/ns/docbook">Description</ns5704:entry></ns5702:row>
+        </ns5701:thead>
+        <ns5705:tbody xmlns:ns5705="http://docbook.org/ns/docbook">
+          <ns5706:row xmlns:ns5706="http://docbook.org/ns/docbook"><ns5707:entry xmlns:ns5707="http://docbook.org/ns/docbook">+</ns5707:entry><ns5708:entry xmlns:ns5708="http://docbook.org/ns/docbook">integer addition</ns5708:entry></ns5706:row>
+          <ns5709:row xmlns:ns5709="http://docbook.org/ns/docbook"><ns5710:entry xmlns:ns5710="http://docbook.org/ns/docbook">-</ns5710:entry><ns5711:entry xmlns:ns5711="http://docbook.org/ns/docbook">integer subtraction</ns5711:entry></ns5709:row>
+          <ns5712:row xmlns:ns5712="http://docbook.org/ns/docbook"><ns5713:entry xmlns:ns5713="http://docbook.org/ns/docbook">*</ns5713:entry><ns5714:entry xmlns:ns5714="http://docbook.org/ns/docbook">integer multiplication</ns5714:entry></ns5712:row>
+          <ns5715:row xmlns:ns5715="http://docbook.org/ns/docbook"><ns5716:entry xmlns:ns5716="http://docbook.org/ns/docbook">/</ns5716:entry><ns5717:entry xmlns:ns5717="http://docbook.org/ns/docbook">integer division</ns5717:entry></ns5715:row>
+          <ns5718:row xmlns:ns5718="http://docbook.org/ns/docbook"><ns5719:entry xmlns:ns5719="http://docbook.org/ns/docbook">**</ns5719:entry><ns5720:entry xmlns:ns5720="http://docbook.org/ns/docbook">exponentiation (power)</ns5720:entry></ns5718:row>
+          <ns5721:row xmlns:ns5721="http://docbook.org/ns/docbook"><ns5722:entry xmlns:ns5722="http://docbook.org/ns/docbook">%</ns5722:entry><ns5723:entry xmlns:ns5723="http://docbook.org/ns/docbook">modulus (remainder)</ns5723:entry></ns5721:row>
+        </ns5705:tbody>
+      </ns5700:tgroup>
+    </ns5698:table>
+  </ns5695:para>
+
+  <ns5724:section xmlns:ns5724="http://docbook.org/ns/docbook">
+    <ns5725:title xmlns:ns5725="http://docbook.org/ns/docbook">Example script</ns5725:title>
+    <ns5726:para xmlns:ns5726="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/testArithmetic_sh.docbook"/>
+      <ns5727:note xmlns:ns5727="http://docbook.org/ns/docbook">
+        <ns5728:para xmlns:ns5728="http://docbook.org/ns/docbook">
+          We have to put the multiplication operator in full quotes so that it is not
+          interpreted as an escape character by the shell, <ns5729:abbrev xmlns:ns5729="http://docbook.org/ns/docbook">i.e.</ns5729:abbrev>
+          preventing the shell from expanding it into matching filenames.
+        </ns5728:para>
+        <ns5730:para xmlns:ns5730="http://docbook.org/ns/docbook">
+          Note also that we used the <ns5731:command xmlns:ns5731="http://docbook.org/ns/docbook">expr</ns5731:command> command to
+          request the evaluation of an expression. This is done within backward quotes
+          (see <ns5732:xref xmlns:ns5732="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.shell.scripting.backwardQuote.backwardQuote"/>)
+          which evaluates the <ns5733:command xmlns:ns5733="http://docbook.org/ns/docbook">expr</ns5733:command> command and substitutes
+          its output for the backward quotes.
+        </ns5730:para>
+      </ns5727:note>     
+    </ns5726:para>    
+    <ns5734:para xmlns:ns5734="http://docbook.org/ns/docbook">
+      When executing the shell script via
+      <ns5735:cmdsynopsis xmlns:ns5735="http://docbook.org/ns/docbook"><ns5736:command xmlns:ns5736="http://docbook.org/ns/docbook">
+ ./testArithmetic.sh 2 3
+      </ns5736:command></ns5735:cmdsynopsis>
+      we obtain the following output:
+      <ns5737:programlisting xmlns:ns5737="http://docbook.org/ns/docbook">
+2+3 = 5
+2-3 = -1
+2*3 = 6
+2/3 = 0
+2**3 = 8
+2%3 = 2
+      </ns5737:programlisting>
+    </ns5734:para>
+  </ns5724:section>
+
+  <ns5738:section xmlns:ns5738="http://docbook.org/ns/docbook">
+    <ns5739:title xmlns:ns5739="http://docbook.org/ns/docbook">Requesting evaluation across multiple substitutions</ns5739:title>
+    <ns5740:para xmlns:ns5740="http://docbook.org/ns/docbook">
+      Shell scripts support a syntax which performs substitutions across multiple
+      elements by inserting a <ns5741:literal xmlns:ns5741="http://docbook.org/ns/docbook">$</ns5741:literal> sign infront of square 
+      brackets which specify the range across which the substitutions should be
+      done. This may simplify the syntax at times. Consider, for example
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/testSquareBrackets_sh.docbook"/>      
+      with output
+      <ns5742:programlisting xmlns:ns5742="http://docbook.org/ns/docbook">
+Enter x:
+2
+Enter y:
+3
+x*y = 6
+x*y = 6     
+      </ns5742:programlisting>
+    </ns5740:para>
+  </ns5738:section>
+  
+  
+</ns5693:section>

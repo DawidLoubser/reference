@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.relationships.entityBeans.entityBeanRelationships"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="Entity bean relationships">Entity bean relationships</title>
+  <para>
+    Value objects are often not that satisfactory. Firstly, if they are persisted as
+    serialized BLOBS, then the information they carry is not readily available for standard
+    reporting tools -- the information must be accessed from Java.
+  </para>
+  <para>
+    Furthermore, value objects can only be used to realize composition relationships.
+    Association relationships have to be modeled as a more loose relationship which, if a
+    relational database is used for the storage technology, should persist in the form of a link
+    between tables.
+  </para>
+  <para>
+    As an example of a one-to-one unary relationship between entity beans, consider the
+    relationship between a task and a client who requested the task. If we want to support
+    querying client information from the task, the task has to maintain a reference to the client.
+  </para>
+
+  <section>
+    <title>Entity Bean Implementation</title>
+    <para>
+      As was the case for value objects, we still specify the related entity bean via
+      abstract accessor methods:
+<programlisting><![CDATA[
+public abstract class ProjectBean implements EntityBean
+{
+  public abstract Client getClient();
+  public abstract void setClient(Client newClient);
+  
+  ...
+}
+]]></programlisting>    
+    </para>
+    <para>
+      But the <literal>Client</literal> class need not (but still may be)
+      serializable and we do not specify a CMP-field for the related entity object. Instead we
+      shall specify a relationship between the entity beans as a container-managed relationship.
+    </para>
+  </section>
+  
+  <section>
+    <title>Deployment Specification</title>
+    <para>The container will 
+      <itemizedlist>
+        <listitem>
+          <para>provide the implementation for the reference specified as abstract accessor and </para>
+        </listitem>
+        <listitem>
+          <para>persist the relationship to the database.</para>
+        </listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      To this end we have to publish the relationship to the container. This is done by
+      specifying the two endpoints of the relationship. For each of the endpoints (roles) we
+      specify the object which hosts the role and a multiplicity which is going to be  
+      <literal>One</literal> on both sides if we have a one-to-one relationship.
+    </para>
+    <para>
+      Note that the source side of a unary association (and, in the case of a binary
+      association, both sides) hosts a container-managed relationship (cmr) field. This is the
+      datafield for the reference which is queried and set via the abtract accessor methods.
+<programlisting><![CDATA[
+<ejb-jar>
+  <enterprise-beans>
+
+   <entity>
+     <ejb-name>Task</ejb-name>
+     ...
+     <ejb-ref>
+       <ejb-ref-name>ejb/Client</ejb-ref-name>
+       <ejb-ref-type>Entity</ejb-ref-type>
+       <home>za.co.SolmsTraining.clients.ClientHome</home>
+       <remote>za.co.SolmsTraining.clients.Client</remote>
+       <ejb-link>Client</ejb-link>
+     </ejb-ref>
+  </entity>
+  
+  <entity>
+     <ejb-name>Client</ejb-name>
+     ...
+  </entity>
+  
+  <relationships>
+   <ejb-relation>
+     <ejb-relation-name>Task-Client</ejb-relation-name>
+     <ejb-relationship-role>
+       <ejb-relationship-role-name>
+         Task has association to Client
+       </ejb-relationship-role-name>
+       <multiplicity>One</multiplicity>
+       <relationship-role-source>
+         <ejb-name>Task</ejb-name>
+       </relationship-role-source>
+       <cmr-field>
+         <cmr-field-name>client</cmr-field-name>
+       </cmr-field>
+     </ejb-relationship-role>
+     <ejb-relationship-role>
+       <ejb-relationship-role-name>
+         Client associated to Task
+       </ejb-relationship-role-name>
+       <multiplicity>One</multiplicity>
+       <relationship-role-source>
+         <ejb-name>Client</ejb-name>
+       </relationship-role-source>
+     </ejb-relationship-role>
+   </ejb-relation>
+  </relationships>
+
+</ejb-jar>
+]]></programlisting>
+    </para>
+    <para>
+      The responsibility of persisting the relationship is left to the persistence manager of
+      the container. In the case of JBossCMP, the relationships are persisted to a relational
+      database in reverse order. This, client will have the task as a foreign key and not vice versa.
+    </para>
+    <para>
+      The reason for this is that this mapping works well also with one-to-many associations.
+    </para>
+  </section>
+  
+  <section>
+    <title>One-to-Many and Many-to-Many Relationships</title>
+    <para>
+      The many side(s) of an association are specified by simply assigning a  
+      <literal>Many</literal> multiplicity to the corresponding role.
+    </para>
+    <para>
+      For example, assume a task has many time stretches (time periods spent working on
+      that task like from 13h30 to 16h00 on some date). Each time stretch will be spent on one
+      task only and hence the relationship is a one-to-many relationship. Below we show the
+      implementation of a binary one-to-many relationship:
+<programlisting><![CDATA[
+
+<ejb-relation>
+  <ejb-relation-name>Task-TimeStretch</ejb-relation-name>
+    <ejb-relationship-role>
+     <ejb-relationship-role-name>
+       task-has-timeStretches
+     </ejb-relationship-role-name>
+     <multiplicity>One</multiplicity>
+     <relationship-role-source>
+       <ejb-name>Task</ejb-name>
+     </relationship-role-source>
+     <cmr-field>
+       <cmr-field-name>timeStretches</cmr-field-name>
+       <cmr-field-type>java.util.Set</cmr-field-type>
+     </cmr-field>
+    </ejb-relationship-role>
+  <ejb-relationship-role>
+   <ejb-relationship-role-name>
+     timeStretch-for-task
+   </ejb-relationship-role-name>
+   <multiplicity>Many</multiplicity>
+   <relationship-role-source>
+     <ejb-name>TimeStretch</ejb-name>
+   </relationship-role-source>
+   <cmr-field>
+      <cmr-field-name>task</cmr-field-name>
+   </cmr-field>
+  </ejb-relationship-role>
+</ejb-relation>
+]]></programlisting>
+    </para>
+    <para>
+      The datatype for implementing the many side of the association is currently restricted to
+      one of <literal>java.util.Collection</literal> or <literal>java.util.Set</literal>.
+    </para>
+    <para>
+      On the database level this relationship will be implemented, once again in reverse
+      direction, simplifying it considerably. Note, however, that the object access has to still
+      provided in the direction of navigatability. To this end we need to be able to query for
+      collections of objects. This is still supported without you having to manage it. Once
+      again you'll just supply the abstract accessor methods returning and receiving this time
+      either a<literal>Collection</literal> or a <literal>Set</literal>:
+    </para>
+    <para>
+      Look, for example at the following excerpt of the task bean show how we specify
+      accessor methods for the one-to-many association return/receive a set:
+<programlisting><![CDATA[
+package za.co.SolmsTraining.pm;
+
+import java.util.Set;
+
+public abstract class TaskBean implements javax.ejb.EntityBean
+{
+public TaskBean() {}
+...
+
+public abstract Set getTimeStretches(); // related entity beans
+public abstract void setTimeStretches(Set timeStretches); // related entity beans
+...
+}
+]]></programlisting>
+    </para>
+  </section>
+</section>

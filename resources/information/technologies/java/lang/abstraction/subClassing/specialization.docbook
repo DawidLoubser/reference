@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.lang.abstraction.subClassing.specialization">
+  <title>Specialisation through Subclassing</title>
+  <para>
+    Java allows you to define objects at various levels of abstraction. For example, You
+    might view a particular manager as a <literal>Manager</literal>, an
+    <literal>Employee</literal>, a <literal>Person</literal> or simply as an <literal>Object</literal>. 
+    This is a process from very concrete to more and more abstract.
+  </para>
+  <para>
+    The reverse direction can be viewed as specialisation. A <literal>Manager</literal> is a special type 
+    of <literal>Employee</literal> which is a special type of <literal>Person</literal> which is a special 
+    type of <literal>Object</literal>.
+  </para>
+  <para>
+    Note that we can identify a specialisation relationship as a special kind of 
+    <quote>
+         <emphasis>is a</emphasis>
+      </quote> relationship and this should 
+    be the criterion for deciding on subclassing.
+  </para>
+  <para>
+    Subclassing is achieved in Java via the <literal>extends</literal> keyword:
+    <programlisting language="Java">
+public class Person {...}
+</programlisting>
+    <programlisting language="Java">
+public class Employee extends Person {...}
+</programlisting>
+    <programlisting language="Java">
+public class Manager extends Employee {...}
+    </programlisting>
+  </para>
+  <para>
+     Here <literal>Manager</literal> is a subclass of <literal>Employee</literal> which 
+     is a subclass of <literal>Person</literal>. Conversely, <literal>Person</literal>
+     is the superclass of <literal>Employee</literal> which is the superclass
+     of <literal>Manager</literal>. Note that we did not have to specify that
+     <literal>Person</literal> extends Object. If no superclass is
+     specified, the compiler automatically inserts <literal>extends
+     Object</literal> the ultimate base class for all classes.
+    </para>
+    <para>
+      The language relies on <emphasis>you</emphasis> to design your class hierarchies in
+      such a way that the subclass is a sensible specialisation of the superclass. This is best
+      illustrated by the following simple statement:
+      <programlisting language="Java">
+Employee e;
+ 
+e = new Manager();
+      </programlisting>
+    </para>  
+    <para>
+      We first declare a reference to an <literal>Employee</literal>. This reference can refer
+      to any object which is an <literal>Employee</literal>. In the second
+      statement we create a <literal>Manager</literal> and assign the <literal>Employee</literal>-reference 
+      to refer to the manager. The compiler is
+      quite happy because <literal>Manager</literal> is a subclass of <literal>Employee</literal> 
+      and he/she trusts you in having applied the <quote>
+         <emphasis>is a</emphasis>
+      </quote> criterion for subclassing.
+    </para>
+    <para>
+      Quite generally the following rule should hold. Everywhere where an <literal>Employee</literal> 
+      is required you should be able to supply any <literal>Employee</literal>, whether it is a vanilla 
+      <literal>Employee</literal> or a specialised <literal>Employee</literal> like <literal>Manager</literal> or
+      <literal>Programmer</literal>. We can thus work with employees at
+      various levels of abstraction. Let us have a look at the implementation of a simple <literal>Person</literal> class.
+      <programlisting language="Java">
+         <xi:include parse="text" href="src/Person.java"/>
+      </programlisting>
+    </para>
+    <para>
+        Let us now look at the subclass, <literal>Employee</literal>:
+      <programlisting language="Java">
+         <xi:include parse="text" href="src/Employee.java"/>
+      </programlisting>
+    </para>
+
+        <para/>
+   <para>
+    An <literal>Employee</literal> inherits the attributes, <literal>name</literal> and 
+   <literal>idNumber</literal> from the
+   <literal>Person</literal> class, but cannot access them directly.
+    Instead it has to access them via the public <literal>getName()</literal>
+    and <literal>getIdNo()</literal> services.
+ </para>
+  <para>
+    Note that the first statement in the first <literal>Employee</literal> constructor specifies that the superclass, 
+    (<literal>Person</literal>), should be instantiated via the constructor which
+    takes two strings as arguments. When we instantiate a class, we automatically instantiate
+    all its superclasses (otherwise an employee would not have any components for the <literal>name</literal> 
+    and the <literal>idNumber</literal>). If
+    you do not specify how the superclass should be instantiated, the compiler will try and
+    instantiate it via the default constructor of the class. If no default constructor exists,
+    the compiler will inform you of that fact with an error message. The rest of the
+    constructor body simply initializes its own attributes.
+  </para>
+  <note>
+    <para>
+      The <literal>super()</literal> statement, like the <literal>this()</literal> statement - 
+      must be the first statement in the constructor.
+    </para>
+  </note>
+  
+  <section>
+    <title>Overriding services</title>
+    <para>
+      Note that the <literal>Person</literal> offers a service, <literal>speak()</literal>, allowing
+      a client to request that the person say something. The <literal>Employee</literal> class inherits this
+      (and all other) functionality by default. Hence, all employees will also be able to speak. 
+    </para>
+    <para>
+      We may wish, however, for an employee to act different when offering the same service, i.e.
+      he may wish to be more professional and helpful. In order to do this, a subclass may
+      <emphasis>override</emphasis> the inherited service, by re-defining the same service
+      (with the same service name, arguments and return type) but with a different method body.
+      The Java compiler will always ensure that an overriden service does not violate the
+      <quote>contract</quote> of the original (abstract) service, i.e. that it does indeed
+      receive the same arguments, produces the same return type, and does not throw any additional
+      exceptions to those declared by the service in the sperclass.
+    </para>
+    <para>
+      This mirrors real life, where specialisations offer the same service (i.e. both a Fiat
+      and a Ferrari offer the <literal>accelerate()</literal> service) but the services are
+      realised very differently.
+    </para>
+    <para>
+      Overriding services are also the basis of <emphasis>polymorphism</emphasis>, an important
+      aspect of Object-orientation.
+    </para>
+  </section>
+  
+</section>

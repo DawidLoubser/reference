@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude" 
+  xml:id="resources.information.solms.training.courses.AdvancedJava.courseNotes.ooReview.assertions.anExample">
+    
+    <title>An Example</title>
+
+<para>Below we show the code for a one-dimensional Newton-Raphson root solver:
+<programlisting language="Java">
+    <xi:include parse="text" href="../source/NewtonRaphson1D.java"/>
+</programlisting>
+</para>    
+<para>It makes use of an interface for one-dimensional differentiable functions
+  <programlisting language="Java">
+    <xi:include parse="text" href="../source/DifferentiableFunction1D.java"/>
+</programlisting>
+</para>
+<para>which, in turn, extends the interface for general real-valued one-dimensional
+functions:
+  <programlisting language="Java">
+    <xi:include parse="text" href="../source/Function1D.java"/>
+</programlisting>
+</para>
+<para>The root solver converges (hopefully) to the root. If convergence within the
+specified error bars is not achieved within a specified number of iterations,
+the root solver throws the following exception.
+  <programlisting language="Java">
+    <xi:include parse="text" href="../source/NoConvergenceException.java"/>
+</programlisting>
+</para>
+    <para>Now, assume we have code which makes use of this root solver. If the system
+behaves correctly, the resultant root is within the error tolerance, and our
+assertion test should pass. If there is an error in the algorithm (in
+general this may have been introduced by modifying some other classes),
+then the assertion may fail, resulting in the application halting with
+an error. We are thus informed of an error in the system (not caused by
+incorrect usage or unexpected environmental conditions, as per Exceptions, 
+but by <emphasis>system failure</emphasis>) via an <literal>AssertionError</literal>:
+
+<programlisting language="Java">
+<xi:include parse="text" href="../source/AssertionTest.java"/>
+</programlisting>   
+</para>
+</section>

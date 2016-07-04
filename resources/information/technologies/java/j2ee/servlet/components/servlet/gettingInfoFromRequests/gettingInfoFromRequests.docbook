@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Getting information from requests</title>
+    <para>
+        A request contains data passed between a client and the servlet. All requests 
+        implement the <literal>ServletRequest</literal> interface. This interface defines methods for 
+        accessing the following information: 
+        <itemizedlist>
+            <listitem>
+                <para>Parameters, which are typically used to convey information between 
+                clients and servlets
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Object-valued attributes, which are typically used to pass information 
+                    between the servlet container and a servlet or between collaborating servlets
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Information about the protocol used to communicate the request and about 
+                    the client and server involved in the request
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Information relevant to localization
+                </para>
+            </listitem>
+        </itemizedlist>
+   
+        For example, a servlet to add a product to a shopping cart may receive the product ID as a 
+        parameter to the request. The following code 
+        fragment illustrates how to use the getParameter() service to extract the product identifier: 
+        <programlisting><![CDATA[
+String prodId = request.getParameter("productid"); 
+if (prodId != null) 
+{ 
+    Product p = ProductDAO.getProduct(prodId); 
+    //...
+}
+else
+{
+    // Client did not provide parameter
+    //...
+}
+        ]]></programlisting>
+    You can also retrieve an input stream from the request and manually parse the 
+    data (though this is uncommon in typical applications). To read character data, use the <literal>BufferedReader</literal> object returned by the 
+    request’s <literal>getReader</literal> method. To read binary data, use the <literal>ServletInputStream</literal> 
+    returned by <literal>getInputStream</literal>. 
+    </para>
+    
+    <section>
+        <title>Example: Reading Parameters</title>
+        <para>
+            The following complete servlet indicates how to obtain an enumeration of all request parameters and
+            display them as <emphasis>plain text</emphasis> (<literal>text/plain</literal>) to the client.
+            <programlisting><![CDATA[
+]]><xi:include href="../examples/simple/src/src/java/example/basic/EchoServlet.java" parse="text"/><![CDATA[
+            ]]></programlisting>
+            <note>
+                <para>
+                    We chose to output plain text information in roder to simplify the code. Typical output would be XHTML,
+                    but servlets are not supposed to contain presentation logic in anyway. What <emphasis>is</emphasis>
+                    important, is that one should <emphasis>always</emphasis> indicate the content type of information sent 
+                    across the network.
+                </para>
+            </note>
+        </para>
+        <para>
+            We could send parameters to the echo servlet using an XHTML form, as
+            follows:
+            <programlisting><![CDATA[
+]]><xi:include href="../examples/simple/src/src/web/echoForm.xhtml" parse="text"/><![CDATA[
+            ]]></programlisting>
+        </para>
+    </section>
+    
+    
+    <section><title/>
+    <para>
+        HTTP servlets are passed an HTTP request object, <literal>HttpServletRequest</literal>, which 
+        contains the request URL, HTTP headers, query string, and so on. 
+        An HTTP request URL contains the following parts (available through services on the request object): 
+        <programlisting><![CDATA[
+http://[host]:[port][request path]?[query string]
+        ]]></programlisting>
+        The request path is composed of the following elements: 
+        <itemizedlist>
+            <listitem>
+                <formalpara>
+                    <title>Context path</title>
+                    <para>A forward slash (/), followed by the context root of the servlet’s web application.</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Servlet path</title>
+                    <para>The path section that corresponds to the component alias (the URI mapping specified in <literal>web.xml</literal>) 
+                        that activated this request. This path starts with a forward slash (/).</para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Path info</title>
+                    <para>The part of the request path that is not part of the context path or the servlet path (the rest).</para>
+                </formalpara>
+            </listitem>
+        </itemizedlist>
+        
+        For a web module deployed to <literal>/productApp</literal>, the following example shows the values
+        reported by the path services. The deployment descriptor contains the following mappings:
+    </para>
+    
+    <table>
+        <title>Servlet mappings</title>
+        <tgroup cols="2">
+            <thead>
+                <row>
+                    <entry>
+                        <para>URI Pattern</para>
+                    </entry>
+                    <entry>
+                        <para>Servlet</para>
+                    </entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry>
+                        <para>/cart/* </para>
+                    </entry>
+                    <entry>
+                        <para>CartServlet</para>
+                    </entry>
+                    
+                </row>
+                <row>
+                    <entry>
+                        <para>/*.svg</para>
+                    </entry>
+                    <entry>
+                        <para>SVGRenderServlet</para>
+                    </entry>
+                    
+                </row>
+            </tbody>
+        </tgroup>
+    </table>
+    
+    <table>
+        <title>Analysis of request URIs</title>
+        <tgroup cols="3">
+            <thead>
+                <row>
+                    <entry>
+                        <para>Request URI (req.getRequestURI())</para>
+                    </entry>
+                    <entry>
+                        <para>Servlet Path (req.getServletPath())</para>
+                    </entry>
+                    <entry>
+                        <para>Path Info (req.getPathInfo())</para>
+                    </entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry>
+                        <para>/productApp/cart/add/5314</para>
+                    </entry>
+                    <entry>
+                        <para>/cart</para>
+                    </entry>
+                    <entry>
+                        <para>/add/5314</para>
+                    </entry>
+                </row>
+                <row>
+                    <entry>
+                        <para>/productApp/images/wheelbarrow.svg</para>
+                    </entry>
+                    <entry>
+                        <para>/images/wheelbarrow.svg</para>
+                    </entry>
+                    <entry>
+                        <para><literal>null</literal></para>
+                    </entry>
+                </row>
+            </tbody>
+        </tgroup>
+    </table>
+    </section>
+    
+    
+</section>

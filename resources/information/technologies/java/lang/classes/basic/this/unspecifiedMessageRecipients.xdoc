@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.classes.basic.this.unspecifiedMessageRecipients"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title role="Unspecified Message Recipients">Unspecified Message Recipients</title>
+  <para>
+    At times you will see code where a function is called directly without a message
+    recipient being specified. Consider, for example, the following version of the 
+    <literal>Account</literal> class:
+    <programlisting><xi:include parse="text" href="src/Account1.java"/></programlisting>
+  </para>
+  <para>
+    In the <literal>debit()</literal> method the credit method is called. But
+    the recipient of the service request message is not specified -- recall that one usually
+    sends a message via
+    <programlisting><![CDATA[
+someObject.doSomething(args);
+    ]]></programlisting>
+ </para>
+ <para>
+   So, who receives the <literal>credit()</literal> message? If no message recipient is specified, the
+    Java compiler inserts <literal>this</literal>. Hence, the service request
+   <programlisting><![CDATA[
+credit(amount);
+   ]]></programlisting>
+   in the <literal>debit()</literal> method is interpreted as
+   <programlisting><![CDATA[
+this.credit(amount);
+   ]]></programlisting>
+ </para>  
+ <para>
+   Let us carefully identify once more who
+   exactly will receive the message by tracing the service requests. A client will request a
+   debit from some particular account via
+   <programlisting><![CDATA[
+myAccount.debit(amount);
+   ]]></programlisting>
+ </para>  
+ <para>
+   We thus enter the <literal>debit()</literal> service for <literal>myAccount</literal>. In it we call
+   <programlisting><![CDATA[
+this.credit(amount);
+   ]]></programlisting>
+   with <literal>this</literal> being <literal>myAccount</literal>.
+ </para>
+</section>

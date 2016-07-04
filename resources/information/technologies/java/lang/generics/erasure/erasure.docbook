@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.lang.generics.defining.erasure">
+    <title>Erasure</title>
+    <para>
+        In order to remain compatible with previous versions of Java byte
+        code (compiled Java code), the generics are resolved at compile
+        time, and no information about parameterised types survives in the byte
+        code. Parameterised types are thus solely a source-code feature in Java, <abbrev>i.e.</abbrev>
+        all information about the type parameters is erased from the compiled code.
+    </para>
+    
+    <section>
+        <title>How does the compiler handle type parameters?</title>
+        <para>
+            The Java compiler processes generics by generating byte code
+            using the raw (non-parameterised) type,
+            and together with type-casts which ensure the type safety. Thus, even though you might
+            have defined a
+            <programlisting language="Java"><![CDATA[
+class LinkedList<T> implements List<T>
+{
+   T get(int index) {...}
+                
+   ...
+}                
+                ]]></programlisting>
+            the compiler generates code which only uses a raw, non-parametrised linked list with
+            type casting code around it. The parametrised type and the type parameter itself do not
+            exist within the compiled code.
+        </para>
+    </section>
+    
+    <section>
+        <title>Consequences of erasure</title>
+        <para>
+            The consequence of erasure is that generics is in some ways more restrictive in Java than it is
+            in other programming languages like C++. 
+        </para>
+        <section>
+            <title>Cannot instantiate template type</title>
+            <para>
+                For example, in C++ it would be possible to
+                define a mathematical <literal>Vector</literal> class on a template where new instances of
+                the template type are created in the at run-time. However, due to erasure, instantiation of the 
+                template type is not possible in Java. Other mechanisms like cloning from a prototype must
+                be used instead.
+            </para>
+            <para>
+                
+                <programlisting language="Java"><![CDATA[
+public class Vector<T extends Scalar> implements Cloneable
+{
+  public Vector(int length)
+  {
+    elements = new T[length];                 // illegal
+    for (int i=0; i<elements.length; ++i)
+      elements[i] = new T();                     //illegal
+  }
+  ...
+}                    
+                    ]]></programlisting>
+            </para>
+        </section>
+        
+        <section>
+            <title>Cast to and use as raw type</title>
+            <para>
+                Because type parameters are purely a source code construct which do not survive
+                within the compiled code, we can always cast a parameterised class to its raw form,
+                losing all type safety in the process.
+            </para>
+            <para>
+                For example, we may be using a <literal><![CDATA[LinkedList<Integer> intList]]></literal>,
+                adding <literal>Integer</literal>s to it. After typecasting this list to a raw list
+                we can add any object to it, even though the list itselfwas created as a list of integers:
+                <programlisting language="Java"><![CDATA[
+LinkedList<Integer> intList = new LinkedList<Integer>();
+intList.add(new Integer(2));                    
+intList.add(new Integer(5));
+...
+LinkedList rawList = (LinkedList)intList;
+rawList.add("String which ain't an integer");  
+....                    
+                    ]]></programlisting>
+            </para>
+        </section>
+        
+        <section>
+            <title>Ambiguity errors</title>
+            <para>
+                Erasure can be the result of ambiguity errors where two classes or methods result in
+                the same erasure, <abbrev>i.e.</abbrev> in compiled classes or methods which have
+                the same signature after erasure.
+            </para>
+            <para>
+                For example, the <literal>set</literal> methods as well as the two
+                <literal>average</literal> functions would result in ambiguities caused by erasure
+                <programlisting language="Java">
+<xi:include parse="text" href="../examples/ambiguityTest/AmbiguityTest.java"/>                    
+                </programlisting>
+            </para>
+        </section>
+      
+      <section>
+        <title>Unable to reflect upon</title>
+        <para>
+          We cannot use Java reflection to, at runtime, examine an object
+          and its type parameters. All type parameters will simply reflect
+          as <literal>java.lang.Object</literal>.
+        </para>
+      </section>
+    </section>
+    
+</section>    

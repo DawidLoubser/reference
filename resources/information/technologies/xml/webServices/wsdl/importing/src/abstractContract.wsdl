@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions  
+  targetNamespace="http://example.co.za/clock/"
+  xmlns:clock="http://example.co.za/clock/" 
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://schemas.xmlsoap.org/wsdl/ 
+                      http://schemas.xmlsoap.org/wsdl/wsdl.xsd">
+  
+  <wsdl:documentation>
+    An abstract contract for a clock
+  </wsdl:documentation>
+
+
+  <!-- Types used for exchanged value objects -->
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://example.co.za/service/" 
+      elementFormDefault="qualified" 
+      attributeFormDefault="unqualified">
+      
+      <xsd:complexType name="GetTimeRequest"/>
+      <xsd:element name="getTimeRequest" type="clock:GetTimeRequest"></xsd:element>
+      
+      <xsd:complexType name="GetTimeResponse">
+        <xsd:sequence>
+          <xsd:element name="time" type="xsd:time"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getTimeResponse" type="clock:GetTimeResponse"/>
+      
+    </xsd:schema>
+  </wsdl:types>
+
+
+  <!-- Exchanged value objects and faults -->
+  <wsdl:message name="GetTimeRequest">
+    <wsdl:part  name="body" element="clock:getTimeRequest"/>
+  </wsdl:message>
+  <wsdl:message name="GetTimeResponse">
+    <wsdl:part  name="body" element="clock:getTimeResponse"/>
+  </wsdl:message>
+
+
+  <!-- Service contract (interface) -->
+  <wsdl:portType name="Clock">
+    
+    <wsdl:operation name="getCurrentTime">
+      <wsdl:input message="clock:GetTimeRequest"/>
+      <wsdl:output message="clock:GetTimeResponse"/>
+    </wsdl:operation>
+    
+  </wsdl:portType>
+  
+</wsdl:definitions>

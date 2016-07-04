@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.ooLanguage.innerClasses.anonymousClasses"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/dist/resources/components/za/co/solms/solmsDoc/schema/solmsDoc.xsd">
+    
+    <title role="Anonymous Classes">Anonymous Classes</title>
+
+<para>Anonymous classes are unnamed inner classes. Generally using anonymous
+classes makes your code more difficult to read and, except for tiny
+inner classes, one should rather not make them anonymous.</para>
+
+<para>They are, however, quite commonly used for event adapters. For example
+
+<programlisting><![CDATA[
+import java.awt.*;
+import java.awt.event.*;
+
+public class MyFrame extends Frame
+{
+  public MyFrame()
+  {
+    addWindowListener (new WindowAdapter()
+                       {
+                         public void windowClosing (WindowEvent event)
+                           {System.exit(0);}
+                       });
+  }
+}
+]]></programlisting>
+</para>
+<para>The above defines an anonymous subclass of <emphasis role="verb">WindowAdapter</emphasis> which overrides the
+<emphasis role="verb">windowClosing()</emphasis> event handler method. The above code is essentially
+equivalent to the following, more conventional code:
+
+<programlisting><![CDATA[
+import java.awt.*;
+import java.awt.event.*;
+
+public class MyFrame extends Frame
+{
+  public MyFrame()
+  {
+    class MyWindowAdapter extends WindowAdapter
+    {
+      public void windowClosing (WindowEvent event)
+      {System.exit(0);}
+    }
+
+    addWindowListener (new MyWindowAdapter());
+  }
+}
+]]></programlisting>
+</para>    
+</section>

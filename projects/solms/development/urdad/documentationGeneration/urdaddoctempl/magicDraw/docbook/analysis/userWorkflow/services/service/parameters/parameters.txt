@@ -1,0 +1,59 @@
+#getInputParameters($service)    
+#set($inputParameters = $result)
+#if ($inputParameters.size() > 1)
+    <note>
+        <title>ERROR: Not complying to request-response pattern</title>
+        <para>
+            The $service.name service has multiple input parameters. A URDAD complient design
+            should contain only a single request object
+            which contains all the information which should be conveyed with the request
+            for the $targetUseCase.name service.
+        </para>
+    </note>
+#end
+    
+#foreach($par in $inputParameters)
+    <section>
+        <title>Input (request object): $par.type.name</title>
+        <para>
+            The request object for the $service.name service is a $par.type.name. It contains the information
+            which must be provided with the service request.
+        </para>
+        #set($typeComment = $report.getComment($par.type).body)                    
+        #if ($typeComment && $typeComment != '')
+            <para>
+                $typeComment
+            </para>
+        #end                    
+        
+        #getDataStructureDiagram($par.type)    
+        #set($diagram = $result)
+        #set($diagramId = $diagram.qualifiedName.replaceAll('::','.').replaceAll(' ','_'))
+        
+        #if($diagram && $diagram != '')
+            #set ($diagramComment = $report.getComment($diagram).body)
+            #if ($diagramComment && $diagramComment != '')
+                <para>
+                    $diagramComment
+                </para>
+            #end
+            
+##            <figure xml:id="$diagramId">
+            <figure>
+                <title>Data structure (class) diagram for $par.type.name</title>
+                <mediaobject><imageobject>
+                    <imagedata contentwidth="150mm" scalefit="1" fileref="$diagram.image"/>
+                </imageobject></mediaobject>
+            </figure>   
+        #else
+            <note>
+                <title>ERROR: missing data structure specification</title>
+                <para>
+                    The data structure requirements for each exchanged value object needs to be specified. The data structure of 
+                    $par.type.name has not been specified.
+                </para>
+            </note>
+        #end
+        
+    </section>
+#end  ##foreach(parameter)

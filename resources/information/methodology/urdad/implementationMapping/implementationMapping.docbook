@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-2-18 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Implementation mappings</title>
+    <para>
+        The implementation mappings to a particular SOA technology suite (such as a JBI-based EJB) would be quite technology-specific. 
+        Thus, while the technology neutral business process design
+        is usually done by business analysts, the implementation mappings are usually done by the technical team, with guidance
+        from the architect.
+    </para>
+    <para>
+        Often a business process is realised across a combination of manual (human) work flow steps, services provided by external service providers
+        and automated processing steps executed within systems. The services contracts coming out of the technology
+        neutral business process design can be used as a basis for the service provider contracts which are either realised
+        by external service providers or by business units hosted within the organisation. The implementation mapping of
+        such work flow steps may require training certain staff members to execute them.
+    </para>
+    <para>
+        Often, however, the technology mapping may result in mapping the technology neutral design onto 
+        <itemizedlist>
+            <listitem>
+                <para>a realisation using current systems, with perhaps some additional development,</para>
+            </listitem>
+            <listitem>
+                <para>buying technology components and customising them, or</para>
+            </listitem>
+            <listitem>
+                <para>developing an entire system hosting the various services from scratch.</para>
+            </listitem>
+        </itemizedlist>
+         MDA (Model-Driven Architecture) tools aim to automate this process fully in the near future.
+    </para>
+    
+    <section>
+        <title>Notes on mapping onto a Service-Oriented architecture (SOA)</title>
+        
+        <section>
+            <title>Services Contracts</title>
+            <para>
+                Services contracts are mapped to WSDL contracts which are typically abstract, i.e. without protocol
+                binding definitions. The structure of the exchanged value objects are mapped to XML Schema definitions.
+            </para>
+        </section>
+        
+        <section>
+            <title>Workflow controllers</title>
+            <para>
+                The service which plays the role of workflow controller at a certain level of granularity typically needs
+                to invoke other, lower-level services. For this, we typically map it to a technology which could be used for service 
+                orchestration, such as <emphasis>WS-BPEL</emphasis> or a <emphasis>Java-based</emphasis> service.
+            </para>
+            <para>
+                The design for a workflow controller often involves dynamically routing requests to lower-level service providers
+                based on certain criteria (message contents, context, environmental state). This implies a content-based router,
+                often implemented in a rules or workflow technology such as Apache Camel or Drools.
+            </para>
+            <note>
+                <para>
+                    WS-BPEL has practical shortcomings in terms of data manipulation / querying when dealing with
+                    object-oriented XML structures, which render it practical only for relatively simple, course-grained
+                    and high-level activities, forcing the developer to out-source logic to a greater number of low-level services (implemented
+                    in, say, Java or XSLT) than what may have been otherwise necessary). 
+                </para>
+            </note>
+        </section>
+        
+        <section>
+            <title>Service Adaptors</title>
+            <para>
+                An URDAD-based design often includes, or implies, adaptors between services. These adaptors often primarily
+                involve message transformation, to which a technology such as XSLT is very suited. If an adaptor contains a large
+                amount of logic, or requires multiple helper services, it could be implemented as a special form of workflow controller.
+            </para>
+        </section>
+        
+        <section>
+            <title>Low-level business services</title>
+            <para>
+                Individual services that perform atomic tasks (such as computation, database persistence, etc) are often implemented in
+                a technology which has access to the necessary support technologies, such as Java (and often in a container such as EJB).
+            </para>
+        </section>
+        
+    </section>
+    
+    <!--
+    <section>
+        <title>Notes on mapping onto a Java EE based architecture</title>
+        <para>
+            As a second example of a technology mapping, consider a typical Java EE architecture.
+            The work flow controllers at the various levels of granularity would be typically mapped onto either session
+            or message driven beans (EJB). The value objects would map onto Java data objects, and sometimes
+            entity objects stored with JPA.
+        </para>
+    </section>
+    
+    
+    <bibliography>
+        <xi:include href="../../../bibliography/Erl_2005_SOA.docbook"></xi:include>
+    </bibliography>
+    -->
+</section>    
+    

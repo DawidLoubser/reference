@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.platforms.linux.processControl.kill"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Killing processes</title>
+  <para>
+    To terminate one or more processes given their process ids (ids), one uses
+    <cmdsynopsis><command><![CDATA[
+kill <PID1> <PID2> ...      
+    ]]></command></cmdsynopsis>
+    command which sends a <emphasis>termination signal</emphasis> to the
+    respective processes. The above is actually shorthand for
+    <cmdsynopsis><command><![CDATA[
+kill -SIGTERM <PID1> <PID2> ...      
+    ]]></command></cmdsynopsis>
+  </para>
+    <para>
+      There are a number of signals one can send to terminate a process including
+      <itemizedlist>
+        <listitem><para>
+          the interruption signal, <literal>SIGINT</literal> sent to the process upon 
+          interrupting it from the terminal via <literal><![CDATA[<CTRL> C]]></literal>,
+        </para></listitem>
+        <listitem><para>
+          the quit signal, <literal>SIGQUIT</literal>, sent when quitting a process from
+          the keyboard  via <literal><![CDATA[<CTRL> D]]></literal> and
+        </para></listitem>
+        <listitem><para>
+          the hangup signal, <literal><![CDATA[SIGHUP]]></literal>  sent to a process when
+          the terminal from which the process was launched is closed, or when the user which 
+          started a process logs off (when the <emphasis>nohup</emphasis>
+          option is specified, a process will ignore the hangup signal, and continue processing
+          after the terminal from which it was started is closed).
+        </para></listitem>
+      </itemizedlist>
+      The main example of explicitly specifying a terminal signal other than <literal>SIGTERM</literal>
+      is that of terminating a process unconditionally.
+    </para>
+  
+  <section id="resources.information.platforms.linux.processControl.sigkill">
+    <title>Terminating background processes unconditionally</title>
+    <para>
+      At times termination signals are ignored and one needs to force an unconditional
+      termination of a process. This is done via the kill signal, <literal>SIGKILL</literal>,
+      which has the numerical value 9.
+    </para>
+    <para>
+      For example
+      <cmdsynopsis><command>
+kill -SIGKILL 11111
+      </command></cmdsynopsis>
+      kills the process with PID=11111 unconditionally.
+      <note>
+        <para>
+          The <literal>SIGKILL</literal> signal does not give the process a chance to do any
+          clean up before it is terminated, and should only be used in exceptional cases.
+        </para>
+      </note>
+    </para>
+   </section>
+  
+  <section>
+    <title>Terminating all background processes</title>
+    <para>
+      To kill all background processes of a terminal, one uses
+      <cmdsynopsis><command>
+kill 0        
+      </command></cmdsynopsis>
+      This is particularly useful if a background process spawns a series of further processes,
+      and you would like to kill them all.
+    </para>
+  </section>
+  
+  <section>
+    <title>Killing all processes for a particular command via <command>killall</command></title>
+    <para>
+      So far we have use ids to terminate processes. Often it is more convenient to specify
+      a process by the command which launched it. For this, the <command>killall</command>
+      command can be used. For example, to kill all java processes via the termination signal
+      <literal>SIGTERM</literal>, you can use
+      <cmdsynopsis><command>
+killall java        
+      </command></cmdsynopsis>
+    </para>
+  </section>
+  
+  
+</section>

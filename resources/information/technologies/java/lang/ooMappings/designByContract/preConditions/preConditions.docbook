@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>Implementing preconditions in Java</title>
+    <para>
+        The preconditions are those conditions under which a service provider may refuse a service
+        without breaking the contract.
+        <note>
+            <para>
+                The contract is written from the client's perspective. It does not mean that every service
+                provider realising the contract
+                <emphasis>must</emphasis>
+                refuse the service when the precondition does not hold - only that the
+                service provider has the right to refuse the service. For example, when there
+                is insufficient funds in an account, a certain Bank implementation might
+                immediately provide a loan to the client instead of refusing a cash withdrawal.
+            </para>
+        </note>
+    </para>
+    <para>
+        The notification mechanism used by services to refuse a service because a precondition is not met,
+        is to throw a <emphasis>checked exception</emphasis> - <abbrev>i.e.</abbrev>
+        any exception which is not a<literal>java.lang.RuntimeException</literal>. Hence, for every pre-condition one
+        introduces a checked exception class.
+    </para>
+    <figure>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="javaExceptions.png"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+    <para>
+        Java essentially has three categories of throwable objects, represented by three direct
+        subclasses to <literal>java.lang.Throwable</literal>:
+        <orderedlist>
+            <listitem>
+                <formalpara>
+                    <title>java.lang.Error</title>
+                    <para>
+                        Errors are thrown by the Java Runtime Environment. They signal problems with the runtime
+                        environment itself and should not be thrown, or caught, by application code.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>java.lang.RuntimeException</title>
+                    <para>
+                        Runtime exceptions are thrown if an application error occurs,
+                        <abbrev>i.e.</abbrev>
+                        if the server is unable to meet the contractual obligations. This is usually attributable
+                        to a coding mistake, insufficient testing, or infrastructure failure.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Checked exceptions</title>
+                    <para>
+                        These are the pre-condition exceptions used to notify a client that a service request is
+                        refused because a particular precondition has not been met. Since the contract allows
+                        for service request refusal under such conditions, no application error has occurred (at the current
+                        level of granularity).
+                    </para>
+                </formalpara>
+            </listitem>
+        </orderedlist>
+    </para>
+    <para>
+        For example, if an account may refuse the
+        <literal>debit</literal>
+        service if either
+        <itemizedlist>
+            <listitem>
+                <para>
+                    there are insufficient funds, or
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    if the daily withdrawal limit has been exceeded,
+                </para>
+            </listitem>
+        </itemizedlist>
+        then one should introduce two exception classes, e.g.
+        <literal>InsufficientFundsException</literal>
+        and<literal>DailyLimitExceededException</literal>. Both these exceptions would be notifiable
+        exceptions (i.e. extend<literal>java.lang.Exception</literal>).
+    </para>
+    <para>
+        Thus the service implementation would check whether all contractual preconditions the service
+        provider realisation would like to enforce are met, and if any of these is not met, the service
+        would throw a corresponding exception:
+        <programlisting language="Java"><![CDATA[
+public class AccountImpl implements Account
+{
+   ...      
+   public TransactionConfirmation debit(double amount)
+   throws InsufficientFundsException, DailyLimitExceededException
+   {
+      // Test preconditions
+      if (balance - amount < minimumBalance)
+        throw new InsufficientFundsException();
+      
+      if (getTotalDebits(today) + amount > dailyLimit)
+        throw new DailyLimitExceededException();
+      
+      // Now perform the debit
+      ...
+      
+      // Now we can check that business rules still hold. 
+      // If they fail now, then there was an application error.
+      
+      assert balance >= minimumBalance : 
+        "minimum balance invariance violated";
+        
+      assert getTotalDebits(today) <= dailyLimit : 
+        "daily debit limit violated";
+      
+      ...
+   }   
+      
+   ...
+}      
+      ]]></programlisting>
+    </para>
+</section>

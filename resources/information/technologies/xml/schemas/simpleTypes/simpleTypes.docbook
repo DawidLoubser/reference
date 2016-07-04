@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+xml:id="resources.information.technologies.xml.schemas.simpleTypes.simpleTypes"
+      
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Simple Types</title>
+  
+  <indexterm>
+    <primary>XML Schema</primary>
+    <secondary>simple types</secondary>
+  </indexterm>
+    <para> 
+      Simple types in XML schemas are indivisible (atomic) - they do not contain any lower-level elements or 
+      attributes. They are either one of the built-in primitive data types like <literal>string</literal>,
+        <literal>float</literal> or<literal>date</literal> or a specialization of one of
+        these primitive types. They are often used as the data type for <emphasis>attributes</emphasis>, 
+        as complex types can only be used within <emphasis>elements</emphasis>.
+    </para>
+
+    <section>
+        <title>Primitive Data Types</title>
+        <para> 
+          XML Schema supports the standard primitives found in most object-oriented programming
+            languages, as well as a few special ones for full date/time/time-period support,
+            as well as support for XML concepts themselves.
+        </para>
+        <para> 
+          Below we summarize the primitive data types supported by XML Schemas:
+          <itemizedlist>
+            <listitem><formalpara>
+              <title>Text data</title>
+              <para>
+                Either <literal>string</literal>, or <literal>CDATA</literal> for un-parsed text data (i.e. text that does not
+                  have to conform to valid XML syntax).
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>boolean</title>
+              <para>
+                 An element or attribute of type <literal>boolean</literal>, to represent 'true' or 'false' ('1' or '0' can also
+                  be used).
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Integer numbers</title>
+              <para>
+                XML schemas support signed and unsigned
+                versions of typical integral types, such as <literal>byte</literal>, <literal>short</literal>,
+                <literal>int</literal> and <literal>long</literal> (e.g.
+                <literal>int</literal> and <literal>unsignedInt</literal>) as well as
+                derived (convenient) types such as <literal>negativeInteger</literal>,
+                <literal>positiveInteger</literal>, <literal>nonNegativeInteger</literal> and
+                <literal>nonPositiveInteger</literal>.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Floating point data types</title>
+              <para>
+                 XML schemas support floating-point numbers with
+                <literal>float</literal> and <literal>double</literal> (for the corresponding
+                IEEE specifications), and <literal>decimal</literal> (for arbitrary precision decimal numbers).
+                Also supported is <literal>NaN</literal> (for "not a number").
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Data types for specifying dates and times</title>
+              <para>
+                 The date/time support in XML
+                 Schema is very extensive.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Name Data Types</title>
+              <para>
+                 XML Schema introduces 3 data types for naming. These are 
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <literal>Name</literal> for standard names adhering to XML's naming rules. </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <literal>QName</literal> for qualified names using XML name spaces. For
+                            example <literal>TravelLog:trip</literal>. </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <literal>NCName</literal> for names from other name spaces without the
+                            prefix, for example the <literal>trip</literal> of the above example. </para>
+                    </listitem>
+                </itemizedlist>
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Identities, Named Tokens, Notations and Entities</title>
+              <para>
+                XML Schema defines standard data
+                types for these via <literal>ID</literal>, <literal>IDREF</literal>,
+                <literal>IDREFS</literal>, <literal>NMTOKEN</literal>,
+                <literal>NMTOKENS</literal>, <literal>NOTATION</literal>,
+                <literal>ENTITY</literal> and <literal>ENTITIES</literal>.              
+              </para>
+            </formalpara>
+            </listitem>
+          </itemizedlist>
+        </para>  
+           
+        <section>
+            <title>Date/Time Types</title>
+            <para>
+                In principle (and similar to the Java programming language), XML Schema can support
+                different calendar systems. However, the <emphasis>Gregorian Calendar</emphasis>
+                (commonly used in the western world) is the only one requiring native support.
+                The types that represent Gregorian calendar concepts are typically prefixed with a 'g'.
+            </para>
+            <table xml:id="dateTimePrimitives">
+                <title>Date/Time primitives defined for XML Schema.</title>
+                <tgroup cols="3">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Date/Time Type</para>
+                            </entry>
+                            <entry>
+                                <para>Example </para>
+                            </entry>
+                            <entry>
+                                <para>Description </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>date </para>
+                            </entry>
+                            <entry>
+                                <para>2001-01-31</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>time </para>
+                            </entry>
+                            <entry>
+                                <para>17:08:10</para>
+                            </entry>
+                            <entry>
+                                <para>Time-zone is optional, e.g. 17:08:10+02:00</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>dateTime </para>
+                            </entry>
+                            <entry>
+                                <para>2001-01-31T17:08:10+02:00</para>
+                            </entry>
+                            <entry>
+                                <para>(Time-zone is optional)</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>gMonth</para>
+                            </entry>
+                            <entry>
+                                <para>2001-01 </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>gYear </para>
+                            </entry>
+                            <entry>
+                                <para>2001 </para>
+                            </entry>
+                        </row>
+                        <!-- Removed from XSD spec?? row>
+                            <entry>
+                                <para>century </para>
+                            </entry>
+                            <entry>
+                                <para>20 </para>
+                            </entry>
+                            <entry>
+                                <para>21'st century </para>
+                            </entry>
+                        </row-->
+                        <!-- Can't find this in XSD spec? row>
+                            <entry>
+                                <para>timePeriod </para>
+                            </entry>
+                            <entry>
+                                <para>2001-01-31T17:08 </para>
+                            </entry>
+                        </row-->
+                        <row>
+                            <entry>
+                                <para>duration </para>
+                            </entry>
+                            <entry>
+                                <para>P3Y2M17DT4H20M2S (or P3D)</para>
+                            </entry>
+                            <entry>
+                                <para>3 years, 2 months, 17 days, 4 hours, 20 minutes, 2 seconds. (or 3 days)  </para>
+                            </entry>
+                        </row>
+                        <!-- Where does this stuff come from?? row>
+                            <entry>
+                                <para>recurringDate </para>
+                            </entry>
+                            <entry>
+                                <para>
+                                    <literal>DASHDASH</literal>05-31 </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>recurringDay </para>
+                            </entry>
+                            <entry>
+                                <para>
+                                    <literal>DASHDASHDASHDASH</literal>31 </para>
+                            </entry>
+                        </row-->
+                    </tbody>
+                </tgroup>
+            </table>
+        </section>
+    </section>
+    
+    <section>
+        <title>List Types</title>
+        <para> 
+          List types are sequences of atomic (indivisible) types. Thus a list can contain
+          any primitive data type or any specialization of a primitive data type. For example
+        <programlisting><![CDATA[
+<xsd:simpleType name="dateList">   
+  <xsd:list itemType="date"/> 
+</xsd:simpleType> 
+        ]]></programlisting>
+            defines a data type for list of dates. In an XML document which implements the
+            schema we can populate such a list via
+           <programlisting><![CDATA[
+<dateList>2000-01-20 2000-05-20 2000-09-20 2000-12-20</dateList> 
+           ]]></programlisting>
+         </para>  
+    </section>
+  
+  <section>
+    <title>Deriving your own simple types</title>
+    
+    <para>
+      A powerful feature of XML Schema is that the developer can create his own
+      simple types by <emphasis>restricting</emphasis> one of the built-in
+      types, such as <literal>string</literal>. The allowable values can be restricted by
+      specifying, amongst other things,
+      <itemizedlist>
+        <listitem>
+          <para>minimum, maximum, or exact length</para>
+        </listitem>
+        <listitem>
+          <para>an enumeration of constant values</para>
+        </listitem>
+        <listitem>
+          <para>a regular expression pattern to which the value must conform</para>
+        </listitem>
+      </itemizedlist>
+    </para>
+    
+    
+    <xi:include href="regularExpressions/regularExpressions.docbook"/>
+    
+    <!-- TODO: Enumerations, etc -->
+    
+  </section>
+  
+  
+  
+</section>

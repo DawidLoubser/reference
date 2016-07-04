@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za  -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>JavaEE implementation of a Call-Return mapping adapter</title>
+    <para>
+        The minimalistic test example is a service provider who offers a service doX which requires at some stage the user to provideA.
+    </para>
+    <para>
+        The conceptual workflow is shown below:
+    </para>
+    <figure>
+        <title>Workflow as per technology neutral design (URDAD)</title>
+        <mediaobject><imageobject><imagedata fileref="../../../userWorkflow.png"/></imageobject></mediaobject>
+    </figure>
+    <para>
+        Because we cannot make a call-back when having a web front-end, we need to map the request back to the client onto a return:
+    </para>    
+    <figure>
+        <title>Workflow using a call-return adapter</title>
+        <mediaobject><imageobject><imagedata fileref="../../../process.png"/></imageobject></mediaobject>
+    </figure>
+    
+    <section>
+        <title>The service layer</title>
+        <para>
+            The service itself is independent of the adapter used to access the service. It is based on a simple URDAD based design. The interface
+            for the service is simply
+            <programlisting>
+<xi:include parse="text" href="../../../../../../../../projects/solms/business/sbss/sbss-bl/src/main/java/za/co/solms/test/webAdapter/businessLogic/ServiceX.java"/>                
+            </programlisting>
+        </para>
+        <para>
+            The services itself is implemented as a stateless session bean:
+            <programlisting>
+<xi:include parse="text" href="../../../../../../../../projects/solms/business/sbss/sbss-bl/src/main/java/za/co/solms/test/webAdapter/businessLogic/ServiceXBean.java"/>                
+            </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Stateful Session Bean adapter using asynchronous session bean call</title>
+        <para>
+            For the adapter an asynchronous call to a session bean (EJB 3.1 +) we need the stateless session bean which offers the asynchronous service
+            <programlisting>
+<xi:include parse="text" href="../../../../../../../../projects/solms/business/sbss/sbss-bl/src/main/java/za/co/solms/test/webAdapter/adapter/ServiceXAsync.java"/>                
+            </programlisting>
+            as well as the adapter which transfers control across services using Futures as communication mechanism:
+            <programlisting>
+<xi:include parse="text" href="../../../../../../../../projects/solms/business/sbss/sbss-bl/src/main/java/za/co/solms/test/webAdapter/adapter/ServiceXAdapter.java"/>                
+            </programlisting>
+        </para>
+    </section>
+    <!--
+    <section>
+        <title>Stateful Session Bean adapter creating a thread</title>
+        <para>
+            An alternative (legacy) implementation is to create a thread in the session bean. Here we use an executor and using a mechanism where we await on
+            appropriate conditions (Java 5 +) to perform the switching between threads:            
+            <note><para>
+                The asynchronous call implementation is preferable as it does not violate EJB rules.
+            </para></note>
+            <programlisting>
+<xi:include parse="text" href="../../../../../../../../projects/solms/business/sbss/sbss-bl/src/main/java/za/co/solms/test/webAdapter/adapter/ServiceXAdapter2.java"/>                
+             </programlisting>
+        </para>
+    </section> -->
+</section>    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

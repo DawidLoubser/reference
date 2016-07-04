@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Project background</title>
+    <para>
+        The current ticket vending system is no longer able to support the organization. A range of infrastructural concerns, high maintenance costs and
+        the inability to effectively realize user requirements has led to the client  deciding to replace the current system with a new system based on a
+        solid enterprise architecture which is able to fulfill the organization's current and future needs.
+    </para>
+    
+    <section>
+        <title>Overview of current system architecture</title>
+        <para>
+            The current system has been developed in ASP with the ASP code directly accessing the SQL database via embedded SQL queries.
+        </para>
+        <para>
+            The system does not have services, domain objects or integration layers. The business logic is directly embedded in the presentation
+            layer, and there are no defined contracts for any of the services offered by the system. 
+        </para>
+        <para>
+            The system does not have a separate integration layer. It interfaces, however, 
+            <itemizedlist>
+                <listitem><para>
+                    with the accounting system used via an ASP connector provided by vendor of the accounting system,        
+                </para></listitem>
+                <listitem><para>
+                    with a payment gateway in order to process credit card transactions,
+                </para></listitem>
+                <listitem><para>
+                    with ticket providers (theatre providers, bus services, ...) via proprietary protocols negotiated with the individual ticket providers,
+                </para></listitem>
+                <listitem><para>
+                    other internal systems via the database.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            The system does support authentication and authorization at the presentation layer and enforces authorization at
+            the database.
+        </para>
+    </section>
+    
+    <section>
+        <title>Reliability issues</title>
+        <para>
+            The current system falls over regularly. This is partially due to not being able to handle the load, partially due to memory management and
+            threading issues and partially due to the current architecture not having any redundancy at either the processing or the persistence layer.
+        </para>
+        <para>
+            The system integrity is also at times compromised due to not enforcing ownership of data. As the system does not support a separate integration
+            layer, integration is often facilitated by other system directly accessing the database. 
+            This endangers the data integrity and ultimately the systems integrity.
+        </para>
+        <para>
+            The transaction demarcation is in code and does not cover transactional control across process steps executed within ticket provider systems.
+        </para>
+    </section>
+    
+    <section>
+        <title>Monitorability and auditability issues</title>
+        <para>
+            In cases where the current system does experience problems, it is often the case that the ticket vendor only becomes aware of these problems
+            after having received complaints from clients. Even then it is often difficult to be able to trace processes in order to identify the source of 
+            the problem.
+        </para>
+    </section>
+    
+    <section>
+        <title>Usability issues</title>
+        <para>
+            The current system is not very intuitive to use. Often usability has been compromised for technical implementation reasons. Furthermore,
+            the system does not support multi-language and accessibility support.
+        </para>
+        <para>
+            Most long-running processes are not managed by the system itself, but are controlled by users who assemble these processes across
+            separate services offered by the system. This results in high user training costs, increased faults around the manually executed
+            processes.
+        </para>
+        <para>
+            Some operational use cases are not explicitly supported by the system itself but are executed by direct database manipulations. This results
+            in higher costs, high error rates and loss of reputation.
+        </para>
+    </section>
+    
+    <section>
+        <title>Scalability issues</title>
+        <para>
+            The system is not able to handle current peak loads or to to support future growth. Furthermore, the current architecture
+            does not allow for scalability of processing power.
+        </para>
+    </section>
+    
+    <section>
+        <title>Accessibility issues</title>
+        <para>
+            The current system is only accessible via web browsers. The business processes are encoded within the web based presentation layer and
+            are not accessible through other channels like mobile clients, application clients or web services.
+        </para>
+        <para>
+            Furthermore, the current system is not usable across a range of standards compliant browsers and are largely written for Microsoft Internet Explorer.
+            As Internet Explorer is loosing more and more market share, the current system excludes more and more users from using the system.
+        </para>
+    </section>
+    
+    <section>
+        <title>Flexibility issues</title>
+        <para>
+            The current system is very expensive to maintain. There are no reusable services or domain objects. The business logic is intertwined with 
+            the presentation, persistence, security and transactional logic. This results in reduced flexibility and high maintenance costs.
+        </para>
+        <para>
+            The in-code transaction management adds further maintenance costs and also reduces the reusability of process steps.
+        </para>
+        <para>
+            Furthermore, the integrability issues discussed below have a further impact on being able to rapidly and cost-effectively make modifications
+            to the system.
+        </para>
+    </section>
+    
+    <section>
+        <title>Integrability issues</title>
+        <para>
+            The current system integrates with 
+            <itemizedlist>
+                <listitem><para>
+                    the accounting system via a ASP connector provided by the vendor of the accounting system,
+                </para></listitem>
+                <listitem><para>
+                    ticket providers via hard-coded messages in proprietary protocols sent from within the ASP code,
+                </para></listitem>
+                <listitem><para>
+                    other internal systems via the database.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Adding new ticket providers and making protocol or connectivity changes for ticket providers is expensive for both,
+            the ticket vending organization and the ticket providers. Furthermore, there is no fail-over safety support, no
+            connection pooling, no transactional control across to ticket provider processes.
+        </para>
+        <para>
+            The database based integration is also cumbersome, expensive to maintain, and threatens the data and system integrity.  
+        </para>
+    </section>
+    
+    <section>
+        <title>Security concerns</title>
+        <para>
+            The authentication is performed in the presentation/processes layer and authorization is hard-coded within this layer. The database
+            performs a second level of authorization around data access.
+        </para>
+        <para>
+            Furthermore, the system does not currently make use of secure communications. This short-coming needs to be addressed within
+            the new architecture.
+        </para>
+    </section>
+    
+</section>    

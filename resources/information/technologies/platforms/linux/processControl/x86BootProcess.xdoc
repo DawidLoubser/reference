@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section SYSTEM "file:/usr/share/sgml/db42xml/docbookx.dtd"-->
+
+<section id="resources.information.platforms.linux.processControl.x86BootProcess"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>The x86 boot process</title>
+  <para>
+     Below are the steps of the boot process up to the point at which the Linux kernel is loaded:
+     <orderedlist>
+       <listitem><para>
+         The x86 processor looks at the end of the system memory for the BIOS (Basic Input/Output
+         system) and runs it. The BIOS is a piece of software stored in ROM (Read-Only Memory).
+         The BIOS
+         <itemizedlist>
+           <listitem><para>provides a low-level interface to peripheral devices</para></listitem>
+           <listitem><para>looks for and checks peripherals,</para></listitem>
+           <listitem><para>determines which device is used for booting,</para></listitem>
+           <listitem><para>
+             reads the master boot record (MBR) at the first sector of the drive which contains the
+             instructions on how to load the boot loader. Linux provides two boot loaders,
+             LILO (the Linux Loader) and GRUB (the Grand Unified Bootloader).
+             <note>
+               <para>
+                 Linux can incorporate the boot information of existing operating systems
+                 like Microsoft Windows within its boot loaders. Microsoft Windows, on the other
+                 hand will simply overwrite the boot loader without preserving any information
+                 from it. Hence, if you want to install both operating systems, you'll have to
+                 install Windows first and then Linux.
+               </para>
+             </note>
+           </para></listitem>
+         </itemizedlist>
+       </para></listitem>
+       <listitem><para>
+         The boot loader loads and starts the operating system kernel which
+         <orderedlist>
+           <listitem><para>
+             Initializes the hardware connected to the system.
+           </para></listitem>
+           <listitem><para>
+             Mounts the root file system, often <filename>/dev/hda1</filename>.
+           </para></listitem>
+           <listitem><para>
+              Executes <filename>/sbin/init</filename> with
+              process id, <constant>PID=1</constant>.
+           </para></listitem>
+           <listitem><para>
+             Executes all the startup scripts for the default run-level.  
+           </para></listitem>
+           
+         </orderedlist>
+       </para></listitem>
+     </orderedlist>
+  </para>
+</section>

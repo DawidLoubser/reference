@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-01-16 --><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"><title>Mapping UML specialization relationships onto XML</title>
+	
+	
+	
+	<para>
+		XML schemas support inheritance, substitutability and the definition of abstract classes.
+		Consider, for example, the class hierarchy shows in
+		<xref linkend="technology.xml.umlMappings.classDiagram.specialization.accounts_fig"/>.
+	</para>
+	
+    <figure xml:id="technology.xml.umlMappings.classDiagram.specialization.accounts_fig">
+		<title>An accounts collection which may contain different concrete accounts</title>
+		<mediaobject><imageobject>
+		    <imagedata width="400" fileref="./accounts.jpg"/>
+		</imageobject></mediaobject>
+	</figure>
+	
+	<para>
+		The UML diagram specifies that instances of <literal>Accounts</literal> will contain zero or
+		more instances of <literal>Account</literal>. <literal>Account</literal> itself, however,
+		has been declared abstract. Hence every instance contained within the <literal>Accounts</literal>
+		collection must be an instance of one of the concrete subclasses of account. The accounts collection
+		is a polymorphic collection and we may substitute any specialized account for the account entries.
+	</para>
+	
+	<para>
+		Mapping the UML diagram onto an XML schema yields
+		<programlisting>
+		    <xi:include parse="text" href="accounts.xsd"/>
+		</programlisting>
+	</para>
+	<para>
+		An example XML document complying to the schema specification is shown below:
+		<programlisting>
+<xi:include parse="text" href="accounts.xml"/>
+		</programlisting>
+	</para>
+	
+	<section>
+		<title>The problem of multiple inheritence in XML schemas</title>
+		<para>
+			XML schemas do not support multiple inheritance. This is problematic as XML schemas do not provide any
+			alternative mechanism for obtaining substitutability for instances of one class for instances of
+			multiple other classes.
+		</para>
+		<para>
+			Thus, assume, for example, that we require that a personal card is substitutable for both, an identity card
+			and a drivers license card. The XML schema specification does not provide a clean mechanism through which
+			we can specify such a data structure.
+		</para>
+	</section>
+</section>

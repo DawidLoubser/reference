@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  id="components.technologies.java.j2ee.common.work.workManager">
+  <title>Work and work managers</title>
+  <para>
+    In a managed environment such as an EJB- or Web container, the deployed components are 
+    not allowed to start new threads as part of the application logic, as that would interfere with 
+    the container's capability to effectively manage them. Instead, one can submit work requests
+    for execution within the managed environment.
+  </para>
+  
+  <section>
+    <title>Work</title>
+    <para>
+      A work request is a sequence of tasks which will be executed within the context of a thread.
+      Every unit of work is <emphasis>runnable</emphasis> and will be executed within a thread
+      managed by the application server.
+      <programlisting><![CDATA[
+package commonj.work;
+        
+public interface Work extends Runnable
+{
+  public boolean isDaemon();
+        
+  public void release();
+}
+        ]]></programlisting>
+    </para>
+    <para>
+      In addition, a work unit can be released by the application server, requesting the thread to
+      terminate. This usually sets a flag which is periodically checked within the
+      <literal>run()</literal> method and, if set, the thread should terminate (exit the
+      <literal>run()</literal> method).
+    </para>
+  </section>
+  
+  <section>
+    <title>Work managers</title>
+    <para>
+      Work managers are used to submit work requests to the managed environment. They support
+      <itemizedlist>
+        <listitem><para>
+          scheduling work units with or without work listeners which are informed about the status
+          of a submitted task (submitted, accepted, rejected or completed),
+        </para></listitem>
+        <listitem><para>
+          synchronization points which will block the completion of the work unit until certain work
+          items have been completed.
+        </para></listitem>
+      </itemizedlist>
+      The Work manager contract looks as follows
+      <programlisting><![CDATA[
+package commonj.work;
+        
+public interface WorkManager
+{
+    WorkItem schedule(Work work);
+        
+    WorkItem schedule(Work work, WorkListener wl);
+        
+    boolean waitForAll
+          (java.util.Collection workItems, long timeout_ms);
+        
+    java.util.Collection waitForAny
+          (java.util.Collection workItems, long timeout_ms);
+}        
+    ]]></programlisting>
+    with work items being pollable result objects hose status can be queried
+      <programlisting><![CDATA[
+package commonj.work;
+        
+public interface WorkItem
+{
+    public int getStatus();
+
+    public  Work getResult();
+}        
+    ]]></programlisting>
+where the result is the completed work request.
+    </para>
+    
+  </section>
+</section>  
+  

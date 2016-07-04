@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Requirements for entities</title>
+    <para>
+        Entities must satisfy a number of requirements:
+        <itemizedlist>
+            <listitem>
+                <formalpara>
+                    <title>Constructors</title>
+                    <para>
+                        Entities must have a <literal>public</literal> or
+                        <literal>protected</literal> default (no-argument) constructor. They
+                        may have other constructors. If the default constructor 
+                        is declared <literal>protected</literal>, it is only available for the
+                        entity manager and users are forced to use the publicly available
+                        constructors.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Primary key</title>
+                    <para>
+                        Every entity requires a primary key, which may be a simple primary
+                        key represented by a bean field, or a composite key. The primary key is 
+                        specified by annotating the relevant field with <literal>javax.persistence.Id</literal>
+                        <programlisting language="Java">
+import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class Account
+{
+
+	// Services and constructors here
+	//...
+	
+	@Id private int accountNumber;
+	private double balance;
+}
+
+          </programlisting>
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Support for serialization</title>
+                    <para>
+                        Entities which are meant to be detachable in order to pass them around
+                        as value objects (i.e. sent to a client through a remote interface) must be serializable. 
+                        These temporarily detached value objects can be re-attached to the entity manager at a later stage.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Final</title>
+                    <para>
+                        Neither the class, nor any of its methods, may be final. The JPA provider
+                        must be able to subclass your class, in order to provide natural
+                        interception points and to access protected fields not published via
+                        public access methods.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Entities may be abstract</title>
+                    <para>
+                       Shared data may be encapsulated in abstract entities which are subclassed by various
+                       concrete entities.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Entities and inheritance</title>
+                    <para>
+                        Entities may extend both entity and non-entity classes, and non-entity classes may 
+                        extend entity classes.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Fields accessed only via accessors or business methods</title>
+                    <para>
+                        Persistent instance fields must be declared with private, package or protected scope (preferably private),
+                        and can only be accessed directly by the entity class’s methods. 
+                        Clients must access the entity’s state through accessor or business methods.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem><formalpara>
+                <title>All annotations either at getter or field level</title>
+                <para>
+                    The entity manager will access the fields either directly or via getters and setters. The method used
+                    depends on whether the annotations are don on the fields or on the getters. They should, however,
+                    not be mixed - i.e. they should be either all at the field level or all at the getter level.
+                    Alternatively the access type can be explicitly specified on an entity by annotating the entity with
+                    either <literal>@Access(AccessType.FIELD)</literal> or 
+                    <literal>@Acess(AccessType.Property)</literal>.
+                </para>
+            </formalpara>
+            </listitem>
+        </itemizedlist>
+    </para>
+</section>

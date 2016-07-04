@@ -1,0 +1,68 @@
+<section id="resources.information.technologies.java.j2se.security.SSLClientAuthentication.CreateCA"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Creating your own Certificate Authority</title>
+	<para>
+		For our convenience some clever people have provided us with a perl script assisting us in the creation of our own CA,<emphasis role="strong">CA.pl</emphasis>. This script is typically distributed with most unix flavors. 
+	</para>
+	<programlisting>
+[Butterfly:~] alex% locate CA.pl
+/System/Library/OpenSSL/misc/CA.pl
+	</programlisting>
+	<para>
+		Make a new directory and copy this script into it
+	</para>
+	<programlisting>
+[Butterfly:~] alex% mkdir CA
+[Butterfly:~] alex% cd CA/
+[Butterfly:~/CA] alex% cp /System/Library/OpenSSL/misc/CA.pl .
+	</programlisting>
+	<para>
+		To create a new certificate authority call the script with the <emphasis role="strong">-newca</emphasis> parameter as follows.
+	</para>
+	<programlisting>
+[Butterfly:~/CA] alex% perl CA.pl -newca
+CA certificate filename (or enter to create)
+[ENTER]
+Making CA certificate ...
+Using configuration from /System/Library/OpenSSL/openssl.cnf
+Generating a 1024 bit RSA private key
+.....................++++++
+.....++++++
+writing new private key to './demoCA/private/cakey.pem'
+Enter PEM pass phrase: password
+Verifying password - Enter PEM pass phrase: password
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:ZA
+State or Province Name (full name) [Some-State]:Gauteng
+Locality Name (eg, city) []:Johannesburg
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:MyOrganization
+Organizational Unit Name (eg, section) []:workshop
+Common Name (eg, YOUR name) []:myorg.co.za
+Email Address []:admin@myorg.co.za
+[Butterfly:~/CA] alex% ls
+CA.pl  demoCA
+[Butterfly:~/CA] alex% 
+	</programlisting>
+	<para>
+		In the example the PEM password is set to <emphasis role="strong">password</emphasis>. The result of this command is a new directory named <emphasis role="strong">demoCA</emphasis>. The file cacerts.pem contains a self-signed certificate (including public key).  The private key resides in the private/cakey.pem file.
+	</para>
+	<figure>                                                      
+  	<title>CA directory structure</title>                       
+  	<mediaobject>                                               
+    	<imageobject>                                             
+      	<imagedata fileref="Graphics/demoCA_DirectoryStructure.jpg" format="JPG" align="center"/>
+    	</imageobject>                                            
+    	<textobject><phrase>CA directory structure</phrase></textobject>   
+  	</mediaobject>                                              
+	</figure>  
+</section>

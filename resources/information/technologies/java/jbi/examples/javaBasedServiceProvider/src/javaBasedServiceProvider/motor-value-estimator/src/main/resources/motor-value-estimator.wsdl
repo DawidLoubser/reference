@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+    targetNamespace="http://solms.co.za/example/motors/"
+    xmlns:m="http://solms.co.za/example/motors/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://schemas.xmlsoap.org/wsdl/ http://schemas.xmlsoap.org/wsdl/wsdl.xsd http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+    
+    <wsdl:types>
+        <xs:schema 
+            targetNamespace="http://solms.co.za/example/motors/"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+            
+            <xs:complexType name="MotorValueEstimationRequest">
+                <xs:annotation>
+                    <xs:documentation>
+                        A request to assess the value of a described motor vehicle.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:sequence>
+                    <xs:element name="manufacturer" type="xs:string"/>
+                    <xs:element name="model" type="xs:string"/>
+                    <xs:element name="yearOfManufacture" type="xs:gYear"/>
+                    <xs:element name="condition" type="m:Condition"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="motorValueEstimationRequest" type="m:MotorValueEstimationRequest"/>
+            
+            <xs:simpleType name="Condition">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="LikeNew"/>
+                    <xs:enumeration value="Excellent"/>
+                    <xs:enumeration value="Fair"/>
+                    <xs:enumeration value="Worn"/>
+                    <xs:enumeration value="Damaged"/>
+                </xs:restriction>
+            </xs:simpleType>
+            
+            <xs:complexType name="MotorValueEstimationResult">
+                <xs:annotation>
+                    <xs:documentation>
+                        A result specifying the estimated value of a motor vehicle
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:sequence>
+                    <xs:element name="estimatedTradeValue" type="m:MonetaryValue"/>
+                    <xs:element name="estimatedRetailValue" type="m:MonetaryValue"/>
+                </xs:sequence>
+                <xs:attribute name="estimationDateTime" type="xs:dateTime" use="required"/>
+            </xs:complexType>
+            <xs:element name="motorValueEstimationResult" type="m:MotorValueEstimationResult"/>
+            
+            <xs:complexType name="MonetaryValue">
+                <xs:sequence>
+                    <xs:element name="amount" type="xs:double"/>
+                </xs:sequence>
+                <xs:attribute name="currency" type="m:CurrencyCode"/>
+            </xs:complexType>
+            
+            <xs:simpleType name="CurrencyCode">
+                <xs:annotation>
+                    <xs:documentation>
+                        ISO currency code
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="[A-Z]{3}"/>
+                </xs:restriction>
+            </xs:simpleType>
+            
+            <xs:complexType name="UnknownMotorVehicle">
+                <xs:annotation>
+                    <xs:documentation>
+                        A fault indicating that a specified motor vehicle represents a type or model
+                        unknown to the service provider, and thus non-estimable.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:complexType>
+            <xs:element name="unknownMotorVehicle" type="m:UnknownMotorVehicle"/>
+            
+        </xs:schema>
+    </wsdl:types>
+    
+    
+    <wsdl:message name="motorValueEstimationRequest">
+        <wsdl:part name="motorValueEstimationRequest" element="m:motorValueEstimationRequest"/>
+    </wsdl:message>
+    <wsdl:message name="motorValueEstimationResult">
+        <wsdl:part name="motorValueEstimationResult" element="m:motorValueEstimationResult"/>
+    </wsdl:message>
+    <wsdl:message name="unknownMotorVehicle">
+        <wsdl:part name="unknownMotorVehicle" element="m:unknownMotorVehicle"/>
+    </wsdl:message>
+    
+    
+    <wsdl:portType name="MotorValueEstimator">
+        
+        <wsdl:operation name="estimateMotorValue">
+            <wsdl:input message="m:motorValueEstimationRequest"/>
+            <wsdl:output message="m:motorValueEstimationResult"/>
+            <wsdl:fault name="unknownMotorVehicle" message="m:unknownMotorVehicle"/>
+        </wsdl:operation>
+        
+    </wsdl:portType>
+    
+</wsdl:definitions>

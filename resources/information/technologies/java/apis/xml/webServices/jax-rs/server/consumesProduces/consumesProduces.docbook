@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: fritz@solms.co.za -->
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+    <title>Supported inputs and outputs</title>
+    <para>
+        The <literal>@Consumes</literal> and <literal>@Produces</literal> annotations are
+        used to specify the input and output MIME types for a resource.
+    </para>
+    <para>
+        For example, in the <literal>EchoResource</literal> shown below, 
+        the two <literal>@GET</literal> implementations produce plain text
+        and XML respectively.
+        <programlisting language="java">
+<xi:include parse="text" href="../../examples/echoResource/src/main/java/za/co/solms/training/jaxrs/echo/EchoResource.java"/>
+        </programlisting>
+    </para>
+    <para>
+        A service can also consume and produce XML. For example
+        <programlisting language="java">
+<xi:include parse="text" href="../../../../../../javaEE/examples/weatherBuro/weatherBuro-web/src/main/java/za/co/solms/jaxrs/locations/LocationResource.java"/>
+        </programlisting>
+        the <literal>addLocation</literal> service consumes and produces XML. The corresponding echanged
+        data objects must be instances of classes which have been annotated with
+        <literal>XMLRootElement</literal>:
+        <programlisting language="java">
+<xi:include parse="text" href="../../../../../../javaEE/examples/weatherBuro/weatherBuro-businessLogic/src/main/java/za/co/solms/location/Location.java"/>
+        </programlisting>
+        In our case we simply annotated an entity to be also an <literal>XmlRootElement</literal>.
+    </para>
+    <para>
+        A single method can also consume or produce multiple MIME types. The different 
+        acceptable MIME types are separated by commas.
+        <programlisting><![CDATA[
+@GET
+@Produces("application/xml,application/xhtml+xml")
+public PersonDetails getPersonDetails(...)
+{
+    ...
+}    
+            ]]></programlisting>
+    </para>
+    
+    <section>
+        <title>How is the output type selected?</title>
+        <para>
+            The MIME type the HTTP client (e.g. browser or your REST web service client)
+            is able to consume is specified in the ACCEPT header element. Different
+            output formats can be assigned relative preferences via a weighting (<literal>q</literal>)
+            factor which is between 0 and 1 with the higher number given preference.
+            supporting different content types
+            <programlisting><![CDATA[
+GET /sales/processOrder HTTP/1.1
+Host: vendorX.com
+Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png;q=0.5
+]]></programlisting>
+        </para>    
+        <para>
+            This specifies that the HTTP client is able to consume XML, XHTML, HTML, plain text
+            and images with a preference for those with a higher weighting with the first two options
+            having the highest rating of 1.
+        </para>
+    </section>
+</section>    
+    
+    
+    

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Example SBA process: pedagogcally sound document generation</title>
+    
+    <para>
+        This section provides an example which aims to illustrate how space based architectures 
+        can simplify a problem and make the resultant solution
+        considerably more flexible, while providing a reliable and scalable environment.
+    </para>
+    
+    <section>
+        <title>Problem description</title>
+        <para>
+            The system should enable one to generate  pedagogical sound course notes from information
+            available to the organization using semantic information available in a knowledge repository.
+        </para>
+        <para>
+            The course notes should take a trainee who fulfills the requirements to
+            the outcomes of the course following a pedagogically sound path, <abbrev>i.e.</abbrev>
+            a path along which at any stage all required knowledge has been made available.
+        </para>
+        <para>
+            More specifically, the documentat request will contain
+            <itemizedlist>
+                <listitem><para>
+                    the outcomes which should be covered by the document, and
+                </para></listitem>
+                <listitem><para>
+                    the prerequisites for the reader/trainee, <abbrev>i.e.</abbrev> the knowledge one assumes
+                    the reader should have prior to reading the document.
+                </para></listitem>
+            </itemizedlist>
+            The document generation process should generate a document which includes the outcomes as well as
+            the knowledge required to understand these outcomes (and recursively any other included
+            knowledge components). Furthermore, the process will need to order these knowledge components
+            in a pedagogically sound way which ensures that when any particular knowledge component is reached,
+            that the required knowledge for that knowledge component has been covered either by the prerequisites
+            or by the knowledge components already covered.
+        </para>
+    </section>
+    
+    <section>
+        <title>The knowledge repository</title>
+        <para>
+            The knowledge repository marks up information components in various formats
+            by adding meta-information around these information components. 
+        </para>
+        <para>
+            Assume the knowledge repository identifies knowledge domains. Assume further,
+            that the following semantic relationships is available:
+            <itemizedlist>
+                <listitem><para>
+                    <emphasis>partOf</emphasis> which specifies that a knowledge domain is a sub-domain
+                    of a higher knowledge domain (<abbrev>e.g.</abbrev> that the knowledge domain of architectural
+                    strategies is part of the knowledge domain of architecture),
+                </para></listitem>
+                <listitem><para>
+                    <emphasis>requires</emphasis> which specifies that understanding a particular knowledge
+                    domain requires the understanding of another knowledge domain.
+                </para></listitem>
+                <listitem><para>
+                    <emphasis>instanceOf</emphasis> which specifies that a knowledge domain specifies a concrete
+                    instance of something more abstract defined in another knowledge domain, (for example, that
+                    the knowledge domain of the blackboard architectural pattern is the knowledge domain of
+                    a particular instance of an architectural pattern), and
+                </para></listitem>
+                <listitem><para>
+                    <emphasis>informationOn</emphasis> which specifies that a particular information component (data)
+                    hosted somewhere
+                    provides information on a particular knowledge domain (for example a document explaining
+                    state based architectures provides information on the latter).
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>   
+    
+    <section>
+        <title>The SBA based documentation generation process</title>
+    
+        <para>
+            The following collaboration of knowledge sources could generate the required document:
+            <orderedlist>
+                <listitem><para>
+                    A lecturer who wants to assemble a set of course notes from a knowledge repository puts
+                    the document request for course notes with given outcomes and prerequisites into space.
+                </para></listitem>
+                <listitem><para>
+                    An assembler receives that event and assembles a list of all knowledge components which
+                    need to be included. The assembler writes the original compilation request together with 
+                    the assembled list of knowledge components into space.
+                </para></listitem>
+                <listitem><para>
+                    A pedagogical sequencer waits for the event of an document request for which the knowledge
+                    components have been assembled, picks it up, determines a pedagogically sound ordering
+                    for the knowledge components, and puts the original request
+                    with the ordered list of knowledge component into space.
+                </para></listitem>
+                <listitem><para>
+                    A document structurer now adds the information about the hierachical ordering (part, chapter,
+                    section, subsection, ...) and writes the document request with the document structure into space.
+                </para></listitem>
+                <listitem><para>
+                    A document information collector picks up the document request with the document strucure, sources 
+                    the information components marked up by the various knowledge components, and puts for each 
+                    information component a transformation request into space.
+                </para></listitem>
+                <listitem><para>
+                    Different transformation services observe transformation requests and execute them, writing
+                    the normalized information component into space.
+                </para></listitem>
+                <listitem><para>
+                    A document assembler picks up the document request with the document structure and waits for the
+                    events for the transformed information components. Once the event for all required information
+                    components has been received, or once some timeout period has expired, the document assembler
+                    assembles the normalized information components into a document with the required structure.
+                    The document request together with the assembled document is put space.
+                </para></listitem>
+                <listitem><para>
+                    The document request with assembled document is picked up by that document renderer which 
+                    can render into the required format. The completed document is put into space.
+                </para></listitem>
+                <listitem><para>
+                    The lecturer who awaits the event for the completed document picks it up and says thank you.
+                </para></listitem>
+            </orderedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Benefits of the SBA architecture in the context of this example</title>
+        <para>
+            The process of generating a document from the information components and the knowledge available in
+            the knowledge repository is not entirely trivial. Furthermore, it can be expected that the way this is to be done
+            may continuously evolve (for example, one may include a processing step which adds exercises, or one
+            which takes the target audience into account and compiles examples relevant for the target audience into
+            the document).
+        </para>
+        <para>
+            In the SBA implementation we focused on developing knowledge sources each of which could provide some
+            well defined functionality. Each knowledge source waited until the information it requires is available. The implict
+            process is significantly simpler and a lot more flexible than a hard coded process. We do not, for example, have to
+            decide which transformation elements are to be called. We just put transformation request into space and let the
+            appropriate tranformation services pick up these requests to do their processing.
+        </para>
+    </section>
+</section>        

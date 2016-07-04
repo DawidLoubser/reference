@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.xml.xsl-transform.templates.matching">
+    <title>Template Matching</title>
+    
+    <para>
+        Starting from the root element of the input document, the XSLT processor automatically
+        scans for any templates which have a <literal>match</literal> attribute (representing an
+        XPath expression) and hands control to the template. The template is then in full control of
+        outputting some information, as well as requesting that the XSLT processor continues recursively
+        stepping through the input document (or not).
+    </para>
+    <para>
+        For example, the following template will match a car in the input document, and
+        output an automobile in the result document. The call to <literal>apply-templates</literal>
+        indicates to the XSLT processor that it should at this point continue and find further templates
+        that are applicable ot the child elements of <literal>car</literal> in the input document.
+        <programlisting language="XML"><![CDATA[
+<xsl:template match="car">
+    <automobile>
+        <xsl:apply-templates/>
+    </automobile>
+</xsl:template>
+                    ]]></programlisting>
+    </para>
+    <para>
+        Since the match expression is XPath, we may construct more selective expressions. For example,
+        the following will only output an automobile if the car in the input does not contain <quote>diesel</quote>
+        as the <literal>fuelType</literal> attribute:
+        <programlisting language="XML"><![CDATA[
+<xsl:template match="car[ not( @fuelType = 'diesel' ) ]">
+    <automobile>
+        <xsl:apply-templates/>
+    </automobile>
+</xsl:template>
+                    ]]></programlisting>
+    </para>
+    <para>
+        By carefully constructing many simple templates that each take care of a single concern, seemingly complex yet intuitive
+        transformation behaviour can be achieved.
+    </para>
+</section>

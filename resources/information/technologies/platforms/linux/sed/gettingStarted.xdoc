@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.platforms.linux.sed.gettingStarted"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Getting started with <command>sed</command></title>
+  <para>
+    A very common application of <command>sed</command> is to use it for performing
+    text substitutions non-interactively within files. The syntax for this is
+    <programlisting><![CDATA[
+sed 's/<oldText>/<newText>/g' <filename>    
+    ]]></programlisting>
+  </para>
+  <section>
+    <title>A simple example</title>
+      <para>
+        Consider the following text file, called <filename>bricks.txt</filename>:
+        <programlisting><![CDATA[
+We are only bricks in the wall.
+A wall is an ordered collection of bricks -- in fact it is full of bricks.
+Bricks & Co. PTY LTD.
+
+The bricking trade calls YOU!!!!
+bricks vs. rocks : crafted art vs. natural beauty.        
+        ]]></programlisting>
+        Thus
+        <programlisting><![CDATA[
+sed 's/bricks/baked stones/g' bricks.txt > newBrick.txt    
+        ]]></programlisting>
+        This will process the file <filename>bricks.txt</filename> by substituting every
+        occurance of <quote>bricks</quote> with <quote>baked stones</quote> and
+        write the processed text to the file <filename>newBrick.txt</filename>. The
+        resultant file looks like this:
+        <programlisting><![CDATA[
+We are only baked stones in the wall.
+A wall is an ordered collection of baked stones.
+Bricks & Co. PTY LTD.
+
+The bricking trade calls YOU!!!!
+baked stones vs. rocks : crafted art vs. natural beauty.
+        ]]></programlisting>        
+        <note>
+          <para>
+            We need the single quote to protect the sed command from shell interpretations.
+          </para>
+        </note>
+      </para>
+      <para>
+        The flag <option>g</option> at the end of the command requests a global substitution,
+        and since <command>sed</command> is a line editor this means globally within a line.
+        If this option is ommitted, only every first occurance of the match string (bricks) is
+        replaced.
+      </para>
+  </section>
+  <section>
+    <title>The input and output streams</title>
+    <para>
+      By default <command>sed</command> will read from the standard input stream and
+      write to th standard output stream. Thus, if we use
+        <programlisting><![CDATA[
+sed 's/bricks/baked stones/g' 
+        ]]></programlisting>
+        then it will process each line of text entered from the console until you provide
+        the <emphasis>end-of-file</emphasis> character via <literal><![CDATA[<Ctrl>D]]></literal>.
+    </para>
+  </section>
+  
+  <section>
+    <title>Specifying multiple commands</title>
+    <para>
+        We can ask <command>sed</command> to process multiple commands by listing
+        each with its own <option>-e</option>. The commands will be processed line for line
+        in the order in which they are provided.
+        <note>
+          <para>
+            Sed will still only read once through the file,<abbrev>i.e.</abbrev> process all
+            commands within a single sweep through the file.
+          </para>
+        </note>
+    </para>
+    <para>
+      For example, if we execute
+      <programlisting><![CDATA[
+sed -e 's/bet/bat/g' -e 's/bat/bet/g'
+      ]]></programlisting>
+      on 
+      <programlisting><![CDATA[
+I bet you have a bat at home.
+      ]]></programlisting>
+      we will receive as output
+      <programlisting><![CDATA[
+I bet you have a bet at home.
+      ]]></programlisting>      
+    </para>
+  </section>
+</section>

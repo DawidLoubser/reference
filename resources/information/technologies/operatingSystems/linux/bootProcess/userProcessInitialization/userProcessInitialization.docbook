@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>User process initialization - the <literal>init</literal> process</title>
+    <para>
+        The <literal>/sbin/init</literal> stage of the boot process starts the user-space processes. 
+    </para>
+    <para>
+        The <literal>init</literal> process reads instructions from the <literal><![CDATA[/etc/inittab]]></literal> 
+        run-level configuration file. This file specifies
+        <itemizedlist>
+            <listitem><para>
+                the processes which should be started for the boot run level including 
+                <itemizedlist>
+                    <listitem><para>
+                        mounting of local file systems,
+                    </para></listitem>
+                    <listitem><para>
+                        starting of text terminals, and
+                    </para></listitem>
+                    <listitem><para>
+                        single user test terminal login.
+                    </para></listitem>
+                </itemizedlist>
+            </para></listitem>
+            <listitem><para>
+                the default run level for the system, and
+            </para></listitem>
+            <listitem><para>
+                the binding of run levels to run level numbers
+                The common run-level configuration introcudes the following run levels:
+                <itemizedlist>
+                    <listitem><formalpara>
+                        <title>Run-level 1:</title>
+                        <para>
+                            Single user mode without networking.
+                        </para>
+                    </formalpara></listitem>
+                    <listitem><formalpara>
+                        <title>Run-level 2</title>
+                        <para>
+                            Networking.
+                        </para>
+                    </formalpara></listitem>
+                    <listitem><formalpara>
+                        <title>Run-levels 3, 4 and 5</title>
+                        <para>
+                            Run-level 3 is the default run level with run-levels 4 and 5 usually being mapped onto
+                            run-level 3. On a desktop this default run-level usually starts the <emphasis>XWindows</emphasis>
+                            server together with the window manager and desktop as well as core user services like
+                            printing services, device plugin detection services, and so on.
+                            On a server based system this run level would usually not start an <emphasis>XWindows</emphasis>
+                            server but rather sshd, database servers, web servers, application servers,
+                            mail servers, DNS and DHCP servers and so on.
+                        </para>
+                    </formalpara></listitem>
+                    <listitem><formalpara>
+                        <title>Run-level 6</title>
+                        <para>
+                            This level is the shutdown process.
+                        </para>
+                    </formalpara></listitem>
+                </itemizedlist>
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para> 
+        A typical <literal>inittab</literal> file looks like this:
+        <programlisting><![CDATA[
+# Default runlevel.
+id:3:initdefault:
+
+# System initialization, mount local filesystems, etc.
+si::sysinit:/sbin/rc sysinit
+
+# Further system initialization, brings up the boot runlevel.
+rc::bootwait:/sbin/rc boot
+
+# Defining the run-levels
+---------------------
+l0:0:wait:/sbin/rc shutdown
+l0s:0:wait:/sbin/halt -dhp
+l1:1:wait:/sbin/rc single
+l2:2:wait:/sbin/rc nonetwork
+l3:3:wait:/sbin/rc default
+l4:4:wait:/sbin/rc default
+l5:5:wait:/sbin/rc default
+l6:6:wait:/sbin/rc reboot
+l6r:6:wait:/sbin/reboot -dk
+#z6:6:respawn:/sbin/sulogin
+
+# Start single-user login
+-------------------------
+su0:S:wait:/sbin/rc single
+su1:S:wait:/sbin/sulogin
+
+# Defining the command terminals
+------------------------------
+c1:12345:respawn:/sbin/agetty 38400 tty1 linux
+c2:2345:respawn:/sbin/agetty 38400 tty2 linux
+c3:2345:respawn:/sbin/agetty 38400 tty3 linux
+c4:2345:respawn:/sbin/agetty 38400 tty4 linux
+c5:2345:respawn:/sbin/agetty 38400 tty5 linux
+c6:2345:respawn:/sbin/agetty 38400 tty6 linux
+
+# SERIAL CONSOLES
+#s0:12345:respawn:/sbin/agetty 9600 ttyS0 vt100
+#s1:12345:respawn:/sbin/agetty 9600 ttyS1 vt100
+
+# What to do at the "Three Finger Salute".
+ca:12345:ctrlaltdel:/sbin/shutdown -r now
+
+# Used by /etc/init.d/xdm to control DM startup.
+# Read the comments in /etc/init.d/xdm for more
+# info. Do NOT remove, as this will start nothing
+# extra at boot if /etc/init.d/xdm is not added
+# to the "default" runlevel.
+x:a:once:/etc/X11/startDM.sh            
+            ]]></programlisting>
+    </para>
+</section>    

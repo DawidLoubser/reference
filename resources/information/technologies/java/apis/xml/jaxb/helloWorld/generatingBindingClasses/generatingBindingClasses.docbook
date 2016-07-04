@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Generating the binding classes</title>
+    <para>
+        The binding classes can now be generated via Maven using
+        <programlisting><![CDATA[
+mvn generate-sources            
+            ]]></programlisting>
+    </para>
+    <para>
+        Alternatively you can use the <literal>xjc</literal> directly against the schema to generate the Java binding classes.
+    </para>
+    
+    <section>
+        <title>Generated classes</title>
+        <para>
+            The binding compiler generates a Java class for each complex type which has the getters and setters for the
+            data elements as well as some annotation specifying the XML mapping. For example, the generated Message class
+            looks as follows (after having removed some comments):
+            <programlisting language="java"><![CDATA[
+package za.co.solms.training.java.apis.jaxb.helloworld;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "Message", propOrder = { "messageText",  "sender" })
+public class Message 
+{
+    @XmlElement(required = true)
+    protected String messageText;
+    protected Person sender;
+
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlSchemaType(name = "language")
+    protected String language;
+
+    public String getMessageText() {return messageText;}
+
+    public void setMessageText(String value) {this.messageText = value;}
+
+    public Person getSender() {return sender;}
+
+    public void setSender(Person value) {this.sender = value;}
+
+    public String getLanguage() {return language;}
+
+    public void setLanguage(String value) {this.language = value;}
+}              
+            ]]></programlisting>
+        </para>
+        <para>
+            The file includes annotations to specify
+            <itemizedlist>
+                <listitem><para>
+                    which properties are to be mapped onto elements and which onto attributes,
+                </para></listitem>
+                <listitem><para>
+                    the ordering of the elements in the XML documents (Java does not specify ordering of properties/fields), and
+                </para></listitem>
+                <listitem><para>
+                    which of the elements are required/mandatory.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            In addition to the classes generated for the <literal>Person</literal>, <literal>Message</literal> and <literal>Messages</literal>
+            complex types, the binding compiler also generates an <literal>ObjectFactory</literal> class which has marshalling and
+            de-marshalling methods for each of the classes/complex datatypes, i.e. methods which create Java objects from XML nodes
+            and methods which generate JAXBElements from Java objects - these are ultimately mapped onto XML nodes
+            <programlisting language="java"><![CDATA[
+package za.co.solms.training.java.apis.jaxb.helloworld;
+
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.annotation.XmlElementDecl;
+import javax.xml.bind.annotation.XmlRegistry;
+import javax.xml.namespace.QName;
+
+
+/**
+ * This object contains factory methods for each 
+ * Java content interface and Java element interface 
+ * generated in the za.co.solms.training.java.apis.jaxb.helloworld package. 
+ * <p>An ObjectFactory allows you to programatically 
+ * construct new instances of the Java representation 
+ * for XML content. The Java representation of XML 
+ * content can consist of schema derived interfaces 
+ * and classes representing the binding of schema 
+ * type definitions, element declarations and model 
+ * groups.  Factory methods for each of these are 
+ * provided in this class.
+ * 
+ */
+@XmlRegistry
+public class ObjectFactory {
+
+    private final static QName _Messages_QNAME = new QName("http://www.solms.co.za/training/java/apis/jaxb/helloWorld", "messages");
+    private final static QName _Message_QNAME = new QName("http://www.solms.co.za/training/java/apis/jaxb/helloWorld", "message");
+
+    public ObjectFactory() {}
+
+    public Person createPerson() {return new Person();}
+
+    public Messages createMessages() {return new Messages();}
+
+    public Message createMessage() {return new Message();}
+
+    @XmlElementDecl(namespace = "http://www.solms.co.za/training/java/apis/jaxb/helloWorld", name = "messages")
+    public JAXBElement<Messages> createMessages(Messages value) 
+    {
+        return new JAXBElement<Messages>(_Messages_QNAME, Messages.class, null, value);
+    }
+
+   @XmlElementDecl(namespace = "http://www.solms.co.za/training/java/apis/jaxb/helloWorld", name = "message")
+    public JAXBElement<Message> createMessage(Message value) 
+    {
+        return new JAXBElement<Message>(_Message_QNAME, Message.class, null, value);
+    }
+}                
+                ]]></programlisting>
+        </para>
+    </section>
+</section>    

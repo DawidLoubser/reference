@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>
+        Invariance constraints
+        <indexterm><primary>Object Constraint Language</primary><secondary>invariance constraint</secondary></indexterm>
+        <indexterm><primary>invariance constraint</primary></indexterm>
+        <indexterm><primary>constraint</primary>
+          <seealso>
+              <indexterm><primary>invariance constraint</primary></indexterm>
+              <indexterm><primary>pre-condition</primary></indexterm>
+              <indexterm><primary>post-condition</primary></indexterm>
+          </seealso>
+        </indexterm>
+    </title>
+    <para>
+        Invariance constraint are used to specify symmetry rules which constrain the valid states of objects. If any of the
+        invariance constraints for an object are violated, then the object is said to be in an invalid or 
+        <emphasis>inconsistent</emphasis> state.
+        <note><para>
+            The consistency requirement of the ACID criteria of a transaction specifies that if a system was in a consistent
+            state prior to the start of the transaction, then it must, at the end of a transaction, be again in a consistent state,
+            <abbrev>i.e.</abbrev> that none of the invariance constraints of the objects is violated.
+        </para></note>
+    </para>
+    <para>
+        An invariance constraint is specified by a <literal>inv:</literal> prefix on the constraint expression. The context of
+        an invariance constraint is usually a class.
+    </para>
+    <para>
+        For example, we may have a constraint that the sum of all transaction amounts of a transaction history of
+        an account must always add up to the current balance of the account. This could be specified as follows:
+        <programlisting><![CDATA[
+context Account
+  inv: self.transactions->collect(amount)->sum() = self.balance
+            ]]></programlisting>
+    </para>
+    <para>
+        We can assign a name to the invariance constraint. For example, we could name the consistency constraint on the 
+        account balance <literal>consistentBalance</literal>:
+        <programlisting><![CDATA[
+context Account
+  inv consistentBalance: self.transactions->collect(amount)->sum() = self.balance
+            ]]></programlisting>
+    </para>
+    <para>
+        Invariance constraints are often used to specify <emphasis>business rules</emphasis> 
+        <indexterm><primary>business</primary><secondary>rule</secondary></indexterm>.
+        like that the balance of a savings account may never be negative
+        <programlisting><![CDATA[
+context SavingsAccount
+  inv: self.balance >= 0
+            ]]></programlisting>
+    </para>
+</section>   

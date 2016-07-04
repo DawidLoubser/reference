@@ -1,0 +1,88 @@
+<section id="resources.information.platforms.linux.networkServices.sendmail.client"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Mail clients</title>
+	<para>
+	For the testing of the sendmail, we used the <emphasis role="strong">mail</emphasis> command which provided minimalistic features. Many other more friendly tools are available, and the configuration between these applications are similar. To send email, a SMTP server is required, which is accessed on port 25. To receive email, a POP3 server, which is accessed on port 110, is required. 
+	</para>
+	
+	<section>
+		<title>Sending email via telnet</title>
+		<para>
+		</para>
+		<programlisting>
+		<![CDATA[
+[butterfly:~] alex% telnet client8 25
+Trying 192.168.1.18...
+Connected to client8.
+Escape character is '^]'.
+220 client8.solmshome.co.za ESMTP Sendmail 8.12.8/8.12.8; Thu, 4 Sep 2003 11:03:53 +0200
+mail from: alex@client8.solmshome.co.za
+250 2.1.0 alex@client8.solmshome.co.za... Sender ok
+rcpt to: root@client8.solmshome.co.za
+250 2.1.5 root@client8.solmshome.co.za... Recipient ok
+data
+354 Enter mail, end with "." on a line by itself
+Subject: This is the subject
+And this is the message body
+Which can span mulitple lines
+And is ended with a . on a line by itself
+.
+250 2.0.0 h8493rhc004817 Message accepted for delivery
+^]
+telnet> quit
+Connection closed.
+[butterfly:~] alex%
+		]]>
+		</programlisting>
+	</section>	
+	<section>
+		<title>Receiving mail via the mail tool</title>
+		<para>
+		
+		</para>
+		<programlisting>
+		<![CDATA[
+[root@client8 mail]# mail
+Mail version 8.1 6/6/93.  Type ? for help.
+"/var/spool/mail/root": 1 message 1 new
+>N  1 alex@client8.solmsho  Thu Sep  4 11:05  15/665   "This is the subject"
+&
+Message 1:
+From alex@client8.solmshome.co.za  Thu Sep  4 11:05:31 2003
+Date: Thu, 4 Sep 2003 11:03:53 +0200
+From: alex@client8.solmshome.co.za
+X-Authentication-Warning: client8.solmshome.co.za: butterfly [192.168.1.88] didn't use HELO protocol
+Subject: This is the subject
+ 
+And this is the message body
+Which can span mulitple lines
+And is ended with a . on a line by itself
+ 
+&
+		]]>
+		</programlisting>
+	</section>	
+	<section>
+		<title>Receiving mail status via telnet</title>
+		<para>
+	 	To query a POP3 server using telnet for information on how many messages are available within an account inbox, telnet into the server on port 110.	
+		</para>
+		<programlisting>
+[butterfly:~] alex% telnet client8 110
+Trying 192.168.1.18...
+Connected to client8.
+Escape character is '^]'.
++OK POP3 client8 v2001.78rh server ready
+User user
++OK User name accepted, password please
+Pass password
++OK Mailbox open, 1 messages
+		</programlisting>
+		<para>
+		Once this has been completed successfully, any other client should be able to retrieve the messages from the inbox.
+		</para>
+	</section>	
+</section>

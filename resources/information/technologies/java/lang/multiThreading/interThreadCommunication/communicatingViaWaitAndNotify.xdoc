@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.lang.multiThreading.interThreadCommunication.communicatingViaWaitAndNotify"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="Communicating via wait() and notify()">Communicating via wait() and notify()</title>
+
+<para>In multi-threaded systems it is not uncommon that a thread has to wait for
+resources before it can continue. In the previous example the data processing 
+thread has to wait for data ready to be processed. We achieved this by
+connecting the two threads with a pipe. </para>
+
+<para>In general this may not be good enough. A thread may want to perform some 
+task but is unable to do so at some instant in time because a required 
+resource object is not in the required state. The thread can then wait 
+until the state of the resource object has changed and then check whether 
+it can continue at that stage.</para>
+
+<para>A typical scenario is the consumer-producer problem discussed in the
+previous section. On the consumer side which depletes the resource, we 
+typically have the following process:
+    <orderedlist>
+        <listitem><para>A thread requires services from a protected resource and requests
+        the monitor.</para></listitem>
+        <listitem><para>When the thread acquires the monitor it checks whether the resource
+        is in the required state (<abbrev>e.g.</abbrev> that it has new data available).</para></listitem>
+        <listitem><para> If so, it completes the service and releases the monitor lock.</para></listitem>
+        <listitem><para> If not, it sends a <emphasis role="verb">wait()</emphasis> message to the object whose 
+        monitor is held (<abbrev>i.e.</abbrev> to the synchronized object). </para></listitem>
+        <listitem><para> The <emphasis role="verb">wait()</emphasis>
+        method temporarily releases the monitor so that other threads
+        can access the protected resource. The consumer thread enters a
+         <emphasis>blocked</emphasis> state.</para></listitem>
+    </orderedlist>
+    </para>
+
+<para>Note that this behaviour is different to that of the <emphasis role="verb">sleep()</emphasis>
+method which does not release the monitor of any object
+automatically. A call to an object's <emphasis role="verb">wait()</emphasis> method can only be 
+done from within the thread which holds the monitor, but it does
+temporarily (until notified via <emphasis role="verb">notify()</emphasis> or <emphasis role="verb">notifyAll()</emphasis>)
+release the monitor of the object whose <emphasis role="verb">wait()</emphasis> method is
+called.</para>
+
+<para>The other side is the producer side which replenishes the resource.
+    <itemizedlist>
+        <listitem><para>Once the consumer is in a waiting state it releases the monitor and
+        the producer acquires ownership of the monitor.</para></listitem>
+        <listitem><para>The producer changes the state of the resource, hopefully such that
+        the consumer will be able to proceed.</para></listitem>
+        <listitem><para>The producer sends a <emphasis role="verb">notify()</emphasis> or <emphasis role="verb">notifyAll()</emphasis> message
+        to the resource object (the one whose monitor it currently owns).</para></listitem>
+        <listitem><para>The producer then releases the lock by exiting the synchronized 
+        block of code. </para></listitem>
+    </itemizedlist>
+    
+At this stage the consumer may be able to continue. Before doing so he must,
+however, check that the resource is in the required state. If not it must
+go back into the blocked state by sending another <emphasis role="verb">wait()</emphasis> message to
+the resource object.</para>
+
+<para>It is quite common to associate a time-out algorithm with a consumer. In that
+case the consumer has limited patience and aborts the service request if the
+a resource has not become available within a specified amount of time.</para>
+
+<para>Note that the messages, <emphasis role="verb">wait()</emphasis> and <emphasis role="verb">notify()</emphasis>, may be sent only 
+from threads that hold the lock for the object to which these messages are
+sent. Recall also that all objects inherit the <emphasis role="verb">wait()</emphasis> and 
+<emphasis role="verb">notify()</emphasis> message handlers from the mother of all classes,
+<emphasis role="verb">Object</emphasis>.</para>
+
+<para>Let us focus a little on the <emphasis role="verb">wait()</emphasis>. When the <emphasis role="verb">wait()</emphasis> releases
+the lock on the resource which is not in the required state for the consumer
+thread to continue, the consumer thread blocks on a second synchronized 
+object called a <emphasis>condition variable</emphasis>. The thread will wait until the
+notified condition is set <emphasis role="verb">true</emphasis> by some other thread calling 
+<emphasis role="verb">notify()</emphasis> or <emphasis role="verb">notifyAll()</emphasis>.</para>
+
+<para>We demonstrate the usage of <emphasis role="verb">wait()</emphasis> and <emphasis role="verb">notify()</emphasis> with a variant
+of the producer-consumer problem where a data source generates random
+data points between 1 and 1000 and the data consumer thread calculates the
+running average of the data points:</para>
+<para>
+<programlisting>
+<xi:include parse="text" href="source/RunningAverage.java"/>
+</programlisting>
+</para>
+</section>

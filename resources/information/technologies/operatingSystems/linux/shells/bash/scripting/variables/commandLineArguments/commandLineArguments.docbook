@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Command-line arguments</title>
+    <para>
+        Many commands take command-line arguments which specify
+        <itemizedlist>
+            <listitem><para>options and</para></listitem>
+            <listitem><para>resources</para></listitem>
+        </itemizedlist>
+        to be used when the command is executed.
+    </para>
+    <para>
+        In a similar way, shell scripts themselves can be provided with command-line
+        arguments, and within a shell script you can access these via
+        <itemizedlist>
+            <listitem><para>
+                <literal><![CDATA[$0]]></literal> for the name of the shell script,
+            </para></listitem>
+            <listitem><para>
+                <literal><![CDATA[$1 ... $9]]></literal> the first 9 command-line arguments and
+            </para></listitem>
+            <listitem><para>
+                <literal><![CDATA[${10}, ${11}, ...]]></literal> for any further command-line arguments.
+                <note>
+                    <para>
+                        The command-line arguments number 10 and higher have to be accessed by
+                        putting the command-line argument number within curly brackets.
+                    </para>
+                </note>
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>Finding out how many command-line arguments were passed</title>
+        <para>
+            To find out how many command line arguments there are, use <literal><![CDATA[$#]]></literal>.
+            For example,
+            <programlisting><![CDATA[
+echo "You entered $# command-line arguments."
+      ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>The collection of all command-line arguments</title>
+        <para>
+            Bash shell scripts support a variable, <varname><![CDATA[$*]]></varname>,
+            for the collection of all command-line arguments. This may be useful if you
+            want to pass these on to other applications called from the script. For example
+            we can intercept the copy command via a shell script, <filename>cp</filename>,
+            which calls the <command>rm</command> command with all command-line
+            arguments, but adding the <parameter>-i</parameter> forcing a confirmation
+            on removal of a file:
+            <programlisting><![CDATA[
+#!/bin/bash
+rm -i $*
+      ]]></programlisting>      
+        </para>
+        
+        <section>
+            <title>A simple example</title>
+            <para>
+                As a simple example, consider the following shell script which adds up 12 numbers. 
+                The user has to provide exactly 12 parameters every time. In the next example we
+                will use the <command>shift</command> command to provide a better implementation
+                of the <application>sum</application> application:     
+                <programlisting>                
+<xi:include parse="text" href="../source/sumBasic.sh" />
+                    </programlisting>
+            </para>
+        </section>
+        
+        <section>
+            <title>The <command>shift</command> command</title>
+            <para>
+                The <command>shift</command> command is used to shift the command-line arguments
+                to the left, <abbrev>i.e.</abbrev> command line argument number <constant>n+1</constant>
+                becomes command-line argument number <constant>n</constant>.
+            </para>
+            <para>
+                The following application adds up all supplied command-line arguments and prints
+                the sum. It uses a for-loop. 
+            </para>
+        </section>
+        
+        
+    </section>
+</section>

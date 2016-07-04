@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.concepts.design.businessProcess.urdad.design.contractSpecification.contractSpecification"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Contract specification</title>
+  <para>
+    The output of the URDAD design phase for a particular level of granularity includes
+    <itemizedlist>
+      <listitem><para>
+        the contract for each role player within that level of granularity together with
+      </para></listitem>
+      <listitem><para>
+        the business process across these role players (on that level of granularity).
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>Extracting service requirements</title>
+    <para>
+      To generate the contract for a role player, one takes the corresponding interface from the
+      collaboration. That interface will specify the services required from that role player. Any
+      service provider fulfilling that contract will have to provide these services. 
+    </para>
+    <figure
+      id="resources.information.concepts.design.businessProcess.urdad.design.contractSpecification.valuationsInterface_fig">
+      <title>The interface specifying the services required from valuations.</title>
+      <graphic fileref="valuationsInterface.jpg"/>
+    </figure>
+  </section>
+  
+  <section>
+    <title>Abstracting lower level services into use cases</title>
+    <para>
+      Often each service represents a lower level use case, <abbrev>i.e.</abbrev> a complete client
+      service provided by that role player. The client of valuations is the claims department.
+    </para>
+    
+    <figure
+      id="resources.information.concepts.design.businessProcess.urdad.design.contractSpecification.valuationsContract_fig">
+      <title>Functional and quality requirements for a lower level use case</title>
+      <graphic fileref="valuationsContract.jpg"/>
+    </figure>
+    
+    <para>
+      In such cases one can directly abstract these services as use cases and specify a use case
+      contract for each of them. The use case contract would contain the functional and quality
+      requirements (see <xref
+        linkend="resources.information.concepts.design.businessProcess.urdad.design.contractSpecification.valuationsContract_fig"/>)
+      together with the class diagrams for the value objects exchanged (see, for example, <xref
+        linkend="resources.information.concepts.design.businessProcess.urdad.design.contractSpecification.vehicleAccidentClaim_fig"/>).
+      <note><para>
+        If a functional requirement is not shown to be required by a particular stake holder (via a
+        <literal><![CDATA[<<requires>>]]></literal> dependency), then it is assumed that the user of
+        that use case requires it.
+      </para></note>
+    </para>
+    
+    <figure
+      id="resources.information.concepts.design.businessProcess.urdad.design.contractSpecification.vehicleAccidentClaim_fig">
+      <title>Information provided with a vehicle accident claim</title>
+      <graphic fileref="vehicleAccidentClaim.jpg"/>
+    </figure>
+    
+    <section>
+      <title>What if use cases span multiple interactions?</title>
+      <para>
+        Often these services deliver directly lower level use cases. This is certainly so if the in the
+        business process of the current level of granularity a single service is requested from that
+        role player. At other times one can identify a sequence of messages exchanged in the context of
+        requesting a service from this lower level component. In such cases one needs to abstract
+        the work flow across the different interactions into a single use case. 
+      </para>
+      <para>
+        For such use cases one would have to include the higher level user work flow for that use
+        case. This can be directly extracted from the sequence and activity diagrams which we
+        already have for the current level of granularity.
+        <note><para>
+          This is no different to what we had with the initial analysis view for the
+          <emphasis>process vehicle accident claim</emphasis> as a whole. There too we had a use
+          case which was not provided over a single interaction (the policy holder was, for example,
+          required to sig the settlement offer) and we included the user work flow specification
+          (sequence and activity diagrams) as part of the contract. In essence, we are projecting
+          out an analysis view for the lower level role players. 
+        </para></note>
+      </para>
+    </section>
+    
+  </section>
+  
+</section>  

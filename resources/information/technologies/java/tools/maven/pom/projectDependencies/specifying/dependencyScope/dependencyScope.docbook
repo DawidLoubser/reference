@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Specifying the scope of a dependency</title>
+    <para>
+        By default dependencies are available in all classpaths for all build phases and are packaged
+        within the resultant archive. Maven allows you, however, to reduce the scope of a dependency
+        via the <literal>scope</literal> attribute which can have the following values
+        <itemizedlist>
+            <listitem><formalpara>
+                <title>compile</title>
+                <para>
+                    The <literal>compile</literal> scope is the default scope. A dependency which is assigned the
+                    <literal>compile</literal> scope is available in all class paths and is included in the
+                    package for the project (main) artifact. For example, a library which you are compiling against
+                    and whose classes are required at run time would typically be specified using the 
+                    
+                    <programlisting><![CDATA[
+<project>
+   ...
+   <dependencies>
+      <dependency>
+         <groupId>solms.co.za.mavenCourse</groupId>
+         <artifactId>testLibrary</artifactId>
+         <version>1.4.2</version>
+         <scope>compile</scope>
+      </dependency>
+   </dependencies>
+   ...
+</project>
+]]></programlisting>                    
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>provided</title>
+                <para>
+                    The <literal>provided</literal> dependency is used to specify a dependency which
+                    would be provided by the deployment/execution environment for the project artifact.
+                    For example, the EJB, JTA, JPA, ... APIs would be provided by the application server into which
+                    an application is to be deployed into. Dependencies with <literal>provided</literal>
+                    scope are still included in the class paths for compilation purposes, but are not
+                    packaged within the resultant project artifact.
+                    <programlisting><![CDATA[
+<project>
+   ...
+   <dependencies>
+      <dependency>
+         <groupId>javax.servlet</groupId>
+         <artifactId>jervlet-api</artifactId>
+         <version>[2.2,2.3)</version>
+         <scope>provided</scope>
+      </dependency>
+   </dependencies>
+   ...
+</project>
+]]></programlisting>                    
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>runtime</title>
+                <para>
+                    Dependencies specified with <literal>runtime</literal> scope are required during
+                    execution and testing, but not for compilation. For example, you might need  a 
+                    particular API/contract jar at compile time, but the actual implementation classes
+                    for that API only at run time.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>test</title>
+                <para>
+                    Dependencies declared with <literal>test</literal> scope are only required for the
+                    compilation and execution of tests. For example, a JUnit dependency would typically
+                    be scoped as a <emphasis>test</emphasis> dependency:
+                    <programlisting><![CDATA[
+<project>
+   ...
+   <dependencies>
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>[4,]</version>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+   ...
+</project>
+]]></programlisting>                    
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>system</title>
+                <para>
+                    The <literal>system</literal> scope is meant to be used to specify native system
+                    dependencies. If you declare a dependency with <literal>system</literal> scope,
+                    you will have to specify the <literal>systemPath</literal> element. System scope
+                    should be used only in very exceptional cases.
+                </para>
+            </formalpara></listitem>
+        </itemizedlist>
+    </para>
+</section>    

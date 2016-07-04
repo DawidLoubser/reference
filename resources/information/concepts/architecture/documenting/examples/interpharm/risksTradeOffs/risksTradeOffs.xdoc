@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.concepts.architecture.documenting.examples.interpharm.architecture.risksTradeOffs.risksTradeOffs"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title role="Risks and trade-offs">Architectural risks and trade-offs</title>
+  <para>
+  
+  </para>
+  
+  <section>
+    <title>Security</title>
+    <para>
+      Currently the communication between pharmacies and the switch and the switch and medical aid
+      administators is transmitted largely with little or no support for confidentiality (encryption) and data
+      integrity (hashing). As the communication is ported over to HTTP and/or web services, the
+      support for this can be easily added via SSL. 
+    </para>
+  </section>
+  
+  <section>
+    <title>Transaction management</title>
+    <para>
+      Currently the transaction boundaries are compromised by not being able to place the technical
+      boundaries on the true business boundaries (in principle, the transaction spans from the
+      pharmacy over interpharm and the administrator back to the pharmacy). This means that separate
+      use cases for performing inverse transactions to cater for incorrectly committed transactions
+      need to be supported.
+    </para>
+    <para>
+      Also, the transaction context is currently not propagated through the JCA connector to the
+      administrator system, resulting additional logic to for roll-back requests in the claim switching
+      system and the administrator having to provide support for roll back via inverse
+      transactions. 
+    </para>
+  </section>
+  
+  <section>
+    <title>Fail over safety in the socket connection layer</title>
+    <para>
+      The socket connection layer has limited fail-over safety. If a machine goes down, then the
+      connections to the client are lost and all transactions
+    </para>
+  </section>
+  
+  <section>
+    <title>Database synchronization</title>
+    <para>
+      If a database server falls over, it may not have been able to synchronize all data to the
+      second database server yet. This introduces a risk of aborting workflows and duplicate  claims on database server
+      failure.
+    </para>
+  </section>
+  
+  
+</section>  

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Emerging a package</title>
+    <para>
+        To emerge (install) a software package, you can simply use
+        <programlisting><![CDATA[
+emerge somePackage            
+            ]]></programlisting>
+        This will 
+        <itemizedlist>
+            <listitem><para>
+                calculate the recursive dependencies,
+            </para></listitem>
+            <listitem><para>
+                compare them against your current installation base,               
+            </para></listitem>
+            <listitem><para>
+                download the sources for any missing packages,
+            </para></listitem>
+            <listitem><para>
+                compile and link those sources, creating any required dynamic link libraries,
+            </para></listitem>
+            <listitem><para>
+                and install the packages and libraries in the installation base.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <para>
+        For example, in order to emerge <literal>digikam </literal>,a KDE-based photo management application,
+        you can use
+        <programlisting><![CDATA[
+emerge digikam            
+]]></programlisting>
+        will install the dependencies and ultimately the <literal>digikam</literal> package itself. 
+    </para>
+    
+    <para>
+        If you first want to see what would be installed, you can use the <literal>--pretend</literal> option.
+        For example, to see what would still be added to your installation base when emerging the 3D
+        creation/animation/publishing system, <literal>blender</literal>, you can use:            
+        <programlisting><![CDATA[
+emerge --pretend blender
+
+These are the packages that would be merged, in order:
+
+Calculating dependencies... done!
+[ebuild  N    ] media-libs/openjpeg-1.3-r2  USE="-tools"
+[ebuild  N    ] media-libs/ftgl-2.1.3_rc5
+[ebuild  N    ] media-gfx/blender-2.49a  USE="nls ogg openmp -blender-game -ffmpeg -openal -verse"            
+            ]]></programlisting>
+    </para>
+
+    <para>
+        You can also download the sources without compiling or installing them via 
+        <programlisting><![CDATA[
+emerge --fetchonly blender
+        ]]></programlisting>
+    </para>
+</section>    

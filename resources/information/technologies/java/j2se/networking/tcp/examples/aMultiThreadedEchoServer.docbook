@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns2420:section xmlns:ns2420="http://docbook.org/ns/docbook" xml:id="resources.information.tecnologies.java.networking.tcp.examples.multiThreadedEchoServer">
+    
+    <ns2421:title xmlns:ns2421="http://docbook.org/ns/docbook">A Multi-Threaded Echo Server</ns2421:title>
+
+<ns2422:para xmlns:ns2422="http://docbook.org/ns/docbook">The simple server implementations discussed thus far can only
+handle a single connection (client) at a time. In order to serve
+multiple clients we have to create a separate server thread for
+each client.</ns2422:para>
+
+<ns2423:para xmlns:ns2423="http://docbook.org/ns/docbook">Let us first look at the main program encapsulated in the
+<ns2424:literal xmlns:ns2424="http://docbook.org/ns/docbook">MultiThreadEchoServer</ns2424:literal> class. We first create a server socket. In
+an infinite loop the server waits for clients to connect via</ns2423:para>
+
+<ns2425:para xmlns:ns2425="http://docbook.org/ns/docbook"><ns2426:programlisting xmlns:ns2426="http://docbook.org/ns/docbook">
+Socket ClientServerSocket server.accept()
+</ns2426:programlisting></ns2425:para>
+
+
+<ns2427:para xmlns:ns2427="http://docbook.org/ns/docbook">It creates a socket for each client and then creates an
+<ns2428:literal xmlns:ns2428="http://docbook.org/ns/docbook">EchoHandlerThread</ns2428:literal> for this client and starts the thread. The
+actual echo handler thread creates an input and an outputstream to
+the client socket. It then simply echos the lines received from the
+client until it receives ``CIAOU'' upon which it closes the
+connection. I</ns2427:para>
+
+<ns2429:para xmlns:ns2429="http://docbook.org/ns/docbook">
+<ns2430:programlisting xmlns:ns2430="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="MultiThreadEchoServer.java"/>
+</ns2430:programlisting>
+</ns2429:para>    
+
+<ns2431:para xmlns:ns2431="http://docbook.org/ns/docbook">This server can now handle multiple clients simultaneously. The
+clients could use the client application developed in the previous
+section to connect to the server.</ns2431:para>
+    
+</ns2420:section>

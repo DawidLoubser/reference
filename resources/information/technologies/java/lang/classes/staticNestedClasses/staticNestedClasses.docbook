@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6225:section xmlns:ns6225="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.lang.classes.staticNestedClasses.staticNestedClasses">
+    
+    <ns6226:title xmlns:ns6226="http://docbook.org/ns/docbook">Static Nested Classes</ns6226:title>
+
+<ns6227:para xmlns:ns6227="http://docbook.org/ns/docbook">Static nested classes (or simply <ns6228:emphasis xmlns:ns6228="http://docbook.org/ns/docbook" role="em"> nested classes</ns6228:emphasis>) are classes defined
+within another class. Being static, they have only access to the class
+methods and attributes of the outer class, not the instance members.
+
+<ns6229:programlisting xmlns:ns6229="http://docbook.org/ns/docbook">
+public class OuterClass
+{
+  protected static class InnerClass
+  {
+    public InnerClass() {}
+
+    public void doSomething()
+    {
+      // can access classMember
+      // cannot access instanceMember
+    }
+  }
+
+  private InstanceMember instanceMember;
+  private static ClassMember classMember;
+}
+</ns6229:programlisting>
+</ns6227:para>
+<ns6230:para xmlns:ns6230="http://docbook.org/ns/docbook">Depending on the scope with which they are defined, they can be instantiated
+either from within the outer class in whose context the inner class is
+defined (<ns6231:emphasis xmlns:ns6231="http://docbook.org/ns/docbook" role="verb">private</ns6231:emphasis>), or only from within the outer class and its
+subclasses <ns6232:emphasis xmlns:ns6232="http://docbook.org/ns/docbook" role="bf"> protected</ns6232:emphasis>, from within all classes in the package
+or from within any class which has access to the outer class (<ns6233:emphasis xmlns:ns6233="http://docbook.org/ns/docbook" role="verb">public</ns6233:emphasis>).</ns6230:para>
+
+<ns6234:para xmlns:ns6234="http://docbook.org/ns/docbook">Except if one has some strange reason for not wanting to nest the package
+hierarchy any further, static nested classes are only really useful when
+they are declared <ns6235:emphasis xmlns:ns6235="http://docbook.org/ns/docbook" role="verb">private</ns6235:emphasis> or <ns6236:emphasis xmlns:ns6236="http://docbook.org/ns/docbook" role="verb">protected</ns6236:emphasis>. In these cases one
+restricts the objects/classes which can see and/or instantiate the nested
+class to either the class itself or to the class and its subclasses.</ns6234:para>
+
+<ns6237:para xmlns:ns6237="http://docbook.org/ns/docbook">If the nested class is declared private in the above example other classes
+cannot obtain a handle to the nested class. If, on the other hand, the
+nested class implements some interface then the outer class can give a
+handle for the inner to some external class. The external class can then
+make use of those services of the inner class whose message signatures
+have been specified in the corresponding interface. Assume we have the
+following interface
+
+<ns6238:programlisting xmlns:ns6238="http://docbook.org/ns/docbook">
+public Interface SomeInterface
+{
+  public void doSomething();
+}
+</ns6238:programlisting>
+</ns6237:para>
+<ns6239:para xmlns:ns6239="http://docbook.org/ns/docbook"><ns6240:programlisting xmlns:ns6240="http://docbook.org/ns/docbook">
+public class OuterClass
+{
+  public OuterClass() {inner = new InnerClass();}
+
+  protected static class InnerClass implements SomeInterface
+  {
+    public InnerClass() {}
+
+    public void doSomething()
+    {
+      // can access classMember
+      // cannot access instanceMember
+    }
+
+    public doSomethingElse() {...}
+  }
+
+  public SomeInterface getInner() {return inner;}
+
+  private InnerClass inner;
+  private InstanceMember instanceMember;
+  private static ClassMember classMember;
+}
+</ns6240:programlisting>
+</ns6239:para>
+<ns6241:para xmlns:ns6241="http://docbook.org/ns/docbook">Now objects which have a reference to an instance of <ns6242:emphasis xmlns:ns6242="http://docbook.org/ns/docbook" role="verb">OuterClass</ns6242:emphasis>
+can obtain a reference to the instance of outer's <ns6243:emphasis xmlns:ns6243="http://docbook.org/ns/docbook" role="verb">InnerClass</ns6243:emphasis>
+(as a reference to <ns6244:emphasis xmlns:ns6244="http://docbook.org/ns/docbook" role="verb">SomeInterface</ns6244:emphasis>) and can request the
+<ns6245:emphasis xmlns:ns6245="http://docbook.org/ns/docbook" role="verb">doSomething()</ns6245:emphasis> service from that object:
+
+<ns6246:programlisting xmlns:ns6246="http://docbook.org/ns/docbook">
+public class Test
+{
+  public static void main(String[] args)
+  {
+    OuterClass outer = new OuterClass();
+
+    SomeInterface inner = outer.getInner();
+
+    inner.doSomething(); // no problem
+
+    inner.doSomethingElse(); // XXX no access.
+  }
+}
+</ns6246:programlisting>
+</ns6241:para>
+    
+</ns6225:section>

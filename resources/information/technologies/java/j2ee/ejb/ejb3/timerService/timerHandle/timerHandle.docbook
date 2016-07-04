@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    
+    <title>Persistent Timer References</title>
+    
+    <indexterm>
+        <primary>EJB</primary>
+        <secondary>Timer Service</secondary>
+        <tertiary>persistent reference</tertiary>
+    </indexterm>
+    
+    <para>
+        Often, different services offered by a stateless EJB need to interact with the
+        same timer, in order to, for example, cancel it. Imagine a traffic fine system,
+        where, upon notification of an offence, a session bean schedules a timer which
+        will ultimately result in a warrant of arrest being served upon the offender
+        within a month of not paying.
+    </para>
+    <para>
+        However, it offers a service of paying for a fine, which should cancel the timer
+        that will dispatch the friendly police officer to your residence. This service may
+        even reside in a different EJB. For example:
+    </para>
+    <programlisting language="Java"><![CDATA[
+@Stateless
+public class TrafficLawEnforcementBean implements TrafficLawEnforcement 
+{ 
+    public void registerOffence( Offence o )
+    {
+        // Dispatch fine to user's postal address
+        // ...
+        
+        // Schedule a warrant-of-arrest timer
+        Timer t = ejbContext.getTimerService().createTimer( 
+                           /* 1 month */ , o.getDriverDetails() );
+    }
+    
+    public void payForOffence( PaymentRequest p )
+    {
+        // Process payment
+        // ...
+        
+        // Cancel Timer
+        // ???
+    }
+    
+    @Timeout
+    public void dispatchOfficer(Timer timer)
+    {
+        DriverDetails d = (DriverDetails)timer.getInfo();
+        dispatch.dispatchVehicle( /* ... */ );
+    }
+    
+    @Resource
+    private EJBContext ejbContext;
+    
+    @EJB
+    private VehicleDispatch dispatch;
+} 
+]]></programlisting>
+    <para>
+        The problem lies with the fact that a stateless session bean cannot maintain object state between service requests
+        (i.e. we cannot assign the created timer to an instance variable). Furthermore, multiple timers may be scheduled for 
+        a single bean. One solution to this problem, if the different
+        services are within the same bean, is to ask the <literal>TimerService</literal> for all the timers for the current
+        bean, and manually inspect them to find the one to cancel. For example:
+    </para>
+    <programlisting language="Java"><![CDATA[
+@Stateless
+public class TrafficLawEnforcementBean implements TrafficLawEnforcement 
+{ 
+    ...
+    
+    public void payForOffence( PaymentRequest p )
+    {
+        // Process payment
+        // ...
+        
+        // Look for applicable timer, and cancel it
+        for (Timer t : ejbCOntext.getTimerService().getTimers())
+        {
+            if (t.getInfo().equals( /* ... */ )
+            {
+                t.cancel();
+            }
+        }
+    }
+
+    ...
+    
+    @Resource
+    private EJBContext ejbContext;
+
+} 
+]]></programlisting>
+    <para>
+        This is however not an elegant solution, and we may wish to use the <literal>TimerHandle</literal>
+        interface instead.
+    </para>
+    
+    <section>
+        <title>TimerHandle</title>
+        <para>
+            A <literal>javax.ejb.TimerHandle</literal> is a serializable, persistent reference to an active timer.
+            It is created by requesting a service from a timer:
+            <programlisting language="Java"><![CDATA[
+                Timer t = ... ;
+                TimerHandle th = t.getHandle();
+            ]]></programlisting>
+        </para>
+        <para>
+            Because it is serializable, the handle may now be persisted, such as storing it in the database.
+            A common technique is to use a JPA Entity which has, as one of its fields, a TimerHandle.
+            At any time when a handle to the original, running timer is required, it is simply requested
+            from the timer handle:
+            <programlisting language="Java"><![CDATA[
+                TimerHandle th = /* Get from database */;
+                Timer t = th.getTimer();
+            ]]></programlisting>
+        </para>
+        <para>
+            The traffic law-enforcement bean may now be implemented in a manner where the timer is stored in the
+            database in the one service, and retrieved from the database in the other: A simple entity bean
+            called <literal>WarrantOfArrestTimer</literal> is used in this example:
+        </para>
+        <programlisting language="Java"><![CDATA[
+@Stateless
+public class TrafficLawEnforcementBean implements TrafficLawEnforcement 
+{ 
+    public void registerOffence( Offence o )
+    {
+        // Dispatch fine to user's postal address
+        // ...
+        
+        // Schedule a warrant-of-arrest timer
+        Timer t = ejbContext.getTimerService().createTimer( 
+                           /* 1 month */ , o.getDriverDetails() );
+                           
+        // Store timer info in the database
+        em.persist( new WarrantOfArrestTimer( t, o.getId() ) );
+    }
+    
+    public void payForOffence( PaymentRequest p )
+    {
+        // Process payment
+        // ...
+        
+        // Cancel Timer
+        WarrantOfArrestTimer woa = em.find( WarrantOfArrestTimer.class, p.getOffence().getId() );
+        TimerHandle handle = woa.getTimerHandle();
+        handle.getTimer().cancel();
+    }
+    
+    @Timeout
+    public void dispatchOfficer(Timer timer)
+    {
+        DriverDetails d = (DriverDetails)timer.getInfo();
+        dispatch.dispatchVehicle( /* ... */ );
+    }
+    
+    @Resource
+    private EJBContext ejbContext;
+    
+    @EJB
+    private VehicleDispatch dispatch;
+    
+    @PersistenceContext
+    private EntityManager em;
+} 
+]]></programlisting>
+        <section>
+            <title>Referencing an expired timer</title>
+            <para>
+                If a <literal>TimerHandle</literal> is serialized, say, to a database,
+                the information will exist until it is explicitly removed, which may be
+                for a very long time.
+            </para>
+            <para>
+                A Timer handle can, however, only be used to reference a timer which exists
+                in the application server. Calling <literal>getTimer()</literal> to obtain
+                a timer which has been cancelled, or a single-event timer which has already
+                timed out, will cause a <literal>javax.ejb.NoSuchObjectLocalException</literal>
+                to be thrown. This is because, once a timer's work is complete, the application
+                server will remove it from the runtime environment.
+            </para>
+            <para>
+                Any code which thus uses a TimerHandle to reference a timer, <emphasis>must</emphasis> be prepared to
+                catch this exception. When a timer is cancelled, it would also make sense to remove
+                any persistent remnants of the time handle from, for example, the database, as the handle
+                can no longer be used to obtain information about the timer. For example, to cancel
+                a timer which was stored in a database, the following approach could be used:
+                <programlisting language="Java"><![CDATA[
+...
+
+/* An internal service which may be used by other services to cancel the
+   reminder timer for a given account */
+private void cancelTimerForAccountReminder( Account a )
+{
+    // Use information form account to get timer handle from database
+    SomeEntity entity = entityManager.find( /* ... */ );
+    TimerHandle handle = entity.getTimerHandle();
+    
+    try
+    {
+        // Use handle to get timer and cancel it
+        Timer t = handle.getTimer();
+        t.cancel();
+    }
+    catch (NoSuchObjectLocalException e)
+    {
+        // Timer no longer active, so there is nothing to cancel
+    }
+    finally
+    {
+        // Remove from database
+        entityManager.remove( entity );
+    }
+}
+
+...
+                    ]]></programlisting>
+            </para>
+        </section>
+    </section>
+
+</section>

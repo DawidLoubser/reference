@@ -1,0 +1,100 @@
+\section{Implementation mapping notes}
+
+This section specifies some general guidelines on the envisaged model transformations outputs of an URDAD model.
+The model transformation outputs include the encoding of services contracts, service implementations, unit tests
+for services contracts and documentation for services.
+
+%=======================================================================
+
+\subsection{Implementation mapping of leaf services}
+
+The requirements for leaf services which are sourced from outside the scope of the system are specified 
+through a services contract which specifies the unputs, outputs, pre- and post-conditions and quality requirements.
+These contracts need to be mapped onto technology representations of such contracts. Examples include
+WSDL, CORBA IDL and Java interface encodings.
+
+URDAD distinguishes between errors and exceptions with errors communicating that an internal problem has occured 
+which prevents the service provider to meet the contractual obligations for the service, while and exception communicates
+that a service provider does not provide the requested service because a pre-condition for the service was not met.
+URDAD further requires that an exception class is introduced for each pre-condition.
+
+The model contains the linkage between a pre-condition and an associated exception class in the form of a dependency.
+Since UML does not specfy a notation for constraints, the dependency is generally not showable in UML diagrams. 
+It is, however, specified in the model and URDAD supporting tools could show it diagrammatically. During implementation
+mapping of the services contract one needs to make certain that the correct exception is specified to be raised.
+
+%=======================================================================
+
+\subsection{Implementation mapping of composite services}
+
+Services are recursively assembled from lower level services until a required functionality is provided by
+an externally available service, i.e.\  a service provided by the programming language, frameworks or libraries,
+or external systems we are integrating with.
+
+The service contract implementation mapping is also done for non-leaf services. In addition the process
+realizing the service needs to be implemented.
+
+The assembly of a process for a composite service from lower level services is specified in a UML composite 
+activity  and visually represented in a UML activity diagram. Note that the only operations contained in an URDAD
+compliant UML activity diagram are
+\begin{itemize}
+  \item the activity for the outer service with its input and output nodes,
+  \item call operations which request lower level services,
+  \item send signal operations including those for raising exceptions, and
+  \item flow control activities like decision and merge nodes, forks and sysnchronization bars.
+\end{itemize}
+
+This subset is sufficient yet minimal, has well defined semantics and allows for straight forward implementation 
+mappings.
+
+%=======================================================================
+
+\subsection{Implementation mapping of exchanged value objects}
+
+The URDAD model contains the data structure specifications for the exchanged data objects. These
+are mapped onto a technology representation like data classes in the chosen programming language, 
+XML schemas if the encoding of the value objects is XML and so on.
+
+When performing the model transformations for the implementation mapping of value objects one should
+take into account the following URDAD guidelines:
+\begin{description}
+  \item[public attributes] In the spirit of CORBA, the URDAD model uses public attributes on entities as a short
+	 hand notation for getter and setters.
+  \item[composition implies encapsulation] UML composition relationships are to be implemented in such a way that
+the component is encapsuled. External objects should not obtain direct access to encapsulated components. Should
+they require an object (e.g.\ an account balance) they would be given a copy of the balance object, not a direct reference
+or pointer to the balance object.
+  \item[association] The model may contain association relationships to directly accessible objects and to remote, 
+non-accessible objects. Associations to accessible objects are implemented in a standard way via references, pointers,
+foreign keys etc. UML association relationships to non-accessible objects are implemented as object identifiers
+ (e.g.\ URI, account number, ...).
+\end{description}
+
+%=======================================================================
+
+\subsection{Unit test generation}
+Unit tests are to be generated off service contract specifications. A unit test needs to 
+ 
+  \begin{enumerate}
+	 \item Check whether all pre-conditions are met.
+	 \item Request the service and
+		\begin{itemize}
+		  \item if the pre-conditions are not met, check that an approapriate exception is thrown,
+		  \item if the pre-conditions are met check that all post-conditions hold true after the service has been provided.
+		\end{itemize}
+  \end{enumerate}
+
+%=======================================================================
+
+\subsection{Service documentation generation}
+
+The service documentation generation is envisaged to provide a UML to natual language mapping of an URDAD/OCL
+model mapping the semantic statements in the model onto corresponding semantic statements in a natural language.
+For example, if class B is specified in the model to be a specialization of class A then this is mapped onto a statement
+that {\em instances of B are special instances of A} and so forth.
+
+The envisaged complexity is not in the mapping of the individual semantic statements, but rather in the higher level
+assembly of these statements into an ordered, readable, well-structured document. For this one can be guided by
+the core elements of an URDAD model, i.e., that of the service contract specification, the identification of services
+required to address the various pre- and post-conditions and the orchestration of those services within a defined
+process.

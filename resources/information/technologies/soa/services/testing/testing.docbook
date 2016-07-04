@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Testing Services</title>
+    <indexterm>
+        <primary>services</primary>
+        <secondary>testing</secondary>
+    </indexterm>
+    
+    <para>
+        If one follows a test-driven development methodology (an important component of
+        agile software development), it is necessary to write one or more unit tests
+        which tests our service.
+    </para>
+    
+    <section>
+        <title>What needs to be tested?</title>
+        <para>
+            The unit test should ideally only test that the functional requirements of the
+            service are satisfied, i.e. that
+            <itemizedlist>
+                <listitem>
+                    <para>when the preconditions to a service is met by a request,</para>
+                </listitem>
+                <listitem>
+                    <para>the postconditions must be realised.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            The test should request the service in various ways to adequately cover the typically
+            envisaged usage patterns.
+        </para>
+    </section>
+    
+    <section>
+        <title>What should not be tested?</title>
+        <para>
+            When performing functional unit testing on a service, one does not want to test
+            <itemizedlist>
+                <listitem>
+                    <para>the lower-level infrastructure upon which it depends, such as object-relational
+                    persistence providers or e-mail services</para>
+                </listitem>
+                <listitem>
+                    <para>the infrastructure through which the service itself is requested, such as
+                    through an ESB,</para>
+                </listitem>
+                <listitem>
+                    <para>the protocol mapping / adaptor layer through which the service is requested,
+                    such as a web services framework / xml binding technology</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        the lower-level services (if any) upon which this service depends.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Each of these <emphasis>infrastructure</emphasis> services will typically have their own tests
+            (not implemented by the same developer who implemented the service), and one does not want to duplicate,
+            for every business logic component that one writes, the testing of the infrastructure which it depends
+            on.
+        </para>
+        <para>
+            The developer should trust that all lower-level services, as well as infrastructure services, are working
+            as per their respective contracts. If we suspect otherwise, we should run the (separate) unit tests for
+            those services.
+        </para>
+    </section>
+    
+    <section>
+        <title>Implementing the service test</title>
+        <para>
+            When we follow the approach above of strictly separating the <emphasis>functional</emphasis> testing from the
+            <emphasis>non-functional</emphasis> testing, we can implement the functional test in whichever testing framework
+            is <quote>closest</quote> to the service's implementation technology. For example, if a service is implemented
+            using the Java programming language, the JUnit testing framework would be very suitable.
+        </para>
+        <para>
+            In the future, with software being generated from a PIM (UML Platform-Independent Model) which has a semantically
+            sound set of OCL constraints to express service pre- and post-conditions, we see tests being generated automatically for
+            contracts.
+        </para>
+        <para>
+            In the context of SOA development, one may ultimately want to execute technology-neutral tests (against the WSDL
+            contracts) which are then able to test one's own service implementations, as well as out-sourced implementations,
+            using the same test. Current web services testing frameworks do exist, but they are all tied to the concrete model
+            of the WSDL, i.e. they make the assumption that a SOAP/HTTP transport protocol is used, making them less suitable both
+            for other interaction protocols (File System, JMS, CORBA, ...). They all usually also inadvertently test the services
+            infrastructure.
+        </para>
+    </section>
+    
+    <section>
+        <title>Integration testing</title>
+        <indexterm>
+            <primary>services</primary>
+            <secondary>autonomy</secondary>
+        </indexterm>
+        <para>
+            One of the principles of Services, in the context of SOA, is service autonomy. This means that, during the implementation or selection of
+            a particular service provider, it needs to be tested in an isolated (non-integrated) manner. Only once services are assembled in a
+            service assembly, ready for deployment to an integration infrastructure (such as an Enterprise Services Bus) should integration
+            testing be performed.
+        </para>
+    </section>
+    
+    <!-- TODO: Quality testing? (performance, etc) -->
+    
+</section>

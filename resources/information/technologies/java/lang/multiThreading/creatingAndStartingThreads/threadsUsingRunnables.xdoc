@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.lang.multiThreading.creatingAndStartingThreads.threadsUsingRunnables"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+    <title role="Threads using a Runnables run()">Threads using a Runnables run()</title>
+
+<para>So far the initial thread tasks were specified within the <emphasis role="verb">run()</emphasis>
+method of a <emphasis role="verb">Thread</emphasis> class, <abbrev>i.e.</abbrev> we subclassed <emphasis role="verb">Thread</emphasis> and
+overloaded its <emphasis role="verb">run()</emphasis> method. If you want to package a thread's
+<emphasis role="verb">run()</emphasis> method within a class which is already derived from another
+class (bar <emphasis role="verb">Object</emphasis>), and if that superclass is not itself derived 
+from <emphasis role="verb">Thread</emphasis>, we have a problem. Java does not support multiple
+inheritance of classes and hence we cannot derive that class from 
+<emphasis role="verb">Thread</emphasis>.</para>
+
+<para>Java's solution to this problem is to wrap the object which supplies the
+<emphasis role="verb">run()</emphasis> method with a <emphasis role="verb">Thread</emphasis>. The thread will then obtain the
+instructions for its task from the <emphasis role="verb">run()</emphasis> method of the object it
+wraps. Of course the object which is wrapped by the thread must supply
+a <emphasis role="verb">run()</emphasis> method. To enforce this it's class must implement the
+<emphasis role="verb">Runnable</emphasis> interface. The is illustrated in the following code
+snippet:</para>
+
+<para><programlisting>
+class ClassWithRunMethodForThread implements Runnable
+{
+  ...
+  public void run() {...}
+}  
+
+public static void main(String args)
+{
+  ...
+  new Thread(new ClassWithRunMethodForThread()).start();
+  ...
+} 
+</programlisting></para>
+    
+</section>

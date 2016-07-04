@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Rendering information from business objects</title>
+  
+  <para>
+    The typical use-case for using the EL is to render information from
+    <quote>business objects</quote> passed to a JSP from another layer. These
+    are called <emphasis>value expressions</emphasis>, and typically used the
+    ${} syntax. All expressions using the ${} syntax are evaluated immediately. These 
+    expressions can be used within template text, or as the value of a JSP 
+    tag attribute that can accept runtime expressions (such as one of the many <quote>standard</quote>
+    tags supplied with the JSP Standard Tag Library - the JSTL).
+  </para>
+  <para>
+    The following example shows a tag whose value attribute references an 
+    immediate evaluation expression that gets the total price from the session-scoped bean 
+    named cart: 
+  </para>
+  <programlisting language="xml"><![CDATA[
+    ...
+    <p>
+      Thank you for shopping, your total amount outstanding
+      is ${sessionScope.cart.total}.
+    </p>
+  ]]></programlisting>
+  <para>
+    Of course, it would be more likely to process the value in some way before
+    outputting it, such as passing it through a number formatter:
+  </para>
+  <programlisting language="xml"><![CDATA[
+    ...
+    <p>
+      Thank you for shopping, your total amount outstanding
+      is <fmt:formatNumber value="${sessionScope.cart.total}"/>.
+    </p>
+  ]]></programlisting>
+  <note>
+    <para>
+      Immediate evaluation expressions are always read-only value expressions. The 
+      expressions shown above can only get the total price from the cart bean; it cannot 
+      set the total price.
+    </para>
+  </note>
+  
+  <section>
+    <title>Referencing objects using expressions</title>
+    <para>
+      EL expressions can refer to the following objects and their 
+      properties or attributes: 
+      <itemizedlist>
+        <listitem>
+          <para>JavaBeans components</para>
+        </listitem>
+        <listitem>
+          <para>Collections</para>
+        </listitem>
+        <listitem>
+          <para>Java SE enumerated types</para>
+        </listitem>
+        <listitem>
+          <para>Implicit objects</para>
+        </listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      To refer to these objects, you write an expression using a variable name with 
+      which you created the object. The following expression references a JavaBeans 
+      component called customer. 
+  <programlisting><![CDATA[
+${customer}
+    ]]></programlisting>      
+    </para>
+    <para>
+      The web container evaluates a variable that appears in an expression by looking 
+      up its value according to the behaviour of <literal>javax.servlet.jsp.PageContext.findAttribute(String)</literal>.
+      For example, when evaluating the expression ${customer}, 
+      the container will look for customer in the page, request, session, and 
+      application scopes (in that order) and will return its value. If customer 
+      is not found, null is returned. A variable that matches one of the 
+      implicit objects available to the page (such as the HttpSession) will return 
+      that implicit object instead of the variable's value.
+    </para>
+  </section>
+  
+  <section>
+    <title>Referencing object properties using expressions</title>
+    <para>
+      To refer to properties of a bean or an Enum instance, items of a collection, or 
+      attributes of an implicit object, you use either the <literal>.</literal> 
+      or <literal>[]</literal> notation. 
+    </para>
+    
+    <section>
+      <title>Referencing JavaBeans properties</title>
+      <para>
+      So, if you wanted to reference the <quote>name</quote> property of the customer bean, you 
+      could use either the expression
+      <programlisting><![CDATA[
+${customer.name}]]></programlisting> 
+       or the expression
+       <programlisting><![CDATA[
+${customer["name"]}]]></programlisting>. 
+      The part inside the square brackets is a String literal that is 
+      the name of the property to reference.You can use either double or single quotes 
+      for the String literal. You can also combine the [] and . notations, for example:
+      <programlisting><![CDATA[
+${customer.address["street"]}]]></programlisting>
+        (equivalent to:)
+        <programlisting><![CDATA[
+${customer.address.street}]]></programlisting> 
+    </para>
+    </section>
+    
+    <section>
+      <title>Referencing the properties of enumerated types</title>
+      <para>
+        Properties of an enum can also be referenced in this way. However, as with 
+        JavaBeans component properties, the Enum class’s properties must follow JavaBeans 
+        component conventions. This means that a property must at least have an acces- 
+        sor method called get<![CDATA[<Property>]]> — where <![CDATA[<Property>]]> is 
+        the name of the property — in order for an expression to be able to reference it. 
+      </para>
+      <para>
+        For example, say you have an Enum class that encapsulates the names of the 
+        planets of our galaxy and includes a method to get the mass of a planet. You can 
+        use the following expression to reference the method <literal>getMass()</literal> of the Planet 
+        Enum class:
+        <programlisting><![CDATA[
+${myPlanet.mass}
+          ]]></programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>Referencing items in an array or list</title>
+      <para>
+        If you are accessing an item in an array or list, you must use either a literal value 
+        that can be coerced to int or the [] notation with an int and without quotes.
+        For example: 
+<programlisting><![CDATA[
+${customer.orders[1]}
+  ]]></programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>Referencing items in a java.util.Map</title>
+      <para>
+        An item in a Map can be accessed by specifying the value of the key (as per <literal>Map.get(Object key)</literal>)
+        in square brackets, for
+        example:
+        <programlisting><![CDATA[
+${customer.orders["socks"]}
+]]></programlisting>
+        (for a map stored in the variable <quote>curstomer.orders</quote>)
+      </para>
+    </section>
+    
+    <section>
+      <title>Referencing computed or non-object values</title>
+      <para>
+        An expression may also refer directly to values that are not objects, such as the 
+        result of arithmetic operations and literal values, for example:
+        <programlisting><![CDATA[
+${"literal string"} 
+${customer.age + 20} 
+${true} 
+${57}
+          ]]></programlisting>
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>Customising the variable resolving behaviour</title>
+    <para>
+      The JSP and EL framework is very extensible, and allows for the developer
+      to provide custom variable resolvers. This, however, is very rarely required
+      in typical business web applications.
+    </para>
+  </section>
+  
+</section>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    
+<section id="resources.information.platforms.jboss.messaging.definingQueuesTopics.definingQueuesTopics"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Defining Queues and Topics in JBossMQ</title>
+  <para>
+    Though message publishers and consumers interface through the standard JMS API,
+    connection factories and destinations (queues and topics) are typically maintained in a way
+    which is dependent on the specifics of the individual message queue implementations.
+  </para>
+  <para>
+    In JBoss destinations (queues and topics) can be added programmatically on the fly,
+    but these only survive while the message queue is up and running.
+  </para>
+  <para>
+    To add destinations permanently (until they are removed) to JBossMQ, one adds a
+    managed bean for the topic in the <literal>jboss.jcml</literal>
+    configuration file. For example, to add a GoldPrice topic to JBossMQ, we add the following line:
+<programlisting><![CDATA[
+<mbean code="org.jboss.mq.server.TopicManager"
+      name="JBossMQ:service=Topic,name=GoldPrice"/>
+]]></programlisting>  
+  </para>
+  <para>
+    In a similar way we define a new HiThere queue by adding the following managed bean
+    to the<literal>jboss.jcml</literal> configuration file:
+ <programlisting><![CDATA[
+<mbean code="org.jboss.mq.server.QueueManager"
+  name="JBossMQ:service=Queue,name=HiThere"/>
+]]></programlisting>  
+  </para>
+</section>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Interpharm web interface deployment -->
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+  <display-name>Weather Forecast Web Interface</display-name>
+
+  <!-- Use case: Request Weather Forecast -->
+  <servlet>
+    <servlet-name>ForecastRequestServlet</servlet-name>
+    <servlet-class>
+      za.org.weather.presentationLayer.ForecastRequestServlet
+    </servlet-class>
+    <!-- Configure the weather service to use (JNDI name) -->
+    <init-param>
+      <param-name>WeatherServiceName</param-name>
+      <param-value>WeatherForecastServiceBean/local</param-value>
+    </init-param>
+  </servlet>
+  <!-- Map a fixed URI to this use case -->
+  <servlet-mapping>
+    <servlet-name>ForecastRequestServlet</servlet-name>
+    <url-pattern>/weatherForecast</url-pattern>
+  </servlet-mapping>   
+    
+  <!-- Default welcome files -->
+  <welcome-file-list>
+    <welcome-file>index.jspx</welcome-file>
+  </welcome-file-list>
+   
+</web-app>

@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<h:form xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.prime.com.tr/ui"> 
+	
+		<h2>Ajax Locations</h2>
+    
+        <h:messages style="color:red"/> 
+	
+		<fieldset>
+    		<legend>Locations</legend>
+		
+	       	<h:selectOneListbox id="locationNameSelectorListbox" value="#{ajaxLocationsBinding.locationName}">
+	       		<f:selectItems value="#{ajaxLocationsBinding.locationNames}"/>
+	       		<f:ajax render="@this locationDetails"/>
+			</h:selectOneListbox>
+		</fieldset>
+
+		<fieldset>
+			<legend>Location details</legend>
+			<h:panelGroup>    
+	 		    <h:panelGrid columns="2" id="locationDetails">
+				   	<h:outputLabel id="nameLabel" for="nameField" value="#{msgs.name}"/>
+				   	<h:outputText id="nameField" value="#{ajaxLocationsBinding.location.name}"/> 
+				   	<h:outputLabel id="addressLabel" for="addressField" value="#{msgs.address}"/>
+				   	<h:inputTextarea rows="5" id="addressField" value="#{ajaxLocationsBinding.location.address}"/> 
+			   </h:panelGrid>
+	
+				<fieldset> 
+				    <legend>Geographic coordinates</legend>
+				    <h:panelGrid columns="2">
+				    	<h:outputLabel id="longitudeLabel" for="longitudeField" value="#{msgs.longitude}"/>
+				    	<h:outputText id="longitudeField" value="#{ajaxLocationsBinding.location.geographicLocation.longitude}"/> 
+				    	<h:outputLabel id="latitudeLabel" for="longitudeField" value="#{msgs.latitude}"/>
+				    	<h:outputText id="latitudeField" value="#{ajaxLocationsBinding.location.geographicLocation.latitude}"/> 
+				    </h:panelGrid>
+				</fieldset>    
+			</h:panelGroup>		
+		</fieldset>   
+ 
+    	<h:panelGrid columns="3" >
+    		<h:commandButton id="refreshPage" value="#{msgs.refreshPage}" 
+    		    actions="#{ajaxLocationsBinding.refreshPage()}"/>
+    	</h:panelGrid>
+    
+</h:form>    

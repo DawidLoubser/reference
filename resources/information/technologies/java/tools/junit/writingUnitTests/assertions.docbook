@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+  <title>Assertions</title>
+  
+  <indexterm>
+    <primary>JUnit</primary>
+    <secondary>assertions</secondary>
+  </indexterm>
+  
+  <para>
+    An assertions is a statement which, if untrue, indicates
+    a test failure. JUnit provides a range of assertion tests
+    as static services provided by the <literal>org.junit.Assert</literal>
+    class. These are typically <emphasis>statically imported</emphasis>
+    to improve the readability of tests.
+    <programlisting language="Java"><![CDATA[
+import static org.junit.Assert.*;
+import org.junit.*;
+
+public class CalculatorTest
+{
+  @Test(timeout=50)
+  public void testAdditionSimple()
+  {
+    assertEquals( 5, calc.evaluate("3 + 2") );
+  }
+  
+  @Test(timeout=50)
+  public void testRandom()
+  {
+    // Test that random floating point number is
+    // always between 0.0 and 1.0
+    assertTrue( calc.randomNumber() > 0.0 );
+    assertTrue( calc.randomNumber() < 1.0 );
+  }
+  
+  @Before
+  public void createCalculator()
+  {
+    // Perform each test case with a new calculator instance
+    calc = new BasicCalculator();
+  }
+
+  // The test subject
+  private Calculator calc;
+}
+    ]]></programlisting>
+  </para>
+  <para>
+    The <literal>org.junit.Assert</literal> class contains a large
+    number of assert services (a subset of which are shown below), such as to assert that
+    <itemizedlist>
+      <listitem>
+        <formalpara>
+          <title>a boolean statement is true,</title>
+          <para><literal>assertTrue( boolean condition )</literal></para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>a boolean statement is not true,</title>
+          <para><literal>assertFalse( boolean condition )</literal></para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>an object is null,</title>
+          <para><literal>assertNull( Object object )</literal></para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>an object is not null,</title>
+          <para><literal>assertNotNull( Object object )</literal></para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>two objects are logically equal,</title>
+          <para><literal>assertEquals( Object expected, Object actual )</literal></para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>two double numbers are equal to within the given
+            precision (delta),</title>
+          <para><literal>assertEquals( double expected, double actual,
+            double delta)</literal></para>
+        </formalpara>
+      </listitem>
+    </itemizedlist>
+    etc.
+  </para>
+  <para>
+    Services are also provided to immediately fail the currently executing
+    test case, <literal>fail()</literal> and 
+    <literal>fail( String message )</literal>.
+  </para>
+  <note>
+    <para>
+      The behaviour of JUnit assertions are not, in principle,
+      inconsistent with the assertions provided in the Java language by
+      the <literal>assert</literal> keyword: both evaluate a statement
+      to test the developer's assumptions regarding the state of the
+      system.
+    </para>
+    <para>
+      JUnit, however, is about making statements regarding the externally
+      visible state (behaviour) of a system, whilst java language
+      assertions test the internal integrity of components (and
+      <emphasis>fail fast</emphasis> when the system is in an inconsistent
+      state - if assertions are enabled for the current Java VM)
+    </para>
+  </note>
+  
+</section>

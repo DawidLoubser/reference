@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="Passing Objects by Value or by Reference">Passing Objects by Value or by Reference</title>
+    
+    <para>An object which you pass to a remote client must be either <emphasis>Serializable</emphasis>
+        or it must implement <emphasis>java.rmi.Remote</emphasis>. In the latter case the object
+        will be passed <emphasis> by reference</emphasis>, <abbrev>i.e.</abbrev> the cient will receive a reference
+        to a remote object and all service requests to such objects are remote
+        method calls.</para>
+    
+    <para>If, on the other hand, an object is passed to a remote client which does not
+        implement <emphasis>java.rmi.Remote</emphasis>, then it must be <emphasis>Serializable</emphasis> so that
+        it can be serialized accross the network to the client. You will receive a
+        run-time <emphasis>NotSerializableException</emphasis> at the point where you try and
+        pass the object if your don't class does not implement <emphasis>Serializable</emphasis>.</para>
+    
+    <para>Note that, by default, the class itself is not serialized. It is thus
+        expected that the client side has the class locally available. A class can, however, be sourced
+        remotely to a mechanism similar to that used by servlets.
+    </para>  
+    
+    <xi:include href="passingACounterByValue/passingACounterByValue.docbook"/>
+    
+    <xi:include href="passingACounterByReference/passingObjectsByReference.docbook"/>
+    
+    <xi:include href="distributedGarbageCollection/distributedGarbageCollection.docbook"/>
+    
+</section>

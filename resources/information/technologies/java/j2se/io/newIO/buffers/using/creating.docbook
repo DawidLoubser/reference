@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author Dawid Loubser -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.newIO.buffers.using.creating">
+    
+    <title>Creating Buffers</title>
+    <para>
+        A buffer is a wrapper around a <emphasis>backing storage</emphasis> which contains
+        bytes. There are three ways to create a buffer, based on the backing storage:
+        <itemizedlist>
+            <listitem>
+                <formalpara>
+                    <title>Internal byte array</title>
+                    <para>
+                        The slowest buffer type, it can either wrap an existing array (by calling
+                        <literal>XXXBuffer.wrap( byte[] b )</literal> ) or create it's own internal array
+                        (by calling <literal>XXXBuffer.allocate( int capacity )</literal> ). Accesses data
+                        through Java array accessors
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Another, existing Buffer</title>
+                    <para>
+                        The new buffer presents an alternative view of (or wraps) the
+                        existing buffer, in order to read/write higher-level datatypes,
+                        such as integers or doubles. Created by calling the <literal>asXXXBuffer()</literal>
+                        method on the existing buffer, for example: <literal>myByteBuf.asDoubleBuffer()</literal>.
+                        The new buffer shares the same underlying data, <emphasis>but not the same state</emphasis>
+                        i.e. <literal>position</literal>, <literal>limit</literal>, etc.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Native, contiguous memory block</title>
+                    <para>
+                        If possible, this is Buffer has the biggest advantage. The buffer
+                        presents a view on a native memory block in the operating system's kernel space. The OS
+                        can process this data much more efficiently when, say, writing to a file, as the data does 
+                        not reside in the java runtime environment. Created by calling 
+                        <literal>XXXBuffer.allocateDirect( int capacity )</literal>.
+                    </para>
+                </formalpara>
+            </listitem>
+        </itemizedlist>
+        <note>
+            <para>
+                <literal>XXXBuffer</literal> refers to a concrete implementation of <literal>java.nio.Buffer</literal>,
+                such as <literal>java.nio.ByteBuffer</literal> or <literal>java.nio.IntBuffer</literal>. Note that buffers 
+                are often not created directly, but rather returned by one of the NIO services, such as memory-mapping a file.
+            </para>
+        </note>
+    </para>
+</section>

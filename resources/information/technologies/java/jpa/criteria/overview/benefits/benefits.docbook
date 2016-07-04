@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Why JPA Criteria API?</title>
+    <para>
+        <itemizedlist>
+            <listitem><formalpara>
+                <title>Simpler dynamic query construction</title>
+                <para>
+                    The Criteria API provides a simpler way to dynamically and incrementally assemble a complex query
+                    allowing for reuse of query elements across queries. This is particularly true for complex queries.
+                </para>
+            </formalpara></listitem>
+            
+            <listitem><formalpara>
+                <title>Compile-time checking of queries</title>
+                <para>
+                    JPQL queries are typically checked only at run-time. Criteria-based queries are validated at compile-time.
+                    Consider for example the following query:
+                    <programlisting language="java"><![CDATA[
+String jpqlQuery = "select weatherReading from WeatherReading where weatherReading.temperature > 40";
+Query query = em.createQuery(jpqlQuery);
+List<WeatherReading> result = query.getResultList();                        
+]]></programlisting>
+                    The syntax error in the above query is not glaringly obvious and would only be spotted at either
+                    deploy-time or run-time (hopefully in the context of unit testing). The correct query string is, of course,
+                    <programlisting language="java"><![CDATA[
+String jpqlQuery = "select weatherReading from WeatherReading weatherReading where weatherReading.temperature > 40";
+...
+]]></programlisting>
+                    On the other hand, when using the Criterua API, syntactically incorrect queries will result in compiler errors
+                    which are typically already highlighted by the IDE during coding.
+                </para>
+            </formalpara></listitem>
+            
+            <listitem><formalpara>
+                <title>Type-safe queries</title>
+                <para>
+                    String-based JPQL queries are intrinsically not type-safe and one generally suppresses type-safety warnings via
+                    the corresponding annotation. For example,
+                    <programlisting language="java"><![CDATA[
+@SuppressWarnings("unchecked")
+public List<WeatherReading> getAllWeatherReadings()
+{
+    Query query = entityManager.createNamedQuery("findAllWeatherReadings");
+    return query.getResultList();
+}                        
+                        ]]></programlisting>
+                    Criteria-based queries can, on the other hand, be used in a type safe way.                    
+                </para>
+            </formalpara>
+            </listitem>
+        </itemizedlist>
+    </para>
+</section>

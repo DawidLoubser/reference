@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article
+  id="resources.information.concepts.architecture.examples.claimSwitch.claimSwitch"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <articleinfo>
+    <title>Case Study: Interpharm Claim Switch</title>
+    <subtitle>Treating architecture orthogonal to design</subtitle>
+    <xi:include href="../../../../../../resources/information/solms/resources/skills/authors/fritzSolmsContact.xml"/>
+  </articleinfo>
+  
+  <abstract>
+    <para>
+      This article discusses a case study of a project where virtually every aspect of the
+      architecture of a system was changed without touching the design of the system. The consequence
+      was that the system behaved no different from a functional perspective, but thatthe new systemit realized the use
+      cases from a user perspective the same way it
+    </para>
+  </abstract>
+  
+  <section>
+    <title>Background</title>
+    <para>
+      Interpharm management approached Solms Training, Consulting and Development (STCD) to assess
+      the current architecture of their medical ais claims switch. The reason for this was that
+      management was concerned about
+      <itemizedlist>
+        <listitem><para>
+          persistent reliability problems experienced with their current systems,
+        </para></listitem>
+        <listitem><para>
+          the maintenance costs within the current architecture,  
+        </para></listitem>
+        <listitem><para>
+          the, at times, long periods required by the technical team to resolve system problems, and 
+        </para></listitem>
+        <listitem><para>
+          the ability of the system to scale with increasing load.
+        </para></listitem>
+      </itemizedlist>
+      In addition, management would welcome a reduction in the round trip time of a claim submission.
+    </para>
+    
+    <section>
+      <title>Core responsibilities of the system</title>
+      <para>
+        The system is a real-time swith which switches claims received from pharmacies to the appropriate medical aid
+        administrators and feeds the claim assessment back to the pharmacy.
+      </para>
+      <para>
+        The system had to
+        <itemizedlist>
+          <listitem><para>
+            demarshall incoming messages,  
+          </para></listitem>
+          <listitem><para>
+            persist the claim for auditing purposes,
+          </para></listitem>
+          <listitem><para>
+            perform certain validations on claims as specified by medical aid administrators and
+            South African law,
+          </para></listitem>
+          <listitem><para>
+            depending on the medical aid administrator for that claim, the system would have to
+            apply pricing rules,
+          </para></listitem>
+          <listitem><para>
+            persist the pre-processed claim as sent to the medical aid administrator,
+          </para></listitem>
+          <listitem><para>
+            marshall the pre-processed claim onto the communication protocol used
+            by the appropriate administrator and send it through to the administrator system,
+          </para></listitem>
+          <listitem><para>
+            wait for a response containing the assessed claim, 
+          </para></listitem>
+          <listitem><para>
+            persist the administrator assessed claim and feed it back to the pharmacy.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Quality requirements</title>
+      <para>
+        Business placed the following core quality requirements on the system
+        <note><title>TODO</title>
+          <para>
+            We need to quantify these quality requirements (<abbrev>i.e.</abbrev> scaleability in
+            claims per second, turn-around time in seconds, availability, reliability,
+            maintainability, ...).
+          </para>
+        </note>
+      </para>
+      <para>
+        <itemizedlist>
+        <listitem><formalpara>
+          <title>Reliability</title>
+          <para>
+          
+          </para>
+        </formalpara></listitem>  
+          <listitem><formalpara>
+            <title>Maintainability</title>
+            <para>
+              
+            </para>
+          </formalpara></listitem>  
+          <listitem><formalpara>
+            <title></title>
+            <para>
+              
+            </para>
+          </formalpara></listitem>  
+          <listitem><formalpara>
+            <title>Scaleability and performance</title>
+            <para>
+              The system had to handle a peak load current load of <emphasis>XX transactions per
+                time unit</emphasis>. Business expected that growth may require the system to sclae
+              up to a load of <emphasis>XX transactions per time unit within YY years</emphasis>.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Performance</title>
+            <para>
+              The round-trip turn around time per claim had to be below 2 seconds (including the
+              time used to feed the claim to the administrator system and feed the reponse back to
+              the pharmacy). Management expressed that they would prefer a sub-second round 
+              trip performance, if possible.
+              <note><title>TODO</title>
+                <para>
+                  Does this include the time the administrator required to process the claim. If so,
+                  what time was
+                </para></note>
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Availability</title>
+            <para>
+              
+            </para>
+          </formalpara></listitem>  
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Concerns about the current system</title>
+      <para>
+        The concerns management had about the existing architecture focused mainly on reliability
+        and maintainability issues, with some concern around scaleability and performance:
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>Reliability</title>
+            <para>
+              The existing system exhibited the following reliability issues:
+              <itemizedlist>
+                <listitem><para>
+                  Memory management problems required occasional restarting of the system.
+                </para></listitem>
+                <listitem><para>
+                  Even though the system was a clustered system with fail over safety built in,
+                  there was an exposure to a node failing during the processing of a claim resulting
+                  in a failure due to a lag in the synchronization of local databases.
+                </para></listitem>
+              </itemizedlist>
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Scaleability and performance</title>
+            <para>
+              Management was not unhappy about the performance and scaleability of the existing
+              system. Still, they did feel that an improvement in performance would provide improved 
+              usability for the users and improved scaleability would benefit growth opportunities
+              for the company.
+            </para>
+           </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Availability</title>
+            <para>
+              Availability was generally good except for the down times during restart periods and
+              occasional unavailability due to resource intensive background system tasks.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Maintainability</title>
+            <para>
+              The existing system was not based on a reference architecture and was quite complex to
+              maintain. The complexity also increased the time required for new developers to become
+              productive.
+            </para>
+          </formalpara></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Current architecture</title>
+      <para>
+      
+      </para>
+    </section>
+    
+    
+  </section>
+  
+  <section>
+    <title>General approach for the project</title>
+    <para>
+    
+    </para>
+  </section>
+  
+  <section>
+    <title>The new architecture</title>
+    <para>
+    
+    </para>
+  </section>
+  
+  <section>
+    <title>Problems experienced</title>
+    <para>
+    
+    </para>
+  </section>
+  
+  <section>
+    <title>How the problems were solved</title>
+    <para>
+    
+    </para>
+  </section>
+  
+  <section>
+    <title>Testing the quality requirements</title>
+    <para>
+    
+    </para>
+  </section>
+  
+  <section>
+    <title>Conclusions</title>
+    <para>
+    
+    </para>
+  </section>
+  
+  
+  
+  
+</article>

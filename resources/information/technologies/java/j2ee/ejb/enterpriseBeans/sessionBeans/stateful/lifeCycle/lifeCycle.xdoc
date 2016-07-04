@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateful.lifeCycle.lifeCycle"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Life cycle of a stateful session bean</title>
+  <para>
+    <xref linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateful.lifeCycle.lifeCycle_fig"/>
+    depicts the life cycle of a stateless session bean. The difference between
+    stateless and stateful session beans is that the latter can be passivated, saving its state
+    to persistent storage, and that beans can be automatically removed after a time-out period
+    resulting in the permanent loss of state information. 
+  </para>
+  
+  <figure id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateful.lifeCycle.lifeCycle_fig">
+    <title>The life-cycle of a stateful session bean</title>
+    <graphic fileref="lifeCycle.jpg"/>
+  </figure>
+  
+  <section>
+    <title>Passivation and Activation of Stateful Session Beans</title>
+    <para>
+      In the case of stateless session beans the container could simply maintain a pool of
+      method-ready session bean instances and delegate client service requests to them. After the
+      service has been provided the bean could be reused for another client. No information had to
+      be kept across method calls.
+    </para>
+    <para>
+      In the case of stateful session beans pooling is not that simple. We may not be able to
+      keep each stateful session bean in memory until the client disconnects. There may be a very
+      huge number of clients and many of which could potentially remain connected over an extended
+      period of time. This would bring the server down to its knees.
+    </para>
+    <para>
+      To avoid this stateful session beans are passified -- swapped out onto disk if they are
+      currently not in use and re-activated upon receiving a new service request from the client
+      serviced by the stateful session bean.
+    </para>
+  
+    <section>
+      <title>Automatic removal of inactive session beans</title>
+      <para>
+        The container may destroy your stateful session bean (and hence its state) if there
+        was inactivity over a period exceeding the time-out period. This time-out period can
+        usually be specified for stateless session beans individually.
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>State Representation Requirements</title>
+    <para>
+      The state must be persistent across re-activations. To this end it is required from the
+      bean developer that the state can be serialized onto a stream (e.g. to a database). The
+      state is defined by non-transient primitives or objects and in the latter case the object
+      must be an instance of a class which implements
+  <programlisting><![CDATA[
+  java.io.Serializable.
+  ]]></programlisting>
+     <note><para>
+       <literal>javax.ejb.EnterpriseBean</literal>, the interface from which both  
+       <literal>Session Bean</literal> and<literal>EntityBean</literal>
+        are derived is itself an extension of <literal>java.io.Serializable</literal>.
+     </para></note>  
+   </para>  
+   <para>
+      EJB containers use object serialization to
+      save the state of a stateful session bean. The state must be represented by either
+      non-transient primitives ornon-transient serializable objects. The exact details about how
+      the stateless session beans are swapped out of and into memory is left to the container vendor.
+   </para>
+  </section>
+
+  <section>
+    <title>Stateful Session Beans may Survive Server Crashes</title>
+    <para>
+      From EJB 1.1 onwards there is a timeout transition to the bean-does-not-exist state.
+      The<literal>ejbRemove()</literal> method is NOT called in this case.
+      This enables application servers to let their stateful session beans survive server crashes.
+    </para>
+    <para>
+      Though this is not required by the EJB 1.1 standard, many do. For example, the Borland
+      Application Server persists stateful session beans to the last passivated state.
+    </para>
+  </section>
+</section>

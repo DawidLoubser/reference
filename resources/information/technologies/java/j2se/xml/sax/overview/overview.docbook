@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xml:id="resources.information.technologies.java.j2se.xml.apis.sax.overview.overview"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>SAX Overview</title>
+  
+  <indexterm>
+    <primary>SAX</primary>
+    <secondary>overview</secondary>
+  </indexterm>
+    
+    <para>
+        <abbrev>SAX</abbrev> (package <literal>org.xml.sax</literal>) is a very simple, lightweight API for processing XML.
+      Unlike heavyweight in-memory tree APIs such as DOM, SAX is an event-driven
+      parser: A developer-supplied event handler is plugged into the parser as
+      it steps through the XML document.
+    </para>
+    <para>
+        SAX is mostly suitable, either as a low-level component for some other parser (e.g. 
+        a DOM parser may use a SAX parser internally to build the tree structure), or in cases
+        where the the developer needs absolute control over the XML processing. SAX
+        parsing is typically very efficient (depending, of course, on what the
+        plugged-in event handler does with the events and data that it receives)
+        because only small portions of the document is in memory
+        at any one time.
+    </para>
+    <para>
+        Like most other XML APIs, SAX is abstractly specified through Interfaces. Several implementations
+        can be substituted without making code changes.
+    </para>
+    
+    <section>
+        <title>Typical SAX usage</title>
+        <para>
+            SAX is best suited to either extracting simple information sets (read-only) from a document, or, usually,
+            as a lower-level component of a more sophisticated component. It is not suitable for day-to-day
+            information processing. It is typically used as follows:
+            <orderedlist>
+                <listitem>
+                    <formalpara>
+                        <title>Obtain a reference to the installed SAX implementation</title>
+                        <para>A <literal>javax.xml.parsers.SAXParserFactory</literal> can
+                        produce a <literal>SAXParser</literal> with a particular
+                        configuration, e.g. <emphasis>namespaces</emphasis>- or 
+                            <emphasis>XInclude</emphasis>-awareness</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Set up a Content Handler</title>
+                        <para>A <emphasis>ContentHandler</emphasis> is your class (which usually extends
+                            <literal>org.xml.sax.helpers.DefaultHandler</literal>) which will receive
+                        callbacks for various events, such as start and end of elements, text,
+                        white space, processing instructions, and so on.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Parse the document</title>
+                        <para>The <literal>SAXParser</literal> has several <literal>parse(...)</literal> services
+                        for parsing documents from various sources. Most of them take a reference to your 
+                        <emphasis>ContentHandler</emphasis> as a second argument, e.g. <literal>parse( url, myHandler )</literal>.</para>
+                    </formalpara>
+                </listitem>
+            </orderedlist>
+            Any actions to be performed (e.g. display, writing to file, etc) are directly invoked by the callback methods
+            in your content handler, so SAX makes no provision for explicit document serialization/output.
+        </para>
+    </section>
+    
+    
+</section>

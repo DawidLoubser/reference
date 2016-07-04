@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://company.com/schema/clients" 
+    xmlns:c="http://company.com/schema/clients">
+
+    <!-- A single client, with optional accounts -->
+    <xs:complexType name="Client">
+        <xs:sequence>
+            <xs:element name="personal" type="c:PersonalInformation"/>
+            <xs:element name="accounts" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="account" maxOccurs="unbounded"/>                                  
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- A person's personal information -->
+    <xs:complexType name="PersonalInformation">
+        <xs:sequence>
+            <xs:element name="honorific" type="xs:string" minOccurs="0"/>
+            <xs:element name="givenname" type="xs:string"/>
+            <xs:element name="surname" type="xs:string"/>
+            <xs:element name="email" type="xs:string" minOccurs="0" 
+                maxOccurs="unbounded"/>
+            <xs:element name="phone" type="xs:string" minOccurs="0"
+                maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- A single bank account -->
+    <xs:complexType name="Account">
+        <xs:attribute name="number" type="xs:int"/>
+        <xs:sequence>
+            <xs:element name="opened" type="xs:date" minOccurs="0"/>
+            <xs:element name="balance" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- A document conforming to this schema can either contain a list of,
+    or a single client -->
+    <xs:complexType name="ClientDocument">
+        <xs:choice>
+            
+        </xs:choice>
+    </xs:complexType>
+    
+</xs:schema>

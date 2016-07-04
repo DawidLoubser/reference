@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"-->
+<section id="resources.information.platforms.linux.processControl.configuringRunLevels"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Configuring run-levels</title>
+  <para>
+      You may want to add, remove or modify processes which are launched for a particular
+      run level. 
+  </para>
+  <section>
+    <title>The start and kill scripts</title>
+    <para>
+       For each run-level there is a subdirectory of <filename>/etc/init.d</filename> with
+       name <filename>rcX.d</filename> where <literal>X</literal> is the run-level
+       (between 0 and 6).
+    </para>
+    
+    <section>
+      <title>The run-level script directories</title>
+      <para>
+        These directories contain <emphasis>symbolic links to shell scripts in the 
+        <filename>init.d</filename> directory</emphasis> which are executed when a
+        particular run-level is initialized. 
+      </para>
+      <para>
+        There are <emphasis>kill scripts</emphasis> and
+        <emphasis>start</emphasis> scripts. The <command>init</command> process
+        first runs all the <emphasis>kill scripts</emphasis> and then all the
+        <emphasis>start</emphasis> scripts.
+      </para>
+      <para>
+        For example, the script directory for run-level 2, <filename>rc2.d</filename>,
+        contains the following symbolic links (use <command>ls -l</command>):
+        <programlisting><![CDATA[
+lrwxrwxrwx 1 root root   9 2003-06-26 22:50 K05hwscan -> ../hwscan
+lrwxrwxrwx 1 root root   9 2003-06-26 22:50 K06splash -> ../splash
+lrwxrwxrwx 1 root root  14 2003-08-06 10:49 K06splash_late -> ../splash_late
+lrwxrwxrwx 1 root root  12 2003-06-26 22:50 K07alsasound -> ../alsasound
+lrwxrwxrwx 1 root root   6 2003-08-06 10:49 K07atd -> ../atd
+lrwxrwxrwx 1 root root   7 2003-08-06 10:49 K07cron -> ../cron
+lrwxrwxrwx 1 root root   7 2003-08-04 11:17 K07cups -> ../cups
+lrwxrwxrwx 1 root root   8 2003-06-26 22:50 K07fbset -> ../fbset
+lrwxrwxrwx 1 root root  17 2003-06-26 22:50 K07rpmconfigcheck -> ../rpmconfigcheck
+lrwxrwxrwx 1 root root   9 2003-07-04 11:43 K07smpppd -> ../smpppd
+lrwxrwxrwx 1 root root  15 2003-06-24 21:44 K11splash_early -> ../splash_early
+lrwxrwxrwx 1 root root   9 2003-06-24 21:44 K13pcmcia -> ../pcmcia
+lrwxrwxrwx 1 root root   9 2003-06-24 21:44 K13resmgr -> ../resmgr
+lrwxrwxrwx 1 root root  10 2003-06-24 21:44 K14hotplug -> ../hotplug
+lrwxrwxrwx 1 root root   9 2003-06-24 21:44 K15syslog -> ../syslog
+lrwxrwxrwx 1 root root  10 2003-06-24 21:44 K16network -> ../network
+lrwxrwxrwx 1 root root   7 2003-06-24 21:28 K20isdn -> ../isdn
+lrwxrwxrwx 1 root root   9 2003-06-24 21:28 K20random -> ../random
+lrwxrwxrwx 1 root root   7 2003-06-24 21:28 S01isdn -> ../isdn
+lrwxrwxrwx 1 root root   9 2003-06-24 21:28 S01random -> ../random
+lrwxrwxrwx 1 root root  10 2003-06-24 21:44 S05network -> ../network
+lrwxrwxrwx 1 root root    9 2003-06-24 21:44 S06syslog -> ../syslog
+lrwxrwxrwx 1 root root  10 2003-06-24 21:44 S07hotplug -> ../hotplug
+lrwxrwxrwx 1 root root    9 2003-06-24 21:44 S08pcmcia -> ../pcmcia
+lrwxrwxrwx 1 root root    9 2003-06-24 21:44 S08resmgr -> ../resmgr
+lrwxrwxrwx 1 root root  15 2003-06-24 21:44 S10splash_early -> ../splash_early
+lrwxrwxrwx 1 root root  12 2003-06-26 22:50 S14alsasound -> ../alsasound
+lrwxrwxrwx 1 root root    6 2003-08-06 10:49 S14atd -> ../atd
+lrwxrwxrwx 1 root root    7 2003-08-06 10:49 S14cron -> ../cron
+lrwxrwxrwx 1 root root    7 2003-08-04 11:17 S14cups -> ../cups
+lrwxrwxrwx 1 root root    8 2003-06-26 22:50 S14fbset -> ../fbset
+lrwxrwxrwx 1 root root  17 2003-06-26 22:50 S14rpmconfigcheck -> ../rpmconfigcheck
+lrwxrwxrwx 1 root root   9 2003-07-04 11:43 S14smpppd -> ../smpppd
+lrwxrwxrwx 1 root root   6 2003-06-26 22:50 S15kbd -> ../kbd
+lrwxrwxrwx 1 root root   9 2003-06-26 22:50 S15splash -> ../splash
+lrwxrwxrwx 1 root root  14 2003-08-06 10:49 S15splash_late -> ../splash_late
+lrwxrwxrwx 1 root root   9 2003-06-26 22:50 S16hwscan -> ../hwscan
+        ]]></programlisting>
+      </para>
+      <para>
+        All start scripts link files start with the letter <literal>S</literal> followed by a number 
+        and then by the name of the shell script they symbolically link to. Similarly,
+        all kill scripts link files start with the letter <literal>K</literal> followed by a number 
+        and then by the name of the shell script they symbolically link to. 
+      </para>
+      <para>
+        The scripts are executed in the order of the numbering of the symbolic link files. If 
+        multiple link files have the same number they are executed one after the other, but
+        the order in which they are executed is not guaranteed.
+      </para>
+      <para>
+        You can add further script files to the <filename>/etc/init.d</filename> directory
+        and further symbolic links with a number specifying the point at which that script
+        is to be executed to the appropriate run-level script directory. You can also renumber
+        the symbolic link files if you want to modify the order in which the run-level 
+        initialization scripts are executed.
+      </para>
+    </section>
+    
+    <section>
+      <title>Starting and stopping the run-level scripts</title>
+      <para>
+        The scripts typically take <command>start</command> and <command>stop</command>
+        command-line arguments and the processes they launch can thus also be controlled
+        manually by running these scripts with either option.
+      </para>
+    </section>
+  </section>
+</section>

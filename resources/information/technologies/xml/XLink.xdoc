@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="resources.information.technologies.xml.XLink"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    
+    <title>The XML Linking Language</title>
+    
+    <section>
+        <title>Introduction</title>
+        <para> 
+            The XML Linking Language (XLINK) facilitates simple uni-directional and more complex
+            linking structures between resources or parts of resources (for example an element within
+            another XML document). A resource can be regarded as any addressable unit of information or service.
+        </para>
+        <para>
+            As of XHTML (the web page markup language) version 2.0, XLink will be the primary linking
+            mechanism (the vocabulary no longer contains it's own linking tags).
+        </para>
+        <para>
+            The elements of the XLink standard are in the following namespace:
+            <programlisting>
+http://www.w3.org/1999/xlink
+            </programlisting>
+        </para>
+        <para> XLink defines both <emphasis>extended</emphasis> and <emphasis>simple</emphasis> links. 
+            The latter are really a shorthand notation for a
+            special type of uni-directional, extended link to a single external resource.</para>
+        <para> We shall first look at the case of simple XLinks before discussing the more general class
+            of extended links. 
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Simple Links</title>
+        <para> Simple links are uni-directional links between 2 resources (or parts of resources).
+            Furthermore, they are out-bounding and have to hence be defined in the source document
+            which should reference the second document. They are in many ways similar to HTML links.</para>
+        <para> Consider the following simple XHTML link:
+        <programlisting> 
+            <![CDATA[
+<a href="http://www.solms.co.za/downloads/file.pdf">The File</a>
+            ]]>
+        </programlisting>
+        </para>
+        
+        <section>
+            <title>Simple Link Elements</title>
+            <para> Below is an example of the most basic form of a simple XLINK:
+            <programlisting>
+                <![CDATA[
+<courseSchedule  
+    xmlns:xlink="http://www.w3.org/1999/xlink"  
+    xlink:type="simple"  
+    xlink:href="http://www.solms.co.za/training/program/index.html" 
+    xlink:role="schedule"   
+    xlink:title= "Course Schedule"   
+    xlink:show="replace"   
+    xlink:actuate="user">
+                ]]>
+            </programlisting>
+            </para>
+            <para> 
+                Note that XML links are embedded into any other XML element, in any other vocabulary.
+            </para>
+        </section>
+
+        <section>
+            <title>Attributes of Simple Links</title>
+            <para> The various aspects of a link are specified via standard XML attributes of the
+                XLink tag.</para>
+            <section>
+                <title>xlink:type</title>
+                <para> the <emphasis>type</emphasis> attribute specifies whether the link is a
+                    <emphasis>simple</emphasis> or an <emphasis>extended</emphasis> link.</para>
+            </section>
+
+            <section>
+                <title>xlink:href</title>
+                <para> This attribute contains the destination URI the link is linking to.</para>
+            </section>
+
+            <section>
+                <title>xlink:role</title>
+                <para> The role attribute has been included to allow for semantic classification of
+                    links. The possible values of the role are left to the XML developers and has
+                    not been specified by the W3C.</para>
+            </section>
+
+            <section>
+                <title>xlink:title</title>
+                <para> This attribute represents the title which should be displayed to users. It is
+                    similar to the title of HTML links which is usually rendered in blue (possibly
+                    underlines) by browsers. As browsers start supporting extended XML links they
+                    are most probably going to use the title to render them in a similar way to
+                    which HTML links are rendered.</para>
+            </section>
+
+            <section>
+                <title>xlink:show</title>
+                <para> This attribute specifies how the target URI will be rendered to users. It can
+                    assume the following values: 
+                    <itemizedlist>
+                        <listitem>
+                            <formalpara>
+                                <title>replace</title>
+                                <para>
+                                    This value specifies that the target
+                                    content should replace the content of the source context. If the rendering is
+                                    done in a browser it would populate the content of the window or the frame
+                                    containing the link with the content of the target URI.
+                                </para>
+                            </formalpara>
+                        </listitem>
+                        <listitem>
+                            <formalpara>
+                                <title>new</title>
+                                <para>
+                                    This value specifies
+                                    that the target URI should be rendered in a separate context. If the rendering
+                                    is done in a browser it means that the content of the target URI should be shown
+                                    in a separate window launched by the browser.
+                                </para>
+                            </formalpara>
+                        </listitem>
+                        <listitem>
+                            <formalpara>
+                                <title>embedded</title>
+                                <para>
+                                    This value specifies that
+                                    the content of the target URI should be embedded within the context containing
+                                    the link at the link position. This is similar to the <emphasis>&lt;img
+                                    src=&quot;HiThere.png&quot;></emphasis> tags in HTML, where the image is
+                                    embedded at the specified position within the source document.
+                                </para>
+                            </formalpara>
+                        </listitem>
+                        <listitem>
+                            <formalpara>
+                                <title>none</title>
+                                <para>
+                                    This is the default value. It specifies that the target URI should not be shown, i.e. that
+                                    the link is their for semantic or design reasons and has no presentation consequences.
+                                </para>
+                            </formalpara>
+                        </listitem>
+                    </itemizedlist>
+                    
+                </para>
+            </section>
+
+            <section>
+                <title>xlink:actuate</title>
+                <para> This attribute is used to specify what triggers the traversal of the link.
+                    Currently it can take on the following values: 
+                    
+                    <itemizedlist>
+                        <listitem>
+                            <formalpara>
+                                <title>onRequest</title>
+                                <para>
+                                    This specifies that the
+                                    link is traversed upon user request. If the presentation is done in a browser
+                                    the link could be traversed when the user clicks on the link title.
+                                </para>
+                            </formalpara>
+                        </listitem>
+                        <listitem>
+                            <formalpara>
+                                <title>onLoad</title>
+                                <para>
+                                    This value is used to specify that the link should be traversed upon loading the
+                                    context which contains the link. You may want to use this attribute when the
+                                    <emphasis>show</emphasis> attribute is set to <emphasis>embedded</emphasis> or
+                                    even when it is <emphasis>new</emphasis>, potentially opening two browser
+                                    windows simultaneously.
+                                </para>
+                            </formalpara>
+                        </listitem>
+                        <listitem>
+                            <formalpara>
+                                <title>none</title>
+                                <para>
+                                    This value is used if the link should not be traversed.
+                                </para>
+                            </formalpara>
+                        </listitem>
+                    </itemizedlist>    
+                </para>
+            </section>
+
+        </section>
+
+    </section>
+
+    <section>
+        <title>Current Support for XLink</title>
+        <para> 
+            Even though the specification (1999) is a few years old by now, the support for XML
+            linking is still quite weak. Current versions of Mozilla and Firefox (the most widely used
+            open-source Web Browser) as well as X-Smiles, do support simple linking.
+        </para>
+        <para> The XLink support in the latest Internet Explorer and Opera web browsers is simply
+            not there. Not even simple links are currently supported.</para>
+        <para> Doczilla, a Mozilla based browser from CiTEC, is the only browser with extended link
+            support. It is currently in release candidate II (the last non-production release) and
+            can be downloaded for Linux and Windows.</para>
+        <para> The following XML linked XML documents demonstrate the support for simple links in
+            Mozilla-based browsers. It establishes links from the contract XML element to a photo
+            and an XML document describing the agent.
+        <programlisting><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="contract.css" type="text/css" media="screen"?>
+<contract id="2003-02-12-a11">
+  <date>2003-01-12</date>
+  <property propertyId="65412">
+    <stand>
+            <standNumber>1332</standNumber>
+            <suburb>Greenside</suburb>
+        </stand>
+        <streetAddress>25 Greenhill Str, Greenside</streetAddress>
+        <photo xmlns:xlink="http://www.w3.org/1999/xlink"
+                xlink:type="simple"
+                xlink:href="./property1.jpeg"
+                xlink:role="photo"
+                xlink:title="photo of property"
+                xlink:show="embedded"
+                xlink:label="agent details"
+                xlink:actuate="onRequest">photo of property
+        </photo>
+     </property>      
+     <agent>
+         <name>Carolyn Carolus</name>
+         <agentDetails xmlns:xlink="http://www.w3.org/1999/xlink"
+                      xlink:type="simple"
+                      xlink:href="./agent1.xml"
+                      xlink:role="agent description"
+                      xlink:title="agent"
+                      xlink:show="new"
+                      xlink:label="agent details"
+                      xlink:actuate="onRequest">agent details
+         </agentDetails>
+     </agent>
+</contract>
+        ]]></programlisting>
+        </para>
+        <!--para> 
+            Note that the <emphasis>embed</emphasis> show attribute behaves as if it was a
+            <emphasis>new</emphasis> show attribute.
+        </para-->
+    </section>
+
+    <section>
+        <title>Extended Links</title>
+        <para> Extended links are much more powerful than simple links. In particular, they can be
+            used to 
+        <itemizedlist>
+            <listitem>
+                <para>Define links between more than 2 resources. </para>
+            </listitem>
+            <listitem>
+                <para>Define bi-directional links. </para>
+            </listitem>
+            <listitem>
+                <para>Define in-bound links. </para>
+            </listitem>
+            <listitem>
+                <para>Define links external to the source document (third-party links). </para>
+            </listitem>
+            <listitem>
+                <para>Allow the association of meta-data to links.</para>
+            </listitem>
+        </itemizedlist>
+        </para>
+        <section>
+            <title>Advantages of Being Able to Define Links in a Dfferent Document</title>
+            <para> There are several advantages of XML's capability of defining links outside the
+                source document:
+            <itemizedlist>
+                <listitem>
+                    <para>You can add links to documents which you cannot or do not want to modify. </para>
+                </listitem>
+                <listitem>
+                    <para>You could have different links for different contexts or users. </para>
+                </listitem>
+                <listitem>
+                    <para>You can define links for resources which do not support the concept of
+                        links internally (e.g. images).
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>You could define all links for a web site within a single, central
+                        document. This could simplify link maintenance.</para>
+                </listitem>
+            </itemizedlist>
+            </para>
+            
+            <para> 
+                For example, an extended link could link a property sale contract with a the
+                property, its photo, the buyer, the seller and the transfer attorney and the
+                financing bank as is depicted in figure <xref linkend="propertySaleContract"/>. 
+            </para>
+            <figure id="propertySaleContract">
+                <title>Possible linking for a property sale contract.</title>
+                <graphic fileref="Linking/PropertySaleContract.gif"/>
+            </figure>
+        </section>
+
+        <section>
+            <title>An Example Extended Link</title>
+            <para> Below we show an example of an extended link implementing the associations shown
+                in figure <xref linkend="propertySaleContract"/>:
+
+            <programlisting><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<propertySaleContract xmlns:xlink="http://www.w3.org/1999/xlink" settled="false">
+  <agent>Cindy Lee</agent>
+  <contract xlink:type="resource"
+        xlink:role="http://www.propdealer.co.za/roles/contract"
+        xlink:title="The dead of sale."
+        xlink:label="contract"id="May2001_102">
+        <date>2001/05/10</date>
+        <purchasePrice>320000</purchasePrice>
+  </contract>
+  <client xlink:type="locator"
+       xlink:href="http://www.propdealer.co.za/clientdatabase/PeterSmith.xml"
+       xlink:role="http://www.propdealer.co.za/roles/buyer"
+       xlink:title="The buyer of the property"
+       xlink:label="buyer"/>
+  <client xlink:type="locator"
+       xlink:href="http://www.propdealer.co.za/clientdatabase/TandiKhumalo.xml"
+       xlink:role="http://www.propdealer.co.za/roles/seller"
+       xlink:title="The property seller"
+       xlink:label="seller"/>
+  <asset xlink:type="locator"
+      xlink:href="http://www.propdealer.co.za/propertydatabase/Kensington_erf1876.xml"
+       xlink:role="http://www.propdealer.co.za/roles/property"
+       xlink:title="The property"
+      xlink:label="property"/>
+  <image xlink:type="locator"
+      xlink:href="http://www.propdealer.co.za/propertydatabase/Kensington_erf1876.jpeg"
+      xlink:role="http://www.propdealer.co.za/roles/photo"
+      xlink:title="Photo of the property"
+      xlink:label="photo"/>
+   <serviceProvider xlink:type="locator"
+         xlink:href="http://www.propdealer.co.za/attorneydatabase/SamDeBeer.xml"/>
+         xlink:role="http://www.propdealer.co.za/roles/attorney"
+         xlink:title="The transfer attorney"
+         xlink:label="attorney"/>
+   <contract xlink:type="locator"
+        xlink:href="http://www.propdealer.co.za/contractdatabase/May2001_102.xml"/>
+        xlink:role="http://www.propdealer.co.za/roles/contract"
+        xlink:title="The dead of sale."
+        xlink:label="contract"/>
+   <bank xlink:type="resource"
+      xlink:role="http://www.propdealer.co.za/banks/bank"
+      xlink:title="The buyer's bank."
+      xlink:label="bank">
+     <name>Second National Bank</name>
+          <branch>Johannesburg</branch>
+  </bank>
+ <aLink xlink:type="arc"
+      xlink:from="contract"
+      xlink:to="buyer"
+      xlink:show="embed"
+      xlink:actuate="onLoad"/>
+  <aLink xlink:type="arc"
+      xlink:from="contract"
+      xlink:to="seller"
+      xlink:show="embed"
+      xlink:actuate="onLoad"/>
+  <aLink xlink:type="arc"
+      xlink:from="contract"
+      xlink:to="property"
+      xlink:show="replace"
+      xlink:actuate="onRequest"/>
+   <aLink xlink:type="arc"
+      xlink:from="property"
+      xlink:to="photo"
+      xlink:show="replace"
+      xlink:actuate="onRequest"/>
+  <aLink xlink:type="arc" 
+      xlink:from="photo"
+      xlink:to="property"
+      xlink:show="replace"
+      xlink:actuate="onRequest"/>
+   <aLink xlink:type="arc"
+      xlink:from="contract" 
+      xlink:to="attorney"
+      xlink:show="replace" 
+      xlink:actuate="onRequest"
+      xlink:title="the dead of sale"/>
+  <aLink xlink:type="arc"
+      xlink:from="buyer"
+      xlink:to="bank"
+      xlink:show="replace" 
+      xlink:actuate="onRequest"
+      xlink:title="Buyer's bank"
+      xlink:arcrole="http://www.propdealer.co.za/roles/financier"/>  
+</propertySaleContract>
+            ]]> </programlisting>
+            </para>
+        </section>
+
+        <section>
+            <title>Resources</title>
+            <para> A resource is any addressable unit of information or service. The following are
+                examples of resources: 
+            <itemizedlist>
+                <listitem>
+                    <para>An XML or HTML document. </para>
+                </listitem>
+                <listitem>
+                    <para>An element within an XML document. </para>
+                </listitem>
+                <listitem>
+                    <para>Any file. </para>
+                </listitem>
+                <listitem>
+                    <para>An image. </para>
+                </listitem>
+                <listitem>
+                    <para>A CORBA server. </para>
+                </listitem>
+                <listitem>
+                    <para>An application. </para>
+                </listitem>
+                <listitem>
+                    <para>Query results.</para>
+                </listitem>
+            </itemizedlist>
+            </para>
+            <para> 
+                Note that even though XLinks must be hosted by XML documents they can link any
+                types of resources. Since XLinks can be defined outside the source resource none of
+                the resources being linked need themselves be an XML document.
+            </para>
+        </section>
+
+        <section>
+            <title>Local Versus Remote Resources</title>
+            <para> Extended links link resources. The resources may be an XML element, an XML or a
+                HTML file or any other addressable information resource which may or may not itself
+                support links</para>
+            <para> The terminology of local and remote resources can be confusing since remote
+                resources need not necessarily be physically remote.</para>
+            <section>
+                <title>Remote Resources (Locators)</title>
+                <para> A resources is regarded as remote resource if it is addressed by an URI reference.</para>
+                <para> The URI reference may point to an element within the same XML document as the
+                    link or even to a sub-element of the element containing the link.</para>
+                <para> An extended link specifies a remote resource via locator elements. For example
+                <programlisting><![CDATA[ 
+<client xmlns:xlink="http://www.w3.org/1999/xlink"    
+    xlink:type="locator"     
+    xlink:href="http://www.propdealer.co.za/clientdatabase/PeterSmith.xml"
+    xlink:role="http://www.propdealer.co.za/roles/buyer"   
+    xlink:title="The buyer of the property"           
+    xlink:label="Buyer" /> 
+                ]]></programlisting>
+                    
+                    specifies a remote resource.
+                </para>
+                <para> In our example we use locators for the following remote resources:
+                    <itemizedlist>
+                        <listitem>
+                            <para>buyer </para>
+                        </listitem>
+                        <listitem>
+                            <para>seller </para>
+                        </listitem>
+                        <listitem>
+                            <para>transferAttorney </para>
+                        </listitem>
+                        <listitem>
+                            <para>property </para>
+                        </listitem>
+                        <listitem>
+                            <para>photo</para>
+                        </listitem>
+                    </itemizedlist>
+                </para>
+            </section>
+
+            <section>
+                <title>Local Resources</title>
+                <para> A local resource is an XML element which is either 
+                    <itemizedlist>
+                        <listitem>
+                            <para>itself a linking element or </para>
+                        </listitem>
+                        <listitem>
+                            <para>has as parent a linking element.</para>
+                        </listitem>
+                    </itemizedlist>
+                </para>
+                
+                <para>For example
+                <programlisting><![CDATA[ 
+<contract xmlns:xlink="http://www.w3.org/1999/xlink"   
+    xlink:type="resource"         
+    xlink:role="http://www.propdealer.co.za/roles/contract"       
+    xlink:title="The dead of sale"         
+    xlink:label="contract"
+    id="May2001_102">
+    <date>2004/05/10</date>   
+    <purchasePrice>820000</purchasePrice>
+</contract> 
+                ]]></programlisting>
+                specifies a local resource element with attribute, <emphasis>id</emphasis> and
+                    sub-elements, <emphasis>date</emphasis> and<emphasis>purchasePrice</emphasis>.</para>
+            </section>
+
+            <section>
+                <title>Resource Labels</title>
+                <para> Note that every resource has a label. The labels are used by the arcs of
+                    extended links to identify the resource.</para>
+            </section>
+
+        </section>
+
+        <section>
+            <title>Arcs</title>
+            <para> Arcs provide the transversal paths between resources. Each arc is a one-way path
+                between two resources, but an extended link can have arbitrarily many paths.</para>
+            <section>
+                <title>Arcs can point from resources which do not support links</title>
+                <para> For example, we have defined a binary link between the property XML resource
+                    and the photo for that property:
+                    <programlisting><![CDATA[ 
+<aLink 
+    xlink:type="arc"
+    xlink:from="property"      
+    xlink:to="photo"     
+    xlink:show="replace"      
+    xlink:actuate="onRequest"/>
+                    
+<aLink 
+    xlink:type="arc"
+    xlink:from="photo" 
+    xlink:to="property"      
+    xlink:show="replace"
+    xlink:actuate="onRequest"/> 
+                    ]]></programlisting>
+                </para>
+            </section>
+
+            <section>
+                <title>Arcs as instances of association classes</title>
+                <para> Arcs themselves can have further domain-specific attributes and sub-elements.
+                    Such arc types perform the role of <emphasis>association classes</emphasis> in UML.</para>
+            </section>
+
+            <section>
+                <title>Arc roles</title>
+                <para> An arc can be given a semantic role via the <emphasis>arcrole</emphasis>
+                    attribute. This role can be used to classify arc types.</para>
+            </section>
+
+            <section>
+                <title>Consider the example</title>
+                <para> Lets have a look at the arcs for our example shown in figure <xref
+                    linkend="propertySaleContract"/>. For each on the associations we have an arc.</para>
+            </section>
+
+        </section>
+
+    </section>
+
+    <section>
+        <title>Exercise</title>
+        <para>
+            Draw a diagram showing the associations between the role players in a payment
+            transaction (including payer, receiver, their accounts, their banks, and the transaction).
+        </para>
+    </section>
+</chapter>

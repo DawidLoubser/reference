@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:service="http://solms.co.za/example/motors/"
+    xmlns:serviceSOAP="http://solms.co.za/example/motors/soap"
+    xsi:schemaLocation="http://schemas.xmlsoap.org/wsdl/ http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="http://solms.co.za/example/motors/soap">
+    
+    <wsdl:documentation> This WSDL document specifies concrete SOAP bindings for the original
+    'http://solms.co.za/example/motors/' contract. </wsdl:documentation>
+    
+    <!--Import abstract contract-->
+    <wsdl:import namespace="http://solms.co.za/example/motors/" location="motor-value-estimator.wsdl"/>
+    
+    <wsdl:binding name="MotorValueEstimatorSOAPBinding " type="service:MotorValueEstimator">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="estimateMotorValue">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="unknownMotorVehicle">
+                <soap:fault use="literal" name="unknownMotorVehicle"/>
+            </wsdl:fault>
+        </wsdl:operation>
+
+    </wsdl:binding>
+    
+    <wsdl:service name="MotorValueEstimatorService">
+        <wsdl:port name="MotorValueEstimatorSOAP"
+            binding="serviceSOAP:MotorValueEstimatorSOAPBinding ">
+            <soap:address location="http://localhost:8080/service/motorvalueestimator"/>
+        </wsdl:port>
+    </wsdl:service>
+    
+</wsdl:definitions>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section
+  xmlns="http://docbook.org/ns/docbook" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Implementing postconditions in Java</title>
+  <para>
+    The postconditions are the conditions which must hold after successful completion of the service
+    They may include conditions on the final state of
+    <itemizedlist>
+      <listitem><para>
+         the object providing the service,
+      </para></listitem>
+      <listitem><para>
+        any object accessed by that object during the realisation of the service request,
+      </para></listitem>
+      <listitem><para>
+        the return value of the service.
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  <para>
+    These postconditions must be satisfied by the service logic in order that the service provider
+    meets its contractual obligations. Hence, if any of these postconditions are not met upon
+    service completion, the contractual obligations have been violated and we have an error. Clients
+    may be notified of such errors either via
+    <itemizedlist>
+      <listitem><para>
+        a <literal>RuntimeException</literal>, or
+      </para></listitem>
+      <listitem><para>
+        an <literal>AssertionError</literal>.
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  <section>
+    <title>RuntimeExceptions</title>
+    <para>
+      A service provider will throw a <literal>RuntimeException</literal> if the service provider
+      encounters a problem not covered by the preconditions, which prevents it from fulfilling its
+      contractual obligation.
+    </para>
+  </section>
+  
+  <section>
+    <title>Assertions</title>
+    <para>
+      Assertions may be used at the end of the service to check whether all the postconditions have
+      been met. Assertions are a more sophisticated mechanism which may be switched
+      on or off at will.
+    </para>
+  </section>
+  
+  <section>
+    <title>Ensuring that the postconditions of a superclass are met when the service is requested
+      from a subclass</title>
+    <para>
+      An approach which may often be used to ensure that the design-by-contract constraints for
+      overriding a method are not violated is to delegate the first part of the service realization
+      to the superclass itself by calling the corresponding superclass method as first statement in
+      the overriding method. Once the superclass has addressed its responsibilities, the service
+      implementation in the subclass can add its additional responsibilities.
+      <programlisting><![CDATA[
+class SomeSubClass extends SomeSuperclass
+{
+  ...      
+  public void f(...)        // Overridden service
+  {
+    super.f(...);
+    
+   // add additional responsibilities here.
+  }
+  ...
+}        
+        ]]></programlisting>
+    </para>
+  </section>
+  
+</section>  

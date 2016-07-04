@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Consequences</title>
+    <para>
+        <itemizedlist>
+            <listitem><formalpara>
+                <title>Provides controlled access to sole instance</title>
+                <para>
+                    The singleton pattern provides a single access point through which the sole instance
+                    is created and through which access to the sole instance is obtained. It avoids using
+                    a global variable as access point to the instance and thus the associated name
+                    space pollution.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>May fail in a multi-threaded environment</title>
+                <para>
+                    When multiple threads request handles to the instance of a singleton,
+                    it may happen that more than one instance is created. Combining the
+                    double locking pattern 
+                    with the singleton pattern can solve this problem.
+                </para>
+            </formalpara></listitem>
+            <listitem><para>
+                Too strong binding to the actual class - difficult to decouple from the class when using the singleton pattern - it may be
+                a better solution to use a simple factory and let the factory provide the instance of the actual singleton class.
+            </para></listitem>
+            <listitem><para>
+                Too strong binding to the fact that it is a singleton requiring code changes in the client should things change.
+                Again, it may be
+                a better solution to use a simple factory and let the factory behind the scenes decide whether to reuse
+                a single instance, provide an object from an object pool or create a new instance upon request.
+            </para></listitem>
+            <listitem><formalpara>
+                <title>Can create instance with information provided at run-time</title>
+                <para>
+                    We can provide separate methods for instance creation and instance access. 
+                    The former may take initialization information as parameters which is used
+                    to create the instance. Both services would not be provided unconditionally --
+                    the former would through an <literal>InstanceExists</literal>
+                    exception if the constructor service is called iteratively and the second method
+                    would throw a <literal>NoInstanceInitialized</literal> exception if
+                    the instance is requested prior to having created it.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>In most cases you do not want to allow subclassing of the singleton class</title>
+                <para>
+                    In many examples (<abbrev>e.g.</abbrev> that of continuous compounding), you
+                    would not want to allow the development of subclasses. Some languages like Java
+                    allow you to explicitly disallow subclassing.
+                </para>
+            </formalpara></listitem>  
+            <listitem><formalpara>
+                <title>Providing specialized instances</title>
+                <para>
+                    A singleton could have subclasses and when requesting its instance, one of the 
+                    subclass instances would be returned -- a subclass instance is, after all, also
+                    an instance of the class itself. The actual class through which access to one of
+                    its specializations is obtained could even be abstract. 
+                </para>
+            </formalpara></listitem>
+            
+        </itemizedlist>
+        
+    </para>
+</section>

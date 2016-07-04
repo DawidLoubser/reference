@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns123:section xmlns:ns123="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.documenting.examples.interpharm.architecture.patterns.patterns">
+  <ns124:title xmlns:ns124="http://docbook.org/ns/docbook">Architectural patterns</ns124:title>
+  <ns125:para xmlns:ns125="http://docbook.org/ns/docbook">
+    The proposed architecture aims to use proven architectural patterns in order to simplify the
+    high-level structure, achieving clean responsibility allocations, and realizing the quality
+    requirements.
+  </ns125:para>
+  
+  <ns126:section xmlns:ns126="http://docbook.org/ns/docbook">
+    <ns127:title xmlns:ns127="http://docbook.org/ns/docbook">Layering</ns127:title>
+    <ns128:para xmlns:ns128="http://docbook.org/ns/docbook">
+      In order to reduce the dependencies within the system and provide a high level responsibility
+      allocation, the proposed architecture is in its core a layered architecture with the following
+      layers software layers:
+      <ns129:orderedlist xmlns:ns129="http://docbook.org/ns/docbook">
+        <ns130:listitem xmlns:ns130="http://docbook.org/ns/docbook"><ns131:para xmlns:ns131="http://docbook.org/ns/docbook">
+          Socket based connections layer which accepts raw socket connections and transforms the
+          transport layer protocol to HTTP. 
+        </ns131:para></ns130:listitem>
+        <ns132:listitem xmlns:ns132="http://docbook.org/ns/docbook"><ns133:para xmlns:ns133="http://docbook.org/ns/docbook">
+          An HTTP request processor which extracts the XML messages and passes these on to the
+          business logic layer.
+        </ns133:para></ns132:listitem>
+        <ns134:listitem xmlns:ns134="http://docbook.org/ns/docbook"><ns135:para xmlns:ns135="http://docbook.org/ns/docbook">
+          A business logic layer which
+          <ns136:itemizedlist xmlns:ns136="http://docbook.org/ns/docbook">
+            <ns137:listitem xmlns:ns137="http://docbook.org/ns/docbook"><ns138:para xmlns:ns138="http://docbook.org/ns/docbook">
+              demarshals the Superformat messages onto Java objects,
+            </ns138:para></ns137:listitem>
+            <ns139:listitem xmlns:ns139="http://docbook.org/ns/docbook"><ns140:para xmlns:ns140="http://docbook.org/ns/docbook">
+              interfaces with persistent storage, and
+            </ns140:para></ns139:listitem>
+            <ns141:listitem xmlns:ns141="http://docbook.org/ns/docbook"><ns142:para xmlns:ns142="http://docbook.org/ns/docbook">
+              applies the claim processing rules.
+            </ns142:para></ns141:listitem>
+          </ns136:itemizedlist>
+        </ns135:para></ns134:listitem>
+        <ns143:listitem xmlns:ns143="http://docbook.org/ns/docbook"><ns144:para xmlns:ns144="http://docbook.org/ns/docbook">
+            a persistence layer with redundancy,         
+        </ns144:para></ns143:listitem>
+        <ns145:listitem xmlns:ns145="http://docbook.org/ns/docbook"><ns146:para xmlns:ns146="http://docbook.org/ns/docbook">
+          a connectivity layer containing the connectors to the various medical aid
+          administrators which manage the connections and the administrator specific protocol
+          marshalling/demarshalling.
+        </ns146:para></ns145:listitem>
+      </ns129:orderedlist>
+    </ns128:para>
+    
+    <ns147:para xmlns:ns147="http://docbook.org/ns/docbook">
+      These software layers are deployed across the following hardware layers:
+      <ns148:itemizedlist xmlns:ns148="http://docbook.org/ns/docbook">
+        <ns149:listitem xmlns:ns149="http://docbook.org/ns/docbook"><ns150:para xmlns:ns150="http://docbook.org/ns/docbook">
+          A layer of front-end socket connection acceptors supporting fail-over safety via redundant
+          machines which bring themselves up with the same IP address.
+        </ns150:para></ns149:listitem>
+        <ns151:listitem xmlns:ns151="http://docbook.org/ns/docbook"><ns152:para xmlns:ns152="http://docbook.org/ns/docbook">
+          The HTTP request processing, business logic and connectivity layers are deployed onto a
+          single clustered hardware layer.
+        </ns152:para></ns151:listitem>
+        <ns153:listitem xmlns:ns153="http://docbook.org/ns/docbook"><ns154:para xmlns:ns154="http://docbook.org/ns/docbook">
+          The persistence layer is  deployed onto a separate hardware layer supporting database
+          redundancy.
+        </ns154:para></ns153:listitem>
+      </ns148:itemizedlist>
+    </ns147:para>
+  </ns126:section>
+  
+  <ns155:section xmlns:ns155="http://docbook.org/ns/docbook">
+    <ns156:title xmlns:ns156="http://docbook.org/ns/docbook">Pipes and filters</ns156:title>
+    <ns157:para xmlns:ns157="http://docbook.org/ns/docbook">
+      The claims processing work flows are meant to be realized within a pipes and filters
+      architecture which supports easy customizations/changes and assembling of work flows from
+      processing elements. This aspect of the intended architecture is out of scope for this
+      iteration.
+    </ns157:para>
+  </ns155:section>
+  
+  <ns158:section xmlns:ns158="http://docbook.org/ns/docbook">
+    <ns159:title xmlns:ns159="http://docbook.org/ns/docbook">Broker</ns159:title>
+    <ns160:para xmlns:ns160="http://docbook.org/ns/docbook">
+      The connector layer itself is architected around the broker architectural pattern which
+      ensures
+      <ns161:itemizedlist xmlns:ns161="http://docbook.org/ns/docbook">
+        <ns162:listitem xmlns:ns162="http://docbook.org/ns/docbook"><ns163:para xmlns:ns163="http://docbook.org/ns/docbook">
+          decoupling of clients from service providers,  and
+        </ns163:para></ns162:listitem>
+        <ns164:listitem xmlns:ns164="http://docbook.org/ns/docbook"><ns165:para xmlns:ns165="http://docbook.org/ns/docbook">
+          encapsulating of network specific functionality within a bridge.
+        </ns165:para></ns164:listitem>
+      </ns161:itemizedlist>
+    </ns160:para>
+  </ns158:section>
+  
+  
+</ns123:section>

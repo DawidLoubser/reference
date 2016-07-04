@@ -1,0 +1,1 @@
+int numInstances = Account.getNumInstances();			

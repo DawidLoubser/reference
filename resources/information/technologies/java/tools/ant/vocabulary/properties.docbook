@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title role="Properties">Properties</title>
+    <para> 
+       Properties are name-value pairs. They are often used for specifying 
+       <itemizedlist>
+          <listitem><para>directory paths,</para></listitem>
+          <listitem><para>compiler or build attributes,</para></listitem>
+          <listitem><para>target file names</para></listitem>
+       </itemizedlist> 
+       and other properties. 
+    </para>
+    <para> 
+      One specifies a property as a name-value pair: 
+<programlisting language="XML"><![CDATA[
+<property name="distDir" value="./dist"/>
+
+<property name="clientAppName" value="LoanCalculator"/>
+
+<property name="clientAppJar" value="${clientAppName}.jar"/>
+]]></programlisting>
+    </para>
+    <para> 
+      To access a property one uses the syntax 
+      <literal><![CDATA[${propertyName}+]]></literal>. For example, above, we specify the 
+      <literal>clientAppJar</literal> property as a function of the 
+      <literal>clientAppName</literal> property. 
+    </para>
+    <para> 
+      Below we show another example where we specify that the
+      <literal>runClientApp</literal> target executes the <literal>java</literal> task
+        with specified class names and paths. 
+<programlisting language="XML"><![CDATA[
+<target name="runClientApp" depends="jarClientApp">
+  <java classname="${clientAppName}" path=""${distDir}/${clientApp-jar}"/>
+</target>
+]]></programlisting>
+    </para>
+    <para> 
+      Properties can also be defined in properties files which can then be
+      <emphasis>imported</emphasis> into an Ant build file within a property tag. Assume,
+        for example, that we define the following properties in a properties file
+<programlisting><![CDATA[ 
+app.version = 1.0
+app.jar.name = ${ant.project.name}-${app.version}.jar
+deploy.location = http://server.com/someLocation
+]]></programlisting>
+        saved as, say, <literal>build.properties</literal>. We can now import this
+        properties file into an Ant build file as follows: 
+<programlisting><![CDATA[
+<project name="MyProject" basedir=".">
+
+<!-- Import a property file -->
+<property file="build.properties"/>
+
+<!-- Targets, etc... -->
+
+</project>
+]]></programlisting>
+    </para>    
+    
+    <xi:include href="builtInProperties.docbook"/>
+</section>

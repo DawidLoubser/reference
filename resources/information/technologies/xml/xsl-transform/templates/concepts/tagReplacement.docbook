@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.xml.xsl-transform.templates.concepts.tagReplacement">
+    <title>Tag Replacement</title>
+    <para>
+        The primary purpose of XSLT is to transform data from one XML vocabulary
+        to another. In a simple case, this may just mean replacing one set of tags with another.
+        The start and end tags of an element that triggers a template <emphasis>is automatically
+        discarded</emphasis>. The template may include new tags which will effectively
+      replace the original tags.
+    </para>
+    <para>
+        The newly inserted tags may conform to any vocabulary of choice (XHTML is a very popular and well-known
+        example, and examples of these will be used frequently). Adding output elements to the template
+        can be done in two different ways: First, the tags are simply added to the template. <emphasis>Using name
+        spaces for this approach is very important</emphasis> - as the XSLT processor is only interested in
+        processing tags in the XSLT (<literal>http://www.w3.org/1999/XSL/Transform</literal>) namespace:
+<programlisting><![CDATA[
+    <xsl:template match="book/title">
+        <h1><xsl:apply-templates/></h1>
+    </xsl:template>
+]]></programlisting>
+        
+        complex templates are easier to read using this technique:
+
+<programlisting><![CDATA[
+    <xsl:template match="book">
+        <html xmlns="http://www.w3.org/1999/xhtml">
+            <head>
+                <title>Our cool book</title>
+            </head>
+            <body>
+                <xsl:apply-templates/>
+            </body>
+        </html>
+    </xsl:template>
+]]></programlisting>
+    </para>
+    <para>
+        Alternatively, XSLT contains the <literal>element</literal> attribute, which identifies
+        the element to be output by the <literal>name</literal> attribute: This is useful
+        if the name of the element is to be programmatically determined.
+<programlisting><![CDATA[
+    <template match="book/title">
+        <element name="h1"><xsl:apply-templates/></element>
+    </template>
+]]></programlisting>
+    </para>
+    
+</section>

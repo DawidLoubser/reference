@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Functions</title>
+    <para>
+        Linux shell scripts provide support for simple functions. The purpose is to encapsulate
+        a reusable block of statements within a function which can be called from a number
+        of different places.
+    </para>
+    <para>
+        Like functions declared in programming languages, shell functions also have a function
+        header and a function body delimited by curly brackets.
+    </para>
+    
+    <section>
+        <title>A simple example function</title>
+        <para>
+            The following shell script contains a function which constructs a meeting which depends
+            on the time of the day.
+            <programlisting>
+<xi:include parse="text" href="source/greeting.sh" />
+</programlisting>                
+            The output of the script is something like
+            <programlisting>
+Good morning, fritz. Please try and not do too much damage on the machine today.
+      </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Function arguments and return values</title>
+        <para>
+            Linux shell functions also support function parsing arguments to functions, and obtaining
+            return values from functions.
+        </para>
+        <para>
+            Function arguments are provided via
+            <cmdsynopsis><command><![CDATA[
+functionName arg1 arg2 ...        
+      ]]></command></cmdsynopsis>
+            They are accessible within the function as <emphasis>positional parameters</emphasis>
+            similar to the command-line arguments the shell script itself receives, <abbrev>i.e.</abbrev>
+            via <literal><![CDATA[$1]]></literal>, <literal><![CDATA[$2]]></literal> and so forth.
+        </para>
+        <para>
+            The return value is returned via a <command>return</command> statement, which also
+            exits the function. The return value is accessible from within the callings script via
+            the <emphasis>exit status</emphasis> variable, <literal><![CDATA[$?]]></literal>.
+        </para>
+        <para>
+            The syntax of function parameters and return values is illustrated in the following shell
+            script, which uses a <command>factorial</command> function to calculate the factorial
+            of a supplied integer value:
+            <programlisting>
+<xi:include parse="text" href="source/factorial1.sh" />
+</programlisting>                
+            The output of the script when run with parameter <constant>5</constant> is
+            <programlisting>
+factorial(5) = 120
+      </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Recursion and local variables</title>
+        <para>
+            A function can also call itself. For example, below we show a recursive implementation
+            of the factorial function:
+            <programlisting>
+<xi:include parse="text" href="source/factorial2.sh" />
+</programlisting>                
+            From a user's perspective, the function behaves in the same way as the previous implementation
+            of <command>factorial</command>. The output of the script when run with parameter 
+            <constant>5</constant> is
+            <programlisting>
+factorial(4) = 24
+      </programlisting>
+        </para>
+        
+        <section>
+            <title>Local function variables</title>
+            <para>
+                So far all our variables were either
+                <itemizedlist>
+                    <listitem><para>local to the shell, or</para></listitem>
+                    <listitem><para>
+                        global variables which were <command>export</command>ed to other shells.
+                    </para></listitem>
+                </itemizedlist>
+            </para>
+            <para>
+                Shell scripts also provide limited support for local variables -- in particular for
+                variables which are local to a particular function. For example, the recursive 
+                implementation of <command>factorial</command>, above, declares the
+                variable <varname>factorial_product</varname> as <command>local</command>,
+                thereby protecting it from being modified outside the function.
+            </para>
+        </section>
+    </section>
+    
+</section>

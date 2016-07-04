@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns3028:section xmlns:ns3028="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.nfs.exporting">
+
+  <ns3029:title xmlns:ns3029="http://docbook.org/ns/docbook">Exporting</ns3029:title>
+  <ns3030:para xmlns:ns3030="http://docbook.org/ns/docbook">
+    In order to use files across a network, the machine which serves a file system
+    across the network needs to export the volumes it shares.
+  </ns3030:para>
+  
+  <ns3031:section xmlns:ns3031="http://docbook.org/ns/docbook">
+    <ns3032:title xmlns:ns3032="http://docbook.org/ns/docbook">Specifying a shared volume in <ns3033:filename xmlns:ns3033="http://docbook.org/ns/docbook">/etc/exports</ns3033:filename></ns3032:title>
+    <ns3034:para xmlns:ns3034="http://docbook.org/ns/docbook">
+      The <ns3035:filename xmlns:ns3035="http://docbook.org/ns/docbook">/etc/exports</ns3035:filename> file contains a list of volumes which are shared.
+      For each shared volume there is a line entry of the form
+      <ns3036:programlisting xmlns:ns3036="http://docbook.org/ns/docbook">
+pathToSharedVolume client1(option1_1,option2_1) client2(option1_2,option2_2)
+      </ns3036:programlisting>
+      Here
+      <ns3037:itemizedlist xmlns:ns3037="http://docbook.org/ns/docbook">
+        <ns3038:listitem xmlns:ns3038="http://docbook.org/ns/docbook"><ns3039:formalpara xmlns:ns3039="http://docbook.org/ns/docbook"> 
+          <ns3040:title xmlns:ns3040="http://docbook.org/ns/docbook">pathToSharedVolume</ns3040:title>
+          <ns3041:para xmlns:ns3041="http://docbook.org/ns/docbook">
+            represents the directory you want to share.
+          </ns3041:para>
+        </ns3039:formalpara></ns3038:listitem>
+        <ns3042:listitem xmlns:ns3042="http://docbook.org/ns/docbook"><ns3043:formalpara xmlns:ns3043="http://docbook.org/ns/docbook"> 
+          <ns3044:title xmlns:ns3044="http://docbook.org/ns/docbook">client1 and client2</ns3044:title>
+          <ns3045:para xmlns:ns3045="http://docbook.org/ns/docbook">
+            are the client machines you want to give access to. You can identify client machines
+            either by their IP address or by the host (DNS) names. Using IP addresses is more
+            secure.
+          </ns3045:para>
+        </ns3043:formalpara></ns3042:listitem>
+        <ns3046:listitem xmlns:ns3046="http://docbook.org/ns/docbook"><ns3047:formalpara xmlns:ns3047="http://docbook.org/ns/docbook">
+          <ns3048:title xmlns:ns3048="http://docbook.org/ns/docbook">access options</ns3048:title>
+          <ns3049:para xmlns:ns3049="http://docbook.org/ns/docbook">
+            The access option for an exported volume is one of
+            <ns3050:itemizedlist xmlns:ns3050="http://docbook.org/ns/docbook">
+              <ns3051:listitem xmlns:ns3051="http://docbook.org/ns/docbook"><ns3052:formalpara xmlns:ns3052="http://docbook.org/ns/docbook">
+                <ns3053:title xmlns:ns3053="http://docbook.org/ns/docbook">ro</ns3053:title>
+                <ns3054:para xmlns:ns3054="http://docbook.org/ns/docbook">
+                  which specifies read-only access,
+                </ns3054:para>
+              </ns3052:formalpara></ns3051:listitem>
+              <ns3055:listitem xmlns:ns3055="http://docbook.org/ns/docbook"><ns3056:formalpara xmlns:ns3056="http://docbook.org/ns/docbook">
+                <ns3057:title xmlns:ns3057="http://docbook.org/ns/docbook">rw</ns3057:title>
+                <ns3058:para xmlns:ns3058="http://docbook.org/ns/docbook">which requests read-write access for the exported volume,</ns3058:para>
+              </ns3056:formalpara></ns3055:listitem>
+              <ns3059:listitem xmlns:ns3059="http://docbook.org/ns/docbook"><ns3060:formalpara xmlns:ns3060="http://docbook.org/ns/docbook">
+                <ns3061:title xmlns:ns3061="http://docbook.org/ns/docbook">no_root_squash</ns3061:title>
+                <ns3062:para xmlns:ns3062="http://docbook.org/ns/docbook">
+                  If a user logged on as <ns3063:emphasis xmlns:ns3063="http://docbook.org/ns/docbook">root</ns3063:emphasis> tries to access
+                  a file on a NFS server, the user is treated as the <ns3064:emphasis xmlns:ns3064="http://docbook.org/ns/docbook">nobody</ns3064:emphasis>
+                  user on the server. On the other hand, if the option
+                  <ns3065:literal xmlns:ns3065="http://docbook.org/ns/docbook">no_root_squash</ns3065:literal> is selected, then a user logged on 
+                  as <ns3066:emphasis xmlns:ns3066="http://docbook.org/ns/docbook">root</ns3066:emphasis> on the client machine will have root-level access to 
+                  the files exported by the server. This option should be used only in exceptional
+                  circumstances, usually for administrative work.
+                </ns3062:para>
+              </ns3060:formalpara></ns3059:listitem>
+            </ns3050:itemizedlist>
+          </ns3049:para>
+        </ns3047:formalpara></ns3046:listitem>
+        <ns3067:listitem xmlns:ns3067="http://docbook.org/ns/docbook"><ns3068:formalpara xmlns:ns3068="http://docbook.org/ns/docbook">
+          <ns3069:title xmlns:ns3069="http://docbook.org/ns/docbook">sync or async</ns3069:title>
+          <ns3070:para xmlns:ns3070="http://docbook.org/ns/docbook">
+            Recent versions of NFS use by default <ns3071:literal xmlns:ns3071="http://docbook.org/ns/docbook">sync</ns3071:literal>, <ns3072:abbrev xmlns:ns3072="http://docbook.org/ns/docbook">i.e.</ns3072:abbrev>
+            synchronous behaviour. This is the safer option. The server will only notify a client that
+            a write is completed once it has been written to stable storage. When <ns3073:literal xmlns:ns3073="http://docbook.org/ns/docbook">async</ns3073:literal>
+            is specified, the server may notify a client that the data has been successfully written prior
+            to it having been transferred to stable storage, and this may result in undetected
+            loss/corruption of data upon server crash.
+          </ns3070:para>
+        </ns3068:formalpara></ns3067:listitem>
+        <ns3074:listitem xmlns:ns3074="http://docbook.org/ns/docbook"><ns3075:formalpara xmlns:ns3075="http://docbook.org/ns/docbook">
+          <ns3076:title xmlns:ns3076="http://docbook.org/ns/docbook">secure/insecure</ns3076:title>
+          <ns3077:para xmlns:ns3077="http://docbook.org/ns/docbook">
+             The <ns3078:literal xmlns:ns3078="http://docbook.org/ns/docbook">secure</ns3078:literal> option requires client requests to originate from 
+             a port less than <ns3079:literal xmlns:ns3079="http://docbook.org/ns/docbook">IPPORT_RESERVED</ns3079:literal> which is port 1024. 
+          </ns3077:para>
+        </ns3075:formalpara></ns3074:listitem>
+      </ns3037:itemizedlist>
+  
+      <ns3080:note xmlns:ns3080="http://docbook.org/ns/docbook">
+        <ns3081:para xmlns:ns3081="http://docbook.org/ns/docbook">
+          If you share a directory, then all its subdirectories are shared too.
+        </ns3081:para>
+      </ns3080:note>
+    </ns3034:para>  
+  </ns3031:section>
+  
+  <ns3082:section xmlns:ns3082="http://docbook.org/ns/docbook">
+    <ns3083:title xmlns:ns3083="http://docbook.org/ns/docbook">Some example entries in <ns3084:filename xmlns:ns3084="http://docbook.org/ns/docbook">etc/exports</ns3084:filename></ns3083:title>
+    <ns3085:para xmlns:ns3085="http://docbook.org/ns/docbook">
+      <ns3086:itemizedlist xmlns:ns3086="http://docbook.org/ns/docbook">
+        <ns3087:listitem xmlns:ns3087="http://docbook.org/ns/docbook"><ns3088:para xmlns:ns3088="http://docbook.org/ns/docbook">
+          To provide read, and secure write access to 
+          <ns3089:filename xmlns:ns3089="http://docbook.org/ns/docbook">home/fritz/freeForAll</ns3089:filename> to everyone 
+          connecting from any port, add the following line to your
+          <ns3090:filename xmlns:ns3090="http://docbook.org/ns/docbook">/etc/exports</ns3090:filename> file:
+          <ns3091:programlisting xmlns:ns3091="http://docbook.org/ns/docbook">
+/home/fritz/freeForAll *(rw,sync,insecure)      
+          </ns3091:programlisting>
+        </ns3088:para></ns3087:listitem>
+        
+       <ns3092:listitem xmlns:ns3092="http://docbook.org/ns/docbook"><ns3093:para xmlns:ns3093="http://docbook.org/ns/docbook">
+         The following provides read-only access to a software repository
+         directory for all machines in a domain
+         <ns3094:programlisting xmlns:ns3094="http://docbook.org/ns/docbook">
+/usr/public/softwareRepository solmstraining.co.za(ro,insecure)
+         </ns3094:programlisting>
+       </ns3093:para></ns3092:listitem>
+        
+        <ns3095:listitem xmlns:ns3095="http://docbook.org/ns/docbook"><ns3096:para xmlns:ns3096="http://docbook.org/ns/docbook">
+          Since devices are represented by files in Linux, you can also share devices
+          via NFS. For example,
+          <ns3097:cmdsynopsis xmlns:ns3097="http://docbook.org/ns/docbook">
+<ns3098:command xmlns:ns3098="http://docbook.org/ns/docbook">mnt/cdrom 192.168.0.*(ro)</ns3098:command>          
+          </ns3097:cmdsynopsis>
+          shares the mounted cdrom drive to all IP addresses
+        </ns3096:para></ns3095:listitem>
+       
+       <ns3099:listitem xmlns:ns3099="http://docbook.org/ns/docbook"><ns3100:para xmlns:ns3100="http://docbook.org/ns/docbook">
+         The need may occasionally arise to provide full access (including root
+         access) for the entire file system to another machine. The following
+         line in the <ns3101:filename xmlns:ns3101="http://docbook.org/ns/docbook">/etc/exports</ns3101:filename> file would provide this:
+         <ns3102:programlisting xmlns:ns3102="http://docbook.org/ns/docbook">
+/  192.162.200.11(rw,no_root_squash)
+         </ns3102:programlisting>
+       </ns3100:para></ns3099:listitem>  
+       
+       <ns3103:listitem xmlns:ns3103="http://docbook.org/ns/docbook"><ns3104:para xmlns:ns3104="http://docbook.org/ns/docbook">
+         To export the public FTP directory to everyone for read-access,
+         but enforcing that all requests are executed as user 
+         <ns3105:emphasis xmlns:ns3105="http://docbook.org/ns/docbook">nobody</ns3105:emphasis>, you can use:
+         <ns3106:programlisting xmlns:ns3106="http://docbook.org/ns/docbook">
+/pub            (ro,insecure,all_squash)
+         </ns3106:programlisting>
+       </ns3104:para></ns3103:listitem>
+       <ns3107:listitem xmlns:ns3107="http://docbook.org/ns/docbook"><ns3108:para xmlns:ns3108="http://docbook.org/ns/docbook">
+           You can also provide multiple machines access within a single export:
+           <ns3109:programlisting xmlns:ns3109="http://docbook.org/ns/docbook">
+  /usr/local    192.168.0.1(ro) 192.168.0.2(ro)
+  /home/ 192.168.0.1(rw) 192.168.0.2(rw)
+           </ns3109:programlisting>
+        </ns3108:para></ns3107:listitem>
+        
+        <ns3110:listitem xmlns:ns3110="http://docbook.org/ns/docbook"><ns3111:para xmlns:ns3111="http://docbook.org/ns/docbook">
+           If you have a number of machines on the same local network that require 
+           access to your server, you can also specify a network mask. For example,
+           if you wanted to allow access to all the machines with IP addresses 
+           between 192.168.0.0 and 192.168.0.255, then you could have the entries:
+           <ns3112:programlisting xmlns:ns3112="http://docbook.org/ns/docbook">
+  /usr/local 192.168.0.0/255.255.255.0(ro)
+  /home      192.168.0.0/255.255.255.0(rw)
+           </ns3112:programlisting>
+        </ns3111:para></ns3110:listitem>
+        
+        <ns3113:listitem xmlns:ns3113="http://docbook.org/ns/docbook"><ns3114:para xmlns:ns3114="http://docbook.org/ns/docbook">
+           Finally, you can also publish NFS directories to <ns3115:emphasis xmlns:ns3115="http://docbook.org/ns/docbook">netgroup</ns3115:emphasis>s
+           as defined in the <ns3116:filename xmlns:ns3116="http://docbook.org/ns/docbook">/etc/netgroups</ns3116:filename> file. For example, to
+           public a directory for read-write access to all members of the netgroup
+           <ns3117:emphasis xmlns:ns3117="http://docbook.org/ns/docbook">development</ns3117:emphasis>, and read access to the rest of the
+           organization, you can use
+           <ns3118:programlisting xmlns:ns3118="http://docbook.org/ns/docbook">
+/projects/src @development(rw) *.solmstraining.co.za(ro)           
+           </ns3118:programlisting>
+         </ns3114:para></ns3113:listitem>  
+      </ns3086:itemizedlist>
+    </ns3085:para>
+  </ns3082:section>
+  
+  <ns3119:section xmlns:ns3119="http://docbook.org/ns/docbook">
+    <ns3120:title xmlns:ns3120="http://docbook.org/ns/docbook">Using <ns3121:command xmlns:ns3121="http://docbook.org/ns/docbook">exportfs</ns3121:command></ns3120:title>
+    <ns3122:para xmlns:ns3122="http://docbook.org/ns/docbook">
+      The application, <ns3123:command xmlns:ns3123="http://docbook.org/ns/docbook">exportfs</ns3123:command> is used to export
+      (publish) file systems via NFS.
+    </ns3122:para>
+    
+    <ns3124:section xmlns:ns3124="http://docbook.org/ns/docbook">
+      <ns3125:title xmlns:ns3125="http://docbook.org/ns/docbook">Publishing changes to <ns3126:filename xmlns:ns3126="http://docbook.org/ns/docbook">/etc/exports</ns3126:filename></ns3125:title>
+      <ns3127:para xmlns:ns3127="http://docbook.org/ns/docbook">
+        After you have finished editing <ns3128:filename xmlns:ns3128="http://docbook.org/ns/docbook">/etc/exports</ns3128:filename>, you
+        need to publish those changes. This is done by running
+        <ns3129:cmdsynopsis xmlns:ns3129="http://docbook.org/ns/docbook">
+<ns3130:command xmlns:ns3130="http://docbook.org/ns/docbook">exportfs -ra</ns3130:command>
+        </ns3129:cmdsynopsis>
+        <ns3131:note xmlns:ns3131="http://docbook.org/ns/docbook">
+          <ns3132:para xmlns:ns3132="http://docbook.org/ns/docbook">
+            You will typically need to be a super-user to run this command (as well as to edit
+            the <ns3133:filename xmlns:ns3133="http://docbook.org/ns/docbook">/etc/exportfs</ns3133:filename> file).
+          </ns3132:para>
+        </ns3131:note>
+      </ns3127:para>
+    </ns3124:section>
+    
+    <ns3134:section xmlns:ns3134="http://docbook.org/ns/docbook">
+      <ns3135:title xmlns:ns3135="http://docbook.org/ns/docbook">Temporary exports via <ns3136:command xmlns:ns3136="http://docbook.org/ns/docbook">exportfs</ns3136:command></ns3135:title>
+      <ns3137:para xmlns:ns3137="http://docbook.org/ns/docbook">
+        At times you may want to export certain volumes temporarily. In that 
+        case you may  not want to add those directories to the 
+        <ns3138:filename xmlns:ns3138="http://docbook.org/ns/docbook">/etc/exports</ns3138:filename> file, because that would have 
+        the consequence that they will be automatically republished on reboot.
+      </ns3137:para>
+      <ns3139:para xmlns:ns3139="http://docbook.org/ns/docbook">
+        In this case you may want to run <ns3140:command xmlns:ns3140="http://docbook.org/ns/docbook">exportfs</ns3140:command>
+        providing the volume you want to export as command-line
+        argument. For example, if Mr Bean wants to export his
+        <ns3141:filename xmlns:ns3141="http://docbook.org/ns/docbook">work</ns3141:filename> directory temporarily for read-only 
+        access to <ns3142:literal xmlns:ns3142="http://docbook.org/ns/docbook">192.168.0.15</ns3142:literal>, he can run
+        <ns3143:cmdsynopsis xmlns:ns3143="http://docbook.org/ns/docbook">
+<ns3144:command xmlns:ns3144="http://docbook.org/ns/docbook">exportfs -o ro 192.168.0.15:/home/bean/work</ns3144:command>        
+        </ns3143:cmdsynopsis>
+        Here the <ns3145:option xmlns:ns3145="http://docbook.org/ns/docbook">-o</ns3145:option> option enables him to specify a list
+        of export options in the same way as it is specified in the
+        <ns3146:filename xmlns:ns3146="http://docbook.org/ns/docbook">/etc/exports</ns3146:filename> file.
+      </ns3139:para>
+    </ns3134:section>
+  
+    <ns3147:section xmlns:ns3147="http://docbook.org/ns/docbook">
+      <ns3148:title xmlns:ns3148="http://docbook.org/ns/docbook">Withdrawing an exported volume</ns3148:title>
+      <ns3149:para xmlns:ns3149="http://docbook.org/ns/docbook">
+        At times, particularly when specifying temporary exports, you may want
+        to <ns3150:quote xmlns:ns3150="http://docbook.org/ns/docbook"><ns3151:emphasis xmlns:ns3151="http://docbook.org/ns/docbook">unexport</ns3151:emphasis></ns3150:quote> a volume. This
+        is done via the <ns3152:option xmlns:ns3152="http://docbook.org/ns/docbook">-u</ns3152:option> command-line option of the
+        <ns3153:command xmlns:ns3153="http://docbook.org/ns/docbook">exportfs</ns3153:command> command. For example, if Mr Bean
+        wishes to withdraw the export of his work directory, he can run
+        <ns3154:cmdsynopsis xmlns:ns3154="http://docbook.org/ns/docbook">
+<ns3155:command xmlns:ns3155="http://docbook.org/ns/docbook">exportfs -u 192.168.1.1:/home/bean/work</ns3155:command>        
+        </ns3154:cmdsynopsis>
+      </ns3149:para>
+    </ns3147:section>
+  </ns3119:section>
+</ns3028:section>

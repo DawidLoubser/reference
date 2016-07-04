@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns3221:section xmlns:ns3221="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.security.messageIntegrity.recipientSide">
+    
+    <ns3222:title xmlns:ns3222="http://docbook.org/ns/docbook">Recipient Side</ns3222:title>
+
+<ns3223:para xmlns:ns3223="http://docbook.org/ns/docbook">The message recipient can read the information directly through
+a <ns3224:emphasis xmlns:ns3224="http://docbook.org/ns/docbook">DigestInputStream</ns3224:emphasis> which calculates the digest value
+for the information read through the stream:
+</ns3223:para>
+<ns3225:para xmlns:ns3225="http://docbook.org/ns/docbook"><ns3226:programlisting xmlns:ns3226="http://docbook.org/ns/docbook">
+// get info
+
+InputStream in;
+
+// Initialize input stream, perhaps as a buffered input stream to
+// a network socket or file.
+
+MessageDigest messageDigester = MessageDigest.getInstance("SHA-1");
+
+DigestInputStream digestStream 
+  = new DigestInputStream(in, messageDigester);
+
+byte[] buffer = new byte[bufferSize];
+try
+{
+  do 
+  {
+	  int numRead = digestStream.read(buffer, 0, buffer.length);
+	  
+	  // do something with information
+  }
+}
+catch (EOFException e) {}
+
+messageDigester = digestStream.getMessageDigest();
+
+byte[] digest = messageDigester.digest();
+</ns3226:programlisting></ns3225:para>
+    
+</ns3221:section>

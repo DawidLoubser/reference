@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+ -->
+<section id="resources.information.technologies.c.pointers.introductionToPointers"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Introduction to pointers</title>
+  <para>
+    A pointer variable holds as value a memory address. They are the cornerstone
+    around which flexible computing in C is achieved. Using pointers can result
+    in efficient, compact code and ultimately form the basis for object-oriented
+    programming in <emphasis>C</emphasis>.
+  </para>
+   
+  <section><title>Stack versus Heap</title>
+    <para>
+      The stack is used to keep track of local variables and function pointers
+      at all levels of the calling hierarchy. The stack should be viewed as a
+      scarce resource (in some operating systems the stack per application is
+      constrained to a maximum of <constant>64kB</constant>) and large memory
+      structures should typically not be created on the stack. 
+    </para>
+    <para>
+      When grabbing and releasing memory dynamically (via <command>malloc</command> 
+      and <command>free</command>) one grabs memory from the heap. The heap is
+      a virtually unlimited resource constrained only by the virtual memory
+      limit which may be the sum total of your physical RAM and the available disk 
+      space. In <emphasis>C</emphasis>, when using memory on the heap one has to use 
+      pointers.
+    </para>
+  </section>
+  
+  <section><title>Declaring and using pointers</title>
+    <para>
+      A pointer points to a block of memory of a certain size sitting at a
+      particular position in memory
+      <itemizedlist>
+        <listitem><para>
+          The position in memory is determined by the value of the pointer variable.  
+        </para></listitem>
+        <listitem><para>
+          The size of the memory the pointer points to is determined by its type, 
+          (e.g. a double pointer points to 8 bytes).
+        </para></listitem>
+      </itemizedlist>
+      <example id="simplePointerDemo.c"><title>simplePointerDemo.c</title>
+        <para>
+          In the following simple example we declare an integer variable, 
+          <varname>k</varname> and initialize it to the value <constant>3</constant>.
+          We then declare a pointer to an integer, <varname>int *pk</varname>,
+          and initialize its value to the address of the variable <varname>k</varname>.
+        </para>
+        <programlisting><xi:include href="simplePointerDemo.c" parse="text"/></programlisting>
+        <para>
+          Dereferencing the pointer gives us the value of the 4 bytes (the pointer
+          being an <type>int*</type>) interpreted as an integer to be 3.
+        </para>
+        <para>
+          Setting the value of the variable to which the pointer points to 
+          <constant>5</constant> has the consequence that the value of 
+          <varname>k</varname> changes to <constant>5</constant>.
+          The output of the program is shown below:
+        </para>  
+        <programlisting>
+pointer value, pk= bffff384
+dereferencing the pointer: *pk=3
+after *k=5: k=5
+        </programlisting>
+      </example>
+    </para>
+  </section>
+  
+  <section><title>Typed versus untyped pointers</title>
+    <para>
+      For untyped pointers no data type is specified. The size of the memory block
+      they are pointing to is thus not known. Neither is it known how the memory
+      content should be interpreted. 
+    </para>
+    <para>
+      Void pointers are type compatible with any other pointer, <abbrev>i.e.</abbrev> we can assign
+      the value of a void pointer to that of any other pointer. In the other
+      direction we have to, however, explicitly cast:
+      <programlisting>
+double x = 2.3;          
+double* p_x = &amp;x;
+
+void* p = p_x;  /* no casting required */
+
+double* p2_x = (double*)p;  /* have to cast */
+      </programlisting>
+    </para>
+    <para>
+      To clarify the latter, recall for that example, both <type>int</type> and 
+      <type>float</type> typically occupy 4 bytes. Interpreting the same data
+      as an <type>int</type> or as a <type>float</type> will, however, yield
+      very different results.
+      <warning>
+        <para>
+          Pointers are intrinsically unsafe and a lot of care has to be taken
+          that no errors occur. Void-pointers are even more dangerous and should
+          be used with even greater care.
+        </para>
+      </warning>
+    </para>    
+    <example id="voidPointer.c"><title>voidPointer.c</title>
+      <programlisting><xi:include href="voidPointer.c" parse="text"/></programlisting>
+      <para>
+        The listing above defines a <type>void*</type> which is made to first point to an
+        integer and then to a floating point variable. The data is now open
+        to interpretation, <abbrev>i.e.</abbrev> interpreting it as an <type>int</type> or as
+        a <type>float</type> produces vary different results.
+      </para>
+      <programlisting>
+k = 3
+f = 3.000000
+after setting void_p = &amp;k:
+*((int*)void_p) = 3
+*((float*)void_p) = 0.000000
+after setting void_p = &amp;f:
+*((int*)void_p) = 1077936128
+*((float*)void_p) = 3.000000
+      </programlisting>
+    </example>
+  </section>
+</section>

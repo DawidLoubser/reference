@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.technologies.java.lang.innerClasses.whyInnerClasses"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Why use inner classes?</title>
+  <para>
+    There may be a number of reasons why one would like to declare a class an inner class of
+    another. Most of these are related to <emphasis>improved encasulation</emphasis> and better
+    <emphasis>scoping</emphasis>. Also, inner classes reduce the class clutter by hiding classes
+    which you cannot use.
+  </para>
+  
+  <section>
+    <title>Implementation hiding</title>
+    <para>
+      At times one would like to prevent external code from building any dependencies on any
+      particular implementation class, enforcing decoupling via an interface. Thsu, external code
+      may still maitain references to instances of such a class and request services from that
+      instance, but the reference type would be that of the interface and not of the class itself.
+      This can be neatly achieved via a private inner class which implements a public interface.
+    </para>
+    <para>
+      For example, any Java developer has used iterators over collections, without being aware or
+      caring what implementation of an iterator they have been using. You just request an iterator
+      from a collection obtaining an instance of some or other implementation of the
+      <literal>Iterator</literal> interface. The collection will return you an appropriate iterator
+      for that object (this particular instance of a collection). This approach has a number of
+      benefits including the following:
+      <itemizedlist>
+        <listitem><para>
+          Maintainers of the collection class can change the iterator class returned without
+          affecting any of the code using the collection or the iterator usage.
+        </para></listitem>
+        <listitem><para>
+          Instances of the iterator class have direct access to the outer class instance members
+          (like the head node of a list). 
+        </para></listitem>
+        <listitem><para>
+          Every instance of an iterator exists only in the context of an instance of the outer class
+          -- it does no make sense to have an iterator without a collection.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    
+    <section>
+      <title>Implementation hiding and factory methods</title>
+      <para>
+        Of course, if we want to completely decouple users from an implementation class, we
+        cannot ask users to create objects via constructors. Instead we will use one or other form
+        of a factory. 
+      </para>
+      <para>
+        In the case of exposing an service provider which is intrinsically coupled to
+        a context, one usually will use a factory method. For example, the collection classes
+        provide the <literal>iterator()</literal> method as a factory method for providing a
+        suitable iterator implementation to users.
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>Complete encapsulation</title>
+    <para>
+      At times, a class becomes excessively complex and we would like to <emphasis>delegate 
+      lower level realization responsibilities to a lower level class</emphasis>. 
+      Such classes are part of the inner workings of the
+      outer class and should be completely hidden from any code outside that class. This would be a
+      private inner class without any method providing any handle to any instance of such a class.
+    </para>
+    <para>
+      For example, <emphasis>linked lists use the concept of nodes</emphasis>. Each node has a
+      content and a pointer or reference to the next node of the linked list (usually linked lists are 
+      implemented as bidirectional circular linked lists where each node has one reference to the
+      next and one to the previous node of the linked list).
+    </para>
+  </section>
+  
+  <section>
+    <title>Narrowly collaborating classes without breaking encapsulation</title>
+    <para>
+      At times certain classes are meant to narrowly collaborate in order to realize some
+      functionality. Such examples are candidates for inner classes.
+    </para>
+    
+    <section>
+      <title>Friendship</title>
+      <para>
+        Languages like C++ support the concept of friendship. Here one class provides direct access to
+        its private members to another class which it has declared a friend class. This is, at times,
+        used for narrowly collaborating classes like a linked list and its iterator. The linked list
+        class would declare the iterator class a friend, therby providing iterators access to the
+        private instance members of linked lists.
+      </para>
+    </section>
+    
+    <section>
+      <title>The inner class alternative</title>
+      <para>
+        The use of friendship is generally discouraged because it directly breaks encapsulation --
+        the external friend class instances obtain direct access to the private members of another
+        class.
+      </para>
+      <para>
+        If, on the other hand, the iterator class is declared an inner class of the linked list
+        class, its instances can directly access the outer class instance members without breaking
+        encapsulation. This is so because the inner class is part of the encapsulated content of the
+        outer class.
+      </para>
+    </section>
+    
+  </section>
+  
+  <section>
+    <title>Callback handlers</title>
+    <para>
+      A common application of inner classes is that of callback handlers. This is an approach
+      commonly used for event handlers
+    </para>
+  </section>
+  
+  
+</section>  

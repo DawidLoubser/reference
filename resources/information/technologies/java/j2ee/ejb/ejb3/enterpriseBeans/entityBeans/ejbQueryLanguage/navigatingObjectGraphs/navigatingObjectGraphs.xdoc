@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.navigatingObjectGraphs.navigatingObjectGraphs"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Navigating Through Object Graphs </title>
+  <para>
+    Before we can discuss navigation through object graphs, we have to discuss single and
+    multi-valued paths.
+  </para>
+  
+  <section>
+    <title>Simple Paths</title>
+    <para>
+      Assume we have a <literal>Bond</literal> entity bean which has the
+      structure shown in 
+      <xref linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.navigatingObjectGraphs.bond_fig"/>.
+      One of the strengths of EJB-QL is its ability to smoothly navigate across
+      relationships, <abbrev>i.e.</abbrev> through object graphs. Consider, as an example, the UML 
+      diagram for a bond shown in 
+      <xref linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.navigatingObjectGraphs.bond_fig"/>.
+    </para>
+    
+    <figure id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.navigatingObjectGraphs.bond_fig">
+      <title>UML diagram for a bond</title>
+      <graphic fileref="bond.jpg"/>
+    </figure>
+    
+    <para>
+      In EJB-QL one can traverse relationships in an object-oriented fashion using the Java
+      element access operator. For example, we could specify the following SELECT statement to
+      select all bond accounts
+<programlisting><![CDATA[
+SELECT b.bondAccount FROM Bond b
+]]></programlisting>      
+      returns a collection of
+      accounts, each of which is a bond account. The <literal>Bond</literal>
+      entity bean must supply an abstract accessor method to query the related bond account. The
+      equivalent SQL statement would look something like this
+<programlisting><![CDATA[
+SELECT account from Account, Bond
+WHERE Bond.bondAccount = Account.id
+]]></programlisting>      
+   </para>
+   <para>
+      We can have paths of multiple nodes. For example,
+<programlisting><![CDATA[
+SELECT bond.bondAccount.balance FROM Bond bond
+]]></programlisting>  
+    </para>
+  </section>  
+  
+  <section>
+    <title>Single-Valued versus Multi-Valued Paths</title>
+    <para>
+      A single valued path is a path without any branching below the highest layer (i.e.
+      the layer connected to the result objects). SELECT clauses and most WHERE clauses require
+      a single-valued path.
+    </para>
+    <para>For example, all the queries discussed in the previous section use single valued
+      paths in the SELECT statement and are hence valid EJB-QL statements. On the other hand,
+      querying all the bond accounts of all the clients via
+<programlisting><![CDATA[
+SELECT client.bonds.account FROM Client client      -> INVALID
+]]></programlisting>      
+      resembles a multi-valued path because c refers to a collection of clients each 
+      of which has a collection of bonds which each has an account. 
+    </para>
+    
+    <figure id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.navigatingObjectGraphs.courseSchedule_fig">
+      <title>UML diagram for presentations of courses for a course schedule</title>
+      <graphic fileref="courseSchedule.jpg"/>
+    </figure>
+
+    <para>
+      As a second example, consider the UML diagram for a course schedule shown in figure
+      <xref linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.navigatingObjectGraphs.courseSchedule_fig"/>.
+      In a relational database this object graph could be represented as 4 tables, one
+      for each entity bean.
+    </para>
+    <para>
+      If we wanted to extract all course names which are currently scheduled 
+      (<abbrev>i.e.</abbrev> for
+      which there exists a presentation), we could do this via the following SQL query:
+<programlisting><![CDATA[
+SELECT Course.name from Course, Presentation 
+WHERE Presentation.course = Course.id
+]]></programlisting>      
+    </para>
+    <para>
+      To achieve the same in EJB-QL we can specify the following query:
+<programlisting><![CDATA[
+SELECT p.course.name FROM Presentation p
+]]></programlisting>      
+      This is a single-valued
+      path and hence the query is valid. On the other hand, the query
+<programlisting><![CDATA[
+SELECT p.presenters.course.name FROM Presentation p   -> INVALID
+]]></programlisting>      
+      is incorrect because we have, once again, a multi-valued path. 
+    </para>
+  </section>
+</section>

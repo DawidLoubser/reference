@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>File permissions</title>
+    <para>
+        After having controlled who actually logs on to the system, the next line of defense
+        is file permissions. 
+        <note><para>
+            Since any system resource is regarded on Linux as a file, file permissions can be used
+            to control access to any system resource (for example to a <emphasis>cdrecorder</emphasis>).
+        </para></note>
+    </para>
+    
+    <section>
+        <title>Read-write-execute permissions</title>
+        <para>
+            You can specify the
+            <itemizedlist>
+                <listitem><para>read permissions,</para></listitem>
+                <listitem><para>write permissions and</para></listitem>
+                <listitem><para>execute permissions.</para></listitem>
+            </itemizedlist>
+            for
+            <itemizedlist>
+                <listitem><para>
+                    the owner user,  
+                </para></listitem>
+                <listitem><para>
+                    members of the owner group  
+                </para></listitem>
+                <listitem><para>
+                    and for all other users.  
+                </para></listitem>
+            </itemizedlist>
+        </para>
+        
+        <section>
+            <title>Changing permissions via symbolic flags</title>
+            <para>
+                When using symbolic flags to change file permissions, you specify
+                <itemizedlist>
+                    <listitem><para>
+                        to whom the permission changes apply (the owner user (u), the group members (g), other users
+                        which are not a member of the owner group (o), or all users(a)) and
+                    </para></listitem>
+                    <listitem><para>
+                        what the changes are (read access (r), write access (w), execute access (x), execute access
+                        for directories only (X) as well as some other options.
+                    </para></listitem>
+                </itemizedlist>
+            </para>
+            <para>
+                The permissions are combined with an operator which is
+                <itemizedlist>
+                    <listitem><para>
+                        <command>+</command>  if the specified permission is to be added,
+                    </para></listitem>
+                    <listitem><para>
+                        <command>-</command>  if the specified permission is to be removed,
+                    </para></listitem>
+                    <listitem><para>
+                        <command>=</command>  if the specified permission is to be the only permission
+                        for the target file(s).
+                    </para></listitem>
+                </itemizedlist>
+            </para>
+            <section>
+                <title>Some examples</title>
+                <para>
+                    For example,
+                    <cmdsynopsis>
+                        <command>chmod ug+rwX *</command>      
+                    </cmdsynopsis>
+                    adds read, write to all files and execute access to all subdirectories of the current directory
+                    for the owner user and members of the owner group.  It will leave the access for all
+                    other users unchanged.
+                </para>        
+                <para>
+                    As another example, consider
+                    <cmdsynopsis>
+                        <command>chmod o-wx *</command>      
+                    </cmdsynopsis>
+                    removes write and execute access to all files in the current directory for all users other than the 
+                    file owner and members of the owner group.
+                </para>
+                <para>
+                    Finally, if we want to provide read/write access to the owner user and no access to all
+                    other users, we can use
+                    <cmdsynopsis>
+                        <command>chmod u=rw theNiceDuckMenu.txt</command>            
+                    </cmdsynopsis>
+                </para>
+                <note>
+                    <para>
+                        The command <command>chmod</command> never changes the permissions of symbolic links,
+                        but changes the permissions of the file to which the symbolic link refers to instead. 
+                        This is not a problem since the permissions of symbolic links are never used. 
+                    </para>
+                </note>            
+                
+            </section>
+            
+            <section>
+                <title>Concatenating permission change requests</title>
+                <para>
+                    Several permission change requests can be concatenated with commas.
+                    For example
+                    <cmdsynopsis>
+                        <command>chmod a+r,o-wx,ug+wx duckMenu.txt</command>      
+                    </cmdsynopsis>
+                </para>
+            </section>
+        </section>
+        
+        <section>
+            <title>Setting permissions via binary flags</title>
+            <para>
+                The permissions are set with binary flags where
+                <itemizedlist>
+                    <listitem><formalpara>
+                        <title>bit 0</title>
+                        <para>
+                            is the lowest order bit (the <![CDATA[2^0]]> bit) which is set <constant>true</constant> 
+                            (1) to provide <emphasis>execute</emphasis> permission and to <constant>false</constant>
+                            (0) if execute permission should be denied.
+                        </para>
+                    </formalpara></listitem>
+                    <listitem><formalpara>
+                        <title>bit 1</title>
+                        <para>
+                            is the second bit from the right (the <![CDATA[2^1]]> bit) which is set <constant>true</constant> 
+                            (1) to provide <emphasis>write</emphasis> permission and to <constant>false</constant>
+                            (0) if write permission should be denied.
+                        </para>
+                    </formalpara></listitem>
+                    <listitem><formalpara>
+                        <title>bit 2</title>
+                        <para>
+                            is the highest (left-most) bit (the <![CDATA[2^2]]> bit) which is set <constant>true</constant> 
+                            (1) to provide <emphasis>read</emphasis> permission and to <constant>false</constant>
+                            (0) if read permission should be denied.
+                        </para>
+                    </formalpara></listitem>
+                </itemizedlist>
+            </para>
+            <para>
+                Now, to specify read/write/execute permissions for the owner user, members of the owner group
+                and other users, the <command>chmod</command> is supplied with three octal digits, each
+                thus having a value of between 0 and 7:
+                <itemizedlist>
+                    <listitem><para>
+                        the first (left-most) octal digit specifies the read/write/execute permissions for the owner
+                        user,
+                    </para></listitem>
+                    <listitem><para>
+                        the second (middle) digit specifies the read/write/execute permissions for the members
+                        of the owner group and
+                    </para></listitem>
+                    <listitem><para>
+                        the third (right-most)  octal digit specifies the read/write/execute permissions for all other
+                        users.  
+                    </para></listitem>
+                </itemizedlist>
+                Thus 
+                <cmdsynopsis>
+                    <command>chmod 777 *</command>        
+                </cmdsynopsis>
+                changes the file permissions of all files in the current directory to give read, write and
+                execute permissions to everyone, while
+                <cmdsynopsis>
+                    <command>chmod 751 donaldsDuckMenu.txt</command>        
+                </cmdsynopsis>
+                provides 
+                <itemizedlist>
+                    <listitem><para>
+                        read/write/execute access to the owner user,  
+                    </para></listitem>
+                    <listitem><para>
+                        read and execute access to members of the owner group and  
+                    </para></listitem>
+                    <listitem><para>
+                        execute access to all other users.  
+                    </para></listitem>
+                </itemizedlist>
+            </para>
+        </section>
+    </section>
+    
+    <section>
+        <title>Restricted write access via sticky bits</title>
+        <para>
+            Historically, setting the sticky bit for an executable file was a request to keep the 
+            file in memory after the command has been completed. The sticky bit is no longer
+            used for this purpose in Linux.
+        </para>
+        <para>
+            These days the sticky bit is typically used on directories to separate file deletion,
+            renaming, unlinking permissions from general write permissions.
+            Without the sticky bit, anyone able  to  write  to the  directory can delete or rename files.  
+            If the sticky bit is set, only the super-user can delete, rename or unlink files in the
+            directory, even if other users have write access to files in that directory.
+        </para>
+        <para>
+            Sticky bits are generally used for directories containing log files where users need write
+            permission, but should not be able to remove or rename files.
+        </para>
+        <para>
+            To set the sticky bit on a directory, one uses the <command>t</command> permission
+            symbol. For example,
+            <cmdsynopsis>
+                <command>chmod +t /var/tmp/log</command>      
+            </cmdsynopsis>
+            sets the sticky bit for the <filename>/var/tmp/log</filename> directory and
+            <cmdsynopsis>
+                <command>chmod -t /var/tmp/log</command>      
+            </cmdsynopsis>
+            would cancel the sticky bit.
+        </para>
+    </section>
+    
+    <section>
+        <title>Transferring file permissions to the executing user</title>
+        <para>
+            At times, one wants to specify that an executable is to be executed not with the
+            permission of the user, but with the permissions of the user owner or the group
+            owner of the executable file.
+        </para>
+        <section>
+            <title>Transferring the user owner permissions of the file to the user by setting the SUID bit</title>
+            <para>
+                As an example, consider the <command>passwd</command> command used by users
+                to change their own passwords. This command modifies the <filename>/etc/passwd</filename>
+                file to which only the <emphasis>root</emphasis> user has access. If users ran the
+                <command>passwd</command> command with their own permissions, they would not
+                be able to change their password as stored in the <filename>/etc/passwd</filename> file.
+                Instead, the SUID bit is set on the file for the <command>passwd</command> command,
+                causing the permissions of the owner user (root) of the <filename>passwd</filename> file
+                to be transferred to the user when executing the command.
+            </para>
+            <para>
+                To set the SUID bit use
+                <cmdsynopsis>
+                    <command>chmod u+s ./passwd</command>        
+                </cmdsynopsis>
+            </para>
+        </section>
+        
+        <section>
+            <title>Transferring the group owner permissions of the file to the user, by setting the SGID bit</title>
+            <para>
+                At times, though not very often, one wants to transfer the permissions of the owner group (not that 
+                of the owner user) to the executing user. This is done by setting the SGID bit via 
+                <cmdsynopsis>
+                    <command>chmod g+s someExecutable</command>        
+                </cmdsynopsis>
+                <note>
+                    <para>
+                        You will want to use SUID and SGID permissions as little as possible because it can have serious 
+                        security implications.
+                    </para>
+                </note>
+            </para>
+        </section>
+        
+    </section>
+    
+</section>

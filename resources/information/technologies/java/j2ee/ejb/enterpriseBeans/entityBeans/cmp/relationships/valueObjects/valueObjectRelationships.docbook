@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1394:section xmlns:ns1394="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.relationships.valueObjects.valueObjectRelationships">
+
+  <ns1395:title xmlns:ns1395="http://docbook.org/ns/docbook">Entity Relationship with Value Objects </ns1395:title>
+  <ns1396:para xmlns:ns1396="http://docbook.org/ns/docbook">
+    In EJB one can specify a relationship between an entity bean and a value object.
+  </ns1396:para>
+  
+  <ns1397:section xmlns:ns1397="http://docbook.org/ns/docbook">
+    <ns1398:title xmlns:ns1398="http://docbook.org/ns/docbook">Specifying Value Objects</ns1398:title>
+    <ns1399:para xmlns:ns1399="http://docbook.org/ns/docbook">
+      Value objects resemble true components of the entity bean (in the context of a
+      composition relationship in OO). They are defined within entity beans via abstract
+      accessor methods which return/receive instances of a class which implements 
+      <ns1400:literal xmlns:ns1400="http://docbook.org/ns/docbook">java.io.Serializable</ns1400:literal>.
+    </ns1399:para>
+    <ns1401:para xmlns:ns1401="http://docbook.org/ns/docbook">
+      Consider, for example, a <ns1402:literal xmlns:ns1402="http://docbook.org/ns/docbook">Task</ns1402:literal> which has as one of
+      its components a taskType. A task may be of type  
+      <ns1403:literal xmlns:ns1403="http://docbook.org/ns/docbook">DevelopmentTask</ns1403:literal> (which carries a  
+      <ns1404:literal xmlns:ns1404="http://docbook.org/ns/docbook">riskFactor</ns1404:literal> as one of its published attributes) or a  
+      <ns1405:literal xmlns:ns1405="http://docbook.org/ns/docbook">MaintenanceTask</ns1405:literal> which specifies a  
+      <ns1406:literal xmlns:ns1406="http://docbook.org/ns/docbook">problemDescription</ns1406:literal>. These tasks could be subclasses of an
+      abstract class, <ns1407:literal xmlns:ns1407="http://docbook.org/ns/docbook">TaskType</ns1407:literal> which implements 
+      <ns1408:literal xmlns:ns1408="http://docbook.org/ns/docbook">java.io.Serializable</ns1408:literal>:
+<ns1409:programlisting xmlns:ns1409="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/TaskManager/src/common/TaskType.java"/>
+</ns1409:programlisting>
+    </ns1401:para>
+    <ns1410:para xmlns:ns1410="http://docbook.org/ns/docbook">
+      We can define the concrete subclass, <ns1411:literal xmlns:ns1411="http://docbook.org/ns/docbook">DevelopmentTask</ns1411:literal> via
+<ns1412:programlisting xmlns:ns1412="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/TaskManager/src/common/DevelopmentTask.java"/>
+</ns1412:programlisting>
+    </ns1410:para>
+    <ns1413:para xmlns:ns1413="http://docbook.org/ns/docbook">
+      and the <ns1414:literal xmlns:ns1414="http://docbook.org/ns/docbook">MaintenanceTask</ns1414:literal> as
+<ns1415:programlisting xmlns:ns1415="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/TaskManager/src/common/MaintenanceTask.java"/>
+</ns1415:programlisting>
+    </ns1413:para>
+    <ns1416:para xmlns:ns1416="http://docbook.org/ns/docbook">
+      Now, in order to specify that a <ns1417:literal xmlns:ns1417="http://docbook.org/ns/docbook">TaskType</ns1417:literal> is a value
+      object and hence a component of a<ns1418:literal xmlns:ns1418="http://docbook.org/ns/docbook">Task</ns1418:literal> entity bean, we
+      add the abstract accessor methods as follows:
+<ns1419:programlisting xmlns:ns1419="http://docbook.org/ns/docbook">
+package za.co.SolmsTraining.pm;
+
+public abstract class TaskBean implements javax.ejb.EntityBean
+{
+...
+
+public abstract TaskType getTaskType();
+public abstract void setTaskType(TaskType taskType);
+
+...
+}
+</ns1419:programlisting>
+    </ns1416:para>
+  </ns1397:section>
+  
+  <ns1420:section xmlns:ns1420="http://docbook.org/ns/docbook">
+    <ns1421:title xmlns:ns1421="http://docbook.org/ns/docbook">Value Objects are Declared CMP Fields</ns1421:title>
+    <ns1422:para xmlns:ns1422="http://docbook.org/ns/docbook">
+      The container is given the reposibility of persisting value objects and hence the
+      value object is defined as yet another container-managed persistence (cmp) field:
+<ns1423:programlisting xmlns:ns1423="http://docbook.org/ns/docbook">
+&lt;ejb-jar&gt;
+&lt;display-name&gt;Task Manager&lt;/display-name&gt;
+&lt;enterprise-beans&gt;
+
+ &lt;entity&gt;
+   &lt;ejb-name&gt;Task&lt;/ejb-name&gt;
+   &lt;home&gt;za.co.SolmsTraining.pm.TaskHome&lt;/home&gt;
+   &lt;remote&gt;za.co.SolmsTraining.pm.TaskRemote&lt;/remote&gt;
+   &lt;ejb-class&gt;za.co.SolmsTraining.pm.TaskBean&lt;/ejb-class&gt;
+   &lt;persistence-type&gt;Container&lt;/persistence-type&gt;
+   &lt;prim-key-class&gt;java.lang.String&lt;/prim-key-class&gt;
+   &lt;reentrant&gt;False&lt;/reentrant&gt;
+   &lt;cmp-version&gt;2.x&lt;/cmp-version&gt;
+   &lt;abstract-schema-name&gt;TaskBean&lt;/abstract-schema-name&gt;
+   &lt;cmp-field&gt;
+     &lt;field-name&gt;id&lt;/field-name&gt;
+   &lt;/cmp-field&gt;
+   &lt;cmp-field&gt;
+     &lt;field-name&gt;description&lt;/field-name&gt;
+   &lt;/cmp-field&gt;
+   &lt;cmp-field&gt;
+     &lt;field-name&gt;dueDate&lt;/field-name&gt;
+   &lt;/cmp-field&gt;
+   &lt;cmp-field&gt;
+     &lt;field-name&gt;taskType&lt;/field-name&gt;
+   &lt;/cmp-field&gt;
+   &lt;primkey-field&gt;id&lt;/primkey-field&gt;
+   ...
+
+ &lt;/entity&gt;
+&lt;/enterprise-beans&gt;
+&lt;/ejb-jar&gt;
+</ns1423:programlisting>
+    </ns1422:para>
+  </ns1420:section>
+  
+  <ns1424:section xmlns:ns1424="http://docbook.org/ns/docbook">
+    <ns1425:title xmlns:ns1425="http://docbook.org/ns/docbook">How are Value Objects Persisted?</ns1425:title>
+    <ns1426:para xmlns:ns1426="http://docbook.org/ns/docbook">
+      In the case of CMP 2.0, the persistence of value objects is left to the disgression
+      of the container's persistence engine. Very often the object will be simply serialized as
+      a BLOB in one of the columns of the <ns1427:literal xmlns:ns1427="http://docbook.org/ns/docbook">Task</ns1427:literal> table. But
+      the container may choose to persist the value object in a way which is more accessible to
+      reporting engines. Furthermore, if an object database is used, the container may persist
+      the value object in a clean way.
+    </ns1426:para>
+  </ns1424:section>
+</ns1394:section>

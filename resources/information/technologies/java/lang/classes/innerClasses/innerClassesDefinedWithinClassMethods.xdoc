@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+    id="resources.information.technologies.java.lang.ooLanguage.innerClasses.innerClassesDefinedWithinClassMethods"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/dist/resources/components/za/co/solms/solmsDoc/schema/solmsDoc.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title role="Inner Classes defined within Class Methods">Inner Classes defined within Class Methods</title>
+    <para>Assume we have defined a common interface, <emphasis
+        role="verb">FunctionDoubleDouble</emphasis>, for functions which map real numbers onto real numbers:<programlisting>
+<xi:include parse="text" href="../source/FunctionDoubleDouble.java"/>
+</programlisting>
+    </para>
+    <para>Assume further that we have a utility class which offers a collection of class services
+        for solving for a root of such functions (an $x$-value for which the function value is
+        zero). We only show one implementation of a root solver which implements the simple
+        bisection method for solving for a root.<programlisting>
+<xi:include parse="text" href="../source/RootSolvers.java"/>
+</programlisting>
+    </para>
+    <para>In the bisection method you are given a function and an interval (two $x$-values) over
+        which the function value changes sign (from positive to negative). Assuming the function is
+        continuous, we know that there is at least one root. The method iteratively finds the center
+        of the interval and creates a new interval (which is half the size of the previous interval)
+        over which the function still changes sign (within which the function still has at leasdt
+        one root).</para>
+    <para>Note that the first argument to our root solver method is an interface. This specifies
+        that any object of any class which implements that interface can be passed to our root
+        solver. All the root solver needs to know is that the object can be queried for function
+        values at different $x$-values.</para>
+    <para>Figure: RootFunction shows a function with several roots. In our example we shall
+        determine the root which lies between 0 and 1.
+        <!--\begin{figure}[hbt]
+  \begin{center}\input{OOReview/Function.tex}\end{center}
+  \caption{A function with several roots. We will be searching for the root
+           which lies between 0 and 1. \label{figRootFunction"
+\end{figure}-->
+        <!-- please add apropriate solmsDoc/MathML-->
+    </para>
+    <para>Assume further we have some class which requires for one of its services to find the root
+        of some function which is solely defined for the class itself. For example, below we assume
+        that there is a class <emphasis role="verb">MyConstruction</emphasis> which needs to find
+        the root of a particular function in order to calculate the stress. This function exists
+        solely for the purpose of calculating the stress for that particular construction. Hence we
+        define it within the method<emphasis role="verb">calculateStress()</emphasis>.<programlisting>
+<xi:include parse="text" href="../source/MyConstruction.java"/>
+</programlisting>
+    </para>
+    <para>This function implements the <emphasis role="verb">FunctionDoubleDouble</emphasis>
+        interface. The class can only be instantiated within the method in which it is defined, but
+        a handle to instances of that class can be given to some other class. In our example an
+        instance of our inner class is passed to our root solver. All the root solver needs to know
+        is that our function can be queried for its value at a given $x$-value.</para>
+    <para>Being an inner class, the <emphasis role="verb">RootSolver</emphasis> is not able to
+        typecast the<emphasis role="verb">FunctionDoubleDouble</emphasis> it receives to a <emphasis
+        role="verb">InnerFunction</emphasis>. In fact, the only method the root solver can use
+        (without reverting to really filthy means) is the <emphasis
+        role="verb">value(double)</emphasis> method.</para>
+    <para>Finally, let us write a little main program which demonstrates that the above actually works:<programlisting>
+<xi:include parse="text" href="../source/InnerClassTest.java"/>
+</programlisting>
+    </para>
+    <para>If you run the program, you will receive the following output:<programlisting><![CDATA[
+stress = 0.31681060791015625
+        ]]></programlisting>
+    </para>
+</section>

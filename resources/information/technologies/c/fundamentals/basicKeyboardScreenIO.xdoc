@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.c.fundamentals.basicKeyboardScreenIO"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Basic keyboard and screen input/output</title>
+  <para>
+    In order to be able to develop some sensible applications we need to be able
+    to write to the screen and read from the keyboard.
+    This is typically done with the <command>printf</command> and <command>scanf</command>
+    commands respectively.
+  </para>
+  <section><title>Writing to the screen via printf</title>
+    <para>
+      The arguments to <command>printf</command> are
+      <itemizedlist>
+        <listitem><formalpara><title>A formatting string.</title>
+          <para>
+            The formatting string contains
+            <itemizedlist>
+              <listitem><para>
+                literal text,  
+              </para></listitem>
+              <listitem><para>
+                conversion specifiers for the variables whose values have to be converted
+                to text and inserted into the literal string at the position of the
+                conversion specifier, and
+              </para></listitem>
+              <listitem><para>
+                control characters like the <token>end-of-line</token> character, 
+                <command>\n</command>.
+              </para></listitem>
+            </itemizedlist>
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara><title>An argument list of variables.</title>
+          <para>
+            The values of the variables in the arguments list will be converted to
+            text using the corresponding conversion specifiers and the resultant
+            text is inserted into the formatting string at the positions of the
+            conversion specifiers.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+    
+    <section><title>Conversion specifiers</title>
+      <para>
+        <xref linkend="conversionSpecifierTable"/>shows the conversion specifiers
+        available in <emphasis>C</emphasis>.
+      </para>
+      <table id="conversionSpecifierTable"><title>Text conversion specifiers.</title>
+        <tgroup cols="3">
+          <thead>
+            <row rowsep="1">
+              <entry>Specifier</entry><entry>Description</entry><entry>Data types converted</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>%c</entry><entry>single character</entry><entry>char</entry>
+            </row>
+            <row>
+              <entry>%i, %d</entry><entry>signed decimal integer</entry><entry>int</entry>
+            </row>
+            <row>
+              <entry>%u</entry><entry>unsigned decimal integer</entry><entry>unsigned int</entry>
+            </row>
+            <row>
+              <entry>%o</entry><entry>octal number</entry><entry>unsigned int</entry>
+            </row>
+            <row>
+              <entry>%x, %X</entry><entry>hexadecimal number</entry><entry>unsigned int</entry>
+            </row>
+            <row>
+              <entry>%f, %m.nf
+                <footnote><para>
+                  The format <command>%m.nf</command> is used to specify the field width, <token>m</token>
+                  and the number of decimal digits behind the decimal point, <token>n</token>.
+                  If a minus signed is inserted as in <command>%-7.3f</command>, then
+                  the converted text is left-justified.
+                </para></footnote>
+                </entry><entry>decimal floating point number</entry><entry>float,double</entry>
+            </row>
+            <row>
+              <entry>%lf, %m.nlf
+                <footnote><para>
+                  Same as <command>%f</command> except that this is for double.
+                </para></footnote>
+                </entry><entry>double-precision floating point number</entry><entry>double</entry>
+            </row>
+            <row><entry>%e, %E</entry><entry>scientific notation</entry><entry>float, double</entry></row>
+            <row>
+              <entry>g, G</entry>
+              <entry>scientific/floating point
+                <footnote><para>
+                  Selects the more compact between %f and %e.
+                </para></footnote>
+              </entry>
+              <entry>float, double</entry>
+            </row>
+            <row>
+              <entry>%%</entry><entry>percent</entry><entry>simply print a percentage</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+      <para>
+        <xref linkend="conversionSpecifiers.c"/> illustrates the use of conversion 
+        specifiers for both, output to <token>stdout</token> (typically the screen) 
+        and input from <token>stdin</token> (typically the keyboard).
+      </para>
+      <example id="conversionSpecifiers.c"><title>conversionSpecifiers.c</title>
+        <programlisting><xi:include href="source/conversionSpecifiers.c" parse="text" /></programlisting>
+      </example>
+    </section>
+    
+    <section><title>Control characters</title>
+      <para>
+        We have used the <emphasis>end-of-line</emphasis> character, <command>/n</command>
+        already. The ASCII data set specifies a range of control characters. Some of the
+        most frequently used control characters are shown in 
+        <xref linkend="controlCharacters"/>.
+      </para>
+      <table id="controlCharacters"><title>Some commonly used control characters.</title>
+        <tgroup cols="2">
+          <thead>
+            <row rowsep="1"><entry>Character</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row><entry>\b</entry><entry>backspace</entry></row>
+            <row><entry>\n</entry><entry>new-line</entry></row>
+            <row><entry>\t</entry><entry>horizontal tab</entry></row>
+            <row><entry>\\</entry><entry>backslash</entry></row>
+            <row><entry>\?</entry><entry>question mark</entry></row>
+            <row><entry>\'</entry><entry>single quote</entry></row>
+          </tbody>
+        </tgroup>
+      </table>
+    </section>
+  </section>
+
+  <section><title>Reading from the keyboard via scanf</title>
+    <para>
+      The <command>scanf</command> function extracts variables from the
+      standard input stream and puts the bytes resembling the conversion 
+      into an address for a variable which should typically be of the
+      data type specified in the conversion.
+    </para>
+    <para>
+      In <xref linkend="conversionSpecifiers.c"/> we read the two scores
+      into the addresses ofr the corresponding variables, <token>score1</token>
+      and <token>score2</token>. We use the interger conversion specifier,
+      <command>%d</command> to convert the text representation to the binary
+      representation and the <emphasis>address-of</emphasis> operator,
+      <command>&amp;</command> to specifiy the target addresses of the
+      memory used by the variables <token>score1</token> and <token>score2</token>.
+    </para>
+  </section>
+</section>

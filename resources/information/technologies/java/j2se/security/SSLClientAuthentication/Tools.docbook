@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns3613:section xmlns:ns3613="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.security.SSLClientAuthentication.Tools">
+
+  <ns3614:title xmlns:ns3614="http://docbook.org/ns/docbook">Tools</ns3614:title>
+  <ns3615:para xmlns:ns3615="http://docbook.org/ns/docbook">
+    Generate a X509 certificate from a signed certificate
+  </ns3615:para>
+  <ns3616:programlisting xmlns:ns3616="http://docbook.org/ns/docbook">
+openssl x509 -in server_cert.pem -out server.x509
+  </ns3616:programlisting>
+  <ns3617:para xmlns:ns3617="http://docbook.org/ns/docbook">
+    Generate a PKCS12 certificate form a signed certificate
+  </ns3617:para>
+  <ns3618:programlisting xmlns:ns3618="http://docbook.org/ns/docbook">
+openssl pkcs12 -export -in server_cert.pem -inkey server_key.pem 
+               -out server.p12  
+  </ns3618:programlisting>
+  <ns3619:para xmlns:ns3619="http://docbook.org/ns/docbook">
+    Generate a public / private key using keytool
+  </ns3619:para>
+  <ns3620:programlisting xmlns:ns3620="http://docbook.org/ns/docbook">
+alex% keytool -genkey -keystore clientstore -alias meAsClient 
+              -storepass changeit
+What is your first and last name?
+  [Unknown]:  meAsClient.org.za
+What is the name of your organizational unit?
+  [Unknown]:  clientUnit
+What is the name of your organization?
+  [Unknown]:  clientOrg
+What is the name of your City or Locality?
+  [Unknown]:  Johannesburg
+What is the name of your State or Province?
+  [Unknown]:  Gauteng
+What is the two-letter country code for this unit?
+  [Unknown]:  ZA
+Is CN=meAsClient.org.za, OU=clientUnit, O=clientOrg, L=Johannesburg, 
+      ST=Gauteng, C=ZA correct?
+  [no]:  y
+
+Enter key password for &lt;meAsClient&gt;
+        (RETURN if same as keystore password):  
+alex% 
+  </ns3620:programlisting>
+  <ns3621:para xmlns:ns3621="http://docbook.org/ns/docbook">
+    This will create a new keystore with password <ns3622:emphasis xmlns:ns3622="http://docbook.org/ns/docbook" role="strong">changeit</ns3622:emphasis> persisted in the <ns3623:emphasis xmlns:ns3623="http://docbook.org/ns/docbook" role="strong">clientstore</ns3623:emphasis> file. The following entries in this keystore are also created.
+  </ns3621:para>
+  <ns3624:programlisting xmlns:ns3624="http://docbook.org/ns/docbook">
+alex% keytool -list -keystore clientstore 
+Enter keystore password:  changeit
+
+Keystore type: jks
+Keystore provider: SUN
+
+Your keystore contains 1 entry
+
+measclient, Aug 3, 2003, keyEntry,
+Certificate fingerprint (MD5): 1F:64:B5:95:10:D2:7B:43:76:CD:D6:01:39:C8:7E:E8
+alex% 
+  </ns3624:programlisting>
+  <ns3625:para xmlns:ns3625="http://docbook.org/ns/docbook"> 
+    Note the entry type : <ns3626:emphasis xmlns:ns3626="http://docbook.org/ns/docbook" role="strong">keyEntry</ns3626:emphasis>. A keystore can maintain 2 different types of entries, one being a keyEntry containing a private key and certificate and the other being a trustedCertEntry which only contains a certificate.
+  </ns3625:para>
+  <ns3627:para xmlns:ns3627="http://docbook.org/ns/docbook">
+    Generate a CSR using keytool
+  </ns3627:para>
+  <ns3628:programlisting xmlns:ns3628="http://docbook.org/ns/docbook">
+alex% keytool -keystore clientstore -certreq -alias measclient 
+              -file client.csr -storepass changeit
+  </ns3628:programlisting>
+  <ns3629:para xmlns:ns3629="http://docbook.org/ns/docbook">
+    Sign the CSR with OPENSSL
+  </ns3629:para>
+  <ns3630:programlisting xmlns:ns3630="http://docbook.org/ns/docbook">
+openssl x509   -req -CA cacert.pem -CAkey cakey.pem -extensions v3_ca 
+               -in client.csr -inform DER -out client_cert.x509 
+               -CAcreateserial
+
+eg :
+
+alex% openssl x509   -req -CA demoCA/cacert.pem -CAkey demoCA/private/cakey.pem  
+                     -extensions v3_ca -in client.csr -inform DER 
+                     -out client_cert.x509 -CAcreateserial
+Signature ok
+subject=/C=ZA/ST=Gauteng/L=Johannesburg/O=clientOrg
+        /OU=clientUnit/CN=meAsClient.org.za
+Getting CA Private Key
+Enter PEM pass phrase: [password[
+alex% ls
+  </ns3630:programlisting>
+  <ns3631:para xmlns:ns3631="http://docbook.org/ns/docbook">
+    Import the CA's self signed certificate into the truststore
+  </ns3631:para>
+  <ns3632:programlisting xmlns:ns3632="http://docbook.org/ns/docbook">
+alex# keytool -import -alias butterflyCA 
+              -keystore /Syst.. ..urity/cacerts -file ../CA/demoCA/cacert.pem    
+  </ns3632:programlisting>
+  <ns3633:para xmlns:ns3633="http://docbook.org/ns/docbook">
+    Import the signed certificate response into the keystore. This requires the CA to be added to the truststore. Note the alias is the same as was used in the creation of the CSR.
+  </ns3633:para>
+  <ns3634:programlisting xmlns:ns3634="http://docbook.org/ns/docbook">
+alex% keytool -import -alias measclient -keystore clientstore -trustcacerts 
+              -file client_cert.x509
+Enter keystore password:  changeit
+Certificate reply was installed in keystore
+  </ns3634:programlisting>
+</ns3613:section>

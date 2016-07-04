@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns4266:section xmlns:ns4266="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.qualityAttributes.modifiability.lateBinding">
+
+  <ns4267:title xmlns:ns4267="http://docbook.org/ns/docbook">Late binding</ns4267:title>
+  <ns4268:para xmlns:ns4268="http://docbook.org/ns/docbook">
+    Thus far the modifiability tactics enable developers to apply system changes more
+    cost efficiently. The changes were however applied at compile time. Late binding
+    tactic enables one to apply changes at either deploy or run time.
+  </ns4268:para>
+  
+  <ns4269:section xmlns:ns4269="http://docbook.org/ns/docbook">
+    <ns4270:title xmlns:ns4270="http://docbook.org/ns/docbook">Benefits of late binding</ns4270:title>
+    <ns4271:para xmlns:ns4271="http://docbook.org/ns/docbook">
+      Architectures which defer binding decisions to either deploy or run time are
+      usually considerably more flexible. They facilitate
+      <ns4272:itemizedlist xmlns:ns4272="http://docbook.org/ns/docbook">
+        <ns4273:listitem xmlns:ns4273="http://docbook.org/ns/docbook"><ns4274:para xmlns:ns4274="http://docbook.org/ns/docbook">
+          deployers to  deploy customized solutions without requiring developers to make system
+          changes,
+        </ns4274:para></ns4273:listitem>
+        <ns4275:listitem xmlns:ns4275="http://docbook.org/ns/docbook"><ns4276:para xmlns:ns4276="http://docbook.org/ns/docbook">
+          and even clients to modify a system at run-time without bringing the system down.  
+        </ns4276:para></ns4275:listitem>
+      </ns4272:itemizedlist>
+    </ns4271:para>
+  </ns4269:section>
+  
+  <ns4277:section xmlns:ns4277="http://docbook.org/ns/docbook">
+    <ns4278:title xmlns:ns4278="http://docbook.org/ns/docbook">Tactics used to realize late binding</ns4278:title>
+    <ns4279:para xmlns:ns4279="http://docbook.org/ns/docbook">
+      Below we provide a few concrete tactics used to realize late binding strategies.      
+    </ns4279:para>
+    
+    <ns4280:section xmlns:ns4280="http://docbook.org/ns/docbook">
+      <ns4281:title xmlns:ns4281="http://docbook.org/ns/docbook">Runtime registration</ns4281:title>
+      <ns4282:para xmlns:ns4282="http://docbook.org/ns/docbook">
+        This strategy facilitates registration and loading of new components at run-time. 
+        These components should typically realize a <ns4283:emphasis xmlns:ns4283="http://docbook.org/ns/docbook">contract</ns4283:emphasis>.
+        This can be achieved by registering service providers with 
+        <ns4284:itemizedlist xmlns:ns4284="http://docbook.org/ns/docbook">
+          <ns4285:listitem xmlns:ns4285="http://docbook.org/ns/docbook"><ns4286:para xmlns:ns4286="http://docbook.org/ns/docbook">
+           naming and/or trader services,  
+          </ns4286:para></ns4285:listitem>
+          <ns4287:listitem xmlns:ns4287="http://docbook.org/ns/docbook"><ns4288:para xmlns:ns4288="http://docbook.org/ns/docbook">
+            message queues,  
+          </ns4288:para></ns4287:listitem>
+          <ns4289:listitem xmlns:ns4289="http://docbook.org/ns/docbook"><ns4290:para xmlns:ns4290="http://docbook.org/ns/docbook">
+            messaging bus,  
+          </ns4290:para></ns4289:listitem>
+          <ns4291:listitem xmlns:ns4291="http://docbook.org/ns/docbook"><ns4292:para xmlns:ns4292="http://docbook.org/ns/docbook">
+            component containers like EJB containers or servlet/JSP or ASP containers.  
+          </ns4292:para></ns4291:listitem>
+        </ns4284:itemizedlist>
+      </ns4282:para>
+    </ns4280:section>
+    
+    <ns4293:section xmlns:ns4293="http://docbook.org/ns/docbook">
+      <ns4294:title xmlns:ns4294="http://docbook.org/ns/docbook">Customized deployment via configuration files</ns4294:title>
+      <ns4295:para xmlns:ns4295="http://docbook.org/ns/docbook">
+        This tactic supports the selection of components or entire frameworks (like
+        presentation layer frameworks) at deploy-time. It is often used together
+        with the <ns4296:emphasis xmlns:ns4296="http://docbook.org/ns/docbook">abstract factory</ns4296:emphasis> pattern.
+      </ns4295:para>
+    </ns4293:section>
+    
+    <ns4297:section xmlns:ns4297="http://docbook.org/ns/docbook">
+      <ns4298:title xmlns:ns4298="http://docbook.org/ns/docbook">Service provider lookup via naming and trader services</ns4298:title>
+      <ns4299:para xmlns:ns4299="http://docbook.org/ns/docbook">
+        Service providers may register themselves with naming or trader services
+        Potential clients look up service providers at run-time, obtaining a message
+        path to the service provider (<ns4300:abbrev xmlns:ns4300="http://docbook.org/ns/docbook">e.g.</ns4300:abbrev> a CORBA reference or
+        a URL to a web service). This message path is then used to issue service 
+        requests.
+      </ns4299:para>
+      <ns4301:para xmlns:ns4301="http://docbook.org/ns/docbook">
+        Naming services enables potential clients to look up service providers from a name. 
+        They are conceptually similar to a normal telephone book containing a 
+        name to telephone number (message path) mapping.       
+      </ns4301:para>
+      <ns4302:para xmlns:ns4302="http://docbook.org/ns/docbook">
+        Trader services, on the other hand enable clients to look up service providers via
+        a hierarchical classification of services, <ns4303:abbrev xmlns:ns4303="http://docbook.org/ns/docbook">i.e.</ns4303:abbrev> via the service
+        they require.
+      </ns4302:para>
+      <ns4304:para xmlns:ns4304="http://docbook.org/ns/docbook">
+        Using a naming or trader service facilitates late binding. The concrete service provider
+        bound to may be replaced at run-time. In middleware frameworks (<ns4305:abbrev xmlns:ns4305="http://docbook.org/ns/docbook">e.g.</ns4305:abbrev>
+        CORBA) the reference itself is location transparent and the concrete realization of a service
+        provider may be altered significantly (location, implementation technologies like
+        programming language, platform, ...).
+      </ns4304:para>
+    </ns4297:section>
+    
+  </ns4277:section>
+  
+</ns4266:section>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+			<html xmlns="http://www.w3.org/1999/xhtml"
+    		xmlns:f="http://java.sun.com/jsf/core"
+            xmlns:h="http://java.sun.com/jsf/html">
+<head>
+	<title>Basic Text Form: Create Person (immediate component processing)</title>
+</head>
+<body>
+    <h1><h:outputText id="header1" value="Form with employer fields only shown when employed."/></h1>
+    <h2><h:outputText id="header2" value="Immediate component processing"/></h2>
+
+    <h:form id="form">
+        <h:panelGrid id="personGrid" columns="2">
+            <h:outputLabel id="firstNameLabel" value="First Name:" for="firstNameField"/>
+            <h:inputText id="firstNameField" value="#{createPersonBinding.person.firstName}"/>
+            
+            <h:outputLabel id = "surnameLabel" value="Surname:" for="surnameField"/>
+            <h:inputText id="surnameField" value="#{createPersonBinding.person.surname}"/>
+            
+            <h:outputLabel id="titleLabel" value="Title:" for="titleField"/>
+            <h:selectOneMenu id="titleField" value="#{createPersonBinding.person.title}">
+			  <f:selectItems value="#{createPersonBinding.titles}"/>
+            </h:selectOneMenu>
+        
+            <h:outputLabel id="employedLabel" value="Employed:" for="employedField"/>
+            <h:selectBooleanCheckbox id="employedField" 
+                value="#{createPersonBinding.employed}"
+                immediate="true" onclick="this.form.submit()"/>
+            
+        </h:panelGrid>
+
+        <h:panelGrid id="employerGrid" rendered="#{createPersonBinding.employed}" columns="2">           
+            <h:outputLabel id="employerNameLabel" value="Employer Name:" for="employerNameField"/>
+            <h:inputText id="employerNameField" value="#{createPersonBinding.employer.name}"/>
+            
+            <h:outputLabel id = "employerTelNoLabel" value="Telephone No:" for="employerTelNoField"/>
+            <h:inputText id="employerTelNoField" value="#{createPersonBinding.employer.telephoneNo}"/>
+        </h:panelGrid>
+        
+        <h:commandButton id="save" action="#{createPersonBinding.savePerson}" value="save"/>
+        
+    </h:form>
+</body>
+</html>

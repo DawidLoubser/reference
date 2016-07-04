@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.concepts.transactions.introduction.introduction"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Introduction</title>
+  <para>
+    So far it seems that EJBs have put us into a position where we can write server side
+    business logic very efficiently with bean developers focusing exclusively on the definition
+    of business logic and business information. The container supplies us with 
+    <itemizedlist>
+      <listitem>
+        <para>
+          The ability to offer location transparent remote services to clients without having
+          to explicitly code for RMI or CORBA. 
+        </para>
+      </listitem>
+      <listitem>
+        <para>Automatic processing of concurrent clients. </para>
+      </listitem>
+      <listitem>
+        <para>Resource pooling. </para>
+      </listitem>
+      <listitem>
+        <para>Declarative security. </para>
+      </listitem>
+      <listitem>
+        <para>Either 
+        <itemizedlist>
+          <listitem>
+            <para>Declarative persistence entirely controlled by the container or </para>
+          </listitem>
+          <listitem><para>
+              Programmatic persistence with the container ensuring the synchronization of
+              information over different client views.
+            </para>
+          </listitem>
+        </itemizedlist>
+          </para>
+      </listitem>
+    </itemizedlist>
+  </para>
+  <para>
+    However, for robust enterprise applications we still need support for transactions.
+    Generally this requires that developers use some transaction service 
+    (<abbrev>e.g.</abbrev> the CORBA
+    transaction service). They would manually demarcate and commit or roll-back transactions via
+    calls to a transaction API.
+  </para>
+  <para>
+    EJBs support complete declarative transactions, removing the responsibility of
+    programming for transactions from the bean developer.
+  </para>
+
+  <section>
+    <title>Why Transactions?</title>
+    <para>
+      Let's have a look at some problems which are addressed by transactions. In
+      particular, consider the need for 
+    <itemizedlist>
+      <listitem>
+        <para>Either completing a set of operations as a whole or unwinding the set of
+          operations. </para>
+      </listitem>
+      <listitem>
+        <para>Safe concurrent access to shared information. </para>
+      </listitem>
+      <listitem>
+        <para>Graceful recovery from a server crash or network problem.</para>
+      </listitem>
+    </itemizedlist>
+    </para>
+    
+    <section>
+      <title>Atomic Operations</title>
+      <para>
+        Sometimes a set of operations have to be completed as a whole or they have to be
+        undone such that the state of the effected objects is the same as what it was before the
+        set of operations was started -- <abbrev>i.e.</abbrev>. the set of operations has to be rolled back.
+      </para>
+      <para>
+        For example, in the case of a transfer one account is debited and another is
+        credited. The transfer must be an atomic operation. If the debit fails the credit cannot
+        be performed.
+      </para>
+      <para>
+        Conversely, if the debit was successful but the credit failed (because, say, the
+        account has been closed) the debit has to be reversed.
+      </para>
+    </section>
+    
+    <section>
+      <title>Safe Concurrent Access to Shared Information</title>
+      <para>
+        If multiple clients access information simultaneously one has to ensure that 
+      <itemizedlist>
+        <listitem>
+          <para>Any information received represents a valid, sensible view of the business
+            information and is not corrupted by the fact that clients are looking at information
+            which is only partially updated. </para>
+        </listitem>
+        <listitem>
+          <para>The information is safe with respect to updating by multiple clients.
+            Simultaneous updating can lead to a situation where the resulting set of information
+            is not a valid set because it contains elements of different interleaving updates
+            from different information providers.</para>
+        </listitem>
+      </itemizedlist>
+      <note><para>
+        Note furthermore that the information may be distributed across multiple databases
+        within the organization (or even across organizations) and that the integrity of this
+        distributed information must be protected.
+      </para></note>
+     </para>
+    </section>
+    
+    <section>
+      <title>Graceful Failure Recovery</title>
+      <para>
+        Consider the situation where a client withdraws funds from a auto teller. In the
+        process of the withdrawal the network fails. The bank server may not be in a position to
+        know whether the funds have been issued to the client or not.
+      </para>
+      <para>
+        After recovering from the network failure the information of whether the money has
+        been issued to the client or not must be communicated to the server. If not, the debit
+        of the account must be rolled back.
+      </para>
+    </section>
+  </section>
+</section>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbook.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+
+    <title>SQL-Ledger accounting</title>
+    <para>
+        Required software installed from portage
+        <itemizedlist>
+            <listitem><para>Perl ##For SQL-Ledger accounting system -- uses Perl</para></listitem>
+            <listitem><para>DBD-Pg</para></listitem>
+            <listitem><para>DBI</para></listitem>
+            <listitem><para>Apache</para></listitem>
+            <listitem><para>tetex</para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        The  standard installation instructions were used and a virtual host has been set up as follows:
+        <programlisting><![CDATA[
+<VirtualHost *:80>
+        ServerName ledger.solms.co.za
+
+        DocumentRoot /var/www/solms/sql-ledger/
+
+        <Directory "/var/www/solms/sql-ledger/">
+                AllowOverride All
+                AddDefaultCharset On
+                AddHandler cgi-script .pl
+                Options ExecCGI Includes FollowSymLinks
+                Order allow,deny
+                Allow from all
+        </Directory>
+
+        <Directory "/var/www/solms/sql-ledger/users/">
+                Order Deny,Allow
+                Deny from All
+        </Directory>
+
+        #<IfModule mpm_peruser_module>
+        #        ServerEnvironment apache apache
+        #</IfModule>
+</VirtualHost>       
+        ]]></programlisting>
+        The admin console is reached at sql-ledger/admin.pl and the password has been whistled by the birds circling UNISA.
+
+ </para>
+</article>

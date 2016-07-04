@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+  
+<project name="ElectionServer" default="help" basedir=".">
+  
+  <target name="help">
+    <echo message="Available targets: (typically used in this order)"/>
+    <echo message="  "/>
+    <echo message="  clean  - deletes all but the source files."/>
+    <echo message="  prepare  - creates the directories for compilation and distribution."/>
+    <echo message="  compile  - compiles the Java source files."/>
+    <echo message="  jar  - creates an archive for distribution."/>
+    <echo message="  run  - launches the server."/>
+    <echo message="  test  - launches the test client testing the server."/>
+    <echo message="  "/>
+  </target>
+    
+  <!-- The server application which is launched in the start target -->
+  <property name="server.app" value="za.co.solms.election.server.ElectionServer"/>
+
+  <!-- The test application -->
+  <property name="test.app" value="za.co.solms.election.server.test.ElectionServerTest"/>
+  
+  <!-- File name for target jar file for the server -->
+  <property name="server.jar" value="electionServer.jar"/>
+  
+  <!-- Handle to environment -->
+  <property environment="env"/>	
+  
+  <!-- Directories -->
+  <property name="src.dir" value="src"/>	
+  <property name="build.dir" value="build" />
+  <property name="shelf.dir" value="shelf" />
+  <property name="dist.dir" value="dist"/>
+  
+  <!-- Compiler flags -->
+  <property name="compile.debug" value="true"/>
+  <property name="compile.optimize" value="false"/>
+  <property name="compile.deprecation" value="true"/>
+
+  <!-- Libraries path -->
+  <path id="shelf">
+    <fileset dir="${shelf.dir}">
+      <include name="**/*.jar" />
+      <include name="**/*.rar" />
+    </fileset>
+  </path>  	
+	
+  <!-- path used for build target -->
+  <path id="build.path">
+    <path refid="shelf"/>
+    <pathelement path="${build.dir}"/>
+  </path>
+
+  <!-- TARGETS -->
+  
+  <!-- Removes all generated artifacts -->
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target> 	
+  
+  <!-- Prepares the required directories for the build -->
+  <target name="prepare">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${dist.dir}"/>
+  </target>
+  
+  <!-- Compiles the Java source files -->
+  <target name="compile" depends="prepare">
+    <javac srcdir="${src.dir}" destdir="${build.dir}"
+      deprecation="${compile.deprecation}"
+      optimize="${compile.optimize}"
+      debug="${compile.debug}">
+      <classpath>
+        <path refid="build.path"/>
+      </classpath>
+    </javac>           
+  </target>
+
+  <!-- Generates the Java archive for the server side business logic layer -->
+  <target name="jar" depends="compile">
+    <delete file="${dist.dir}/${server.jar}"/>  	
+    <jar jarfile="${dist.dir}/${server.jar}"> 
+      <fileset dir="${build.dir}" includes="**/*.class"/>
+      
+      <fileset  dir="${src.dir}" includes="**/*.properties"/>
+      <fileset  dir="${src.dir}" includes="**/*.policy"/>
+      
+    </jar>
+  </target>
+  
+  <!-- Launches the server -->
+  <target name="run">
+    <echo message="Running the ${server.app} application:" />
+    <echo message="  java -classpath ${dist.dir}/${server.jar} ${server.app}"/>
+    <java fork="on" classname="${server.app}" >
+      <arg value="-Djava.security.manager -Djava.security.policy=security.policy"/>
+      <classpath>
+        <pathelement location="${dist.dir}/${server.jar}"/>
+        <path refid="shelf"/>
+      </classpath>
+    </java>
+  </target>
+  
+  <!-- Runs test which connects to election server -->
+  <target name="test">
+    <echo message="Running the ${test.app} application:" />
+    <echo message="  java -classpath ${dist.dir}/${server.jar} ${test.app}"/>
+    <java fork="on" classname="${test.app}" >
+      <arg value="-Djava.security.manager -Djava.security.policy=security.policy"/>
+      <classpath>
+        <pathelement location="${dist.dir}/${server.jar}"/>
+        <path refid="shelf"/>
+      </classpath>
+    </java>
+  </target>
+</project>

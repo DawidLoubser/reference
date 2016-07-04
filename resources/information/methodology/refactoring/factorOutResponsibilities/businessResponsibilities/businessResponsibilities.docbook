@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2009-4-16 -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Factor out business responsibilities</title>
+    <para>
+        Classes and services contracts should adhere to the <emphasis>single responsibility principle</emphasis>, i.e. should have a single
+        responsibility which can be identified as a cohesive concept with all its services aligned with this single responsibility.
+        Refactoring identifies classes which have multiple business responsibilities and factors these separate responsibilities
+        out into separate classes.
+    </para>
+
+    <section>
+        <title>Identifying non-cohesive classes and contracts</title>
+        <para>
+            <indexterm><primary>cohesion</primary><secondary>and refactoring</secondary></indexterm>
+            One way is to try and abstract the services specified in a services contract or a class into a more abstract services domain
+            for which all services can be seen as concrete specializations of that single, more abstract services domain.
+            In the case where a single more abstract servicess domain encompassing all services offered by the services contract
+            or class can not be found, groups of services not part of the more abstract services domain (and their supporting
+            data structures) need to be factored out into a separate services contract or class.
+        </para>
+        <para>
+            Another way to identify services from different services domains is to analyze the data structures accessed by the various services.
+            If some services access completely different data structures than other services than they will typically be from a different responsibility
+            domain and should hence be factored out.
+        </para>
+    </section>
+
+    <section>
+        <title>What if work flow across different responsibilities?</title>
+        <para>
+            <indexterm><primary>refactoring</primary><secondary>factor out work flow</secondary></indexterm>
+            However, sometimes a class has services from different services domains as well as services which assemble processes across these
+            responsibility domains. The latter should be factored out into a higher level (controller) class and the services from the different
+            responsibility domains should still be factored out into separate classes.
+        </para>
+    </section>
+</section>    

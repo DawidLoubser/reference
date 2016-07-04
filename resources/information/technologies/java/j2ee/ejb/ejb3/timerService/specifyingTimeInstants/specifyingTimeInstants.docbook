@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <title>Specifying time instants</title>
+    <para>
+        The EJB timer service uses a time instant specification approach which is analogous to the Unix <literal>cron</literal>
+        syntax for scheduling jobs. One specifies the second, minute, hour, dayOfMonth, month, dayOfWeek and year and can specify
+        relative to which time zone the time instant specification is done.
+    </para>
+
+    <section>
+        <title>Parameters and their possible and default values</title>
+        <para>
+            A scheduling request will refer to one or more time instants each of which is, in turn specified through a number of parameters.
+            Each parameter can have a range of possible values and has a default value if that parameter is not specified. The parameters
+            and their possible and default values are shown in the table below.
+        </para>
+        <table>
+            <title>Time instant parameter values</title>
+            <tgroup cols="3">
+                <thead>
+                    <row>
+                        <entry>Parameter</entry>
+                        <entry>Values</entry>
+                        <entry>Default</entry>
+                    </row>
+                </thead>
+                
+                <tbody>
+                    <row>
+                        <entry>second</entry>
+                        <entry>0..59</entry>
+                        <entry>0</entry>
+                    </row>
+                    <row>
+                        <entry>minute</entry>
+                        <entry>0..59</entry>
+                        <entry>0</entry>
+                    </row>
+                    <row>
+                        <entry>hour</entry>
+                        <entry>0..23</entry>
+                        <entry>0</entry>
+                    </row>
+                    <row>
+                        <entry>dayOfMonth</entry>
+                        <entry>1..31, -1..-31 (from end of month), or "Last"</entry>
+                        <entry>*</entry>
+                    </row>
+                    <row>
+                        <entry>month</entry>
+                        <entry>1..12 or "Jan".."Dec"</entry>
+                        <entry>*</entry>
+                    </row>
+                    <row>
+                        <entry>dayOfWeek</entry>
+                        <entry>0..7 or "Mon".."Fri" or expressions like "second Wed" or "last Fri"</entry>
+                        <entry>*</entry>
+                    </row>
+                    <row>
+                        <entry>year</entry>
+                        <entry>use 4 digits</entry>
+                        <entry>*</entry>
+                    </row>
+                    <row>
+                        <entry>timeZone</entry>
+                        <entry>as per zoneinfo DB</entry>
+                        <entry>the default time zone for the system</entry>
+                    </row>
+                </tbody>
+            </tgroup>
+            <caption><annotation><para>An asterisk means any.</para></annotation></caption>
+        </table>    
+        
+    </section>
+    
+    <section>
+        <title>Specifying time expressions</title>
+        <para>
+            For each of the time instant parameters one may specify
+            <itemizedlist>
+                <listitem><para>
+                    a single value, e.g. like <literal>month="7"</literal>,
+                </para></listitem>
+                <listitem><para>
+                    a wild card to specify any, e.g. <literal>dayOfWeek="*"</literal>
+                </para></listitem>
+                <listitem><para>
+                    a comma-delimited list, e.g. <literal>dayOfMonth="15,Last"</literal>
+                </para></listitem>
+                <listitem><para>
+                    an increment specification specifying an initial value and an increment thereafter which is separated 
+                    via a forward slash, e.g. 
+                    <itemizedlist>
+                        <listitem><para>
+                            <literal>minute="20/5"</literal> which specifies after 20 minutes and every 5
+                            minutes thereafter.
+                        </para></listitem>
+                        <listitem><para>
+                            <literal>hour="*/3"</literal> which means start any hour, but then perform the task every 3 hours thereafter.                            
+                        </para></listitem>
+                    </itemizedlist>
+                    
+                </para></listitem>
+            </itemizedlist>
+            
+        </para>
+    </section>
+</section>

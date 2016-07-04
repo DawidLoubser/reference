@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--
+<!DOCTYPE chapter SYSTEM "file:/opt/share/xml/Oxygen/samples/docbook/xml/docbookx.dtd">
+--><ns0:chapter xmlns:ns0="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2me.communication.communication">
+<ns1:title xmlns:ns1="http://docbook.org/ns/docbook">MIDP Communication</ns1:title>
+
+  <ns2:section xmlns:ns2="http://docbook.org/ns/docbook"><ns3:title xmlns:ns3="http://docbook.org/ns/docbook">Introduction</ns3:title>
+    <ns4:para xmlns:ns4="http://docbook.org/ns/docbook">
+      While J2SE and J2EE support a wide range of protocols, J2ME supports only HTTP.
+      Note, however, that the J2ME specification does not specify which transport layer
+      or network layer is used underneath the HTTP protocol.
+    </ns4:para>
+    
+    <ns5:section xmlns:ns5="http://docbook.org/ns/docbook"><ns6:title xmlns:ns6="http://docbook.org/ns/docbook">J2ME's Generic Connection Framework (GCF)</ns6:title>
+      <ns7:para xmlns:ns7="http://docbook.org/ns/docbook">
+        MIDP implementation do thus not have access to the standard Java networking
+        classes, since these are too heavyweight for small devices. Instead, CLDC
+        specifies a new connection framework called the <ns8:emphasis xmlns:ns8="http://docbook.org/ns/docbook">Generic
+        Connection Framework</ns8:emphasis> (GCF). The design of the GCF is shown in
+        <!--xref linkend=""/-->
+      </ns7:para>
+      
+        <ns9:figure xmlns:ns9="http://docbook.org/ns/docbook" xml:id="figGenericConnectionFramework">
+          <ns10:title xmlns:ns10="http://docbook.org/ns/docbook">The design of the Generic Connection Framework (GCF).</ns10:title>
+          <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="file:/home/solms/Documents/courses/J2ME/book/communication/GenericConnectionFramework.jpg"/></imageobject></mediaobject>
+        </ns9:figure>
+    </ns5:section>
+  </ns2:section>
+    
+<!-- ================================================================== -->
+  
+  <ns11:section xmlns:ns11="http://docbook.org/ns/docbook"><ns12:title xmlns:ns12="http://docbook.org/ns/docbook">Connections</ns12:title>
+    <ns13:para xmlns:ns13="http://docbook.org/ns/docbook">
+      Note that the only class in the GCF is <ns14:classname xmlns:ns14="http://docbook.org/ns/docbook">Connector</ns14:classname>
+      which represents a factory class for connections. It supplies only 
+      class services -- hence the services have been specified
+      in the <ns15:type xmlns:ns15="http://docbook.org/ns/docbook">MetaClass</ns15:type>.
+    </ns13:para>
+    
+    <ns16:para xmlns:ns16="http://docbook.org/ns/docbook">
+      All other elements of the GCF are interfaces -- the implementation classes
+      are completely hidden from J2ME developers.
+    </ns16:para>
+    
+    <ns17:section xmlns:ns17="http://docbook.org/ns/docbook"><ns18:title xmlns:ns18="http://docbook.org/ns/docbook">Uniform Resource Identifiers</ns18:title>
+      <ns19:para xmlns:ns19="http://docbook.org/ns/docbook">
+        To make a connection one typically identifies the resource one wants to connect
+        to via a URI, a <ns20:emphasis xmlns:ns20="http://docbook.org/ns/docbook">Uniform Resource Identifier</ns20:emphasis>.
+        URIs represent the standard way of referring to resources
+        available on the web. The most widely used format is
+        <ns21:programlisting xmlns:ns21="http://docbook.org/ns/docbook">
+protocol://user@host:port/resource        
+        </ns21:programlisting>
+      </ns19:para>
+      <ns22:para xmlns:ns22="http://docbook.org/ns/docbook">
+        Some examples are
+        <ns23:programlisting xmlns:ns23="http://docbook.org/ns/docbook">
+http://www.weirdproducts.com/index.html
+
+https://www.weirdproducts.com/index.html
+
+ssh://fritz@192.168.1.1:22
+
+datagram://www.javagroups.org:7887
+        </ns23:programlisting>
+      </ns22:para>
+    </ns17:section>
+    
+    <ns24:section xmlns:ns24="http://docbook.org/ns/docbook"><ns25:title xmlns:ns25="http://docbook.org/ns/docbook">Opening Connections</ns25:title>
+      <ns26:para xmlns:ns26="http://docbook.org/ns/docbook">
+        One opens a connection by requesting a connections from the connector,
+        supplying the URI of the resource one wants to connect to:
+        <ns27:programlisting xmlns:ns27="http://docbook.org/ns/docbook">
+String uri = "http://www.SolmsTraining.co.za";          
+          
+HttpConnection connection = (HttpConnection)Connector.getConnection(uri);        
+
+//Making a secure connection
+
+String uri = "https://www.SolmsTraining.co.za";          
+          
+HttpsConnection connection = (HttpsConnection)Connector.getConnection(uri);        
+
+        </ns27:programlisting>
+      </ns26:para>
+    </ns24:section>
+    
+  </ns11:section>
+    
+<!-- ================================================================== -->
+ 
+  <ns28:section xmlns:ns28="http://docbook.org/ns/docbook">
+    <ns29:title xmlns:ns29="http://docbook.org/ns/docbook">HTTP Communication</ns29:title>
+    <ns30:para xmlns:ns30="http://docbook.org/ns/docbook">
+      MIDP implementors are only required to support the HTTP protocol. Hence,
+      most of your connected MIDP applications will talk HTTP. HTTPS supports 
+			has been included in the MIDP specifications since 1.0, but was not required. 
+			In the MIDP2 specifications it has become mandatory. 
+    </ns30:para>
+    
+    <ns31:para xmlns:ns31="http://docbook.org/ns/docbook">
+      HTTP is a text-based protocol. As such it has the advantage that one typically
+      is not exposed to firewall issues - there is typically no need to implement
+      HTTP tunneling if one uses HTTP.
+    </ns31:para>
+    <ns32:para xmlns:ns32="http://docbook.org/ns/docbook">
+      Furthermore, one can put higher-level protocols like XML
+      or even SOAP on-top of HTTP and it can be expected that perhaps most of the
+      mobile-device integration will move to SOAP/XML/HTTP.
+    </ns32:para>
+    
+    <ns33:section xmlns:ns33="http://docbook.org/ns/docbook"><ns34:title xmlns:ns34="http://docbook.org/ns/docbook">The HTTP Request-Response Cycle</ns34:title>
+      <ns35:para xmlns:ns35="http://docbook.org/ns/docbook">
+        HTTP is an assymetric, clean client server scenario where the side which
+        accepts connections is the server side, while the side which opens
+        connections is the client side.
+      </ns35:para>
+    </ns33:section>
+    
+    <ns36:section xmlns:ns36="http://docbook.org/ns/docbook"><ns37:title xmlns:ns37="http://docbook.org/ns/docbook">A typical HTTP request</ns37:title>
+    
+    <ns38:para xmlns:ns38="http://docbook.org/ns/docbook">
+      MIDP 1.0 implements only a subset including only the following HTTP requests:
+      <ns39:itemizedlist xmlns:ns39="http://docbook.org/ns/docbook">
+        <ns40:listitem xmlns:ns40="http://docbook.org/ns/docbook"><ns41:para xmlns:ns41="http://docbook.org/ns/docbook">
+          <ns42:emphasis xmlns:ns42="http://docbook.org/ns/docbook">GET:</ns42:emphasis> the default HTTP request. It is used to request 
+          information in a idempotent way, i.e. it has no lasting effect on the state
+          of the resource from which you are obtaining the information.
+        </ns41:para></ns40:listitem>
+        <ns43:listitem xmlns:ns43="http://docbook.org/ns/docbook"><ns44:para xmlns:ns44="http://docbook.org/ns/docbook">
+          <ns45:emphasis xmlns:ns45="http://docbook.org/ns/docbook">POST:</ns45:emphasis> This is a request for a service or for information
+          which may result in a lasting state transition on the server side. For example,
+          if you want to update a database record you wuld use post.
+        </ns44:para></ns43:listitem>
+        <ns46:listitem xmlns:ns46="http://docbook.org/ns/docbook"><ns47:para xmlns:ns47="http://docbook.org/ns/docbook">
+          <ns48:emphasis xmlns:ns48="http://docbook.org/ns/docbook">HEAD:</ns48:emphasis> is used for testing purposes to see if a response
+          with a header but without information is obtained.
+        </ns47:para></ns46:listitem>
+      </ns39:itemizedlist>
+    </ns38:para>  
+    
+    <ns49:para xmlns:ns49="http://docbook.org/ns/docbook">
+      An example HTTP request is shown below:
+      <ns50:programlisting xmlns:ns50="http://docbook.org/ns/docbook">
+GET /Training/Program/Schedule.xml HTTP/1.1
+User-Agent:Profile/MIDP-1.0 Configuration/CLDC-1.0
+Accept:text/xml
+Host:lab1.SolmsTraining.co.za
+Content-length:0
+Content-Language:en-ZA
+   ...
+   content body
+   ...
+      </ns50:programlisting>
+    </ns49:para>
+    
+    </ns36:section>
+    
+    <ns51:section xmlns:ns51="http://docbook.org/ns/docbook"><ns52:title xmlns:ns52="http://docbook.org/ns/docbook">A typical HTTP response</ns52:title>
+      
+      <ns53:para xmlns:ns53="http://docbook.org/ns/docbook">
+        A typical HTTP response is shown below:
+        <ns54:programlisting xmlns:ns54="http://docbook.org/ns/docbook">
+HTTP/1.1 200 OK
+server:JBoss 3.0.6
+Content-Length:437
+Content-type:text/xml
+Connection:Keep-Alive
+
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!-- edited with XML Spy v4.2 U (http://www.xmlspy.com) by Fritz Solms (Solms Training &amp; Consulting CC) --&gt;
+&lt;?xml-stylesheet type="text/xsl" href="TrainingRegister.xslt"?&gt;
+&lt;schedule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                 xsi:noNamespaceSchemaLocation="Schedule.xsd"&gt;
+  &lt;courseGroup&gt;
+    &lt;title&gt;Day Courses&lt;/title&gt;
+    &lt;description&gt;  Course fees include VAT, lecture notes in the form of a bound book, a CD with
+  all required Software, practicals, lunches and an optional exam.&lt;/description&gt;
+    &lt;hours&gt;8:30-16:30&lt;/hours&gt;
+    &lt;course&gt;
+      &lt;name&gt;Business Analysis using UML&lt;/name&gt;
+      &lt;dates&gt;6/5 - 9/5/2003&lt;/dates&gt;
+      &lt;fee&gt;4600&lt;/fee&gt;
+      &lt;url&gt;../Courses/BusinessAnalysis/BusinessAnalysis.html&lt;/url&gt;
+    &lt;/course&gt;
+    &lt;course&gt;
+      &lt;name&gt;XML and Web Services with Java&lt;/name&gt;
+      &lt;dates&gt;12/5 - 16/5/2003&lt;/dates&gt;
+      &lt;fee&gt;5750&lt;/fee&gt;
+      &lt;url&gt;../Courses/XmlWebServices/XmlWebServices.html&lt;/url&gt;
+    &lt;/course&gt;
+    &lt;course&gt;
+      &lt;name&gt;Object-Oriented Analysis and Design using UML&lt;/name&gt;
+      &lt;dates&gt;19/5 - 23/5/2003&lt;/dates&gt;
+      &lt;fee&gt;5750&lt;/fee&gt;
+      &lt;url&gt;../Courses/Ooad/Ooad.html&lt;/url&gt;
+    &lt;/course&gt;
+    &lt;course&gt;
+      &lt;name&gt;Enterprise Java Beans&lt;/name&gt;
+      &lt;dates&gt;26/5 - 30/5/2003&lt;/dates&gt;
+      &lt;fee&gt;5750&lt;/fee&gt;
+      &lt;url&gt;../Courses/Ejb/Ejb.html&lt;/url&gt;
+    &lt;/course&gt;
+  &lt;/courseGroup&gt;
+  &lt;courseGroup&gt;
+     &lt;course&gt;
+      &lt;name&gt;Programming In Java&lt;/name&gt;
+      &lt;dates&gt;19/5 - 30/5/2003&lt;/dates&gt;
+      &lt;fee&gt;4600&lt;/fee&gt;
+      &lt;url&gt;../Courses/ProgrammingInJava/Prog_Java.html&lt;/url&gt;
+    &lt;/course&gt;
+  &lt;/courseGroup&gt;
+&lt;/schedule&gt;
+        </ns54:programlisting>
+      </ns53:para>
+    </ns51:section>
+    
+    
+  </ns28:section>  
+<!--    
+    
+    <section><title>Creating and Sending HTTP requests</title>
+      <para>
+      
+      </para>
+    
+    </section>
+    
+    <section><title>Processing a HTTP response</title>
+      <para>
+      
+      </para>
+    </section>
+    
+    <section><title>Managing HTTP sessions</title>
+      <para>
+      
+      </para>
+      
+      <section><title>Using Cookies</title>
+        <para>
+        
+        </para>
+      </section>
+      
+      <section><title>Using URL rewriting</title>
+        <para>
+        
+        </para>
+      </section>
+    </section>
+      
+-->      
+    
+<!-- ================================================================== -->
+<!--    
+  </section>
+  
+  <section><title>Connectionless communication via Datagrams</title>
+    <para>
+    
+    </para>
+  </section>
+-->  
+<!-- ================================================================== -->
+<!--
+  <section><title>Exercises</title>
+  
+    <orderedlist>
+      <listitem><para>
+        
+      </para></listitem>
+    </orderedlist>
+    
+  </section>
+-->  
+</ns0:chapter>

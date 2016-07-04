@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns862:section xmlns:ns862="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.collections.collections.collections.interfaces.collectionsInterface">
+    <ns863:title xmlns:ns863="http://docbook.org/ns/docbook">The Collection Interface</ns863:title>
+    <ns864:para xmlns:ns864="http://docbook.org/ns/docbook">The <ns865:literal xmlns:ns865="http://docbook.org/ns/docbook">Collection</ns865:literal> interface supplies the most abstract view of
+        collections. The primary uses of this interface are </ns864:para>
+    <ns866:para xmlns:ns866="http://docbook.org/ns/docbook">
+        <ns867:orderedlist xmlns:ns867="http://docbook.org/ns/docbook">
+            <ns868:listitem xmlns:ns868="http://docbook.org/ns/docbook">
+                <ns869:para xmlns:ns869="http://docbook.org/ns/docbook">Lay down the specification for the services which all collections must supply
+                    including the signatures for the corresponding service request messages (i.e.
+                    the method names, arguments and return values). </ns869:para>
+            </ns868:listitem>
+            <ns870:listitem xmlns:ns870="http://docbook.org/ns/docbook">
+                <ns871:para xmlns:ns871="http://docbook.org/ns/docbook">Lay down the specification for optional services which may be supplied by
+                    collections. </ns871:para>
+            </ns870:listitem>
+            <ns872:listitem xmlns:ns872="http://docbook.org/ns/docbook">
+                <ns873:para xmlns:ns873="http://docbook.org/ns/docbook">Enables one to pass around collections without having to care what type of
+                    collection it is.</ns873:para>
+            </ns872:listitem>
+        </ns867:orderedlist>
+    </ns866:para>
+    <ns874:para xmlns:ns874="http://docbook.org/ns/docbook">Assume, for example, that you want to supply a service for calculating the total salary
+        expenditure of your company. You do not care whether the employees are stored in a
+        <ns875:literal xmlns:ns875="http://docbook.org/ns/docbook">LinkedList</ns875:literal>, <ns876:literal xmlns:ns876="http://docbook.org/ns/docbook">HashMap</ns876:literal>, <ns877:literal xmlns:ns877="http://docbook.org/ns/docbook">TreeMap</ns877:literal> or
+        whatever. All you want to do is step through the collection of employees and accumulate the salaries:</ns874:para>
+    <ns878:para xmlns:ns878="http://docbook.org/ns/docbook"/>
+    <ns879:para xmlns:ns879="http://docbook.org/ns/docbook">
+        <ns880:programlisting xmlns:ns880="http://docbook.org/ns/docbook">
+public class EmployeeStatistics 
+ { 
+    ... 
+    public static double getTotalSalary(Collection employees) 
+    {
+        Iterator iter = employees.iterator(); 
+        double totalSalary = 0; 
+        while(iter.hasNext())
+        totalSalary += ((Employee)iter.next()).getSalary(); 
+        return totalSalary; 
+    } 
+}
+        </ns880:programlisting>
+    </ns879:para>
+    <ns881:para xmlns:ns881="http://docbook.org/ns/docbook"> We ask the collection for an iterator which allows us to step through the collection and
+        then, while the iterator has not reached the end of the collection, we ask for the next
+        element of the collection.</ns881:para>
+    <ns882:para xmlns:ns882="http://docbook.org/ns/docbook">Since collections can store any object and since we have trusted the client (most probably
+        a mistake) that he/she will allways supply one or other collection containing only employees
+        (or specialized employees), we can typecast the object we extract from the collection to an
+        <ns883:literal xmlns:ns883="http://docbook.org/ns/docbook">Employee</ns883:literal> and and ask it for its salary.</ns882:para>
+    <ns884:para xmlns:ns884="http://docbook.org/ns/docbook">Iterators will be discussed in more detail later on, nut for now observe that the method
+        is completely independent of the type of collection used to store the employees. In order to
+        see what type of services are offered by all collections, let us have a look at the
+        <ns885:literal xmlns:ns885="http://docbook.org/ns/docbook">Collection</ns885:literal> interface:</ns884:para>
+    <ns886:para xmlns:ns886="http://docbook.org/ns/docbook"/>
+    <ns887:para xmlns:ns887="http://docbook.org/ns/docbook">
+        <ns888:programlisting xmlns:ns888="http://docbook.org/ns/docbook">
+public interface Collection 
+{ 
+    // Standard Services int size (); 
+    boolean isEmpty ();
+    boolean contains (Object element); 
+    boolean add (Object element) throws UnsupportedOperationException; 
+    boolean remove (Object element) throws UnsupportedOperationException; 
+    Iterator iterator (); 
+    // Bulk Services boolean containsAll (Collection c); 
+    boolean addAll (Collection c) throws UnsupportedOperationException; 
+    boolean removeAll (Collection c) throws UnsupportedOperationException; 
+    boolean retainAll (Collection c) throws UnsupportedOperationException; 
+    void clear () throws UnsupportedOperationException; //
+    Array Services Object[] toArray (); 
+    Object[] toArray (Object a[]); 
+}        
+        </ns888:programlisting>
+    </ns887:para>
+    <ns889:para xmlns:ns889="http://docbook.org/ns/docbook"> The services which have to be supplied by all collections are</ns889:para>
+    <ns890:para xmlns:ns890="http://docbook.org/ns/docbook">size() A service returning the number of elements (object references) currently stored in
+        the collection. isEmpty() A service returning <ns891:literal xmlns:ns891="http://docbook.org/ns/docbook">true</ns891:literal> when trhere are
+        currently no elements stored in the collection. contains(Object) A service returning true if
+        the specified object is currently in the collection. iterator() returns an iterator which
+        can be used to step through the collection. containsAll() returns <ns892:literal xmlns:ns892="http://docbook.org/ns/docbook">true</ns892:literal> if
+        the collection contains all the lements contained in the collection supplied as argument.
+        toArray() returns an array containing all the elemnts in the collection. toArray(Object[ )]
+        Returns all the elements in the collection whose run-time type is that of the array. For
+        example, if we call the method with a verb+Person[]+ array it will return all the persons
+        (and specialized persons, i.e. <ns893:literal xmlns:ns893="http://docbook.org/ns/docbook">Employee</ns893:literal>) contained in the collection and
+        not, for example, the accounts contained in the collection. If the extracted elements plus
+        an extra null reference indicating the end of the subcollection fit into the supplied array,
+        this array is returned. If not, a new array is created.</ns890:para>
+    <ns894:para xmlns:ns894="http://docbook.org/ns/docbook">Supporting the remaining services is not obligatory, but most collection implementations
+        actually do. These include adding and removing objects and collections of objects as well as
+        the <ns895:literal xmlns:ns895="http://docbook.org/ns/docbook">retainAll(Collection)</ns895:literal> method which retains only those elements in the
+        collection which are also in the supplied collection.</ns894:para>
+    <ns896:para xmlns:ns896="http://docbook.org/ns/docbook"/>
+    <ns897:section xmlns:ns897="http://docbook.org/ns/docbook">
+        <ns898:title xmlns:ns898="http://docbook.org/ns/docbook">The Set Interface</ns898:title>
+        <ns899:para xmlns:ns899="http://docbook.org/ns/docbook">A set is a collection which contains no duplicate elements. A <ns900:literal xmlns:ns900="http://docbook.org/ns/docbook">Set</ns900:literal>
+            contains no other services than those specified in <ns901:literal xmlns:ns901="http://docbook.org/ns/docbook">Collection</ns901:literal>. Sets
+            only apply the restriction of not allowing duplicate elemnts in the collection.</ns899:para>
+        <ns902:para xmlns:ns902="http://docbook.org/ns/docbook">If the <ns903:literal xmlns:ns903="http://docbook.org/ns/docbook">Set</ns903:literal> interface simply extends the
+            <ns904:literal xmlns:ns904="http://docbook.org/ns/docbook">Collection</ns904:literal> interface without specifying any further services, what
+            then is the purpose of defining the <ns905:literal xmlns:ns905="http://docbook.org/ns/docbook">Set</ns905:literal> interface at all? The reason
+            is that this introduces a further classification level, enabling servers to specify that
+            a service requires not just any collection, but only some sort of <ns906:literal xmlns:ns906="http://docbook.org/ns/docbook">Set</ns906:literal>
+            (e.g. for example a <ns907:literal xmlns:ns907="http://docbook.org/ns/docbook">HashSet</ns907:literal> or a <ns908:literal xmlns:ns908="http://docbook.org/ns/docbook">TreeSet</ns908:literal>).</ns902:para>
+        <ns909:para xmlns:ns909="http://docbook.org/ns/docbook"/>
+    </ns897:section>
+    <ns910:section xmlns:ns910="http://docbook.org/ns/docbook">
+        <ns911:title xmlns:ns911="http://docbook.org/ns/docbook">The List Interface</ns911:title>
+        <ns912:para xmlns:ns912="http://docbook.org/ns/docbook">While sets do not guarantee ordering of its elements, a <ns913:literal xmlns:ns913="http://docbook.org/ns/docbook">List</ns913:literal> does.
+            A <ns914:literal xmlns:ns914="http://docbook.org/ns/docbook">List</ns914:literal> is thus an ordered collection (sometimes referred to as a sequence).</ns912:para>
+        <ns915:para xmlns:ns915="http://docbook.org/ns/docbook">One can access the elements of a list by their position. Thus one can request the
+
+            <!--informalequation>
+                <graphic fileref="ProgrammingInJava32x.gif"/>
+            </informalequation-->'th
+            element of a list. In this sense a <ns916:literal xmlns:ns916="http://docbook.org/ns/docbook">List</ns916:literal> is a random access
+            collection. Alternatively one can have sequential access to the elements of a list via a
+            <ns917:literal xmlns:ns917="http://docbook.org/ns/docbook">ListIterator</ns917:literal> which is a special type of <ns918:literal xmlns:ns918="http://docbook.org/ns/docbook">Iterator</ns918:literal>
+            adding some special list-specific services like traversing through the list in reverse order:</ns915:para>
+        <ns919:para xmlns:ns919="http://docbook.org/ns/docbook"/>
+        <ns920:para xmlns:ns920="http://docbook.org/ns/docbook">
+            <ns921:programlisting xmlns:ns921="http://docbook.org/ns/docbook">
+public interface List extends Collection 
+{ 
+    // Positional Access 
+    Object get (int index); 
+    Object set (int index, Object element) throws UnsupportedOperationException; 
+    void add (int index, Object element) throws UnsupportedOperationException; 
+    Object remove (int index) throws UnsupportedOperationException; 
+    abstract boolean addAll(int index, Collection c) throws UnsupportedOperationException; 
+    // Search int indexOf(Object o); int lastIndexOf(Object o); 
+    // Iteration ListIterator listIterator(); 
+    ListIterator listIterator(int index); 
+    // Range-view 
+    List subList(int from, int to); 
+}            
+            </ns921:programlisting>
+        </ns920:para>
+        <ns922:para xmlns:ns922="http://docbook.org/ns/docbook"> Thus additional to the services specified in <ns923:literal xmlns:ns923="http://docbook.org/ns/docbook">Collection</ns923:literal>, the list
+            interface supports</ns922:para>
+        <ns924:para xmlns:ns924="http://docbook.org/ns/docbook"/>
+        <ns925:para xmlns:ns925="http://docbook.org/ns/docbook">
+            <ns926:itemizedlist xmlns:ns926="http://docbook.org/ns/docbook">
+                <ns927:listitem xmlns:ns927="http://docbook.org/ns/docbook">
+                    <ns928:para xmlns:ns928="http://docbook.org/ns/docbook">Retrieving, modifying, adding and remving elements by their position. </ns928:para>
+                </ns927:listitem>
+                <ns929:listitem xmlns:ns929="http://docbook.org/ns/docbook">
+                    <ns930:para xmlns:ns930="http://docbook.org/ns/docbook">Searching for the position of an object in the collection. </ns930:para>
+                </ns929:listitem>
+                <ns931:listitem xmlns:ns931="http://docbook.org/ns/docbook">
+                    <ns932:para xmlns:ns932="http://docbook.org/ns/docbook">Obtaining a range-view of the list which projects a specified range of
+                        elements into a sublist.</ns932:para>
+                </ns931:listitem>
+            </ns926:itemizedlist>
+        </ns925:para>
+        <ns933:para xmlns:ns933="http://docbook.org/ns/docbook">Note that a list supports all the services we expect from an array (a
+            <ns934:literal xmlns:ns934="http://docbook.org/ns/docbook">Vector</ns934:literal> in pre-Java 2 terms), in particular the indexed element
+            access. We shall see that an <ns935:literal xmlns:ns935="http://docbook.org/ns/docbook">ArrayList</ns935:literal> is a concrete implementation
+            of such an array.</ns933:para>
+        <ns936:para xmlns:ns936="http://docbook.org/ns/docbook">Furthermore, a list contains all the services of a linked list. In particular
+            bi-directional sequential traversal of the collection and insertion and removal at
+            specified positions. A concrete implementation of a traditional linked list is supplied
+            with the <ns937:literal xmlns:ns937="http://docbook.org/ns/docbook">LinkedList</ns937:literal> class.</ns936:para>
+        <ns938:para xmlns:ns938="http://docbook.org/ns/docbook">One of the very interesting features of the <ns939:literal xmlns:ns939="http://docbook.org/ns/docbook">List</ns939:literal> interface is that
+            it supports a service for supplying a view of a range within the list. Note that it is
+            only a view of the range. Thus manipulating elements from the returned view results in
+            manipulation of the underlying list elements. For example, the following statement
+            removes a range from a list:</ns938:para>
+        <ns940:para xmlns:ns940="http://docbook.org/ns/docbook">
+            <ns941:programlisting xmlns:ns941="http://docbook.org/ns/docbook">
+list.subList(fromIndex, toIndex).clear(); 
+            </ns941:programlisting>
+        </ns940:para>
+    </ns910:section>
+</ns862:section>

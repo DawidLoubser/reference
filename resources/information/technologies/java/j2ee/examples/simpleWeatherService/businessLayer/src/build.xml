@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<project name="weatherService" default="help">
+
+    <!-- Import build properties -->
+	<property file="build.properties"/>
+		
+	<!-- Refers to all JARs in /resources -->
+	<path id="buildClassPath">
+		<fileset dir="resources">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- Compiles all java classes -->
+	<target name="compile">
+	    <mkdir dir="${buildDir}"/>
+	    <!-- Compile all Java code -->
+		<javac srcdir="${sourceDir}" destdir="${buildDir}" 
+			debug="on" classpathref="buildClassPath"/>
+	    <!-- Copy any resources (non-java files) -->
+		<copy todir="${buildDir}">
+		    <fileset dir="${sourceDir}">
+		        <exclude name="**/*.java"/>
+		        <exclude name="**/*.class"/>
+		    </fileset>
+		</copy>
+	</target>
+		
+	<!-- Creates deployable business layer JAR -->
+	<target name="package" depends="compile">
+	    <mkdir dir="${distDir}"/>
+		<jar destfile="${distDir}/${ant.project.name}.jar" 
+			basedir="${buildDir}" includes="**/*"/>
+	</target>
+    
+    <!-- Creates a JAR of the contract for the application -->
+	<target name="export-contract" depends="compile">
+	    <mkdir dir="${distDir}"/>
+	    <jar destfile="${distDir}/${ant.project.name}-api.jar" 
+	    	basedir="${buildDir}" 
+	        includes="${contract.package.root}/*.*"/>
+	</target>
+    
+	<!-- Removes all generated files -->
+	<target name="clean">
+		<delete dir="${buildDir}"/>
+		<delete dir="${distDir}"/>
+	</target>
+    
+    <!-- Build instructions -->
+    <target name="help">
+        <echo>package : Create deployable business layer</echo>
+        <echo>export-contract : Create service contract API</echo>
+        <echo>build : Comply compile all Java code</echo>
+        <echo>clean : Remove all generated artifacts</echo>
+    </target>
+	
+</project>

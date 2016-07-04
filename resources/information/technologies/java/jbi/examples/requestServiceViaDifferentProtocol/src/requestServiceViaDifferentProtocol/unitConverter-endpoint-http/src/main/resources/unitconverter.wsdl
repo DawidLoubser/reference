@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+  name="unitconverter" 
+  targetNamespace="http://example.co.za/unitconverter/"
+  xmlns:uc="http://example.co.za/unitconverter/" 
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://schemas.xmlsoap.org/wsdl/ 
+                      http://schemas.xmlsoap.org/wsdl/wsdl.xsd">
+
+  <wsdl:documentation>
+    This contract specifies the abstract service model for a simple
+    but generic unit converter.
+  </wsdl:documentation>
+
+
+  <!-- Types used for exchanged value objects -->
+  <wsdl:types>
+    <xsd:schema>
+      <xsd:import namespace="http://example.co.za/unitconverter/" 
+        schemaLocation="unitconverter.xsd"/>
+    </xsd:schema>
+  </wsdl:types>
+
+
+  <!-- Bind Exchanged value objects and faults to types -->
+  <wsdl:message name="UnitConversionRequest">
+    <wsdl:part  name="body" element="uc:unitConversionRequest"/>
+  </wsdl:message>
+  <wsdl:message name="UnitConversionResponse">
+    <wsdl:part  name="body" element="uc:unitConversionResponse"/>
+  </wsdl:message>
+  <wsdl:message name="UnsupportedUnit">
+    <wsdl:part  name="body" element="uc:unsupportedUnit"/>
+  </wsdl:message>
+  <wsdl:message name="SupportedUnitsRequest">
+    <wsdl:part  name="body" element="uc:supportedUnitsRequest"/>
+  </wsdl:message>
+  <wsdl:message name="SupportedUnitsResponse">
+    <wsdl:part  name="body" element="uc:supportedUnitsResponse"/>
+  </wsdl:message>
+
+
+  <!-- Service contract (interface) -->
+  <wsdl:portType name="UnitConverter">
+    
+    <wsdl:operation name="convert">
+      <wsdl:input message="uc:UnitConversionRequest"/>
+      <wsdl:output message="uc:UnitConversionResponse"/>
+      <wsdl:fault name="unsupportedUnit" message="uc:UnsupportedUnit"/>
+    </wsdl:operation>
+    
+    <wsdl:operation name="getSupportedUnits">
+      <wsdl:input message="uc:SupportedUnitsRequest"/>
+      <wsdl:output message="uc:SupportedUnitsResponse"/>    
+    </wsdl:operation>
+    
+  </wsdl:portType>
+  
+</wsdl:definitions>

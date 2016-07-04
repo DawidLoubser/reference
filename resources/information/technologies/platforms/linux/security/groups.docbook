@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"--><ns4604:section xmlns:ns4604="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.security.groups">
+
+  <ns4605:title xmlns:ns4605="http://docbook.org/ns/docbook">Assigning users to security groups</ns4605:title>
+  <ns4606:para xmlns:ns4606="http://docbook.org/ns/docbook">
+    Access to system resources (file access in Linux) can be set on either user level, or
+    on group level. Multiple users can belong to the same group and setting file
+    authorization at a group level, and is typically much more maintenance friendly and 
+    indirectly more secure.
+  </ns4606:para>
+  <ns4607:para xmlns:ns4607="http://docbook.org/ns/docbook">
+    Each user is in at least one security group -- recall that the default primary group for 
+    a new user was specified in the <ns4608:filename xmlns:ns4608="http://docbook.org/ns/docbook">/etc/default/useradd</ns4608:filename> file.
+    You can view the group memberships in the <ns4609:filename xmlns:ns4609="http://docbook.org/ns/docbook">/etc/group</ns4609:filename>
+    file. Below we show an excerpt of a group file:
+    <ns4610:programlisting xmlns:ns4610="http://docbook.org/ns/docbook">
+root:x:0:
+mail:x:12:fritz
+dialout:x:16:fritz,solms,alex,ernst
+audio:x:17:fritz,solms,alex,ernst
+floppy:x:19:
+cdrom:x:20:
+console:x:21:
+at:x:25:
+video:x:33:fritz,solms,alex,ernst
+games:x:40:
+ftp:x:49:
+man:x:62:
+sshd:x:65:
+nobody:x:65533:nobody
+nogroup:x:65534:nobody
+users:x:100:
+solms:x:500:fritz,solms,alex,ernst,root
+xcdwrite:x:501:fritz
+    </ns4610:programlisting>
+  </ns4607:para>
+  <ns4611:para xmlns:ns4611="http://docbook.org/ns/docbook">
+    Note that a Linux system typically has many groups and often changing a user's permissions
+    only involves adding him/her to or removing her/him from a group.
+  </ns4611:para>
+  
+  <ns4612:section xmlns:ns4612="http://docbook.org/ns/docbook">
+    <ns4613:title xmlns:ns4613="http://docbook.org/ns/docbook">Adding a new group via <ns4614:command xmlns:ns4614="http://docbook.org/ns/docbook">groupadd</ns4614:command></ns4613:title>
+    <ns4615:para xmlns:ns4615="http://docbook.org/ns/docbook">
+      You can add a new group by editing the <ns4616:filename xmlns:ns4616="http://docbook.org/ns/docbook">/etc/group</ns4616:filename>
+      file. Alternatively you can use the <ns4617:command xmlns:ns4617="http://docbook.org/ns/docbook">groupadd</ns4617:command> which
+      is typically used in its simplest form:
+      <ns4618:cmdsynopsis xmlns:ns4618="http://docbook.org/ns/docbook"><ns4619:command xmlns:ns4619="http://docbook.org/ns/docbook">
+groupadd &lt;groupName&gt;        
+      </ns4619:command></ns4618:cmdsynopsis>
+    </ns4615:para>
+  </ns4612:section>
+  
+  <ns4620:section xmlns:ns4620="http://docbook.org/ns/docbook">
+    <ns4621:title xmlns:ns4621="http://docbook.org/ns/docbook">Deleting a group via <ns4622:command xmlns:ns4622="http://docbook.org/ns/docbook">groupdel</ns4622:command></ns4621:title>
+    <ns4623:para xmlns:ns4623="http://docbook.org/ns/docbook">
+      Once again you can delete a group by deleting the group's entry in the
+      <ns4624:filename xmlns:ns4624="http://docbook.org/ns/docbook">/etc/group</ns4624:filename> file. Alternatively you can use the 
+      <ns4625:command xmlns:ns4625="http://docbook.org/ns/docbook">groupdel</ns4625:command> command:
+      <ns4626:cmdsynopsis xmlns:ns4626="http://docbook.org/ns/docbook"><ns4627:command xmlns:ns4627="http://docbook.org/ns/docbook">
+groupdel &lt;groupName&gt;        
+      </ns4627:command></ns4626:cmdsynopsis>
+      <ns4628:note xmlns:ns4628="http://docbook.org/ns/docbook">
+        <ns4629:para xmlns:ns4629="http://docbook.org/ns/docbook">
+          You will have to reallocate the permissions of all those files which were allocated to
+          that group to another existing group. (see
+          <ns4630:xref xmlns:ns4630="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.security.filePermissions"/>)
+        </ns4629:para>
+      </ns4628:note>
+    </ns4623:para>
+  </ns4620:section>
+</ns4604:section>

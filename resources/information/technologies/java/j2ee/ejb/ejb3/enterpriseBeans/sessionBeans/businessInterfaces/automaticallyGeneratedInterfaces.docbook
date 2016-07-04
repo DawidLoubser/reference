@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.businessInterfaces.automaticallyGeneratedInterfaces">
+	  <title>Automatically generated business interfaces</title>
+	  <para>
+		In the case where the developer only writes the bean implementation class, 
+		EJB supports automatic generation of either a local or a remote interface (but
+		not both.) 
+	</para>
+	
+	  <section>
+		    <title>Automatic interface naming</title>
+		    <para>
+			Beans for which interfaces are to be generated automatically must be named
+			with the one of the following suffixes:
+			<programlisting>
+***Bean,  ***Impl,  ***Implementation,  ***EJB				
+				</programlisting>
+			The application server will generate an interface with the same name as the
+			bean implementation class, but with the suffix dropped. Thus, the
+			automatically generated business interface for <literal>AccountBean</literal>
+			would be named <literal>Account</literal>.
+		</para>
+	  </section>
+
+	  <section>
+		    <title>Which services are published in the automatically generated interface?</title>
+		    <para>
+			The application server will, by default, publish all public methods (except those used
+			by the application server for dependency injection.)
+		</para>
+		    <para>
+			This default can, however, be overridden by annotating those methods which
+			should appear in the interface with the <literal>@BusinessMethod</literal>
+			annotation. As soon as any method is annotated using
+			<literal>@BusinessMethod</literal>, all other non-annotated
+			public methods will no longer be included in the application server generated
+			business interface.
+		</para>
+	  </section>
+	
+	  <section>
+		    <title>Automatically generated local interfaces</title>
+		    <para>
+			The application server will generate automatically a local interface
+			for any session bean class which is not annotated as
+			<literal>@Remote</literal>.
+		</para>
+	  </section>
+  
+  <section>
+      <title>Automatically generated remote interfaces</title>
+      <para>
+      To request an automatically generated remote interface, one must annotate
+      the bean implementation class with the 
+      <literal>@Remote</literal> annotation. Note that the local
+      interface will no longer be generated if a remote interface is requested,
+      <abbrev>i.e.</abbrev> that you will have to define the interfaces yourself
+      for any bean class for which you want <emphasis>both</emphasis> local and 
+      remote interfaces.
+    </para>
+  </section>
+	
+	  <section>
+		    <title>Automatically generated interfaces: A good idea?</title>
+		    <para>
+			Though a useful feature, if one follows a typical design process
+			such as URDAD, the <emphasis>contracts</emphasis> are usually the
+			first coding deliverable, which means that the Java interfaces should
+			already be derived even before design decisions are made such as
+			the types of components to be used (e.g. EJB).
+		</para>
+		    <para>
+			In this spirit, it is usually a better idea to always write (or generate)
+			your contracts as the result of the <emphasis>design process</emphasis>,
+			and not by <quote>reverse engineering</quote> them from an implementation.
+		</para>
+	  </section>
+	
+</section>

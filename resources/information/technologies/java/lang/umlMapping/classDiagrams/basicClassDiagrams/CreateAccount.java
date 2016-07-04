@@ -1,0 +1,1 @@
+Account myAccount = new Account();			

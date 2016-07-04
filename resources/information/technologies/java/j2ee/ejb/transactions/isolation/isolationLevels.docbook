@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns2947:section xmlns:ns2947="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.transactions.isolation.isolationLevels">
+
+  <ns2948:title xmlns:ns2948="http://docbook.org/ns/docbook">Transaction Isolation Levels</ns2948:title>
+  <ns2949:para xmlns:ns2949="http://docbook.org/ns/docbook">
+    Enterprise bean developers can control how isolated your bean's transaction scope is
+    from other transactions. The choice of isolation level must be weighed up against its
+    impact on performance.
+  </ns2949:para>
+  
+  <ns2950:section xmlns:ns2950="http://docbook.org/ns/docbook">
+    <ns2951:title xmlns:ns2951="http://docbook.org/ns/docbook">Serializable</ns2951:title>
+    <ns2952:para xmlns:ns2952="http://docbook.org/ns/docbook">
+      This is the most stringent isolation level which enforces that your transaction
+      requires exclusive read and write privileges to data. Transactions can neither read nor
+      write the same data your transaction accesses until your transaction has committed.
+    </ns2952:para>
+  </ns2950:section>
+  
+  <ns2953:section xmlns:ns2953="http://docbook.org/ns/docbook">
+    <ns2954:title xmlns:ns2954="http://docbook.org/ns/docbook">Repeatable Reads</ns2954:title>
+    <ns2955:para xmlns:ns2955="http://docbook.org/ns/docbook">
+      This isolation level prevents your transaction to modify any data which is read by
+      other transactions, <ns2956:abbrev xmlns:ns2956="http://docbook.org/ns/docbook">i.e.</ns2956:abbrev> there may be multiple concurrent reads,
+      but no thread can be writing while other threads are reading.
+    </ns2955:para>
+    <ns2957:para xmlns:ns2957="http://docbook.org/ns/docbook">
+      Phantom reads can occur. A phantom read is the reading of a database record which was
+      not yet present when your transaction started, but has been added while your transaction
+      is busy processing.
+    </ns2957:para>
+  </ns2953:section>
+  
+  <ns2958:section xmlns:ns2958="http://docbook.org/ns/docbook">
+    <ns2959:title xmlns:ns2959="http://docbook.org/ns/docbook">Read Committed</ns2959:title>
+    <ns2960:para xmlns:ns2960="http://docbook.org/ns/docbook">
+      This isolation level prevents your transaction from reading uncommitted data. As with
+      repeatable reads, phantom reads can occur.
+    </ns2960:para>
+    <ns2961:para xmlns:ns2961="http://docbook.org/ns/docbook">
+      Furthermore non-repeatable reads may occur. A non-repeatable read is one where the
+      information may change during the same transaction, <ns2962:abbrev xmlns:ns2962="http://docbook.org/ns/docbook">i.e.</ns2962:abbrev> if the 
+      data is read again during  the same transaction it may lead to different results.
+    </ns2961:para>
+  </ns2958:section>
+  
+  <ns2963:section xmlns:ns2963="http://docbook.org/ns/docbook">
+    <ns2964:title xmlns:ns2964="http://docbook.org/ns/docbook">Read Uncommited</ns2964:title>
+    <ns2965:para xmlns:ns2965="http://docbook.org/ns/docbook">
+      This is the weakest isolation level allowing your transaction to read data from
+      databases which has not yet been committed. Reading of uncommitted data is referred to as
+      dirty reads.
+    </ns2965:para>
+    <ns2966:para xmlns:ns2966="http://docbook.org/ns/docbook">
+      In the case of the Dirty Read Problem one transaction can perform a credit and before
+      the transaction is committed another application reads the uncommitted ("dirty") new
+      balance. At a later stage it may happen that the credit transaction is rolled back and the
+      application is working with the incorrect balance.
+    </ns2966:para>
+  </ns2963:section>
+</ns2947:section>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.basicLanguage.programFlow.iterative.forIn"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+  <title role="For-each loops">For-each loops</title>
+  
+  <para>
+      For-each provides a mechanism to iterate over an entire <emphasis>collection of objects</emphasis> in sequential
+      order. This new construct (introduced in Java 5) provides a compact, more readable alternative 
+      to traditional for-loops, as well as Java Collections <literal>iterators</literal>.
+  </para>
+    <para>
+      The construct can be used for
+      <itemizedlist>
+          <listitem><para>primitive arrays,</para></listitem>
+          <listitem><para>collection classes, and</para></listitem>
+          <listitem><para>any other class for which an iterator has been defined.</para></listitem>
+      </itemizedlist>
+  </para>
+    
+  <section>
+      <title>Using the for-each construct</title>
+      <para>
+          The syntax for the <literal>for-each</literal> construct is
+          <programlisting><![CDATA[
+for(Type iterationVariable:iterableObject)
+    statementBlock
+              ]]></programlisting>
+      </para>
+      <para>
+          For example, we could iterate over an array of invoices via
+          <programlisting><![CDATA[
+Invoice[] invoices = ...
+              
+...
+              
+for (Invoice invoice:invoices)
+{              
+    sum += invoice.getTotalExcludingVat();
+}              
+              ]]></programlisting>
+      </para>
+      <para>
+          We could iterate over a collection of invoices in a similar way:
+          <programlisting><![CDATA[
+Collection<Invoice> invoices = new HashSet<Invoice>();
+             
+...
+              
+for (Invoice invoice:invoices)
+{              
+    sum += invoice.getTotalExcludingVat();
+}              
+            ]]></programlisting>          
+      </para>
+      
+      <section>
+          <title>Breaking out of for-each</title>
+          <para>
+              As with any other iterative construct, one can use <literal>break</literal>, to break
+              out of the loop.
+          </para>
+      </section>
+      
+      <section>
+          <title>Iterating over multiple array dimensions</title>
+          <para>
+              We can also use the for-each loop to iterate over multi-dimensional arrays. This is
+              illustrated in the following example code:
+              <programlisting>
+<xi:include parse="text" href="source/TestMatrix.java"/>                  
+              </programlisting>              
+          </para>
+      </section>
+  </section>
+    
+  <section>
+      <title>Supporting for-each in custom classes</title>
+      <para>
+          In order to support the for-each construct in custom classes one needs to
+          <orderedlist>
+              <listitem><para>have the class implement <literal><![CDATA[java.lang.Iterable<T>]]></literal></para></listitem>
+              <listitem><para>write an iterator for the custom class which implements
+                  <literal><![CDATA[java.lang.Iterator<T>]]></literal>., and</para></listitem>
+              <listitem><para>provide an iterator factory method,  <literal><![CDATA[Iterator<T>
+                  iterator()]]></literal> which returns an instance of the class's iterator.</para></listitem>
+          </orderedlist>
+          
+      </para>
+  </section>
+    
+    
+
+</section>

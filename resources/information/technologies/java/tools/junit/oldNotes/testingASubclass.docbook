@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns7491:section xmlns:ns7491="http://docbook.org/ns/docbook" xml:id="resources.information.tecnologies.java.tools.junit.testingASubclass">
+    
+    <ns7492:title xmlns:ns7492="http://docbook.org/ns/docbook">Testing a subclass</ns7492:title>
+<ns7493:para xmlns:ns7493="http://docbook.org/ns/docbook">
+When a class <ns7494:emphasis xmlns:ns7494="http://docbook.org/ns/docbook">B</ns7494:emphasis> subclass a class <ns7495:emphasis xmlns:ns7495="http://docbook.org/ns/docbook">A</ns7495:emphasis>, one may want to have <ns7496:emphasis xmlns:ns7496="http://docbook.org/ns/docbook">TextB</ns7496:emphasis>
+subclass <ns7497:emphasis xmlns:ns7497="http://docbook.org/ns/docbook">TestA</ns7497:emphasis>. After all a <ns7498:emphasis xmlns:ns7498="http://docbook.org/ns/docbook">B</ns7498:emphasis> is an <ns7499:emphasis xmlns:ns7499="http://docbook.org/ns/docbook">A</ns7499:emphasis> and should hence pass
+all tests of <ns7500:emphasis xmlns:ns7500="http://docbook.org/ns/docbook">A</ns7500:emphasis>.
+</ns7493:para>
+<ns7501:para xmlns:ns7501="http://docbook.org/ns/docbook"><ns7502:emphasis xmlns:ns7502="http://docbook.org/ns/docbook"> JUnit</ns7502:emphasis> will, by default, run all inherited tests. You must, however, make certain
+that the <ns7503:emphasis xmlns:ns7503="http://docbook.org/ns/docbook">setUp</ns7503:emphasis> method of <ns7504:emphasis xmlns:ns7504="http://docbook.org/ns/docbook">TestB</ns7504:emphasis> calls the <ns7505:emphasis xmlns:ns7505="http://docbook.org/ns/docbook">setUp</ns7505:emphasis> method of class
+<ns7506:emphasis xmlns:ns7506="http://docbook.org/ns/docbook">TestA</ns7506:emphasis>.</ns7501:para>
+<ns7507:para xmlns:ns7507="http://docbook.org/ns/docbook">
+As an example, let us look at a class, <ns7508:emphasis xmlns:ns7508="http://docbook.org/ns/docbook">Parabola</ns7508:emphasis> which uses a combination
+of extensions (the <ns7509:emphasis xmlns:ns7509="http://docbook.org/ns/docbook">getTurningPoint</ns7509:emphasis> and <ns7510:emphasis xmlns:ns7510="http://docbook.org/ns/docbook">getRealRoots</ns7510:emphasis> methods) and 
+restrictions (that there are no coefficients higher than second order coefficients)
+during subclassing:
+<ns7511:programlisting xmlns:ns7511="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/ParabolaR2.java"/>
+</ns7511:programlisting>
+</ns7507:para>
+<ns7512:para xmlns:ns7512="http://docbook.org/ns/docbook">
+The unit test should test only the differences between the subclass and its superclass,
+<ns7513:abbrev xmlns:ns7513="http://docbook.org/ns/docbook">i.e.</ns7513:abbrev> the extensions and restrictions. We thus do not have to test the function values
+or that the supplied coefficients are equal, but we do test the turning point, roots
+and that there are no coefficients which are higher than second order:
+<ns7514:programlisting xmlns:ns7514="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/ParabolaR2Test.java"/>
+</ns7514:programlisting>
+</ns7512:para>
+    
+</ns7491:section>

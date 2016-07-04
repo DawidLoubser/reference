@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"--><ns1297:section xmlns:ns1297="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.commands.sendingMessages">
+
+  <ns1298:title xmlns:ns1298="http://docbook.org/ns/docbook">Sending messages</ns1298:title>
+  <ns1299:para xmlns:ns1299="http://docbook.org/ns/docbook">
+    At times it may be useful to send a message to a particular user, or to broadcast
+    a message to all users.
+  </ns1299:para>
+  
+  <ns1300:section xmlns:ns1300="http://docbook.org/ns/docbook">
+    <ns1301:title xmlns:ns1301="http://docbook.org/ns/docbook">Enabling/disabling messaging via <ns1302:command xmlns:ns1302="http://docbook.org/ns/docbook">mesg</ns1302:command></ns1301:title>
+    <ns1303:para xmlns:ns1303="http://docbook.org/ns/docbook">
+      To specify whether your messaging is enabled or disabled for your terminal session,
+      use the <ns1304:command xmlns:ns1304="http://docbook.org/ns/docbook">mesg</ns1304:command> command with either 
+      <ns1305:literal xmlns:ns1305="http://docbook.org/ns/docbook">yes</ns1305:literal> or <ns1306:literal xmlns:ns1306="http://docbook.org/ns/docbook">no</ns1306:literal>. For example
+      <ns1307:cmdsynopsis xmlns:ns1307="http://docbook.org/ns/docbook">
+<ns1308:command xmlns:ns1308="http://docbook.org/ns/docbook">mesg</ns1308:command> <ns1309:arg xmlns:ns1309="http://docbook.org/ns/docbook">yes</ns1309:arg>
+      </ns1307:cmdsynopsis>
+      enables messaging for that terminal.
+    </ns1303:para>
+    <ns1310:para xmlns:ns1310="http://docbook.org/ns/docbook">
+       This controls both,
+       <ns1311:itemizedlist xmlns:ns1311="http://docbook.org/ns/docbook">
+         <ns1312:listitem xmlns:ns1312="http://docbook.org/ns/docbook"><ns1313:para xmlns:ns1313="http://docbook.org/ns/docbook">
+           whether you are willing to receive messages in your terminal from other
+           users and
+         </ns1313:para></ns1312:listitem>
+         <ns1314:listitem xmlns:ns1314="http://docbook.org/ns/docbook"><ns1315:para xmlns:ns1315="http://docbook.org/ns/docbook">
+           whether you are able to send messages to other users or not.  
+         </ns1315:para></ns1314:listitem>
+       </ns1311:itemizedlist>
+    </ns1310:para>
+  </ns1300:section>
+  
+  <ns1316:section xmlns:ns1316="http://docbook.org/ns/docbook">
+    <ns1317:title xmlns:ns1317="http://docbook.org/ns/docbook">Sending a message via <ns1318:command xmlns:ns1318="http://docbook.org/ns/docbook">write</ns1318:command></ns1317:title>
+    <ns1319:para xmlns:ns1319="http://docbook.org/ns/docbook">
+      You can send a sequence of messages to a user via write. Messages are communicated by
+      copying lines from your terminal to theirs.
+      <ns1320:cmdsynopsis xmlns:ns1320="http://docbook.org/ns/docbook">
+<ns1321:command xmlns:ns1321="http://docbook.org/ns/docbook">write</ns1321:command> <ns1322:arg xmlns:ns1322="http://docbook.org/ns/docbook">username</ns1322:arg>
+      </ns1320:cmdsynopsis>
+      accepts input lines each of which will be sent as a message to the user
+      upon <ns1323:command xmlns:ns1323="http://docbook.org/ns/docbook">&lt;ENTER&gt;</ns1323:command> being pressed. To terminate the
+      write session, press <ns1324:command xmlns:ns1324="http://docbook.org/ns/docbook">&lt;CTRL&gt;&lt;D&gt;</ns1324:command> in order
+      to provide an end-of-file character.
+    </ns1319:para>
+    <ns1325:para xmlns:ns1325="http://docbook.org/ns/docbook">
+       If the user you want to write to is logged in on more than
+       one terminal, you can specify which terminal to  write  to
+       by  specifying  the terminal name as the second operand to
+       the <ns1326:command xmlns:ns1326="http://docbook.org/ns/docbook">write</ns1326:command>  command.   
+    </ns1325:para>
+    <ns1327:para xmlns:ns1327="http://docbook.org/ns/docbook">
+      If you do not specify the terminal to be used, <ns1328:command xmlns:ns1328="http://docbook.org/ns/docbook">write</ns1328:command> will
+      select the one with the shortest idle time.
+    </ns1327:para>
+    <ns1329:para xmlns:ns1329="http://docbook.org/ns/docbook">
+      You can also use piping to send all the messages in a file to a user. For example
+      <ns1330:cmdsynopsis xmlns:ns1330="http://docbook.org/ns/docbook">
+<ns1331:command xmlns:ns1331="http://docbook.org/ns/docbook">less msg.txt |  write &lt;username&gt;</ns1331:command>        
+      </ns1330:cmdsynopsis>
+    </ns1329:para>
+  </ns1316:section>
+  
+  <ns1332:section xmlns:ns1332="http://docbook.org/ns/docbook">
+    <ns1333:title xmlns:ns1333="http://docbook.org/ns/docbook">Broadcasting via <ns1334:command xmlns:ns1334="http://docbook.org/ns/docbook">wall</ns1334:command></ns1333:title>
+    <ns1335:para xmlns:ns1335="http://docbook.org/ns/docbook">
+      If you want to broadcast a message to all users, you can use the <ns1336:command xmlns:ns1336="http://docbook.org/ns/docbook">wall</ns1336:command>
+      command, which is short for <ns1337:emphasis xmlns:ns1337="http://docbook.org/ns/docbook">write-all</ns1337:emphasis>. It takes a file name with the
+      message as argument. Alternatively, you can use piping:
+      <ns1338:cmdsynopsis xmlns:ns1338="http://docbook.org/ns/docbook">
+<ns1339:command xmlns:ns1339="http://docbook.org/ns/docbook">echo 'testing wall' | wall</ns1339:command>  
+      </ns1338:cmdsynopsis>
+    </ns1335:para>
+  </ns1332:section>
+  
+</ns1297:section>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.solms.co.za/retail/outlets"
+    xmlns:r="http://www.solms.co.za/retail/outlets"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+    
+    <xs:element name="retailOutlets" type="r:RetailOutlets">
+        
+        <xs:key name="RegionKey">
+            <xs:selector xpath="./r:region"/>
+            <xs:field xpath="@id"/>
+        </xs:key>
+        
+        <xs:keyref refer="r:RegionKey" name="RegionRef">
+            <xs:selector xpath="./r:retailOutlet"/>
+            <xs:field xpath="r:region"/>
+        </xs:keyref>
+        
+    </xs:element>
+    
+    <xs:complexType name="RetailOutlets">
+        <xs:sequence>
+            <xs:element name="retailOutlet" type="r:RetailOutlet" maxOccurs="unbounded"/>
+            <xs:element name="region" type="r:Region" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="RetailOutlet">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="address" type="xs:string"/>
+            <xs:element name="region" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+    
+    <xs:complexType name="Region">
+        <xs:sequence>
+            <xs:element name="name"/>
+            <xs:element name="description" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+
+</xs:schema>

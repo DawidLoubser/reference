@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.classes.basic.classMembers.usingClassMembers"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title role="Using Class Services">Using Class Services</title>
+  <para>
+    Data fields for classes are typically defined private for the same reasons that one
+    defines instance data fields private -- they are an implementation detail and should not
+    be accessed directly by users. 
+  </para>
+  <para>
+    In order to request a class service, we have to send a message to the class (Java
+    does allow you to send the message to any instance of the class too, but this has mainly
+    confusion value). Hence, to query the number of instances which exist at the current
+    instant, we send the message
+    <programlisting><![CDATA[
+int nInstances = Account.getNumberOfInstances();
+    ]]></programlisting>
+  </para>
+  <para>
+    Have now a look at the following little application:
+    <programlisting><xi:include parse="text" href="src/AccountTest.java"/></programlisting>
+    The output of the program is as follows:
+    <programlisting><![CDATA[
+ A: no of accounts = 0
+ B: no of accounts = 2
+ C: no of accounts = 2
+ A2 is finalized.
+ D: no of accounts = 1
+    ]]></programlisting>
+  </para>
+ <para>
+    We first query the number of instances, even before we created any account. Of course the
+    instance count is still zero at this stage. Next we create 2 accounts and the instance
+    count confirms this. Next we drop the reference to one of the accounts, but our counter
+    still still counting 2. This is because the garbage collector, which is a separate
+    execution thread has not come around to deleting the unreferenced object yet. We can,
+    however, force the garbage collector to run. This is accomplished by the following statement:
+    <programlisting><![CDATA[
+System.gc();
+    ]]></programlisting>
+  </para>  
+</section>

@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<project name="weatherServicePL" default="build">
+	
+  <!-- This is our main target to produce a complete, packaged
+       web application. -->
+  <target name="build" depends="package"/>
+	
+  <!-- Refers to all JARs in /resources -->
+  <path id="buildClassPath">
+    <fileset dir="resources">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+	
+  <!-- Compiles all java classes -->
+  <target name="compile" depends="createStructure">
+    <javac srcdir="source/java" destdir="build/webapp/WEB-INF/classes" 
+        debug="on" classpathref="buildClassPath"/>
+    <!-- Include all non-java (resources) -->
+    <copy todir="build/webapp/WEB-INF/classes">
+      <fileset dir="source/java">
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
+  </target>
+	
+  <!-- Copies all content and libraries to web application -->
+  <target name="assemble" depends="compile">
+    <!-- Web content -->
+    <copy todir="build/webapp">
+      <fileset dir="source/web">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+    <!-- Libraries (JARs) -->
+    <copy todir="build/webapp/WEB-INF/">
+      <fileset dir="resources/">
+        <!-- Only /lib JARs are deployed -->
+        <exclude name="shelf"/>
+        <exclude name="shelf/*"/>
+      </fileset>
+    </copy>
+  </target>
+	
+  <!-- Creates our WAR file -->
+  <target name="package" depends="assemble">
+    <mkdir dir="dist"/>
+    <jar destfile="dist/${ant.project.name}.war" 
+        basedir="build/webapp" includes="**/*"/>
+  </target>
+	
+  <!-- Creates the initial directory structure -->
+  <target name="createStructure">
+    <mkdir dir="build/webapp/WEB-INF/classes"/>
+    <mkdir dir="build/webapp/WEB-INF/lib"/>
+  </target>
+	
+  <!-- Removes all generated files -->
+  <target name="clean">
+    <delete dir="build"/>
+    <delete dir="dist"/>
+  </target>
+	
+</project>

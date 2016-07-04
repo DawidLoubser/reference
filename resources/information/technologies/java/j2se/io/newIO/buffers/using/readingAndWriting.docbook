@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author Dawid Loubser -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.newIO.buffers.using.readingAndWriting">
+    
+    <title>Reading and Writing Buffers</title>
+    <para>
+        A buffer is created with a specific size (known as its <literal>capacity</literal>) that 
+        remains constant for its lifetime.
+        The following codes creates a <emphasis>direct</emphasis> buffer that can hold 8 bytes:
+        <programlisting language="Java"><![CDATA[
+ByteBuffer buf = ByteBuffer.allocateDirect(8);
+        ]]></programlisting>
+    </para>
+    <figure>
+        <title>A newly created Buffer</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/freshBuffer.jpg"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>
+        The Buffer's <literal>position</literal> is the index of the next element that will be written or read. 
+        Position starts at <literal>0</literal> for a newly allocated Buffer. As you put data into the Buffer, 
+        position increases toward the <literal>limit</literal>. 
+        Let's add some bytes to the buffer:
+        <programlisting language="Java"><![CDATA[
+buf.put( (byte)'a' );
+buf.putInt( 55 );
+buf.put( (byte)'c' );
+        ]]></programlisting>
+    </para>
+    <figure>
+        <title>Data written to a Buffer</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/writtenBuffer.jpg"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>
+        Another of the buffer's important attributes is its <literal>limit</literal>. The <literal>limit</literal> is the 
+        first element that <emphasis>should not be read or written</emphasis>. Attempting to <literal>put()</literal> past 
+        the <literal>limit</literal> causes a <literal>BufferOverflowException</literal>. Similarly, attempting to 
+        <literal>get()</literal> past the <literal>limit</literal> causes a <literal>BufferUnderflowException</literal>. 
+        For a new buffer, the <literal>limit</literal> equals the <literal>capacity</literal>.
+    </para>
+    <note>
+        <para>
+            Our second <literal>put</literal> to the buffer wrote an <literal>int</literal>, which consumes 4 bytes (32 bits).
+        </para>
+    </note>
+    <para>
+        There is an important action to remember when using buffers. Between filling the buffer with data and 
+        writing it on a <literal>Channel</literal>, the buffer must <emphasis>flip</emphasis>. Flipping a buffer 
+        primes it for a new sequence of operations. If you've been putting data into a buffer, flipping it ensures 
+        that it's data is ready to be read. More precisely, flipping the buffer sets its <literal>limit</literal> 
+        to the <emphasis>current position</emphasis> and then resets its position to zero. Its capacity does not 
+        change. The following code flips the buffer:
+        <programlisting language="Java"><![CDATA[
+buf.flip();
+        ]]></programlisting>
+    </para>
+    <figure>
+        <title>Flipped Buffer</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/flippedBuffer.jpg"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>
+        After the flip, the buffer can be read. In this example, <literal>get()</literal> returns six bytes before 
+        it throws a <literal>BufferUnderflowException</literal>.
+    </para>
+  <para>
+    A buffer may be flipped any number of times, or cleared (via
+    <literal>clear()</literal>, in which case the position is set to 0,
+    and the limit set to the capacity) which effectively readies it for
+    a fresh set of data.
+  </para>
+
+</section>

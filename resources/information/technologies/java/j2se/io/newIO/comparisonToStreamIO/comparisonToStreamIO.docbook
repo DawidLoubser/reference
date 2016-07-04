@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author Dawid Loubser -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.newIO.comparisonToStreamIO.comparisonToStreamIO">
+    
+    <title>Comparison to Stream-based IO</title>
+    <para>
+        The Java NIO API does not replace the standard stream-based I/O (<literal>java.io.*</literal>) classes. The two
+        APIs are meant to co-exist, and the NIO classes are typically used for reasons of performance and
+        scalability. NIO is typically not used to <emphasis>process</emphasis> streams of data, but rather for moving
+        them around or copying them. Standard <literal>java.io</literal> components are then often used to process
+        parts of interest.
+    </para>
+    
+    <section>
+        <title>Disadvantages</title>
+        <para>
+            <itemizedlist>
+            <listitem>
+                <para>Users of the API work in a much lower-level, buffer-based paradigm. The Streaming
+                I/O API has an elegant <emphasis>pipes and filters</emphasis> architecture</para>
+            </listitem>
+            <listitem>
+                <para>It is currently limited to <emphasis>file</emphasis> and <emphasis>nework</emphasis>
+                (sockets-based) I/O</para>
+            </listitem>
+            <listitem>
+                <para>
+                    It has a steeper learning curve when compared to Streaming I/O
+                </para>
+            </listitem>
+                <listitem>
+                    <para>
+                        It is easier to assemble complex pipelines (compression, encryption, monitoring, etc)
+                        with Streaming I/O. NIO can be used at either the source or destination of such
+                        pipelines, but cannot easily be used as part of the processing pipeline.
+                    </para>
+                </listitem>
+        </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Advantages</title>
+        <para>
+            <itemizedlist>
+            <listitem>
+                <para>
+                    Buffers, the data transfer unit of the NIO API, are extremely efficient in terms of memory
+                    usage. Several different <quote>views</quote> on the same byte data feed off the same 
+                    <emphasis>backing storage</emphasis>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    NIO makes use of native operating-system I/O functionality, which means that large amounts of 
+                    data can be moved around without the need to physically stream these bytes through the java
+                    application (and runtime environment).
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    NIO incorporates <emphasis>non-blocking I/O</emphasis>, which means that (should your application require
+                    this) code does not block while waiting for I/O to occur
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Non-blocking I/O and <emphasis>selectors</emphasis> enable the development of network servers with the capability
+                    to handle thousands of concurrent connections, overcoming the practical limit of creating such a large number
+                    of connection handling Threads yourself - it introduces a fundamentally different design.
+                </para>
+            </listitem>
+        </itemizedlist>
+        </para>
+    </section>
+</section>

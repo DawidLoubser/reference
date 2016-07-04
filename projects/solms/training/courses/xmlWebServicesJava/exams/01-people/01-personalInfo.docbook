@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbook.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>XML and web Services with Java</title>
+        <subtitle>Examination</subtitle>
+        <date>October 22, 2009</date>
+    </info>
+    
+    <section>
+        <title>Introduction</title>
+        <para>
+            This examination paper tests competency in the basic usage of XML and Web Services
+            technologies, using Java. Answers to theoretical questions may be provided in any form (written on
+            paper, text file, XML) and practical solutions must be provided in the form of a ZIP file containing
+            all relevant work.
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>There is no time limit, as long as the examination is completed in a single session</para>
+            </listitem>
+            <listitem>
+                <para>This is an open-book exam, any non-human resources may be used to assist you in completing it.</para>
+            </listitem>
+            <listitem>
+                <para>Due to the above, we have extremely sensitive to work which is not your own - any occurrence of
+                    direct plagiarism will be detrimental to your examination. Examples provided to you during the
+                    course by Solms TCD are exempted from this requirement, and you are welcome to base your practical
+                    project(s) on any standard infrastructure and best-practices provided during the course.</para>
+            </listitem>
+        </itemizedlist>
+    </section>
+    
+    
+    <section>
+        <title>Practical</title>
+        
+        <para>
+            Considering the following UML class diagram which describes simple personal information,
+            similar to what would be stored in an address book.
+        </para>
+        
+        <figure>
+            <title>Data Model</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="dataStructure.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        
+        <section>
+            <title>XML Schema</title>
+            <para>
+                Write an XML schema which represents this data structure. The schema should allow you to validate
+                an instance document containing a <literal>CollectionOfPeople</literal>.
+            </para>
+        </section>
+        
+        <section>
+            <title>Instance Document</title>
+            <para>
+                Create an instance document containing at least four people.
+            </para>
+        </section>
+        
+        <section>
+            <title>Validator</title>
+            <para>
+                Write a small Java program that uses the JAXP validation API to validate an instance document
+                using your schema. Your program, as well as the schema, must be bundled together in a single executable JAR
+                which is produced via Apache Ant. It must be executable in a manner such as the following:
+            </para>
+            <programlisting>
+java -jar myValidator.jar someInstanceDocument.xml
+            </programlisting>
+        </section>
+        
+        <section>
+            <title>Transformation</title>
+            <para>
+                Create an XSLT (transformation instructions) that produces, from your instance document, a new list
+                of people in any format of your choosing. (e.g. XHTML, or any other XML vocabulary, provided that you
+                provide or refer to the XML schema of the output format).
+            </para>
+            <para>
+                <emphasis>The output produced by your XSLT should only contain the people in the input document 
+                    that have contact details (i.e. that have one or more <literal>ContactChannel</literal>s).</emphasis>
+            </para>
+        </section>
+        
+        <section>
+            <title>Web Service</title>
+            <para>
+                Design a contract for an <literal>AddressBook</literal> service. This services contract should specify
+                two services:
+                <itemizedlist>
+                    <listitem>
+                        <para>A service to add a person to the address book (provided that sufficient personal details have been provided)</para>
+                    </listitem>
+                    <listitem>
+                        <para>A service to get the personal details of a single person, by providing the name of the person (provided such a person exists
+                        in the address book)</para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+            <section>
+                <title>Design</title>
+                <para>
+                    Draw a UML class diagram, showing the services contract of your address book. It should re-use the data structure(s)
+                    from the previous section to represent personal details.
+                </para>
+            </section>
+            <section>
+                <title>WSDL Document</title>
+                <para>
+                    Write a WSDL document representing your services contract. Re-use your original schema from the previous section
+                    where personal details are required.
+                </para>
+            </section>
+            <section>
+                <title>Dummy implementation</title>
+                <para>
+                    Using Apache Ant and JAX-WS, create a skeletal implementation of an address book service, which does not
+                    actually have to store the information anywhere. It should perhaps print out messages to the console,
+                    indicating received service requests.
+                </para>
+            </section>
+            <section>
+                <title>Invocation</title>
+                <para>
+                    Using any means of your liking (and which is repeatable by the examiner) invoke your dummy
+                    address book service, showing that messages are correctly exchanged. This may be as simple
+                    as using the testing feature of an XML tool (such as Oxygen XML) or by writing a simple
+                    Java client that uses JAX-WS to invoke the service - the choice is yours. Keep it simple.
+                </para>
+            </section>
+        </section>
+        
+    </section>
+    
+</article>

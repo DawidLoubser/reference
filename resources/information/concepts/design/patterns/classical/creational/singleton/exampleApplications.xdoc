@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.design.patterns.classical.creational.singleton.exampleApplications"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Example applications</title>
+  <para>
+    There are very many potential applications for the singleton pattern. Below we discuss
+    some of the more common usage classes for the singleton pattern.
+  </para>
+  
+  <section>
+    <title>Necessary singletons</title>
+    <para>
+      There are a number of classes which need to be singletons to avoid problems which would
+      occur if multiple instances of the class were around. Examples include
+      <itemizedlist>
+        <listitem><para>thread schedulers,</para></listitem>
+        <listitem><para>printer queues,</para></listitem>
+        <listitem><para>telephone answering units.</para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Stateless objects</title>
+    <para>
+      If instances of a particular class do not carry any state, then any instance is completely 
+      equivalent to any other instance. Most of these classes should be declared singletons (a
+      possible exception is that where instances of the class act as threads for a thread
+      pool).
+    </para>
+    <para>
+      For example, continuous compounding is a class which encapsulates the interest rate
+      algorithms required for interest rates using continuous compounding, like that of
+      converting between an interest rate and a discount factor. The instances of the class
+      do not carry state and hence one should declare the class a singleton -- otherwise one 
+      may carry the unnecessary overhead of creating large number of instances of 
+      <literal>ContinuousCompounding</literal> for many of the interest rates used, 
+      while the different interest rates to
+      which this form of compounding applies could all refer to the same instance of
+      <literal>ContinuousCompounding</literal>.
+    </para>
+    <para>
+      Other examples are 
+      <itemizedlist>
+        <listitem><para>sorters,</para></listitem>
+        <listitem><para>database connection pools,</para></listitem>
+        <listitem><para>
+          routers which route requests to different threads in a thread pool or to different machines
+          in a cluster.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Object factories</title>
+    <para>
+      Object factories themselves should be singletons. Otherwise no object factory would
+      take control of all the instances.
+    </para>
+  </section>
+  
+  
+</section>

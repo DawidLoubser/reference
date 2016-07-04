@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author Dawid Loubser -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.newIO.buffers.using.accessingContents">
+    
+    <title>Accessing the bytes in a buffer</title>
+    <para>
+        A buffer is a simply container for a set of bytes. Though they are the primary unit of transfer
+        for Java NIO classes such as <literal>Channel</literal>s, many other Java classes expect byte data
+        as a byte array. Any subclass of ByteBuffer exposes it's contents with the <literal>array()</literal>
+        method, returning a byte array. For example, the following three lines of code exposes the contents
+        of a file as a byte array, using memory-mapping:
+        <programlisting language="Java"><![CDATA[
+// Establish a channel to the file
+FileChannel fileChannel = new FileChannel(/*...*/);
+
+// Map the contents to memory
+ByteBuffer contents = fileChannel.map(/*...*/);
+
+// Access the byte information as a byte array
+byte[] bytes = contents.array();
+        ]]></programlisting>
+    </para>
+  <para>
+    Converting the contents to an array often negates the purpose of using
+    buffers in the first place, and data is usually best obtained from a
+    buffer, one iece at a time, using the buffer's <literal>get()</literal>
+    service.
+  </para>
+    <note>
+        <para>The primary aim of buffers is for efficiency, and a typical application working with
+        large files will only have parts of the file in memory at any one time (unlike the example above). 
+        Because buffers are meant to be re-usable, they overcome the need for unnecessary garbage collection, and they are typically used by
+        repeatedly reading chunks of data into the same buffer.</para>
+    </note>
+</section>

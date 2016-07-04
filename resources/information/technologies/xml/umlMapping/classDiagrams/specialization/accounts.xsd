@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.solms.co.za/finance/accounts"
+    xmlns="http://www.solms.co.za/finance/accounts"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:complexType name="Accounts">
+        <xs:sequence>
+            <xs:element name="account" type="Account" 
+                minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Account" abstract="true">
+        <xs:sequence>
+            <xs:element name="accountNumber" type="xs:string"/>
+            <xs:element name="balance" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="CreditCardAccount">
+        <xs:complexContent>
+            <xs:extension base="Account">
+                <xs:sequence>
+                    <xs:element name="creditLimit" type="xs:decimal"/>
+                    <xs:element name="creditCard" type="CreditCard"
+                        minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="SavingsAccount">
+        <xs:complexContent>
+            <xs:extension base="Account">
+                <xs:sequence>
+                    <xs:element name="interestRate" type="xs:decimal"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="CreditCard">
+        <xs:sequence>
+            <xs:element name="cardNumber" type="xs:string"/>
+            <xs:element name="clearingHouse" type="xs:string"/>
+            <xs:element name="holderName" type="xs:string"/>
+            <xs:element name="expiryDate" type="xs:date"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="accounts" type="Accounts"/>
+    
+</xs:schema>

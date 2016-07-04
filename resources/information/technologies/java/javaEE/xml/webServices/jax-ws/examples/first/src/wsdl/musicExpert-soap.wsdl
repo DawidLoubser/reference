@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:service="http://solms.co.za/example/simple"
+    xmlns:serviceSOAP="http://solms.co.za/example/simple/soap"
+    xsi:schemaLocation="http://schemas.xmlsoap.org/wsdl/ http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="http://solms.co.za/example/simple/soap">
+    
+    <wsdl:documentation>
+        This WSDL document specifies concrete SOAP bindings for the original
+        'http://solms.co.za/example/simple' contract. 
+    </wsdl:documentation>
+    
+    <!--Import abstract contract-->
+    <wsdl:import namespace="http://solms.co.za/example/simple" location="musicExpert.wsdl"/>
+    
+    <wsdl:binding name="MusicExpertSOAPBinding " type="service:MusicExpert">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="classifySong">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="unknownArtistOrSong">
+                <soap:fault use="literal" name="unknownArtistOrSong"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    
+    <wsdl:service name="MusicExpertService">
+        <wsdl:port name="MusicExpertSOAP" binding="serviceSOAP:MusicExpertSOAPBinding ">
+            <soap:address location="http://www.musicexpert.com/services/classify"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

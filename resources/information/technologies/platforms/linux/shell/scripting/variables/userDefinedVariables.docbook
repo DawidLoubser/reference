@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns5984:section xmlns:ns5984="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.variables.userDefinedVariables">
+
+  <ns5985:title xmlns:ns5985="http://docbook.org/ns/docbook">User-defined variables</ns5985:title>
+  <ns5986:para xmlns:ns5986="http://docbook.org/ns/docbook">
+    When writing your own shell script, you are often going to define variables and use
+    them in different places within the shell script.
+  </ns5986:para>
+  
+  <ns5987:section xmlns:ns5987="http://docbook.org/ns/docbook">
+    <ns5988:title xmlns:ns5988="http://docbook.org/ns/docbook">Valid variable names</ns5988:title>
+    <ns5989:para xmlns:ns5989="http://docbook.org/ns/docbook">
+      Variable names must begin with a letter and may be followed by further letters, numerical
+      characters or underscore characters.
+    </ns5989:para>
+  </ns5987:section>
+  
+  <ns5990:section xmlns:ns5990="http://docbook.org/ns/docbook">
+    <ns5991:title xmlns:ns5991="http://docbook.org/ns/docbook">Assigning a variable</ns5991:title>
+    <ns5992:para xmlns:ns5992="http://docbook.org/ns/docbook">
+      Variables are typically assigned in bash scripts via an assignment statement:
+      <ns5993:programlisting xmlns:ns5993="http://docbook.org/ns/docbook">
+myVariable=23      
+      </ns5993:programlisting>
+      <ns5994:note xmlns:ns5994="http://docbook.org/ns/docbook">
+        <ns5995:para xmlns:ns5995="http://docbook.org/ns/docbook">
+          There may be no spaces before or after the assignment.
+        </ns5995:para>
+      </ns5994:note>
+    </ns5992:para>
+    <ns5996:para xmlns:ns5996="http://docbook.org/ns/docbook">
+      We can also assign a variable via a <ns5997:command xmlns:ns5997="http://docbook.org/ns/docbook">let</ns5997:command> statement:
+      <ns5998:programlisting xmlns:ns5998="http://docbook.org/ns/docbook">
+let x=2*9      
+      </ns5998:programlisting>
+      The <ns5999:command xmlns:ns5999="http://docbook.org/ns/docbook">let</ns5999:command> command attempts to evaluate a result before
+      assigning it to the value of the variable.
+    </ns5996:para>
+    
+    <ns6000:section xmlns:ns6000="http://docbook.org/ns/docbook">
+      <ns6001:title xmlns:ns6001="http://docbook.org/ns/docbook">Bash variables are untyped</ns6001:title>
+      <ns6002:para xmlns:ns6002="http://docbook.org/ns/docbook">
+        Bash variables are untyped. Strictly speaking, bash variables are actually always
+        character strings. However, if the value of a variable contains only digits,
+        bash may interprete the string value of the variable as a numeric integer and allow
+        integer operations on the variable.
+        <ns6003:note xmlns:ns6003="http://docbook.org/ns/docbook">
+          <ns6004:para xmlns:ns6004="http://docbook.org/ns/docbook">
+            The lack of typed variables may, at times, be the cause of an error. It is the
+            developer's responsibility to keep track of the variable types in shell scripts.
+          </ns6004:para>
+        </ns6003:note>
+      </ns6002:para>
+    </ns6000:section>
+    
+    <ns6005:section xmlns:ns6005="http://docbook.org/ns/docbook">
+      <ns6006:title xmlns:ns6006="http://docbook.org/ns/docbook">Setting multiple variables on the same line</ns6006:title>
+      <ns6007:para xmlns:ns6007="http://docbook.org/ns/docbook">
+        You can set multiple variables at the same time. For example,
+        <ns6008:programlisting xmlns:ns6008="http://docbook.org/ns/docbook">
+let x=y=2*$z+12
+        </ns6008:programlisting>
+        sets the value of both, <ns6009:varname xmlns:ns6009="http://docbook.org/ns/docbook">x</ns6009:varname> and <ns6010:varname xmlns:ns6010="http://docbook.org/ns/docbook">y</ns6010:varname> to
+        the result of multiplying the value of the variable <ns6011:varname xmlns:ns6011="http://docbook.org/ns/docbook">z</ns6011:varname> with
+        <ns6012:constant xmlns:ns6012="http://docbook.org/ns/docbook">2</ns6012:constant> and adding <ns6013:constant xmlns:ns6013="http://docbook.org/ns/docbook">12</ns6013:constant> to it.
+      </ns6007:para>
+    </ns6005:section>
+    
+    <ns6014:section xmlns:ns6014="http://docbook.org/ns/docbook">
+      <ns6015:title xmlns:ns6015="http://docbook.org/ns/docbook">Assigning a variable to the result of a command</ns6015:title>
+      <ns6016:para xmlns:ns6016="http://docbook.org/ns/docbook">
+        You can use a single quote to assign the value of a variable to the result of
+        a command. For example.
+        <ns6017:programlisting xmlns:ns6017="http://docbook.org/ns/docbook">
+javaFiles=`find /home/fritz/work *.java`        
+        </ns6017:programlisting>
+        assigns the value of the variable <ns6018:varname xmlns:ns6018="http://docbook.org/ns/docbook">javaFiles</ns6018:varname> to output of the 
+        <ns6019:command xmlns:ns6019="http://docbook.org/ns/docbook">find</ns6019:command> command.
+      </ns6016:para>
+    </ns6014:section>
+    
+    <ns6020:section xmlns:ns6020="http://docbook.org/ns/docbook">
+      <ns6021:title xmlns:ns6021="http://docbook.org/ns/docbook">Reading in variables</ns6021:title>
+      <ns6022:para xmlns:ns6022="http://docbook.org/ns/docbook">
+        We can read in variable values via the <ns6023:command xmlns:ns6023="http://docbook.org/ns/docbook">read</ns6023:command> command:
+        <ns6024:cmdsynopsis xmlns:ns6024="http://docbook.org/ns/docbook"><ns6025:command xmlns:ns6025="http://docbook.org/ns/docbook">
+echo "Enter the value of a:"          
+read a         
+echo "a=$a"
+        </ns6025:command></ns6024:cmdsynopsis>
+      </ns6022:para>
+    </ns6020:section>
+    
+    <ns6026:section xmlns:ns6026="http://docbook.org/ns/docbook">
+      <ns6027:title xmlns:ns6027="http://docbook.org/ns/docbook">Unsetting variables</ns6027:title>
+      <ns6028:para xmlns:ns6028="http://docbook.org/ns/docbook">
+        It is good practice to <ns6029:command xmlns:ns6029="http://docbook.org/ns/docbook">unset</ns6029:command> a variable when it is no longer
+        used. This is particularly true because shell scripts do not support scoping of variables
+        except within the context of functions.
+        To <ns6030:command xmlns:ns6030="http://docbook.org/ns/docbook">unset</ns6030:command> a variable, simply use 
+        <ns6031:cmdsynopsis xmlns:ns6031="http://docbook.org/ns/docbook"><ns6032:command xmlns:ns6032="http://docbook.org/ns/docbook">
+unset variableName          
+        </ns6032:command></ns6031:cmdsynopsis>
+      </ns6028:para>
+    </ns6026:section>
+    
+  </ns5990:section>
+  
+  <ns6033:section xmlns:ns6033="http://docbook.org/ns/docbook">
+    <ns6034:title xmlns:ns6034="http://docbook.org/ns/docbook">Using variables</ns6034:title>
+    <ns6035:para xmlns:ns6035="http://docbook.org/ns/docbook">
+      We have already seen that we can dereference a variable, <ns6036:abbrev xmlns:ns6036="http://docbook.org/ns/docbook">i.e.</ns6036:abbrev> 
+      extract its value, via the <ns6037:command xmlns:ns6037="http://docbook.org/ns/docbook">$</ns6037:command> dereferencing 
+      operator.
+    </ns6035:para>
+    
+    <ns6038:section xmlns:ns6038="http://docbook.org/ns/docbook">
+      <ns6039:title xmlns:ns6039="http://docbook.org/ns/docbook">Strings with variables (partial quoting)</ns6039:title>
+      <ns6040:para xmlns:ns6040="http://docbook.org/ns/docbook">
+        At times, one wants to specify a string whose value is affected through the
+        expansion of variables contained in the string. To this end one uses
+        <ns6041:emphasis xmlns:ns6041="http://docbook.org/ns/docbook">partial quoting</ns6041:emphasis>.
+      </ns6040:para>
+      <ns6042:para xmlns:ns6042="http://docbook.org/ns/docbook">
+        A <ns6043:emphasis xmlns:ns6043="http://docbook.org/ns/docbook">partial quote</ns6043:emphasis> is a string put within double-quotes
+        which may have variable references which are expanded in-line. For example
+        <ns6044:programlisting xmlns:ns6044="http://docbook.org/ns/docbook">
+a=2        
+        
+echo "a = $a"        
+        </ns6044:programlisting>
+        will expand the value of the variable <ns6045:varname xmlns:ns6045="http://docbook.org/ns/docbook">a</ns6045:varname>, within the string
+        and print
+        <ns6046:programlisting xmlns:ns6046="http://docbook.org/ns/docbook">
+a = 2        
+        </ns6046:programlisting>
+      </ns6042:para>
+    </ns6038:section>
+    
+  </ns6033:section>
+  
+    
+  <ns6047:section xmlns:ns6047="http://docbook.org/ns/docbook">
+    <ns6048:title xmlns:ns6048="http://docbook.org/ns/docbook">Full quoting</ns6048:title>
+    <ns6049:para xmlns:ns6049="http://docbook.org/ns/docbook">
+        If a string contains <ns6050:varname xmlns:ns6050="http://docbook.org/ns/docbook">$</ns6050:varname> characters which 
+        do not refer to variables and should remain in the string, then one can use
+        full quoting. This is done by putting the string within single quotes. Thus
+        <ns6051:programlisting xmlns:ns6051="http://docbook.org/ns/docbook">
+a=2        
+        
+echo 'a = $a'        
+        </ns6051:programlisting>
+        will print
+        <ns6052:programlisting xmlns:ns6052="http://docbook.org/ns/docbook">
+a = $a
+        </ns6052:programlisting>
+    </ns6049:para>
+  </ns6047:section>
+    
+  <ns6053:section xmlns:ns6053="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.variables.escapeCharacters">
+    <ns6054:title xmlns:ns6054="http://docbook.org/ns/docbook">Escape characters</ns6054:title>
+    <ns6055:para xmlns:ns6055="http://docbook.org/ns/docbook">
+      With certain programs like <ns6056:command xmlns:ns6056="http://docbook.org/ns/docbook">echo</ns6056:command> and <ns6057:command xmlns:ns6057="http://docbook.org/ns/docbook">sed</ns6057:command>,
+      you can use the escape characters listed in
+      <ns6058:xref xmlns:ns6058="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.shell.scripting.variables.escapeCharactersTable"/>
+    </ns6055:para>
+    <ns6059:table xmlns:ns6059="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.variables.escapeCharactersTable">
+      <ns6060:title xmlns:ns6060="http://docbook.org/ns/docbook">Escape characters for <ns6061:command xmlns:ns6061="http://docbook.org/ns/docbook">echo</ns6061:command> and <ns6062:command xmlns:ns6062="http://docbook.org/ns/docbook">sed</ns6062:command></ns6060:title>
+      <ns6063:tgroup xmlns:ns6063="http://docbook.org/ns/docbook" cols="2">
+        <ns6064:thead xmlns:ns6064="http://docbook.org/ns/docbook">
+          <ns6065:row xmlns:ns6065="http://docbook.org/ns/docbook"><ns6066:entry xmlns:ns6066="http://docbook.org/ns/docbook">Escape character</ns6066:entry><ns6067:entry xmlns:ns6067="http://docbook.org/ns/docbook">Description</ns6067:entry></ns6065:row>
+        </ns6064:thead>
+        <ns6068:tbody xmlns:ns6068="http://docbook.org/ns/docbook">
+          <ns6069:row xmlns:ns6069="http://docbook.org/ns/docbook"><ns6070:entry xmlns:ns6070="http://docbook.org/ns/docbook">\n</ns6070:entry><ns6071:entry xmlns:ns6071="http://docbook.org/ns/docbook">new line</ns6071:entry></ns6069:row>
+          <ns6072:row xmlns:ns6072="http://docbook.org/ns/docbook"><ns6073:entry xmlns:ns6073="http://docbook.org/ns/docbook">\r</ns6073:entry><ns6074:entry xmlns:ns6074="http://docbook.org/ns/docbook">return</ns6074:entry></ns6072:row>
+          <ns6075:row xmlns:ns6075="http://docbook.org/ns/docbook"><ns6076:entry xmlns:ns6076="http://docbook.org/ns/docbook">\t</ns6076:entry><ns6077:entry xmlns:ns6077="http://docbook.org/ns/docbook">horizontal tab</ns6077:entry></ns6075:row>
+          <ns6078:row xmlns:ns6078="http://docbook.org/ns/docbook"><ns6079:entry xmlns:ns6079="http://docbook.org/ns/docbook">\v</ns6079:entry><ns6080:entry xmlns:ns6080="http://docbook.org/ns/docbook">vertical tab</ns6080:entry></ns6078:row>
+          <ns6081:row xmlns:ns6081="http://docbook.org/ns/docbook"><ns6082:entry xmlns:ns6082="http://docbook.org/ns/docbook">\b</ns6082:entry><ns6083:entry xmlns:ns6083="http://docbook.org/ns/docbook">backspace</ns6083:entry></ns6081:row>
+          <ns6084:row xmlns:ns6084="http://docbook.org/ns/docbook"><ns6085:entry xmlns:ns6085="http://docbook.org/ns/docbook">\a</ns6085:entry><ns6086:entry xmlns:ns6086="http://docbook.org/ns/docbook">alert (typically a beep)</ns6086:entry></ns6084:row>
+          <ns6087:row xmlns:ns6087="http://docbook.org/ns/docbook"><ns6088:entry xmlns:ns6088="http://docbook.org/ns/docbook">\0xx</ns6088:entry><ns6089:entry xmlns:ns6089="http://docbook.org/ns/docbook">maps onto the octal ASCII character number</ns6089:entry></ns6087:row>
+          <ns6090:row xmlns:ns6090="http://docbook.org/ns/docbook"><ns6091:entry xmlns:ns6091="http://docbook.org/ns/docbook">\"</ns6091:entry><ns6092:entry xmlns:ns6092="http://docbook.org/ns/docbook">double quotes</ns6092:entry></ns6090:row>
+          <ns6093:row xmlns:ns6093="http://docbook.org/ns/docbook"><ns6094:entry xmlns:ns6094="http://docbook.org/ns/docbook">\$</ns6094:entry><ns6095:entry xmlns:ns6095="http://docbook.org/ns/docbook">the dollar sign</ns6095:entry></ns6093:row>
+          <ns6096:row xmlns:ns6096="http://docbook.org/ns/docbook"><ns6097:entry xmlns:ns6097="http://docbook.org/ns/docbook">\\</ns6097:entry><ns6098:entry xmlns:ns6098="http://docbook.org/ns/docbook">a backslash</ns6098:entry></ns6096:row>
+        </ns6068:tbody>
+      </ns6063:tgroup>
+    </ns6059:table>
+  </ns6053:section>
+
+  <ns6099:section xmlns:ns6099="http://docbook.org/ns/docbook">
+    <ns6100:title xmlns:ns6100="http://docbook.org/ns/docbook">An example shell script</ns6100:title>
+    <ns6101:para xmlns:ns6101="http://docbook.org/ns/docbook">
+      Consider the following example shell script, <ns6102:filename xmlns:ns6102="http://docbook.org/ns/docbook">testVariables.sh</ns6102:filename>:
+      
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/testVariables_sh.docbook"/>      
+      
+      Running the script via
+      <ns6103:programlisting xmlns:ns6103="http://docbook.org/ns/docbook">
+./testVariables.sh 
+      </ns6103:programlisting>
+      yields an output similar to 
+      <ns6104:programlisting xmlns:ns6104="http://docbook.org/ns/docbook">
+b=36, c=36
+b=, c=36
+Processing the following Java files:
+./docs/components/technologies/uml/classDiagrams/specialization/java/ChequeAccount.java
+./docs/components/technologies/uml/classDiagrams/specialization/java/Account.java
+./docs/components/technologies/uml/classDiagrams/specialization/java/InsufficientFundsException.java
+./docs/components/technologies/java/j2se/security/SSLClientAuthentication/SSLIX.java
+./docs/components/cvs/za/co/stcd/finance/calculators/presentation/swing/LoanCalculatorClient.java
+./docs/components/cvs/za/co/stcd/finance/calculators/presentation/swing/LoanCalculatorPanel.java
+./docs/components/cvs/za/co/stcd/finance/calculators/businessLogic/LoanCalculator.java
+How old are you?
+28
+You are 10227 days old
+      </ns6104:programlisting>
+    </ns6101:para>
+  </ns6099:section>
+</ns5984:section>

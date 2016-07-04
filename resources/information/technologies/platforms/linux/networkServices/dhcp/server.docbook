@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns2741:section xmlns:ns2741="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.dhcp.server">
+
+	<ns2742:title xmlns:ns2742="http://docbook.org/ns/docbook">Dynamic network configuration using dhcp</ns2742:title>
+	<ns2743:para xmlns:ns2743="http://docbook.org/ns/docbook">
+	The DHCP server configuration is centralised in a single configuration file <ns2744:emphasis xmlns:ns2744="http://docbook.org/ns/docbook" role="strong">/etc/dhcpd.conf</ns2744:emphasis>. Once the configuration is set and the DHCP server packages are installed, the dhcpd service can be started via <ns2745:emphasis xmlns:ns2745="http://docbook.org/ns/docbook" role="strong">/etc/init.d/dhcpd start</ns2745:emphasis>. 
+	</ns2743:para>
+	<ns2746:programlisting xmlns:ns2746="http://docbook.org/ns/docbook">
+option domain-name "earth";
+option domain-name-servers 192.168.0.1;
+option routers 192.168.0.1;
+default-lease-time 900;
+max-lease-time 900;
+
+subnet 192.168.0.0 netmask 255.255.255.0 {
+  range 192.168.0.4 192.168.0.16;
+ }
+
+group {
+  host butterfly.earth{
+    hardware ethernet 00:03:93:49:4b:bc;
+    fixed-address 192.168.0.2;
+  }
+}
+group {
+  host snail.earth{
+    hardware ethernet 00:06:5b:bc:88:e2;
+    fixed-address 192.168.0.3;
+  }
+}
+	</ns2746:programlisting>
+	<ns2747:para xmlns:ns2747="http://docbook.org/ns/docbook">
+	The <ns2748:emphasis xmlns:ns2748="http://docbook.org/ns/docbook" role="strong">domain-name</ns2748:emphasis> option sets the domain of the clients, and the <ns2749:emphasis xmlns:ns2749="http://docbook.org/ns/docbook" role="strong">domain-name-servers</ns2749:emphasis> sets the clients list of name servers. The clients gateway is configured via the <ns2750:emphasis xmlns:ns2750="http://docbook.org/ns/docbook" role="strong">routers</ns2750:emphasis> options. The period after which the configuration is refreshed is set by the <ns2751:emphasis xmlns:ns2751="http://docbook.org/ns/docbook" role="strong">default-lease-time</ns2751:emphasis> parameter. The subnet section which follows, allocates a range (192.1680.4 up to 192.168.0.16) to be allocated from a pool. The two subsequent group sections map a fixed address to a specified mac address.
+	</ns2747:para>
+</ns2741:section>

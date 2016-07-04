@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Problems caused by optimistic locking</title>
+    <para>
+        Optimistic locking is <emphasis>more complex</emphasis> to implement and is more <emphasis>error prone</emphasis>,
+        particularly with respect to failures in the transaction manager itself.
+    </para>
+    
+    <section>
+        <title>Additional complexity and risk</title>
+        <para>
+            Optimistic locking adds the complexity of maintaining an accurate copy of the resource, accurately
+            comparing the resource state after having acquired the write lock to that at the start of the transaction,
+            and making the conflict decision. If any of these steps is not performeed correctly the ACID criteria
+            may be violated.
+        </para>
+    </section>
+    
+    <section>
+        <title>Overheads of maintaining an additional copy of each resource</title>
+        <para>
+            In optimistic locking one is required to make an additional copy of each resource, the validation copy.
+            This process may be costly from a memory and a computational perspective.
+        </para>
+    </section>
+    
+    <section>
+        <title>Overheads of having to acquire the lock for each resource at least twice</title>
+        <para>
+            There are some overheads of having to acquire within a single transaction for each resource
+            once a read lock and once a write lock.
+        </para>
+    </section>
+    
+    <section>
+        <title>Multiple executions of the business logic in high collision scenarios</title>
+        <para>
+            In high concurrency systems where conflicts are common, the overheads of having to execute potentially expensive
+            business logic multiple times when conflicts are detected may nullify any performance gain obtained through the
+            shorter time span of locks.
+        </para>
+    </section>    
+</section>    

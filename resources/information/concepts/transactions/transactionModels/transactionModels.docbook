@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns92:section xmlns:ns92="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.transactions.transactionModels.transactionModels">
+
+  <ns93:title xmlns:ns93="http://docbook.org/ns/docbook">Transaction models</ns93:title>
+  <ns94:para xmlns:ns94="http://docbook.org/ns/docbook">
+    There are a number of transactions models generally used. The most common are 
+    <ns95:itemizedlist xmlns:ns95="http://docbook.org/ns/docbook">
+      <ns96:listitem xmlns:ns96="http://docbook.org/ns/docbook">
+        <ns97:para xmlns:ns97="http://docbook.org/ns/docbook">flat transactions and </ns97:para>
+      </ns96:listitem>
+      <ns98:listitem xmlns:ns98="http://docbook.org/ns/docbook">
+        <ns99:para xmlns:ns99="http://docbook.org/ns/docbook">nested transactions</ns99:para>
+      </ns98:listitem>
+    </ns95:itemizedlist>
+  </ns94:para>
+  <ns100:para xmlns:ns100="http://docbook.org/ns/docbook">
+    The J2EE specification only requires support for flat transactions. The reason for this
+    is that these are standard across databases and hence J2EE does not introduce excessive
+    requirements on databases which can be used with application servers.
+  </ns100:para>
+  
+  <ns101:section xmlns:ns101="http://docbook.org/ns/docbook">
+    <ns102:title xmlns:ns102="http://docbook.org/ns/docbook">Flat Transactions</ns102:title>
+    <ns103:para xmlns:ns103="http://docbook.org/ns/docbook">
+      In the case of flat transactions each unit of work is at the same level and if any of
+      these fails, the entire transaction fails and is rolled back.
+    </ns103:para>
+  </ns101:section>
+  
+  <ns104:section xmlns:ns104="http://docbook.org/ns/docbook">
+    <ns105:title xmlns:ns105="http://docbook.org/ns/docbook">Nested Transactions</ns105:title>
+    <ns106:para xmlns:ns106="http://docbook.org/ns/docbook">
+      Nested transactions allows for lower-level atomic units to be embedded in
+      higher-level atomic units. The result is a <ns107:emphasis xmlns:ns107="http://docbook.org/ns/docbook">transaction tree</ns107:emphasis>. 
+      If any of the
+      sub-transactions fails, it will be rolled back, but the higher level transactions will not
+      be affected.
+    </ns106:para>
+    <ns108:para xmlns:ns108="http://docbook.org/ns/docbook">
+      For example, part of the work flow of organizing a party may be to obtain funding and
+      to book your favorite band. We would start transaction 
+      <ns109:literal xmlns:ns109="http://docbook.org/ns/docbook">OrganizeParty</ns109:literal> which encapsulates
+      the hole process. We may then try and obtain the funding in a nested transaction,
+      <ns110:literal xmlns:ns110="http://docbook.org/ns/docbook">ObtainFunds</ns110:literal>. 
+      Within that we try to transfer the required funds from your credit card to
+      your current account. This would be done in a nested transaction 
+      <ns111:literal xmlns:ns111="http://docbook.org/ns/docbook">TransferFromCreditCard</ns111:literal>.
+    </ns108:para>
+    <ns112:para xmlns:ns112="http://docbook.org/ns/docbook">
+      <ns113:emphasis xmlns:ns113="http://docbook.org/ns/docbook">If that transaction fails may not want to abort the idea of having the party. 
+      Only that step should be rolled back.</ns113:emphasis> 
+      You can start a new transaction for transferring the required
+      funds from your savings account, <ns114:literal xmlns:ns114="http://docbook.org/ns/docbook">TransferFromSavingsAccount</ns114:literal>. 
+      If either of these is successful, the <ns115:literal xmlns:ns115="http://docbook.org/ns/docbook">ObtainFunds</ns115:literal> is successful, but still 
+      kept open (not committed). Next you attempt the transaction <ns116:literal xmlns:ns116="http://docbook.org/ns/docbook">BookBand</ns116:literal>. 
+      If successful, then the whole process, <ns117:literal xmlns:ns117="http://docbook.org/ns/docbook">organizeParty</ns117:literal>,
+      can be committed resulting in <ns118:literal xmlns:ns118="http://docbook.org/ns/docbook">BookBand</ns118:literal> and 
+      <ns119:literal xmlns:ns119="http://docbook.org/ns/docbook">ObtainFunds</ns119:literal> being committed. If either step
+      failed all transactions would be rolled back and there would be no party.
+    </ns112:para>
+  </ns104:section>
+</ns92:section>

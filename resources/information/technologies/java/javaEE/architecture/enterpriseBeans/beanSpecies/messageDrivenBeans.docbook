@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+
+    <title>Message-Driven Beans</title>
+    <para>
+        MDBs are beans which can process JMS (Java Messaging Service) messages. JMS messages
+        are asynchronous messages fed by a messaging service that facilitates
+        reliable asynchronous communication. If a message recipient is temporarily not
+        available, the message will typically be stored until it can be delivered.
+    </para>
+
+    <section>
+        <title>Synchronous versus asynchronous bean requests</title>
+        <para>
+            Session beans receive synchronous service requests --
+            <abbrev>i.e.</abbrev>
+            the
+            calling thread's execution is paused until a reply or an exception is received. In
+            the case of message driven beans the calling thread simply dispatches the message and,
+            upon confirmation of receipt from the message queue or topic, the client thread continues
+            processing while the server may still be processing the message.
+        </para>
+    </section>
+
+    <section>
+        <title>The onMessage() service</title>
+        <para>
+            Unlike entity and session beans, message driven beans provide only a single
+            <literal>onMessage()</literal>
+            service. If different services are to be
+            provided by a single message driven bean (typically this is not recommended),
+            then the different service requests must be encoded in the message itself.
+        </para>
+    </section>
+
+    <section>
+        <title>Providing a response</title>
+        <para>
+            Message-driven beans do not support return values (it would not make sense in
+            the context of processing asynchronous service requests.) If a message-driven bean
+            should make a response available to the client, it again should place a response message
+            on a message queue which will route messages to the client.
+        </para>
+    </section>
+
+</section>    

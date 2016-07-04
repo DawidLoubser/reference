@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DEPENDS: Java Reflection -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude" 
+  xml:id="resources.information.technologies.java.lang.annotations.reflection.reflection">
+    
+    <title>Reflecting on annotations</title>
+  <indexterm>
+    <primary>Annotations</primary>
+    <secondary>reflection</secondary>
+  </indexterm>
+    <para>
+        Java has extended the reflection API in order to facilitate processing of annotations. The
+        following reflection methods have been added to the class descriptor,
+        <literal>java.lang.Class</literal>:
+        <itemizedlist>
+            <listitem><formalpara>
+                <title><![CDATA[public boolean isAnnotationPresent(Class<? extends Annotation> annotationClass)]]></title>
+                <para>
+                    This method can be used to query whether an annotated element is annotated with the specified annotation.
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title><![CDATA[public Annotation[] getAnnotations()]]></title>
+                <para>Returns an array of all annotations for this element. This includes <emphasis>inherited</emphasis>
+                annotations, if any. (i.e. annotations specified in a superclass or interface)</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title><![CDATA[public Annotation[] getDeclaredAnnotations()]]></title>
+                <para>Returns an array of all annotations that have specifically been added to this element.
+                This does <emphasis>not</emphasis> include any inherited annotations.</para>
+            </formalpara></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        Annotations can then be queried for their type and methods. The annotation parameter values
+        can be extracted using standard reflection to determine the annotation's query methods and
+        invoking them via <literal>Method.invoke(...)</literal>.
+    </para>
+</section>    

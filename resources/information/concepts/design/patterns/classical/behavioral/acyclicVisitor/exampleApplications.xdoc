@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.design.patterns.classical.behavioral.acyclicVisitor.exampleApplications"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Example applications</title>
+  <para>
+    The acyclic visitor pattern still enables one to add a polymorphic service across a class hierarchy
+    without modifying the classes in the class hierarchy and without introducing a cyclic dependency
+    between the element and the visitor hierarchy.
+  </para>
+  <para>
+    It can be applied to the same problem domain as what the classical visitor pattern is applied to
+    including adding polymorphic services to class hierarchies which
+    <itemizedlist>
+      <listitem><para>
+         cannot be modified because the source code is not available,       
+      </para></listitem>
+      <listitem><para>
+        one does not want to modify because the class hierarchy is maintained by a different
+        development team and one does not want to absorb the maintenance burden of maintaining
+        one's own modifications, and
+      </para></listitem>
+      <listitem><para>
+        one may not want to modify because adding those services would pollute the responsibility
+        focus of the classes.
+      </para></listitem>
+    </itemizedlist>
+    
+  </para>
+  <section>
+    <title>Total salary and total leave calculators</title>
+    <para>
+      Reconsider the example of the <literal>TotalSalaryCalculator</literal> and
+      let us add a <literal>TotalLeaveCalculator</literal>. Using the acyclic
+      visitor pattern one may have a structure as shown in
+      <xref linkend="resources.information.concepts.design.patterns.classical.behavioral.acyclicVisitor.employeesVisitor_fig"/>.
+    </para>
+    
+    <figure id="resources.information.concepts.design.patterns.classical.behavioral.acyclicVisitor.employeesVisitor_fig">
+      <title>The structure used for a visitor adding a getTotalSalary() service to employees.</title>
+      <graphic fileref="employeeVisitors.jpg"/>
+    </figure>
+    
+    <para>
+       The <literal>TotalSalaryCalculator</literal> adds a polymorphic 
+       <literal>getTotalSalary()</literal> method to the entire element class hierarchy
+       which executes different algorithms for different types of employees.
+    </para>
+    <para>
+      The <literal>TotalLeaveCalculator</literal> cannot be applied to contract workers
+      and hence only impements the <literal>DeveloperVisitor</literal> and
+      <literal>ManagerVisitor</literal> interfaces.
+    </para>
+  </section>
+</section>

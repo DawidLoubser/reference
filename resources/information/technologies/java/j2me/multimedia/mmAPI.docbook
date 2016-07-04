@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns655:section xmlns:ns655="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2me.multimedia.mmAPI">
+
+	<ns656:title xmlns:ns656="http://docbook.org/ns/docbook">Multimedia API</ns656:title>
+	<ns657:para xmlns:ns657="http://docbook.org/ns/docbook">
+	In the MIDP2 specification a audio-only subset from the MMAPI (Mobile Media API) has been included allowing for the playback of audio, such as WAV and MIDI files as well as MPEG data. Certain devices may also support the full MMAPI 1.0 specification allowing for the playback and recording of audio and video content.
+	</ns657:para>
+	
+	<ns658:section xmlns:ns658="http://docbook.org/ns/docbook">
+		<ns659:title xmlns:ns659="http://docbook.org/ns/docbook">MMAPI Audio Only Subset as included in MIDP2</ns659:title>
+		<ns660:para xmlns:ns660="http://docbook.org/ns/docbook">
+		The subset included in the MIDP2 API from the MMAPI consist of the <ns661:emphasis xmlns:ns661="http://docbook.org/ns/docbook">Manager class</ns661:emphasis>, <ns662:emphasis xmlns:ns662="http://docbook.org/ns/docbook">Controll class</ns662:emphasis>, <ns663:emphasis xmlns:ns663="http://docbook.org/ns/docbook">Player interface</ns663:emphasis> and <ns664:emphasis xmlns:ns664="http://docbook.org/ns/docbook">Control interface</ns664:emphasis>. A Manger is used to construct an instance of a Player for a particular Audio MIME type. The instance of the Player provides various services around playback such as repititions, start and stop, and some resource management. An instance of a controll can also be accessed via the player's <ns665:emphasis xmlns:ns665="http://docbook.org/ns/docbook">getControl</ns665:emphasis> method.
+		</ns660:para>
+		<ns666:para xmlns:ns666="http://docbook.org/ns/docbook">
+		Two type of controls are provided, a <ns667:emphasis xmlns:ns667="http://docbook.org/ns/docbook">TuneControl</ns667:emphasis> and a <ns668:emphasis xmlns:ns668="http://docbook.org/ns/docbook">VolumenControl</ns668:emphasis>. The TuneControl controls the playback of user defined monotonic tone sequences. The VolumeControl mananges the volume at which playback occurs. It also allows for the muting of current playback.
+		</ns666:para>
+		<ns669:para xmlns:ns669="http://docbook.org/ns/docbook">
+		Play a note for 5000 milliseconds as full volume (100)
+			<ns670:programlisting xmlns:ns670="http://docbook.org/ns/docbook">
+try
+{
+	Manager.playTone(ToneControl.C4,5000, 100)
+}
+catch (MediaException e)
+{
+	... 
+}
+			</ns670:programlisting>
+		The following snippet illustrated the playback of a wav file	
+			<ns671:programlisting xmlns:ns671="http://docbook.org/ns/docbook">
+try
+{
+	InputStream in = getClass().getResourceAsStream("music.wav");
+	Player player = Manager.createPlayer(in, "audio/X-wav");
+	player.start();	
+}
+catch (IOException ioe)
+{
+	... 
+}
+catch (MediaException me)
+{
+	... 
+}
+			</ns671:programlisting>
+		</ns669:para>
+		<ns672:para xmlns:ns672="http://docbook.org/ns/docbook">
+
+
+		It may require a significant amount of resources to construct and initialise a player, which may deplay the actual playback from time the start method has been invoked. To minimize this delay the Player provides a number of services. When the player is instanticated it is in the <ns673:emphasis xmlns:ns673="http://docbook.org/ns/docbook">UNREALIZED</ns673:emphasis>. At this point the Player does not have enought information to function, and invokations to <ns674:emphasis xmlns:ns674="http://docbook.org/ns/docbook">getContentType</ns674:emphasis> result in a IllegalStateException to be thrown. The player enters a <ns675:emphasis xmlns:ns675="http://docbook.org/ns/docbook">REALIZED</ns675:emphasis> state via the realize method. During the realization the player obtains the information required to acquire the media resource. At may acquire further resources, except those which are exclusive / scarce system resources, such as the audio device.
+		</ns672:para>
+		<ns676:para xmlns:ns676="http://docbook.org/ns/docbook">
+		To further minize the delay between invokation of the play method and actual playback the <ns677:emphasis xmlns:ns677="http://docbook.org/ns/docbook">prefetch</ns677:emphasis> service is available. During prefetchinch the player aquires all resources required for playback as well as read a portion of the media resource into a buffer. After completion of the prefetch method the player is in a <ns678:emphasis xmlns:ns678="http://docbook.org/ns/docbook">PREFETCHED</ns678:emphasis> state. After playback the player returns into this state as well.
+		</ns676:para>
+		<ns679:para xmlns:ns679="http://docbook.org/ns/docbook">
+		During playback the player is in a <ns680:emphasis xmlns:ns680="http://docbook.org/ns/docbook">STARTED</ns680:emphasis> state. To release any aquired resources the <ns681:emphasis xmlns:ns681="http://docbook.org/ns/docbook">close</ns681:emphasis> method must be invoked. After closing the player enters the <ns682:emphasis xmlns:ns682="http://docbook.org/ns/docbook">CLOSED</ns682:emphasis> state.
+		</ns679:para>
+	</ns658:section>	
+
+	<ns683:section xmlns:ns683="http://docbook.org/ns/docbook">
+		<ns684:title xmlns:ns684="http://docbook.org/ns/docbook">MultiMedia API 1.0 (MMAPI)</ns684:title>
+		<ns685:para xmlns:ns685="http://docbook.org/ns/docbook">
+		The MMAPI is an add on API which may be supported on certain devices. It facilitates the playback and recording of both audio and video content. As such it required relatively powerfull devices.
+		</ns685:para>
+	</ns683:section>	
+	
+</ns655:section>

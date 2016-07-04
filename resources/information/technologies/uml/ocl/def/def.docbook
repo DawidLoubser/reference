@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>
+        Def expressions
+        <indexterm><primary>Object Constraint Language</primary><secondary>def expression</secondary></indexterm>
+    </title>
+    <para>
+        Variables declared via <literal>let</literal> sub-expressions are only available within the expression containing the
+        <literal>let</literal> declaration. If one would like to define variables which is available across multiples expressions,
+       one needs to use <literal>def</literal> expressions.
+    </para>
+    <para>
+        Definition expressions can not only be used to define variable, but also to define functions. Both, variables defined for
+        a context and functions defined for the context are globally available as if the context had the corresponding attributes
+        and services. They are accessed like any other attribute or operation.
+    </para>
+    
+    <section>
+        <title>Defining variables via def expressions</title>
+        <para>
+            To define a variable via a definition expression, one uses the following syntax:
+            <programlisting><![CDATA[
+def: <variableName> : <VariableType> = <InitializationExpression>                
+                ]]></programlisting>
+        </para>
+        <para>
+            For example, if we would like to define a variable which represents the total available funds for an account, we could
+            use the following OCL definintion expression:
+            <programlisting><![CDATA[
+context Account
+    def: availableFunds : Real = self.balance - self.minimumBalance
+    ]]></programlisting>
+            The <literal>availableFunds</literal> attribute is now available to the UML model like any other attribute of the class
+            and can be used across various OCL expressions.
+        </para>
+    </section>
+    
+    <section>
+        <title>Defining re-usable functions</title>
+        <para>
+            OCL definitions can also be used to define reusable functions for classes. For example, if we wanted to define a
+            reusable function which returns true if an organization has a particular employee who has a specified identity number,
+            we could use the following OCL definition expression:
+            <programlisting><![CDATA[
+context Organization  
+    def: hasEmployee(idNumber: String): Boolean = self.employees.exists(idNo=idNumber)
+                ]]></programlisting>
+        </para>
+    </section>    
+</section>    

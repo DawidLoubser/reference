@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Unit test classes</title>
+  
+  <indexterm>
+    <primary>JUnit</primary>
+    <secondary>unit test</secondary>
+  </indexterm>
+  
+  
+  <para>
+    A JUnit test class contains one or more test cases. It is
+    loaded by the JUnit runtime, and test cases executed, upon request.
+    <programlisting language="Java"><![CDATA[
+public class AccountTest
+{
+  // Test cases go here
+  // ...
+  
+  private Account testSubject;
+}
+    ]]></programlisting>
+  </para>
+  
+  <section>
+    <title>The scope of a unit test</title>
+    <para>
+      Whilst JUnit does not enforce the scope of a unit test, a single
+      test is typically used to test a single class (or interface).
+    </para>
+  </section>
+  
+  <section>
+    <title>Lifecycle annotations</title>
+    <para>
+      A common requirement in unit tests that contain many test cases is to
+      start with a <quote>fresh</quote> subject, or set of test
+      data, before executing any particular test case. In order to prevent
+      duplication, we may place such <quote>setup</quote> instructions in
+      a separate method, and request that it be run before each test case
+      by annotating it with <literal>@org.junit.Before</literal>.
+    </para>
+    <para>
+      Similarly, we may have to perform cleanup, release resources, or
+      other <quote>teardown</quote> actions after each test case. A
+      service containing such instructions may be annotated with 
+      <literal>@org.junit.After</literal>.
+    </para>
+    <para>
+      The following skeleton for a test shows the usage of both
+      annotations:
+      <programlisting language="Java">
+<xi:include href="src/TestWithBeforeAfter.java" parse="text"/>
+      </programlisting>
+      Which, when run, produces the following output:
+      <programlisting><![CDATA[
+Creating new subject
+Testing something
+Cleaning up
+Creating new subject
+Testing something else
+Cleaning up
+      ]]></programlisting>
+    </para>
+    <para>
+      Similarly, a service which should be run <emphasis>only once per
+        unit test, before
+      any test cases are executed</emphasis> may be annotated with
+      <literal>@org.junit.BeforeClass</literal>, and a service which
+      should be run at <emphasis>only once, after all test cases have been
+      completed</emphasis>, may be annotated with
+      <literal>@org.junit.AfterClass</literal>. These are useful to
+      perform global environmental setup, connecting to remote services,
+      etc.
+    </para>
+  </section>
+  
+</section>

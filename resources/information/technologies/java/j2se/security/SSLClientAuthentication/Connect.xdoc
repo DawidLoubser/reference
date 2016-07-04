@@ -1,0 +1,39 @@
+<section id="resources.information.technologies.java.j2se.security.SSLClientAuthentication.Connect"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Connecting to the server</title>
+	<section>
+		<title>Using OPENSSL and a browser</title>
+		<para>
+		Now that we have created a CA and configured Apache to use SSL and provide secure contence on port 443 a connection can be attempted. If we have switched client authentication on <emphasis role="strong">SSLVerifyClient require</emphasis> then we still need to create and sign a client certificate. The process to do this is the same a we used to create the servers certificate.
+		</para>
+		<programlisting>
+perl CA.pl -newreq
+perl CA.pl -sign
+mv newreq.pem client_req.pem
+mv newcert.pem client_cert.pem
+openssl rsa &lt; client_req.pem &gt; client_key.pem
+openssl pkcs12 -export -in client_cert.pem -inkey client_key.pem -out client.p12
+		</programlisting>
+		<para>
+			The resulting <emphasis role="strong">client.p12</emphasis> file must be imported into the browser. In many cases it might be required to add the CA's certificate <emphasis role="strong">cacerts.pem</emphasis> to the browsers certificate store as well. This might also prevent popups appearing.
+		</para>	
+	</section>
+	<section>
+		<title>Using JAVA API</title>
+		<para>
+			To connect using a java program follow the steps. Details on the commands issued are the the Tools section	
+		</para>
+		<programlisting>
+Create a keystore with a key pair in it
+Export a CSR from the keystore
+Sign the request with your own CA's cacert
+Re-Import the signed cert back into the keystore. Remember to use the same alias
+		</programlisting>
+		<para>
+			Connection using standard JSSE calls. One might need to specify the proper <emphasis role="strong">key</emphasis> and <emphasis role="strong">trustore</emphasis> (default truststore is $JAVA_HOME/jre/lib/security/cacerts). Keystores are used to contain keys and trusted certs and must contain a entry of type <emphasis role="strong">keyEntry</emphasis> consisting of the client's private key and the signed certificate. Truststores are used to validated trusted entities. The truststore must contain the CA's public certificate. To specify the key and truststores at runtime the following paramters used <emphasis role="strong">-Djavax.net.ssl.keyStore and -Djavax.net.ssl.keyStorePassword</emphasis> and respectively <emphasis role="strong">-Djavax.net.ssl.trustStore and -Djavax.net.ssl.trustStorePassword</emphasis>
+		</para>
+	</section>
+</section>

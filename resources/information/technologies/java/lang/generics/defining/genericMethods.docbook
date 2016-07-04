@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.lang.generics.defining.genericMethods">
+    <title>Generic methods</title>
+    <para>
+        In certain cases, one may find it useful to define a type
+        parameter for a method, without defining the class containing it
+        as a generic class. This is often useful in utility classes
+        containing static services (functions) as stand-alone algorithms.
+    </para>
+    <para>
+        For example, below we define a generic <literal>bubbleSort</literal> function which can sort
+        any array of any Comparable object (using bounded types). In
+        <literal>main</literal> we request the
+        to sort a <literal>Double[]</literal> and a <literal>String[]</literal>. 
+      The compiler will generate all required casting and type-checking
+      code, and we may simply use the functions as if two separate ones
+      were defined in the class:
+       <programlisting language="Java">
+<xi:include parse="text" href="../examples/genericBubbleSortMethod/GenericBubbleSortMethod.java"/>           
+       </programlisting>
+        Running the application yields the following output:
+        <programlisting>
+{0.9,1.2,2.4,3.9,5.6}
+{Pete,Peter,Petra,Piet,Pieter,Piotr}
+        </programlisting>
+      <note>
+        <para>
+          The <literal>java.util.Comparable</literal> interface itself is
+          a generic interface, with a type parameter to constrain the types
+          of objects it can be compared against.
+        </para>
+      </note>
+    </para>
+    
+    <section>
+        <title>Generic constructors</title>
+        <para>
+            At times one may want to be able to define a generic constructor for a class which
+            itself may not be generic. For example, one may want to provide the facility to 
+            generate a double precision floating point vector from any array of numbers. This could
+            be supported by the following generic constructor:
+<programlisting language="Java">
+    <![CDATA[
+public class Vector    // Note: Vector class itself not parameterised
+{
+    public Vector() {}
+    
+    public <N extends Number> Vector(N[] elements)
+    {
+      ...
+    }
+    
+    private double[] elements;
+}    
+    ]]></programlisting>            
+        </para>
+    </section>
+    
+</section>    

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"-->
+<chapter id="resources.information.technologies.tools.versionControl._cvs.toolsIntegration.cvsWithIDE"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Using CVS with an IDE</title>
+    
+    <para>In this section we will illustrate the use of CVS with an IDE. Most IDEs support some kind of source control and many support CVS.
+    For this part and in the open source spirit we will use NetBeans. All the functionality is not the same as in other development environments
+    but you will easily find it once you know what to expect.</para>
+    
+    <section>
+        <title>CVS and NetBeans</title>
+        
+        <para>There are basically some steps you will take to set up or configure the repository you want to access. And then there are some 
+        tasks which will be a part of your everyday run of the mill. Here we will cover:
+            <itemizedlist>
+                <listitem><para>Configuring and setting up CVS</para></listitem>
+                <listitem><para>General CVS commands, ie.: checking in and out</para></listitem>
+                <listitem><para>Diffs, patches and conflicts</para></listitem>
+            </itemizedlist>
+        </para>
+        
+        <section>
+            <title>Configuring and setting up CVS</title>
+            <para>Setting up and connecting to the CVS repository is merely a case of mounting the file system and entering the appropriate 
+            information at the prompts.</para>
+            <para>If you haven't already, start NetBeans, create a new project. Click on the 'Filesystem' tab on the left in the Explorer panel, click with the 
+            alternate mouse button(usually the right button) on the Filesystems icon inside the Filesystems explorer move the mouse cursor to 'Mount'
+            then 'Version Control' and finally click on CVS as illustrated in this image.
+            <figure>
+                <title>Mounting CVS filesystem</title>
+                <graphic fileref="../../../../../resources/information/technologies/tools/versionControl/cvs/toolsIntegration/images/mountCVS.jpg"/>
+            </figure>
+            </para>
+            <para>The New CVS Wizard opens. Type the directory name of the local directory that'll be the working directory
+            or use the Browse button for a Gui browser to locate the directory you want to use. Finally click the 'Next' button. 
+            <figure>
+                <title>New CVS Wizard</title>
+                <graphic fileref="../../../../../resources/information/technologies/tools/versionControl/cvs/toolsIntegration/images/CVS-Wizard-1.jpg"/>
+            </figure>
+            </para>
+            <para>This will bring you to the screen where the server (whether local or remote) settings are to be entered.
+            <figure>
+                <title>CVS wizard settings</title>
+                <graphic fileref="../../../../../resources/information/technologies/tools/versionControl/cvs/toolsIntegration/images/CVS-Wizard-2.jpg"/>
+            </figure>
+            Choose the appropriate radio button for the connection method. Enter the server details including the port number if you are using a non 
+            default port and your user name if authentication is required. NetBeans will require you to have the CVS executable installed for certain connection types.
+            The internal CVS client only supports pserver. Click next once you are done on this screen. The next screen will give you the opportunity to use the
+            CVS executable vs. built in CVS client options:<figure>
+                <title>CVS executable vs. Built in client</title>
+                <graphic fileref="../../../../../resources/information/technologies/tools/versionControl/cvs/toolsIntegration/images/CVS-Wizard-3.jpg"/>
+            </figure>
+             Choose appropriately and click next. Note that you have more options with the local CVS executable than
+            with the built in client. For example creating patches and graphical conflict resolution is only available if you use the CVS executable.
+            </para>
+            <para>Now you have an opportunity to test your settings. Type your password in the password field and click on the 'Login' button.
+            The server response will be printed just below the password field. If everything went according to plan , 'Login successful' will be displayed there.
+            If not, check the message and respond appropriately, retype/double check password, check server and server settings etc. 
+            <figure>
+                <title>CVS wizard login to server screen</title>
+                <graphic fileref="../../../../../resources/information/technologies/tools/versionControl/cvs/toolsIntegration/images/CVS-Wizard-4.jpg"/>
+            </figure></para>
+            <para>On the next screen you can choose to check out repository files. Tick the check box if you want to check out files or modules
+            and click on 'Finish'. The following prompt looks like this: <figure>
+                <title>Select Module</title>
+                <graphic fileref="../../../../../resources/information/technologies/tools/versionControl/cvs/toolsIntegration/images/CVS-Wizard-6.jpg"/>
+            </figure>
+             Here you can set the various options for the <command>checkout</command> command. If modules are configured on the server
+             you can click on the 'Select Module' button. Then you can simply click on the module you want to check out. Alternatively you can just
+             type the module name or the name of the directory that was imported into the repository. You can also just leave the fullstop/dot '.' 
+             that's there to check out everything. Click 'OK' to complete.</para>
+            <para>As with any other CVS command the command output window will pop up to show CVS' output to the command. 
+            <figure>
+                <title>Checkout output</title>
+                <graphic fileref="../../../../../resources/information/technologies/tools/versionControl/cvs/toolsIntegration/images/CVS-Wizard-7.jpg"/>
+            </figure>
+             If everything went as it should you will see the local copy of the mounted CVS file system in the 
+            explorer panel on the left with the red VCS icon next to it: 
+            <figure>
+                <title>File system mounted</title>
+                <graphic fileref="../../../../../resources/information/technologies/tools/versionControl/cvs/toolsIntegration/images/CVS-Wizard-8.jpg"/>
+            </figure>
+             If you got this far; Congratulations! 
+            </para>
+            <para>If you didn't get this far, revisit your server settings, permissions and other settings like security etc.</para>
+            <section>
+                <title>Changing settings</title>
+                <para>You can easily edit the different CVS settings by clicking with the alternate mouse button on the mounted VCS file system icon 
+                in the explorer view and then clicking on  'Customize' pop-up-menu-option. Here you can change everything from the local
+                relative mount point(local directory) to the server's settings. Note that NetBeans is quite finicky about the mounted file systems and packaging.
+                If you for example have a package tree like: za.co.solmstraining.utilities with the base directory za in a directory called source. But the whole 
+                project has other packages that have different base and subdirectories. You can mount the whole project base directory and then just
+                set the relative mount points to the different package base directories. This way both CVS and the java filesystem restrictions are satisfied.</para>
+                <para>Next to the different files there are little badges to indicate their status. A little tick for Up-to-date, a plus indicates the file was
+                locally modified, a minus because the file has been removed locally. A triangle when the file has a merge conflict with the file on the server.
+                Finally there is a little yellow diamond when a file needs to be checked out. In addition you'll see the file's status to the right of the filename.
+                </para>
+            </section>
+            
+        </section>
+        
+        <section>
+            <title>General CVS commands, ie.: checking in and out</title>
+            <para> The general run of the mill commands can be executed by clicking with the alternate mouse button on the file, moving the mouse cursor to CVS
+            and then to the command you wish to execute like in this image: 
+            <figure>
+                <title>CVS commands(Internal CVS client)</title>
+                <graphic fileref="../../../../../resources/information/technologies/tools/versionControl/cvs/toolsIntegration/images/CVS-Commands-0.jpg"/>
+            </figure>
+             After clicking the command will execute and the Output window will pop up once again to display the CVS output. To add command options/flags 
+             to the command; hold down the control 'Ctrl' key while clicking on the command. A command option prompt window will pop up to allow you to further
+             define your command.</para>
+        </section>
+        
+        <section>
+            <title>Diffs, conflicts and patches </title>
+           <para>So you are not the only person on the team busy with a specific file. Usually you get your changes checked in before the
+           other's and merging is their problem not yours. Today you slip up and merging is your baby since both you and some else edited the same lines
+           in the file you are attempting to check in. CVS insist that you resolve the conflicts before you can check in. Diff text output really suck,
+           navigating your way from conflict to conflict deciphering both the source and the diff output. Surely
+           there's a better way to do this. What if you had a view of the files that looked like the following image?
+           </para>
+           <section>
+               <title>Diff gui</title>
+           <figure>
+               <title>Viewing conflicts with GUI Diff tool.</title>
+               <graphic fileref="../../../../../resources/information/technologies/tools/versionControl/cvs/toolsIntegration/images/FileMerge.jpg"/>
+           </figure>
+           <para>
+            Usually versions are merged automatically but if there are changes to exactly the same lines conflicts arise. You can right click on the file that needs 
+           merging, move the mouse cursor to CVS then click on diff. This diff gui will pop up. The conflicts will be highlighted, you can go to the appropriate lines 
+           edit them and commit after all the conflicts are resolved. Alternatively you can right click on the file, then click on <command>'Resolve conflicts'</command>
+           which will bring up a similar gui, except that it has a third view at the bottom of the finally accepted version. Click on the accept or accept and next buttons at the top of the version which
+           has the changes you want. Finally close the conflict resolver and commit the file to CVS.
+           </para>
+           </section>
+           <section>
+               <title>Patching</title>
+               <para>Sometimes you will want to propagate source changes without committing your changes to the repository. One way of doing this is creating a patch.
+               In NetBeans right click on the changed file, move the mouse cursor to CVS then click on patch. You can manipulate the command options in the next
+               screen or just click OK to accept the default command flags. The patch output window will pop up, Like in the image, you can right click in this
+               screen and click on <command>'Save to file'</command>. Save it where and as whatever you choose. </para>
+               <figure>
+                   <title>Patch output</title>
+                   <graphic fileref="../../../../../resources/information/technologies/tools/versionControl/cvs/toolsIntegration/images/patch-output.jpg"/>
+               </figure>
+               <para>You can send the patch to any interested parties and they can apply the patch to that version of the source. Let's say for example the
+               senior engineer wants to evaluate the changes before committing it to the repository. In NetBeans it's a case of right clicking on the file or directory to which
+               the patch applies, move the cursor to tools and then click on apply patch. In the File chooser dialogue that pops up browse to the patch, select it and apply it.
+               You could potentially also ship the patch to your off site customer in any of the numerous ways. They can then patch and recompile their version of the source.
+               </para>
+               
+           </section>
+           
+        </section>
+        
+        
+    </section>
+    
+</chapter>

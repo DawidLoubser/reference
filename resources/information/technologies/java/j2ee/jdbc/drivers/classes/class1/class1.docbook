@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns3586:section xmlns:ns3586="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.jdbc.drivers.classes.class1.class1">
+
+        
+  <ns3587:title xmlns:ns3587="http://docbook.org/ns/docbook">Class 1 JDBC drivers</ns3587:title>
+  <ns3588:para xmlns:ns3588="http://docbook.org/ns/docbook">
+    Class 1 drivers use a client-side JDBC/ODBC bridge which communicates with an ODBC
+    server typically (though not necessarily) hosted on the database server (see
+    <ns3589:xref xmlns:ns3589="http://docbook.org/ns/docbook" linkend="resources.information.technologies.java.j2ee.jdbc.drivers.classes.class1.class1_fig"/>).
+    ODBC is a Windows API standard for SQL developed by Microsoft. Other companies
+    (<ns3590:abbrev xmlns:ns3590="http://docbook.org/ns/docbook">e.g.</ns3590:abbrev> Visigenic) have developed ODBC software development kits for 
+    other platforms.
+  </ns3588:para>
+  
+  <ns3591:figure xmlns:ns3591="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.jdbc.drivers.classes.class1.class1_fig">
+    <ns3592:title xmlns:ns3592="http://docbook.org/ns/docbook">Class 1 JDBC driver</ns3592:title>
+    <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="class1.jpg"/></imageobject></mediaobject>
+  </ns3591:figure>
+  
+  <ns3593:para xmlns:ns3593="http://docbook.org/ns/docbook">
+    The JDBC/ODBC bridge maps JDBC calls onto ODBC calls which are sent to the ODBC
+    server. The ODBC server translates the ODBC service requests to native database calls. 
+  </ns3593:para>
+
+  <ns3594:section xmlns:ns3594="http://docbook.org/ns/docbook">
+    <ns3595:title xmlns:ns3595="http://docbook.org/ns/docbook">Problems with Drivers using a JDBC/ODBC bridge</ns3595:title>
+    <ns3596:para xmlns:ns3596="http://docbook.org/ns/docbook">
+      <ns3597:itemizedlist xmlns:ns3597="http://docbook.org/ns/docbook">
+        <ns3598:listitem xmlns:ns3598="http://docbook.org/ns/docbook"><ns3599:formalpara xmlns:ns3599="http://docbook.org/ns/docbook">
+          <ns3600:title xmlns:ns3600="http://docbook.org/ns/docbook">Performance:</ns3600:title>
+          <ns3601:para xmlns:ns3601="http://docbook.org/ns/docbook">
+            Going through the various layers (and particularly the JDBC-ODBC
+            mapping) can degrade performance significantly.
+          </ns3601:para>
+        </ns3599:formalpara></ns3598:listitem>
+        <ns3602:listitem xmlns:ns3602="http://docbook.org/ns/docbook"><ns3603:formalpara xmlns:ns3603="http://docbook.org/ns/docbook">
+          <ns3604:title xmlns:ns3604="http://docbook.org/ns/docbook">Security:</ns3604:title>
+          <ns3605:para xmlns:ns3605="http://docbook.org/ns/docbook">
+            Java byte code can be sent
+            accross the network to dynamically supply client database functionality. If the code makes
+            use of native routines (as would be the case for class 1 and 2 drivers) the Java security
+            manager has to assume that the code is insecure and will have to lock you into the sandbox
+            security model.
+          </ns3605:para>
+        </ns3603:formalpara></ns3602:listitem>
+        <ns3606:listitem xmlns:ns3606="http://docbook.org/ns/docbook"><ns3607:formalpara xmlns:ns3607="http://docbook.org/ns/docbook">
+          <ns3608:title xmlns:ns3608="http://docbook.org/ns/docbook">Portability:</ns3608:title>
+          <ns3609:para xmlns:ns3609="http://docbook.org/ns/docbook">
+            Using a native JDBC/ODBC bridge compromises the portability
+            of the client side significantly.
+          </ns3609:para>
+        </ns3607:formalpara></ns3606:listitem>
+      </ns3597:itemizedlist>
+      Furthermore, ODBC drivers require that the ODBC
+      datasource is registered with the operating system.
+    </ns3596:para>
+  </ns3594:section>
+</ns3586:section>

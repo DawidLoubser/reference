@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.networking.tcpIpCommunication.aMultiThreadedEchoServer"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="A Multi-Threaded Echo Server">A Multi-Threaded Echo Server</title>
+
+<para>The simple server implementations discussed thus far can only
+handle a single connection (client) at a time. In order to serve
+multiple clients we have to create a seperate server thread for
+each client.</para>
+
+<para>Let us first look at the main program encapsulated in the
+<emphasis role="verb">MultiThreadEchoServer</emphasis> class. We first create a server socket. In
+an infinite loop the server waits for clients to connect via</para>
+
+<para><programlisting>
+Socket ClientServerSocket server.accept()
+</programlisting></para>
+
+
+<para>It creates a socket for each client and then creates an
+<emphasis role="verb">EchoHandlerThread</emphasis> for this client and starts the thread. The
+actual echo handler thread creates an input and an outputstream to
+the client socket. It then simply echos the lines received from the
+client until it receives ``CIAOU'' upon which it closes the
+connection. I</para>
+
+<para>
+<programlisting>
+<xi:include parse="text" href="MultiThreadEchoServer.java"/>
+</programlisting>
+</para>    
+
+<para>This server can now handle multiple clients simultaneously. The
+clients could use the client application developed in the previous
+section to connect to the server.</para>
+    
+</section>

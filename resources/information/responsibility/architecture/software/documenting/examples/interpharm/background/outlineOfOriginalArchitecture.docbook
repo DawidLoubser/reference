@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Outline of the original architecture</title>
+    <para>
+        The original architecture had the following core features:
+        <itemizedlist>
+            <listitem><para>
+                The system core was realized via a <emphasis>multi-layered clustered environment with
+                    different software layers deployed on different hardware layers</emphasis>.
+                There were 4 layers with
+                <itemizedlist>
+                    <listitem><para>
+                        two machines load balancing incoming requests across 
+                    </para></listitem>
+                    <listitem><para>
+                        a cluster of 5 front-end machines demarshaling the request and persisting the
+                        incoming claims which load balance the calls onto        
+                    </para></listitem>
+                    <listitem><para>
+                        a rules processing cluster which, in turn, load balances the preprocessed
+                        requests
+                    </para></listitem>
+                    <listitem><para>
+                        across a third cluster of machines which marshaled the preprocessed medical aid
+                        claims onto messages for the individual medical aid administrators.
+                    </para></listitem>
+                </itemizedlist>
+            </para></listitem>
+            <listitem><para>
+                <emphasis>Intra-layer communication</emphasis> was done via asynchronous XML messages.
+                The original synchronous request was thus internally mapped onto asynchronous messages
+                between the software layers, forwarded synchronously to the medical aid administrator,
+                and returned through the layers asynchronously. For the return the asynchronous message
+                was matched with the original synchronous request in order top provide a synchronous
+                response.
+            </para></listitem>
+            <listitem><para>
+                Persistence was realized through a XML-Castor based database mapping onto local
+                databases which were synchronized across all local databases within the 4 layers of
+                clusters as well as a master database.
+            </para></listitem>
+            <listitem><para>
+                Connectivity to the medical aid administrators was done by having proprietary connector
+                components open separate sessions for the the individual requests.
+            </para></listitem>
+            <listitem><para>
+                Load balancing was done through home-grown load balancers requesting threads from
+                home-grown thread pools. Object pools where otherwise not used.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+</section>

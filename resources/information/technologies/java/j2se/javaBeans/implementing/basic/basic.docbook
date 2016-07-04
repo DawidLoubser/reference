@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Implementing basic JavaBeans</title>
+  <indexterm>
+    <primary>JavaBeans</primary>
+    <secondary>basic</secondary>
+  </indexterm>
+  <para>
+    A simple JavaBean is a class which adheres to the following
+    constraints:
+    <itemizedlist>
+      <listitem>
+        <para>The attributes (or <emphasis>properties</emphasis>) of the
+          bean are normal, private (encapsulated) attributes, exposed
+          through <emphasis>getter</emphasis> and <emphasis>setter</emphasis>
+        services that adhere to the standard pattern. For the
+        <literal>String</literal> property called <quote>x</quote>, the
+        services would be: <literal>public String getX()</literal> and
+        <literal>public void setX( String x)</literal>.</para>
+      </listitem>
+      <listitem>
+        <para>The bean implements the <literal>java.io.Serializable</literal>
+        marker interface, which merely gives Java permission to persist an
+        instance as bytes, and reconstruct it later on when called for.
+        This also enables the network transmission of a bean.</para>
+      </listitem>
+      <listitem>
+        <para>Though any number of <emphasis>constructors</emphasis> may
+        be provided, every JavaBean must possess a default (no-arguments)
+        constructor. This enables instantiation followed by retrospective
+        state population.</para>
+      </listitem>
+      <listitem>
+        <para>It is recommended that every JavaBean implement the standard
+        <literal>java.lang.Object</literal> services, such as
+          <literal>toString()</literal>, <literal>equals()</literal>,
+          <literal>hashCode()</literal>, etc.</para>
+      </listitem>
+    </itemizedlist>
+  </para>
+  <figure>
+    <title>Simple JavaBeans representation</title>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="javaBeansImplementation.png"/>
+      </imageobject>
+    </mediaobject>
+  </figure>
+  <note>
+    <para>
+      These constraints are so common, that, indeed, most Java classes
+      written automatically qualify for being JavaBeans, whether
+      intentional or not. Adhering to these conventions make it
+      surprisingly easy to use one's existing objects in common
+      persistence, XML, and GUI frameworks, among others.
+    </para>
+  </note>
+  
+  <section>
+    <title>Referring to properties</title>
+    <para>
+      From a pure Java perspective, we would access properties
+      through their accessor methods:
+      <programlisting language="Java"><![CDATA[
+CarBean myCar =     // get from somewhere
+double cc = myCar.getEngine().getCapacity();
+        ]]></programlisting>
+    </para>
+    <para>
+      However, many frameworks (such as the JSP framework for dynamic web
+      content, or JPA for peristent storage and query) exist in which we could easily access (and traverse)
+      properties through simpler patterns. For example, in JSP, to output
+      the capacity of a given car's engine, one could use the following EL
+      expression:
+      <programlisting language="XML"><![CDATA[
+<p>
+  Your car's engine capacity is ${myCar.engine.capacity} cc
+</p>
+        ]]></programlisting>
+      In such frameworks, the accessor methods are ultimately always invoked
+      (since the private attributes cannot be accessed directly), which
+      means that the get/set methods are an important interception point
+      to perform validation, generate events, and so on.
+    </para>
+  </section>
+  
+</section>

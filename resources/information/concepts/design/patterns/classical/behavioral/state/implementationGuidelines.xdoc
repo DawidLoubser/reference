@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.design.patterns.classical.behavioral.state.implementationGuidelines"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Implementation guidelines</title>
+    <para>
+      Although the implementation of the state pattern is typically a direct mapping of the
+      UML diagrams onto code, there are a few aspects which are worth discussing.
+    </para>  
+
+  <section>
+    <title>Who should control the state transitions?</title>
+    <para>
+      Although on first sight it may seem obvious to let the context manage state transitions,
+      one can often make a strong argument for delegating that control to the state itself.
+      This is particularly so if the same user event results in different state transitions depending 
+      on the current state itself. Also, some state transitions may be available only from certain 
+      states.
+    </para>
+    <para>
+      One may see the fact that in these cases one state needs to know of at least another
+      state as a distinct disadvantage. However, this is often the nature of the problem and
+      if it is, then giving the state transition control to the states themselves provides the
+      cleanest and simplest solution.
+      <note>
+        <para>
+          Of course, if a context has certain generic transitions which are common across all
+          states as well as others which are specific for individual states, then the generic control
+          would reside in the context and the state-specific control within individual states.
+        </para>
+      </note>
+    </para>
+  </section>
+  
+  <section>
+    <title>Encapsulate all state-dependant aspects within the state</title>
+    <para>
+      This includes not only the state-dependent service realizations, but also the
+      state dependent attributes.
+    </para>
+  </section>
+  
+   <section>
+     <title>States can be kept alive while they are inactive</title> 
+     <para>
+       For contexts which change state very frequently one would typically want to keep
+       the state alive, even when it is inactive. This avoids the overheads of unnecessary
+       object creation and destruction. Furthermore the value of state-dependent 
+       attributes may survive across multiple state transitions.
+     </para>
+   </section>
+   
+   <section>
+     <title>States are often implemented as either inner or static nested classes</title>
+     <para>
+       The state of an object is usually hidden within its context and only accessible by its
+       context. Furthermore, state objects often require access to private attributes and
+       services of the context. Both of these are facilitated via inner classes.
+     </para>
+     <para>
+       If the state does not require access to private instance members of the context and
+       if it does not carry intrinsic state, then the flyweight pattern can be realized via static
+       nested classes.
+     </para>
+   </section>
+   
+</section>

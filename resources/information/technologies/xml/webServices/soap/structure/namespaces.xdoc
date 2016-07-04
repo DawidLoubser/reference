@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      id="resources.information.technologies.xml.webServices.soap.structure.namespaces">
+    
+    <title>Namespaces in SOAP Messages</title>
+    <para>
+        The use of XML namespaces a directly responsible for the flexibility of SOAP.
+    </para>
+    <para>
+        Namespaces are used in SOAP messages exactly as they would be in any other
+        XML vocabulary that combines several namespaces (Schemas). The schema rules
+        in terms of <emphasis>element form defaults</emphasis> and <emphasis>attribute
+        form defaults</emphasis> need to be observed, which controls whether all sub-elements
+        of a particular element must contain namespace prefixes (or not, i.e. they inherit the
+        namespace of their parent element).
+    </para>
+    <para>
+        The SOAP Envelope namespace (used to qualify the <literal>Envelope</literal>, 
+        <literal>Body</literal>, <literal>Header</literal>, etc elements) is
+        <programlisting>
+http://schemas.xmlsoap.org/soap/envelope/
+        </programlisting>
+    </para>
+    <para>
+        Furthermore, the <emphasis>Schema Instance</emphasis> namespace, used to add
+        attributes to indicate the <emphasis>type</emphasis> of an element (if the
+        type extends an expected base type), is
+        <programlisting>
+http://www.w3.org/2001/XMLSchema-instance
+        </programlisting>
+    </para>
+    
+    <section>
+        <title>Namespace Examples</title>
+        <para>
+            Consider the following scenario: A Web Service accepts a message to add a <literal>Person</literal>
+            to a repository of some kind (say, a Human Resources system). Our schema defines an <literal>Employee</literal>
+            type (a special type of person, with added state). The schema containing the core types do not know about the
+            web service messages, and a separate schema is created to define an <literal>AddPersonRequest</literal>
+            message.
+        </para>
+        <para>
+            This is the schema defining our primary types. It is in no way linked to SOAP, and may be re-used
+            throughout the organisation (or the world):
+            <programlisting>
+<xi:include href="src/people.xsd" parse="text"/>
+            </programlisting>
+        </para>
+        <para>
+            This is the schema which defines the message types for our SOAP service. It imports the
+            schema above, and merely defines types for the messages (which usually correspond to
+            the <emphasis>use cases</emphasis> of our system):
+            <programlisting>
+<xi:include href="src/people-service.xsd" parse="text"/>
+            </programlisting>
+        </para>
+        <para>
+            The following SOAP message containing the request (to add an <emphasis>Employee</emphasis>):
+            <programlisting>
+<xi:include href="src/msgAddPerson01.xml" parse="text"/>
+            </programlisting> 
+            is, from an XML and SOAP point of view, absolutely identical to the following:
+            <programlisting>
+<xi:include href="src/msgAddPerson02.xml" parse="text"/>
+            </programlisting>
+            Note that, as long as namespace prefixes are <emphasis>visible</emphasis> to
+            elements using them (by nesting those elements inside an element which contains
+            the declaration) it doesn't matter where we declare the namespaces.
+            Also, from a service contract point of view, the service may or may not care that we are in fact
+            sending an employee. The only guarantee is that it accepts <literal>Person</literal> instances,
+            though we may choose to send it any specialised type.
+        </para>
+    </section>
+
+</section>

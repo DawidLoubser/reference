@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2se.security.messageIntegrity.senderSide"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/Docs/re_schema/solmsDoc.xsd">
+    
+    <title role="Sender Side">Sender Side</title>
+
+<para>The sender would generate a message digest as the information is 
+written to a stream. To facilitate this in a convenient way,
+Java's Security API provides a \verb+DigestOutputStream+ which
+automatically generates a digest value for the information which
+has been sent through it.</para>
+
+<para><programlisting><![CDATA[
+byte[] information;
+
+// get info
+
+OutputStream out;
+
+// Initialize output stream perhaps as a buffered output stream
+// to a socket or file.
+
+MessageDigest messageDigester = MessageDigest.getInstance("SHA-1");
+
+DigestOutputStream digestStream 
+  = new DigestOutputStream(out, messageDigester);
+
+digestStream.write(information, 0, information.length);
+
+messageDigester = digestStream.getMessageDigest();
+
+byte[] digest = messageDigester.digest();
+]]></programlisting></para>
+    
+</section>

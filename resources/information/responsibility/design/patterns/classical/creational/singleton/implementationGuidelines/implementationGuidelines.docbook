@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Implementation guidelines</title>
+    <para>
+        <itemizedlist>
+            <listitem><para>
+                In languages like <emphasis>C++, Java, Delphi</emphasis> and their derivatives 
+                (<abbrev>e.g.</abbrev> C#), the concept of a meta-class is not directly supported. 
+                Meta-class methods and attributes are mapped onto <emphasis>static</emphasis> 
+                members, <abbrev>i.e.</abbrev> class functions and class attributes. The constructor, 
+                the instance handle (pointer or reference), and the access provider service 
+                (<abbrev>e.g.</abbrev> <literal>getInstance()</literal>) would in
+                these languages all be declared <emphasis>static</emphasis>.
+                <note>
+                    <para>
+                        Constructors are implicitly class (static) services.
+                    </para>
+                </note>
+            </para></listitem>
+            <listitem><para>
+                The instance handle needs to  be declared <emphasis>private</emphasis>. So does the
+                constructor except when specializations are allowed. In such cases the constructor needs
+                to be declared <emphasis>protected</emphasis>.
+            </para></listitem>
+            <listitem><para>
+                The access provider service requires <emphasis>public</emphasis> access.
+            </para></listitem>
+            <listitem><para>
+                You should consider combining the singleton pattern with the double-locking pattern
+                to make it thread-safe.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>Example: ContinuousCompounding</title>
+        <para>
+            Below is the listing of a Java implementation of <literal>ContinuousCompounding</literal>.
+            We make the class a singleton because instances of the class do not carry any state.
+            <programlisting>
+                <xi:include parse="text" href="ContinuousCompounding.java" />      
+            </programlisting>
+        </para>
+    </section>
+    
+</section>

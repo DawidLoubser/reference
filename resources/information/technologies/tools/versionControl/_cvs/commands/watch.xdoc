@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.commands.watch"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Using CVS for inter-developer communication</title>
+  <para>
+    CVS is meant for large and distributed development groups (in the open-source
+    community they cannot even be called teams). To enable developers to work
+    efficiently, CVS does not implement a lock-edit-unlock mechanism. The latter
+    does not scale well with development team size.
+  </para>
+  <para>
+    The down-side of this is that you may have checked out a file and, without 
+    being aware of it, another developer updates the same file and commits it.
+    It would be nice if CVS could make you aware of this. To this end CVS
+    supports <emphasis>watches</emphasis>.
+  </para>
+  <para>
+    Besides facilitating inter-developer communication, watches also enable
+    administrators to keep a close eye on what is going on in the repository.
+    CVS watches support notification by e-mail, SMS and other mechanisms.
+  </para>
+  
+  <section>
+    <title>Enabling notification</title>
+    <para>
+      Developers will typically be notified by e-mail. To this end we have
+      to enable the notification mechanism of CVS. This is done by editing
+      the <filename><![CDATA[CVSROOT/notify]]></filename> file. In the
+      spirit of version control, this is done by 
+      <itemizedlist>
+        <listitem><para>
+          checking the file out from the CVSROOT module,
+        </para></listitem>
+        <listitem><para>
+         editing the file and  
+        </para></listitem>
+        <listitem><para>
+          commiting the changes.
+        </para></listitem>
+      </itemizedlist>
+      Since these are administrative files, it is usually the 
+      <quote>root</quote> user who has to do this.
+    </para>
+    <para>
+      To enable notification we uncomment the last line. The resultant file
+      will look something like the following:
+      <synopsis><![CDATA[
+# The "notify" file controls where notifications from watches set by
+# "cvs watch add" or "cvs edit" are sent.  The first entry on a line is
+# a regular expression which is tested against the directory that the
+# change is being made to, relative to the $CVSROOT.  If it matches,
+# then the remainder of the line is a filter program that should contain
+# one occurrence of %s for the user to notify, and information on its
+# standard input.
+#
+# "ALL" or "DEFAULT" can be used in place of the regular expression.
+#
+# For example:
+ALL mail -s "CVS notification" %s
+      ]]></synopsis>
+      Here
+      <itemizedlist>
+        <listitem><para>
+          <literal>All</literal> refers to the directory for which
+          notification is enabled,
+        </para></listitem>
+        <listitem><para>
+          <literal>mail</literal> specifies that notification will be via
+          e-mail,
+        </para></listitem>
+        <listitem><para>
+          <quote>CVS notification</quote> is the e-mail subject line 
+          which will be used by CVS when sending e-mail messages and
+        </para></listitem>
+        <listitem><para>
+          <literal>%s</literal> refers to the user which will be substituted
+          by CVS.
+        </para></listitem>
+      </itemizedlist>
+      
+    </para>
+  </section>
+  
+  <section>
+    <title>Providing the e-mail addresses for CVS notifications</title>
+    <para>
+      Somewhere CVS needs to get the e-mail addresses for the users which
+      are to be notified when watching and editing files. This is done by
+      adding a <filename><![CDATA[users]]></filename> file in 
+      <filename><![CDATA[CVSROOT]]></filename>.
+    </para>
+    <para>
+      Once again, we have to check out the <filename>CVSROOT</filename>
+      module in order to add the <filename>users</filename> file. The 
+      structure of this file is as follows:
+      <synopsis><![CDATA[
+user1:emailAddressForUser1      
+...
+user1:emailAddressForUser1      
+      ]]></synopsis>
+      In our case the file looks as follows:
+      <synopsis><![CDATA[
+fritz:fritz
+ernst:ernst@solmstraining.co.za
+      ]]></synopsis>
+      In order to test it without being connected to a mail server, we
+      use the Linux mail address for the first user which is simply
+      the username.
+    </para>
+    <para>
+      We now need to add the <filename>users</filename> file to the
+      <filename>CVSROOT</filename> module via
+      <synopsis><![CDATA[
+cvs add users      
+      ]]></synopsis>
+      and then commit the addition:
+      <synopsis><![CDATA[
+cvs commit -m 'added users file with e-mail addresses for notification'      
+      ]]></synopsis>
+      Once again, CVS will notify you that the administrative files have
+      been rebuilt.
+    </para>
+  </section>
+  
+  <section>
+    <title>
+      Specifying that users should run <command>cvs edit</command> before
+      editing a file
+    </title>
+    <para>
+      We can now add watched (see next section) and will be notified of
+      any changes made to any of the files we are watching. This is nice,
+      but we will only be notified after the file has been edited, 
+      <abbrev>i.e.</abbrev> when the changes are committed.
+    </para>
+    <para>
+      It would, however, be better if we were notified before another user
+      actually starts editing the file. Though CVS cannot truely enforce
+      this fully, it can encourage users to use the <command>cvs edit</command>
+      command before starting to edit a file by checking the file out with
+      read-only access. The <command>cvs edit</command> command will
+      change the file access to <emphasis>read/write</emphasis> and notify
+      any <emphasis>watchers</emphasis> that a file is going to be edited.
+    </para>
+    <para>
+      To switch <command>cvs edit</command> requesting on, you run the following
+      command in CVS:
+      <synopsis><![CDATA[
+cvs watch on [-lR] files ...      
+      ]]></synopsis>
+      For example 
+      <synopsis><![CDATA[
+cvs watch on LoanCalculator.java      
+      ]]></synopsis>
+      switches <command>cvs edit</command> requesting on for the
+      <filename>LoanCalculator.java</filename> file.
+    </para>
+  </section>
+  
+  <section>
+    <title>Requesting watches</title>
+    <para>
+      Developers watch one or more files, requesting notification
+      if one of the following commands is applied by other developers
+      to the watched files:
+      <itemizedlist>
+        <listitem><para>
+          <command>edit</command> when users unlock a watched file
+          via the <command>cvs edit</command> command,
+        </para></listitem>
+        <listitem><para>
+          <command>unedit</command> when users have released the 
+          <emphasis>busy-being-edited</emphasis> state for the file
+          by either
+          <itemizedlist>
+            <listitem><para><command>cvs unedit,</command></para></listitem>
+            <listitem><para><command>cvs release or</command></para></listitem>
+            <listitem><para>
+              <command>cvs update</command> after deleting the file.
+            </para></listitem>
+          </itemizedlist>
+        </para></listitem>
+        <listitem><para>
+          <command>commit</command> when committing changes or
+        </para></listitem>
+        <listitem><para>
+          <command>all</command> for all of the above (this is the default).
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      To request a watch on a set of files one uses the command
+      <synopsis><![CDATA[
+cvs watch add [-a action] [-lR] files...
+      ]]></synopsis>
+      with the action being one of the above 
+      <emphasis>watchable commands</emphasis>.
+    </para>
+    <para>
+      For example, 
+      <synopsis><![CDATA[
+cvs watch add LoanCalculator.java     
+      ]]></synopsis>
+      requests a watch for a particular file. You will now be notified when
+      users start editing the file via <command>cvs edit</command> or when
+      <command>unedit</command>ing, <command>commit</command>ting and when
+      running <command>cvs release</command>.
+    </para>
+  </section>
+  
+  <section>
+    <title>Removing watches from file</title>
+    <para>
+      Watched are simply removed via 
+      <synopsis><![CDATA[
+cvs watch remove [-a action] [-lR] files...     
+      ]]></synopsis>
+      For example, to remove the watch we applied to 
+      <filename>LoanCalculator.java</filename>, we run
+      <synopsis><![CDATA[
+cvs watch remove LoanCalculator.java      
+      ]]></synopsis>
+    </para>
+  </section>
+  
+    
+  <section>
+    <title>Switching <command>cvs edit</command> requesting off</title>
+    <para>
+      We can switch off the feature that files with watched are fed to
+      developers with read-only access in order to encourage them to run
+      <command>cvs edit</command> via
+      <synopsis><![CDATA[
+cvs watch off [-lR] files...      
+      ]]></synopsis>
+    </para>
+  </section>
+  
+</section>

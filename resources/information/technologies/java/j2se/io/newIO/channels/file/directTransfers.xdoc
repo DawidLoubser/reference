@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author Dawid Loubser -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.newIO.channels.file.directTransfers">
+    
+    <title>Direct Channel Data Transfer</title>
+    <para>
+        A very handy feature of FileChannel is the capability to request it to transfer all underlying
+        data to, or from, another channel directly - <emphasis>without the need for managing buffers yourself</emphasis>. 
+        This saves us from writing the same old I/O copy loop over and over again. Furthermore, the transfer typically executes 
+        in operating system kernel space, which leads to a significant performance gain.
+    </para>
+    <para>
+        Two services are provided, both of which take <literal>long</literal> <emphasis>start position</emphasis>
+        and <emphasis>count</emphasis> numbers. These indicate the range of bytes to be attempted for reading / writing.
+        In both cases, if the range (<literal>start + count</literal>) falls outside of the available bytes, an exception is not thrown - the actual number 
+        of bytes transferred is simply returned as a <literal>long</literal>.
+        <programlisting language="Java"><![CDATA[
+long transferTo(long position, long count, WritableByteChannel target)
+long transferFrom(ReadableByteChannel src, long position, long count)
+        ]]></programlisting>
+    </para>
+    
+</section>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Virtual files and directories</title>
+    <para>
+        The <literal>proc</literal> file system has virtual files as interfaces (mostly read-only) into operating system processes,
+        resources and devices. These files have zero length as they are not physical files but purely and I/O mechanism to the kernel.
+        <note><para>
+            Even though they are listed as zero size on the file system, they may contain a large amount of data when viewed.
+        </para></note>
+     </para>   
+    <para>
+        The last-modified date/time is always the current time as these virtual files are purely a real-time access point to a kernel
+        managed resource or process. From a user aspect it might look that the files are constantly updated.        
+    </para> 
+    <para>    
+        Thus, virtual files such like <literal>/proc/partitions</literal>, <literal>/proc/interrupts</literal> , <literal>/proc/meminfo</literal>
+        provide real-time information on what is happening in the kernel.
+    </para>    
+    <para>
+        To provide easier access, the process files are grouped into virtual directories representing different kernel process or resource groups.
+        For instance, bus-related information is grouped in a virtual <literal>bus</literal> directory which has virtual sub-directories
+        <literal>pci</literal>, <literal>usb</literal>, <literal>input</literal>, .... Each of these has a devices file as well as individual files for
+        specific devices. For example, the input devices for a laptop may look as follows:
+        Likewise, process directories contain information about each running process on the system.
+        <programlisting><![CDATA[
+I: Bus=0019 Vendor=0000 Product=0001 Version=0000
+N: Name="Power Button"
+P: Phys=LNXPWRBN/button/input0
+S: Sysfs=/devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+U: Uniq=
+H: Handlers=kbd event0 
+B: EV=3
+B: KEY=100000 0 0 0
+
+I: Bus=0019 Vendor=0000 Product=0005 Version=0000
+N: Name="Lid Switch"
+P: Phys=PNP0C0D/button/input0
+S: Sysfs=/devices/LNXSYSTM:00/device:00/PNP0C0D:00/input/input1
+U: Uniq=
+H: Handlers=event1 
+B: EV=21
+B: SW=1
+
+I: Bus=0019 Vendor=0000 Product=0003 Version=0000
+N: Name="Sleep Button"
+P: Phys=PNP0C0E/button/input0
+S: Sysfs=/devices/LNXSYSTM:00/device:00/PNP0C0E:00/input/input2
+U: Uniq=
+H: Handlers=kbd event2 
+B: EV=3
+B: KEY=4000 0 0 0 0
+
+I: Bus=0019 Vendor=0000 Product=0006 Version=0000
+N: Name="Video Bus"
+P: Phys=/video/input0
+S: Sysfs=/devices/LNXSYSTM:00/device:00/PNP0A08:00/device:06/device:07/input/input3
+U: Uniq=
+H: Handlers=kbd event3 
+B: EV=3
+B: KEY=3f000b 0 0 0 0 0 0 0
+
+I: Bus=0017 Vendor=0001 Product=0001 Version=0100
+N: Name="Macintosh mouse button emulation"
+P: Phys=
+S: Sysfs=/devices/virtual/input/input4
+U: Uniq=
+H: Handlers=mouse0 event4 
+B: EV=7
+B: KEY=70000 0 0 0 0 0 0 0 0
+B: REL=3
+
+I: Bus=0011 Vendor=0001 Product=0001 Version=ab54
+N: Name="AT Translated Set 2 keyboard"
+P: Phys=isa0060/serio0/input0
+S: Sysfs=/devices/platform/i8042/serio0/input/input5
+U: Uniq=
+H: Handlers=kbd event5 
+B: EV=120013
+B: KEY=4 2000000 3803078 f800d001 feffffdf ffefffff ffffffff fffffffe
+B: MSC=10
+B: LED=7
+
+I: Bus=0011 Vendor=0002 Product=0007 Version=81b1
+N: Name="SynPS/2 Synaptics TouchPad"
+P: Phys=isa0060/serio1/input0
+S: Sysfs=/devices/platform/i8042/serio1/input/input6
+U: Uniq=
+H: Handlers=mouse1 event6 
+B: EV=b
+B: KEY=6420 0 70000 0 0 0 0 0 0 0 0
+B: ABS=11000003
+
+I: Bus=0011 Vendor=0002 Product=000a Version=0000
+N: Name="TPPS/2 IBM TrackPoint"
+P: Phys=synaptics-pt/serio0/input0
+S: Sysfs=/devices/platform/i8042/serio1/serio2/input/input7
+U: Uniq=
+H: Handlers=mouse2 event7 
+B: EV=7
+B: KEY=70000 0 0 0 0 0 0 0 0
+B: REL=3            
+            ]]></programlisting>
+    </para>
+</section>    

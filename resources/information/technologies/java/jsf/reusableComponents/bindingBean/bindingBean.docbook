@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Binding beans</title>
+    <para>
+        Binding beans are managed beans which
+        <itemizedlist>
+            <listitem><para>
+                manage presentation layer processes which assembles the information required for
+                the request object of a service required by the user - this process may be across
+                multiple views,
+            </para></listitem>
+            <listitem><para>
+                construct the request object for the service to be requested from the services layer
+                and request the service from the services layer,
+            </para></listitem>
+            <listitem><para>
+                receive the result from the services layer and render the result to the user.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        To this end we have a binding bean which is a managed bean which 
+        <itemizedlist>
+            <listitem><para>
+                gets the stateless session bean or the web service for the business
+                service in the services/business processes layer injected, via the
+                <literal>@EJB</literal> and <literal>@WebServiceRef</literal>
+                annotations respectively,
+            </para></listitem>
+            <listitem><para>
+                gets the backing bean
+                for the view used to construct request view injected as a managed property
+                via the <literal>@ManagedProperty</literal> annotation,
+            </para></listitem>
+            <listitem><para>
+                has a action handler for the command component (e.g. button) through which the
+                user requests the service within which the request object is assembled, the
+                service is requested from the services layer and the result view is
+                brought up by returning a relative path to it.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        For example, below we show the <literal>AddWeatherReadingBinding</literal> which
+        <itemizedlist>
+            <listitem><para>
+                gets the <literal>WeatherServices</literal> stateless session bean
+                    and the <literal>WeatherReadingBackingBean</literal> injected,
+            </para></listitem>
+            <listitem><para>
+                extracts the weather reading from the backing bean for the weather reading panel,
+            </para></listitem>
+            <listitem><para>
+                requests the <literal>persistWeatherReading</literal> service from the
+                stateless session bean, and
+            </para></listitem>
+            <listitem><para>
+                pushes an informational message into the faces context, informing the user 
+                that the weather reading was successfully stored,
+            </para></listitem>
+            <listitem><para>
+                returns the current page in order to capture the next weather reading.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+</section>    

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>How to write Servlet Filters</title>
+    
+    <para>
+        Servlet filters are Java classes which are deployed in Java EE Web modules, similar to Servlets.
+        The steps involved in writing a filter typically includes:
+        <itemizedlist>
+            <listitem>
+                <para>Writing the filter class (by implementing the <literal>javax.servlet.Filter</literal> interface)</para>
+            </listitem>
+            <listitem>
+                <para>Implementing custom request and/or response objects that <emphasis>wrap</emphasis>
+                the original objects received from the client.</para>
+            </listitem>
+            <listitem>
+                <para>Declaring and mapping URIs to the filters in the <literal>web.xml</literal> deployment descriptor.</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    <xi:include href="writing/writing.docbook"/>
+    <xi:include href="alteringRequestResponse/alteringRequestResponse.docbook"/>
+    
+    <section>
+        <title>Mapping filters to resources</title>
+        <para>
+            Similar to Servlets, filters are declared in the <literal>web.xml</literal>
+            deployment descriptor, and them mapped to one or more URIs:
+        </para>
+        <programlisting language="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app 
+  version="2.5"
+  xmlns="http://java.sun.com/xml/ns/javaee" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+  
+    ...      
+    
+    <filter>
+    	<filter-name>HitCounter</filter-name>
+    	<filter-class>my.app.filters.HitCounterFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+    	<filter-name>HitCounter</filter-name>
+    	<url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    ...
+    
+</web-app>
+        ]]></programlisting>
+    </section>
+    <!--
+    <xi:include href="mappingToRequests/mappingToRequests.docbook"/>
+    -->
+    
+</section>

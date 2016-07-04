@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns329:section xmlns:ns329="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.jboss.resources.resourceManagers.specifying">
+
+  <ns330:title xmlns:ns330="http://docbook.org/ns/docbook">Resource Managers</ns330:title>
+  <ns331:para xmlns:ns331="http://docbook.org/ns/docbook">
+    Resource managers manage external resources like databases, mail servers, and other
+    resources (via the connector API, for example). A resource manager is a component of a J2EE
+    container which is responsible for connection pooling, transaction support and communication
+    with the external resource.
+  </ns331:para>
+  <ns332:para xmlns:ns332="http://docbook.org/ns/docbook">
+    A very commonly used resource manager is  
+    <ns333:literal xmlns:ns333="http://docbook.org/ns/docbook">javax.sql.DataSource</ns333:literal> which manages connections to SQL
+    datasources, typically relational databases.
+  </ns332:para>
+  <ns334:para xmlns:ns334="http://docbook.org/ns/docbook"/>
+  <ns335:section xmlns:ns335="http://docbook.org/ns/docbook">
+    <ns336:title xmlns:ns336="http://docbook.org/ns/docbook">Specifying a resource manager in jboss.xml</ns336:title>
+    <ns337:para xmlns:ns337="http://docbook.org/ns/docbook">
+      In the <ns338:literal xmlns:ns338="http://docbook.org/ns/docbook">jboss.xml</ns338:literal> file we specify a mapping of the
+      logical name onto the resource name assigned to the JMX MBean for the resource (as
+      specified in the <ns339:literal xmlns:ns339="http://docbook.org/ns/docbook">jboss.jcml</ns339:literal> configuration file).
+    </ns337:para>
+    <ns340:para xmlns:ns340="http://docbook.org/ns/docbook">
+      We also assign a JNDI name for the resource connection factory:
+    </ns340:para>
+    <ns341:para xmlns:ns341="http://docbook.org/ns/docbook">
+      In the resource-ref tag we map the logical name onto the resource name used within
+      JBoss (the name of the JMX MBean) in the resource-manager tag we provide a JNDI name under
+      which resource connection factory is registered with the naming service used by the
+      application server.
+<ns342:programlisting xmlns:ns342="http://docbook.org/ns/docbook">
+&lt;resource-managers&gt;
+&lt;resource-manager
+ res-class="org.jboss.jdbc.deployment.XADataSourceLoader"&gt;
+ &lt;res-name&gt;MySQLtestDS&lt;/res-name&gt;
+ &lt;res-jndi-name&gt;java:/MySQLtestDS&lt;/res-jndi-name&gt;
+&lt;/resource-manager&gt;
+&lt;/resource-managers&gt;
+</ns342:programlisting> 
+     <ns343:note xmlns:ns343="http://docbook.org/ns/docbook"><ns344:para xmlns:ns344="http://docbook.org/ns/docbook">
+      Note that the J2EE naming convention is used for the JNDI name. When accessing that
+      resource from within a bean (e.g. a session bean or an entity bean using bean-managed
+      persistence) it would be resolved via
+<ns345:programlisting xmlns:ns345="http://docbook.org/ns/docbook">
+javax.sql.DataSource dataSource
+= (javax.sql.DataSource)jndiContext.lookup
+   ("java:/comp/env/jdbc/mySQLDS");
+</ns345:programlisting>          
+      </ns344:para></ns343:note>
+    </ns341:para>  
+  </ns335:section>
+    </ns329:section>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.client.application.client"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>A simple session bean client</title>
+  <para>
+    Stateless session beans exist for the duration of a user
+    session (that is the conceptual/virtual user object --
+    the physical bean object continues existing in the
+    object pool). 
+  </para>
+  <section>
+    <title>Client.java</title>
+    <para>
+      The client initialises its naming context and then looks up the
+      application server generated remote object using the JNDI name for the
+      remote interface. Once the reference to the remote session bean has been
+      obtained, the client may use the business services offered by the session
+      bean.
+      <programlisting>
+<xi:include parse="text"
+href="../../examples/average/src/client/app/java/za/co/solms/average/Client.java"/>
+      </programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Packaging the JNDI properties file with the client</title>
+    <para>
+      <programlisting>
+<xi:include parse="text"
+href="../../examples/average/src/client/app/jndi.properties"/>
+      </programlisting>
+    </para>
+  </section>    
+  
+  <section>
+    <title>Running the client application</title>
+    <para>
+      To build the client application you only nead to run the ant-task,
+      <literal>jar.client.app</literal>. This will compile the
+      common and client code and archive them into
+      <literal>AverageClient.jar</literal>. In addition to this the JBoss
+      client-side library files need to be included in the classpath.
+    </para>
+  </section>
+  
+  <section>
+    <title>Providing a fully self-contained client</title>
+    <para>
+      For the client to run on a remote machine one needs to make some of the
+      EJB libraries available on the client side. One can package these within
+      the client jar, but one needs to first unpack the library jars before
+      inserting the library components into the client jar (because extraction
+      from nested jars is not currently supported in Java). 
+    </para>
+  </section>
+  
+</section>

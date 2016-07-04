@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Implementing a service</title>
+    <indexterm>
+        <primary>service</primary>
+        <secondary>implementation</secondary>
+    </indexterm>
+    
+    <para>
+        Once a contract for a service exists, one needs to decide whether one wants to
+        out-source the responsibility to an existing external service provider (in which case
+        one may need to build an adaptor to it) or whether one wants to implement the service
+        oneself.
+    </para>
+    
+    <section>
+        <title>Choosing an implementation technology</title>
+        <para>
+            When building a service based on a contract, an implementation technology should be used which satisfies
+            as many criteria of suitability as possible, such as that it
+            <itemizedlist>
+                <listitem>
+                    <para><emphasis>can realise the required qualities</emphasis>, such as performance, scalability, reliability, security, maintainability</para>
+                </listitem>
+                <listitem>
+                    <para><emphasis>provides or has access to the required support technologies</emphasis>, such as persistence, manipulation of graphics, multi-threading</para>
+                </listitem>
+                <listitem>
+                    <para><emphasis>is in a domain suitable to the nature of the service implementation,</emphasis> such as being efficient at service orchestration, or at data transformation</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>in a technology with which the implementor(s) are proficient, or could acquire the skills in the required time-frame</emphasis>
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Implementation Technology Recommendations</title>
+        <para>
+            Without taking into account the skills of the development team, the following recommendations can be made for
+            a few typical service provider categories:
+        </para>
+        
+        <section>
+            <title>High-level workflow controller</title>
+            <para>
+                If a service offers a high-level use-case (such as accepting an insurance claim) it may have to control a
+                business processes which is realised by orchestrating many lower-level service providers. Furthermore, the
+                business process may run for a potentially long time, with many interactions.
+            </para>
+            <para>
+                Assuming our requirements are
+                <itemizedlist>
+                    <listitem>
+                        <para>easy maintainability</para>
+                    </listitem>
+                    <listitem>
+                        <para>ability to orchestrate many lower-level services</para>
+                    </listitem>
+                    <listitem>
+                        <para>ability to maintain complex workflow state</para>
+                    </listitem>
+                    <listitem>
+                        <para>high scalability</para>
+                    </listitem>
+                    <listitem>
+                        <para>low performance</para>
+                    </listitem>
+                </itemizedlist>
+                a <literal>WS-BPEL</literal> process, deployed into a Business Process Execution Engine, may be found suitable to this task.
+            </para>
+        </section>
+        
+        <section>
+            <title>Lower-level service provider</title>
+            <para>
+                If a service offers a service at a finer level of granularity (which may potentially be used in many contexts), such as performing a calculation, or
+                storing / retrieving information from a database, our requirements may be:
+                <itemizedlist>
+                    <listitem>
+                        <para>high performance</para>
+                    </listitem>
+                    <listitem>
+                        <para>high scalability</para>
+                    </listitem>
+                    <listitem>
+                        <para>access to support technologies, such as persistence</para>
+                    </listitem>
+                    <listitem>
+                        <para>no requirement to maintain business process state</para>
+                    </listitem>
+                </itemizedlist>
+                A Java class may very well be suited to the task. To realise high scalability, plus easy access to
+                support technologies such as persistence, an EJB is usually recommended for enterprise systems.
+            </para>
+        </section>
+        
+        <section>
+            <title>Transformation service</title>
+            <para>
+                If a service primarily involves transforming one data structure to another, our requirements may be:
+                <itemizedlist>
+                    <listitem>
+                        <para>high performance</para>
+                    </listitem>
+                    <listitem>
+                        <para>easy maintainability of transformation rules</para>
+                    </listitem>
+                    <listitem>
+                        <para>no need to access support technologies such as persistence</para>
+                    </listitem>
+                    <listitem>
+                        <para>no need to orchestrate lower-level service providers</para>
+                    </listitem>
+                </itemizedlist>
+                An XSLT transformation document, deployed to a suitable service container which can associate a transformation
+                service with a service contract, may be suited to the task.
+            </para>
+        </section>
+        
+        <section>
+            <title>Ingenuitive service</title>
+            <para>
+                Where a contract has been sufficiently specified in terms of pre- and post-conditions, but the process of realising
+                the service is too complex to define or model in a semantically meaningful way, and we are happy with:
+                <itemizedlist>
+                    <listitem>
+                        <para>poor performance</para>
+                    </listitem>
+                    <listitem>
+                        <para>poor scalability</para>
+                    </listitem>
+                    <listitem>
+                        <para>poor reliability</para>
+                    </listitem>
+                    <listitem>
+                        <para>high adaptability</para>
+                    </listitem>
+                    <listitem>
+                        <para>high ingenuity</para>
+                    </listitem>
+                </itemizedlist>
+                we may wish to out-source the service to one or more people, accessed via an adaptor which communicates with the
+                person through some or other communication channel, such as e-mail, graphical user interface, etc.
+            </para>
+        </section>
+        
+    </section>
+    
+    
+    <!-- section>
+        <title>An example</title>
+        <para>
+            
+        </para>
+    </section -->
+    
+</section>
+    

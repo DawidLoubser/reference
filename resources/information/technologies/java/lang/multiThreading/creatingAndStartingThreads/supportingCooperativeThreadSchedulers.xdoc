@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.lang.multiThreading.creatingAndStartingThreads.supportingCooperativeThreadSchedulers"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="Supporting Cooperative Thread Schedulers">Supporting Cooperative Thread Schedulers</title>
+
+<para>Scheduling systems have the ability to preempt (suspend) running threads
+while cooperative thread schedulers wait for a thread to yield control
+before they can transfer control to another thread. 
+Some systems support both, preemptive and cooperative thread scheduling.
+The reason for this is that although the first is safer, the latter is
+more efficient. </para>
+
+<para>You should thus write your threads in such a way that they can safely run
+on both, preemptive and cooperative thread schedulers. To this end your 
+thread should from time to time yield control as is done in the
+following listing</para>
+
+        <para>
+        <programlisting>
+<xi:include parse="text"
+  href="source/MyCooperativeThreads.java"/>
+        </programlisting>
+    </para>
+<para>
+Alternatively a thread can yield control by calling one of its
+<emphasis>sleep()</emphasis> methods. There are two such methods:</para>
+
+<para><programlisting>
+public static void sleep(long milliSeconds)                  {...}
+public static void sleep(long milliSeconds, int nanoSeconds) {...}
+</programlisting></para>
+
+
+<para>In the following listing we use the sleep method to yield control:
+</para>
+            <para>
+        <programlisting>
+<xi:include parse="text"
+  href="source/MySleepyThreads.java"/>
+        </programlisting>
+    </para>
+
+    <para>Note that the output has changed now:</para>
+
+    <para>
+<programlisting>
+All threads have started.
+123
+The execution thread for the main program terminates.
+111111111111111232323232323232323232323232132132132132132132132132132
+213213213212121313123123123123123123123123123232323232323232121313131
+222222313131313131313131313131313232121212121212121212121212121212131
+121212111111112222222222222222231313131231231231231231232323232323232
+333333333333333311111111111111113333333333333222222222222211111111111
+222222222222312312312312312312312312312312312312312312312312312222333
+333333333333333333311111111111222222222221111111111111111122222222222
+231231231231231231231231231231231231231231231212121212123333333333333
+333333333111112222111111111111111112222222222222222231313131313213213
+321321321321212121212121232321313213213213213213232323232333333333333
+111111111111111111111111111222222223131313131231231231231231231231231
+1231231231231212222222333333333333333332222222222222222233333333333
+Thread3 terminates.
+211
+Thread2 terminates.
+111111111111111111111111111111111111111111111
+Thread1 terminates.
+</programlisting></para>
+    
+</section>

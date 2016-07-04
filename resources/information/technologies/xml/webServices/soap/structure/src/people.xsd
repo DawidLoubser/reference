@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:people="http://example.org/hr/people"
+    targetNamespace="http://example.org/hr/people"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xs:complexType name="Person">
+        <xs:sequence>
+            <xs:element name="firstName" type="xs:string"/>
+            <xs:element name="lastName" type="xs:string"/>
+            <xs:element name="birthDate" type="xs:date" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Employee">
+        <xs:complexContent>
+            <xs:extension base="people:Person">
+                <xs:sequence>
+                    <xs:element name="joinDate" type="xs:date"/>
+                    <xs:element name="empNo" type="xs:positiveInteger"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:element name="person" type="people:Person"/>
+
+</xs:schema>

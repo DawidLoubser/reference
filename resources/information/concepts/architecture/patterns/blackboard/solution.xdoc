@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.architecture.patterns.blackboard.solution"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Solution</title>
+  <para>
+    The solution suggested by the blackboard architectural pattern is to allow for
+    <emphasis>multiple independent knowledge sources to contribute cooperatively 
+      to the solution</emphasis> of a problem on a blackboard. 
+      The process is coordinated by a controller.
+  </para>
+  
+  <section>
+    <title>Responsibility allocation</title>
+    <para>
+      The role players in the blackboard patterns are thus
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>the blackboard</title>
+          <para>
+            itself which acts as repository for both, 
+            <itemizedlist>
+              <listitem><para>the problem description, and</para></listitem>
+              <listitem><para>the current state of the solution,</para></listitem>
+            </itemizedlist>
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>the knowledge sources</title>
+          <para>
+            which apply their individual domain knowledges to contribute to a solution
+            to the problem, and
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>a controller</title>
+          <para>
+            which 
+            <itemizedlist>
+              <listitem><para>
+                invites the knowledge sources to suggest hypothesis given the problem statement 
+                and the current state of the solution,
+              </para></listitem>
+              <listitem><para>
+                selects the <emphasis>most likely hypothesis</emphasis>
+                <footnote><para>In, 
+                for example, the maximum entropy sense -- <abbrev>i.e.</abbrev>
+                that solution to the problem which has the lowest information content
+                (the simplest solution).</para></footnote>, and  
+              </para></listitem>
+              <listitem><para>
+                requests the knowledge source with the most likely hypothesis to update the
+                current state of the solution.
+              </para></listitem>
+            </itemizedlist>
+            This process is done iteratively within the context of an incremental construction of the
+            solution.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+    <figure id="resources.information.concepts.architecture.patterns.blackboard.responsibilityAllocation_fig">
+      <title>Responsibilities of the role players in the blackboard architectural pattern.</title>
+      <graphic fileref="responsibilityAllocation.jpg"/>
+    </figure>
+    
+  </section>
+  
+  <section>
+    <title>Structure</title>
+    <para>
+      The structure around the core components of the blackboard pattern is straight forward.
+      The knowledge sources obtain and update information contained in the blackboard, but 
+      they do not interact with each other directly and hence are independent of one another.
+    </para>
+    
+    <figure id="resources.information.concepts.architecture.patterns.blackboard.structure_fig">
+      <title>The structure of the blackboard architectural pattern.</title>
+      <graphic fileref="structure.jpg"/>
+    </figure>
+    
+    <para>
+      The blackboard notifies the controller of any changes which then selects knowledge
+      sources which may potentially contribute to the solution.
+    </para>
+  <para>
+    
+    </para>
+  </section>
+  
+  <section>
+    <title>Dynamics</title>
+    <para>
+      The knowledge sources do not interact directly with one another. The blackboard
+      pattern provides an <emphasis>opportunistic problem solving</emphasis>
+      strategy which facilitates <emphasis>experimentation with different algorithms</emphasis>.
+      The dynamics of the blackboard pattern is illustrated in
+      <xref linkend="resources.information.concepts.architecture.patterns.blackboard.dynamics_fig"/>.
+    </para>
+    
+    <figure id="resources.information.concepts.architecture.patterns.blackboard.dynamics_fig">
+      <title>The dynamics of the blackboard architectural pattern.</title>
+      <graphic fileref="dynamics.jpg"/>
+    </figure>
+    
+    <para>
+      During the iterative problem solving process the partial contributions to the solution 
+      are added, modified and rejected.
+       <note><para>
+           The knowledge sources check concurrently whether they can contribute to the
+           solution.
+       </para></note>      
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>What is the solution?</title>
+    <para>
+      The blackboard pattern is typically applied to  problems with a large solution space
+      for which there is insufficient domain knowledge available to generate a deterministic
+      solution. It provides a mechanism for different experts to contribute collaboratively
+      to a partial or complete solution for a problem.
+    </para>
+    <section>
+      <title>Criterion for selecting hypotheses</title>
+      <para>
+        Very often the problem is less that of finding a complete solution, but more one of
+        the hypothesis space potentially exploding generating a huge number of potential
+        solutions. In such situation one needs to select hypotheses and hence the ultimate
+        solution carefully. For this one needs some criterion around which one hypothesis
+        is preferred above another. 
+      </para>
+      
+      <section>
+        <title>Selecting on credibility ratings</title>
+        <para>
+          Hypotheses are usually selected on a <emphasis>credibility rating</emphasis>
+          which assigns a level of credibility based on the support from other hypotheses
+          and general domain knowledge. Such a process <emphasis>detects mutually
+          supportive clusters of hypotheses</emphasis> which are consistent with
+          the input information.
+        </para>
+      </section>
+      
+      <section>
+        <title>Preferring wide spanning hypotheses</title>
+        <para>
+           At times one is looking for hypothesis which find support across the
+           available information range. This often resembles itself as a drive
+           towards higher-level hypotheses.
+        </para>
+      </section>
+      
+      <section>
+        <title>Islands driving</title>
+        <para>
+          This approach focuses on finding 
+          <emphasis><quote>islands fo certainty</quote></emphasis> which are then
+          locked into the solution and reduces the search space which needs to be covered
+          in the context of the furthr exploration of the solution.
+        </para>
+      </section>
+      
+      <section>
+        <title>Information theory approach</title>
+       <para>
+          Another criterion which is may be used is the 
+          <emphasis>maximum entropy principle</emphasis> which is philosophically based on 
+          <emphasis>Occam's razor</emphasis>. Occam's razor effectively states that 
+          <blockquote><para><emphasis>
+            if you have two solutions which explain equally much about an observed problem, 
+            then the simpler solution which makes less assumptions and hence contains less
+            information is the preferred solution.
+          </emphasis></para></blockquote>  
+        </para>
+        <para>
+          The maximum entropy principle puts Occam's razor into a quantitative framework
+          where the information content of a solution is measured and minimized subject
+          to the condition that the observables need to be explained.
+        </para>
+      </section>
+      
+    </section>
+    
+    <section>
+      <title>Types of hypotheses</title>
+      <para>
+        A hypothesis may be assembled from a number of lower-level hypotheses --
+        <abbrev>i.e.</abbrev> one hypothesis may be a part of another. Blackboard
+        architectures typically also use the concepts of
+        <itemizedlist>
+          <listitem><para>supporting hypotheses, and</para></listitem>
+          <listitem><para>abstraction levels of hypotheses.</para></listitem>
+        </itemizedlist>
+      </para>
+      
+      <section>
+        <title>Supporting hypotheses</title>
+        <para>
+          One hypothesis can <emphasis>support</emphasis> another hypothesis. Very
+          abstract hypotheses are far removed from a concrete solution, <abbrev>i.e.</abbrev>
+          they generate very lit
+        </para>
+      </section>
+      
+      <section>
+        <title>The abstraction level of a hypothesis</title>
+        <para>
+          The abstraction level of a hypothesis resembles its
+          <emphasis>conceptual distance from the input information</emphasis>.
+          The lowest abstraction level is simply the input data representation, while
+          the highest abstraction level resembles a solution in the output domain.
+        </para>
+        <para>
+          Abstraction levels are best understood in the context of a concrete example.
+          Blackboard architectures have been widely applied to artificial intelligence
+          problems like speech and image recognition. In speech recognition we may
+          end up with the following abstraction levels:
+          <orderedlist>
+            <listitem><para>
+              The lowest level hypothesis is the input signal (a sound signal),
+            </para></listitem>
+            <listitem><para>
+              The next higher level of abstraction may be a segmentation of the signal
+              into separate units (words).
+            </para></listitem>
+            <listitem><para>
+              The third level of abstraction may be the identification of syllables.
+            </para></listitem>
+            <listitem><para>
+              The fourth level of abstraction could be the identification of the individual
+              words.
+            </para></listitem>
+            <listitem><para>
+              The highest level of abstraction would be the solution in terms of statements and
+              sentences which are correct in both, vocabulary and syntax. 
+              <note><para>
+                A even higher level
+                solution would also be correct in meaning, <abbrev>i.e.</abbrev> would ensure
+                that the statements are meaningful.
+              </para></note>  
+            </para></listitem>
+          </orderedlist>
+        </para>
+      </section>
+      
+      <section>
+        <title>Information content of a hypothesis</title>
+        <para>
+          The information content is a measure of the complexity of a hypothesis. The higher
+          the complexity, the higher its information content.
+        </para>
+      </section>
+    </section>
+    
+  </section>
+  
+</section>

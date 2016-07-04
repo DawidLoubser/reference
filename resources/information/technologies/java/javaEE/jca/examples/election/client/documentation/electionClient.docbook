@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za  -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">  
+  
+  <title>A client application for the resource adapter</title>
+  
+  <para>
+    In this section we show the implementation of a session bean which uses the resource adapter in
+    order to make the EIS services available to EJB clients. We then develop a simple web client
+    (JSP and servlet) providing web users access to the EIS services offered by the resource
+    adapter.
+  </para>
+  
+  <section>
+    <title>The session bean</title>
+    <programlisting language="java">
+<xi:include parse="text" href="../src/main/java/za/co/solms/election/sessionBean/impl/ElectionBean.java"/>      
+    </programlisting>
+  </section>
+  
+  <section>
+    
+    <title>The session bean</title>
+    
+    <para>
+      <programlisting language="java">
+        <xi:include parse="text" href="../src/main/java/za/co/solms/election/sessionBean/impl/ElectionBean.java"/>
+      </programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>A JSP-based user interface</title>
+    
+    <para>
+      <programlisting language="xml">
+      <xi:include parse="text" href="../src/servlet/ElectionClient.jsp"/>
+        </programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>A servlet controller</title>
+    <para>
+      <programlisting language="java">
+      <xi:include parse="text" href="../src/servlet/za/co/solms/election/servlet/ElectionServlet.java"/>
+      </programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>The web deployment descriptor</title>
+    <para>
+      <programlisting language="xml">
+      <xi:include parse="text" href="../src/servlet/web.xml"/>
+      </programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>The application deployment descriptor</title>
+    <para>
+      <programlisting language="xml">
+      <xi:include parse="text" href="../src/META-INF/application.xml"/>
+      </programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>The Ant build script</title>
+    <para>
+      <programlisting language="xml">
+      <xi:include parse="text" href="../build.xml"/>
+      </programlisting>
+    </para>
+  </section>
+  
+  <ns135:section xmlns:ns135="http://docbook.org/ns/docbook">
+    <ns136:title xmlns:ns136="http://docbook.org/ns/docbook">Deploying the application</ns136:title>
+    <ns137:para xmlns:ns137="http://docbook.org/ns/docbook">
+      Running 
+      <ns138:programlisting xmlns:ns138="http://docbook.org/ns/docbook">
+ant ear      
+      </ns138:programlisting>
+      creates the enterprise archive containing both,
+      <ns139:itemizedlist xmlns:ns139="http://docbook.org/ns/docbook">
+        <ns140:listitem xmlns:ns140="http://docbook.org/ns/docbook"><ns141:para xmlns:ns141="http://docbook.org/ns/docbook">
+          the EJB based business logic layer, and
+        </ns141:para></ns140:listitem>
+        <ns142:listitem xmlns:ns142="http://docbook.org/ns/docbook"><ns143:para xmlns:ns143="http://docbook.org/ns/docbook">
+          the Servlet/JSP based presentation layer.
+        </ns143:para></ns142:listitem>
+      </ns139:itemizedlist>
+      It can be depoyed within JBoss via
+      <ns144:programlisting xmlns:ns144="http://docbook.org/ns/docbook">
+ant deploy.ear
+      </ns144:programlisting>
+    </ns137:para>
+  </ns135:section>
+  
+  <ns145:section xmlns:ns145="http://docbook.org/ns/docbook">
+    <ns146:title xmlns:ns146="http://docbook.org/ns/docbook">Using the web client</ns146:title>
+    <ns147:para xmlns:ns147="http://docbook.org/ns/docbook">
+      The web client is accessed via the URL
+      <ns148:programlisting xmlns:ns148="http://docbook.org/ns/docbook">
+http://hostName:port/election        
+        </ns148:programlisting>
+    </ns147:para>
+  </ns145:section>
+  
+</section>

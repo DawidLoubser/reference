@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+  <title>Integration via shared resources</title>
+  <para>
+    Shared resources is one of the most widely used integration approaches. Information is exchanged across
+    systems based on the <emphasis>state</emphasis> of the shared resource.
+  </para>
+  <para>
+    Most enterprise systems use this at least as one of the integration approaches. Typical examples include
+    <itemizedlist>
+        <listitem><formalpara>
+            <title>Shared database</title>
+            <para>
+               Within an enterprise many applications usually use a common database through which
+              information is exchanged between the systems.
+            </para>
+        </formalpara></listitem>   
+        <listitem><formalpara>
+          <title>Shared files</title>
+          <para>
+            Shared files are usually used when one system wants to publish information which
+            must be retrieved by other systems.
+          </para>
+        </formalpara></listitem>  
+        <listitem><formalpara>
+          <title>Shared objects</title>
+          <para>
+            Other shared objects used to integrate systems may include
+            <itemizedlist>
+              <listitem><para>
+                shared stateful objects (for example, an account, a counter, a linked list or queue, ...), or even
+              </para></listitem>  
+              <listitem><para>
+                shared hardware components.
+              </para></listitem>
+            </itemizedlist>
+          </para>
+        </formalpara></listitem>
+    </itemizedlist>
+  </para>  
+  
+  <section>
+    <title>Making resources safe for concurrent access</title>
+    <para>
+      Resources accessed concurrently by multiple processes may get corrupted due to concurrent access. To prevent
+      this, certain types of access may need to be serialised. To this end, shared resources typically require support
+      for <emphasis>locking</emphasis>. For example, processes modifying database records acquire the locks of the records
+      before being able to alter them. Processes crediting or debiting a shared account object, acquire the lock (or monitor) 
+      of that specific account instance before being able to request services of it.
+    </para>
+    <para>
+      Locking technologies may support client-side locking, resource-side locking  or both.
+    </para>
+    
+    <section>
+      <title>Client-side locking</title>
+      <para>
+        <emphasis>Client-side locking</emphasis> leaves the decision of which locks are to be acquired at
+        which points in the client workflow with the client itself. Client-side locking has the disadvantage that
+        a client will have to know when the lock of a resource needs to be acquired and when it can be released.
+        This may require intimate knowledge of the internals of the resource and may be difficult to implement.
+      </para>
+      <para>
+        Furthermore, the safety of a resource assumes responsible resource usage by clients -- a resource cannot
+        be guaranteed that it will be used in a way which will not corrupt the state of the resource.
+      </para>  
+      <para>
+        Client-side locking has, however, one advantage over resource-side locking, namely that it is easier to avoid deadlocks.
+      </para>
+    </section>
+    
+    <section>
+      <title>Resource-side locking</title>
+      <para>
+        In the case of resource-side locking, the resource itself will decide under what usage scenarios the client will have
+        to acquire the lock for itself. This approach does not require clients to understand the internals of a resource
+        and the integrity of the resource state does not depend on the client usage scenarios.
+      </para>
+      <para>
+        However, it is more difficult to avoid deadlocks when employing resource side locking and technologies
+        which support resource-side locking typically require additional mechanisms for resolving potential
+        deadlocks.
+      </para>
+    </section>
+    
+    <section>
+      <title>Approaches for avoiding deadlocks</title>
+      <para>
+        Introducing the concept of locks for resources solves the problem of corruption due to concurrent access.
+        However, the solution to that problem introduces a new problem which we did not have originally -- that
+        of deadlocks. There are several approaches to avoiding/resolving deadlocks.
+      </para>
+      
+      <section>
+        <title>Acquire only the lock of a single resource at a time</title>
+        <para>
+          If each process only acquires the lock of a single resource at a time, no deadlocks can occur.
+        </para>  
+      </section>
+      
+      <section>
+        <title>Processes acquire locks of resources in predefined order</title>
+        <para>
+          If all process acquire locks of resources according to some global ordering of resources, then
+          the possibility of a deadlock does not occur. At the low level the ordering may be the object
+          address. At the higher level the global ordering may be determined by the published name of the 
+          resource.
+        </para>
+      </section>
+    </section>  
+      
+    <section>
+      <title>Resolving deadlocks</title>
+      <para>
+        One commonly employed mechanism for resolving deadlocks is for processes to check whether they
+        have to wait for a state change in a resource before they can continue. The state change may be a
+        general state change like that a process cannot continue while a queue is empty or that the lock
+        of a resource must become available. 
+      </para>
+      <para>
+        The process will then go into a <emphasis>wait</emphasis> state during which all locks currently
+        acquired by the process are temporarily released. Any process which changes the state of an resource
+        will <emphasis>notify</emphasis> all objects waiting for a change of state in that resource that they 
+        may potentially be able to continue. Each resource waiting will first check if it can indeed continue. 
+        If not it will go back to the <emphasis>wait</emphasis> state. Otherwise it will re-acquire the locks it
+        temporarily released and will continue.
+        <note><para>
+          Processes may have to undo certain aspects of the process thus far completed before being able to go into
+          the wait state.
+        </para></note>
+      </para>
+      </section>
+    </section>  
+</section>            

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns2907:section xmlns:ns2907="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.security.encryption.symmetricKeyEncryption">
+    
+    <ns2908:title xmlns:ns2908="http://docbook.org/ns/docbook">Symmetric-Key Encryption</ns2908:title>
+
+<ns2909:para xmlns:ns2909="http://docbook.org/ns/docbook">Secret-Key or Parameter-based encryption uses a password or 
+pass-phrase to generate a key for encrypting and decrypting byte streams. 
+This is a symmetric key algorithm where the same key is used for
+encryption and decryption. This is then the disadvantage of symmetric key
+algorithms, <ns2910:abbrev xmlns:ns2910="http://docbook.org/ns/docbook">i.e.</ns2910:abbrev> that both sides have to have access to the same key and
+that this key has to be transferred between the parties.</ns2909:para>
+    
+<ns2911:para xmlns:ns2911="http://docbook.org/ns/docbook">
+However, symmetric key algorithms are still very widely used, particularly 
+where the cost of cracking the key would outweigh the financial or other
+benefit that can be gained from the encrypted information.</ns2911:para>
+
+<ns2912:para xmlns:ns2912="http://docbook.org/ns/docbook">The Java Cryptography Extension (JCE) supports most of the common symmetric
+key algorithms including
+<ns2913:itemizedlist xmlns:ns2913="http://docbook.org/ns/docbook">
+  <ns2914:listitem xmlns:ns2914="http://docbook.org/ns/docbook"><ns2915:formalpara xmlns:ns2915="http://docbook.org/ns/docbook"><ns2916:title xmlns:ns2916="http://docbook.org/ns/docbook">The Data Encryption Standard (DES)</ns2916:title> <ns2917:para xmlns:ns2917="http://docbook.org/ns/docbook">which uses a 56-bit secret key.</ns2917:para></ns2915:formalpara></ns2914:listitem>
+  <ns2918:listitem xmlns:ns2918="http://docbook.org/ns/docbook"><ns2919:formalpara xmlns:ns2919="http://docbook.org/ns/docbook"><ns2920:title xmlns:ns2920="http://docbook.org/ns/docbook">Tripple-DES</ns2920:title><ns2921:para xmlns:ns2921="http://docbook.org/ns/docbook"> which strengthens the DES algorithm by using 3 DES keys.</ns2921:para></ns2919:formalpara></ns2918:listitem>
+  <ns2922:listitem xmlns:ns2922="http://docbook.org/ns/docbook"><ns2923:formalpara xmlns:ns2923="http://docbook.org/ns/docbook"><ns2924:title xmlns:ns2924="http://docbook.org/ns/docbook">RC2 and RC4</ns2924:title><ns2925:para xmlns:ns2925="http://docbook.org/ns/docbook"> which can use keys up to 2048 bytes long.</ns2925:para></ns2923:formalpara></ns2922:listitem>
+  <ns2926:listitem xmlns:ns2926="http://docbook.org/ns/docbook"><ns2927:formalpara xmlns:ns2927="http://docbook.org/ns/docbook"><ns2928:title xmlns:ns2928="http://docbook.org/ns/docbook">RC5</ns2928:title><ns2929:para xmlns:ns2929="http://docbook.org/ns/docbook"> which allows the user to specify the key length.</ns2929:para></ns2927:formalpara></ns2926:listitem>
+</ns2913:itemizedlist> 
+</ns2912:para>  
+
+<ns2930:para xmlns:ns2930="http://docbook.org/ns/docbook">Often another random value, 
+called the <ns2931:emphasis xmlns:ns2931="http://docbook.org/ns/docbook"> salt</ns2931:emphasis>, is used to increase the effort required to decrypt
+a password-encrypted file. The salt and the password and the encryption
+mode (encryption or decryption) are combined to create a cipher which is
+the used to encrypt or decrypt a file.</ns2930:para>
+
+<ns2932:para xmlns:ns2932="http://docbook.org/ns/docbook">The application listed below uses Parameter-Based Encryption to encrypt or
+decrypt a byte stream (<ns2933:abbrev xmlns:ns2933="http://docbook.org/ns/docbook">e.g.</ns2933:abbrev> a file). The class can be used within the
+context of another application or from command line. </ns2932:para>
+
+<ns2934:para xmlns:ns2934="http://docbook.org/ns/docbook">The encrypter requires the input and output streams, a password and the mode
+(encryption or decryption) as arguments.</ns2934:para>
+
+<ns2935:para xmlns:ns2935="http://docbook.org/ns/docbook">To encrypt as file from command line you issue the command</ns2935:para>
+
+<ns2936:para xmlns:ns2936="http://docbook.org/ns/docbook"><ns2937:programlisting xmlns:ns2937="http://docbook.org/ns/docbook">
+java Encrypter encrypt &lt;inputFileName&gt; &lt;outputFileName&gt;
+</ns2937:programlisting></ns2936:para>
+
+<ns2938:para xmlns:ns2938="http://docbook.org/ns/docbook">
+You will then be asked to supply the pass-phrase or password. It will then
+generate a new file which represents the encrypted version of the input file.</ns2938:para>
+
+<ns2939:para xmlns:ns2939="http://docbook.org/ns/docbook">To decrypt an encrypted file you simply issue the command
+
+<ns2940:programlisting xmlns:ns2940="http://docbook.org/ns/docbook">
+java Encrypter decrypt &lt;inputFileName&gt; &lt;outputFileName&gt;
+</ns2940:programlisting>
+</ns2939:para>
+    
+<ns2941:para xmlns:ns2941="http://docbook.org/ns/docbook">Below we show a listing of the application. The main program simply gathers 
+the required information (input and output streams, pass-phrase and mode)
+and requests the <ns2942:emphasis xmlns:ns2942="http://docbook.org/ns/docbook">encrypt</ns2942:emphasis> service. The encrypter generates a cipher
+from the key and a salt generated by calculating a digest for the key and
+this cipher is used to encrypt or decrypt the byte stream:
+<ns2943:programlisting xmlns:ns2943="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="Encrypter.java"/>
+</ns2943:programlisting>
+</ns2941:para>
+    
+</ns2907:section>

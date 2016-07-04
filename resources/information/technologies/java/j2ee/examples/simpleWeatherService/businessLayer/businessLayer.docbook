@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns2973:section xmlns:ns2973="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.examples.simpleWeatherService.businessLayer.businessLayer">
+    
+    <ns2974:title xmlns:ns2974="http://docbook.org/ns/docbook">The Business Layer</ns2974:title>
+
+    <ns2975:section xmlns:ns2975="http://docbook.org/ns/docbook">
+        <ns2976:title xmlns:ns2976="http://docbook.org/ns/docbook">Writing the Contracts and Data Objects</ns2976:title>
+    
+        <ns2977:para xmlns:ns2977="http://docbook.org/ns/docbook">
+            We start off the business layer by writing the contracts as Java interfaces. Note that both the
+            business service, as well as the actual <ns2978:emphasis xmlns:ns2978="http://docbook.org/ns/docbook">data objects</ns2978:emphasis>, are expressed as
+            interfaces. This allows us to express different <ns2979:emphasis xmlns:ns2979="http://docbook.org/ns/docbook">views</ns2979:emphasis> onto the same objects,
+            e.g. read-only vs mutable. The abstract contract for the service, and it's collection of
+            data objects, are placed in the package <ns2980:literal xmlns:ns2980="http://docbook.org/ns/docbook">za.org.weather.service</ns2980:literal>.
+        </ns2977:para>
+        
+        <ns2981:figure xmlns:ns2981="http://docbook.org/ns/docbook">
+            <ns2982:title xmlns:ns2982="http://docbook.org/ns/docbook">The Weather Forecast service contract</ns2982:title>
+            <ns2983:programlisting xmlns:ns2983="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/source/za/org/weather/service/WeatherForecastService.java" parse="text"/>
+            </ns2983:programlisting>
+        </ns2981:figure>
+        <ns2984:note xmlns:ns2984="http://docbook.org/ns/docbook">
+            <ns2985:para xmlns:ns2985="http://docbook.org/ns/docbook">
+                The weather service always returns a list of read-only weather forecasts,
+                as specified by the <ns2986:literal xmlns:ns2986="http://docbook.org/ns/docbook">WeatherForecast</ns2986:literal> interface.
+            </ns2985:para>
+        </ns2984:note>
+        
+        <ns2987:figure xmlns:ns2987="http://docbook.org/ns/docbook">
+            <ns2988:title xmlns:ns2988="http://docbook.org/ns/docbook">Weather Forecast Data Object</ns2988:title>
+            <ns2989:programlisting xmlns:ns2989="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/source/za/org/weather/service/WeatherForecast.java" parse="text"/>
+            </ns2989:programlisting>
+        </ns2987:figure>
+        
+        <ns2990:figure xmlns:ns2990="http://docbook.org/ns/docbook">
+            <ns2991:title xmlns:ns2991="http://docbook.org/ns/docbook">Locality Data Object</ns2991:title>
+            <ns2992:programlisting xmlns:ns2992="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/source/za/org/weather/service/Locality.java" parse="text"/>
+            </ns2992:programlisting>
+        </ns2990:figure>
+        
+        <ns2993:para xmlns:ns2993="http://docbook.org/ns/docbook">
+            The service contract package also contains default implementations of the data objects,
+            which are straightforward Java Objects. Implementations may or may not choose to use them,
+            but recall that there are never any direct dependencies on these classes:
+            <ns2994:programlisting xmlns:ns2994="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/source/za/org/weather/service/WeatherForeCastImpl.java" parse="text"/>
+            </ns2994:programlisting>
+            <ns2995:programlisting xmlns:ns2995="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/source/za/org/weather/service/LocalityImpl.java" parse="text"/>
+            </ns2995:programlisting>
+        </ns2993:para>
+    </ns2975:section>
+    
+    
+    <ns2996:section xmlns:ns2996="http://docbook.org/ns/docbook">
+        <ns2997:title xmlns:ns2997="http://docbook.org/ns/docbook">Writing the Implementation</ns2997:title>
+        <ns2998:para xmlns:ns2998="http://docbook.org/ns/docbook">
+            As the correct functioning of this service si not relevant to the exercise,
+            we write an implementation of a <ns2999:literal xmlns:ns2999="http://docbook.org/ns/docbook">WeatherForecastService</ns2999:literal>
+            that simply maintains a list of <ns3000:quote xmlns:ns3000="http://docbook.org/ns/docbook">known</ns3000:quote> localities, and generates
+            random weather forecasts upon request.
+        </ns2998:para>
+        <ns3001:figure xmlns:ns3001="http://docbook.org/ns/docbook">
+            <ns3002:title xmlns:ns3002="http://docbook.org/ns/docbook">The Weather Forecast service contract</ns3002:title>
+            <ns3003:programlisting xmlns:ns3003="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/source/za/org/weather/service/impl/WeatherForecastServiceBean.java" parse="text"/>
+            </ns3003:programlisting>
+        </ns3001:figure>
+        <ns3004:note xmlns:ns3004="http://docbook.org/ns/docbook">
+            <ns3005:para xmlns:ns3005="http://docbook.org/ns/docbook">
+                The service, as implemented here as a <ns3006:emphasis xmlns:ns3006="http://docbook.org/ns/docbook">stateless session bean</ns3006:emphasis>, is
+                nothing more than a plain Java class with some annotations (<ns3007:literal xmlns:ns3007="http://docbook.org/ns/docbook">@Stateless</ns3007:literal>,
+                <ns3008:literal xmlns:ns3008="http://docbook.org/ns/docbook">@Local</ns3008:literal> and <ns3009:literal xmlns:ns3009="http://docbook.org/ns/docbook">@Remote</ns3009:literal>) which indicate to the container
+                the type of managed bean, and which interfaces to expose to both local (in-container) and
+                remote clients.
+            </ns3005:para>
+        </ns3004:note>
+    </ns2996:section>
+    
+    
+    
+    <ns3010:section xmlns:ns3010="http://docbook.org/ns/docbook">
+        <ns3011:title xmlns:ns3011="http://docbook.org/ns/docbook">Structuring and Building the Project</ns3011:title>
+        <ns3012:para xmlns:ns3012="http://docbook.org/ns/docbook">
+            We assemble the project into a self-contained directory structure, which
+            uses <ns3013:literal xmlns:ns3013="http://docbook.org/ns/docbook">ant</ns3013:literal> to automate compilation and assembly. Earlier
+            versions of EJB required specific structures and deployment descriptors,
+            but an EJB3 application is simply a Java Archived (JAR) tree of classes
+            and resources.
+        </ns3012:para>
+        <ns3014:figure xmlns:ns3014="http://docbook.org/ns/docbook">
+            <ns3015:title xmlns:ns3015="http://docbook.org/ns/docbook">Project Directory Structure</ns3015:title>
+            <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="images/businessLayerFileStructure.jpg"/></imageobject></mediaobject>
+        </ns3014:figure>
+        <ns3016:figure xmlns:ns3016="http://docbook.org/ns/docbook">
+            <ns3017:title xmlns:ns3017="http://docbook.org/ns/docbook">The Ant Build Script</ns3017:title>
+            <ns3018:programlisting xmlns:ns3018="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/build.xml" parse="text"/>
+            </ns3018:programlisting>
+        </ns3016:figure>
+        <ns3019:figure xmlns:ns3019="http://docbook.org/ns/docbook">
+            <ns3020:title xmlns:ns3020="http://docbook.org/ns/docbook">Externalised Build properties</ns3020:title>
+            <ns3021:programlisting xmlns:ns3021="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/build.properties" parse="text"/>
+            </ns3021:programlisting>
+        </ns3019:figure>
+        <ns3022:para xmlns:ns3022="http://docbook.org/ns/docbook">
+            Running
+            <ns3023:programlisting xmlns:ns3023="http://docbook.org/ns/docbook">
+ant package
+            </ns3023:programlisting>
+            compiles and builds the application JAR, which can then simply be deployed to your
+            application server. In the case of, it may simply be copied to:
+            <ns3024:programlisting xmlns:ns3024="http://docbook.org/ns/docbook">
+$JBOSS_HOME/server/default/deploy
+                </ns3024:programlisting>
+            which immediately deploys the service. Your service may now be used from
+            <ns3025:itemizedlist xmlns:ns3025="http://docbook.org/ns/docbook">
+                <ns3026:listitem xmlns:ns3026="http://docbook.org/ns/docbook">
+                    <ns3027:para xmlns:ns3027="http://docbook.org/ns/docbook">Local Java clients, running in the same container (e.g. other services, EJBs, etc)</ns3027:para>
+                </ns3026:listitem>
+                <ns3028:listitem xmlns:ns3028="http://docbook.org/ns/docbook">
+                    <ns3029:para xmlns:ns3029="http://docbook.org/ns/docbook">Remote Java clients, by connecting to it using Java RMI</ns3029:para>
+                </ns3028:listitem>
+                <ns3030:listitem xmlns:ns3030="http://docbook.org/ns/docbook">
+                    <ns3031:para xmlns:ns3031="http://docbook.org/ns/docbook">
+                        Remote clients in other languages (such as C++), by using CORBA
+                    </ns3031:para>
+                </ns3030:listitem>
+            </ns3025:itemizedlist>
+        </ns3022:para>
+        <ns3032:para xmlns:ns3032="http://docbook.org/ns/docbook">
+            Running
+            <ns3033:programlisting xmlns:ns3033="http://docbook.org/ns/docbook">
+ant export-contract
+                </ns3033:programlisting>
+            produces an API JAR which contains the <ns3034:quote xmlns:ns3034="http://docbook.org/ns/docbook">contract</ns3034:quote> of this
+            service. This is useful to provide to other clients who want to access
+            your service, and will also be used to create a decoupled user interface
+            (web presentation layer) for the service.
+        </ns3032:para>
+    </ns3010:section>
+</ns2973:section>

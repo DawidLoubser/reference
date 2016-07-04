@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"-->
+<section id="resources.information.platforms.linux.commands.sendingMessages"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Sending messages</title>
+  <para>
+    At times it may be useful to send a message to a particular user, or to broadcast
+    a message to all users.
+  </para>
+  
+  <section>
+    <title>Enabling/disabling messaging via <command>mesg</command></title>
+    <para>
+      To specify whether your messaging is enabled or disabled for your terminal session,
+      use the <command>mesg</command> command with either 
+      <literal>yes</literal> or <literal>no</literal>. For example
+      <cmdsynopsis>
+<command>mesg</command> <arg>yes</arg>
+      </cmdsynopsis>
+      enables messaging for that terminal.
+    </para>
+    <para>
+       This controls both,
+       <itemizedlist>
+         <listitem><para>
+           whether you are willing to receive messages in your terminal from other
+           users and
+         </para></listitem>
+         <listitem><para>
+           whether you are able to send messages to other users or not.  
+         </para></listitem>
+       </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Sending a message via <command>write</command></title>
+    <para>
+      You can send a sequence of messages to a user via write. Messages are communicated by
+      copying lines from your terminal to theirs.
+      <cmdsynopsis>
+<command>write</command> <arg><![CDATA[username]]></arg>
+      </cmdsynopsis>
+      accepts input lines each of which will be sent as a message to the user
+      upon <command><![CDATA[<ENTER>]]></command> being pressed. To terminate the
+      write session, press <command><![CDATA[<CTRL><D>]]></command> in order
+      to provide an end-of-file character.
+    </para>
+    <para>
+       If the user you want to write to is logged in on more than
+       one terminal, you can specify which terminal to  write  to
+       by  specifying  the terminal name as the second operand to
+       the <command>write</command>  command.   
+    </para>
+    <para>
+      If you do not specify the terminal to be used, <command>write</command> will
+      select the one with the shortest idle time.
+    </para>
+    <para>
+      You can also use piping to send all the messages in a file to a user. For example
+      <cmdsynopsis>
+<command><![CDATA[less msg.txt |  write <username>]]></command>        
+      </cmdsynopsis>
+    </para>
+  </section>
+  
+  <section>
+    <title>Broadcasting via <command>wall</command></title>
+    <para>
+      If you want to broadcast a message to all users, you can use the <command>wall</command>
+      command, which is short for <emphasis>write-all</emphasis>. It takes a file name with the
+      message as argument. Alternatively, you can use piping:
+      <cmdsynopsis>
+<command><![CDATA[echo 'testing wall' | wall]]></command>  
+      </cmdsynopsis>
+    </para>
+  </section>
+  
+</section>

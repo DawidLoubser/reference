@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.integrating.localInterface.remoteInterfaceOverheads"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Overheads of remote interfaces</title>
+  <para>
+    Accessing local beans through their home and remote interfaces is unnecessarily slow. The
+    steps performed are: 
+    <orderedlist>
+      <listitem>
+        <para>The client calls a local stub. </para>
+      </listitem>
+      <listitem>
+        <para>The stub marshalls the service request onto a RMI/IIOP or a IIOP message. </para>
+      </listitem>
+      <listitem>
+        <para>The message is sent via a network connection to the server skeleton. </para>
+      </listitem>
+      <listitem>
+        <para>The server skeleton de-marshals the service request and calls the EJB object which is
+          network enabled. </para>
+      </listitem>
+      <listitem>
+        <para>The EJB object applies middleware support services like </para>
+        <itemizedlist>
+          <listitem>
+            <para>connection pooling, </para>
+          </listitem>
+          <listitem>
+            <para>transaction control, </para>
+          </listitem>
+          <listitem>
+            <para>life-cycle services, </para>
+          </listitem>
+          <listitem>
+            <para>persistence services (e.g. loading an entity bean's state from a database) and </para>
+          </listitem>
+          <listitem>
+            <para>security.</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+      <listitem>
+        <para>The EJB object calls the bean implementations sevices via a normal Java call. </para>
+      </listitem>
+      <listitem>
+        <para>On service completion further middleware services may be applied (e.g. life-cycle and
+          persistence services) </para>
+      </listitem>
+      <listitem>
+        <para>The server skeleton marshalls the return value, any output arguments or any exceptions
+          raised by the server onto the RMI/IIOP stream. </para>
+      </listitem>
+      <listitem>
+        <para>The client stub de-marshalls the server response and passes it on to the client.</para>
+      </listitem>
+    </orderedlist>
+  </para>  
+  <para>
+    If this was the only way one bean can make use of the services of another bean, then
+    performance would put a significant damper on re-using enterprise beans from within enterprise
+    beans and hence on developing small fine-grained beans.
+  </para>
+</section>  

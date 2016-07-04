@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" -->
+
+<section id="resources.information.platforms.jboss.clustering.architecture.clusteringArchitecture"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>The clustering architecture of JBoss</title>
+  <para>
+      In this section we discuss the core architectural elements
+      of the clustering architecture of JBoss.
+  </para>  
+  
+  <section>
+    <title>Partitions and nodes</title>
+    <para>
+      A node is an instance of the application server. To create
+      a cluster from a number of application server instances
+      (typically running on separate machines), one groups those
+      servers into the same partition.    
+      <note><para>
+         The same node can belong to multiple clusters.
+      </para></note>
+    </para>
+  </section>
+  
+  <section>
+    <title>The default partition</title>
+    <para>
+        If a partition is not given a name, it acquires the default name,
+        <literal>partition/cluster</literal>. Consequently, starting new nodes without
+        specifying a partition name will make the nodes belong to the same
+        default partition. However, clustering is switched off by  default.
+    </para>
+  </section>
+  
+  <!--
+  <section>
+    <title>Sub-Partitions</title>
+  </section>
+  -->
+  
+    <section>
+      <title>Automatic node discovery</title>
+      <para>
+          In JBoss one does not have to define a cluster statically. One simply
+          assigns a node to a partition by providing a partition name (it will
+          be in the default partition if a partition name is not specified).
+      </para>
+      <para>
+          The nodes communicate with one another informing the other nodes
+          in the partition of their availability. A node can be dynamically
+          reassigned to another cluster.
+      </para>
+    </section>
+
+    <section>
+      <title>Intra-node communication</title>
+      <para>
+        Nodes communicate their state (<abbrev>e.g.</abbrev> that it has become available or 
+        that it is going down) by sending multi-cast messages. JBoss uses 
+        JavaGroup's which is a framework for reliable group communication via 
+        UDP-multicast messaging.
+      </para>
+    </section>
+    
+    <section>
+      <title>Connnecting to nodes in a fail-over safe way</title>
+      <para>
+        To achieve fail-over safety a connection must automatically be 
+        established to a node which is currently up and running and, upon
+        failure of that node, the connection should be redirected to
+        another node.
+      </para>
+      <para>
+        In this section we first explain some commonly used approaches
+        before discussing the <emphasis>smart-proxy</emphasis> solution provided by
+        <emphasis>JBoss</emphasis>.      
+      </para>
+    </section>
+    
+    <section>
+      <title>Building fail-over safety into client applications</title>
+      <para>
+        For fail over safety a client has to, upon failure at a particular node,
+        reconnect to another node. This logic could be built in to the client
+        application, but that would embed clustering logic directly into client
+        applications. 
+      </para>
+      <para>
+        However, the clustering should preferably be transparent to client 
+        applications, <abbrev>i.e.</abbrev> a client application simply makes use of a service
+        offered by a service provider and is unaware oof which node ultimately
+        supplies the service.
+      </para>
+    </section>
+    
+    <section>
+      <title>Using a server-side dispatcher</title>
+      <para>
+        Alternatively one could host the fail-over safety on the server side
+        by having clients call a dispatcher which forwards the request to one
+        of the nodes, and, upon failure of that node, redirects the request
+        to another node.
+      </para>
+      <para>
+        Using a dispatcher has, however,the disadvantage that there is still
+        a single point of failure, the dispatcher itself.
+      </para>
+    </section>
+    
+    <section>
+      <title>Smart proxies</title>
+      <para>
+        JBoss uses smart-proxies to provide fail-over safety to clients in a 
+        transparent way. Smart proxies have an embedded dispatcher, <abbrev>i.e.</abbrev> the 
+        dispatcher is now on the client side.
+      </para>
+      
+      <section>
+        <title>What do smart-proxies provide you?</title>
+        <para>
+          A smart proxy is an intelligent proxy which
+          <itemizedlist>
+            <listitem><para>
+              <emphasis>is completely transparent to the client</emphasis>
+              (the client need not even know that he is using a smart proxy),
+            </para></listitem>
+            <listitem><para>
+              <emphasis>contains fail-over logic</emphasis> and hence selects an available
+              node for service requests and automatically connects to another node 
+              when one node fails,
+            </para></listitem>
+            <listitem><para>
+              <emphasis>contains load-balancing logic</emphasis>, <abbrev>i.e.</abbrev>
+              uses some pluggable load-balancing policy (<abbrev>e.g.</abbrev>
+              <emphasis>first-available</emphasis> or <emphasis>round-robin</emphasis>
+              to distribute requests accross the available nodes, and
+            </para></listitem>
+            <listitem><para>
+              smart proxies <emphasis>are initialized and continually updated with the available
+              available nodes list</emphasis>, i.e.\ nodes can be removed and added while a client
+              is interfacing with a system through smart proxies.
+            </para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+      
+      <section>
+        <title>Pluggable load-balancing policies</title>
+        <para>
+          The load balancing policy can be selected at deploy-time (is purely a deployment
+          parameter) and can be dynamically modified at  run-time. They implement a standard 
+          interface and one can simply develop further, more specialized load-balancing
+          algorithms and plug them in.        
+        </para>
+      </section>
+      
+      <section>
+        <title>Making smart proxies available to clients</title>
+        <para>
+          The smart proxy has to be either
+          <itemizedlist>
+            <listitem><para>
+              packaged within the client jar or
+            </para></listitem>
+            <listitem><para>
+              downloaded at run-time where the proxy class can even be generated on the fly.
+            </para></listitem>
+          </itemizedlist>
+          JBoss uses object-serialization (the proxy is passed by value) to transfer the proxy 
+          via RMI from the server to the client. The serialized proxy is annotated with a URL
+          providing the client a location from which the proxy class can be downloaded from if
+          it is not available on the client side.
+        </para>
+      </section>
+    </section>
+</section>  

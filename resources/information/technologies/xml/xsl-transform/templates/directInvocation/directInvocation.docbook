@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.technologies.xml.xsl-transform.templates.directInvocation.directInvocation">
+  <title>Directly invoking templates</title>
+
+  <para> At times, one wants to directly invoke templates (based on their
+    name) rather than have them automatically invoked based on their
+      <literal>match</literal> expression. These often take the form of
+    simple (static) templates that output fixed or macro content, or they
+    may receive parameters, in which case they function similar to method
+    calls in a programming language. </para>
+  <para> In order to be eligible for direct calling, a template needs to
+    declare a name, instead of a match expression. For example: <programlisting><![CDATA[
+<xsl:template name="printFooter">
+    <html:div class="footer">
+        © 2006 Solms TCD. No rights reserved.
+    </html:div>
+</xsl:template>
+        ]]></programlisting> This may then be called (repeatedly, is
+    desired) from other templates, for example: <programlisting><![CDATA[
+<xsl:template match="/foo">
+    <!-- Do other stuff -->
+    <!-- ... -->
+    
+    <!-- Call footer template -->
+    <xsl:call-template name="printFooter"/>
+</xsl:template>
+        ]]></programlisting>
+  </para>
+
+  <section>
+    <title>Invoking templates with parameters</title>
+    <para> A named template may declare that it expects one or more
+      parameters. The following template, for example will print the full
+      name of a person, represented by an element that contains a
+        <literal>firstName</literal> and a <literal>surName</literal>
+      sub-elements. It expects to receive this element as a named
+      parameter called <literal>person</literal>. This parameter is
+      available as a standard XSLT variable, used by prefixing with a
+      dollar. <programlisting><![CDATA[
+<!-- Prints the full name of a person -->
+<xsl:template name="printFullName">
+    <xsl:param name="person"/>
+    <xsl:value-of select="$person/firstName"/>
+    <xsl:value-of select="$person/surName"/>
+</xsl:template>
+            ]]></programlisting>
+    </para>
+    <para> Another template may invoke this re-usable template, by passing
+      it appropriate parameters. For example, a template, which matches on
+      a client (which has first and surnames) may use the template as
+      follows: <programlisting><![CDATA[
+<!-- Displays a client's details in XHTML -->
+<xsl:template match="//client">
+    <!-- Write the full name in a level 1 heading -->
+    <html:h1>
+        <xsl:call-template name="printFullName">
+            <!-- Pass it the current context object, which
+                contains a first- and surname -->
+            <xsl:with-param name="person" select="."/>
+        </xsl:call-template>
+    </html:h1>
+    
+    <!-- Output rest of the client's details ... -->
+</xsl:template>
+            ]]></programlisting>
+    </para>
+  </section>
+</section>

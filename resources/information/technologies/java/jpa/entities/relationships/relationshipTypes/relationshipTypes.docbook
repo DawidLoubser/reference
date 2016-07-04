@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Relationship types</title>
+    <para>
+        JPA supports uni-directional and bi-directional one-to-one, one-to-many,
+        many-to-one and many-to-many relationships.
+    </para>
+    
+    <section>
+        <title>Relationship owner</title>
+        <para>
+            For each relationship there is a <emphasis>relationship owner</emphasis>
+            who maintains the pointer (<abbrev>e.g.</abbrev> foreign key) of the
+            relationship. In the case of bi-directional relationships the related
+            entity also provides a message path to the relationship owner.
+        </para>
+    </section>
+    
+    <section>
+        <title>Unidirectional single-valued relationships</title>
+        <para>
+            Consider the uni-directional single-valued relationship shown in the following figure:
+        </para>
+        <figure xml:id="jpa.relationships.uniDirectionalOneToOne_fig">
+            <title>A unidirectional one-to-one relationship</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="uniDirectionalOneToOne.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para>
+            The relationship owner simply maintains the message path as well as the
+            foreign key. The mapping onto entity beans would be as follows:
+            <programlisting language="Java">
+@Entity
+public class Address {...}
+        
+@Entity
+public class Customer
+{
+  public Address getAddress() {return address;}
+        
+  public void setAddress(Address addr) {address = addr;}
+ 
+  @OneToOne(cascade=CascadeType.DELETE)
+  private Address address;
+}        
+        </programlisting>
+        </para>
+        <note>
+            <para>
+                Cascading delete is specified to request the composition
+                behaviour, i.e. that the component should not outlast the
+                owner.
+            </para>
+        </note>
+    </section>
+    
+    <section>
+        <title>Bidirectional one-to-one relationships</title>
+        <para>
+            Consider the bi-directional one-to-one relationship shown in the following figure:
+        </para>
+        <figure xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.entityBeans.beanRelationships.bidirectionalOneToOne_fig">
+            <title>A bidirectional one-to-one relationship</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="bidirectionalOneToOne.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para>
+            Here both entities maintain message paths to one another. At database
+            level, there is, however, only one foreign key maintained, <abbrev>i.e.</abbrev>
+            only one relationship owner.
+        </para>
+        <para>
+            For the reverse relationship we specify a <literal>mappedBy</literal>
+            attribute which ensures that this relationship is not implemented at
+            storage level:
+            <programlisting language="Java">
+@Entity
+public class PurchaseOrder 
+{
+  public Invoice getIssuedInvoice() {return invoice;}
+        
+  public void setIssuedInvoice(Invoice inv) {invoice = inv;}
+  ...
+  
+  @OneToOne
+  private Invoice issuedInvoice;
+}
+        
+@Entity
+public class Invoice
+{
+  public PurchaseOrder getPurchaseOrder() {return purchaseOrder;}
+        
+  public void setPurchaseOrder(PurchaseOrder order) 
+  {
+    purchaseOrder = order;    
+  }
+  ...      
+  
+  @ManyToOne(mappedBy="issuedInvoice")       
+  private PurchaseOrder order;
+}        
+        </programlisting>
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Bidirectional many-to-one relationships</title>
+        <para>
+            To implement one-to-many or many-to-many relationships we need to use
+            either one of the <literal>java.util</literal> collection types:
+        </para>
+        <figure xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.entityBeans.beanRelationships.biDirectionalManyToOne_fig">
+            <title>A bidirectional many-to-one relationship</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="biDirectionalManyToOne.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para>
+            The mapping onto entity beans would be as follows:
+            <programlisting language="Java">
+@Entity
+public class Client 
+{
+  public Collection&lt;Account&gt; getAccounts()
+  {
+    return accounts;
+  }      
+  ...
+ 
+  @OneToMany(mappedBy="client")
+  private Collection&lt;Account&gt; accounts;
+}
+        
+@Entity
+public class Account
+{
+  public Client getClient() {return client;}
+        
+  public void setClient(Client clnt) {client = clnt;}
+  
+  @ManyToOne        
+  private Client client;
+}        
+        </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Cascading Operations</title>
+        <para>
+            Depending on your design, you may desire that operations on a parent component
+            (e.g. a Client) <emphasis>cascade</emphasis> to its constituent components.
+            (for example, deleting a client may or may not cause all the client's
+            accounts to be deleted). This is specified with the <literal>cascade</literal>
+            parameter of any of the relationship annotations, with a set of enumerated values
+            provided by the enumeration <literal>javax.persistence.CascadeType</literal>. For
+            example, to cause all operation (including deletion) to be cascaded to the constituent
+            component:
+            <programlisting language="Java">
+public class Client
+{
+ ...
+ 
+ @OneToOne(cascade=CascadeType.ALL)
+ private Portfolio portfolio;
+}
+      </programlisting>
+        </para>
+        <para>
+            The allowable values are:
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>ALL</title>
+                        <para>Cascade all operations</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>MERGE</title>
+                        <para>Cascade merge (update) operation</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>PERSIST</title>
+                        <para>Cascade persist operation</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>REFRESH</title>
+                        <para>Cascade refresh operation</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>REMOVE</title>
+                        <para>Cascade remove operation</para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+</section>

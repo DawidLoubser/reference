@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author Dawid Loubser -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.newIO.buffers.introduction">
+    
+    <title>Introduction</title>
+    <para>
+        NIO data transfer is based on buffers (<literal>java.nio.Buffer</literal> and related classes). 
+        These classes represent a <emphasis>fixed size</emphasis>, contiguous extent of memory, 
+        together with a small number of services. Although theoretically these are general-purpose data structures, 
+        they may specifically allocate and manage certain areas of memory which are not normally accessible to Java.
+    </para>
+    <para>
+        Typically, this would be used to allow the buffer contents to occupy the <emphasis>same physical memory</emphasis> used 
+        by the underlying operating system for its native I/O operations, thus allowing the most direct transfer mechanism, 
+        and eliminating the need for any additional copying. In most operating systems, some data transfers can even take 
+        place without using the CPU at all. The NIO buffers are intentionally limited in features in order to support 
+        these goals (across different operating systems) - they are simple objects 
+        which basically contain:
+        <itemizedlist>
+            <listitem>
+                <para>A fixed-size array of primitive values</para>
+            </listitem>
+            <listitem>
+                <para>Basic state information (such as size, read position, etc)</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        The most basic buffer is the <literal>ByteBuffer</literal> which simply maps onto a fixed number of bytes.
+    </para>
+    <para>
+        There are higher-level buffer classes for all of Java's primitive types <emphasis>except boolean</emphasis>, which can share 
+        memory with the low-level byte buffers and allow arbitrary interpretation of the underlying bytes. In such a scenario,
+        no duplication of the underlying bytes occur (the higher-level buffer is merely an interpreter for the same bytes), and since 
+        the bytes are typically already mapped to a memory location native to the operating system, the best possible I/O performance
+        can be achieved. These higher level buffers are called <quote>views</quote> onto the lower-level bytes.
+    </para>
+    <note>
+        <para>
+            The ability to use native (operating system) memory to hold buffer data is made possible by changes in the <literal>JNI</literal>
+            (Java Native Interface) API which, for the first time, allow Java objects to indirectly access memory space allocated with 
+            native code.
+        </para>
+    </note>
+    <figure>
+        <title>Java NIO Buffer Types</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="bufferTypes.jpg"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+</section>

@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="resources.information.technologies.xml.XSLFO"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Rendering via XSL-FO</title>
+
+    <section>
+        <title>Introduction</title>
+
+        <para> An XSL-FO document is usually created by applying an XSLT style sheet to an
+                    XML stream. As such it no longer seperates the content from the presentation,
+                    i.e. �the data and the formatting tags are interleaved.</para>
+
+        <para> XSL-FO can be used, for example, to render information visually (e.g. �in a
+                    browser window), for a printer, acoustically or in braille. A very common
+                    application for XML-FO is to generate PDF files. FOP from Apache and XEP from
+                    renderx.com are perhaps the most widely used XML rendering tools.</para>
+                
+        <section>
+            <title>Downloading and Installing FOP</title>
+
+            <para> The latest FOP version can be obtained from 
+            <emphasis>www.apache.org</emphasis>. Download the binary distribution
+                        and extract the files to some installation directory. You may find it
+                        convenient to copy the jar files in the lib directory to the 
+                        <emphasis>jre/lib/ext</emphasis> sub-directory of your Java
+                        installation. You may also want to include the fop installation directory in
+                        your path.</para>
+                    
+        </section>
+                
+    </section>
+            
+            
+    <section>
+        <title>A Simple Hello-World Document</title>
+        <figure id="fopHelloWorld">
+            <title>An XSL-FO document rendered as a PDF using FOP.</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../../../../../resources/information/technologies/xmlXSLFO/HelloWorldFig.gif"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+
+        <para> Let us have a look at XSL-FO HelloWorld example. The result will look as
+                    shown in figure <xref linkend="fopHelloWorld"/>. The document was generated 
+                    with the following simple XSL-FO document:</para>
+                
+
+        <programlisting>
+        <![CDATA[
+        �<?xml �version="1.0" �encoding="UTF-8" �?>
+                     �<fo:root �xmlns:fo="http://www.w3.org/1999/XSL/Format">  �
+                     � � �<fo:layout-master-set>
+                     � � � � �<fo:simple-page-master �master-name="test-page">
+                     � � � � � � �<fo:region-body �margin="2cm"/>  � � � � �</fo:simple-page-master>
+                     � � �</fo:layout-master-set>  �
+                     � � �<fo:page-sequence �master-reference="test-page">
+                     � � � � �<fo:flow �flow-name="xsl-region-body">
+                     � � � � � � �<fo:block �font-weight="bold" �font-size="32pt" �text-align="center">Greeting</fo:block>
+                     � � � � � � �<fo:block �font-family="Times" �font-size="24pt">Hi �there,
+                     � � � � � � � � �<fo:inline �color="green" �font-style="italic">mate!!!</fo:inline>
+                     � � � � � � �</fo:block>  � � � � �</fo:flow>  � � �</fo:page-sequence>  �</fo:root>
+        ]]>             
+        </programlisting>
+
+        <para> Each XSL-FO document has a root node called 
+<emphasis>root</emphasis>. We import the XSL-Format namespace into the
+                        <emphasis>fo</emphasis> prefix and then use the XSL-FO
+                    elements and attributes like blocks, font-sizes and weights, and 
+<emphasis>simple-page-master</emphasis>. </para>
+
+        <section>
+            <title>Performing the FOP transformation</title>
+
+            <para> Once FOP is installed, you can simply execute the following command to
+                        apply the transformation:</para>
+                    
+            <programlisting>fop HelloWorld.fo HelloWorld.pdf</programlisting>
+                    
+        </section>
+                
+
+        <section>
+            <title>Templates and Document Content</title>
+
+            <para> Note that we first defined a set of layout masters (containing a single
+                        layout master in our HelloWorld document) followed by the document content
+                        rendered within those templates.</para>
+
+            <para> The structure of an XSL-FO document is thus:</para>
+
+            <programlisting>
+            <![CDATA[
+            �<root>  �  � � � � �<layout-master-set>  �
+                         � � � � � � � � �<!-- �TEMPLATES �-->  �  � � � � �</layout-master-set>  �
+                         � � � � �< �!-- �DOCUMENT �CONTENT � �-->  �  �</root>
+            ]]>             
+            </programlisting>
+
+            <para> There may be dfferent templates for dfferent page types, e.g. � </para>
+            <itemizedlist>
+                <listitem>
+                    <para>even-page template </para>
+                </listitem>
+                <listitem>
+                    <para>odd-page template </para>
+                </listitem>
+                <listitem>
+                    <para>chapter start, ... .</para>
+                </listitem>
+            </itemizedlist>
+
+            <para>These could define dfferent margins, headers, footers and so on.</para>
+                    
+        </section>
+                
+    </section>
+            
+
+    <section>
+        <title>Setting up a Page</title>
+
+        <para> The templates are used to specify page layouts including page sizes,
+                    orientation, margins, writing directions, page numbering and so on.</para>
+                
+        <section>
+            <title>Page Sizes and Orientation</title>
+
+            <para> Page sizes and orientation are specified as attributes for page masters:</para>
+                
+            <programlisting>
+            <![CDATA[
+            �<layout-master-set>
+                         � � � �<simple-page-master �master-name-"StandardContent"
+                         � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � �page-height="297mm"
+                         � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � �page-width="210mm"
+                         � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � �reference-orientation="90">
+                         � � � � � � � � �...  � � � �</simple-page-master>  �  �</layout-master-set>
+            ]]>             
+            </programlisting>
+
+            <para>For media which support scrolling (e.g. �browsers) one may want t use
+                            <emphasis>indefinite</emphasis> for the page size.</para>
+
+            <para> The page orientation is specified as an angle in degrees, i.e. �a 180
+                        degree angle will result in upside-down pages.</para>
+                    
+        </section>
+                
+
+        <section>
+            <title>Margins</title>
+
+            <para> One can either specify a uniform margin via the 
+<emphasis>margin</emphasis> attribute of
+<emphasis>simple-page-master</emphasis> or specify 
+<emphasis>margin-left</emphasis>, 
+<emphasis>marging-right</emphasis>, 
+<emphasis>margin-top</emphasis> and
+<emphasis>margin-bottom</emphasis> seperately. For example:</para>
+                    
+            <programlisting>
+            <![CDATA[
+                         � � � � �<simple-page-master �master-name="TitlePage"
+                         � � � � � � � � � � � � � � � � � � �page-height="29.7cm"  � � � � � � � � � � � � � � � � � � �page-width="21cm"
+                         � � � � � � � � � � � � � � � � � � �margin-top="1cm"  � � � � � � � � � � � � � � � � � � �margin-bottom="2cm"
+                         � � � � � � � � � � � � � � � � � � �margin-left="2.5cm"
+                         � � � � � � � � � � � � � � � � � � �margin-right="2.5cm">
+                         � � � � � � �<region-body �margin-top="6cm"/>  � � � � �</simple-page-master>
+            ]]>             
+            </programlisting>
+                    
+        </section>
+                
+
+        <section>
+            <title>Specifying the Writing Direction</title>
+
+            <para> European languages are written from left to wright with overflows stacked
+                        from top to bottom. Chinese, on the other hand, is written from toop to
+                        bottom with overflows stacked from right to left. To specify the direction of
+                        writing one uses the <emphasis>writing-mode</emphasis>
+                        attribute of the <emphasis>simple-page-master</emphasis>
+                        element. For example,</para>
+                    
+
+            <programlisting>
+            <![CDATA[
+            �<layout-master-set>
+                         � � � �<simple-page-master �master-name-"EnglishPage" �writing-mode="lr-tb">
+                         � � � � � � � � �...  � � � �</simple-page-master>  �
+                         � � � �<simple-page-master �master-name-"ChinesePage" �writing-mode="tb-rl">
+                         � � � � � � � � �...  � � � �</simple-page-master>  �</layout-master-set>
+            ]]>             
+            </programlisting>
+
+            <para> XSL-FO has standard variable names for positioning relative to the
+                        writing direction. These are start The line start position (
+<emphasis>left</emphasis> in european and 
+<emphasis>top</emphasis> in chinese languages). end The line end
+                            position(<emphasis>right</emphasis> in european and
+                            <emphasis>bottom</emphasis> in chinese languages). before
+                        The direction of the preceding line of text (
+<emphasis>top</emphasis> in european and 
+<emphasis>right</emphasis> in chinese languages). after The line
+                        overflow direction (<emphasis>bottom</emphasis> in european
+                        and <emphasis>lef</emphasis> in chinese languages).</para>
+                   
+        </section>
+                
+                
+        <section>
+            <title>Page Sequences</title>
+
+            <para> Within a document one typically uses a number of dfferent page layouts.
+                        The first page of each chapter may be, for example, rendered in a particular
+                        way. Furthermore, one may want to render odd pages dfferently fromeven pages
+                        and the requirement that chapters start on odd pages may introduce the
+                        necessity of yet another page master for the empty padding pages.</para>
+
+            <para> Generally one does not specify which page master is chosen for which
+                        text. Instead one defines an algorithm which the XSL-FO engine will use to
+                        select the correct page master for the pages as they are generated. In the
+                        simplest form, one specifies a page mqaster for the first page and another
+                        for the remaining pages:</para> 
+
+            <programlisting>
+            <![CDATA[
+                         �<page-sequence-master �master-name="ChapterSequence">
+                         � � � � �<single-page-master-reference �page-position="first"
+                         � � � � � � � � �master-reference="FirstPageOfChapter"/>
+                         � � � � �<repeatable-page-master-reference �master-reference="StdPage"/>  �</page-sequence-master>
+            ]]>             
+            </programlisting>
+
+            <para> But the sequence specification can be more complex. For example, one may
+                        want to specify </para>
+            <itemizedlist>
+                <listitem>
+                    <para>one page master for the first page in the sequence, </para>
+                </listitem>
+                <listitem>
+                    <para>one for the even pages, </para>
+                </listitem>
+                <listitem>
+                    <para>one for the odd pages and </para>
+                </listitem>
+                <listitem>
+                    <para>another for blank padding pages.</para>
+                </listitem>
+            </itemizedlist>
+
+            <para>Such an example is shown below:</para>
+               
+            <programlisting>
+            <![CDATA[
+                         �<page-sequence-master �master-name="ChapterSequence">
+                         � � �<repeatable-page-master-alternatives>
+                         � � � � �<conditional-page-master-reference �page-position="first"
+                         � � � � � � � � �master-reference="FirstPageOfChapter"/>
+                         � � � � �<conditional-page-master-reference �odd-or-even="even"
+                         � � � � � � � � �master-reference="EvenPage"/>
+                         � � � � �<conditional-page-master-reference �odd-or-even="odd"
+                         � � � � � � � � �master-reference="OddPage"/>
+                         � � � � �<conditional-page-master-reference �blank-page="blank"
+                         � � � � � � � � �master-reference="BlankPage"/>
+                         � � �</repeatable-page-master-alternatives>  �</page-sequence-master>
+            ]]>             
+            </programlisting>
+               
+        </section>
+               
+               
+        <section>
+            <title>Page Regions</title>
+
+            <para> A page master contains one or more page regions. The page regions contain
+                        either </para>
+            <itemizedlist>
+                <listitem>
+                    <para>text which flows accross the pages or </para>
+                </listitem>
+                <listitem>
+                    <para>static text which is repeated for each page.</para>
+                </listitem>
+            </itemizedlist>
+                    
+
+            <section>
+                <title>The Body Region</title>
+
+                <para> The body region is the only region which is required by simple page
+                            masters. This region is typically used for the main text flow. One can
+                            specify margins, borders, paddings around the borders, column counts,
+                            column gaps and many more attributes for that region. For example</para>
+                        
+
+                <programlisting>
+                             � � � � �&lt;simple-page-master �master-name="TitlePage"
+                             � � � � � � � � � � � � � � � � � � �page-height="29.7cm"
+                             � � � � � � � � � � � � � � � � � � �page-width="21cm">
+                             � � � � � � �&lt;region-body �margin-top="6cm"
+                             � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � �margin-bottom="2cm"
+                             � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � �margin-left="2.5cm"
+                             � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � �margin-right="2.5cm"
+                             � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � �column-count="3"
+                             � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � � �column-gap="6mm"/>  � � � � �&lt;/simple-page-master></programlisting>
+                        
+
+            </section>
+                    
+
+        </section>
+                
+                
+
+        <section>
+            <title>Border regions</title>
+
+            <para> In addition to the body region, one may want to specify one or more
+                        border regions on the <emphasis>before</emphasis>, 
+<emphasis>after</emphasis>, <emphasis>start</emphasis>
+                        and <emphasis>end</emphasis> borders which, in the case of
+                        european text would be the <emphasis>top</emphasis>, 
+<emphasis>bottom</emphasis>, <emphasis>left</emphasis>
+                        and <emphasis>right</emphasis> borders.</para>
+
+            <para> In the case where one has both, horizontal and vertical border regions
+                        one may specify which gets precedence for the overlapping region. If, for
+                        example, the region at the <emphasis>before</emphasis>
+                        position is assigned <emphasis>presedence</emphasis>, then
+                        the header will span accross the entire available width, but the side bars
+                        will only span up to the header. For example, consider the following specs
+                        for even and odd pages with header, footer and body regions:</para>
+                    
+
+            <programlisting>
+                         �&lt;root �xmlns="http://www.w3.org/1999/XSL/Format">
+                         � � �&lt;layout-master-set>
+                         � � � � �&lt;simple-page-master �master-name="EvenPage" �...>
+                         � � � � � � � �&lt;region-before �extent="2cm" �region-name="EvenHeader" �padding="6mm"/>
+                         � � � � � � � �&lt;region-body �padding="1cm" �margin-top="15mm" �margin-bottom="30mm"/>
+                         � � � � � � � �&lt;region-after �extent="2cm" �region-name="Footer" �padding="6mm"/>
+                         � � � � �&lt;/simple-page-master>
+                         � � � � �&lt;simple-page-master �master-name="OddPage" � �...>
+                         � � � � � � � �&lt;region-before �extent="3cm" �region-name="OddHeader" �padding="6mm"/>
+                         � � � � � � � �&lt;region-body �padding="1cm" �margin-top="15mm" �margin-bottom="30mm"/>
+                         � � � � � � � �&lt;region-after �extent="3cm" �region-name="Footer" �padding="6mm"/>
+                         � � � � �&lt;/simple-page-master>  �
+                         � � � � �&lt;page-sequence-master �master-name="ChapterSequence">
+                         � � � � � � �&lt;repeatable-page-master-alternatives>
+                         � � � � � � � � �&lt;conditional-page-master-reference �odd-or-even="odd"
+                         � � � � � � � � � � � � � �master-reference="OddPage"/>
+                         � � � � � � � � �&lt;conditional-page-master-reference �blank-page="blank"
+                         � � � � � � � � � � � � � �master-reference="BlankPage"/>
+                         � � � � � � �&lt;/repeatable-page-master-alternatives>
+                         � � � � �&lt;/page-sequence-master>  �  � � �&lt;/layout-master-set></programlisting>
+
+            <para> Then, when generating the page sequences, typically via XSLT, we specify
+                        the </para>
+            <itemizedlist>
+                <listitem>
+                    <para>static content for the even and odd headers as well as the
+                                footers, </para>
+                </listitem>
+                <listitem>
+                    <para>flow content of the body region.</para>
+                </listitem>
+            </itemizedlist>
+                    
+
+            <programlisting>
+                         � � �&lt;page-sequence �master-reference="ChapterSequence">  �
+                         � � � � � � �&lt;static-content �flow-name="EvenHeader">  � � � � � � � � �&lt;block>
+                         � � � � � � � � � � �&lt;inline>&lt;page-number/>&lt;/inline>
+                         � � � � � � � � � � �&lt;inline �text-align="center">&lt;xsl:value-of �select="/book/title"/>&lt;/inline>
+                         � � � � � � � � �&lt;/block>  � � � � � � �&lt;/static-content>  �
+                         � � � � � � �&lt;static-content �flow-name="OddHeader">
+                         � � � � � � � � �&lt;float �float="left">
+                         � � � � � � � � � � �&lt;block �text-align="center">&lt;xsl:value-of �select="title"/>&lt;/block>
+                         � � � � � � � � �&lt;/float>  � � � � � � � � �&lt;float>
+                         � � � � � � � � � � �&lt;block �text-align="right"> �&lt;page-number/>&lt;/block>
+                         � � � � � � � � �&lt;/float>  � � � � � � �&lt;/static-content>  �
+                         � � � � � � �&lt;static-content �flow-name="Footer">
+                         � � � � � � � � �&lt;block �text-align="center">Solms �Training �\amp; �Consulting&lt;/block>
+                         � � � � � � �&lt;/static-content>  �  � � � � �&lt;flow �flow-name="xsl-region-body">
+                         � � � � � � �&lt;block>  � � � � � � � � �&lt;xsl:apply-templates/>  � � � � � � �&lt;/block>
+                         � � � � �&lt;/flow>  �  � � �&lt;/page-sequence></programlisting>
+                    
+
+        </section>
+                
+                
+        <section>
+            <title>Page Numbers</title>
+
+            <para> The <emphasis>&lt;page-number/></emphasis> tag can be used
+                        to insert page numbers within header and footer or even within flow text as
+                        one would in the context of referencing. For example, the static header
+                        content listed below sets the page number at the center of the footer region:</para>
+                    
+
+            <programlisting>  �&lt;static-content �flow-name="RegionBelow">
+                         � � � �&lt;block �text-align="center">  � � � � � �&lt;page-number/>  � � � �&lt;/block>  �&lt;/static-content></programlisting>
+                    
+
+        </section>
+                
+
+    </section>
+            
+            
+
+    <section>
+        <title>Lists</title>
+
+        <para> Lists are defined in list-blocks containing list-items. Each list item
+                    contains a label and a body:</para>
+                
+
+        <programlisting>  �&lt;list-block>  � � �&lt;list-item>
+                     � � � � �&lt;list-item-label �end-indent="label-end()">&lt;block>-&lt;/block>&lt;/list-item-label>
+                     � � � � �&lt;list-item-body �start-indent="body-start()">
+                     � � � � � �&lt;block>The �relevance �of �XML �to �the �meaning �of �life.&lt;/block>
+                     � � � � �&lt;/list-item-body>  � � �&lt;/list-item>  � � �&lt;list-item>
+                     � � � � �&lt;list-item-label �end-indent="label-end()">&lt;block>-&lt;/block>&lt;/list-item-label>
+                     � � � � �&lt;list-item-body �start-indent="body-start()">
+                     � � � � � � �&lt;block>Information �is �everything&lt;/block>  � � � � �&lt;/list-item-body>
+                     � � �&lt;/list-item>  � � �&lt;list-item>
+                     � � � � �&lt;list-item-label �end-indent="label-end()">&lt;block>-&lt;/block>&lt;/list-item-label>
+                     � � � � �&lt;list-item-body �start-indent="body-start()">
+                     � � � � � � �&lt;block>Life �without �XML �and �other �horror �stories.&lt;/block>
+                     � � � � �&lt;/list-item-body>  � � �&lt;/list-item>  �&lt;/list-block></programlisting>
+                
+
+    </section>
+            
+            
+
+    <section>
+        <title>A DocBook Example</title>
+
+        <para> In this section we will look at a document complying to the DocBook schema
+                    and we shall use XSLT to render it as XSLFO. Finally FOP will be used to render
+                    the XSLFO onto pdf.</para>
+                
+        <section>
+            <title>The DocBook XML Document</title>
+                    
+
+            <programlisting>  �&lt;?xml �version="1.0" �encoding="UTF-8"?>
+                         �&lt;!DOCTYPE �book �SYSTEM �"file:/usr/java/Oxygen/samples/docbook/xml/docbookx.dtd">
+                         �&lt;book>  � � �&lt;title>XML&lt;/title>
+                         � � �&lt;subtitle>An �object-oriented �approach&lt;/subtitle>  � � �&lt;bookinfo>
+                         � � � � �&lt;author>&lt;firstname>Fritz&lt;/firstname>&lt;surname>Solms&lt;/surname>&lt;/author>
+                         � � � � �&lt;affiliation>&lt;orgname>Solms �Training �and �Consulting&lt;/orgname>&lt;/affiliation>
+                         � � �&lt;/bookinfo>  � � �&lt;chapter>
+                         � � � � �&lt;title>The �XML �Styling �Language&lt;/title>  � � � � �&lt;sect1>
+                         � � � � � � �&lt;title>Introduction&lt;/title>  � � � � � � �&lt;para>
+                         � � � � � � � � �The �XML �Styling �Language �(XSL) �has �two �main �aspects �to �it. �XSLT �is �used �for �transforming �an
+                         � � � � � � � � �XML �document �to �another �tree-like �structure �which �may �be, �for �example, � �another �XML
+                         � � � � � � � � �document �structure, �HTML, �a �text �document.  � � � � � � �&lt;/para>
+                         � � � � � � �&lt;para>
+                         � � � � � � � � �XSL-FO, �on �the �other �hand, �focuses �on �specifying �formating �information �for �the �XML �document.
+                         � � � � � � � � �XSL-FO, �on �the �other �hand, �focuses �on �specifying �formating �information �for �the �XML �document.
+                         � � � � � � � � �XSL-FO, �on �the �other �hand, �focuses �on �specifying �formating �information �for �the �XML �document.
+                         � � � � � � � � �XSL-FO, �on �the �other �hand, �focuses �on �specifying �formating �information �for �the �XML �document.
+                         � � � � � �&lt;/para>  � � � � �&lt;/sect1>  � � � � �&lt;sect2>
+                         � � � � � � �&lt;title>Why �XSL?&lt;/title>  � � � � � � � � �&lt;para>
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.  � � � � � � � � � �&lt;/para>  � � � � � � � � �&lt;para>
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.  � � � � � � � � � �&lt;/para>  � � � � �&lt;/sect2>  � � � � �&lt;sect1>
+                         � � � � � � �&lt;title>Assigning �Style �Sheets �to �XML �Documents&lt;/title>
+                         � � � � � � �&lt;para>To �assign �pou �efw;oiu �dsol �yidso �odsiy �loi �hloih �liuh �liuh �sliuh �ilu �hdsilu �hdsu
+                         � � � � � � � � � � � � �hsigt49uew �o;i �we �hweoiu �ewoiu �odwi �hliu �hysaliu �ahlif �osi �hloi �hsalu �hsaliuh �s
+                         � � � � � � � � � � � � �li �hfds �ihdsi �lkuh �liu �hfolsiu �hfu �hliusd �ho;asiuj;ofsi �uaj;pouej;oewjo; �wfeo �e
+                         � � � � � � � � � � � � �p �ouepou �efwpu �pewfu �pou �jewfu �ijewf9uojh. � �oi �ewoiu �ewoiu �ewoi �weoi � �ewo
+                         � � � � � � � � � � � � �po �ew �;ou �ewoiuewiou �j �ewoi �.&lt;/para>
+                         � � � � � � �&lt;para>To �assign �pou �efw;oiu �dsol �yidso �odsiy �loi �hloih �liuh �liuh �sliuh �ilu �hdsilu �hdsu
+                         � � � � � � � � � � � � �hsigt49uew �o;i �we �hweoiu �ewoiu �odwi �hliu �hysaliu �ahlif �osi �hloi �hsalu �hsaliuh �s
+                         � � � � � � � � � � � � �li �hfds �ihdsi �lkuh �liu �hfolsiu �hfu �hliusd �ho;asiuj;ofsi �uaj;pouej;oewjo; �wfeo �e
+                         � � � � � � � � � � � � �p �ouepou �efwpu �pewfu �pou �jewfu �ijewf9uojh. � �oi �ewoiu �ewoiu �ewoi �weoi � �ewo
+                         � � � � � � � � � � � � �po �ew �;ou �ewoiuewiou �j �ewoi �.&lt;/para>  � � � � �&lt;/sect1>
+                         � � � � �&lt;sect1>
+                         � � � � � � �&lt;title>Assigning �Style �Sheets �to �XML �Documents&lt;/title>
+                         � � � � � � �&lt;para>To �assign �pou �efw;oiu �dsol �yidso �odsiy �loi �hloih �liuh �liuh �sliuh �ilu �hdsilu �hdsu
+                         � � � � � � � � � � � � �hsigt49uew �o;i �we �hweoiu �ewoiu �odwi �hliu �hysaliu �ahlif �osi �hloi �hsalu �hsaliuh �s
+                         � � � � � � � � � � � � �li �hfds �ihdsi �lkuh �liu �hfolsiu �hfu �hliusd �ho;asiuj;ofsi �uaj;pouej;oewjo; �wfeo �e
+                         � � � � � � � � � � � � �p �ouepou �efwpu �pewfu �pou �jewfu �ijewf9uojh. � �oi �ewoiu �ewoiu �ewoi �weoi � �ewo
+                         � � � � � � � � � � � � �po �ew �;ou �ewoiuewiou �j �ewoi �.&lt;/para>
+                         � � � � � � �&lt;para>To �assign �pou �efw;oiu �dsol �yidso �odsiy �loi �hloih �liuh �liuh �sliuh �ilu �hdsilu �hdsu
+                         � � � � � � � � � � � � �hsigt49uew �o;i �we �hweoiu �ewoiu �odwi �hliu �hysaliu �ahlif �osi �hloi �hsalu �hsaliuh �s
+                         � � � � � � � � � � � � �li �hfds �ihdsi �lkuh �liu �hfolsiu �hfu �hliusd �ho;asiuj;ofsi �uaj;pouej;oewjo; �wfeo �e
+                         � � � � � � � � � � � � �p �ouepou �efwpu �pewfu �pou �jewfu �ijewf9uojh. � �oi �ewoiu �ewoiu �ewoi �weoi � �ewo
+                         � � � � � � � � � � � � �po �ew �;ou �ewoiuewiou �j �ewoi �.&lt;/para>  � � � � �&lt;sect2>
+                         � � � � � � �&lt;title>Why �XSL?&lt;/title>  � � � � � � � � �&lt;para>
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.  � � � � � � � � � �&lt;/para>  � � � � � � � � �&lt;para>
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.  � � � � � � � � � �&lt;/para>  � � � � � � �&lt;/sect2>
+                         � � � � � � �&lt;sect2>  � � � � � � � � �&lt;title>Putting �XML �into �Context&lt;/title>
+                         � � � � � � � � � �&lt;itemizedlist>
+                         � � � � � � � � � � � �&lt;listitem>&lt;para>The �relevance �of �XML �to �the �meaning �of �life.&lt;/para>&lt;/listitem>
+                         � � � � � � � � � � � �&lt;listitem>&lt;para>Information �is �everything&lt;/para>&lt;/listitem>
+                         � � � � � � � � � � � �&lt;listitem>&lt;para>Life �without �XML �and �other �horror �stories.&lt;/para>&lt;/listitem>
+                         � � � � � � � � � �&lt;/itemizedlist>  � � � � �&lt;/sect2>  � � � � �&lt;/sect1>
+                         � � �&lt;/chapter>  �&lt;/book></programlisting>
+                    
+
+        </section>
+                
+                
+        <section>
+            <title>The XSLT</title>
+                    
+            <programlisting>  �&lt;?xml �version="1.0" �encoding="UTF-8" �?>
+                         �&lt;xsl:stylesheet �xmlns:xsl="http://www.w3.org/1999/XSL/Transform" �version="1.0">
+                         �&lt;xsl:output �method="xml" �indent="yes"/>  �  �&lt;xsl:template �match="/">  �
+                         �&lt;root �xmlns="http://www.w3.org/1999/XSL/Format">
+                         � � �&lt;layout-master-set>
+                         � � � � �&lt;simple-page-master �master-name="TitlePage"
+                         � � � � � � � � � � � � � � � � � � �page-height="29.7cm"  � � � � � � � � � � � � � � � � � � �page-width="21cm"
+                         � � � � � � � � � � � � � � � � � � �margin-top="3cm"  � � � � � � � � � � � � � � � � � � �margin-bottom="3cm"
+                         � � � � � � � � � � � � � � � � � � �margin-left="2.5cm"
+                         � � � � � � � � � � � � � � � � � � �margin-right="2.5cm">
+                         � � � � � � �&lt;region-body �margin-top="6cm"/>  � � � � �&lt;/simple-page-master>
+                         � � � � �&lt;simple-page-master �master-name="FirstPageOfChapter"
+                         � � � � � � � � � � � � � � � � � � �page-height="29.7cm"  � � � � � � � � � � � � � � � � � � �page-width="21cm"
+                         � � � � � � � � � � � � � � � � � � �margin-top="1cm"  � � � � � � � � � � � � � � � � � � �margin-bottom="5cm"
+                         � � � � � � � � � � � � � � � � � � �margin-left="3cm"  � � � � � � � � � � � � � � � � � � �margin-right="2cm">
+                         � � � � � � �&lt;region-body �margin-top="4cm"/>
+                         � � � � � � �&lt;region-before �extent="3cm"/>
+                         � � � � � � �&lt;region-after �extent="3cm"/>  � � � � �&lt;/simple-page-master>
+                         � � � � �&lt;simple-page-master �master-name="EvenPage"
+                         � � � � � � � � � � � � � � � � � � �page-height="29.7cm"  � � � � � � � � � � � � � � � � � � �page-width="21cm"
+                         � � � � � � � � � � � � � � � � � � �margin-top="2cm"  � � � � � � � � � � � � � � � � � � �margin-bottom="1cm"
+                         � � � � � � � � � � � � � � � � � � �margin-left="2cm"  � � � � � � � � � � � � � � � � � � �margin-right="3cm">
+                         � � � � � � � �&lt;region-before �extent="2cm" �region-name="EvenHeader" �padding="6mm"/>
+                         � � � � � � � �&lt;region-body �padding="1cm" �margin-top="15mm" �margin-bottom="30mm"/>
+                         � � � � � � � �&lt;region-after �extent="2cm" �region-name="Footer" �padding="6mm"/>
+                         � � � � �&lt;/simple-page-master>
+                         � � � � �&lt;simple-page-master �master-name="OddPage"
+                         � � � � � � � � � � � � � � � � � � �page-height="29.7cm"  � � � � � � � � � � � � � � � � � � �page-width="21cm"
+                         � � � � � � � � � � � � � � � � � � �margin-top="2cm"  � � � � � � � � � � � � � � � � � � �margin-bottom="1cm"
+                         � � � � � � � � � � � � � � � � � � �margin-left="3cm"  � � � � � � � � � � � � � � � � � � �margin-right="2cm">
+                         � � � � � � � �&lt;region-before �extent="2cm" �region-name="OddHeader" �padding="6mm"/>
+                         � � � � � � � �&lt;region-body �padding="1cm" �margin-top="15mm" �margin-bottom="30mm"/>
+                         � � � � � � � �&lt;region-after �extent="2cm" �region-name="Footer" �padding="6mm"/>
+                         � � � � �&lt;/simple-page-master>
+                         � � � � �&lt;simple-page-master �master-name="BlankPage">
+                         � � � � � � �&lt;region-body �padding="1cm"/>  � � � � �&lt;/simple-page-master>  �
+                         � � � � �&lt;page-sequence-master �master-name="ChapterSequence">
+                         � � � � � � �&lt;repeatable-page-master-alternatives>
+                         � � � � � � � � �&lt;conditional-page-master-reference �page-position="first" �master-reference="FirstPageOfChapter"/>
+                         � � � � � � � � �&lt;conditional-page-master-reference �odd-or-even="even" �master-reference="EvenPage"/>
+                         � � � � � � � � �&lt;conditional-page-master-reference �odd-or-even="odd" �master-reference="OddPage"/>
+                         � � � � � � � � �&lt;conditional-page-master-reference �blank-page="blank" �master-reference="BlankPage"/>
+                         � � � � � � �&lt;/repeatable-page-master-alternatives>
+                         � � � � �&lt;/page-sequence-master>  �  � � �&lt;/layout-master-set>  �
+                         � � �&lt;xsl:apply-templates/>  �  � � �&lt;/root>  �&lt;/xsl:template>  �
+                         �&lt;xsl:template �match="book">&lt;xsl:apply-templates/>&lt;/xsl:template>  �
+                         �&lt;xsl:template �match="/book/title">
+                         � � �&lt;page-sequence �master-reference="TitlePage">
+                         � � � � �&lt;flow �flow-name="xsl-region-body">
+                         � � � � � � �&lt;block �font-size="36pt" �font-family="Times" �font-weight="bold" �text-align="center"
+                         � � � � � � � � � � � � � � � � � � �padding-top="40pt">
+                         � � � � � � � � �&lt;xsl:value-of �select="."/>  � � � � � � �&lt;/block>
+                         � � � � � �&lt;block �font-size="32pt" �font-family="Times" �text-align="center"
+                         � � � � � � � � � � � � � � � � � �space-after.optimum="36pt">
+                         � � � � � � � �&lt;xsl:value-of �select="../subtitle"/>  � � � � � �&lt;/block>
+                         � � � � � �&lt;block �font-size="16pt" �font-family="Times" �text-align="center"
+                         � � � � � � � � � � � � � � � � � �space-after.optimum="8pt">
+                         � � � � � � � �&lt;inline> �&lt;xsl:value-of �select="../bookinfo/author/firstname"/> �&lt;/inline>
+                         � � � � � � � �&lt;inline> �&lt;xsl:value-of �select="../bookinfo/author/surname"/> �&lt;/inline>
+                         � � � � � �&lt;/block>
+                         � � � � � �&lt;block �font-size="16pt" �font-family="Times" �font-style="italic" �text-align="center">
+                         � � � � � � � � �&lt;xsl:value-of �select="../bookinfo/affiliation"/>
+                         � � � � � � �&lt;/block>  � � � � �&lt;/flow>  � � �&lt;/page-sequence>
+                         �&lt;/xsl:template>  �  �&lt;xsl:template �match="chapter">
+                         � � �&lt;page-sequence �master-reference="ChapterSequence">
+                         � � � � � � �&lt;static-content �flow-name="EvenHeader">
+                         � � � � � � � � �&lt;block �text-align="left">
+                         � � � � � � � � � � �&lt;inline>&lt;page-number/>&lt;/inline> �&lt;inline>&lt;xsl:value-of �select="/book/title"/>&lt;/inline>
+                         � � � � � � � � �&lt;/block>  � � � � � � �&lt;/static-content>
+                         � � � � � � �&lt;static-content �flow-name="OddHeader">
+                         � � � � � � � � �&lt;block �text-align="right">
+                         � � � � � � � � � � �&lt;inline>&lt;xsl:value-of �select="title"/>
+                         � � � � � � � � � � �&lt;inline>&lt;page-number/>&lt;/inline>
+                         � � � � � � � � �&lt;/inline>&lt;/block>  � � � � � � �&lt;/static-content>
+                         � � � � � � � � �&lt;!-- �float �not �yet �implemented �by �FOP
+                         � � � � � � �&lt;static-content �flow-name="OddHeader">
+                         � � � � � � � � �&lt;float �float="left">
+                         � � � � � � � � � � �&lt;block �text-align="center">&lt;xsl:value-of �select="title"/>&lt;/block>
+                         � � � � � � � � �&lt;/float>  � � � � � � � � �&lt;float>
+                         � � � � � � � � � � �&lt;block �text-align="right"> �&lt;page-number/>&lt;/block>
+                         � � � � � � � � �&lt;/float>  � � � � � � �&lt;/static-content>  � � � � � � � � �-->
+                         � � � � � � �&lt;static-content �flow-name="Footer">
+                         � � � � � � � � �&lt;block �text-align="center">Solms �Training �and �Consulting&lt;/block>
+                         � � � � � � �&lt;/static-content>  � � � � �&lt;flow �flow-name="xsl-region-body">
+                         � � � � � � �&lt;block>  � � � � � � � � �&lt;xsl:apply-templates/>  � � � � � � �&lt;/block>
+                         � � � � �&lt;/flow>  � � �&lt;/page-sequence>  �&lt;/xsl:template>  �
+                         �&lt;xsl:template �match="chapter/title">
+                         � � � � � � �&lt;block �font-size="36pt" �font-family="Times" �font-weight="bold"
+                         � � � � � � � � � � � � � � � � � � �padding-top="48pt" �padding-bottom="12pt">
+                         � � � � � � � � �Chapter �&lt;xsl:number �count="chapter"/>  � � � � � � �&lt;/block>
+                         � � � � � � �&lt;block �font-size="32pt" �font-family="Times"
+                         � � � � � � � � � � � � � � � � � � �padding-top="12pt" �padding-bottom="36pt">
+                         � � � � � � � � �&lt;xsl:value-of �select="."/>  � � � � � � �&lt;/block>
+                         �&lt;/xsl:template>  �  �&lt;xsl:template �match="sect1">
+                         � � � � � � �&lt;block �font-size="24pt" �font-family="Times" �font-weight="bold"
+                         � � � � � � � � � � � � � � � � � � �padding-top="24pt" �padding-bottom="24pt">
+                         � � � � � � � � � � �&lt;inline>
+                         � � � � � � � � � �&lt;xsl:number �count="chapter" �format="1."/>&lt;xsl:number �count="sect1"/>
+                         � � � � � � � � � �&lt;/inline>  � � � � � � � � � �&lt;inline>
+                         � � � � � � � � � �&lt;xsl:value-of �select="./title"/>  � � � � � � � � � �&lt;/inline>
+                         � � � � � � �&lt;/block>  � � � � � � �&lt;xsl:apply-templates/>  �&lt;/xsl:template>  �
+                         �&lt;xsl:template �match="sect2">
+                         � � � � � � �&lt;block �font-size="12pt" �font-family="Times" �font-weight="bold"
+                         � � � � � � � � � � � � � � � � � � �padding-top="24pt" �padding-bottom="12pt">
+                         � � � � � � � � � � �&lt;inline>
+                         � � � � � � � � � � � �&lt;xsl:number �count="chapter" �format="1."/>
+                         � � � � � � � � � � � �&lt;xsl:number �count="sect1" �format="1."/>
+                         � � � � � � � � � � � �&lt;xsl:number �count="sect2" �format="1"/>  � � � � � � � � � �&lt;/inline>
+                         � � � � � � � � � �&lt;inline>  � � � � � � � � � � � �&lt;xsl:value-of �select="./title"/>
+                         � � � � � � � � � �&lt;/inline>  � � � � � � �&lt;/block>  � � � � � � �&lt;xsl:apply-templates/>
+                         �&lt;/xsl:template>  �  �&lt;xsl:template �match="itemizedlist">
+                         � � � � � � �&lt;block �font-size="12pt" �font-family="Times" �margin-top="5mm" �margin-left="10mm">
+                         � � � � � � � � � �&lt;list-block>  � � � � � � � � � �&lt;xsl:for-each �select="./listitem">
+                         � � � � � � � � � � �&lt;list-item>
+                         � � � � � � � � � � � � �&lt;list-item-label �end-indent="label-end()">&lt;block>
+                         � � � � � � � � � � � � � � �&lt;xsl:text �disable-output-escaping="yes">&amp;#45;&lt;/xsl:text>
+                         � � � � � � � � � � � � �&lt;/block>&lt;/list-item-label>
+                         � � � � � � � � � � � � �&lt;list-item-body �start-indent="body-start()">&lt;block>&lt;xsl:value-of �select="./para"/>&lt;/block>&lt;/list-item-body>
+                         � � � � � � � � � � �&lt;/list-item>  � � � � � � � � �&lt;/xsl:for-each>
+                         � � � � � � � � �&lt;/list-block>  � � � � � � �&lt;/block>
+                         � � � � � � �&lt;xsl:apply-templates/>  �&lt;/xsl:template>  �
+                         �&lt;xsl:template �match="para">
+                         � � � � � � �&lt;block �font-size="12pt" �font-family="Times" �text-align="justify"
+                         � � � � � � � � � � � � � � � � � � �text-indent="15mm">
+                         � � � � � � � � �&lt;xsl:value-of �select="."/>  � � � � � � �&lt;/block>
+                         � � � � � � �&lt;xsl:apply-templates/>  �&lt;/xsl:template>  �  �
+                         �&lt;xsl:template �match="*">&lt;!-- �not �shown �-->&lt;/xsl:template>  �  �&lt;/xsl:stylesheet></programlisting>
+                    
+        </section>
+                
+
+        <section>
+            <title>The generated XSLFO</title>
+                    
+
+            <programlisting>  �&lt;?xml �version="1.0" �encoding="UTF-8"?>
+                         �&lt;root �xmlns="http://www.w3.org/1999/XSL/Format">  �&lt;layout-master-set>
+                         �&lt;simple-page-master �margin-right="2.5cm" �margin-left="2.5cm" �margin-bottom="3cm" �margin-top="3cm" �page-width="21cm" �page-height="29.7cm" �master-name="TitlePage">
+                         �&lt;region-body �margin-top="6cm"/>  �&lt;/simple-page-master>
+                         �&lt;simple-page-master �margin-right="2cm" �margin-left="3cm" �margin-bottom="5cm" �margin-top="1cm" �page-width="21cm" �page-height="29.7cm" �master-name="FirstPageOfChapter">
+                         �&lt;region-body �margin-top="4cm"/>  �&lt;region-before �extent="3cm"/>
+                         �&lt;region-after �extent="3cm"/>  �&lt;/simple-page-master>
+                         �&lt;simple-page-master �margin-right="3cm" �margin-left="2cm" �margin-bottom="1cm" �margin-top="2cm" �page-width="21cm" �page-height="29.7cm" �master-name="EvenPage">
+                         �&lt;region-before �padding="6mm" �region-name="EvenHeader" �extent="2cm"/>
+                         �&lt;region-body �margin-bottom="30mm" �margin-top="15mm" �padding="1cm"/>
+                         �&lt;region-after �padding="6mm" �region-name="Footer" �extent="2cm"/>
+                         �&lt;/simple-page-master>
+                         �&lt;simple-page-master �margin-right="2cm" �margin-left="3cm" �margin-bottom="1cm" �margin-top="2cm" �page-width="21cm" �page-height="29.7cm" �master-name="OddPage">
+                         �&lt;region-before �padding="6mm" �region-name="OddHeader" �extent="2cm"/>
+                         �&lt;region-body �margin-bottom="30mm" �margin-top="15mm" �padding="1cm"/>
+                         �&lt;region-after �padding="6mm" �region-name="Footer" �extent="2cm"/>
+                         �&lt;/simple-page-master>  �&lt;simple-page-master �master-name="BlankPage">
+                         �&lt;region-body �padding="1cm"/>  �&lt;/simple-page-master>
+                         �&lt;page-sequence-master �master-name="ChapterSequence">
+                         �&lt;repeatable-page-master-alternatives>
+                         �&lt;conditional-page-master-reference �master-reference="FirstPageOfChapter" �page-position="first"/>
+                         �&lt;conditional-page-master-reference �master-reference="EvenPage" �odd-or-even="even"/>
+                         �&lt;conditional-page-master-reference �master-reference="OddPage" �odd-or-even="odd"/>
+                         �&lt;conditional-page-master-reference �master-reference="BlankPage" �blank-page="blank"/>
+                         �&lt;/repeatable-page-master-alternatives>  �&lt;/page-sequence-master>
+                         �&lt;/layout-master-set>  � � �&lt;page-sequence �master-reference="TitlePage">
+                         �&lt;flow �flow-name="xsl-region-body">
+                         �&lt;block �padding-top="40pt" �text-align="center" �font-weight="bold" �font-family="Times" �font-size="36pt">XML&lt;/block>
+                         �&lt;block �space-after.optimum="36pt" �text-align="center" �font-family="Times" �font-size="32pt">An �object-oriented �approach&lt;/block>
+                         �&lt;block �space-after.optimum="8pt" �text-align="center" �font-family="Times" �font-size="16pt">
+                         �&lt;inline>Fritz&lt;/inline>  �&lt;inline>Solms&lt;/inline>  �&lt;/block>
+                         �&lt;block �text-align="center" �font-style="italic" �font-family="Times" �font-size="16pt">Solms �Training �and �Consulting&lt;/block>
+                         �&lt;/flow>  �&lt;/page-sequence>  �  �
+                         � � �&lt;page-sequence �master-reference="ChapterSequence">
+                         �&lt;static-content �flow-name="EvenHeader">  �&lt;block �text-align="left">
+                         �&lt;inline>  �&lt;page-number/>  �&lt;/inline>  �&lt;inline>XML&lt;/inline>
+                         �&lt;/block>  �&lt;/static-content>
+                         �&lt;static-content �flow-name="OddHeader">  �&lt;block �text-align="right">
+                         �&lt;inline>The �XML �Styling �Language&lt;inline>  �&lt;page-number/>
+                         �&lt;/inline>  �&lt;/inline>  �&lt;/block>  �&lt;/static-content>
+                         �&lt;static-content �flow-name="Footer">
+                         �&lt;block �text-align="center">Solms �Training �and �Consulting&lt;/block>
+                         �&lt;/static-content>  �&lt;flow �flow-name="xsl-region-body">  �&lt;block>
+                         � � � � �&lt;block �padding-bottom="12pt" �padding-top="48pt" �font-weight="bold" �font-family="Times" �font-size="36pt">
+                         � � � � � � � � �Chapter �1&lt;/block>
+                         �&lt;block �padding-bottom="36pt" �padding-top="12pt" �font-family="Times" �font-size="32pt">The �XML �Styling �Language&lt;/block>
+                         � � � � �&lt;block �padding-bottom="24pt" �padding-top="24pt" �font-weight="bold" �font-family="Times" �font-size="24pt">
+                         �&lt;inline>1.1&lt;/inline>  �&lt;inline>Introduction&lt;/inline>
+                         �&lt;/block>  �
+                         � � � � � � �&lt;block �text-indent="15mm" �text-align="justify" �font-family="Times" �font-size="12pt">
+                         � � � � � � � � �The �XML �Styling �Language �(XSL) �has �two �main �aspects �to �it. �XSLT �is �used �for �transforming �an
+                         � � � � � � � � �XML �document �to �another �tree-like �structure �which �may �be, �for �example, � �another �XML
+                         � � � � � � � � �document �structure, �HTML, �a �text �document.  � � � � � � �&lt;/block>
+                         � � � � � � � � �The �XML �Styling �Language �(XSL) �has �two �main �aspects �to �it. �XSLT �is �used �for �transforming �an
+                         � � � � � � � � �XML �document �to �another �tree-like �structure �which �may �be, �for �example, � �another �XML
+                         � � � � � � � � �document �structure, �HTML, �a �text �document.  �
+                         � � � � � � �&lt;block �text-indent="15mm" �text-align="justify" �font-family="Times" �font-size="12pt">
+                         � � � � � � � � �XSL-FO, �on �the �other �hand, �focuses �on �specifying �formating �information �for �the �XML �document.
+                         � � � � � � � � �XSL-FO, �on �the �other �hand, �focuses �on �specifying �formating �information �for �the �XML �document.
+                         � � � � � � � � �XSL-FO, �on �the �other �hand, �focuses �on �specifying �formating �information �for �the �XML �document.
+                         � � � � � � � � �XSL-FO, �on �the �other �hand, �focuses �on �specifying �formating �information �for �the �XML �document.
+                         � � � � � �&lt;/block>
+                         � � � � � � � � �XSL-FO, �on �the �other �hand, �focuses �on �specifying �formating �information �for �the �XML �document.
+                         � � � � � � � � �XSL-FO, �on �the �other �hand, �focuses �on �specifying �formating �information �for �the �XML �document.
+                         � � � � � � � � �XSL-FO, �on �the �other �hand, �focuses �on �specifying �formating �information �for �the �XML �document.
+                         � � � � � � � � �XSL-FO, �on �the �other �hand, �focuses �on �specifying �formating �information �for �the �XML �document.
+                         �  �
+                         � � � � �&lt;block �padding-bottom="12pt" �padding-top="24pt" �font-weight="bold" �font-family="Times" �font-size="12pt">
+                         �&lt;inline>1.1&lt;/inline>  �&lt;inline>Why �XSL?&lt;/inline>  �&lt;/block>  �
+                         � � � � � � � � �&lt;block �text-indent="15mm" �text-align="justify" �font-family="Times" �font-size="12pt">
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.  � � � � � � � � � �&lt;/block>
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.  �
+                         � � � � � � � � �&lt;block �text-indent="15mm" �text-align="justify" �font-family="Times" �font-size="12pt">
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.  � � � � � � � � � �&lt;/block>
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.  �  �
+                         � � � � �&lt;block �padding-bottom="24pt" �padding-top="24pt" �font-weight="bold" �font-family="Times" �font-size="24pt">
+                         �&lt;inline>1.2&lt;/inline>
+                         �&lt;inline>Assigning �Style �Sheets �to �XML �Documents&lt;/inline>  �&lt;/block>
+                         �
+                         � � � � � � �&lt;block �text-indent="15mm" �text-align="justify" �font-family="Times" �font-size="12pt">To �assign �pou �efw;oiu �dsol �yidso �odsiy �loi �hloih �liuh �liuh �sliuh �ilu �hdsilu �hdsu
+                         � � � � � � � � � � � � �hsigt49uew �o;i �we �hweoiu �ewoiu �odwi �hliu �hysaliu �ahlif �osi �hloi �hsalu �hsaliuh �s
+                         � � � � � � � � � � � � �li �hfds �ihdsi �lkuh �liu �hfolsiu �hfu �hliusd �ho;asiuj;ofsi �uaj;pouej;oewjo; �wfeo �e
+                         � � � � � � � � � � � � �p �ouepou �efwpu �pewfu �pou �jewfu �ijewf9uojh. � �oi �ewoiu �ewoiu �ewoi �weoi � �ewo
+                         � � � � � � � � � � � � �po �ew �;ou �ewoiuewiou �j �ewoi �.&lt;/block>To �assign �pou �efw;oiu �dsol �yidso �odsiy �loi �hloih �liuh �liuh �sliuh �ilu �hdsilu �hdsu
+                         � � � � � � � � � � � � �hsigt49uew �o;i �we �hweoiu �ewoiu �odwi �hliu �hysaliu �ahlif �osi �hloi �hsalu �hsaliuh �s
+                         � � � � � � � � � � � � �li �hfds �ihdsi �lkuh �liu �hfolsiu �hfu �hliusd �ho;asiuj;ofsi �uaj;pouej;oewjo; �wfeo �e
+                         � � � � � � � � � � � � �p �ouepou �efwpu �pewfu �pou �jewfu �ijewf9uojh. � �oi �ewoiu �ewoiu �ewoi �weoi � �ewo
+                         � � � � � � � � � � � � �po �ew �;ou �ewoiuewiou �j �ewoi �.
+                         � � � � � � �&lt;block �text-indent="15mm" �text-align="justify" �font-family="Times" �font-size="12pt">To �assign �pou �efw;oiu �dsol �yidso �odsiy �loi �hloih �liuh �liuh �sliuh �ilu �hdsilu �hdsu
+                         � � � � � � � � � � � � �hsigt49uew �o;i �we �hweoiu �ewoiu �odwi �hliu �hysaliu �ahlif �osi �hloi �hsalu �hsaliuh �s
+                         � � � � � � � � � � � � �li �hfds �ihdsi �lkuh �liu �hfolsiu �hfu �hliusd �ho;asiuj;ofsi �uaj;pouej;oewjo; �wfeo �e
+                         � � � � � � � � � � � � �p �ouepou �efwpu �pewfu �pou �jewfu �ijewf9uojh. � �oi �ewoiu �ewoiu �ewoi �weoi � �ewo
+                         � � � � � � � � � � � � �po �ew �;ou �ewoiuewiou �j �ewoi �.&lt;/block>To �assign �pou �efw;oiu �dsol �yidso �odsiy �loi �hloih �liuh �liuh �sliuh �ilu �hdsilu �hdsu
+                         � � � � � � � � � � � � �hsigt49uew �o;i �we �hweoiu �ewoiu �odwi �hliu �hysaliu �ahlif �osi �hloi �hsalu �hsaliuh �s
+                         � � � � � � � � � � � � �li �hfds �ihdsi �lkuh �liu �hfolsiu �hfu �hliusd �ho;asiuj;ofsi �uaj;pouej;oewjo; �wfeo �e
+                         � � � � � � � � � � � � �p �ouepou �efwpu �pewfu �pou �jewfu �ijewf9uojh. � �oi �ewoiu �ewoiu �ewoi �weoi � �ewo
+                         � � � � � � � � � � � � �po �ew �;ou �ewoiuewiou �j �ewoi �.  �
+                         � � � � �&lt;block �padding-bottom="24pt" �padding-top="24pt" �font-weight="bold" �font-family="Times" �font-size="24pt">
+                         �&lt;inline>1.3&lt;/inline>
+                         �&lt;inline>Assigning �Style �Sheets �to �XML �Documents&lt;/inline>  �&lt;/block>
+                         �
+                         � � � � � � �&lt;block �text-indent="15mm" �text-align="justify" �font-family="Times" �font-size="12pt">To �assign �pou �efw;oiu �dsol �yidso �odsiy �loi �hloih �liuh �liuh �sliuh �ilu �hdsilu �hdsu
+                         � � � � � � � � � � � � �hsigt49uew �o;i �we �hweoiu �ewoiu �odwi �hliu �hysaliu �ahlif �osi �hloi �hsalu �hsaliuh �s
+                         � � � � � � � � � � � � �li �hfds �ihdsi �lkuh �liu �hfolsiu �hfu �hliusd �ho;asiuj;ofsi �uaj;pouej;oewjo; �wfeo �e
+                         � � � � � � � � � � � � �p �ouepou �efwpu �pewfu �pou �jewfu �ijewf9uojh. � �oi �ewoiu �ewoiu �ewoi �weoi � �ewo
+                         � � � � � � � � � � � � �po �ew �;ou �ewoiuewiou �j �ewoi �.&lt;/block>To �assign �pou �efw;oiu �dsol �yidso �odsiy �loi �hloih �liuh �liuh �sliuh �ilu �hdsilu �hdsu
+                         � � � � � � � � � � � � �hsigt49uew �o;i �we �hweoiu �ewoiu �odwi �hliu �hysaliu �ahlif �osi �hloi �hsalu �hsaliuh �s
+                         � � � � � � � � � � � � �li �hfds �ihdsi �lkuh �liu �hfolsiu �hfu �hliusd �ho;asiuj;ofsi �uaj;pouej;oewjo; �wfeo �e
+                         � � � � � � � � � � � � �p �ouepou �efwpu �pewfu �pou �jewfu �ijewf9uojh. � �oi �ewoiu �ewoiu �ewoi �weoi � �ewo
+                         � � � � � � � � � � � � �po �ew �;ou �ewoiuewiou �j �ewoi �.
+                         � � � � � � �&lt;block �text-indent="15mm" �text-align="justify" �font-family="Times" �font-size="12pt">To �assign �pou �efw;oiu �dsol �yidso �odsiy �loi �hloih �liuh �liuh �sliuh �ilu �hdsilu �hdsu
+                         � � � � � � � � � � � � �hsigt49uew �o;i �we �hweoiu �ewoiu �odwi �hliu �hysaliu �ahlif �osi �hloi �hsalu �hsaliuh �s
+                         � � � � � � � � � � � � �li �hfds �ihdsi �lkuh �liu �hfolsiu �hfu �hliusd �ho;asiuj;ofsi �uaj;pouej;oewjo; �wfeo �e
+                         � � � � � � � � � � � � �p �ouepou �efwpu �pewfu �pou �jewfu �ijewf9uojh. � �oi �ewoiu �ewoiu �ewoi �weoi � �ewo
+                         � � � � � � � � � � � � �po �ew �;ou �ewoiuewiou �j �ewoi �.&lt;/block>To �assign �pou �efw;oiu �dsol �yidso �odsiy �loi �hloih �liuh �liuh �sliuh �ilu �hdsilu �hdsu
+                         � � � � � � � � � � � � �hsigt49uew �o;i �we �hweoiu �ewoiu �odwi �hliu �hysaliu �ahlif �osi �hloi �hsalu �hsaliuh �s
+                         � � � � � � � � � � � � �li �hfds �ihdsi �lkuh �liu �hfolsiu �hfu �hliusd �ho;asiuj;ofsi �uaj;pouej;oewjo; �wfeo �e
+                         � � � � � � � � � � � � �p �ouepou �efwpu �pewfu �pou �jewfu �ijewf9uojh. � �oi �ewoiu �ewoiu �ewoi �weoi � �ewo
+                         � � � � � � � � � � � � �po �ew �;ou �ewoiuewiou �j �ewoi �.
+                         � � � � �&lt;block �padding-bottom="12pt" �padding-top="24pt" �font-weight="bold" �font-family="Times" �font-size="12pt">
+                         �&lt;inline>1.3.1&lt;/inline>  �&lt;inline>Why �XSL?&lt;/inline>  �&lt;/block>
+                         �
+                         � � � � � � � � �&lt;block �text-indent="15mm" �text-align="justify" �font-family="Times" �font-size="12pt">
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.  � � � � � � � � � �&lt;/block>
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.  �
+                         � � � � � � � � �&lt;block �text-indent="15mm" �text-align="justify" �font-family="Times" �font-size="12pt">
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.  � � � � � � � � � �&lt;/block>
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.
+                         � � � � � � � � � � � �XSL �supplies �an �open �and �non-proprietary �XML-based �scripting �language �for
+                         � � � � � � � � � � � �transforming �XML �information �streams �into �other �XML �formats �or �even �non-XML
+                         � � � � � � � � � � � �formats.  �  �
+                         � � � � � � �&lt;block �padding-bottom="12pt" �padding-top="24pt" �font-weight="bold" �font-family="Times" �font-size="12pt">
+                         �&lt;inline>1.3.2&lt;/inline>
+                         �&lt;inline>Putting �XML �into �Context&lt;/inline>  �&lt;/block>  �
+                         � � � � � � � � � �&lt;block �margin-left="10mm" �margin-top="5mm" �font-family="Times" �font-size="12pt">
+                         �&lt;list-block>  �&lt;list-item>
+                         �&lt;list-item-label �end-indent="label-end()">  �&lt;block>-&lt;/block>
+                         �&lt;/list-item-label>  �&lt;list-item-body �start-indent="body-start()">
+                         �&lt;block>The �relevance �of �XML �to �the �meaning �of �life.&lt;/block>
+                         �&lt;/list-item-body>  �&lt;/list-item>  �&lt;list-item>
+                         �&lt;list-item-label �end-indent="label-end()">  �&lt;block>-&lt;/block>
+                         �&lt;/list-item-label>  �&lt;list-item-body �start-indent="body-start()">
+                         �&lt;block>Information �is �everything&lt;/block>  �&lt;/list-item-body>
+                         �&lt;/list-item>  �&lt;list-item>
+                         �&lt;list-item-label �end-indent="label-end()">  �&lt;block>-&lt;/block>
+                         �&lt;/list-item-label>  �&lt;list-item-body �start-indent="body-start()">
+                         �&lt;block>Life �without �XML �and �other �horror �stories.&lt;/block>
+                         �&lt;/list-item-body>  �&lt;/list-item>  �&lt;/list-block>  �&lt;/block>  �  �  �
+                         �  �  �  � � �&lt;/block>  �&lt;/flow>  �&lt;/page-sequence>  �&lt;/root></programlisting>
+                    
+
+        </section>
+                
+                
+
+        <section>
+            <title>Rendering XSLFO as PDF</title>
+
+            <para> Ensure that FOP is installed (see the introduction section). Then you
+                        simply apply the transformation via</para>
+                    
+
+            <programlisting>fop HelloWorld.fo HelloWorld.pdf</programlisting>
+                    
+        </section>
+                
+    </section>
+            
+</chapter>

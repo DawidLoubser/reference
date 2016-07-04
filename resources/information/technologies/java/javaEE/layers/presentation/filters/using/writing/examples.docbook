@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Filter Examples</title>
+    
+    <indexterm>
+        <primary>Filters</primary>
+        <secondary>examples</secondary>
+    </indexterm>
+    
+    <section>
+        <title>Real-time hit counter</title>
+        <para>
+            Imagine we wish to gather, in real-time, the number of requests received by our application
+            since it was started. A simple servlet filter could store and maintain an integer counter
+            in the <literal>ServletContext</literal> (application scope).
+        </para>
+        <programlisting language="Java"><![CDATA[
+package my.app.filters;
+
+import java.io.IOException;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class HitCounterFilter implements Filter 
+{
+	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) 
+	throws IOException, ServletException 
+	{
+		// We assume an HTTP environment
+		HttpServletRequest request = (HttpServletRequest)req;
+		
+		// Increment counter stored in context
+		int counter = (Integer)request.getSession()
+						.getServletContext().getAttribute("counter");
+		request.getSession().getServletContext().setAttribute( "counter", counter + 1 );
+		
+		// Continue
+		chain.doFilter(req, resp);
+	}
+	
+	public void init(FilterConfig cfg) 
+	throws ServletException 
+	{
+		// When the filter starts, check if we have a counter,
+		// and create oen if not
+		if ( cfg.getServletContext().getAttribute("counter") == null)
+		{
+			cfg.getServletContext().setAttribute("counter", 0);
+		}
+	}
+	
+	public void destroy() {	}
+}
+
+        ]]></programlisting>
+    </section>
+
+</section>

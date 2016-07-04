@@ -1,0 +1,49 @@
+    
+<!-- SERVICE CONTRACT SPECIFICATION -->
+<!-- *********************************** -->    
+    
+#getDiagramForUseCase($targetUseCase,$urdad_serviceContractDiagram)    
+#set($diagram = $result)
+#if($diagram && $diagram != '')
+#set($diagramId = $diagram.qualifiedName.replaceAll('::','.').replaceAll(' ','_'))
+
+    <section>
+        <title>Service contract: $targetUseCase.name</title>
+        <para>
+            The service contract specification diagram shown in 
+            <xref linkend="$diagramId"/>
+            specifies the contract (interface) name, the service with the request and response objects, the pre- and post-conditions
+            and the quality requirements for the service.
+        </para>
+        <para>
+            The pre-conditions are those conditions under which the service may be refused without being in breach of services contract.
+            The post-conditions are those conditions which must hold true once the service has been rendered.
+            The quality requirements are the non-functional requirements.
+        </para>
+    
+        #set($diagramComment = $report.getComment($diagram).body)
+        #if ($diagramComment && ($diagramComment != ''))            
+            <para>
+                $diagramComment
+            </para>
+        #end            
+    
+        <figure xml:id="$diagramId">
+            <title>The service contract for the $targetUseCase.name use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="$diagram.image"/>
+            </imageobject></mediaobject>
+        </figure>
+        
+        
+        
+    </section>
+#else
+  <section>
+      <title>ERROR: Missing service contract specification</title>
+      <para>
+          URDAD requires the specification of a services contract showing the contract (interface) with the services, their inputs
+          and outputs and their quality requirements.
+      </para>
+  </section>
+#end

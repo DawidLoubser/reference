@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2se.security.messageIntegrity.recipientSide"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/Docs/re_schema/solmsDoc.xsd">
+    
+    <title role="Recipient Side">Recipient Side</title>
+
+<para>The message recipient can read the information directly through
+a <emphasis>DigestInputStream</emphasis> which calculates the digest value
+for the information read through the stream:
+</para>
+<para><programlisting><![CDATA[
+// get info
+
+InputStream in;
+
+// Initialize input stream, perhaps as a buffered input stream to
+// a network socket or file.
+
+MessageDigest messageDigester = MessageDigest.getInstance("SHA-1");
+
+DigestInputStream digestStream 
+  = new DigestInputStream(in, messageDigester);
+
+byte[] buffer = new byte[bufferSize];
+try
+{
+  do 
+  {
+	  int numRead = digestStream.read(buffer, 0, buffer.length);
+	  
+	  // do something with information
+  }
+}
+catch (EOFException e) {}
+
+messageDigester = digestStream.getMessageDigest();
+
+byte[] digest = messageDigester.digest();
+]]></programlisting></para>
+    
+</section>

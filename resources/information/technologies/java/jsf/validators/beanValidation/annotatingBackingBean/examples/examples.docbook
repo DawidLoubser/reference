@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Example</title>
+    <para>
+        Here we show a minimalistic example which applies some bean validations to
+        the backing bean of a presentation layer process. The backing bean has
+        data fields for the name on a credit card and the credit card number and
+        constrains these with some simple constraints.
+    </para>
+    
+    <section>
+        <title>The POM</title>
+        <para>
+            The POM needs to now include the dependencies on the validation spec,
+            and, in the case where we intend to deploy outside a JavaEE-6 compliant
+            application server, also the dependency on a validation framework
+            implementation:
+            <programlisting language="xml">
+<xi:include parse="text" href="../../../../examples/backingBeanValidation/pom.xml"/>                
+            </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>A custom credit card number constraint annotation</title>
+        <para>
+            Our custom credit card number constraint is an annotation for which we
+            specify:
+            <itemizedlist>
+                <listitem><para>
+                   the validator class for the constraint, 
+                </para></listitem>
+                <listitem><para>
+                    that the annotation needs to be retained up to run-time so that
+                    is available to the application server or validation framework
+                    during run-time,
+                </para></listitem>
+                <listitem><para>
+                    that the target of the annotation is a field
+                    <note><para>
+                        Form the validation specification we will see that the field
+                        must be of type <literal>String</literal>.
+                    </para></note>
+                </para></listitem>
+            </itemizedlist>
+            <programlisting language="java">
+<xi:include parse="text" href="../../../../examples/backingBeanValidation/src/main/java/za/co/solms/finance/model/CreditCardNumberConstraint.java"/>                
+            </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>A custom credit card number validator</title>
+        <para>
+            The validator implements the <literal>ConstraintValidator</literal> template interface,
+            taking the constraint as first template parameter and the type fo the field to be
+            validated with the validator as second template parameter. The <literal>isValid</literal>
+            service gets the field instance and its context as parameters and encodes the 
+            validation logic:            
+            <programlisting language="java">
+<xi:include parse="text" href="../../../../examples/backingBeanValidation/src/main/java/za/co/solms/finance/model/CreditCardNumberValidator.java"/>                
+            </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>The view</title>
+        <para>
+            The view is now devoid of any validators:
+            <programlisting language="xml">
+<xi:include parse="text" href="../../../../examples/backingBeanValidation/src/main/webapp/faces/finance/captureCreditCard.xhtml"/>                
+            </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>The backing bean</title>
+        <para>
+           The fields of the backing bean have now been annotated with constraint annotations
+           including some standard constraint annotations and our custom 
+            <literal>CreditCardNumberConstraint</literal> annotation:
+            <programlisting language="java">
+<xi:include parse="text" href="../../../../examples/backingBeanValidation/src/main/java/za/co/solms/finance/ui/web/CaptureCreditCardBinding.java"/>                
+            </programlisting>
+        </para>
+    </section>
+</section>    

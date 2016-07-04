@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+  <xs:element name="partsCatalog">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="parts" type="Parts">
+          <xs:unique name="uniquePartID">
+            <!-- Each part must be unique, based on 'id' attribute -->
+            <xs:selector xpath="part"/>
+            <xs:field xpath="@id"/>
+          </xs:unique>
+        </xs:element>
+        <xs:element name="manufacturers" type="Manufacturers">
+          <xs:unique name="uniqueManufacturerID">
+            <!-- Each manufacturer must be unique, based on 'id' attribute -->
+            <xs:selector xpath="manufacturer"/>
+            <xs:field xpath="@id"/>
+          </xs:unique>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="Parts">
+    <xs:sequence>
+      <xs:element name="part" type="Part" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Manufacturers">
+    <xs:sequence>
+      <xs:element name="manufacturer" type="Manufacturer"
+        maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Part">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="price" type="xs:decimal"/>
+      <xs:element name="manufacturer" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:integer"/>
+  </xs:complexType>
+  <xs:complexType name="Manufacturer">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:integer"/>
+  </xs:complexType>
+</xs:schema>

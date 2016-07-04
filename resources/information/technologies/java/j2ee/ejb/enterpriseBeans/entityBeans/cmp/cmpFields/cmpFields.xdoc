@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.cmpFields.cmpFields"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="CMP fields">Container Managed Persistence (CMP) fields</title>
+  <para>
+    The data fields for the container managed persistence fields may not be defined in the 
+    entity bean class.
+    For example, an order may not have data fields for the <literal>orderNo</literal>,
+    <literal>customer</literal> and the line-items collection. A concrete realization
+    of the bean's persistent state will be realized by a concrete subclass of your 
+    abstract bean class writtent by the application server.O
+    server.
+  </para>
+  
+  <section>
+    <title>Specifying CMP fields in the deployment descriptor</title>
+    <para>
+      One specifies the fields which the container should persist in the deployment descriptor.
+      For example, below
+<programlisting><![CDATA[      
+<ejb-jar>
+  <display-name>Account entity bean</display-name>
+  <enterprise-beans>
+    <entity>
+      <ejb-name>Account</ejb-name>
+      <home>za.co.solms.finance.AccountHome</home>
+      <remote>za.co.solms.finance.Account</remote>
+      <ejb-class>za.co.solms.finance.AccountBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>java.lang.String</prim-key-class>
+      <reentrant>False</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>AccountBean</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>name</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>balance</field-name>
+      </cmp-field>
+  ...
+]]></programlisting>
+      we specify 3 container-managed persistence fields, the <literal>id</literal>, the
+      <literal>name</literal> and the <literal>balance</literal>.
+    </para>  
+  </section>
+</section>  

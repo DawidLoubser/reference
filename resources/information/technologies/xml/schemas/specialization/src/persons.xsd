@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<schema targetNamespace="http://www.SAA.com/passportControl/persons"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:pass="http://www.SAA.com/passportControl/persons"
+    elementFormDefault="qualified">
+
+  <annotation>
+    <documentation>Persons and employees</documentation>
+  </annotation>
+     
+  <element name="persons">
+    <complexType>
+      <sequence>
+        <element name="person" type="pass:Person" 
+                       maxOccurs="unbounded"/>
+        <element name="employee" type="pass:Employee" 
+                       minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+    </complexType>
+  </element>  
+  
+  <complexType name="Person">
+    <sequence>
+      <element name="name" type="string"/>
+      <element name="passport">
+        <complexType>
+          <sequence>
+            <element name="country" type="string"/>
+            <element name="passportNumber" type="string"/>
+          </sequence>
+        </complexType>
+      </element>
+    </sequence>
+  </complexType>  
+  
+  <complexType name="Employee">
+     <complexContent>
+      <extension base="pass:Person">
+        <sequence>
+          <element name="employer" type="string"/>
+                     <element name="salary" type="decimal"/>
+        </sequence>
+        <attribute name="permanent" 
+            type="boolean" use="required"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  
+</schema>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.bmp.bmp"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>A Simple Entity Bean Using Bean-Managed Persistance</title>
+  <para> 
+    As an example we use a account entity bean which will, of course, be persisted to a
+    database. The account exists from when it is opened until it is deleted. 
+  </para>
+  <para> 
+    In the case of container managed persistence, the container will take over all persistence
+    responsibilities. The mapping between the object representation provided by our bean and table
+    columns of relational databases can be done completely automatically. Even the table itself may
+    be automatically created when the entity bean is deployed with the container. 
+  </para>
+  <para> 
+    In the case of bean-managed persistence, the bean developer supplies the JDBC code to
+    persist the bean information to a database. The container still assumes the responsibility of
+    calling <literal>ejbLoad()</literal> and <literal>ejbStore()</literal> when necessary. 
+  </para>
+  <para> 
+    The remote and home interfaces as well as the client application are not affected by the
+    implementation detail of whether the bean implemented chooses container-managed persistence or
+    bean-managed persistence. Let us first look at these two interfaces.
+  </para>
+  
+  <section>
+    <title>The Remote Interface</title>
+    <para>
+      The remote interface has the business services. Often the business services simply provide
+      mechanisms for querying and modifying state information. For example, a product's price can be
+      queried and modified. Similarly, an account can be credited and debited and one can query the
+      balance of the account.
+<programlisting>
+<xi:include parse="text" href="../../../source/AccountBMP/src/common/Account.java" />
+</programlisting>      
+    </para>
+  </section>
+  
+  <section>
+    <title>The Home Interface</title>
+    <para>The home interface now supplies one or more create services which contain the information
+      with used to initialize the entity bean's state. In addition one supplies finder methods which
+      are mapped by the application server onto SQL query methods. These finder methods are used by
+      clients to connect to existing entity beans:
+<programlisting>
+<xi:include parse="text" href="../../../source/AccountBMP/src/common/AccountHome.java" />
+</programlisting>      
+     </para>
+  </section>
+  
+  <section>
+    <title>Obtaining a Connection to a DataSource</title>
+    <para>
+      Developers should not connect to a datasource directly. That would bypass the connection
+      pooling and transaction support of the container and would also increase the binding between
+      the business logic layer and the persistence layer. Instead they should lookup a DataSource
+      through JNDI and request a connection from it:
+<programlisting><![CDATA[
+ InitialContext jndiContext = new InitialContext();
+ 
+ javax.sql.DataSource dataSource
+   = (javax.sql.DataSource)jndiContext.lookup("java:comp/env/jdbc/EJBcourse");
+ 
+ java.sql.Connection dbConnection = dataSource.getConnection();
+ 
+ ...
+]]></programlisting>    
+    </para>
+  </section>
+  
+  <section>
+    <title>An Entity Bean Managing its own Persistence</title>
+    <para>
+      The bean implementation class provides implementations not only for the business services
+      (e.g. <literal>credit</literal>, <literal>debit</literal> and <literal>getBalance</literal>),
+      but also for the <literal>ejbCreate</literal>,
+      <literal>ejbRemove</literal>,<literal>ejbLoad</literal>, <literal>ejbStore</literal> as well
+      as for the finder methods specified in the home interface. It is in these methods that the
+      bean developer inserts the SQL query, insert and update statements (via JDBC):
+<programlisting>
+<xi:include parse="text" href="../../../source/AccountBMP/src/businessLogic/AccountBean.java" />
+</programlisting>  
+    </para>
+  </section>
+  
+  <section>
+    <title>A Session Bean Providing Access to the Entity Bean</title>
+    <para>
+      Though references to entity beans can be obtained directly through its home interface,
+      they are more commonly accessed through session beans. Below we define
+      an<literal>AccountsManager</literal> session bean which provides access to the account 
+      entity bean.
+    </para>
+
+    <section>
+      <title>The Remote Interface</title>
+      <para>
+        The account manager povides services for 
+      <itemizedlist>
+        <listitem>
+          <para>opening and closing accounts, </para>
+        </listitem>
+        <listitem>
+          <para>obtaining handles to existing accounts by account number or name, </para>
+        </listitem>
+        <listitem>
+          <para>and for finding or deleting all accounts.</para>
+        </listitem>
+      </itemizedlist>
+<programlisting>
+<xi:include parse="text" href="../../../source/AccountBMP/src/common/AccountsManager.java" />
+</programlisting>  
+      </para>
+    </section>
+    
+    <section>
+      <title>The Home Interface</title>
+      <para>
+        The home interface specifies the standard default <literal>create()</literal> service:
+<programlisting>
+<xi:include parse="text" href="../../../source/AccountBMP/src/common/AccountsManagerHome.java" />
+</programlisting>  
+      </para>
+    </section>
+    
+    <section>
+      <title>The Bean Implementation</title>
+      <para>The account manager bean provides the implemntations for the methods specified in the
+        remote interface:
+<programlisting>
+<xi:include parse="text" href="../../../source/AccountBMP/src/businessLogic/AccountsManagerBean.java" />
+</programlisting>  
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>A Client Application</title>
+    <para>
+      Client applications can be developed without knowing whether the bean implementation takes
+      over the persistence responsibility or whether it has been delegated to the container.
+    </para>
+    
+    <section>
+      <title>The AccountManager Client Panel</title>
+      <para>
+        The client application has 
+      <itemizedlist>
+        <listitem>
+          <para>one panel interfacing with the account manager and </para>
+        </listitem>
+        <listitem>
+          <para>one panel interfacing directly with the account entity bean whose handle is obtained
+            from the account manager.</para>
+        </listitem>
+      </itemizedlist>
+          It puts these two panels into a tabbed pane and connects to the
+        <literal>AccountManager</literal> session bean:
+<programlisting>
+<xi:include parse="text" href="../../../source/AccountBMP/src/client/common/AccountClientPanel.java" />
+</programlisting>  
+      </para>
+    </section>
+    
+    <section>
+      <title>The AccountManager Panel</title>
+      <para>
+        The <literal>AccountManagerPanel</literal> receives a handle to the account manager as
+        well as to the account panel. It requests account handles from the
+        <literal>AccountManager</literal> session bean and provides that handle to the
+        <literal>AccountPanel</literal> which is responsible for requesting services from the
+        <literal>Account</literal> entity bean itself:
+<programlisting>
+<xi:include parse="text" href="../../../source/AccountBMP/src/client/common/AccountsManagerPanel.java" />
+</programlisting>  
+      </para>
+    </section>
+    </section>
+    
+  <section>
+    <title>The Deployment Descriptors</title>
+    <para>
+      The deployment descritors are much simpler now because they contain no information about
+      the persistence details. They do, however, contain the information about the resource references.
+    </para>
+
+    <section>
+      <title>ejb-jar.xml</title>
+      <para>
+        The generic deployment descriptor simply declares that the persistence is bean-managed.
+        It also specifies a resource reference for the entity bean:
+<programlisting>
+<xi:include parse="text" href="../../../source/AccountBMP/META-INF/ejb-jar.xml" />
+</programlisting>  
+      </para>
+    </section>
+    
+    <section>
+      <title>jboss.xml</title>
+      <para>
+        In the <literal>jboss.xml</literal> deployment descriptor we specify resource references
+        and resource managers:
+<programlisting>
+<xi:include  parse="text" href="../../../source/AccountBMP/META-INF/ejb-jar.xml" />
+</programlisting>  
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>Running the Bean-Managed Persistence Example</title>
+    <para>
+      We can use our standard <literal>targets.xml</literal> file to build and deploy the entity and session bean
+      as well as to run our client.
+    </para>
+  </section>
+</section>

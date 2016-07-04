@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns5609:section xmlns:ns5609="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.iteration.for">
+
+  <ns5610:title xmlns:ns5610="http://docbook.org/ns/docbook">For loops</ns5610:title>
+  <ns5611:para xmlns:ns5611="http://docbook.org/ns/docbook">
+    We have seen an example of looping over the supplied command-line arguments in
+    <ns5612:xref xmlns:ns5612="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.shell.scripting.variables.commandLineArguments"/>.
+    The for loop uses a loop variable which is set to the various elements of a set.
+  </ns5611:para>
+  <ns5613:para xmlns:ns5613="http://docbook.org/ns/docbook">
+    Consider the following simple shell script for another example of a <ns5614:command xmlns:ns5614="http://docbook.org/ns/docbook">for</ns5614:command>
+    loop:
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/testFor_sh.docbook"/>
+    The output of the script is 
+    <ns5615:programlisting xmlns:ns5615="http://docbook.org/ns/docbook">
+1 -&gt; January
+2 -&gt; February
+3 -&gt; March
+4 -&gt; April
+5 -&gt; May
+6 -&gt; June
+7 -&gt; July
+8 -&gt; August
+9 -&gt; September
+10 -&gt; October
+11 -&gt; November
+12 -&gt; December
+    </ns5615:programlisting>
+  </ns5613:para>
+  
+  <ns5616:section xmlns:ns5616="http://docbook.org/ns/docbook">
+    <ns5617:title xmlns:ns5617="http://docbook.org/ns/docbook">Example: Iterating across files</ns5617:title>
+    <ns5618:para xmlns:ns5618="http://docbook.org/ns/docbook">
+      Let us now look at an example which is a little bit more interesting. Let us write a
+      shell script which searches for all files matching a specified file filter, or for all files
+      in the current directory if no filter is specified. The script looks as follows:
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/fileSizes_sh.docbook"/>
+    </ns5618:para>
+    <ns5619:para xmlns:ns5619="http://docbook.org/ns/docbook">
+      Executing the script via
+      <ns5620:cmdsynopsis xmlns:ns5620="http://docbook.org/ns/docbook"><ns5621:command xmlns:ns5621="http://docbook.org/ns/docbook">
+./fileSizes.sh '*.sh'
+      </ns5621:command></ns5620:cmdsynopsis>
+      yields an output similar to
+      <ns5622:programlisting xmlns:ns5622="http://docbook.org/ns/docbook">
+Using filter: *.sh
+fileSizes.sh -&gt; 300
+testFor.sh -&gt; 200
+Total disk space required by all shell scripts = 500
+      </ns5622:programlisting>
+    </ns5619:para>
+    <ns5623:note xmlns:ns5623="http://docbook.org/ns/docbook">
+      <ns5624:para xmlns:ns5624="http://docbook.org/ns/docbook">
+        The script can be further simplified by directly iterating over the files in the current 
+        directory via
+        <ns5625:programlisting xmlns:ns5625="http://docbook.org/ns/docbook">
+for file in *
+do
+  ...
+done  
+        </ns5625:programlisting>
+      </ns5624:para>
+      <ns5626:para xmlns:ns5626="http://docbook.org/ns/docbook">
+        We can also add conditionals. For example, if we want to search for all files which
+        start with either <ns5627:quote xmlns:ns5627="http://docbook.org/ns/docbook">t</ns5627:quote> or <ns5628:quote xmlns:ns5628="http://docbook.org/ns/docbook">T</ns5628:quote> we can use
+        <ns5629:programlisting xmlns:ns5629="http://docbook.org/ns/docbook">
+for file in [tT]*
+do
+  ...
+done  
+        </ns5629:programlisting>
+      </ns5626:para>
+    </ns5623:note>
+  </ns5616:section>
+  
+  <ns5630:section xmlns:ns5630="http://docbook.org/ns/docbook">
+    <ns5631:title xmlns:ns5631="http://docbook.org/ns/docbook">C-style for loops</ns5631:title>
+    <ns5632:para xmlns:ns5632="http://docbook.org/ns/docbook">
+      Bash shell scripts also support <ns5633:emphasis xmlns:ns5633="http://docbook.org/ns/docbook">C</ns5633:emphasis> style <ns5634:command xmlns:ns5634="http://docbook.org/ns/docbook">for</ns5634:command>
+      loops. To indicate to the interpreter that you are using a <ns5635:emphasis xmlns:ns5635="http://docbook.org/ns/docbook">C</ns5635:emphasis>-style
+      <ns5636:command xmlns:ns5636="http://docbook.org/ns/docbook">for</ns5636:command>- loop, you use double round parentheses:
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/testCFor_sh.docbook"/>      
+      The output of the script is simply
+      <ns5637:programlisting xmlns:ns5637="http://docbook.org/ns/docbook">
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+      </ns5637:programlisting>
+    </ns5632:para>
+  </ns5630:section>
+  
+  <ns5638:section xmlns:ns5638="http://docbook.org/ns/docbook">
+    <ns5639:title xmlns:ns5639="http://docbook.org/ns/docbook">Breaking out of a loop</ns5639:title>
+    <ns5640:para xmlns:ns5640="http://docbook.org/ns/docbook">
+       The <ns5641:command xmlns:ns5641="http://docbook.org/ns/docbook">break</ns5641:command> command is used to break out of a loop, skipping
+       all the remaining lines in the iterative block and starting with the first statement after the
+       loop. The command is illustrated with the following example:
+       <ns5642:programlisting xmlns:ns5642="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/runningSum_sh.docbook"/>      
+       </ns5642:programlisting>
+       An example output is shown below:
+       <ns5643:programlisting xmlns:ns5643="http://docbook.org/ns/docbook">
+Reports running sum. Enter 0 to terminate
+Enter a number:
+2
+Running sum = 2
+Enter a number:
+4
+Running sum = 6
+Enter a number:
+3
+Running sum = 9
+Enter a number:
+0
+       </ns5643:programlisting>
+    </ns5640:para>
+  </ns5638:section>
+  
+  <ns5644:section xmlns:ns5644="http://docbook.org/ns/docbook">
+    <ns5645:title xmlns:ns5645="http://docbook.org/ns/docbook">Continuing at the start of a loop</ns5645:title>
+    <ns5646:para xmlns:ns5646="http://docbook.org/ns/docbook">
+      The <ns5647:command xmlns:ns5647="http://docbook.org/ns/docbook">continue</ns5647:command> command is used to 
+      <ns5648:itemizedlist xmlns:ns5648="http://docbook.org/ns/docbook">
+        <ns5649:listitem xmlns:ns5649="http://docbook.org/ns/docbook"><ns5650:para xmlns:ns5650="http://docbook.org/ns/docbook">terminate the current iteration,</ns5650:para></ns5649:listitem>
+        <ns5651:listitem xmlns:ns5651="http://docbook.org/ns/docbook"><ns5652:para xmlns:ns5652="http://docbook.org/ns/docbook">go back to the test and</ns5652:para></ns5651:listitem>
+        <ns5653:listitem xmlns:ns5653="http://docbook.org/ns/docbook"><ns5654:para xmlns:ns5654="http://docbook.org/ns/docbook">if the test criterion holds, start with another iteration.</ns5654:para></ns5653:listitem>
+      </ns5648:itemizedlist>
+    </ns5646:para>
+    <ns5655:para xmlns:ns5655="http://docbook.org/ns/docbook">
+      The following is a modification of our <ns5656:filename xmlns:ns5656="http://docbook.org/ns/docbook">runningSum</ns5656:filename> script,
+      which skips the remainder of the iteration every time a negative number is
+      entered, reporting thus only the running sum of all positive numbers.
+      Here is the script:
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="source/runningPositiveSum_sh.docbook"/>      
+      Here is an example output:
+      <ns5657:programlisting xmlns:ns5657="http://docbook.org/ns/docbook">
+Reports running sum of positive numbers -- negative numbers are ignored.
+Enter 0 to terminate
+Enter a number:
+1
+Running sum = 1
+Enter a number:
+2
+Running sum = 3
+Enter a number:
+-1
+Enter a number:
+1
+Running sum = 4
+Enter a number:
+0
+      </ns5657:programlisting>
+    </ns5655:para>
+  </ns5644:section>
+  
+</ns5609:section>

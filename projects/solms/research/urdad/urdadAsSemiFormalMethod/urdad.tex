@@ -1,0 +1,68 @@
+\section{The URDAD methodology}
+\label{sec:urdad}
+
+URDAD
+\cite{solms:generatingMdasPimUsingUrdad,
+solms:urdad}
+is an analysis and design methodology which has been adopted by a number
+of organizations, particularly in the financial and insurance
+sectors, for their technology neutral business process design  \cite{klopper:compareSoftwareMethodologies}.
+It aims to provide a simple repeatable engineering process for
+generating generates MDA's PIM, in the sense that the
+outputs from different domain experts with similar
+domain knowledge would be very similar. To achieve this,
+URDAD provides an algorithmic process for analysing and
+designing the technology neutral solution.
+
+The methodology specifies a mechanism for fixing levels
+of granularity, and has specified steps (modeling activities) for each
+level of granularity. The type and structure of the
+inputs and outputs of each step are precisely specified.
+
+One of the core aspects of URDAD is that it requires analysis
+and design to be done across levels of granularity, with both
+of these done by domain experts from different specialization
+areas. Thus instead of requiring a (business) analyst
+to specify the entire requirements for a new service,
+this responsibility is distributed across the domain experts 
+touched by the service requirements.
+
+For example, the business
+process for processing an insurance claim may require services
+for assessing the claim coverage and value, as well as for
+settling the claim and recuperating any losses. Those are
+very different responsibility domains and it is unreasonable
+to expect a business analyst to be able to provide the detailed
+requirements for a business process across levels of
+granularity. Instead a business analyst would specify the high-level 
+requirements (such as that the losses need to be recuperated)
+without having to specify the detailed requirements and process
+for those lower level services. He is, however, assembling the higher
+level business process across those lower level services.
+
+In particular the methodology requires that the URDAD-compliant
+UML model is populated through the following views (UML diagrams):
+\begin{itemize}
+  \item A {\em Services contract view} as a UML class diagram containing
+        the UML interface with the service signature, class diagrams
+		  specifying the data structures of the request and response objects,
+		  and the pre- and post-conditions and quality requiremens for the service.
+	\item A {\em User workflow view} which is typically a sequence diagram showing
+			the interaction (messages exchanged) between the user and the service
+			provider for the use case. Both the user and service provider are
+			represented by UML interfaces for the contracts which are populated
+			with the services required from these role players.
+	\item A {\em Functional requirements view} which shows the lower levels
+			services required to address the pre- and post-conditions.
+	\item A {\em Responsibility allocation view} which specifies how the services are
+assigned to services contracts  via usage dependency which point from the functional requirement/use case to the services contract which hosts the corresponding service.
+	\item A {\em Process view} specifying the (business) process through which the
+			service is to be realized in the form of a UML activity diagram which is
+			assigned to be the behavior of the service. The input and output parameter nodes correspond to the request and response objects as specified in the services contract for the service. It shows the process flow across call operations requesting the lower level services from which the (business) process is assembled.
+\end{itemize}
+
+Services are recursively constructed from lower level services
+with the lowest level services being either
+not domain specific (generic services like numeric addition, or infrastructure services such as persistence) or
+services which are sourced externally. For these externally-sourced services, the methodology still requires the specification of a full services contract, but are otherwise
+handled as black boxes.

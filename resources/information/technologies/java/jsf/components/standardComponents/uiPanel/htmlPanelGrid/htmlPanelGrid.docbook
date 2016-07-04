@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>HtmlPanelGrid</title>
+    <para>
+        <literal>HTMLPanelGrid</literal>s organize the inserted components in a table. One needs
+        to specify the number of columns via the <literal>columns</literal> attribute of the
+        correponding <literal><![CDATA[<h:panelGrid>]]></literal> component tag. 
+    </para> 
+    <para>
+        Components are inserted into the panel grid by nesting the component tags within the tag 
+        for the panel grid. The components are inserted row for row, filling first the first row
+        of the grid and then consecutive rows until there are no more components.
+        <programlisting language="xml"><![CDATA[
+<h:panelGrid columns="2">
+    
+    <h:outputLabel id="temperatureLabel" for="temperatureField" value="#{msgs.temperature}"/>
+    <h:inputText id="temperatureField" value="#{weatherDetailsBinding.temperature}"/> 
+    
+    <h:outputLabel id="humidityLabel" for="humidityField" value="#{msgs.humidity}"/>
+    <h:inputText id="humidityField" value="#{weatherDetailsBinding.humidity}"/> 
+    
+    <h:outputLabel id="ambianceLabel" for="ambianceField" value="#{msgs.ambiance}"/>
+    <h:selectOneMenu id="ambianceField" value="#{weatherDetailsBinding.ambiance}">       
+      	<f:selectItems value="#{weatherDetailsBinding.ambianceValues}"/>
+	</h:selectOneMenu>
+     
+</h:panelGrid>
+            ]]></programlisting>
+    </para>
+    
+    <section>
+        <title>Pre-defined facets</title>
+        <para>
+            Facets are child components of a parent component which play a specific role.
+            They are identified via a name and are stored in a name-value map maintained
+            by the parent component. 
+        </para>
+        <para>
+            Facets can be any components, i.e. they could be output fields for text or graphics
+            or input fields or themselves composite components. 
+        </para>
+        <para>
+            Panel grids have the following pre-defined facets which span across the table 
+            columns:
+            <itemizedlist>
+                <listitem><formalpara>
+                    <title>header</title>
+                    <para>
+                        A header which spans across the columns of the panel grid and
+                        is typically rendered with a specific style above the table.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>footer</title>
+                    <para>
+                        A footer which spans across the columns of the panel grid and
+                        is typically rendered with a specific style below the table.
+                    </para>
+                </formalpara></listitem>
+            </itemizedlist>
+            <programlisting language="xml"><![CDATA[
+<h:panelGrid columns="3">
+
+    <f:facet name="header">
+        <h:panelGroup>
+            <h:outputLabel for="titleText" value="Title:"/>
+            <h:outputText id="titleText" value="Standard JSF single selection components"
+        </h:panelGroup>
+    </f:facet>
+    
+    <h:outputText value="HtmlSelectOneRadio"/> 
+    <h:outputText value="Radio button group"/>
+    <h:graphicImage url="/images/components/selectOneRadio.png"
+        width="100" height="100" title="HtmlSelectOneRadio"/>
+    
+    <h:outputText value="HtmlSelectOneMenu"/> 
+    <h:outputText value="Drop down menu"/>
+    <h:graphicImage url="/images/components/selectOneMenu.png"
+        width="100" height="100" title="HtmlSelectOneMenu"/>
+    
+    <h:outputText value="HtmlSelectOneListbox"/> 
+    <h:outputText value="Single selection list box"/>
+    <h:graphicImage url="/images/components/selectOneListbox.png"
+        width="100" height="100" title="HtmlSelectOneListbox"/>
+
+    <f:facet name="footer">
+        <h:outputText value="CopyLeft Solms Training &amp; Consulting"/>
+    </f:facet>
+     
+</h:panelGrid>
+            ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Pre-defined CSS style classes</title>
+        <para>
+            Panel grids also pre-define a set of CSS style classes which can be
+            used in style sheets to specify the styling preferences for various 
+            aspects of panel grids. The following are the CSS classes which have
+            been pre-defined for styling aspects of panel grids:
+            <itemizedlist>
+                <listitem><formalpara>
+                    <title>panelClass</title>
+                    <para>
+                        This styling class is used to specify default styling
+                        requirements for the panel as a whole, i.e. across
+                        all panel components.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>headerClass</title>
+                    <para>
+                        This styling class is used to specify styling
+                        requirements panel header.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>footerClass</title>
+                    <para>
+                        This styling class is used to specify styling
+                        requirements panel footer.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>rowClasses</title>
+                    <para>
+                        Here one can specify a list of classes which are applied one for one
+                        to consecutive rows until the styling classes have been used up,
+                        after which the first styling class is applied again.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>footerClasses</title>
+                    <para>
+                        Here one can specify a list of classes which are applied one for one
+                        to consecutive columns until the styling classes have been used up,
+                        after which the first styling class is applied again.
+                    </para>
+                </formalpara></listitem>
+            </itemizedlist>            
+        </para>
+        <para>
+            For example,
+            <programlisting language="xml"><![CDATA[
+<h:panelGrid columns="3" rowClasses="evenRowClass, oddRowClass"
+    columnClasses="columnClass" headerClass="headerClass">
+
+    <f:facet name="header">
+        <h:panelGroup>
+            <h:outputLabel for="titleText" value="Title:"/>
+            <h:outputText id="titleText" value="Standard JSF single selection components"
+        </h:panelGroup>
+    </f:facet>
+    
+    <h:outputText value="HtmlSelectOneRadio"/> 
+    <h:outputText value="Radio button group"/>
+    <h:graphicImage url="/images/components/selectOneRadio.png"
+        width="100" height="100" title="HtmlSelectOneRadio"/>
+    
+    <h:outputText value="HtmlSelectOneMenu"/> 
+    <h:outputText value="Drop down menu"/>
+    <h:graphicImage url="/images/components/selectOneMenu.png"
+        width="100" height="100" title="HtmlSelectOneMenu"/>
+    
+    <h:outputText value="HtmlSelectOneListbox"/> 
+    <h:outputText value="Single selection list box"/>
+    <h:graphicImage url="/images/components/selectOneListbox.png"
+        width="100" height="100" title="HtmlSelectOneListbox"/>
+
+    <f:facet name="footer">
+        <h:outputText value="CopyLeft Solms Training &amp; Consulting"/>
+    </f:facet>
+     
+</h:panelGrid>
+            ]]></programlisting>
+            
+        </para>
+    </section>
+    
+    <section>
+        <title>Multiple components within grid cell</title>
+        <para>
+            If you want to insert multiple elements into a grid cell, you can group them within
+            a panel group:
+            <programlisting language="xml"><![CDATA[
+<h:panelGrid columns="2">
+
+    <h:outputLabel for="deliveryAddressField" value="#{msgs.deliveryAddress}"/>
+    <h:inputTextarea rows="4" cols="50"
+        id="deliveryAddressField" value="#{captureOrderBinding.deliveryAddress}"/> 
+    
+    <h:outputLabel for="valueAddsField" value="#{msgs.va;lueAdds}"/>
+    <h:panelGroup>
+        <h:selectBooleanCheckbox id="speedDeliverySelector" 
+            value="#{captureOrderBinding.order.speedDeliveryRequired}"/>
+        <h:selectBooleanCheckbox id="wrappingSelector" 
+            value="#{captureOrderBinding.order.wrappingRequired}"/>
+    </h:panelGroup>
+     
+</h:panelGrid>
+                ]]></programlisting>
+        </para>
+    </section>
+</section>    

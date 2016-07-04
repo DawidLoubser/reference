@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+    <title>Setting up the database connection pool and JDBC resource</title>
+    <para>
+        The JDBC driver for your database needs to be copied into the <literal>lib</literal>
+        directory of the application server (Note: not the lib directory of your domain).
+        If you use PostgreSQL, then the driver can be obtained from 
+        <emphasis><literal><![CDATA[http://jdbc.postgresql.org/download.html]]></literal></emphasis>.
+    </para>
+    <para>
+        You wil need to restart the application server for the new driver to be loaded. You can then go to
+        the admin console to create the connection pool:
+        <programlisting><![CDATA[
+http://localhost:4848            
+            ]]></programlisting>
+    </para>
+    <para>
+        Under <emphasis> Resources -> JDBC -> Connection Pools</emphasis> create a new connection
+        pool with pool name <literal>sbssConnectionPool</literal>, resource type <literal>javax.sql.DataSource</literal>
+        and database vendor <literal>Postgresql</literal>. On the next screen under additional properties
+        one populates the server and database name, database user and password using
+        <programlisting><![CDATA[
+servername: localhost
+database name: <yourDbName>
+]]></programlisting>
+        and the database user authentication credentials (username and password). This adds the following
+        JDBC connection pool descriptor to the JDBC connection pool resources of the 
+        <literal><![CDATA[config/domain.xml]]></literal> domain configuration file:
+        <programlisting><![CDATA[
+<jdbc-connection-pool datasource-classname="org.postgresql.ds.PGSimpleDataSource" 
+        res-type="javax.sql.DataSource" 
+        name="sbssConnectionPool">
+  <property name="DatabaseName" value="<yourDbName>" />
+  <property name="LoginTimeout" value="0" />
+  <property name="Password" value="<dbUserPassword>" />
+  <property name="PortNumber" value="0" />
+  <property name="PrepareThreshold" value="5" />
+  <property name="ServerName" value="localhost" />
+  <property name="SocketTimeout" value="0" />
+  <property name="Ssl" value="false" />
+  <property name="TcpKeepAlive" value="false" />
+  <property name="UnknownLength" value="2147483647" />
+  <property name="User" value="<dbUser>" />
+</jdbc-connection-pool>
+]]></programlisting>
+    </para>
+    <para>
+        You can use the <emphasis>ping</emphasis> facility to see whether the connection pool is working
+    </para>
+    <para>
+        Finally we have to create the JDBC resource for the connection pool by going to 
+        <emphasis>Resources -> JDBC Resources</emphasis>. Select the connection pool
+        and assign <literal>yourJdbcResource</literal> as JNDI name. This adds the JNDI
+        the corresponding <emphasis>JDBCResource</emphasis> in the resources section
+        of the <literal>domain.xml</literal> domain descriptor
+        <programlisting><![CDATA[
+<jdbc-resource pool-name="sbssConnectionPool" jndi-name="yourJdbcResource" />            
+]]></programlisting>
+        as well as a resource reference in the server descriptor of the servers section:
+        <programlisting><![CDATA[
+  <servers>
+    <server name="server" config-ref="server-config">
+      <application-ref ref="__admingui" virtual-servers="__asadmin" />
+      ...
+      <resource-ref ref="yourJdbcResource" />
+    </server>
+  </servers>
+            ]]></programlisting>
+        
+    </para>
+</section>    

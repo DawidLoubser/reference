@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Commit</title>
+    
+    <para> 
+        Two phase commit obviously traverses two phases when committing a transaction. The first phase is a
+        <emphasis>commit-request</emphasis> or preparation phase, while the second phase, the <emphasis>commit</emphasis>
+        phase is hte phase where the effects of the transaction are actually committed, <abbrev>i.e.</abbrev> made durable
+        and visible.
+    </para>
+    
+    <section>
+        <title>Commit request phase</title>
+        <para>
+            During the commit request phase the resource managers are asked to go into a state for which they can guarantee 
+            that they will be able to commit, even in the case of experiencing a technical problem thereafter. 
+        </para>
+        <para>
+            The algorithm for the commit request phase is as follows:
+            <orderedlist>
+                <listitem><para>
+                    The transaction coordinator sends a query to commit to each resource manager.					
+                </para></listitem>
+                <listitem><para>
+                    The resource manager writes the changes to be made to the various resources affected by
+                    the transaction into a transaction log. 
+                    <note><para>
+                        More sophisticated implementations of resource manager maintain two logs, an <emphasis>undo log</emphasis>
+                        and a <emphasis>redo log</emphasis>. For each modification requested by the business 
+                    </para></note>
+                </para></listitem>
+                <listitem><para>
+                    Each resource manager replies either with 
+                    <itemizedlist>
+                        <listitem><para>
+                            an agreement message that the transaction has been successful from
+                            their perspective and that they have reached a state where they can guarantee a successful commit if requested, or
+                        </para></listitem>
+                        <listitem><para>
+                            with an abort message notifying that the transaction has failed from their perspective.
+                        </para></listitem>
+                    </itemizedlist>
+                </para></listitem>
+                <listitem><para>
+                    The coordinator accumulates all responses and uses these to make the decision on whether to finally
+                    commit the transaction or not.
+                </para></listitem>
+            </orderedlist>
+        </para>	
+    </section>
+    
+    <section>
+        <title>The commit phase</title>
+        <para>
+            During the commit phase each resource manager is requested to perform the actual commit which makes the new
+            resource state observable and durable.
+            
+        </para>
+    </section>
+    
+</section>    

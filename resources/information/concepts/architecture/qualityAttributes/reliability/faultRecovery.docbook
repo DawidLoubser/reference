@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xml:id="resources.information.concepts.architecture.qualityAttributes.reliability.faultRecovery" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+
+  <title>Fault Recovery</title>
+  <para>
+    Fault recovery tactics are used after fault detection to recover a system which has
+    experienced a fault in such a way that no failure occurs.
+  </para>
+  
+  <section>
+    <title>Checkpoint roll-back</title>
+    <para>
+      When a system is detected to have ended up in an invalid state, the system may,
+      at times, be able to recover, avoiding failure, by rolling back to some previous
+      checkpoint at which the system was known to be in a consistent state.
+    </para>
+    
+    <section>
+      <title>Transaction roll-back</title>
+      <para>
+        An example of checkpoint roll-back is the rolling back of a transaction.
+        A transaction is defined as follows:
+        <blockquote><para><emphasis>
+          A transaction is a unit of work which needs to be either completed as a whole, or not at all.
+        </emphasis></para></blockquote>
+        Thus, if a fault is detected which would result in a failure (the violation of an
+        invariance constraint) due to some steps of a transactions saving been completed without
+        being able to complete the entire transaction, then the steps so far completed are
+        <emphasis>rolled back</emphasis>, leaving the resources in such a state that
+        effectively no steps of the transaction have been completed.
+      </para>
+    </section>
+    
+  </section>
+  
+  <section>
+    <title>Passive redundancy</title>
+    <para>
+      This tactic is used in clustering configurations which support fail-over safety.
+      It requires redundant components with state replication across the redundant
+      components. 
+    </para>
+    <para>
+      More specifically, one of the components, the primary component, is assigned to 
+      realize a service request, but any changes to its state are replicated to one or 
+      more redundant components.
+    </para>
+    <para>
+      If the primary component which thus far was busy providing the service fails, 
+      one of the  redundant components becomes the primary component and continues
+      providing the service.
+    </para>
+    
+    <section>
+      <title>Replication strategies</title>
+      <para>
+          One can deploy a number of different algorithms to realize state replication. Below
+          we discuss some common used solutions.
+      </para>
+      
+      <section>
+        <title>Cluster-wide replication</title>
+        <para>
+          In the case of cluster-wide replication there is for each primary component a 
+          replicate component on each node. Any number of components and or nodes
+          may fall over. The system is able to recover from faults, preventing failures,
+          as long as at least one node remains alive.
+        </para>
+      </section>
+      
+      <section>
+        <title>Single component replication</title>
+        <para>
+          A common tactic is to have to components assigned to each client:
+          <itemizedlist>
+            <listitem><para>
+              a <emphasis>primary component</emphasis> which executes the required
+              logic and
+            </para></listitem>
+            <listitem><para>
+              a <emphasis>secondary component</emphasis> onto which the state of the
+              primary component is replicated.
+            </para></listitem>
+          </itemizedlist>
+        </para>
+        <para>
+          Upon failure of the primary component, the secondary component becomes the
+          primary component. Typically a new second component is created at this stage.
+        </para>
+        <note><para>
+          This algorithm can be varied to support any fixed number of secondary components.  
+        </para></note>
+      </section>  
+      
+      <section>
+        <title>When should the state be replicated?</title>
+        <para>
+          Secondary components should have the same state as the primary component.
+          But we do not need to update the state after every change of every variable.
+          Instead it usually suffices to <emphasis>replicate the state at transaction
+          boundaries</emphasis>.
+        </para>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title>Active redundancy</title>
+    <para>
+      This tactic requires multiple components to do the actual work of realizing a service
+      request. The response from the first component is used and that of the remaining
+      components is discarded.
+    </para>
+  </section>
+  
+  
+</section>

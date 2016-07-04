@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2se.security.protectingSourceCode.dataObfuscation"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/Docs/re_schema/solmsDoc.xsd">
+    
+    <title role="Data Obfuscation">Data Obfuscation</title>
+
+<para>Data obfuscation makes transformations on data values such that the original 
+logic is much less obvious but that the resultant application logic remains 
+unchanged. This may involve changing the logic like transforming the following 
+code snippet</para>
+<para><programlisting><![CDATA[
+\noindent{\small
+int k=1;
+double sum = 0;
+do
+{
+  sum += vec[k] + 2*k;
+  ++k;
+}
+while (k<100);  
+]]></programlisting></para>
+
+<para>to code which makes the underlying logic a lot less transparent:
+<programlisting><![CDATA[
+int d=17;
+int m=Math.floor(d+Math.sqrt(2*Math.PI));
+double x = m*m;
+do 
+{
+  x += vec[m-14/5] + (2*m - 28)/10;
+  m += 5;
+}
+while (k<100);
+
+x -= 361;
+]]></programlisting></para>
+
+<para>The final value of <emphasis>sum</emphasis> in the first listing will be equal to the final
+value of <emphasis>x</emphasis> in the second listing but the actual logic behind the code
+is difficult to extract.</para>
+<para>
+Data obfuscation may also alter the actual data structures. Techniques commonly
+used include
+<itemizedlist>
+  <listitem><formalpara><title>Merging of data structures.</title><para> Several unrelated data structures (arrays,
+       collections or records) can be combined into a large single data structure
+       containing unrelated elements. The meaning of the data structures becomes
+       difficult to understand and the logic is difficult to unravel.</para></formalpara></listitem>
+  <listitem><formalpara><title>Splitting of data structures.</title><para> Single data structures containing information
+       from a particular domain may be split into several data structures at 
+       localized within different levels of scope and given unrelated names.</para></formalpara></listitem>
+  <listitem><formalpara><title>Rearranging positioning within data structures.</title><para> For example, array elements
+       may be exchanged such that index $i$ is mapped onto $f(i)$.</para></formalpara></listitem>
+  <listitem><formalpara><title>The scoping of data structures may be changed.</title><para> Data structures which are
+       applicable at one level of scope (for example as instance members of a 
+       particular class may be transferred to another scope and made accessible
+       from there.</para></formalpara></listitem>
+</itemizedlist>
+and other techniques.
+</para>
+    
+<para>Note that even though the techniques used are commonly known, it is still very difficult
+to identify where in the obfuscated code the technique has been applied (except
+perhaps if the original logic is known which means that there is nothing to
+protect in the first place).</para>
+
+<para>Data obfuscation typically does carry a computational overhead.</para>
+
+    
+</section>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0">
+  
+    <title>WS-BPEL</title>
+    
+    <indexterm>
+        <primary>WS-BPEL</primary>
+    </indexterm>
+    <indexterm>
+        <primary>BPEL4WS</primary>
+        <see>
+            <indexterm>
+                <primary>WS-BPEL</primary>
+            </indexterm>
+        </see>
+    </indexterm>
+  
+    <xi:include href="introduction/introduction.docbook"/>
+    
+    <xi:include href="coreFeatures/coreFeatures.docbook"/>
+  
+    <xi:include href="examples/helloWorld/helloWorld.docbook"/>
+  
+    <xi:include href="language/language.docbook"/>
+  
+    <xi:include href="manualWorkflowSteps/manualWorkflowSteps.docbook"/>
+    
+    <section>
+        <title>The Benefits of WS-BPEL</title>
+        <para>
+            When it comes to implementing a business process, BPEL enables a process-centric
+            development style, where the services that participate in a single business process 
+            do not have to be split up (with potentially complex and repetitive code to gain access
+            to the <emphasis>state</emphasis> of the business process) across different deployed
+            artifacts. It enables a more natural implementation path because it introduces a physical,
+            centralised artifact for the business process. From the client's point of view, however,
+            services do remain stateless, de-coupled and autonomous.
+        </para>
+        <para>
+            Another major benefit is that it serves as a public standard for implementing complex integration scenarios,
+            affording portability across containers and ESBs, whether they adhere to common low-level standards
+            such as JBI or SCA, or not. Historically, such complex integration scenarios have depended on the availability of
+            specific rules and EIP (Enterprise Integration Patterns) engines, but few if any of them have the centralised,
+            simplified elegance that BPEL provides in a portable way.
+        </para>
+    </section>
+    
+    <section>
+        <title>The Drawbacks of WS-BPEL</title>
+        <para>
+            WS-BPEL appears to be slow in supporting newer XML standards, with it currently only mandating support for
+            XSLT and XPath 1.0, which severely limit the processing ability when managing low-level information, such
+            as performing date/time processing. This means that a WS-BPEL implementation may require more low-level,
+            de-coupled service providers than what may have been necessary, even if such service providers exist only
+            for the purpose of the WS-BPEL process (i.e. not intended for re-use).
+        </para>
+        <para>
+            The implementation complexity around declaring message properties, partner links, as well as the extreme degree of
+            abstraction (such as where a WSDL partnerlink declares an abstract role, the BPEL binds (abstractly) to certain
+            roles, and then the WS-BPEL container / ESB often needs another mapping to concretely bind the abstract roles to
+            the deployed services) make it non-trivial to develop BPEL processes, even using sophisticated tools. The promise of
+            easy implementation by non-technical persons are tus theoretically possible, but today's editors have not realised
+            this vision yet.
+        </para>
+    </section>
+    
+    <!-- Schema: http://docs.oasis-open.org/wsbpel/2.0/CS01/process/executable/ws-bpel_executable.xsd -->
+
+    
+    <!-- 
+        - Comes from older but oft-still-seen BPEL4WS
+        - WS-BPEL 2.0: 
+        -  Highlight the limitations of being based on WSDL 1.1. and XPATH 1.0:
+        -  Poor date/time processing ability (must outsource to separate services)
+        - Certin ESBs, like ServiceMix, do support XPath 2.0
+        - Unnecessary duplication with links for concurrent flows, why not use if/else or pick etc.
+        which just naturally contain flow or sequence specifications.
+        - Message Properties: Why are they in WSDL?
+        - PartnerLinks: Why are they in WSDL?
+        - Strategy: Keep clean, simple contracts for the service providers, and import them into a
+        dedicated WSDL for the service orchestration?
+    -->
+
+</section>

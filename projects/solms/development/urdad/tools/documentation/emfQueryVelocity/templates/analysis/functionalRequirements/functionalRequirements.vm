@@ -1,0 +1,41 @@
+        
+<!--  FUNCTIONAL REQUIREMENTS SPECIFICATION -->
+<!-- ********************************************* -->        
+        
+<section>
+    <title>Functional requirements: $targetUseCase.name</title>
+    
+        #set($diagramId = 'functionalRequirements')
+#* 
+        <para>
+                The functional requirements diagram shown in
+                <xref linkend="$diagramId"/>
+                shows the $targetUseCase.name use case, the stake holders who have an interest in that
+                use case and their functional requirements.
+        </para>
+           
+    #getDiagramForUseCase($targetUseCase,$urdad_functionalRequirementsDiagram)    
+    #set($diagram = $result)
+    #if ($diagram && $diagram != '')
+        #set($diagramId = $diagram.qualifiedName.replaceAll('::','.').replaceAll(' ','_'))
+        <figure xml:id="$diagramId">
+            <title>The stakeholder requirements diagram for the $targetUseCase.name use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="$diagram.image"/>
+            </imageobject></mediaobject>
+        </figure>
+*#
+
+#parse("templates/analysis/functionalRequirements/user.vm")
+   
+#parse("templates/analysis/functionalRequirements/stakeholders.vm")
+        
+#if ( $urdadModelQueryInterface.getMandatoryFunctionalRequirements($targetUseCase).size() > 0)
+	#parse("templates/analysis/functionalRequirements/mandatoryFunctionalRequirements.vm")
+#end
+	        
+#if( $urdadModelQueryInterface.getConditionalFunctionalRequirements($targetUseCase).size() > 0)
+	#parse("templates/analysis/functionalRequirements/conditionalFunctionalRequirements.vm")
+#end
+
+</section>

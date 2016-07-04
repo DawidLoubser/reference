@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+xml:id="resources.information.technologies.xml.schemas.uniquenessConstraints.uniquenessConstraints" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Uniqueness Constraints</title>
+  
+  <indexterm>
+    <primary>XML Schema</primary>
+    <secondary>uniqueness constraints</secondary>
+  </indexterm>
+  
+    <para>XML in general supports the concept of IDs which the parser enforces to be unique within an
+        XML document. However, IDs have several disadvantages: 
+      <itemizedlist>
+          <listitem>
+              <para>They have to be unique within the entire document. </para>
+          </listitem>
+          <listitem>
+              <para>We can only enforce the uniqueness constraint on attribute values, not on
+                  the text content of an element. </para>
+          </listitem>
+          <listitem>
+              <para>They must comply to the criteria of XML identifiers -
+                  <abbrev>i.e.</abbrev> they may not  start with a number. </para>
+          </listitem>
+          <listitem>
+              <para>We cannot enforce that a combination of elements are unique.</para>
+          </listitem>
+      </itemizedlist>
+    </para>
+    
+    <para> 
+      In order to address these shortcomings XML Schema introduces uniqueness or
+      identity constraints. They offer a number of advantages over IDs:
+      <itemizedlist>
+          <listitem>
+              <para>Uniqueness constraints can be applied to both, attribute values and
+                  element contents. </para>
+          </listitem>
+          <listitem>
+              <para>The uniqueness can be scoped and does not have to apply across the entire
+                  XML document. For example, an attribute's uniqueness can be enforced across
+                  all elements of a certain type. </para>
+          </listitem>
+          <listitem>
+              <para>The unique value may be any XML Schema datatype and may start with a
+                  numeral. </para>
+          </listitem>
+          <listitem>
+              <para>One can enforce in XML Schema a uniqueness constraint across elements and
+                  attributes such that they do not have to be unique individually, but that a
+                  combination of element/attribute values need only be unique.</para>
+          </listitem>
+      </itemizedlist>
+    </para>
+    
+    <section>
+        <title>Specifying a Single Uniqueness Constraint</title>
+        <para> 
+          Consider, for example, the following XML document.
+        <programlisting language="XML">  
+<xi:include parse="text" href="src/partsCatalogUniqueIds.xml"/>
+        </programlisting>  
+      </para>  
+        <para> 
+            Here we may want to enforce that each part must have a unique id. Similarly
+            we may want to enforce that each manufacturer has a unique id, but a
+            manufacturer could have the same id as one of the parts.
+        </para>
+        <para> 
+          In order to specify the uniqueness constraint we need to Specify a name for
+          the constraint. This name is used to identify the constraint itself. Specify the
+          scope of the constraint. The constraint has to be specified within the element
+          to which it applies. If the constraint should apply across the entire document
+          it should be placed within the root element. In our case we want to specify the
+          part ids should be unique within the <emphasis>parts</emphasis> element and that
+          manufacturer ids should be unique within the <emphasis>manufacturers</emphasis>
+          element. The two constraints should be positioned within the corresponding
+          elements. Define the selector to which the constraint applies. The selector is
+          the actual element to which the constraint should apply. Define the field to
+          which the uniqueness constraint applies. Here one specifies the element or
+          attribute whose value must be unique within the scope of the constraint.
+        </para>
+        <para> 
+          The following schema definition enforces unique part ids within
+        <programlisting language="XML">  
+<xi:include parse="text" href="src/partsCatalogUniqueIds.xsd"/>
+        </programlisting>  
+      </para>  
+      <note><para>The constraint is specified using XPath, the standard XML
+      addressing and query language.</para></note>
+    </section>
+
+    <section>
+        <title>Specifying a Uniqueness Constraint for a Combination of Fields</title>
+        <para> 
+          XML Schema allows one to specify that a combination of fields must be unique.
+          For example, we may want to allow different manufacturers to produce parts and
+          each manufacturer would assign part ids independently - hence the part ids would
+          not be unique across manufacturers, but the combination of the part id
+          attribute and the manufacturer child element of a part must be unique. This is
+          specified in the following schema definition:
+        <programlisting language="XML">  
+<xi:include parse="text" href="src/partsCatalogMultiFieldIds.xsd"/>
+        </programlisting>  
+        </para>
+        <para>
+          The following document is legal if one of
+          <itemizedlist>
+            <listitem><para>
+              the part's id, or              
+            </para></listitem>
+            <listitem><para>
+              the manufacturer for the part
+            </para></listitem>
+          </itemizedlist>
+          differ. If both are equal, the document will not be valid.
+          <programlisting language="XML">  
+<xi:include parse="text" href="src/partsCatalogMultiFieldIds.xml"/>
+          </programlisting>  
+        </para>  
+    </section>
+
+</section>

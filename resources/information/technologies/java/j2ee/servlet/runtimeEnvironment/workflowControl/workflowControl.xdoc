@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Controlling workflow during request processing</title>
+    <para>
+        Web module components can control the workflow (i.e. what components should be the next one to gain control of a request/response) by <emphasis>dispatching</emphasis>
+        the workflow to another component. This is done with a <literal>javax.servlet.RequestDispatcher</literal>, and works as follows:
+        <itemizedlist>
+            <listitem>
+                <para>The component busy processing the request obtains a <literal>RequestDispatcher</literal> by calling the <literal>getRequestDispatcher( String )</literal>
+                on the current request, providing the path (e.g. "/foo/somePage.jspx") of the component to which control should be handed.</para>
+            </listitem>
+            <listitem>
+                <para>If the component exists, the workflow can be <emphasis>forwarded</emphasis> to that component by calling <literal>forward(request, response)</literal>
+                on the dispatcher. From that point onwards, the forwarded-to component is wholly responsible for servicing the request, as the request and response
+                    is handed to it.</para>
+            </listitem>
+            <listitem>
+                <para>Alternatively, control may be temporarily handed to the indicated component, and its output
+                    included in the current output, by calling <literal>include(request, response)</literal>
+                    on the dispatcher.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <note>
+        <para>
+            From a user point of view, he makes a single request, and receives a single response. Workflow control on the server is completely hidden
+            from the user-agent, unlike a <emphasis>HTTP 302 redirect</emphasis> (client-side redirect), in which the user-agent is explicitly asked to re-request a different URL.
+        </para>
+    </note>
+</section>

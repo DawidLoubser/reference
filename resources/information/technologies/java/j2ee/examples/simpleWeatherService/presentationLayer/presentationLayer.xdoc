@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    id="resources.information.technologies.java.j2ee.examples.simpleWeatherService.presentationLayer.presentationLayer">
+    
+    <title>The Presentation Layer</title>
+    <para>
+        The presentation layer is a highly simplistic application implemented using
+        <itemizedlist>
+            <listitem>
+                <formalpara>
+                    <title>Servlets</title>
+                    <para>Each Servlet acts as the use-case <emphasis>controller</emphasis>
+                        for a particular use-case (in this case, only one). Servlets typically interact
+                        with the business layer.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>JSP Documents</title>
+                    <para>
+                        Each JSP (.jspx) is a <emphasis>view</emphasis>, that either renders
+                        information handed to it, or submits information to the Servlet. JSP
+                        is an elegant, XML-compliant templatting language that introduces minimal
+                        interference in your XML-based <quote>template data</quote> (e.g. XHTML).
+                    </para>
+                </formalpara>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <figure>
+        <title>Presentation Layer UML Robustness Diagram</title>
+        <graphic fileref="images/robustnessDiagram.jpg"/>
+    </figure>
+    
+    
+    <section>
+        <title>Writing the Components</title>
+        <para>
+            When the application's <emphasis>default page</emphasis> is requested by a user,
+            an input form is sent back to the user. This is a very simple XHTML page, generated
+            using JSP, and styled with a bit of CSS:
+        </para>
+        <figure>
+            <title>The Weather Service Input Form</title>
+            <graphic fileref="images/weatherInput.jpg"/>
+        </figure>
+        <figure>
+            <title>The Weather Service Input Form (Source Code)</title>
+            <programlisting>
+<xi:include href="src/source/web/index.jspx" parse="text"/>
+            </programlisting>
+        </figure>
+        <para>
+            When the form is submitted (to the URI "<literal>weatherForecast</literal>"),
+            our controller, a simple <literal>Servlet</literal>, receives the HTTP
+            request. It:
+            <itemizedlist>
+                <listitem>
+                    <para>De-marshals user-provided information, for example by construction
+                    a <literal>Locality</literal> instance from user input.</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Makes use of the service provided by the Weather Service bean (which it acquired
+                        during initialisation (the <literal>init()</literal> service) by looking up
+                        via <literal>JNDI</literal>) to get forecast results.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Hands this information to a view, for rendering. It does so by attaching any relevant objects
+                        to the current <literal>request</literal> and then dispatching it to the JSP document
+                        that renders a list of forecasts.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <figure>
+            <title>The Use-Case controller Servlet</title>
+            <programlisting>
+<xi:include href="src/source/java/za/org/weather/presentationLayer/ForecastRequestServlet.java" parse="text"/>
+            </programlisting>
+        </figure>
+        <para>
+            The response is then rendered to the user by the JSP (also very simplistic,
+            and styled using CSS):
+        </para>
+        <figure>
+            <title>The Weather Service Forecast Results</title>
+            <graphic fileref="images/weatherResults.jpg"/>
+        </figure>
+        <figure>
+            <title>The Weather Service Forecast Results (Source Code)</title>
+            <programlisting>
+<xi:include href="src/source/web/weatherForecastView.jspx" parse="text"/>
+            </programlisting>
+        </figure>
+        <note>
+            <para>
+                This example uses a very small subset of JSP functionality to render
+                a more complex response, and uses the JSP Standard Tag Library (JSTL)
+                for view logic, such as iteration and number/date formatting.
+            </para>
+        </note>
+        
+        <section>
+            <title>Standards-Compliance, and other devices</title>
+            <para>
+                Our presentation-layer is based on W3C-standard XHTML and CSS. JSP functionality
+                is integrated using the (natural) XML name spaces mechanism, which means that
+                at no point does JSP make our documents ill-formed, or invalid.
+            </para>
+            <para>
+                Adhering to the stricter XHTML standard as we do here, and fully splitting content
+                from presentation, our application is automatically fully usable on even the most
+                limited of mobile devices. Here, the presentation layer is accessed using a Motorola
+                V3 cellular phone, which has a very limited graphical browser:
+            </para>
+            <figure>
+                <title>Accessing using Mobile Devices</title>
+                <graphic fileref="images/weatherServiceMobilePhone.jpg"/>
+            </figure>
+            <para>
+                Adhering to XHTML, and using the Java EE framework, we have <emphasis>no need to create
+                special versions</emphasis> or <quote>portals</quote> to access limited functionality using
+                mobile devices. This approach has been shown to scale to pages that are much more
+                complex than our simple example here.
+            </para>
+        </section>
+        
+        <section>
+            <title>Deployment Descriptor</title>
+            <para>
+                The web application is configured through its standard (<literal>web.xml</literal>)
+                deployment descriptor:
+            </para>
+            <figure>
+                <title>Web Application Deployment Descriptor</title>
+                <programlisting>
+                    <xi:include href="src/source/web/WEB-INF/web.xml" parse="text"/>
+                </programlisting>
+            </figure>
+        </section>
+        
+    </section>
+    
+    
+    <section>
+        <title>Structuring and Building the Project</title>
+        <para>
+            We assemble the project into a self-contained directory structure, which
+            uses <literal>ant</literal> to automate compilation and assembly. Unlike
+            the EJB business-layer, presentation-layer modules have a fixed high-level
+            structure, and a deployment descriptor (<literal>web.xml</literal>).
+        </para>
+        <figure>
+            <title>Project Directory Structure</title>
+            <graphic fileref="images/presentationLayerFileStructure.jpg"/>
+        </figure>
+        <para>
+            As part of of our <quote>shelf</quote> (resources on which we have a compile-time dependency, but
+            which is not deployed or packaged with the application) we now have both the Java EE API (<literal>javaee5.jar</literal>)
+            and our business-layer contract (<literal>weatherService-api.jar</literal>). We do here, however, deploy the
+            <literal>JSTL</literal> with the application, which can be avoided if JSTL support is installed
+            in your application server.
+        </para>
+        <para>
+            Our client is compiled and assembled using the following (re-usable) Ant build script:
+        </para>
+        <figure>
+            <title>The Ant Build Script</title>
+            <programlisting>
+<xi:include href="src/build.xml" parse="text"/>
+            </programlisting>
+        </figure>
+        <para>
+            Running
+            <programlisting><![CDATA[
+ant build
+                ]]></programlisting>
+            Produces a deployable Web Archive (WAR), 
+            called <literal>weatherServicePL.war</literal>. This is also simply
+            deployed to your application server (for exmaple, on JBOSS to:)
+            <programlisting><![CDATA[
+$JBOSS_HOME/server/default/deploy
+                ]]></programlisting>
+            Which, by default installs the application to the <emphasis>context root</emphasis> with
+            the same as the archive, e.g. with the server running locally on port 8080
+            <programlisting><![CDATA[
+http://localhost:8080/weatherServicePL/
+            ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Further Enhancements</title>
+        <para>
+            With little or no additional complexity to the components themselves,
+            we may now add the following:
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>Dependency Injection</title>
+                        <para>
+                            As part of the Java EE 5 standard, presentation layer components do not have to
+                            perform their own JNDI lookups. They simply declaratively express the need for a
+                            particular type of component, and the container <emphasis>injects</emphasis> it
+                            at runtime.
+                        </para>
+                    </formalpara>
+                    
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Internationalization (i18n)</title>
+                        <para>
+                            User can automatically have numbers and dates formatted, and page text provided
+                            in their native language (as automatically detected from their browser) by using
+                            the JSTL i18n and Resource Bundles tags within JSP pages.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Declarative Error Handling</title>
+                        <para>
+                            Friendly error pages and/or workflows are declaratively
+                            configured in the deployment descriptor (for example, requesting weather for
+                            a non-existent locality)
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Common Infrastructure</title>
+                        <para>
+                            Custom Tags and inclusion mechanisms can be used to create common, yet still dynamic,
+                            infrastructure, such as menus, headers/footers, etc.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>JSF for improved data binding</title>
+                        <para>
+                            The JSF (Java Server Faces) framework may be used to perform binding of
+                            user input/output to Java objects, with decent validation and data conversion.
+                            This will simplify the controller servlet(s), and integrates smoothly in
+                            existing JSP Documents infrastructure.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Role-based security</title>
+                        <para>Configured declaratively, rather than coded.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <para>General application event handling and filtering in a 
+                        <emphasis>Pipes and Filters</emphasis> architecture.</para>
+                </listitem>
+            </itemizedlist>  
+        </para>
+    </section>
+    
+</section>

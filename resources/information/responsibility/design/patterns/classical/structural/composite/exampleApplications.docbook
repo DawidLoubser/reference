@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.concepts.design.patterns.classical.structural.composite.exampleApplications">
+
+  <title>Example applications</title>
+  <para>
+    The composite pattern can be applied to a wide spectrum of fundamentally
+    different problem domains.
+  </para>  
+  
+  <section>
+      <title>File system</title>
+      <para>
+      Most file systems support a recursive container/component structure where the containers
+      are directories and components are files. A directory contains many files some of which
+      are again directories. This structure is shown in the following image:
+    </para>
+    
+      <figure xml:id="resources.information.concepts.design.patterns.classical.structural.composite.fileDirectory_fig">
+         <title>
+        A directory has files, but is itself a file.
+      </title>
+         <mediaobject>
+            <imageobject>
+               <imagedata fileref="fileDirectory.jpg"/>
+            </imageobject>
+         </mediaobject>
+      </figure>
+    
+     <xi:include href="../../../../../../technologies/platforms/linux/fileSystem/virtualFileSystemDesign.docbook"/>
+  </section>
+    
+  <section>
+      <title>Portfolios and assets</title>
+      <para>
+      Assets are entities which have value. Portfolios are groupings of assets. But the portfolio
+      itself can be viewed (and traded) as an asset and hence it is itself an asset. This very natural
+      design for this is a direct application of the composite pattern:
+    </para>
+    
+      <figure xml:id="resources.information.concepts.design.patterns.classical.structural.composite.assets_fig">
+         <title>
+        A portfolio holds asset and can be itself viewed as an asset. 
+      </title>
+         <mediaobject>
+            <imageobject>
+               <imagedata fileref="assets.jpg"/>
+            </imageobject>
+         </mediaobject>
+      </figure>
+    
+      <section>
+         <title>Services realized polymorphically across the recursive structure</title>
+         <para>
+        The assets/portfolios example provides an ideal platform for demonstrating not only
+        the direct structural benefits of the composite patterns, but also the benefit of being
+        able to easily realize a service polymorphically across the recursive structure.
+      </para>
+         <para>
+        Consider the <literal>getValue</literal> service. Each asset may
+        calculate its value in its own way. The container, <abbrev>i.e.</abbrev> the 
+        portfolio, will calculate its value by asking each of its components (<abbrev>i.e.</abbrev>
+        assets) for their value and summing these values up. If any of the assets is a
+        portfolio itself, it will automatically calculate the value by recursing to the next
+        level in the hierarchy.
+      </para>
+      </section>
+    
+  </section>
+  
+  <section>
+      <title>Java GUI libraries</title>
+      <para>
+      The composite pattern together with the concept of layout managers provide the foundation
+      for Java's platform and resolution independent user-interface design. The idea is simply
+      that there are containers which hold GUI components. The delegates the responsibility of 
+      positioning its components within it to a separate class, a <literal>LayoutManager</literal>.
+    </para>
+      <para>
+      These layout managers are typically very simple, stacking the components on top or next to
+      each other or within grid positions on the screen. A sophisticated, slick panel design which
+      is platform and resolution independent is then achieved by nesting containers. The result
+      is usually a simpler presentation layer where screens are assembled from re-usable, simple
+      panels. The design of the Java user-interface libraries are shown in the following diagram:
+    </para>  
+    
+      <figure xml:id="resources.information.concepts.design.patterns.classical.structural.composite.awtSwing_fig">
+         <title>
+        Java's user interface libraries achieve resolution independence partially through
+        the composite pattern.
+      </title>
+         <mediaobject>
+            <imageobject>
+               <imagedata fileref="awtSwing.jpg"/>
+            </imageobject>
+         </mediaobject>
+      </figure>
+  </section>
+    
+  <section>
+      <title>Document structures</title>
+      <para>
+      Documents themselves may require recursive structures which are processed recursively.
+      For example, <emphasis>DocBook</emphasis>, a public standard for XML-based
+      documentation which is also th source for the document you are currently reading,
+      supports a composite pattern for sections. Sections may contain further sections
+      (the sub -sections) which in turn may recursively contain further sections.
+    </para>
+  </section>
+  
+    
+</section>

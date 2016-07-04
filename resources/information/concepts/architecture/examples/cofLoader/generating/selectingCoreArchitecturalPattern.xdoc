@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.architecture.examples.cofLoader.generating.selectingCoreArchitecturalPattern"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Selecting the core architectural pattern</title>
+  <para>
+     The pattern which immediately jumps to mind is the <emphasis>pipes and filters</emphasis>
+     pattern. Let us have a look how it can accommodate the tactics selected for realizing the
+     quality attributes required by the system.
+  </para>
+  
+  <section>
+    <title>Realizing modifiability in the pipes and filters pattern</title>
+    <para>
+      We selected a number of modifiability tactics which we would like to employ
+      within our chosen architecture. Let us see how well a pipes and filters based
+      architecture can realize these tactics:
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>Minimizing component complexity</title>
+          <para>
+            The components are the filters. We can design filters such that each filter 
+            performs only one specific task. This should assist in reducing component
+            complexity.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Minimizing dependencies</title>
+          <para>
+            A pipes and filters based architecture is particularly well suited to reduce dependencies
+            between components. Each filter makes use of the pipes into which it feeds the output.
+            There is no direct dependencies between the filters at all.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Semantic coherence</title>
+          <para>
+            Each filter will perform only a single task (a single processing step) which should ensure
+            a high level of semantic coherence.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Decoupling</title>
+          <para>
+            The decoupling is excellent because each filter is coupled only to output
+            pipes and does not have any knowledge or direct dependence on the next filter.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Generalization</title>
+          <para>
+             Common interface implemented across different realizations of same type of filter.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Late binding via configuration files</title>
+          <para>
+            The actual confidence level checking algorithms to be used are specified in
+            a configuration file.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Realizing performance in the pipes and filters pattern</title>
+    <para>
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>Replication</title>
+          <para>
+            The data was replicated into a database hosted on the local box and no load other
+            than that of the confidence-level uploading of clients was on the database. After
+            the update the data is merged back into the production database.
+          </para>
+        </formalpara></listitem>
+        
+        <listitem><formalpara>
+          <title>Supporting concurrencies</title>
+          <para>
+              The application is multi-threaded with individual threads performing independent 
+              work flows. While one thread is, for example, waiting for a response from the
+              database, another can start cleaning the data. The number of threads was
+              performance tuned.
+          </para>
+        </formalpara></listitem>
+        
+        <listitem><formalpara>
+          <title>Improving the efficiency of resource usage</title>
+          <para>
+            A pool of client objects is used and every time a new client is extracted an existing
+            <emphasis>client object is repopulated</emphasis> preventing the overhead of 
+            unnecessary object  creation and destruction. Similarly, a <emphasis>pool of 
+            threads</emphasis> is used and database connections are obtained from a 
+            <emphasis>connection pool</emphasis>.
+          </para>
+        </formalpara></listitem>
+        
+        <listitem><formalpara>
+          <title>Managing the event rate</title>
+          <para>
+            Recursively short lists were created from individual single queries on the database.
+            The selection from the short list was done at application level without further database 
+            queries. From the short-list the best match was found and checked against the
+            acceptable confidence level.
+          </para>
+        </formalpara></listitem>
+        
+        <listitem><formalpara>
+          <title>Scheduling</title>
+          <para>
+             Scheduling was only implicitly used for the processor resource in the context of threading.
+          </para>
+        </formalpara></listitem>
+        
+        <listitem><formalpara>
+          <title>Queuing</title>
+          <para>
+            The data cleansing, probability matching and update filters are decoupled via
+            message queues. This allows for separate thread pools with their sizes optimized 
+            for overall application performance.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+</section>
+

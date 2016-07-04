@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>A basic example Web Application</title>
+    <para>
+        The following example illustrates the most basic web application. It contains a single XHTML page
+        with a link to a basic Servlet that generates some data, and hands it to a JSP for rendering in XHTML format.
+        In addition, it also illustrates how to <emphasis>automatically build</emphasis> a web application project using <literal>ant</literal>, with a generic build script that may
+        be used unchanged for any basic web application.
+    </para>
+    
+    <section>
+        <title>Application Files</title>
+        <figure>
+            <title>Example: First Web Application: Structure</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="appStructure.jpg"/>
+                </imageobject>
+            </mediaobject>
+            </figure>
+        <para>
+            Herewith an explanation of the files in this web application:
+        </para>
+        
+        <section>
+            <title>BasicServlet.java</title>
+            <para>
+                Our basic Servlet. This extends <literal>javax.servlet.http.HttpServlet</literal>, and produces
+                two pieces of information which is then handed to a JSP document.
+                <programlisting>
+<xi:include href="src/src/java/example/basic/BasicServlet.java" parse="text"/>
+                </programlisting>
+            </para>
+        </section>
+        
+        <section>
+            <title>dates.jspx</title>
+            <para>
+                A simple JSP document that shows how to use the expression language to render some information.
+                <programlisting>
+<xi:include href="src/src/web/dates.jspx" parse="text"/>
+                </programlisting>
+            </para>
+        </section>
+        
+        <section>
+            <title>web.xml</title>
+            <para>
+                This is our standard deployment descriptor. It declares and maps a single Servlet,
+                and indicates to the server that <literal>index.xhtml</literal> is a "default" page.
+                <programlisting>
+<xi:include href="src/src/web/WEB-INF/web.xml" parse="text"/>
+                </programlisting>
+            </para>
+        </section>
+        
+        <section>
+            <title>index.xhtml</title>
+            <para>
+                A static default page for our application.
+                <programlisting>
+<xi:include href="src/src/web/index.xhtml" parse="text"/>
+                </programlisting>
+            </para>
+        </section>
+        
+        <section>
+            <title>build.xml</title>
+            <para>
+                A standard build script to compile our java classes and assemble our web application. It will copy all libraries
+                in the <literal>/resources/lib</literal> to the web applications' <literal>lib</literal> directory. Any libraries
+                in the <literal>/resources/shelf</literal> directory is used during compilation, such as the 
+                <emphasis>Servlet API</emphasis> library - which is required during compilation, but does not make sense (and
+                is in fact, illegal) to deploy with the application.
+                <note>
+                    <para>
+                        The web application "project", as presented here, is a completely self-contained unit, independent of any
+                        IDE or tool set. It can be built using only a text editor and <literal>ant</literal>, or it can be used
+                        in an IDE (Integrated Development Environment) like Netbeans or Eclipse. These IDEs can automate the process of assembling a web
+                        application using friendly, graphical interfaces - though the technique of using only ant ensures tool
+                        independence, and facilitates processes like automatic nightly builds, etc.
+                    </para>
+                </note>
+                <programlisting>
+<xi:include href="src/build.xml" parse="text"/>
+                </programlisting>
+            </para>
+        </section>
+    </section>
+    
+    <section>
+        <title>Deployment and Running</title>
+        <para>
+            Deploy the generated <literal>WAR</literal> file in the <literal>/dist/</literal> directory
+            (by using whatever mechanism your chosen web container supports). If you are using a default installation
+            of Jakarta Tomcat, running on your local machine, use the following URL to access your application:
+            <literal>http://localhost:8080/myApplication</literal> (where the name of your web archive 
+            is <literal>myApplication.war</literal>)
+            
+        </para>
+        <figure>
+            <title>First Servlet example: Default page</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="index.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <figure>
+            <title>First Servlet example: Invocation</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="output.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        
+        <note>
+            <para>
+                The first part of the URL, after the server name and port, matches the <literal>WAR</literal> file name (by default).
+                This is called the <emphasis>context path</emphasis> - and all paths in a web application are resolved
+                relative to this context path. Several web applications are usually deployed in the same server, each having its own 
+                unique context path.
+            </para>
+        </note>
+        
+    </section>
+    
+</section>

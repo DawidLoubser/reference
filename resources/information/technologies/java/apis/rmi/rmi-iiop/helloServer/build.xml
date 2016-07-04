@@ -1,0 +1,130 @@
+<project name="RMI/IIOP Bank"
+         default="help" 
+         basedir=".">
+
+  <property environment="env"/>
+  
+  <property name="srcDir" value="${basedir}/src"/>
+  <property name="srcCommon" value="${srcDir}/common"/>
+  <property name="srcServant" value="${srcDir}/servant"/>
+  <property name="srcServer" value="${srcDir}/server"/>
+  <property name="srcClient" value="${srcDir}/client"/>
+  
+  <property name="binDir" value="${basedir}/bin"/>
+  <property name="binCommon" value="${binDir}/common"/>
+  <property name="binServant" value="${binDir}/servant"/>
+  <property name="binServer" value="${binDir}/server"/>
+  <property name="binClient" value="${binDir}/client"/>
+  
+  <property name="generated" value="${basedir}/generated"/>
+  
+  <target name="help">
+    <echo message="TARGETS:"/>
+    <echo message="========"/>
+    <echo message="clean  --  deletes all generated files"/>
+    <echo message="compileCommon   --  compiles the common files"/>
+    <echo message="compileServant  --  compiles the RMI servant files"/>
+    <echo message="generateStubs  -- generates the RMI/IIOP stubs and skeletons"/>
+    <echo message="compileServer  --  compiles the server"/>
+    <echo message="compileClient  --  compiles the client side files"/>
+    <echo message="startServer  --  starts the server"/>
+    <echo message="runClient  --  runs the client application"/>
+  </target>
+  
+  <target name="clean"
+          description="Removes the classes directories">
+    <delete dir="${binDir}" />
+    <delete dir="${generated}" />
+  </target>
+  
+  <target name="compileCommon">
+    <echo message="Compiling common classes"/>
+    <mkdir dir="${binDir}"/>
+    <mkdir dir="${binCommon}"/>
+    <javac srcdir="${srcCommon}"
+      destdir="${binCommon}"
+      includes="**/*.java"/>
+  </target>
+  
+  <target name="compileServant" depends="compileCommon">
+    <echo message="Compiling servant classes"/>
+    <mkdir dir="${binServant}"/>
+    <javac srcdir="${srcServant}"
+      destdir="${binServant}"
+      includes="**/*.java">
+      <classpath>
+        <pathelement location="${binCommon}"/>
+        <pathelement location="${binServant}"/>
+      </classpath>
+    </javac>
+  </target>
+    
+  <target name="generateStubs" depends="compileServant">
+    <echo message="Generating stubs and skeletons"/>
+    <mkdir dir="${generated}"/>
+    <rmic classname="HelloImpl" base="${generated}">
+      <classpath>
+        <pathelement location="${binCommon}"/>
+        <pathelement location="${binServant}"/>
+        <pathelement location="${generated}"/>
+      </classpath>
+    </rmic>
+  </target>
+  
+  <target name="compileServer" depends="generateStubs">
+    <echo message="Compiling servant classes"/>
+    <mkdir dir="${binServer}"/>
+    <javac srcdir="${srcServer}"
+      destdir="${binServer}"
+      includes="**/*.java">
+      <classpath>
+        <pathelement location="${binCommon}"/>
+        <pathelement location="${binServant}"/>
+        <pathelement location="${binServer}"/>
+        <pathelement location="${generated}"/>
+      </classpath>
+    </javac>
+  </target>
+  
+  <target name="compileClient" depends="generateStubs">
+    <echo message="Compiling client classes"/>
+    <mkdir dir="${binClient}"/>
+    <javac srcdir="${srcClient}"
+      destdir="${binClient}"
+      includes="**/*.java">
+      <classpath>
+        <pathelement location="${binCommon}"/>
+        <pathelement location="${binClient}"/>
+        <pathelement location="${generated}"/>
+      </classpath>
+    </javac>
+  </target>
+  
+  <target name="startServer" depends="compileServer">
+    <echo message="Starting server. Note: Naming server should have been started via 'orbd -ORBInitialPort 1060'"/>
+    <java classname="HelloServer" fork="on">
+      <sysproperty key="java.naming.factory.initial" value="com.sun.jndi.cosnaming.CNCtxFactory"/>
+      <sysproperty key="java.naming.provider.url" value="iiop://localhost:1060"/>
+      <classpath>
+        <pathelement location="${binCommon}"/>
+        <pathelement location="${binServant}"/>
+        <pathelement location="${binServer}"/>
+        <pathelement location="${generated}"/>
+      </classpath>
+    </java>
+  </target>
+  
+  <target name="runClient" depends="compileClient">
+    <echo message="Running client. Note: Server must have been started."/>
+    <java classname="HelloClient" fork="on">
+      <sysproperty key="java.naming.factory.initial" value="com.sun.jndi.cosnaming.CNCtxFactory"/>
+      <sysproperty key="java.naming.provider.url" value="iiop://localhost:1060"/>
+      <classpath>
+        <pathelement location="${binCommon}"/>
+        <pathelement location="${binClient}"/>
+        <pathelement location="${generated}"/>
+      </classpath>
+    </java>
+  </target>
+  
+</project>

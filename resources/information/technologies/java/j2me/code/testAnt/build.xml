@@ -1,0 +1,44 @@
+<![CDATA[
+<?xml version="1.0"?>
+<project name="TestInstall" default="run" basedir=".">
+
+  <property name="className" value="AustralianHelloWorld"/>
+
+  <target name="checkSourceAvailable">
+    <available file="${className}.java" property="SourceExists"/>
+  </target>
+
+  <target name="createSource" unless="SourceExists" depends="checkSourceAvailable">
+    <echo file="${className}.java">
+public class AustralianHelloWorld
+{
+  public static void main(String[] args)
+  {
+    System.out.println("Hi there, mate.");
+  }
+}
+    </echo>
+    <echo message="Wrote- ${className}.java"/>
+  </target>
+
+  <target name="compile" depends="createSource">
+    <javac destdir="." srcdir="." debug="on" classpath=".">
+      <include name="${className}.java"/>
+    </javac>
+  </target>
+
+   <target name="run" depends="compile">
+     <java classname="${className}" classpath="."/>
+   </target>
+
+   <target name="clean">
+     <delete>
+       <fileSet dir=".">
+         <include name="${className}.*"/>
+       </fileSet>
+     </delete>
+   </target>
+
+   <target name="doAll" depends="run,compile,clean,createSource,checkSourceAvailable"/>
+</project>
+]]>

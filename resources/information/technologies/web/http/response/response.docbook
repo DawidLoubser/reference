@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+    xml:id="components.technologies.www.http.response.response">
+    <title>HTTP Response</title>
+  <indexterm>
+    <primary>HTTP</primary>
+    <secondary>response</secondary>
+  </indexterm>
+    <para>
+        Once a request has been received by the server, it sends back a response
+        message indicating the <emphasis>status</emphasis> of the request, and 
+      any additional information describing the response (if any).
+        Like HTTP requests, HTTP response messages have two areas: A list of headers (similar to request headers) an optionally
+        a response body, which contains the data (resources) that the client requested.
+    </para>
+    <para>The following are common headers returned by an HTTP response:</para>
+    <section>
+        <title>Protocol</title>
+        <para>
+            Version of the HTTP protocol the server will be using to communicate: Currently
+            <literal>HTTP/1.0</literal> or <literal>HTTP/1.1</literal>.
+        </para>
+    </section>
+    <section>
+        <title>HTTP Status Code</title>
+        <para>
+            Directly following the protocol version, an HTTP status code describes, amongst others,
+            the success / failure of the request. It can also contain various other messages, such
+            as indication of move, redirection, invalid client request, etc.
+        </para>
+    </section>
+    <section>
+        <title>Last Modified Date</title>
+        <para> 
+            The Last-Modified field indicates the date and time at which the
+            server believes the requested resource was last modified. This proves to be very useful
+            in assisting web browsers to perform reliable caching of data, e.g. to not request
+            unmodified data more than once.
+        </para>
+    </section>
+    <section>
+        <title>Content-Length</title>
+        <para>
+            The number of bytes in the body (the size of the requested resource, which does not
+            include the size of the header and status fields.
+        </para>
+    </section>
+    <section>
+        <title>Content-Type</title>
+        <para> The MIME-type of the data in the body, such as application/xml or image/gif.</para>
+    </section>
+    <section>
+        <title>Expiration</title>
+        <para> Specifies the date on which this content served is considered as expired. This is
+            used by browser in Cache Control. Often a immediate expiry date is set to indicate that
+            the browser should not cache the response. </para>
+    </section>
+  <section>
+    <title>Cookie</title>
+    <para>
+      Specifies one or more name/value pairs of information which the
+      client should store locally, and reproduce on all subsequent
+      requests to the same host, until the indicated expiry date is
+      reached.
+    </para>
+  </section>
+    <section>
+        <title>Example HTTP responses:</title>
+<programlisting><![CDATA[
+HTTP/1.1 200 OK 
+Date: Wed, 23 Jul 2003 08:23:49 GMT 
+Server: Apache/1.3.20 (Unix) (Red-Hat/Linux) mod_python/2.7.6
+Last-Modified: Wed, 16 Jan 2002 09:04:05 GMT
+Content-Length: 130 
+Connection: close 
+Content-Type: text/xml 
+      
+<?xml version="1.0"?>
+<content>
+    <moreContent useful="no"/>
+    <otherContent>
+        This is just an illustration of 
+        arbitrary requested data.
+    </otherContent>
+</content>
+]]></programlisting>
+
+<para>
+    Another example of a successful request:
+</para>
+<programlisting><![CDATA[
+HTTP/1.1 200 OK 
+Date: Wed, 23 Jul 2003 08:23:50 GMT 
+Server: Apache/1.3.20 (Unix) (Red-Hat/Linux) mod_python/2.7.6 
+Last-Modified: Fri, 16 Nov 2001 07:27:05 GMT
+Content-Length: 72187
+Connection: close 
+Content-Type: image/jpeg 
+
+. . . [binary data] . . . 
+]]></programlisting>
+
+<para>
+    Example response for a resource that does not exist at the requested location:
+    (The message body is optional, but often included to present a custom
+    error page to the user)
+</para>
+<programlisting><![CDATA[
+HTTP/1.1 404 NOT FOUND 
+Date: Wed, 23 Jul 2003 08:29:50 GMT 
+Server: Apache/1.3.20 (Unix) (Red-Hat/Linux) mod_python/2.7.6 
+Content-Length: 94
+Connection: close 
+Content-Type: text/plain
+
+The resource you requested cannot be found, please 
+retry or notify your system administrator.
+]]></programlisting>
+    </section>
+    
+    <!-- HTTP Response Codes -->
+    <xi:include href="responseCodes.docbook"/>
+    
+</section>

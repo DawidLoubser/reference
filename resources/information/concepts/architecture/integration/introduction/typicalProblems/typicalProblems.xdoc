@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section
+  id="resources.information.concepts.architecture.integration.introduction.typicalProblems.typicalProblems"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Typical integration problems</title>
+  <para>
+    There are a number of common problems that affect any integration effort, relating
+    to
+    <itemizedlist>
+      <listitem><para>Integrability</para></listitem>
+      <listitem><para>Higher-level work flow management</para></listitem>
+      <listitem><para>Realising quality requirements</para></listitem>
+      <listitem><para>Normalisation</para></listitem>
+    </itemizedlist>
+    These are often equally pertinent when having to integrate <emphasis>business units</emphasis>,
+    as well as <emphasis>systems</emphasis>.
+  </para>
+  
+  <section>
+    <title>Integrability</title>
+    <para>
+      The accessibility of a work unit (business unit or system) may be compromised by a number of
+      factors: 
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>Encapsulation</title>
+          <para>
+            A work unit may define only very limited integration interfaces. This is particularly true
+            for <quote>monolithic</quote> systems, which often have a user interface, but no 
+            support for integration with other systems. In the case of business units, we may also be 
+            faced with a lack of integration interfaces.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Proprietary languages</title>
+          <para>
+            Work units which provide accessibility channels may do so using proprietary languages.
+            This includes proprietary system protocols as well as different domain languages used by
+            different business units (e.g. trading terms, legal terms, ...).
+            When one work unit integrates with another work unit, it needs to understand the
+            language used to communicate with that work unit. This may require increased
+            communication skills across business units as well as systems requiring support for
+            various various system protocols. 
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Incompatible API's</title>
+          <para>
+            One system may be designed such that it is decoupled from service provider realisations
+            via contracts and standard APIs. However, a system which one may want to use may not
+            implement a <quote>standard</quote> API, but an API which is incompatible.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Incompatible data structures</title>
+          <para>
+            The integration may require the exchange of data. However, the data formats/structures
+            used by the different work units (systems or business units) may be incompatible. This
+            requires <emphasis>transformation</emphasis> of information as it is fed through a 
+            business process across the various work units of the organisation.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>The combinatorics problem</title>
+          <para>
+            Without introducing an integration solution one often faces the <emphasis>combinatorics</emphasis> problem,
+            which introduces a high level of complexity (with the associated costs and risks) as well as a high level of responsibility
+            duplication with further direct costs, maintenance costs and a risk of inconsistency. If we
+            have <emphasis>n</emphasis> work units (systems and/or manual work units) to integrate,
+            then direct integration will lead, in the worst case to <emphasis>n(n-1)/2</emphasis>
+            integration surfaces. For example, for 20 work units this results in 190 integration
+            interfaces. Each work unit (system or business unit) may need to know how to integrate
+            with every other work unit. This may result in a lot of additional code across the
+            various systems and/or a high skills requirements for your employees.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Realising quality requirements</title>
+    <para>
+      Enterprises usually have to maintain a certain <emphasis>quality of service</emphasis>. If work flows
+      are realised across multiple work units, these qualities need to be realised by both
+      <itemizedlist>
+        <listitem><para>the individual work units, as well as</para></listitem>
+        <listitem><para>the integration framework.</para></listitem>
+      </itemizedlist>
+      Examples for such qualities include
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>Scaleability</title>
+          <para>
+            Scaleability includes aspects like
+            <itemizedlist>
+              <listitem><para>
+                the number of transactions which may need to be performed in a unit time,    
+              </para></listitem>
+              <listitem><para>
+                the amount of information which must be processed by the enterprise, as well
+                as
+              </para></listitem>
+              <listitem><para>
+                the number of concurrent users, clients or concurrent requests the
+                organization/system must be able to
+                handle.
+              </para></listitem>
+            </itemizedlist>
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Reliability/availability</title>
+          <para>
+            This includes fail-over safety of the enterprise/enterprise systems as a 
+            whole, with respect to failure of any of its components.  
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Performance</title>
+          <para>
+            High performance is often difficult to achieve within a business process realised across
+            integrated  work units. It typically manifests itself as <emphasis>latency</emphasis> 
+            (response/turnaround times).
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Security</title>
+          <para>
+             One typically would like to have a consistent, integrated approach to security across
+            the work units. This will require the sharing of security contexts, enabling the various
+            work units to perform their own (domain-specific) authorisation.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Auditability</title>
+          <para>
+            Organisations typically need to be able to audit work flows which are realised across the
+            various work units, <abbrev>i.e.</abbrev>one must be able to trace a work flow 
+            across the work units performing the individual work flow steps. This is especially important
+            if there are legal or monetary issues at stake.  
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Higher-level work flow management issues</title>
+    <para>
+      To manage complexity, long-term maintainability and flexibility, one typically wants to deploy work units 
+      across an enterprise independent of one another. One then <emphasis>separately</emphasis> wants to define 
+      <emphasis>services</emphasis>, with their corresponding work flows realised across the various work units 
+      within the organisation. 
+      To this end, an enterprise integration solution will typically need to
+      address the following
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>Hosting of the higher level work flow specification</title>
+          <para>
+            When defining higher level services/workflows across systems (and perhaps business
+            units), one is directly faced
+            with the problem of where to host this higher level
+            work flow specification. Typically this would not be within one of the work units
+            addressing specific responsibilities, but at a higher level.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Transactional control across work units</title>
+          <para>
+              Business often requires that transaction boundaries must be maintained across work flow steps
+            realised by different systems and business units. This implies that the integration solution will 
+            need to manage transactions <emphasis>across</emphasis> the various work units. Recall that, technologically, 
+            these work units are often completely different (and may even include humans). 
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Error and exception handling</title>
+          <para>
+            The different work units used within the enterprise may raise exceptions or return
+            errors. This may be done in various standard or proprietary technologies. An integration
+            solution will typically have to manage exceptions and errors in a consistent way, as well
+            as their effect on transaction management.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Event channels between work units</title>
+          <para>
+            Different work units may generate events which should trigger work flows (or work flow steps). 
+            An integration solution will typically have to be able to receive events generated in various technologies, and
+            start and manage work flows processing the event.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Normalisation issues</title>
+    <para>
+       Ultimately one still would like to enforce normalisation of the work units across the
+      enterprise. This may imply the elimination of work units with duplicate functionality, as well
+      as common ways of representing and sharing information. This would typically include
+      <itemizedlist>
+        <listitem><para>
+           good responsibility localisation across the work units deployed within the organisation, and       
+        </para></listitem>
+        <listitem><para>
+          data normalisation across the various work units.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  
+</section>

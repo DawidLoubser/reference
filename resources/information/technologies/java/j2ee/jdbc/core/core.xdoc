@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.jdbc.core.core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The JDBC Core API</title>
+    <para>
+        JDBC is a Java API for executing SQL statements. This allows you to interact with
+        virtually any relational data base using pure Java. Virtually all data base systems supply
+        JDBC drivers. For those who do not, you can still use the JDK's JDBC-ODBC bridge, if an ODBC
+        driver is available instead.
+    </para>
+    <para>
+        Java's robustness, its security features and its platform independence make it a
+        particularly attractive language for database applications. Furthermore, the fact that data
+        base clients can be distributed with your web pages in the form of an applet adds makes the
+        choice of Java even more compelling.
+    </para>
+    <para>JDBC allows you to<itemizedlist>
+            <listitem>
+                <para> Establish a connection with a database.</para>
+            </listitem>
+            <listitem>
+                <para> Send SQL statements to the database.</para>
+            </listitem>
+            <listitem>
+                <para> Process the results of such statements.</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>The JDBC Core API consists of driver managers, connections, statements and result sets.
+        JDBC drivers are typically supplied by database vendors or third party driver developers.
+        The J2SDK is shipped with a JDBC-ODBC bridge which enables one to use any database which
+        provides an ODBC layer.
+    </para>
+    <section>
+        <title>Loading a Database Driver</title>
+        <para> JDBC drivers are usually shipped packaged in <literal>jar</literal> (Java Archive) files. 
+            The <literal>jar</literal> file for the driver has to be included in the classpath. 
+            The JDBC driver is then dynamically loaded via the bootstrap class loader of the run-time environment:
+        <programlisting><![CDATA[
+try 
+{ 
+    Class.forName("fully-qualified driver name");
+} 
+catch (ClassNotFoundException e)
+{ 
+    // Driver class not found 
+}
+        ]]></programlisting>
+        For example, the MySQL database driver can be loaded in the following way:
+        <programlisting><![CDATA[
+try 
+{ 
+    Class.forName("org.gjt.mm.mysql.Driver"); 
+} 
+catch (ClassNotFoundException e) 
+{ 
+    // Driver class not found 
+}]]></programlisting>
+        When the class is loaded any static initialization (defined in a <literal>static</literal> block)
+            is run.
+        </para>
+        <section>
+            <title>Defining a Set of System Drivers</title>
+            <para> An alternative approach is to define a set of system drivers using
+            <programlisting><![CDATA[ 
+System.setProperty("jdbc.drivers", 
+  "org.gjt.mm.mysql.Driver:COM.cloudscape.core.JDBCDriver");
+            ]]></programlisting>
+            where the individual drivers are seperated by colons.</para>
+        </section>
+    </section>
+    <section>
+        <title>JDBC URLs</title>
+        <para> JDBC URL's enable us to uniquely identify one among several JDBC drivers. The syntax
+            for a JDBC URL is
+        <programlisting><![CDATA[ 
+jdbc:<subprotocol>:<subname>]]></programlisting>
+         where<itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>jdbc</title>
+                        <para>specifies that the jdbc protociol is used -- this is the only protocol
+                            supported by JDBC drivers.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>subprotocol</title>
+                        <para>specifies the database driver and potentially one of a number database
+                            of connectivity mechanisms supported by a driver.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>subname</title>
+                        <para>typivally refers to the database host, port and database name one
+                            wants to connect to. The subname is, however, driver-specific.</para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>For example, to connect to a database, <literal>test</literal>, hosted on the local 
+            host on port 3306 by MySQL, we would use the following JDBC URL:
+        <programlisting><![CDATA[ 
+jdbc:mysql://localhost/test:3306
+          ]]></programlisting>
+          </para>
+    </section>
+    <section>
+        <title>Driver Managers and Database Connections</title>
+        <para> <emphasis>Driver manager</emphasis> is a utility class which keeps track of the available drivers and is
+            responsible for establishing connections between databases and drivers. For example, to
+            request a database connection from a driver manager, we can issue the following statements:
+        <programlisting><![CDATA[ 
+String driverName = "org.gjt.mm.mysql.Driver"; 
+String dbUrl = "jdbc:mysql://localhost/test:3306"; 
+String user = "Bond"; 
+String password = "007secret"; 
+
+try 
+{ 
+    Class.forName(driverName); 
+} 
+catch (ClassNotFoundException e) 
+{ 
+    System.out.println("ERROR: Could not load database driver class."); 
+    System.exit(0); 
+} 
+
+Connection connection = DriverManager.getConnection(dbUrl, user, password);
+        ]]></programlisting>
+        In addition to providing connections, <emphasis>DriverManager</emphasis> has class
+            services for<itemizedlist>
+                <listitem>
+                    <para>registering and de-registering drivers</para>
+                </listitem>
+                <listitem>
+                    <para>resolving an installed driver from a JDBC URL</para>
+                </listitem>
+                <listitem>
+                    <para>querying all registered JDBC drivers</para>
+                </listitem>
+                <listitem>
+                    <para>setting and querying the login timeout, i.e. the maximum time a driver
+                        should wait while attempting to connect
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>Setting and querying the print stream used for logging database service requests.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    <section>
+        <title>Specifying Connection Properties</title>
+        <para>A properties map can be used to specify any properties which should apply for a
+            connection. These properties are usually specific for a database driver.
+        <programlisting><![CDATA[ 
+String driverName = "org.gjt.mm.mysql.Driver"; 
+String dbUrl = "jdbc:mysql://localhost/test:3306"; 
+java.util.Properties props = new java.util.Properties();
+    props.put("autocommit", "true"); 
+    pros.put("foo", "bar");
+Connection connection = DriverManager.getConnection(dbUrl, props);
+          ]]></programlisting>
+          </para>
+    </section>
+    <section>
+        <title>Statements</title>
+        <para> JDBC statements encapsulate SQL statements. Simple statements created
+            via <literal>connection.createStatement()</literal> are used for simple SQL statements
+            where efficiency is not critical. 
+        </para>
+        <para>
+            The <literal>Statement</literal> interface offers three methods for
+            executing SQL statements:
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>executeQuery()</title>
+                        <para> is used for queries which produce a single result set.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>executeUpdate()</title>
+                        <para> is used for <literal>INSERT</literal>, <literal>UPDATE</literal>
+                            and <literal> DELETE</literal> statements as well as for SQL DDL (Data
+                            Definition Language) statements like <literal>CREATE TABLE</literal>
+                            and <literal>DROP TABLE</literal>. The method returns the update count
+                            as an integer. This is the number of rows affected by the statement.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>execute()</title>
+                        <para> 
+                            is used for statements which return more than one result set, or if
+                            it is known at compile time whether an SQL statement will produce results
+                            or not.
+                        </para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    <section>
+        <title>Result Sets</title>
+        <para> 
+            Result sets contain the rows which satisfied the query. Each row contains those
+            columns specified by the query (they can come from differnt tables if a <emphasis>join</emphasis>
+            was executed.) It is a collection of rows and the <emphasis>next()</emphasis> method moves the cursor one row downwards.
+            Column entries are extracted either via column name or via column number (as they are in
+            the result set).
+        </para>
+    </section>
+    <section id="secSimpleJDBCExample">
+        <title>A Simple Example</title>
+      <para>
+        <programlisting>
+<xi:include href="src/TestMySQL.java" parse="text"/>
+        </programlisting>
+        </para>
+    </section>
+    <section>
+        <title>Prepared Statements</title>
+        <para> 
+            Prepared statements are precompiled statements which can obtain a number of arguments.
+            They provide a massive performance benefit if the same SQL statement is executed a number of
+            times, every time with different arguments.
+        <programlisting><![CDATA[
+PreparedStatement preparedStatement = 
+  connection.prepareStatment("UPDATE clients SET company = ? WHERE company = ?");
+        ]]> </programlisting>
+            The arguments to a prepared statement are supplied via the set statements summarized
+            in table <xref linkend="tabSQLdataTypes"/>. For example we could say
+        <programlisting><![CDATA[ 
+preparedStatement.setString(1, "TWENTY20");
+preparedStatement.setString(2, "Standard Chartered");
+        ]]></programlisting>
+        Because prepared statements are precompiled, they execute faster than normal
+            statements and should be used when a similar query is repeated frequently.</para>
+        <table id="tabSQLdataTypes">
+            <title>SQL data types, the corresponding Java datatypes and the set methods used for
+                populating the arguments JDBC prepared statements. </title>
+            <tgroup cols="3">
+                <thead>
+                    <row>
+                        <entry><para>SQL type</para></entry>
+                        <entry><para>Java type</para></entry>
+                        <entry><para>Java set method for <literal>PreparedStatement</literal></para></entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry><para>BIT</para></entry>
+                        <entry><para>boolean</para></entry>
+                        <entry>
+                            <para><literal>void setBoolean(int index, boolean b)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>TINYINT</para></entry>
+                        <entry><para>byte</para></entry>
+                        <entry>
+                            <para><literal>void setByte(int index, byte b)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>SMALLINT</para></entry>
+                        <entry><para>short</para></entry>
+                        <entry>
+                            <para><literal>void setShort(int index, short k)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>INTEGER</para></entry>
+                        <entry><para>int</para></entry>
+                        <entry>
+                            <para><literal>void setInt(int index, int k)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>BIGINT</para></entry>
+                        <entry><para>long</para></entry>
+                        <entry>
+                            <para><literal>void setLong(int index, long k)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>FLOAT</para></entry>
+                        <entry><para>float</para></entry>
+                        <entry>
+                            <para><literal>void setFloat(int index, float x)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>DOUBLE</para></entry>
+                        <entry><para>double</para></entry>
+                        <entry>
+                            <para><literal>void setDouble(int index, double x)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>NUMERIC</para></entry>
+                        <entry><para>java.lang.BigDecimal</para></entry>
+                        <entry>
+                            <para><literal>void setBigDecimal(int index, BigDecimal x)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>VARCHAR(n)</para></entry>
+                        <entry><para>java.lang.String</para></entry>
+                        <entry>
+                            <para><literal>void setString(int index, String s)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>LONG VARCHAR</para></entry>
+                        <entry><para>java.io.InputStream</para></entry>
+                        <entry>
+                            <para><literal>void setASCIISTREAM(int index, InputStream strm, int length)</literal> or</para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para></para></entry>
+                        <entry><para></para></entry>
+                        <entry>
+                            <para><literal>void setUnicodeSTREAM(int index, InputStream strm, int length)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>VARBINARY</para></entry>
+                        <entry><para>byte[]</para></entry>
+                        <entry>
+                            <para><literal> void setBytes(int index, byte[] x)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>LONGVARBINARY</para></entry>
+                        <entry><para>java.io.InputStream</para></entry>
+                        <entry>
+                            <para><literal>void setBinaryStream(int index, InputStream strm, int length)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>DATE</para></entry>
+                        <entry><para>java.sql.Date</para></entry>
+                        <entry>
+                            <para><literal>void setDate(int index, Date date)</literal></para>
+                        </entry>
+                    </row>
+                    <row>
+                        <entry><para>TIME</para></entry>
+                        <entry><para>java.sql.TimeStamp</para></entry>
+                        <entry>
+                            <para><literal>void setTimeStamp(int index, TimeStamp time)</literal></para>
+                        </entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </table>
+    </section>
+    <section>
+        <title>Callable Statements</title>
+        <para> Calable statements allows one to access functions supplied by the DBMS. For example
+        <programlisting><![CDATA[ 
+CallableStatement callableStatement = 
+    connection.prepareCall ("{call doSomething(?, ?)}");
+        ]]></programlisting>
+        The parameters can be input, output or input/output parameters. The former are set via
+            the set methods. Output parameters have to be registered and the values are retrieved
+            via get statements:
+        <programlisting><![CDATA[ 
+callableStatement.registerOutParameter(1, java.sql.Types.FLOAT);
+callableStatement.executeQuery(); 
+
+float x = callableStatement.getFloat("yValue"); 
+// or via parameter index 
+float x = callableStatement.getFloat(3);
+        ]]></programlisting></para>
+    </section>
+    <section>
+        <title>Querying Meta-Data</title>
+        <para> We can obtain descriptive information about the structure of a result-set by querying
+            it for its meta-data. The meta-data contains the number of columns contained in the
+            result set, the column names and types, whether the columns are read-only or not and
+            lots of other information.
+        </para>
+        <para> Below we show a little application which selects all fields of a database, and
+            queries the result set for the number of columns, their names and types:
+        <programlisting>
+<xi:include href="src/TestGetMetaData.java" parse="text"/>
+        </programlisting>
+          </para>
+    </section>
+    <section>
+        <title>Working with Transactions</title>
+        <para> Transactions are usually demarcated via Java's <emphasis>Transaction Service</emphasis>, accessed through
+            the standard API, <emphasis>JTA</emphasis>. JDBC, however, also enables one to start, commit and roll-back
+            transactions. In order to do that we have to first switch off the (default) auto-commit:
+        <programlisting><![CDATA[ 
+connection.setAutoCommit(false); 
+Statement stmt = connection.createStatement(); 
+try 
+{ 
+    // Several Updates 
+    //...
+            
+    connection.commit(); 
+} catch (java.sql.SQLExceoption e) 
+{ 
+    connection.rollback(); 
+} 
+finally 
+{ 
+    connection.close(); 
+}
+          ]]></programlisting>
+          </para>
+    </section>
+    <section>
+        <title>Batch Updates</title>
+        <para> JDBC 2.1 onwards also support batch updates, enabling one to submit multiple SQL
+            INSERT, UPDATE and DELETE statements with a single database service request. This can
+            improve performance significantly: 
+        <programlisting>
+<xi:include href="src/TestBatch.java" parse="text"/>
+        </programlisting>
+          </para>
+    </section>
+</section>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.tools.versionControl._cvs.commands.reverting"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Reverting to a previous version</title>
+  <para>
+    At times errors are introduced with modifications or it may be understood
+    that the modifications done are not consistent with the requirements,
+    architecture or design of the system. In such cases one may want to revert
+    to a previous revision of the file.
+  </para>
+  <para>
+    We shall first discuss the careful, slow approach, before discussing a more
+    efficient approach which is particularly useful when reverting multiple files.
+  </para>
+  
+  <section>
+    <title>The careful approach</title>
+    <para>
+      Typically one would like to first make certain that one is reverting 
+      to the correct version. To this end you can obtain a previous revision
+      via an <command>update</command> command which pipes the requested
+      revision into a temporary file:
+      <synopsis><![CDATA[
+cvs -Q update -r 1.1 -p LoanCalculatorClient.java > temp      
+      ]]></synopsis>
+      Here 
+      <itemizedlist>
+        <listitem><para>
+          the <option>-Q</option> cvs option suppresses CVS messages,          
+        </para></listitem>
+        <listitem><para>
+          the <option>-r 1.1</option> request revision 1.1 of the file,
+        </para></listitem>
+        <listitem><para>
+          <option>-p</option> requests output to the console and
+        </para></listitem>
+        <listitem><para>
+          <literal><![CDATA[> temp]]></literal> pipes the output to a
+          file, <filename>temp</filename>.
+        </para></listitem>
+      </itemizedlist>
+      <note>
+        <para>
+          We cannot simply update with revision 1.1 because CVS will keep
+          track of the fact that you are working with revision 1.1. Altering
+          the file and committing will result in the following error message:
+          <synopsis><![CDATA[
+cvs commit: Examining .
+cvs commit: sticky tag `1.1' for file `LoanCalculatorClient.java' 
+            is not a branch
+cvs [commit aborted]: correct above errors first!
+          ]]></synopsis>
+          which forces you to create a branch along which changes to revision
+          1.1 are made.
+        </para>
+        <para>
+          In the above approach, however, the working copy remains the latest 
+          revision and copying the <filename>temp</filename> file onto it
+          modifies the file.
+        </para>
+      </note>
+    </para>
+    <para>
+      The developer can now make certain that the revision obtained is indeed
+      the version he/she wants to revert to. After being convinced of that, 
+      he/she copies the temporary file the working copy:
+      <synopsis><![CDATA[
+cp temp LoanCalculatorClient.java
+      ]]></synopsis>
+    </para>
+    <para>
+      If he/she has paranoid inclinations she can now run diff between the working
+      copy and the current version in the repository. The output would show the
+      differences between the current version and the version he/she is intending 
+      to revert to:
+      <synopsis><![CDATA[
+cvs diff: Diffing .
+Index: LoanCalculatorClient.java
+===================================================================
+RCS file: /usr/local/cvs/testRepository/LoanCalculator/za/co/stcd/finance...
+            /calculators/presentation/swing/LoanCalculatorClient.java,v
+retrieving revision 1.3
+diff -r1.3 LoanCalculatorClient.java
+11c11,13
+<     getContentPane().add(new LoanCalculatorPanel());
+---
+>     calculatorPanel = new LoanCalculatorPanel();
+>
+>     getContentPane().add(calculatorPanel);
+20d21
+<     System.out.println("application is starting up...");
+22a24,25
+>
+>   private LoanCalculatorPanel calculatorPanel;
+      ]]></synopsis>
+    </para>
+    <para>
+      Finally she can remove the temporary file and commit the changes:
+      <synopsis><![CDATA[
+rm temp
+      
+cvs commit
+      ]]></synopsis>      
+    </para>
+  </section>
+  
+  <section>
+    <title>Rapid reverting via the join-option of <command>update</command></title>
+    <para>
+      The careful approach is fine when reverting single files. Later on we
+      will need to discuss how to revert an entire project to a previous
+      version. To this end we introduce the rapid revert method now which
+      uses the join option of the <command>update</command> command.
+      We shall use the join option when we merging changes made along 
+      branches into a working directory.
+    </para>
+    <para>
+      Here we shall use two join options to specify that the difference
+      between two versions in the repository should be merged into the
+      working copy file:
+      <synopsis><![CDATA[
+cvs update -j 1.3 -j 1.1 LoanCalculatorClient.java      
+      ]]></synopsis>
+      Each <literal>-j</literal> option takes a revision number as argument.
+      The order of the revision numbers is important. CVS provides the following
+      output:
+      <synopsis><![CDATA[
+RCS file: /usr/local/cvs/testRepository/LoanCalculator/za/co/stcd/finance/calculators/presentation/swing/LoanCalculatorClient.java,v
+retrieving revision 1.3
+retrieving revision 1.1
+Merging differences between 1.3 and 1.1 into LoanCalculatorClient.java
+      ]]></synopsis>
+    </para>
+    <para>
+      CVS merges
+      <synopsis><![CDATA[
+(revision 1.1) - (revision 1.3)      
+      ]]></synopsis>
+      into the working copy. The consequence of the operation is that
+      <orderedlist>
+        <listitem><para>
+          If additions have been made from revision 1.1
+          to revision 1.3 then these additions appear with a negative sign in the
+          difference and hence they are removed from the working copy.
+        </para></listitem>
+        <listitem><para>
+          On the other hand, if deletions have been applied from revision 1.1
+          to revision 1.3 then these deletions appear with a positive sign in the
+          difference and hence they are added to the working copy.
+        </para></listitem>
+      </orderedlist>
+    </para>
+  </section>
+  
+</section>
+ 
+ 

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns4888:section xmlns:ns4888="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.sed.gettingStarted">
+
+  <ns4889:title xmlns:ns4889="http://docbook.org/ns/docbook">Getting started with <ns4890:command xmlns:ns4890="http://docbook.org/ns/docbook">sed</ns4890:command></ns4889:title>
+  <ns4891:para xmlns:ns4891="http://docbook.org/ns/docbook">
+    A very common application of <ns4892:command xmlns:ns4892="http://docbook.org/ns/docbook">sed</ns4892:command> is to use it for performing
+    text substitutions non-interactively within files. The syntax for this is
+    <ns4893:programlisting xmlns:ns4893="http://docbook.org/ns/docbook">
+sed 's/&lt;oldText&gt;/&lt;newText&gt;/g' &lt;filename&gt;    
+    </ns4893:programlisting>
+  </ns4891:para>
+  <ns4894:section xmlns:ns4894="http://docbook.org/ns/docbook">
+    <ns4895:title xmlns:ns4895="http://docbook.org/ns/docbook">A simple example</ns4895:title>
+      <ns4896:para xmlns:ns4896="http://docbook.org/ns/docbook">
+        Consider the following text file, called <ns4897:filename xmlns:ns4897="http://docbook.org/ns/docbook">bricks.txt</ns4897:filename>:
+        <ns4898:programlisting xmlns:ns4898="http://docbook.org/ns/docbook">
+We are only bricks in the wall.
+A wall is an ordered collection of bricks -- in fact it is full of bricks.
+Bricks &amp; Co. PTY LTD.
+
+The bricking trade calls YOU!!!!
+bricks vs. rocks : crafted art vs. natural beauty.        
+        </ns4898:programlisting>
+        Thus
+        <ns4899:programlisting xmlns:ns4899="http://docbook.org/ns/docbook">
+sed 's/bricks/baked stones/g' bricks.txt &gt; newBrick.txt    
+        </ns4899:programlisting>
+        This will process the file <ns4900:filename xmlns:ns4900="http://docbook.org/ns/docbook">bricks.txt</ns4900:filename> by substituting every
+        occurance of <ns4901:quote xmlns:ns4901="http://docbook.org/ns/docbook">bricks</ns4901:quote> with <ns4902:quote xmlns:ns4902="http://docbook.org/ns/docbook">baked stones</ns4902:quote> and
+        write the processed text to the file <ns4903:filename xmlns:ns4903="http://docbook.org/ns/docbook">newBrick.txt</ns4903:filename>. The
+        resultant file looks like this:
+        <ns4904:programlisting xmlns:ns4904="http://docbook.org/ns/docbook">
+We are only baked stones in the wall.
+A wall is an ordered collection of baked stones.
+Bricks &amp; Co. PTY LTD.
+
+The bricking trade calls YOU!!!!
+baked stones vs. rocks : crafted art vs. natural beauty.
+        </ns4904:programlisting>        
+        <ns4905:note xmlns:ns4905="http://docbook.org/ns/docbook">
+          <ns4906:para xmlns:ns4906="http://docbook.org/ns/docbook">
+            We need the single quote to protect the sed command from shell interpretations.
+          </ns4906:para>
+        </ns4905:note>
+      </ns4896:para>
+      <ns4907:para xmlns:ns4907="http://docbook.org/ns/docbook">
+        The flag <ns4908:option xmlns:ns4908="http://docbook.org/ns/docbook">g</ns4908:option> at the end of the command requests a global substitution,
+        and since <ns4909:command xmlns:ns4909="http://docbook.org/ns/docbook">sed</ns4909:command> is a line editor this means globally within a line.
+        If this option is ommitted, only every first occurance of the match string (bricks) is
+        replaced.
+      </ns4907:para>
+  </ns4894:section>
+  <ns4910:section xmlns:ns4910="http://docbook.org/ns/docbook">
+    <ns4911:title xmlns:ns4911="http://docbook.org/ns/docbook">The input and output streams</ns4911:title>
+    <ns4912:para xmlns:ns4912="http://docbook.org/ns/docbook">
+      By default <ns4913:command xmlns:ns4913="http://docbook.org/ns/docbook">sed</ns4913:command> will read from the standard input stream and
+      write to th standard output stream. Thus, if we use
+        <ns4914:programlisting xmlns:ns4914="http://docbook.org/ns/docbook">
+sed 's/bricks/baked stones/g' 
+        </ns4914:programlisting>
+        then it will process each line of text entered from the console until you provide
+        the <ns4915:emphasis xmlns:ns4915="http://docbook.org/ns/docbook">end-of-file</ns4915:emphasis> character via <ns4916:literal xmlns:ns4916="http://docbook.org/ns/docbook">&lt;Ctrl&gt;D</ns4916:literal>.
+    </ns4912:para>
+  </ns4910:section>
+  
+  <ns4917:section xmlns:ns4917="http://docbook.org/ns/docbook">
+    <ns4918:title xmlns:ns4918="http://docbook.org/ns/docbook">Specifying multiple commands</ns4918:title>
+    <ns4919:para xmlns:ns4919="http://docbook.org/ns/docbook">
+        We can ask <ns4920:command xmlns:ns4920="http://docbook.org/ns/docbook">sed</ns4920:command> to process multiple commands by listing
+        each with its own <ns4921:option xmlns:ns4921="http://docbook.org/ns/docbook">-e</ns4921:option>. The commands will be processed line for line
+        in the order in which they are provided.
+        <ns4922:note xmlns:ns4922="http://docbook.org/ns/docbook">
+          <ns4923:para xmlns:ns4923="http://docbook.org/ns/docbook">
+            Sed will still only read once through the file,<ns4924:abbrev xmlns:ns4924="http://docbook.org/ns/docbook">i.e.</ns4924:abbrev> process all
+            commands within a single sweep through the file.
+          </ns4923:para>
+        </ns4922:note>
+    </ns4919:para>
+    <ns4925:para xmlns:ns4925="http://docbook.org/ns/docbook">
+      For example, if we execute
+      <ns4926:programlisting xmlns:ns4926="http://docbook.org/ns/docbook">
+sed -e 's/bet/bat/g' -e 's/bat/bet/g'
+      </ns4926:programlisting>
+      on 
+      <ns4927:programlisting xmlns:ns4927="http://docbook.org/ns/docbook">
+I bet you have a bat at home.
+      </ns4927:programlisting>
+      we will receive as output
+      <ns4928:programlisting xmlns:ns4928="http://docbook.org/ns/docbook">
+I bet you have a bet at home.
+      </ns4928:programlisting>      
+    </ns4925:para>
+  </ns4917:section>
+</ns4888:section>

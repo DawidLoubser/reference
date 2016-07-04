@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.relationships.valueObjects.valueObjectRelationships"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Entity Relationship with Value Objects </title>
+  <para>
+    In EJB one can specify a relationship between an entity bean and a value object.
+  </para>
+  
+  <section>
+    <title>Specifying Value Objects</title>
+    <para>
+      Value objects resemble true components of the entity bean (in the context of a
+      composition relationship in OO). They are defined within entity beans via abstract
+      accessor methods which return/receive instances of a class which implements 
+      <literal>java.io.Serializable</literal>.
+    </para>
+    <para>
+      Consider, for example, a <literal>Task</literal> which has as one of
+      its components a taskType. A task may be of type  
+      <literal>DevelopmentTask</literal> (which carries a  
+      <literal>riskFactor</literal> as one of its published attributes) or a  
+      <literal>MaintenanceTask</literal> which specifies a  
+      <literal>problemDescription</literal>. These tasks could be subclasses of an
+      abstract class, <literal>TaskType</literal> which implements 
+      <literal>java.io.Serializable</literal>:
+<programlisting>
+<xi:include parse="text" href="../../../../../source/TaskManager/src/common/TaskType.java" />
+</programlisting>
+    </para>
+    <para>
+      We can define the concrete subclass, <literal>DevelopmentTask</literal> via
+<programlisting>
+<xi:include parse="text" href="../../../../../source/TaskManager/src/common/DevelopmentTask.java" />
+</programlisting>
+    </para>
+    <para>
+      and the <literal>MaintenanceTask</literal> as
+<programlisting>
+<xi:include parse="text" href="../../../../../source/TaskManager/src/common/MaintenanceTask.java" />
+</programlisting>
+    </para>
+    <para>
+      Now, in order to specify that a <literal>TaskType</literal> is a value
+      object and hence a component of a<literal>Task</literal> entity bean, we
+      add the abstract accessor methods as follows:
+<programlisting><![CDATA[
+package za.co.SolmsTraining.pm;
+
+public abstract class TaskBean implements javax.ejb.EntityBean
+{
+...
+
+public abstract TaskType getTaskType();
+public abstract void setTaskType(TaskType taskType);
+
+...
+}
+]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Value Objects are Declared CMP Fields</title>
+    <para>
+      The container is given the reposibility of persisting value objects and hence the
+      value object is defined as yet another container-managed persistence (cmp) field:
+<programlisting><![CDATA[
+<ejb-jar>
+<display-name>Task Manager</display-name>
+<enterprise-beans>
+
+ <entity>
+   <ejb-name>Task</ejb-name>
+   <home>za.co.SolmsTraining.pm.TaskHome</home>
+   <remote>za.co.SolmsTraining.pm.TaskRemote</remote>
+   <ejb-class>za.co.SolmsTraining.pm.TaskBean</ejb-class>
+   <persistence-type>Container</persistence-type>
+   <prim-key-class>java.lang.String</prim-key-class>
+   <reentrant>False</reentrant>
+   <cmp-version>2.x</cmp-version>
+   <abstract-schema-name>TaskBean</abstract-schema-name>
+   <cmp-field>
+     <field-name>id</field-name>
+   </cmp-field>
+   <cmp-field>
+     <field-name>description</field-name>
+   </cmp-field>
+   <cmp-field>
+     <field-name>dueDate</field-name>
+   </cmp-field>
+   <cmp-field>
+     <field-name>taskType</field-name>
+   </cmp-field>
+   <primkey-field>id</primkey-field>
+   ...
+
+ </entity>
+</enterprise-beans>
+</ejb-jar>
+]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>How are Value Objects Persisted?</title>
+    <para>
+      In the case of CMP 2.0, the persistence of value objects is left to the disgression
+      of the container's persistence engine. Very often the object will be simply serialized as
+      a BLOB in one of the columns of the <literal>Task</literal> table. But
+      the container may choose to persist the value object in a way which is more accessible to
+      reporting engines. Furthermore, if an object database is used, the container may persist
+      the value object in a clean way.
+    </para>
+  </section>
+</section>

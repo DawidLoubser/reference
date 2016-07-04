@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    targetNamespace="http://www.solms.co.za/sales/reports"
+    xmlns:sr = "http://www.solms.co.za/sales/reports"
+    xmlns:cl = "http://www.solms.co.za/clients"
+    xmlns:p="http://www.solms.co.za/products"
+    xmlns:o="http://www.solms.co.za/orders"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xs:import namespace="http://www.solms.co.za/clients" schemaLocation="client.xsd"/>
+    <xs:import namespace="http://www.solms.co.za/products" schemaLocation="product.xsd"/>
+    <xs:import namespace="http://www.solms.co.za/orders" schemaLocation="order.xsd"/>
+    
+    <xs:complexType name="SalesReport">
+        <xs:sequence>
+            <xs:element name="clients" type="cl:Clients"/>
+            <xs:element name="products" type="p:Products"/>
+            <xs:element name="orders" type="o:Orders"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="salesReport" type="sr:SalesReport">
+
+        <xs:key name="clientKey">
+            <xs:selector xpath="sr:clients/cl:client"/>
+            <xs:field xpath="cl:code"/>
+        </xs:key>
+        
+        <xs:key name="productKey">
+            <xs:selector xpath="sr:products/p:product"/>
+            <xs:field xpath="@code"/>
+        </xs:key>
+        
+        <xs:key name="orderKey">
+            <xs:selector xpath="sr:orders/o:order"/>
+            <xs:field xpath="o:orderNo"/>
+        </xs:key>
+        
+        
+        <xs:keyref refer="sr:clientKey" name="orderClientRef">
+            <xs:selector xpath="sr:orders/o:order"/>
+            <xs:field xpath="o:client"/>
+        </xs:keyref>
+        
+        <xs:keyref refer="sr:productKey" name="lineItemProductRef">
+            <xs:selector xpath="sr:orders/o:order/o:lineItem"/>
+            <xs:field xpath="o:product/@ref"/>
+        </xs:keyref>
+        
+        
+    </xs:element>
+    
+</xs:schema>

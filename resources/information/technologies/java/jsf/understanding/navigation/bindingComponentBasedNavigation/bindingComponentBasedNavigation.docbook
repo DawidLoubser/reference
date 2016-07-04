@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Backing bean based navigation</title>
+    <para>
+        Typically action events of components are bound to action methods of the associated binding
+        component. These action services would typically call some service int the business process/
+        services layer and then either
+        <itemizedlist>
+            <listitem><para>
+                receive the result and show it in another page to the user, or
+            </para></listitem>
+            <listitem><para>
+                in the context of the services layer providing the service and requiring further
+                user input, be requested to capture that user input.
+                <note><para>
+                    The latter is not directly possible and will require us to insert
+                    a infrastructural component which will map such a request onto a return
+                    message.
+                </para></note>
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        Backing bean based navigation provides a very maintainable navigation specification
+        which is particularly appropriate when the backing bean manages user processes.
+    </para>
+    
+    <section>
+        <title>Binding the a component's action to an action method</title>
+        <para>
+            The binding to an action method is done
+          <programlisting><![CDATA[
+<h:commandButton id="submitOrder" action="#{createOrderBinding.processOrder}" value="Submit order"/>              
+              ]]></programlisting>            
+        </para>
+    </section>
+    
+    <section>
+        <title>The action metod</title>
+        <para>
+            The binding or managed bean would have to have a <literal>processOrder</literal> service
+            which gets no parameters and returns a string specifying the navigation decision.
+            <programlisting><![CDATA[
+@ManagedBean
+@ViewScoped
+public class OrderBean
+{
+    public String processOrder()
+    {
+        this.invoice = orderService.processOrder();
+					
+		return "showInvoice";
+    }		
+}
+                ]]></programlisting>
+        </para>
+    </section>
+</section>    

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns5347:section xmlns:ns5347="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.debugging.debugging">
+
+  <ns5348:title xmlns:ns5348="http://docbook.org/ns/docbook">Debugging shell scripts</ns5348:title>
+  <ns5349:para xmlns:ns5349="http://docbook.org/ns/docbook">
+    To debug shell scripts, one can execute them by calling the command interpreter,
+    <ns5350:command xmlns:ns5350="http://docbook.org/ns/docbook">sh</ns5350:command> or <ns5351:command xmlns:ns5351="http://docbook.org/ns/docbook">bash</ns5351:command>, with one of the
+    following two options:
+    
+    <ns5352:table xmlns:ns5352="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.shell.scripting.debugging.bashDebugOptions">
+      <ns5353:title xmlns:ns5353="http://docbook.org/ns/docbook">Debugging options for bash command interpreter</ns5353:title>
+      <ns5354:tgroup xmlns:ns5354="http://docbook.org/ns/docbook" cols="2">
+        <ns5355:thead xmlns:ns5355="http://docbook.org/ns/docbook">
+          <ns5356:row xmlns:ns5356="http://docbook.org/ns/docbook"><ns5357:entry xmlns:ns5357="http://docbook.org/ns/docbook">Flag</ns5357:entry><ns5358:entry xmlns:ns5358="http://docbook.org/ns/docbook">Description</ns5358:entry></ns5356:row>
+        </ns5355:thead>
+        <ns5359:tbody xmlns:ns5359="http://docbook.org/ns/docbook">
+          <ns5360:row xmlns:ns5360="http://docbook.org/ns/docbook"><ns5361:entry xmlns:ns5361="http://docbook.org/ns/docbook">-v</ns5361:entry><ns5362:entry xmlns:ns5362="http://docbook.org/ns/docbook">Print shell input lines as they are read.</ns5362:entry></ns5360:row>
+          <ns5363:row xmlns:ns5363="http://docbook.org/ns/docbook"><ns5364:entry xmlns:ns5364="http://docbook.org/ns/docbook">-x</ns5364:entry><ns5365:entry xmlns:ns5365="http://docbook.org/ns/docbook">Print commands and their arguments as they are executed.</ns5365:entry></ns5363:row>
+        </ns5359:tbody>
+      </ns5354:tgroup>
+    </ns5352:table>
+  </ns5349:para>
+  <ns5366:para xmlns:ns5366="http://docbook.org/ns/docbook">
+    For example, consider the following shell script:
+    <ns5367:programlisting xmlns:ns5367="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="../iteration/source/fileSizes_sh.docbook"/>    
+    </ns5367:programlisting>
+    If we execute it with the <ns5368:parameter xmlns:ns5368="http://docbook.org/ns/docbook">-x</ns5368:parameter> debug option via
+    <ns5369:cmdsynopsis xmlns:ns5369="http://docbook.org/ns/docbook"><ns5370:command xmlns:ns5370="http://docbook.org/ns/docbook">
+bash -v fileSizes.sh      
+    </ns5370:command></ns5369:cmdsynopsis>
+    we obtain the following output:
+    <ns5371:programlisting xmlns:ns5371="http://docbook.org/ns/docbook">
+#!/bin/bash
+
+filter=''
+
+if [ $# -eq 1 ]
+then
+        filter=$1
+fi
+echo "Using filter: $filter"
+Using filter:
+
+files=`ls $filter`
+ls $filter
+
+totalSize=0
+for file in $files
+do
+  size=`filesize $file`
+  echo "$file -&gt; $size"
+  let totalSize=$[totalSize+size]
+done
+filesize $file
+CVS -&gt; 128
+filesize $file
+fileSizes.sh -&gt; 300
+filesize $file
+guess.sh -&gt; 185
+filesize $file
+runningPositiveSum.sh -&gt; 328
+filesize $file
+runningSum.sh -&gt; 228
+filesize $file
+testCFor.sh -&gt; 97
+filesize $file
+testFor.sh -&gt; 200
+filesize $file
+testWhile.sh -&gt; 131
+echo "Total disk space required by all shell scripts = $totalSize"
+Total disk space required by all shell scripts = 1597
+    </ns5371:programlisting>
+  </ns5366:para>
+  <ns5372:para xmlns:ns5372="http://docbook.org/ns/docbook">
+    We obtain even more debug information, including the exact variable values, by executing it via
+    <ns5373:cmdsynopsis xmlns:ns5373="http://docbook.org/ns/docbook"><ns5374:command xmlns:ns5374="http://docbook.org/ns/docbook">
+bash -x fileSizes.sh      
+    </ns5374:command></ns5373:cmdsynopsis>
+    The output looks as follows:
+    <ns5375:programlisting xmlns:ns5375="http://docbook.org/ns/docbook">
++ filter=
++ '[' 0 -eq 1 ']'
++ echo 'Using filter: '
+Using filter:
+++ ls
++ files=CVS
+fileSizes.sh
+guess.sh
+runningPositiveSum.sh
+runningSum.sh
+testCFor.sh
+testFor.sh
+testWhile.sh
++ totalSize=0
+++ filesize CVS
++ size=128
++ echo 'CVS -&gt; 128'
+CVS -&gt; 128
++ let totalSize=128
+++ filesize fileSizes.sh
++ size=300
++ echo 'fileSizes.sh -&gt; 300'
+fileSizes.sh -&gt; 300
++ let totalSize=428
+++ filesize guess.sh
++ size=185
++ echo 'guess.sh -&gt; 185'
+guess.sh -&gt; 185
++ let totalSize=613
+++ filesize runningPositiveSum.sh
++ size=328
++ echo 'runningPositiveSum.sh -&gt; 328'
+runningPositiveSum.sh -&gt; 328
++ let totalSize=941
+++ filesize runningSum.sh
++ size=228
++ echo 'runningSum.sh -&gt; 228'
+runningSum.sh -&gt; 228
++ let totalSize=1169
+++ filesize testCFor.sh
++ size=97
++ echo 'testCFor.sh -&gt; 97'
+testCFor.sh -&gt; 97
++ let totalSize=1266
+++ filesize testFor.sh
++ size=200
++ echo 'testFor.sh -&gt; 200'
+testFor.sh -&gt; 200
++ let totalSize=1466
+++ filesize testWhile.sh
++ size=131
++ echo 'testWhile.sh -&gt; 131'
+testWhile.sh -&gt; 131
++ let totalSize=1597
++ echo 'Total disk space required by all shell scripts = 1597'
+Total disk space required by all shell scripts = 1597
+    </ns5375:programlisting>
+  </ns5372:para>
+</ns5347:section>

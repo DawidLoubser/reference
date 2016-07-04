@@ -1,0 +1,1065 @@
+
+    % -----------------------  Define your Preamble Here 
+    \documentclass[english,a4]{article}
+    \usepackage{amsmath,amsthm, amsfonts, amssymb, amsxtra,amsopn}
+    \usepackage{graphicx}
+    \usepackage{float}
+    \usepackage{times}
+    \usepackage{algorithmic}
+    \usepackage[dvips]{hyperref}
+    \DeclareGraphicsExtensions{.eps}
+    % ------------------------  End of you preamble.
+  % --------------------------------------------
+\makeatletter
+\newcommand{\dbz}{\penalty \z@}
+\newcommand{\docbooktolatexpipe}{\ensuremath{|}\dbz}
+\newskip\docbooktolatexoldparskip
+\newcommand{\docbooktolatexnoparskip}{\docbooktolatexoldparskip=\parskip\parskip=0pt plus 1pt}
+\newcommand{\docbooktolatexrestoreparskip}{\parskip=\docbooktolatexoldparskip}
+\def\cleardoublepage{\clearpage\if@twoside \ifodd\c@page\else\hbox{}\thispagestyle{empty}\newpage\if@twocolumn\hbox{}\newpage\fi\fi\fi}
+\usepackage[latin1]{inputenc}
+
+\ifx\dblatex@chaptersmark\@undefined\def\dblatex@chaptersmark#1{\markboth{\MakeUppercase{#1}}{}}\fi
+\let\save@makeschapterhead\@makeschapterhead
+\def\dblatex@makeschapterhead#1{\vspace*{-80pt}\save@makeschapterhead{#1}}
+\def\@makeschapterhead#1{\dblatex@makeschapterhead{#1}\dblatex@chaptersmark{#1}}
+
+			
+\AtBeginDocument{\ifx\refname\@undefined\let\docbooktolatexbibname\bibname\def\docbooktolatexbibnamex{\bibname}\else\let\docbooktolatexbibname\refname\def\docbooktolatexbibnamex{\refname}\fi}
+% Facilitate use of \cite with \label
+\newcommand{\docbooktolatexbibaux}[2]{%
+  \protected@write\@auxout{}{\string\global\string\@namedef{docbooktolatexcite@#1}{#2}}
+}
+% Provide support for bibliography `subsection' environments with titles
+\newenvironment{docbooktolatexbibliography}[3]{
+   \begingroup
+   \let\save@@chapter\chapter
+   \let\save@@section\section
+   \let\save@@@mkboth\@mkboth
+   \let\save@@bibname\bibname
+   \let\save@@refname\refname
+   \let\@mkboth\@gobbletwo
+   \def\@tempa{#3}
+   \def\@tempb{}
+   \ifx\@tempa\@tempb
+      \let\chapter\@gobbletwo
+      \let\section\@gobbletwo
+      \let\bibname\relax
+   \else
+      \let\chapter#2
+      \let\section#2
+      \let\bibname\@tempa
+   \fi
+   \let\refname\bibname
+   \begin{thebibliography}{#1}
+}{
+   \end{thebibliography}
+   \let\chapter\save@@chapter
+   \let\section\save@@section
+   \let\@mkboth\save@@@mkboth
+   \let\bibname\save@@bibname
+   \let\refname\save@@refname
+   \endgroup
+}
+
+		
+			
+%\usepackage{cite}
+%\renewcommand\citeleft{(}  % parentheses around list
+%\renewcommand\citeright{)} % parentheses around list
+\newcommand{\docbooktolatexcite}[2]{%
+  \@ifundefined{docbooktolatexcite@#1}%
+  {\cite{#1}}%
+  {\def\@docbooktolatextemp{#2}\ifx\@docbooktolatextemp\@empty%
+   \cite{\@nameuse{docbooktolatexcite@#1}}%
+   \else\cite[#2]{\@nameuse{docbooktolatexcite@#1}}%
+   \fi%
+  }%
+}
+\newcommand{\docbooktolatexbackcite}[1]{%
+  \ifx\Hy@backout\@undefined\else%
+    \@ifundefined{docbooktolatexcite@#1}{%
+      % emit warning?
+    }{%
+      \ifBR@verbose%
+        \PackageInfo{backref}{back cite \string`#1\string' as \string`\@nameuse{docbooktolatexcite@#1}\string'}%
+      \fi%
+      \Hy@backout{\@nameuse{docbooktolatexcite@#1}}%
+    }%
+  \fi%
+}
+
+		
+			
+% --------------------------------------------
+% A way to honour <footnoteref>s
+% Blame j-devenish (at) users.sourceforge.net
+% In any other LaTeX context, this would probably go into a style file.
+\newcommand{\docbooktolatexusefootnoteref}[1]{\@ifundefined{@fn@label@#1}%
+  {\hbox{\@textsuperscript{\normalfont ?}}%
+    \@latex@warning{Footnote label `#1' was not defined}}%
+  {\@nameuse{@fn@label@#1}}}
+\newcommand{\docbooktolatexmakefootnoteref}[1]{%
+  \protected@write\@auxout{}%
+    {\global\string\@namedef{@fn@label@#1}{\@makefnmark}}%
+  \@namedef{@fn@label@#1}{\hbox{\@textsuperscript{\normalfont ?}}}%
+  }
+
+		
+			
+\makeindex
+% index labeling helper
+\newif\ifdocbooktolatexprintindex\docbooktolatexprintindextrue
+\let\dbtolatex@@theindex\theindex
+\let\dbtolatex@@endtheindex\endtheindex
+\@ifundefined{@openrighttrue}{\newif\if@openright}{}
+\def\theindex{\relax}
+\def\endtheindex{\relax}
+\newenvironment{dbtolatexindex}[2]
+   {
+\if@openright\cleardoublepage\else\clearpage\fi
+\let\dbtolatex@@indexname\indexname
+\def\dbtolatex@current@indexname{#2}
+\ifx\dbtolatex@current@indexname\@empty                                                                                             \def\dbtolatex@current@indexname{\dbtolatex@@indexname}
+\fi
+\def\dbtolatex@indexlabel{%
+ \ifnum \c@secnumdepth >\m@ne \ifx\c@chapter\undefined\refstepcounter{section}\else\refstepcounter{chapter}\fi\fi%
+ \label{#1}\hypertarget{#1}{\dbtolatex@current@indexname}%
+ \global\docbooktolatexprintindexfalse}
+\def\indexname{\ifdocbooktolatexprintindex\dbtolatex@indexlabel\else\dbtolatex@current@indexname\fi}
+\dbtolatex@@theindex
+   }
+   {
+\dbtolatex@@endtheindex\let\indexname\dbtolatex@@indexname
+   }
+
+\newlength\saveparskip \newlength\saveparindent
+\newlength\tempparskip \newlength\tempparindent
+
+		
+\def\docbooktolatexgobble{\expandafter\@gobble}
+% Prevent multiple openings of the same aux file
+% (happens when backref is used with multiple bibliography environments)
+\ifx\AfterBeginDocument\undefined\let\AfterBeginDocument\AtBeginDocument\fi
+\AfterBeginDocument{
+   \let\latex@@starttoc\@starttoc
+   \def\@starttoc#1{%
+      \@ifundefined{docbooktolatex@aux#1}{%
+         \global\@namedef{docbooktolatex@aux#1}{}%
+         \latex@@starttoc{#1}%
+      }{}
+   }
+}
+% --------------------------------------------
+% Hacks for honouring row/entry/@align
+% (\hspace not effective when in paragraph mode)
+% Naming convention for these macros is:
+% 'docbooktolatex' 'align' {alignment-type} {position-within-entry}
+% where r = right, l = left, c = centre
+\newcommand{\docbooktolatex@align}[2]{\protect\ifvmode#1\else\ifx\LT@@tabarray\@undefined#2\else#1\fi\fi}
+\newcommand{\docbooktolatexalignll}{\docbooktolatex@align{\raggedright}{}}
+\newcommand{\docbooktolatexalignlr}{\docbooktolatex@align{}{\hspace*\fill}}
+\newcommand{\docbooktolatexaligncl}{\docbooktolatex@align{\centering}{\hfill}}
+\newcommand{\docbooktolatexaligncr}{\docbooktolatex@align{}{\hspace*\fill}}
+\newcommand{\docbooktolatexalignrl}{\protect\ifvmode\raggedleft\else\hfill\fi}
+\newcommand{\docbooktolatexalignrr}{}
+\ifx\captionswapskip\@undefined\newcommand{\captionswapskip}{}\fi
+\makeatother
+
+\setcounter{tocdepth}{4}
+
+\setcounter{secnumdepth}{4}
+\title{\textbf{Quality-attribute driven organizational architecture}}
+\author{}
+\begin{document}
+{\maketitle\pagestyle{empty}
+\thispagestyle{empty}}
+
+% --------------------------------------------
+% Abstract 
+% --------------------------------------------
+\makeatletter\let\save@@abstractname\abstractname\makeatother
+\renewcommand{\abstractname}{Keywords}
+\begin{abstract}
+
+organizational architecture, architectural patterns, architectural strategies, quality attributes, capabilities, business process design,
+\end{abstract}
+\makeatletter\let\abstractname\save@@abstractname\makeatother
+
+
+% --------------------------------------------
+% Abstract 
+% --------------------------------------------
+\begin{abstract}
+
+This article suggests that organizational business process design and architecture are orthogonal. While the former addresses the core functional requirements of client use cases, the latter ensures that the organizational qualities are manifested across the business processes realizing the client use cases. Furthermore, the article proposes a method for designing and analyzing an organization's architecture from the perspective of its quality attributes.  Common architectural patterns like hierarchical, pipes and filters, expert pools and franchises are analyzed on their capability to realize core quality requirements. For each quality attribute common realization strategies are explored. Ultimately an organization's architecture is assembled from a combination of architectural patterns and strategies as to effectively realize its vision. 
+\end{abstract}
+
+
+
+% ------------------------   
+% Section 
+\section{Introduction}
+\label{resources.knowledge.concepts.architecture.organizational.introduction.introduction}\hypertarget{resources.knowledge.concepts.architecture.organizational.introduction.introduction}{}%
+
+Increasingly, organizational architecture is key to managing a modern organization in such a way that it remains aligned with its vision. The vision statement is used to publish the core organizational qualities defining the essence of the organization. Some organizations see their core quality as reliability, while others may aim to differentiate themselves through, for example, ingenuitivity, flexibility, scaleability, or availability. Often it is these quality attributes which provide an organization its competitive edge.
+
+The organizational architecture provides the framework within which the business processes are deployed. It ensures the organization's core qualities are consistently realized across the various business processes and provides the basis for high-level decision making and metrics.
+
+A number of authors have looked at organizational architecture (see, for example \hyperlink{Ashmore-Henson-Chancellor-Nelson-2004}{\docbooktolatexbackcite{Ashmore-Henson-Chancellor-Nelson-2004}?Ashmore-Henson-Chancellor-Nelson-2004?}, \hyperlink{Brickley-Smith-Zimmermann-2001}{\docbooktolatexbackcite{Brickley-Smith-Zimmermann-2001}?Brickley-Smith-Zimmermann-2001?}, \hyperlink{Nadler-Gerstein-Shaw-1992}{\docbooktolatexbackcite{Nadler-Gerstein-Shaw-1992}?Nadler-Gerstein-Shaw-1992?}, \hyperlink{Galbraith-Downy-Kates-2001}{\docbooktolatexbackcite{Galbraith-Downy-Kates-2001}?Galbraith-Downy-Kates-2001?}, \hyperlink{Ethiraj-Levinthal-2004}{\docbooktolatexbackcite{Ethiraj-Levinthal-2004}?Ethiraj-Levinthal-2004?}. Some like \hyperlink{King-1995}{\docbooktolatexbackcite{King-1995}?King-1995?} and to some extend \hyperlink{Ashmore-Henson-Chancellor-Nelson-2004}{\docbooktolatexbackcite{Ashmore-Henson-Chancellor-Nelson-2004}?Ashmore-Henson-Chancellor-Nelson-2004?} suggested that organizational architecture should be driven by the organization's strategic vision and should realize the organization's capabilities.
+
+This article aims to put this vision into practice. The approach starts by looking at an organization's vision in order to identify its core quality goals. Next one investigates a suitable architectural foundation by looking at how one can combine proven architectural patterns to define the course-grained organizational architecture. Having specified the structural foundation for the architecture, one now needs to look at strategies which will be used to concretely realize the various quality goals of the organization across its various business processes. The organization's architecture is ultimately assembled from a particular combination of architectural patterns and strategies.
+
+
+% ------------------------   
+% Section 
+\section{What are quality attributes of an organization?}
+\label{resources.knowledge.concepts.architecture.organizational.introduction.whatAreQualityAttributes}\hypertarget{resources.knowledge.concepts.architecture.organizational.introduction.whatAreQualityAttributes}{}%
+
+Some organizations, particularly in the high-technology field, view ingenuitivity as their core value offering. Others provide services to mission critical areas like the health or aerospace industries. Such organizations may target reliability as the core quality attribute. Yet others may extract value from low cost products or services through high volumes. They would be concerned with realizing scalability.
+
+Quality attributes thus define an organization's core capabilities. These capabilities should be evident across the organization's business processes and hence represent intrinsic qualities around the services it offers to its clients. The organizational qualities are typically expressed in the {\em{Vision Statement}} of the organization.
+
+For example, the vision statement of our little organization, Solms Training, Consulting \& Development, reads as follows: \begin{quote}
+
+{\em{To provide innovative and customizable training, consulting and development services which assist our clients to gain a competitive edge. We focus on organizational and system architecture, business process design and realization as well as quality assurance on any of these.}}
+\end{quote}
+ The vision statement quotes the core quality attributes 
+\begin{itemize}
+%--- Item
+\item 
+{\em{innovation}}, enabling us to come up with novel solutions which may assist our customers to gain a competitive edge, and
+
+
+%--- Item
+\item 
+{\em{modifiability/customizability}} which enables us to customize our services (e.g. the course contents) to address our customers specific needs.
+
+\end{itemize}
+\noindent  These qualities should be present across the training, consulting and development services offered by the organization. It is the organizational architecture which needs to provide the infrastructure to realize these qualities across our services.
+
+Another organization may state in its vision the ability to provide standardized, accredited courses to a huge number of clients across the world. The core qualities may be {\em{scaleability}} and {\em{availability}}. The architectures of the two organizations are bound to be very different. The latter organization could perhaps use role-based human resourcing, replication, outsourcing (for the taking of exams), fixed, rigidly defined workflows and potentially a combination of hierarchical and pipes-and-filters based structural elements in the organization's architecture.
+
+However, this would most likely not work for our organization whose core qualities are innovation and modifiability. Instead we use person-centric human resourcing encouraging staff members to define and evolve their own role within the organization. Furthermore, the core of the organization's architecture facilitates innovation via an expert pool (using the blackboard architectural pattern discussed later) embedded within a very flat hierarchy.
+
+
+% ------------------------   
+% Section 
+\section{What is organizational architecture?}
+\label{resources.knowledge.concepts.architecture.organizational.introduction.whatIsOrganizationalArchitecture}\hypertarget{resources.knowledge.concepts.architecture.organizational.introduction.whatIsOrganizationalArchitecture}{}%
+
+The architecture of an organization is its high-level (course grained) structure, the procedural framework for its business processes, and the communication strategies used internally between the business units and externally to its clients and business partners. 
+\begin{admonition}{figures/note}{Note}% NOTICE: see the db2latex FAQ w.r.t db2latex variable $latex.admonition.path
+
+Organizational architecture is thus considerably more than simply the reporting/accountability structure typically shown in an organization chart.
+\end{admonition}
+
+
+
+Business processes used to realize the client services may change quite frequently in order to address changing client needs and new business opportunities. Organizational architecture, on the other hand, should change much less frequently, largely only when the organization's vision is re-aligned.
+
+In software development circles it is well understood that system architecture is largely driven by the non-functional system requirements, i.e. the required quality attributes for the system. The detailed functional requirements around individual use case generally have little impact on the system architecture (see, for example, \hyperlink{Bass-Clements-Kazman-2003}{\docbooktolatexbackcite{Bass-Clements-Kazman-2003}?Bass-Clements-Kazman-2003?} and \hyperlink{Kazman-1994}{\docbooktolatexbackcite{Kazman-1994}?Kazman-1994?}).
+
+Here we argue that organizational architecture should similarly be driven by the core qualities which define the essence of the organization. Such an approach facilitates that these qualities will be addressed across the business processes of the organization and hence across the services it offers.
+
+
+% ------------------------   
+% Section 
+\section{Organizational architecture versus business process design}
+\label{resources.knowledge.concepts.architecture.organizational.introduction.qualitiesVersusBusinessProcesses}\hypertarget{resources.knowledge.concepts.architecture.organizational.introduction.qualitiesVersusBusinessProcesses}{}%
+
+The architecture of an organization realizing the organization's quality attributes is largely independent of the business processes deployed within that architecture. Furthermore, one can even define the business processes in an architecture/deployment environment neutral way and then map the generic business processes onto defined business processes as realized within a specific architecture. 
+\begin{admonition}{figures/note}{Note}% NOTICE: see the db2latex FAQ w.r.t db2latex variable $latex.admonition.path
+
+This approach is equivalent to the {\em{Model Driven Architecture}} (MDA, see for example \hyperlink{Frankel-2003}{\docbooktolatexbackcite{Frankel-2003}?Frankel-2003?}) as published by the Object Management Group (OMG). In the context of MDA the architecture-neutral design (e.g. business process design) is called the {\em{Platform-Independent Model}} (PIM). The PIM is then mapped into a deployment architecture resulting in the {\em{Platform Specific Model}} (PSM).
+\end{admonition}
+
+
+
+
+% ------------------------   
+% Section 
+\section{Architectural patterns}
+\label{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.architecturalPatterns}\hypertarget{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.architecturalPatterns}{}%
+
+The use of patterns as generic design solutions has been pioneered by Christopher Alexander (see \hyperlink{Alexander-1979}{\docbooktolatexbackcite{Alexander-1979}?Alexander-1979?}). Alexander applied architectural patterns as reusable solutions to buildings architecture.
+
+Software designers and architects soon found that they too could benefit from basing their systems on proven generic architectural and design solutions. The most renowned publication around software design patterns is the so-called «{\em{Gang of four book}}» \hyperlink{Gamma-Helm-Johnson-Vlissides-1995}{\docbooktolatexbackcite{Gamma-Helm-Johnson-Vlissides-1995}?Gamma-Helm-Johnson-Vlissides-1995?} which lists 35 patterns addressing various common software design problems in a simple and elegant way.
+
+This article similarly argues that management and business analysts can benefit substantially from using proven architectural patterns to improve their organizational architecture. Patterns for organizational architecture provide generic, proven ways in which an organization's core quality attributes can be realized.
+
+Different architectural patterns address different core quality attributes. For example, the pipes and filters pattern promotes modifiability. It is frequently used by organizations which regularly need to modify their workflows to address their client's particular and/or changing needs.
+
+The architecture for an organization will typically be assembled from a combination of architectural patterns. Often a specific pattern specifies the core structure of the organization. That pattern should be aligned with the core desired quality attribute for that organization. Further architectural patterns can be used to adress other quality attributes. The specific combination of architectural patterns and strategies define the architecture for that organization. It is this architecture which, in many cases, gives the organization its competitative edge.
+
+Below we select a few architectural patterns to illustrate the concepts.
+
+\subsection{The hierarchical pattern}
+\label{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.hierarchical.hierarchical}\hypertarget{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.hierarchical.hierarchical}{}%
+
+Traditionally most large enterprises were architected around the hierarchical pattern. Over the last few decades the tendency has been to move away from deep hierarchical structures to more flat team-based organizations. However, most of these more flat organizational structures are still hierarchical in their core (see, for example \hyperlink{Leavitt-2004}{\docbooktolatexbackcite{Leavitt-2004}?Leavitt-2004?}). In the extreme these organizations represent a single-level hierarchy.
+
+% figure ------------------------------------------------------
+\begin{figure}[hbt]
+\begin{center}%
+\hypertarget{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.hierarchical.structure_fig}{}%
+
+
+\includegraphics{structure.jpg}
+
+{{\caption[{The structure of a hierarchical architecture}]{{{The structure of a hierarchical architecture}}}\label{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.hierarchical.structure_fig}}}
+\end{center}
+\end{figure}
+
+
+\subsubsection{Vision of the hierarchical pattern}
+\label{d0e164}\hypertarget{d0e164}{}%
+
+The theory behind hierarchical organizations is that an individual's position within the organization evolves such that the individual grows into the domain of responsibility they would like to and are able to handle (see, for example, \hyperlink{Harris-Raviv-2002}{\docbooktolatexbackcite{Harris-Raviv-2002}?Harris-Raviv-2002?}). A position within the hierarchy thus represents a domain of responsibility.
+
+Communication within a hierarchical organization is restricted to 
+\begin{itemize}
+%--- Item
+\item 
+communication within the domain at that hierarchical level,
+
+
+%--- Item
+\item 
+communication to the next lower level in the hierarchy (the subordinates),
+
+
+%--- Item
+\item 
+communication to the immediate superior, and
+
+
+%--- Item
+\item 
+service requests to other business units along well defined client/server routes.
+
+\end{itemize}
+\noindent 
+
+The hierarchical pattern combines vertical layering with horizontal partitioning: 
+\begin{itemize}
+%--- Item
+\item 
+The vertical layering takes one to higher and higher levels of workflow management and decision making resulting in an accountability hierarchy.
+
+
+%--- Item
+\item 
+The horizontal partitioning into separate business units with their own domains of responsibility results in responsibility localization.
+
+\end{itemize}
+\noindent 
+
+\subsubsection{Human resourcing in hierarchical organizations}
+\label{d0e197}\hypertarget{d0e197}{}%
+
+Since hierarchical organizations divide the domain into well-defined areas of responsibility, they typically favour role-based human resourcing, i.e. individuals are hired to fill a well defined role within the organization.
+
+\subsubsection{Strengths of hierarchical organizations}
+\label{d0e205}\hypertarget{d0e205}{}%
+
+Hierarchical organizations have proven themselves over a long time. This architectural pattern can be expected to remain a widely used pattern in the enterprise world for some time to come. The core reasons for this are: 
+\begin{itemize}
+%--- Item
+\item 
+Hierarchical architectures encourage responsibility localization at various levels of granularity.
+
+
+%--- Item
+\item 
+They reduce the number of communication paths within an organization and hence the complexity of a large organization.
+
+
+%--- Item
+\item 
+Hierarchical organizations scale well.
+
+\end{itemize}
+\noindent 
+
+\subsubsection{Weaknesses of hierarchical organizations}
+\label{d0e221}\hypertarget{d0e221}{}%
+
+However, many organizations have started to break down their hierarchical structures. They find that the reduced communication channels becomes more of a liability than an asset. Disadvantages of hierarchical structures include the following: 
+\begin{itemize}
+%--- Item
+\item 
+Hierarchical organizations tend to be very rigid, i.e. modifying business processes or introducing new business processes can be quite costly, particularly if responsibility allocations need to be changed.
+
+
+%--- Item
+\item 
+Deep hierarchies discourage ingenuitivity and personal development.
+
+
+%--- Item
+\item 
+The rigid demarcation of areas of responsibility discourages taking initiatives which fall outside the allocated area of responsibility.
+
+
+%--- Item
+\item 
+If the transition to higher levels within the hierarchy is not managed carefully then it may easily happen that individuals are promoted until they cannot cope with the allocated level of responsibility, i.e. until they have settled in their level of incompetence.
+
+
+%--- Item
+\item 
+It is difficult to support a paradigm where individuals define and evolve their own role within the organization. This is partially due to the partitioning into separate areas of responsibility and partially due to the restricted communication across accountability layers.
+
+
+%--- Item
+\item 
+The horizontal domain partitioning can easily result in stove-pipes where communication across business units deteriorates over time. This typically results in workflow and responsibility duplication across the organization. Furthermore, evolving the business and changing business processes in a way which remains aligned to the organization's vision and quality attributes becomes difficult. 
+\begin{admonition}{figures/note}{Note}% NOTICE: see the db2latex FAQ w.r.t db2latex variable $latex.admonition.path
+
+Stove pipes are also often directly created by mergers.
+\end{admonition}
+
+
+
+\end{itemize}
+\noindent 
+
+\subsubsection{Hierarchical architectures and quality attributes}
+\label{d0e256}\hypertarget{d0e256}{}%
+
+Strong hierarchical architectural structures are typically favoured by large organizations whose core qualities include scaleability, accountability and to a lesser extend by organizations which have reliability.
+
+On the other hand, if the core qualities of an organization include ingenuitivity and modifiability then one typically wants to reduce the hierarchical elements within the organization.
+
+\subsection{The blackboard pattern}
+\label{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.blackboard.blackboard}\hypertarget{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.blackboard.blackboard}{}%
+
+Many modern organizations, particularly in the knowledge and technology fields, regard ingenuitivity as their core quality attribute. Such companies are often architected around the blackboard pattern.
+
+The core elements of the blackboard architectural pattern are 
+\begin{itemize}
+%--- Item
+\item 
+an expert pool,
+
+
+%--- Item
+\item 
+the organization's knowledge base (the blackboard), and
+
+
+%--- Item
+\item 
+management which plays the role of controller.
+
+\end{itemize}
+\noindent  Organizations built around the blackboard pattern have in their core a dynamic, evolving expert pool. The experts within this pool typically define and evolve their own role within the organization. They select themselves when and how they can best contribute to problems the organization is working on.
+
+% figure ------------------------------------------------------
+\begin{figure}[hbt]
+\begin{center}%
+\hypertarget{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.blackboard.structure_fig}{}%
+
+
+\includegraphics{structure.jpg}
+
+{{\caption[{The structure of a blackboard-based architecture}]{{{The structure of a blackboard-based architecture}}}\label{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.blackboard.structure_fig}}}
+\end{center}
+\end{figure}
+
+
+It is important that the body of knowledge continuously grows and that it is accessible to all experts. To this end the organization uses a knowledge repository (the blackboard) which maintains the current knowledge within the organization, the problems the organization is and has been working on, as well as the current state of the solutions to the various problems.
+
+Management controls these collaborative problem solving processes. It 
+\begin{itemize}
+%--- Item
+\item 
+provides a suitable environment for the experts to effectively operate and grow,
+
+
+%--- Item
+\item 
+feeds problems to experts who are in a position to meaningfully contribute,
+
+
+%--- Item
+\item 
+and facilitates a process of selecting the best contribution towards a solution.
+
+\end{itemize}
+\noindent  
+\begin{admonition}{figures/note}{Note}% NOTICE: see the db2latex FAQ w.r.t db2latex variable $latex.admonition.path
+
+Open source software development uses the blackboard architectural pattern. The open source developers are the domain experts. They select themselves when and how they can best contribute. A controller selects the best contribution. The software source and documentation represent the knowledge repository (blackboard). Experts perform quality assurance on each other. (In some examples like the community driven encyclopedia, WikiPedia, anybody can directly add to the blackboard and the community as a whole selects what should be removed from the blackboard.)
+\end{admonition}
+
+
+
+\subsubsection{Recursive blackboards}
+\label{d0e304}\hypertarget{d0e304}{}%
+
+One of the novelties of the blackboard pattern is that it can be applied recursively. For example, consider the following two-layer blackboard. At the lower level core areas of responsibility may be addressed within separate business units some or all of which may be using the blackboard architecture. In the second level management decisions are done via an expert pool with the experts being the managers of the individual business units and the controller being the managing director of the company.
+
+\subsubsection{Human resourcing in the context of blackboard based organizational architectures}
+\label{d0e309}\hypertarget{d0e309}{}%
+
+Blackboard based architectures typically use person-centric human resourcing where a person is not hired for a particular role, but instead defines and evolves his or her own role within the organization. For organizations thriving on ingenuitivity it is key to ensure that experts continue to grow by exposing them to ever more challenging problems and to different environments.
+
+\subsubsection{Strengths of the blackboard architectural pattern}
+\label{d0e314}\hypertarget{d0e314}{}%
+
+As stated previously, the pattern is particularly attractive for organizations driven by ingenuitivity. Its strengths include: 
+\begin{itemize}
+%--- Item
+\item 
+An environment where individuals define and evolve their own role within the organization encourages enthusiasm and initiative.
+
+
+%--- Item
+\item 
+Continuous, intrinsic quality assurance across experts results in higher quality solutions and reduced risk.
+
+
+%--- Item
+\item 
+Providing an environment for natural growth and evolution usually results in lower staff turnover and hence better knowledge retention.
+
+
+%--- Item
+\item 
+The capability of the organization grows continuously.
+
+
+%--- Item
+\item 
+The blackboard pattern provides a framework for solving difficult problems.
+
+
+%--- Item
+\item 
+A knowledge repository captures and maintains knowledge within the organization.
+
+\end{itemize}
+\noindent 
+
+\subsubsection{Weaknesses of the blackboard pattern}
+\label{d0e339}\hypertarget{d0e339}{}%
+
+Though the blackboard pattern is great for driving ingenuitivity and quality, it does introduce a few issues which need to be managed: 
+\begin{itemize}
+%--- Item
+\item 
+Lack of responsibility allocation results in weak accountability tracing and requires additional processes which ensure that all responsibilities are ultimately attended to.
+
+
+%--- Item
+\item 
+Collaborative quest for best solution may result in weak performance.
+
+
+%--- Item
+\item 
+Exposure to individual capabilities and losing certain individuals may significantly impact the organization.
+
+
+%--- Item
+\item 
+Cost implications of active redundancy, i.e. multiple experts work on the same problem.
+
+\end{itemize}
+\noindent 
+
+\subsubsection{The blackboard pattern and quality attributes}
+\label{d0e361}\hypertarget{d0e361}{}%
+
+Organizations will typically assemble an architecture using a combination of architectural patterns. Organizations which make heavy use of the blackboard pattern typically see ingenuitivity and modifiability as their core quality attributes.
+
+Organizations which view their core qualities as accountability, scaleability, reliability and performance will typically use the blackboard pattern in only very confined areas like R\&D.
+
+\subsection{Dynamic workflows via pipes and filters}
+\label{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.pipesAndFilters.pipesAndFilters}\hypertarget{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.pipesAndFilters.pipesAndFilters}{}%
+
+Organizations which see modifiable workflows as one of their core qualities often make extensive use of the pipes and filters pattern. Here business units take over the responsibility of individual workflow steps. Business processes are defined as workflows across these business (processing) units. The idea is that one can very easily assemble and modify business processes within this architecture. Pipes and filters based architectures aim for workflow based horizontal integration across responsibility domains.
+
+% figure ------------------------------------------------------
+\begin{figure}[hbt]
+\begin{center}%
+\hypertarget{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.pipesAndFilters.example_fig}{}%
+
+
+\includegraphics{example.jpg}
+
+{{\caption[{Realizing business processes in a pipes and filters based architecture}]{{{Realizing business processes in a pipes and filters based architecture}}}\label{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.pipesAndFilters.example_fig}}}
+\end{center}
+\end{figure}
+
+
+When setting up a pipes and filters architecture one needs to start with a clean responsibility allocation across business units. With each business unit responsible for a particular processing step one assembles workflows across these. One then needs to put an optimized communication infrastructure in place which typically requires support for queueing and guaranteed delivery. A common solution for this is a services bus which integrates the business units across the organization.
+
+\subsubsection{Management structure for a pipes and filters based organization}
+\label{d0e379}\hypertarget{d0e379}{}%
+
+Managing large pipes and filters based organizations is non-trivial. Traditionally one would tend to put a hierarchy on top of the pipes and filters structure which is based on domains of responsibility, i.e. based on a groupings of the processing units.
+
+However, since workflows are typically constructed across these domains of responsibility, this does not result in effective workflow management. The higher level accountability should reside in a relatively flat hierarchy based on a services and hence workflow categorization. This results in direct workflow ownership at various levels of abstraction and results in accountability based on the services one offers to one's clients.
+
+\subsubsection{Human resourcing from a pipes and filters perspective}
+\label{d0e389}\hypertarget{d0e389}{}%
+
+Due to the strong responsibility localization and the workflow centric approach of pipes and filters based organizational architectures they generally tend to use role-based human resourcing.
+
+\subsubsection{Strengths of the pipes and filters pattern}
+\label{d0e394}\hypertarget{d0e394}{}%
+
+Workflow-centric organizations often make heavy use of the pipes and filters architectural pattern. Core benefits include 
+\begin{itemize}
+%--- Item
+\item 
+One can easily and rapidly assemble new workflows.
+
+
+%--- Item
+\item 
+One can easily modify existing workflows.
+
+
+%--- Item
+\item 
+The pipes and filters pattern typically results in good responsibility localization across the organization.
+
+
+%--- Item
+\item 
+Scaleability and reliability is easily achieved through replication of processing units.
+
+\end{itemize}
+\noindent 
+
+\subsubsection{Weaknesses of the pipes and filters pattern}
+\label{d0e413}\hypertarget{d0e413}{}%
+
+If the core desired quality attribute for your organization is ingenuitivity, then you would typically want to minimize architectural features based on the pipes and filters pattern. The strong focus on roles within the organization tends to discourage individual initiatives and ingenuitivity.
+
+\subsection{The franchise pattern}
+\label{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.franchise.franchise}\hypertarget{resources.knowledge.concepts.architecture.organizational.architecturalPatterns.franchise.franchise}{}%
+
+The number of organizations which use the franchise as the core architectural pattern for their organization has grown rapidly over the past few decades. Franchises typically see their core qualities in the ability to leverage capital investments and the opportunities for rapid growth.
+
+When setting up a franchise one needs to put the support structure for the franchisees in place. This typically includes 
+\begin{itemize}
+%--- Item
+\item 
+the establishment of a franchise brand and the infrastructure to maintain and grow the brand,
+
+
+%--- Item
+\item 
+the infrastructure for product and market research as well as general marketing,
+
+
+%--- Item
+\item 
+the infrastructure for bulk purchasing and distribution,
+
+
+%--- Item
+\item 
+training channels for franchisees,
+
+
+%--- Item
+\item 
+the business support structures for the franchisees,
+
+
+%--- Item
+\item 
+the infrastructure to perform QA on franchisees,
+
+
+%--- Item
+\item 
+feedback channels incorporating field-based ideas originating from franchisees, and
+
+
+%--- Item
+\item 
+the infrastructure to collect revenue from the franchisees.
+
+\end{itemize}
+\noindent 
+
+For many of these elements other architectural patterns are employed. For example the core architecture within the franchiser organization may be hierarchical. However, within that hierarchical structure the organization may use the blackboard pattern for the R\&D and branding arms and pipes and filters for the purchasing, distribution, QA and revenue collection and even the business support arms.
+
+\subsubsection{Human resourcing from a franchise perspective}
+\label{d0e453}\hypertarget{d0e453}{}%
+
+One of the benefits of a franchise is that the franchisees are independent with self-motivated leadership and staff which is off the pay role of the franchiser.
+
+\subsubsection{Strengths of franchises}
+\label{d0e458}\hypertarget{d0e458}{}%
+
+The core benefits of the franchise pattern lie in 
+\begin{itemize}
+%--- Item
+\item 
+the ability to leverage one's capital investment,
+
+
+%--- Item
+\item 
+easy realization of rapid growth through outlet/franchise unit replication and ability to compete against larger organizations within a short period,
+
+
+%--- Item
+\item 
+rapid realization of geographic availability,
+
+
+%--- Item
+\item 
+higher profit through increased volume, franchisee fees and rent,
+
+
+%--- Item
+\item 
+committed management of franchisee units, and
+
+
+%--- Item
+\item 
+field-based research done by franchisees.
+
+\end{itemize}
+\noindent 
+
+\subsubsection{Weaknesses of franchises}
+\label{d0e483}\hypertarget{d0e483}{}%
+
+A core weakness in a franchise is that a change in business processes need to be implemented across semi-independent franchisees. Also, even though the ownership aspect encourages ingenuitivity at the franchisee level, it is quite difficult to extract the benefits from these ideas across the franchisees.
+
+\subsubsection{Franchises and quality attributes}
+\label{d0e488}\hypertarget{d0e488}{}%
+
+If the core quality goals of the organization include investment leveraging, availability, scaleability and/or rapid growth, then one may consider using a franchise for the core architecture of the organization.
+
+Quality attributes like ingenuitivity and modifiability are usually more difficult to realize within franchise architectures because it requires changing business processes across semi-independent franchisees. Reliability and quality are also more difficult to guarantee across the franchisees.
+
+
+% ------------------------   
+% Section 
+\section{Common architectural strategies}
+\label{resources.knowledge.concepts.architecture.organizational.qualityAttributes.qualityAttributes.xdoc}\hypertarget{resources.knowledge.concepts.architecture.organizational.qualityAttributes.qualityAttributes.xdoc}{}%
+
+So far I have looked at defining the core organizational architecture by combining proven architectural patterns in a way which supports the organization's vision. We now need to put concrete architectural strategies in place which ensure the realization of the organization's quality goals across the various business processes which will be deployed within the organization's architecture.
+
+\subsection{Strategies for realizing ingenuitivity}
+\label{resources.knowledge.concepts.architecture.organizational.qualityAttributes.ingenuitivity.ingenuitivity}\hypertarget{resources.knowledge.concepts.architecture.organizational.qualityAttributes.ingenuitivity.ingenuitivity}{}%
+
+Many modern organizations like Philips, Apple and Siemens view ingenuitivity as one of their core qualities. These companies continuously offer new novel services and/or products and often acquire many patents annually.
+
+In \hyperlink{resources.knowledge.concepts.architecture.organizational.qualityAttributes.ingenuitivity.tactics_fig}{Figure {\ref{resources.knowledge.concepts.architecture.organizational.qualityAttributes.ingenuitivity.tactics_fig}}} we show the goals which such organizations typically set themselves in order to achieve a high level of ingenuitivity as well as some common strategies employed to realize these goals.
+
+% figure ------------------------------------------------------
+\begin{figure}[hbt]
+\begin{center}%
+\hypertarget{resources.knowledge.concepts.architecture.organizational.qualityAttributes.ingenuitivity.tactics_fig}{}%
+
+
+\includegraphics{tactics.jpg}
+
+{{\caption[{Goals and strategies for ingenuitivity}]{{{Goals and strategies for ingenuitivity}}}\label{resources.knowledge.concepts.architecture.organizational.qualityAttributes.ingenuitivity.tactics_fig}}}
+\end{center}
+\end{figure}
+
+
+In order to achieve ingenuitivity one requires suitable resources operating in a suitable environment, workflows facilitating ingenuitivity and reward channels for ingenuitivity. Resourcing may be realized through hiring ingenuitive people, giving them wide exposure, assembling polymorphic teams, maintaining a knowledge repository and putting open information channels in place.
+
+Strategies for providing an environment for ingenuitivity include person centric human resource management where individuals are not hired to fill specific roles, but instead define and evolve their own role within the organization, having a flat organizational structure and having information channels in place for publishing ideas and problems.
+
+Brainstorming sessions and proof of concepts are standard and essential workflows across ingenuitive processes.
+
+Finally one has to look at rewarding ingenuitivity. This can be done through direct financial reward, offering a stake in the company and recognizing achievements within the organization and publicly.
+
+On the software development side, many organizations which focus on innovation use so called {\em{agile software development methodologies}}. These methodologies enforce many of the above strategies including person-centric human resourcing, polymorphic teams, open information channels, flat reporting structure, brainstorming sessions proof of concepts and minimized role definition with a tendency towards individuals defining and evolving their own roles within the organization.
+
+\subsection{Strategies for realizing reliability}
+\label{resources.knowledge.concepts.architecture.organizational.qualityAttributes.reliability.reliability}\hypertarget{resources.knowledge.concepts.architecture.organizational.qualityAttributes.reliability.reliability}{}%
+
+Organizations which provide services for mission critical areas usually have reliability as one of their core quality attributes. This is a very common quality requirement in, for example, the health care and defense industries. Reliability is also used as core marketing and cost reduction strategies.
+
+Reliability is a measure of contract compliance. If a service is not rendered according to contract then there is a failure. Failures are caused by faults in the process, but not all faults need to lead to a failure. If a fault is handled internally and the service is still rendered as per contract then we still have achieved high reliability.
+
+Organizations which view reliability as one of their core qualities typically have to look at fault prevention, fault detection and fault recovery. \hyperlink{resources.knowledge.concepts.architecture.organizational.qualityAttributes.reliability.tactics_fig}{Figure {\ref{resources.knowledge.concepts.architecture.organizational.qualityAttributes.reliability.tactics_fig}}} shows strategies commonly employed to realize these goals.
+
+% figure ------------------------------------------------------
+\begin{figure}[hbt]
+\begin{center}%
+\hypertarget{resources.knowledge.concepts.architecture.organizational.qualityAttributes.reliability.tactics_fig}{}%
+
+
+\includegraphics{tactics.jpg}
+
+{{\caption[{Goals and strategies for reliability}]{{{Goals and strategies for reliability}}}\label{resources.knowledge.concepts.architecture.organizational.qualityAttributes.reliability.tactics_fig}}}
+\end{center}
+\end{figure}
+
+
+Most of the strategies are self explanatory. It may, however, be worthwhile expanding, by way of an example, on the difference between active and passive redundency. A plumbing service provider may make use of passive redundency in order to increase reliability. In that case the company may ensure that one or more plumbers remain on stand by to take over if another dispatched plumber encounters a problem (for example, if his/her vehicle breaks down). On the other hand, assume the state president has an accident. The ambulance service would most probably use active redundency, dispatching multiple vehicles concurrently. Should one vehicle encounter a problem, other vehicles are already on the way to provide the required emergency health care service. This is an example of active redundency where multiple units realize the same service concurrently and where the first or best service rendering is chosen in the end.
+
+If reliability is your game then continuous process improvement is usually a necessity. For this organizations commonly use six sigma, a quality management approach developed by Motorola. Six sigma is meant to continuously optimize processes in order to eliminate process defects (see for example \hyperlink{Pande-Neumann-Cavanaugh-2000}{\docbooktolatexbackcite{Pande-Neumann-Cavanaugh-2000}?Pande-Neumann-Cavanaugh-2000?}).
+
+\subsection{Strategies for realizing flexibility}
+\label{resources.knowledge.concepts.architecture.organizational.qualityAttributes.flexibility.flexibility}\hypertarget{resources.knowledge.concepts.architecture.organizational.qualityAttributes.flexibility.flexibility}{}%
+
+Organization which provide customizable products and services
+
+In XrefId[??] we show the goals which such organizations typically set themselves in order to achieve a high level of ingenuitivity as well as some common strategies employed to realize these goals.
+
+% figure ------------------------------------------------------
+\begin{figure}[hbt]
+\begin{center}%
+\hypertarget{resources.knowledge.concepts.architecture.organizational.qualityAttributes.modifiability.tactics_fig}{}%
+
+
+\includegraphics{tactics.jpg}
+
+{{\caption[{Goals and strategies for ingenuitivity}]{{{Goals and strategies for ingenuitivity}}}\label{resources.knowledge.concepts.architecture.organizational.qualityAttributes.modifiability.tactics_fig}}}
+\end{center}
+\end{figure}
+
+
+...
+
+\subsection{Strategies for realizing scaleability}
+\label{resources.knowledge.concepts.architecture.organizational.qualityAttributes.scaleability.scaleability}\hypertarget{resources.knowledge.concepts.architecture.organizational.qualityAttributes.scaleability.scaleability}{}%
+
+Scaleability provides the ability to service/provide products to a large number of clients. This is a core quality attribute for organizations who see growth and volumes as part of their value proposition.
+
+Organizations which want to realize an architecture supporting scaleability typically have to address the following goals: 
+\begin{itemize}
+%--- Item
+\item 
+replicable workflows and resources (e.g. that they can easily set up another outlet with the same structure and workflows as other outlets),
+
+
+%--- Item
+\item 
+effective resource management, and
+
+
+%--- Item
+\item 
+infrastructure for using external resources.
+
+\end{itemize}
+\noindent  Each of these goals can be realized through a number of strategies. Some examples are shown in \hyperlink{resources.knowledge.concepts.architecture.organizational.qualityAttributes.scaleability.tactics_fig}{Figure {\ref{resources.knowledge.concepts.architecture.organizational.qualityAttributes.scaleability.tactics_fig}}}.
+
+% figure ------------------------------------------------------
+\begin{figure}[hbt]
+\begin{center}%
+\hypertarget{resources.knowledge.concepts.architecture.organizational.qualityAttributes.scaleability.tactics_fig}{}%
+
+
+\includegraphics{tactics.jpg}
+
+{{\caption[{Goals and strategies for scaleability}]{{{Goals and strategies for scaleability}}}\label{resources.knowledge.concepts.architecture.organizational.qualityAttributes.scaleability.tactics_fig}}}
+\end{center}
+\end{figure}
+
+
+\subsection{Strategies for realizing accessibility/availability}
+\label{resources.knowledge.concepts.architecture.organizational.qualityAttributes.accessibility.accessibility}\hypertarget{resources.knowledge.concepts.architecture.organizational.qualityAttributes.accessibility.accessibility}{}%
+
+Some organization see accessibility/availability as one of their core offerings. For example, you can purchase Coca Cola or a MacDonalds hamburger from most parts of the world. However, physical accessibility may not be required. For example, you can purchase books and music from anywhere in the world through Amazon.com. Accessibility/availability may include geographic accessibility, visibility and accessibility across time (e.g. 24x7 availability).
+
+In \hyperlink{resources.knowledge.concepts.architecture.organizational.qualityAttributes.accessibility.tactics_fig}{Figure {\ref{resources.knowledge.concepts.architecture.organizational.qualityAttributes.accessibility.tactics_fig}}} we show the goals which need to be addressed for accessibility/availability and some strategies one may use in order to realize the goals.
+
+% figure ------------------------------------------------------
+\begin{figure}[hbt]
+\begin{center}%
+\hypertarget{resources.knowledge.concepts.architecture.organizational.qualityAttributes.accessibility.tactics_fig}{}%
+
+
+\includegraphics{tactics.jpg}
+
+{{\caption[{Goals and strategies for availability/accessibility}]{{{Goals and strategies for availability/accessibility}}}\label{resources.knowledge.concepts.architecture.organizational.qualityAttributes.accessibility.tactics_fig}}}
+\end{center}
+\end{figure}
+
+
+The availability of the organization's services can be published through media advertising, event sponsoring search engine and directory registration (e.g. Internet search engine, telephone book, yellow pages and other services directories as well as registration in electronic trader services like UDDI or ebXML directory services), physical visibility (choosing visible locations for outlets, branches and the head-office) and other strategies.
+
+Some organizations aim for a high level of physical availability through extensive branch and/or outlet networks, as well as making products and/or services available through franchise and external portals. If physical availability across time is required (e.g. 24 hour availability, 7 days a week) then shift work is a standard tactic used.
+
+
+% ------------------------   
+% Section 
+\section{Example: Solms Training, Consulting \& Development}
+\label{resources.knowledge.concepts.architecture.organizational.examples.solms.solms}\hypertarget{resources.knowledge.concepts.architecture.organizational.examples.solms.solms}{}%
+
+As an example for designing an architecture around quality attributes, let us look at our own little organization, Solms Training, Consulting and Development.
+
+\subsection{Quality drivers}
+\label{d0e622}\hypertarget{d0e622}{}%
+
+Being small we see our competitive edge mainly in the following quality attributes: 
+\begin{itemize}
+%--- Item
+\item 
+{\textbf{{Ingenuitivity}.}}\ 
+The ability to provide ingenuitive solutions which can assist in clients obtaining or maintaing a competitive edge.
+
+
+
+%--- Item
+\item 
+{\textbf{{Modifiability}.}}\ 
+The ability to rapidly modify our service offerings to address a client's specific and changing needs.
+
+
+\end{itemize}
+\noindent 
+
+\subsection{Using proven organizational patterns}
+\label{d0e641}\hypertarget{d0e641}{}%
+
+Since ingenuitivity is a central quality offering, we use the blackboard architectural pattern as the core pattern for the architecture of our little company. The ingenuitivity is thus driven by a pool of experts which solves problems collaboratively.
+
+The blackboard-based architecture is embedded within a flat, single layer hierarchy. Auxillary supporting workflows need to be modifiable in order to effectively support the dynamic core. These are hosted within a pipes and filters based architecture managed from the flat single layer hierarchy.
+
+\subsection{Selecting strategies for realizing our quality attributes}
+\label{d0e648}\hypertarget{d0e648}{}%
+
+Having found a suitable architectural structure, (expert pool embeded in flat hierarchy with supporting workflows provided within pipes and filters based structures), we now evaluate the strategies we can use to concretely realize our core quality attributes.
+
+\subsubsection{Person-centric human resourcing with personal role building and evolution}
+\label{d0e653}\hypertarget{d0e653}{}%
+
+Persons are hired for their individual skills and asperations -- a person is not hired to fill a particular role within the organization. Instead experts define their own role within the organization and evolve that role over time.
+
+\subsubsection{Wide exposure and knowledge repository}
+\label{d0e658}\hypertarget{d0e658}{}%
+
+All experts are involved in all arms of the organization, i.e. training, consulting and development. Lessons learnt in any of these are fed into the organization's knowledge repository.
+
+The training aspect results in a structured process of deepening the organization's knowledge. The consulting adds a lateral thinking component as well as an appreciation of problems and solutions found in other organizations. The development arm provides hands-on experience and introduces a reality check for our cognitive models.
+
+\subsubsection{Polymorphic teams}
+\label{d0e668}\hypertarget{d0e668}{}%
+
+Experts are hired to complement polymorphic teams. The combination of different formal and experience backgrounds provides fertile ground for finding novel solutions to problems.
+
+\subsubsection{Workflow strategies for ingenuitivity}
+\label{d0e673}\hypertarget{d0e673}{}%
+
+Brainstorming sessions are central in our workflows. Ingenuitive solutions are standardly validated via proof of concepts. All acquired knowledge is fed into our knowledge repository. Course notes are assembled as compilations across available knowledge components.
+
+\subsubsection{Rewarding ingenuitivity}
+\label{d0e678}\hypertarget{d0e678}{}%
+
+Our current reward channels for ingenuitivity include financial benefits as well as internal and public recognition. The organization is in the process of introducing ownership distribution as a further reward channel.
+
+
+% ------------------------   
+% Section 
+\section{Summary and conclusions}
+\label{resources.knowledge.concepts.architecture.organizational.summaryConclusions.summaryConclusions.xdoc}\hypertarget{resources.knowledge.concepts.architecture.organizational.summaryConclusions.summaryConclusions.xdoc}{}%
+
+The architecture is the primary vehicle through which an organization realizes its vision and core quality attributes. When designing an architecture for an organization, one can benefit from using architectural patterns which are able to effectively address certain quality attributes. The patterns are combined to provide the core infrastructure for the organization. Once this is in place, one can look at strategies which have proven that they can assist in realizing the organization's quality attributes.
+
+The architecture provides a framework for all business processes. The business processes deployed within the architecture acquire the organizational qualities through the architecture. In this way the architecture facilitates the consistent realization of the organization's vision.
+\begin{docbooktolatexbibliography}{WIDELABEL}{\section}{\docbooktolatexbibname}\hypertarget{d0e691}{}
+
+% -------------- biblioentry 
+\bibitem[{Alexander-1979}]{Alexander-1979}\docbooktolatexbibaux{Alexander-1979}{Alexander-1979}
+\hypertarget{Alexander-1979}{\emph{The Timeless Way of Building}}, Christopher Alexander, Oxford University Press, 1979.
+
+
+% -------------- biblioentry 
+\bibitem[{Alexander-Ishikawa-Silverstein-Jacobson-1977}]{Alexander-Ishikawa-Silverstein-Jacobson-1977}\docbooktolatexbibaux{Alexander-Ishikawa-Silverstein-Jacobson-1977}{Alexander-Ishikawa-Silverstein-Jacobson-1977}
+\hypertarget{Alexander-Ishikawa-Silverstein-Jacobson-1977}{\emph{A Pattern Language: Towns, Buildings, Construction}}, Christopher Alexander, Sara Ishikawa, Murray Silverstein, et Max Jacobson, Oxford University Press, 1977.
+
+
+% -------------- biblioentry 
+\bibitem[{Ashmore-Henson-Chancellor-Nelson-2004}]{Ashmore-Henson-Chancellor-Nelson-2004}\docbooktolatexbibaux{Ashmore-Henson-Chancellor-Nelson-2004}{Ashmore-Henson-Chancellor-Nelson-2004}
+\hypertarget{Ashmore-Henson-Chancellor-Nelson-2004}{\emph{}}, .
+
+
+% -------------- biblioentry 
+\bibitem[{Bass-Clements-Kazman-2003}]{Bass-Clements-Kazman-2003}\docbooktolatexbibaux{Bass-Clements-Kazman-2003}{Bass-Clements-Kazman-2003}
+\hypertarget{Bass-Clements-Kazman-2003}{\emph{Software Architecture in Practice}}, Len Bass, Paul Clements, et Rick Kazman, Addison Wesley, 2003.
+
+
+% -------------- biblioentry 
+\bibitem[{Brickley-Smith-Zimmermann-2001}]{Brickley-Smith-Zimmermann-2001}\docbooktolatexbibaux{Brickley-Smith-Zimmermann-2001}{Brickley-Smith-Zimmermann-2001}
+\hypertarget{Brickley-Smith-Zimmermann-2001}{\emph{
+   	Managerial Economics and Organizational Architecture
+    }}, James Brickley, Clifford W. Smith, et Jerold Zimmermann, McGraw-Hill, 2001.
+
+
+% -------------- biblioentry 
+\bibitem[{Ethiraj-Levinthal-2004}]{Ethiraj-Levinthal-2004}\docbooktolatexbibaux{Ethiraj-Levinthal-2004}{Ethiraj-Levinthal-2004}
+\hypertarget{Ethiraj-Levinthal-2004}{\emph{}}, .
+
+
+% -------------- biblioentry 
+\bibitem[{Frankel-2003}]{Frankel-2003}\docbooktolatexbibaux{Frankel-2003}{Frankel-2003}
+\hypertarget{Frankel-2003}{\emph{Model Driven Architecture: Applying MDA to enterprise computing}}, David S. Frankel, John Wiley & Sons, 2003.
+
+
+% -------------- biblioentry 
+\bibitem[{Galbraith-Downy-Kates-2001}]{Galbraith-Downy-Kates-2001}\docbooktolatexbibaux{Galbraith-Downy-Kates-2001}{Galbraith-Downy-Kates-2001}
+\hypertarget{Galbraith-Downy-Kates-2001}{\emph{
+      Designing Dynamic Organizations: A Hands-On Guide for Leaders at All Levels
+    }}, Jay Galbraith, Diane Downy, et Amy Kates, American Management Association, November 2001.
+
+
+% -------------- biblioentry 
+\bibitem[{Gamma-Helm-Johnson-Vlissides-1995}]{Gamma-Helm-Johnson-Vlissides-1995}\docbooktolatexbibaux{Gamma-Helm-Johnson-Vlissides-1995}{Gamma-Helm-Johnson-Vlissides-1995}
+\hypertarget{Gamma-Helm-Johnson-Vlissides-1995}{\emph{Design Patterns}}, Erich Gamma, Richard Helm, Ralph Johnson, et John Vlissides, Addison-Wesley, 1995.
+
+
+% -------------- biblioentry 
+\bibitem[{Harris-Raviv-2002}]{Harris-Raviv-2002}\docbooktolatexbibaux{Harris-Raviv-2002}{Harris-Raviv-2002}
+\hypertarget{Harris-Raviv-2002}{\emph{}}, .
+
+
+% -------------- biblioentry 
+\bibitem[{Kazman-1994}]{Kazman-1994}\docbooktolatexbibaux{Kazman-1994}{Kazman-1994}
+\hypertarget{Kazman-1994}{\emph{Toward Deriving Software Architectures from Attributes}}, Rick Katzman, 1994.
+
+
+% -------------- biblioentry 
+\bibitem[{King-1995}]{King-1995}\docbooktolatexbibaux{King-1995}{King-1995}
+\hypertarget{King-1995}{\emph{}}, .
+
+
+% -------------- biblioentry 
+\bibitem[{Leavitt-2004}]{Leavitt-2004}\docbooktolatexbibaux{Leavitt-2004}{Leavitt-2004}
+\hypertarget{Leavitt-2004}{\emph{Why Hierarchies Are Here to Stay and How to Manage Them More Effectively}}, Harold J. Leavitt, Harvard Business School Press, November 2004.
+
+
+% -------------- biblioentry 
+\bibitem[{Morabito-Sack-Bhate-1999}]{Morabito-Sack-Bhate-1999}\docbooktolatexbibaux{Morabito-Sack-Bhate-1999}{Morabito-Sack-Bhate-1999}
+\hypertarget{Morabito-Sack-Bhate-1999}{\emph{Organization Modeling}}, Joseph Morabito, Ira Sack, et Anilkumar Bhate, Prentice Hall, 1999.
+
+
+% -------------- biblioentry 
+\bibitem[{Nadler-Gerstein-Shaw-1992}]{Nadler-Gerstein-Shaw-1992}\docbooktolatexbibaux{Nadler-Gerstein-Shaw-1992}{Nadler-Gerstein-Shaw-1992}
+\hypertarget{Nadler-Gerstein-Shaw-1992}{\emph{Organizational Architecture}}, David A. Nadler, Marc C. Gerstein, et Robert B. Shaw, Jossey-Bass, May 1992.
+
+
+% -------------- biblioentry 
+\bibitem[{Pande-Neumann-Cavanaugh-2000}]{Pande-Neumann-Cavanaugh-2000}\docbooktolatexbibaux{Pande-Neumann-Cavanaugh-2000}{Pande-Neumann-Cavanaugh-2000}
+\hypertarget{Pande-Neumann-Cavanaugh-2000}{\emph{The Six Sigma Way}}, P.S. Pande, R.P. Neumann, et R.R. Cavanaugh, McGraw-Hill, 2000.
+
+
+% -------------- biblioentry 
+\bibitem[{Schonberger-1982}]{Schonberger-1982}\docbooktolatexbibaux{Schonberger-1982}{Schonberger-1982}
+\hypertarget{Schonberger-1982}{\emph{Japanese Manufacturing Techniques}}, Richard J. Schonberger, Free Press, 1982.
+
+
+\end{docbooktolatexbibliography}
+\end{document}

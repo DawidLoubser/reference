@@ -1,0 +1,227 @@
+
+%------------------------------------------------------------------------------
+
+\section{Abstract Classes}
+
+So far all our classes were {\em concrete}, i.e.\ we were able to create
+instances of them. At times one wants to introduce classes without having 
+the intention of actually instantiating them. The reasoning may be 
+that one still wants to encapsulate some commonalities accross classes 
+within a single superclass, but that the class which encapsulates these
+commonalities by itself. Such a class would be an {\em abstract} class.
+
+For example, all assets have, say an id. Specialized assets like properties,
+vehicles, government or corporate bonds, ..., can be created, but one
+would never create just simply an asset. Still, one would want to define
+a \verb+Asset+ class encapsulating all the commonalities among all assets
+(the asset id in our case). The asset class would be, conceptually,
+an abstract class.
+
+%----------------------------------------------------------------
+
+\subsection{How to Declare a Class with Concrete Methods Abstract}
+
+C++, unlike Java, does not have a mechanism for declaring a class directly 
+abstract. What we need to achieve is that the class can only be instantiated
+from within the context of one of its subclasses. But this can be done
+simply by declaring its constructors with \verb+protected+ access level:
+
+\noindent{\small\begin{verbatim}
+class Asset  
+{
+  public:
+    string id() const {return _id;}
+    
+  protected:
+    Asset(const string& id) _id(id) {}
+    
+  private:
+    string _id;  
+};
+\end{verbatim}}
+
+Abstract classes usually have at least one concrete subclass, i.e.\ one 
+which can be instantiated. For example
+
+\noindent{\small\begin{verbatim}
+class Bond: public Asset
+{
+  public:
+    Bond(string id, Date maturity, double notional, ...);
+    ...
+}
+\end{verbatim}}
+  
+%------------------------------------------------------------------------------
+
+\subsection{Abstract Methods for Interface Definition}
+
+One of the main advantages of abstract classes is that they can incorporate
+interface specifications via abstract methods. Assume, for example, that
+all assets can be queried for their value on a specific date. How the 
+value of an asset is calculated depends on the type of asset. 
+We want to specify, 
+however, that all assets have a service for querying the value, i.e.\
+that they all must be able to process a \verb+getValue(Date)+ message. 
+This is donme in C++ by adding an abstract method -- i.e.\ a method for
+which there is no implementation -- to the class:
+
+\noindent{\small\begin{verbatim}
+virtual Tender value(const Date& date) = 0;
+\end{verbatim}}
+
+\noindent
+Of course, we do not know how to value an 
+abstract asset. An abstract method is one which has no method body. A
+class which has one or more abstract methods is implicitly an abstract
+class and can hence not be instantiated. 
+
+%-------------------------------------------------------------------------
+
+\subsection{SubClassing Abstract Classes}
+
+Subclasses of abstract classes must either comply to the specifications
+laid down in the abstract superclass (i.e.\ provide implementations for 
+the abstract methods of the superclass) or they must be declared abstract
+themselves. 
+
+For example, subclasses of the abstract \verb+Asset+ class must provide
+an implementation for the \verb+value(Date)+ service. If they don't, the
+compiler will regard the subclass itself still as abstract. The reason 
+for this is that the subclass does not fulfill the requirements
+laid down in the superclass. Since an abstract class cannot be instantiated,
+the compiler ensures that there will be no \verb+Asset+ objects (instances
+of the \verb+Asset+ class) which cannot be valued.
+
+%------------------------------------------------------------------------
+
+\subsection{Abstract, Virtual and Non-Virtual Methods}
+
+There are three types of service specifications you can define in
+a class which may be subclassed:
+\begin{itemize}
+  \item Pure specifications for services which must be supplied by
+        concrete subclasses.
+  \item Services with default implementations which may be overridden.
+  \item Services with a fixed implementation which you should NOT override.
+\end{itemize}
+Each of these is dicussed seperately below.
+
+%------------------------------
+  
+\subsubsection{Abstract or pure virtual methods}
+
+Abstract methods lay down specifications  for services which must be supplied 
+by concrete subclasses. No implementation (body) is supplied for abstract 
+methods -- the implementation must be supplied by the concrete subclasses. 
+In this case one inherits only a requirements specification.
+
+An abstract method must be declared \verb+virtual+ and is specified by
+an \verb+ = 0 + behind the message header:
+
+\noindent{\small\begin{verbatim}
+virtual Tender value(const Date& date) = 0;
+\end{verbatim}}
+
+Abstract or pure virtual methods are allways hosted by abstract classes.
+
+%--------------------------------
+
+\subsubsection{Concrete virtual methods} 
+
+Non-abstract virtual methods still require subclasses to provide
+the specified service, but if they do not supply their own
+implementation, a default implementation is provided by the 
+superclass. This default implementation may, but need not, be 
+overridden in the subclass.
+
+A concrete virtual method is thus specified with an implementation.
+For example, an account class may have a virtual \verb+debit+ method
+specifying that all accounts must supply such a service and providing
+a default implementation in which the balance is simply adjusted with
+the debit amount.
+
+Specialized subclasses like \verb+CreditCard+, \verb+ChequeAccount+
+or \verb+HomeLoan+ may override this method with their specialized
+implementation (for example, subtracting a transaction fee), but they
+may also choose to simply inherit the default implementation.
+
+A concrete virtual method is simply a \verb+virtual+ method with a
+supplied function body:
+
+\noindent{\small\begin{verbatim}
+virtual void debit(double amount) { _balance -= amount;}
+\end{verbatim}}
+
+%-----------------------------------
+
+\subsubsection{Non-virtual methods}
+
+Non-virtual methods should be regarded as methods with a fixed 
+implementation which subclasses should NOT override. C++ does 
+not prevent the method from being overridden, but if you do, 
+you may get unexpected behaviour. They are specified as methods
+without the \verb+virtual+ keyword. 
+
+For example, we might want to specify that the \verb+authenticate+ 
+method should not be overridden in specialized \verb+User+ classes,
+i.e.\ no matter how special the user, when he is authenticated the
+block of code specified in the \verb+User+ class should be executed:
+
+\noindent{\small\begin{verbatim}
+class User
+{
+  public:
+    ...
+    void authenticate() { ... }
+    ...
+};
+\end{verbatim}}
+    
+Non-virtual methods are linked statically (i.e.\ at compile time). 
+They do not support polymorphism and should only be used if you want to
+specify that that particular method may not be overridden. By default, you
+should define your methods \verb+virtual+.
+
+So, why is it so bad to override non-virtual methods. Simply because your
+system may exhibit strange, unexpected behaviour. The problem is 
+illustrated in the following little program where we have an instance of
+a class \verb+A+ providing a virtual method \verb+f()+ and a non-virtual
+method, \verb+g()+. Both methods are overridden in a subclass, \verb+B+.
+
+\noindent{\small \input{Abstraction/Programs/OverrideNonVirtual.cpp}}
+
+The poutput of the application is
+
+\noindent{\small\begin{verbatim}
+Requesting virtual service f():
+  We request the same service from the same object through
+  two different message paths (two different pointers.
+
+Requested virtual service f() from an instance of B.
+Requested virtual service f() from an instance of B.
+
+Behaved as expected. Now requesting non-virtual service g():
+  Once again we request the same service from the same object
+  through two different message paths (two different pointers.
+
+Requested non-virtual service g() from an instance of A.
+Requested non-virtual service g() from an instance of B.
+
+This time the object behaved differently, depending on the
+message path (pointer) used to deliver the service request message.
+\end{verbatim}}
+
+Note that we create an instance of \verb+B+ and have an \verb+B*+ and and 
+\verb+A*+ pointing to this one and only object. We then request the service 
+\verb+f()+ through both of these pointers, and, as expected, \verb+B::f()+
+is called in both cases. After all, we only have a \verb+B+.
+
+We then request the non-virtual service \verb+g()+ through both of these 
+pointers, but now \verb+B+'s service \verb+g()+ is supplied when we request
+the service through the \verb+B*+ and A's \verb+g()+ when the service
+is requested through the \verb+A*+. We never requested the service from
+an \verb+A+ though -- there isn't even an \verb+A+. We requested the same
+service from the same object and it does different things. This is not 
+behaviour we want to see in clean object-oriented systems, and hence
+a non-virtual method should not be overridden.

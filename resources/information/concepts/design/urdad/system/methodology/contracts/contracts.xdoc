@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.design.urdad.system.methodology.contracts.contracts"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Service provider contracts</title>
+  <para>
+    Like many other modern design approaches, URDAD is also contract centric. For each component at any level of granularity one first
+    specifies the contract. After all the difference between a class and a component is that the latter realizes a contract as specified
+    by an interface with pre- and post conditions, invariance constraints and quality requirements. Contracts facilitate not only
+    pluggability but also testability -- what would you be testing if there was no contract?
+    <note>
+      <para>
+        Tests should be written for contracts (interfaces), not for classes. Any service provider claiming to realize a specific contract
+        should be tested against the test for that contract.
+      </para>
+    </note>
+  </para>
+  <para>
+    URDAD requires that for each responsibility there should be a contract against which all service providers (components)
+    which realize that responsibility should be tested. 
+    The contract may have
+    functional aspects and non-functional aspects. The functional aspects are defined within the standard design-by-contract framework 
+    (see <xref linkend="Meyer-1991"/> and <xref linkend="Meyer-1992"/>)
+    by an interface with pre- and post-conditions on the services and, if applicable, invariance constraints on the service provider itself.
+    Contracts are developed from the perspective of the client. They thus resemble the <quote>signed contracts</quote> of Andreas
+    Rausch (see <xref linkend="Rausch-2002"/>).
+  </para>
+  <para>
+    The non-functional aspects may include features like scaleability, usability, reliability, security, and so on. These are typically specified
+    in a quality requirements note.
+  </para>
+  
+  <section>
+    <title>Pre-Conditions</title>
+    <para>
+      If any of the pre-conditions is not met, the service provider is entitled to refuse the service without breaking the contract. 
+      On the other hand, if all preconditions are met, the service provider is obliged to provide the service. Otherwise it is a breach 
+      of contract and hence a failure.  For example, for the debit service of an account there may be the pre-condition that there 
+      must be sufficient funds in the account. If there are insufficient funds the account
+      may refuse the service without breaking the contract.
+    </para>
+    <para>
+      In software systems service providers use exceptions to notify clients that a requested service is refused due to a pre-condition violation.
+    </para>
+  </section>
+  
+  <section>
+    <title>Post-Conditions</title>
+    <para>
+      The post-conditions are the deliverables of the service provider. These include the return value, but may also include
+      service provider state information. 
+    </para>
+    <para>
+      For example, the post-condition of debiting an account may include the requirement
+      that the transaction must have been entered into the account's transaction history.
+    </para>
+  </section>
+  
+  <section>
+    <title>Invariance constraints</title>
+    <para>
+      These are symmetry rules around the service provider's state. If at any stage (or at least on transactional boundaries) any of the
+      invariance constraints are not met, then the object and hence the system is in an invalid state. 
+    </para>
+    <para>
+      For example, for an account the invariance constraint could be that the sum of all credits minus the sum of all debits must
+      always yield the current balance. If at any stage (at least on transactional boundaries) this symmetry does not hold, then
+      the account and hence the system is in failure.
+    </para>
+  </section>
+  
+  <section>
+    <title>Quality requirements</title>
+    <para>
+      From design by contract we know that the interface together with the pre- and post-conditions and invariance constraints provide
+      a complete functional requirements specification for a service provider. In addition to the functional requirements, service provider
+      may also need to adhere to certain non-functional (quality) requirements like scaleability, reliability or security requirements. Adding 
+      these quality requirements to the functional requirements completes the contract.
+    </para>
+    <para>
+      For our <literal>MailSender</literal> component we could require auditability as a non-functional requirement. The latter may be
+      facilitated through logging all send requests together with their completion status.
+    </para>
+  </section>
+  
+  <section>
+    <title>Contracts and testing</title>
+    <para>
+      Tests should be developed for contracts, not for individual service providers. The tests need to test both the functional, as well as the
+      non-functional aspects of a contract. 
+    </para>
+    <para>
+      During functional testing one tests that, if all preconditions are met, the service is provided such that
+      <orderedlist>
+        <listitem><para>
+          the client obtains the correct return value,
+        </para></listitem>
+        <listitem><para>
+          all post-conditions are met, and
+        </para></listitem>
+        <listitem><para>
+          if the invariance constraints were met prior to the service having been requested, that they are still met
+          after the service has been provided.
+        </para></listitem>
+      </orderedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Contracts and the Object Constraint Language</title>
+    <para>
+      UML enables one to specify the contracts formally in OCL, UML's <emphasis>Object Constraint Language</emphasis>.
+      Doing this facilitates the automatic generation functional and system integrity tests.
+    </para>
+  </section>
+  
+  <section>
+    <title>MailSender contract</title>
+    <para>
+      <xref linkend="resources.information.concepts.design.urdad.system.methodology.contracts.contract_fig"/>
+      shows an informal contract for the <literal>MailSender</literal> component. 
+      It shows the required services together with the pre- and post-conditions for them as well as the non-functional
+      auditability requirement. The contract could be formalized using the OCL.
+    </para>
+    
+    <figure id="resources.information.concepts.design.urdad.system.methodology.contracts.contract_fig">
+      <title>Contracts are specified for each responsibility and hence for each service provider.</title>
+      <graphic fileref="contract.jpg"/>
+    </figure>
+  </section>
+  
+  
+</section>  

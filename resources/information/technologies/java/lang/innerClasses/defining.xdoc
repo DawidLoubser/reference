@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.innerClasses.definingInnerClasses"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Defining and using inner classes</title>
+  <para>
+    To define an inner class, you simply put the class declaration within the body of another class.
+    <programlisting><![CDATA[
+class A
+{
+      
+ 
+  class B
+  {
+      
+   }   
+}      
+      ]]></programlisting>
+  </para>
+  <section>
+    <title>Life span of inner classes</title>
+    <para>
+      Note that B is not declared a static (class) member of the outer class, but as an instance
+      member instead. Consequently, every instance of B <emphasis>can only be created and can only exist
+        within an instance of A</emphasis>. Once the enclosing instance of A is deleted, the
+      instances of B created within that instance of A will also be deleted
+      <note><para>
+        While some code maintains an external reference to an instance of B, neither that instance of
+        B nor the enclosing instance of A will be deleted, as the inner class instance member
+        maintains a reference to the outer class instance.
+      </para></note>
+    </para>
+  </section>
+  
+  <section>
+    <title>Inner class instance has access to private members of its outer class instance</title>
+    <para>
+      An inner class instance can directly access the private members of the outer class instance within
+      which it exists. For example
+      <programlisting><![CDATA[
+class MonteCarloIntegrator
+{
+       
+   public double integrate(...)
+   {
+      for (int i=0; i<numThreads; ++i)
+        new MonteCarloThread().run();
+   }
+        
+   private class MonteCarloThread extends Thread
+   {
+      public void run()
+      {
+        // Here we can directly access the private parameters
+        // and the private services of
+        // the MonteCarloIntegrator class.
+        ...
+      }  
+   }     
+     
+   private void somePrivateService() {...}     
+        
+   private double parameter1, parameter2;
+        
+   private static final int numThreads = 10;
+ }
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Accessibility of inner classes</title>
+    <para>
+      Inner classes can be declared with any access level, <abbrev>i.e.</abbrev> they can be
+      declared <literal>public</literal>, <literal>protected</literal>, friendly or package scope,
+      and <literal>private</literal>.
+    </para>
+    <para>
+      Core drivers for using inner classes are scoping and encapsulation. For this reason one should
+      generally declare inner classes with private scope.
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Local classes</title>
+    <para>
+      A local class is a class which is defined within a block of code (for example within the body
+      of a method). This construct further reduces the scope of the class (the area where the class
+      can be directly accessed to not only within another class, but to within a particular block of
+      code.
+    </para>
+    <para>
+      For example, 
+      <programlisting><![CDATA[
+class A
+{
+  public void f()
+  {
+     new Thread()
+     {
+        public void run()
+        {
+          // here the processing steps 
+          // to be performed in that thread.
+          ...
+        }
+     }.start();   
+  }
+}        
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Anonymous inner classes</title>
+    <para>
+      Anonymous classes are unnamed inner classes. The only point where the class itself is
+      referenced is upon instance creation. Usually all further interaction with that instance is
+      via some interface. Effectively this reduces the scope and accessibility of the inner class
+      even further.
+    </para>
+    
+    <para>
+      They are, however, quite commonly used for event adapters. For example
+      <programlisting><![CDATA[
+import java.awt.*;
+import java.awt.event.*;
+
+public class MyFrame extends Frame
+{
+  public MyFrame()
+  {
+    addWindowListener (new WindowAdapter()
+                       {
+                         public void windowClosing (WindowEvent event)
+                           {System.exit(0);}
+                       });
+  }
+}
+]]></programlisting>
+    </para>
+    <para>
+      The above defines an anonymous subclass of <emphasis role="verb">WindowAdapter</emphasis> which overrides the
+      <emphasis role="verb">windowClosing()</emphasis> event handler method. The above code is essentially
+      equivalent to the following, more conventional code:
+      <programlisting><![CDATA[
+import java.awt.*;
+import java.awt.event.*;
+
+public class MyFrame extends Frame
+{
+  public MyFrame()
+  {
+    class MyWindowAdapter extends WindowAdapter
+    {
+      public void windowClosing (WindowEvent event)
+      {System.exit(0);}
+    }
+
+    addWindowListener (new MyWindowAdapter());
+  }
+}
+]]></programlisting>
+    </para>    
+  </section>
+  
+  <section>
+    <title>Accessing the outer class instance</title>
+    <para>
+       At times the inner class instance will need to request services from its outer class
+       instance. In order to achieve this you could provide the inner class instance a handle to the
+      outer class instance as a constructor argument. This will, however, not work for anonymous
+      inner classes (as these can only be constructed via a default constructor) and is
+      unnecessarily messy too.
+    </para>
+    <para>
+      In Java the inner class instance can access its outer clas instance directly by using
+      <literal>OuterClass.this</literal>. For example
+      <programlisting><![CDATA[
+class A
+{
+    public void f()
+    {
+        new Thread()
+        {
+            public void run()
+            {
+                x.doSomething(A.this);
+            }
+        }
+    }
+}        
+        ]]></programlisting>
+      In the above code the anonymous inner thread class calls the <literal>doSomething</literal>
+      method passing a handle to its outer class instance.
+    </para>
+  </section>
+  
+  
+</section>  

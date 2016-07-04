@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.commands.gettingSnapshotsByDate"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Getting snapshots by date-time</title>
+  <para>
+    At times one wants to revert an entire project back to its state on a 
+    particular date. Of course one can query the repository log in order to
+    obtain the revision numbers for all the files on that date and then 
+    update the files individually via the <option>-r</option> option.
+    This would, however, be a very laborious task. 
+  </para>
+  <para>
+    To this end CVS supports two mechanisms for extracting the historic state
+    of a project:
+    <orderedlist>
+      <listitem><para>
+        One can extract the state of a project as it was on a specified date-time.        
+      </para></listitem>
+      <listitem><para>
+        One can request the state of a project as at a marked event. This is done
+        via <emphasis>tagging</emphasis> which will be discussed in
+        <xref linkend="resources.information.technologies.tools.versionControl._cvs.commands.tagging"/>.
+      </para></listitem>
+    </orderedlist>
+  </para>
+  
+  <para>
+    To specify an update of a project as it was on a specified date-time, one
+    uses the <option>-D</option> command option:
+    <synopsis><![CDATA[
+cvs update -D "2003-06-17 17:00:00"
+    ]]></synopsis>
+    Generally both, the date and the time should be supplied. If the time is
+    omitted, it defaults to 00:00:00. Valid CVS date/time specifications are
+    discussed in <xref linkend="resources.information.technologies.tools.versionControl._cvs.commands.dateTimes"/>.
+    <warning>
+      <para>
+        The time used internally by CVS is UCT (Universal Coordinated Time) 
+        also known as Greenwich Mean Time, while the time specified
+        via the <option>-D</option> option defaults to local time. Usually
+        the repository time is the important time. To specify that the
+        date provided with the <option>-D</option> refers to UCT or GMT,
+        one appends a <quote>GMT</quote> to the date-time string:
+        <synopsis><![CDATA[
+cvs update -D "2003-06-17 17:00:00 GMT"
+        ]]></synopsis>
+      </para>    
+    </warning>
+  </para>
+  
+</section>

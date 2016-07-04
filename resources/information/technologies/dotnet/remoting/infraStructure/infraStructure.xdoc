@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.dotnet.remotingInfrastructure"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Remoting Infrastructure</title>
+    <figure>
+        <title>Remoting Infrastructure</title>
+        <graphic fileref="infraStructure.gif"/>
+    </figure>
+    <para>
+        .Net Remoting proxies are made up of two
+        different objects: the TransparentProxy object and the   object. The transparent proxy is the client
+        view of the proxy. This provides access to the actual proxy facilitating the connection to the remote
+        object. The >Net framework encourages the development of real proxies for specialized needs.
+    </para>
+    <para>
+        The main reason to create a custom proxy is to implement custom behavior prior to
+        dispatching the method call to the remote object. A load balancing proxy offers a good
+        example. In this scenario, the custom proxy can poll several middle-tier servers to
+        determine the one with the lowest load and dispatch the remote call to that server. Now that
+        you understand proxies, I'll talk about the primary area of extensibility in remoting: the
+        sink chain. 
+    </para>
+    <para> 
+        There are two types of sinks in the remoting infrastructure: message sinks and channel
+        sinks. Each one occurs in a different location along the remoting chain and each one serves
+        a different purpose. Message sinks allow you to intercept the method call message before the
+        method call and its parameters are serialized into a stream. With a channel sink, once the
+        method call message is serialized into a stream, you can intercept the stream before it's
+        put on the wire for transport to the remote machine. These sinks exist on both the client
+        and server side of the remoting chain. 
+    </para>
+    <para> 
+        Out of the box, the remoting framework comes with two formatter message sinks: the binary
+        and SOAP formatters. The binary formatter is fast, encoding service requests in a compact,
+        proprietary, binary format. The SOAP formatter is slower and generates larger messages, 
+        but it allows developers to encode
+        the remote messages in a SOAP format. If neither formatter fits your needs, developers can
+        write their own and plug it in as a replacement. 
+    </para>
+    <para>
+        An example of a custom channel sink is a secure encryption sink. You can easily
+        create a channel sink that intercepts your outgoing message (especially if using the SOAP
+        formatter) and apply MD5 encryption to the stream. Then, on the server side, once the
+        message arrives, the same sink is used to decrypt the stream prior to it arriving in the
+        server-side stack builder.
+    </para>
+  
+</section>

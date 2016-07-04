@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author Fritz Solms -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.interception.callBackListeners.callBackListeners">
+  <title>Reacting to life cycle events</title>
+  <para>
+    Because EJB represents a move from physical objects (as per Java SE) to virtual, pooled objects,
+    the developer can no longer rely on the standard lifecycle events of Java objects (creation via
+    the constructor, destruction via the garbage collector after calling <literal>finalize()</literal>).
+  </para>
+   
+   <section>
+      <title>The life cycle of standard Java objects</title>
+      <para>
+         Recall that, in order to execute code in normal Java objects (such as object set-up
+         or clean-up) when object are <emphasis>created</emphasis> or <emphasis>destroyed</emphasis>,
+         one uses the constructor, as well as the finalize service:
+         <programlisting language="Java"><![CDATA[
+public class Something
+{
+   public Something()
+   {
+      // This code runs right after the object has been created
+      // ...
+   }
+   
+   public void finalize()
+   {
+      // This code runs right before te object is destroyed
+      // ...
+   }
+}
+         ]]></programlisting>
+      </para>
+   </section>
+   
+   <section>
+      <title>The life cycle of session beans</title>
+      <para>
+         Recall that session beans are pooled, and that, from the user perspective, a session bean
+         is <emphasis>created</emphasis> when a client looks it up (the session starts) and that it
+         is destroyed as soon as the session ends. These events do not correspond with the physical creation
+         or destruction of the object (via the constructor and <literal>finalize()</literal>) so we
+         need different <quote>hooks</quote> for these life-cycle events.
+      </para>
+   </section>
+  
+  <section>
+      <title>Callback listener methods</title>
+      <para>
+         Any method in an enterprise bean (which takes no arguments, has no return
+         value, and throws no checked exceptions) may be annotated with one of the
+         following annotations (in the <literal>javax.ejb</literal> package), 
+         to have the container automatically call that method when the indicated event occurs:
+        
+      <itemizedlist>
+            <listitem>
+               <formalpara>
+                  <title>@PostConstruct</title>
+                  <para>
+                     called at the start of the session, at the point when the conceptual object
+                     (from the user's perspective) is created. For EJB development, this effectively replaces
+                     the constructor as the place where any initial setup regarding the state of the object 
+                     is performed. Recall that, since the application server will create and maintain a pool
+                     of session beans at its own will, the constructor no longer has any real meaning with
+                     regards to the set-up of the object's state, and indeed, most enterprise beans have no
+                     more than a default constructor.
+                  </para>
+               </formalpara>
+            </listitem>
+            <listitem>
+               <formalpara>
+                  <title>@PreDestroy</title>
+                  <para>
+                     called at the end of the session, at the pint when the conceptual object (from the user's
+                     perspective) is destroyed. For EJB development, this effectively replaces the
+                     <literal>finalize()</literal> service as the point where any <quote>last actions</quote>
+                     are performed before the object is garbage-collected. In the case of a session bean, however,
+                     the object is usually not garbage-collected, but merely returned to the method-ready pool.
+                  </para>
+               </formalpara>
+            </listitem>
+            <listitem>
+               <formalpara>
+                  <title>@PostActivate</title>
+                  <para>called directly after the bean has been removed from the method-ready pool, and bound to
+                  a user session. This may, of course, occur several times during a single session as the
+                  bean is re-used across several user sessions if necessary.</para>
+               </formalpara>
+            </listitem>
+            <listitem>
+               <formalpara>
+                  <title>@PrePassivate</title>
+                  <para>called directly before the bean is unbound from a particular user session, and placed
+                  back in the method-ready pool.</para>
+               </formalpara>
+            </listitem>
+         </itemizedlist>
+      </para>
+  </section>
+   
+   <!-- TODO: Examples -->
+  
+</section>

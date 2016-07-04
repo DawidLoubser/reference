@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Writing the filter class</title>
+    
+    <para>
+        One writes a class which implements the <literal>javax.servlet.Filter</literal> interface, which 
+        specifies three services:
+        <programlisting language="Java"><![CDATA[
+import java.io.*;
+import javax.servlet.*;
+
+public class MyFilter implements Filter 
+{
+	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) 
+	throws IOException, ServletException 
+	{
+		
+	}
+	
+	public void init(FilterConfig config) 
+	throws ServletException 
+	{
+		
+	}
+	
+	public void destroy() 
+	{
+		
+	}
+}
+
+            ]]></programlisting>
+    </para>
+    <itemizedlist>
+        <listitem>
+            <formalpara>
+                <title>doFilter(...)</title>
+                <para>The primary service, this is where the filtering logic
+                is placed. If a filter is relevant for a particular request, the
+                <literal>doFilter</literal> service is called, and from this point
+                on the filter is responsible for the request.</para>
+            </formalpara>
+        </listitem>
+        <listitem>
+            <formalpara>
+                <title>init(...)</title>
+                <para>Called once to initialise the filter. The given configuration provides access to any
+                initialisation aprameters (specified in <literal>web.xml</literal>) as well as the servlet context
+                environment.</para>
+            </formalpara>
+        </listitem>
+        <listitem>
+            <formalpara>
+                <title>destroy(...)</title>
+                <para>Called once when the filter is to be taken out of action, such as application
+                undeployment or server shutdown.</para>
+            </formalpara>
+        </listitem>
+    </itemizedlist>
+    
+    <section>
+        <title>Controlling request processing</title>
+        <para>
+            The <literal>doFilter(...)</literal> service is provided with an instance of <literal>javax.servlet.FilterChain</literal>,
+            an object which allows the filter to allow or deny the request to reach the next element in the filter chain. This may
+            either be another filter, or the resulting component (such as a Servlet or an XHTML web page).
+        </para>
+        <para>
+            To indicate that the request should proceed to the next component in the chain, the following is performed:
+            <programlisting language="Java"><![CDATA[
+...
+
+public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) 
+throws IOException, ServletException 
+{
+	// Logic before allowing request to proceed
+	// ...
+	
+	// Continue with request
+	chain.doFilter( req, resp );
+	
+	// Logic after request processing is complete
+	// ...
+}
+...
+            ]]></programlisting>
+        </para>
+        <para>
+            To <emphasis>prevent</emphasis> a request from completing, one simply does not - under certain conditions -
+            allow the chain to proceed. It is important to always keep in mind the experience of the client: The filter
+            is responsible for directly or indirectly notifying the client that his request has been denied - one cannot
+            simply allow <quote>nothing</quote> to happen with the request.
+            <programlisting language="Java"><![CDATA[
+...
+
+public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) 
+throws IOException, ServletException 
+{
+	if ( /* request is allowed */ )
+	{
+	    // Continue
+    	chain.doFilter( req, resp );
+    }
+    else
+    {
+        // Not authorised
+        HttpServletResponse httpResponse = (HttpServletResponse)resp;
+		httpResponse.sendError(401, "Only available to paying clients");
+    }
+}
+...
+            ]]></programlisting>
+        </para>
+        <note>
+            <para>
+                Servlet filters are general-purpose components, usable outside of the realm of HTTP. In the
+                typical event of using them to control HTTP requests, however, the given request/response should be
+                <emphasis>cast</emphasis> to e.g. a <literal>javax.servlet.http.HttpServletResponse</literal>.
+            </para>
+        </note>
+    </section>
+    
+    <xi:include href="examples.docbook"/>
+    
+</section>

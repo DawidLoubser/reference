@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: fritz@solms.co.za -->
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+    <title>Path parameters</title>
+    <para>
+        One simple and often intuitive way to specify a parameter is to include it
+        in the actual path (URI). For example, one could use
+        <programlisting><![CDATA[
+http://www.people.org/contacts/jimSmith01            
+]]></programlisting>
+        where the last part of the path is used as a parameter to a JAX-RS web service.
+    </para>
+    <para>
+        For example
+        <programlisting language="java"><![CDATA[
+package za.co.solms.jaxrs.locations;
+
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import javax.ejb.EJB;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
+import za.co.solms.location.Location;
+import za.co.solms.location.LocationServices;
+import za.co.solms.location.LocationServices.LocationNameInUseException;
+import za.co.solms.location.LocationServices.NoSuchLocationException;
+
+@Path("/locations")
+public class LocationResource
+{
+	public LocationResource() {}
+	
+	@Path("/{locationName}")
+	@Produces("application/xml")
+	@GET
+	public Location getLocation(@PathParam("locationName") String locationName)
+	{
+		logger.info("*** Requesting location " + locationName);
+		try
+		{
+			return locationServices.getLocationByName(locationName);
+		}
+		catch (NoSuchLocationException e)
+		{
+			return null;
+		}
+	}
+}	            
+]]></programlisting>
+        we specify that the <literal>getLocation</literal> service is resolved from
+        the relative URI
+        <programlisting><![CDATA[
+/locations/{locationName}            
+]]></programlisting>
+        and we bind the path parameter to the <literal>locationName</literal>
+        method parameter.
+    </para>
+        <para>
+              A particular location can now be queried through a URI like
+              <programlisting><![CDATA[
+http://localhost:8080/weatherBuro/jaxrs/locations/pe                      
+                      ]]></programlisting>
+        </para>
+</section>    

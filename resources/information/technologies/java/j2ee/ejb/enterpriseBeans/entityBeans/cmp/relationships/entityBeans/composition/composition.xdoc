@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.relationships.entityBeans.composition.composition"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Specifying Composition Relationships with Cascading Delete</title>
+  <para>
+    So far we have not differentiated between composition, aggregation and association
+    relationships. The differentiation between association and aggregation is very fine. It
+    really revolvs about interpreting an object's state, i.e. is the associated object part of
+    the client object's state or not. The implementation would thus largely center on different
+    state change notification algorithms.
+  </para>
+  <para>
+    The differentiation between composition and aggregation is, however, a lot stronger.
+    Composition requires full ownership, <abbrev>i.e.</abbrev> that 
+    <itemizedlist>
+      <listitem>
+        <para>the components cannot be modified except through the owner itself and </para>
+      </listitem>
+      <listitem>
+        <para>that the components are deleted once the owner is deleted.</para>
+      </listitem>
+    </itemizedlist>
+  </para>  
+  <para>
+    The former is achieved the through restricting the public interface and by providing a
+    value object as a return value of the query methods. The latter can be achieved by
+    specifying a <literal><![CDATA[<cascading-delete/>]]></literal> element for the 
+    component role of the relationship:
+<programlisting><![CDATA[
+<ejb-relation>
+<ejb-relation-name>Task-TimeStretch</ejb-relation-name>
+<ejb-relationship-role>
+ <ejb-relationship-role-name>
+   task-has-timeStretches
+ </ejb-relationship-role-name>
+ <multiplicity>One</multiplicity>
+ <relationship-role-source>
+   <ejb-name>Task</ejb-name>
+ </relationship-role-source>
+ <cmr-field>
+   <cmr-field-name>timeStretches</cmr-field-name>
+   <cmr-field-type>java.util.Set</cmr-field-type>
+ </cmr-field>
+</ejb-relationship-role>
+<ejb-relationship-role>
+ <ejb-relationship-role-name>
+   timeStretch-for-task
+ </ejb-relationship-role-name>
+ <multiplicity>Many</multiplicity>
+ 
+ <cascading-delete/>
+ 
+ <relationship-role-source>
+   <ejb-name>TimeStretch</ejb-name>
+ </relationship-role-source>
+ <cmr-field>
+   <cmr-field-name>task</cmr-field-name>
+ </cmr-field>
+</ejb-relationship-role>
+</ejb-relation>
+]]></programlisting>  
+  </para>
+  <para>
+    Thus, if we delete a task, the related time stretches will be deleted too.
+  </para>
+</section>

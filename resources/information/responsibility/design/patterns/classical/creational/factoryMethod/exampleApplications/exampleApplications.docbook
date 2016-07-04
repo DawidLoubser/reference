@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Example applications</title> 
+    <para>
+        Examples of the factory method pattern are scattered across many class libraries. They
+        are often so simple that the solution is taken for granted and the use of the pattern
+        is often not seen.
+    </para>
+    
+    <section>
+        <title>Collection iterators</title>
+        <para>
+            One of the classical design patterns used in collection libraries is that of an
+            <emphasis>iterator</emphasis> (see the iterator design pattern)
+            Iterators are used to step across the elements of a collection in a way which is
+            independent of the type of collection used.
+        </para>
+        <para>
+            The responsibility of creating an appropriate iterator for a specific type of collection 
+            is typically delegated to the collection itself. When requesting an iterator, the iterator 
+            should be constructed polymorphically, <abbrev>i.e.</abbrev> the correct iterator
+            for the collection used should be created without specifying in the code the class. 
+        </para>
+        <para>
+            Thus, if a different realization of a collection is chosen, no changes need to be made
+            one the code 
+            <itemizedlist>
+                <listitem><para>which requests and</para></listitem>
+                <listitem><para>uses</para></listitem>
+            </itemizedlist>
+            the iterator.
+        </para>
+
+
+        <figure>
+            <title>Iterators of a collection framework are often obtained via factory methods</title>
+            <mediaobject><imageobject>
+                <imagedata fileref="iterators.jpg"/>
+            </imageobject></mediaobject>
+        </figure>
+        
+        <note>
+            <para>
+                In the case of the <emphasis>Java 2 Collection Framework</emphasis>, the 
+                concrete iterator classes are defined as private inner classes and hence the
+                implementation class of the <literal>Iterator</literal> interface is
+                completely hidden from the users.
+            </para>  
+        </note>
+    </section>
+    
+    
+    <section>  
+        <title>Polymorphic object copying</title>
+        <para>
+            A special case and a very common application of the factory method is that of 
+            <emphasis>polymorphically cloning</emphasis> objects via virtual methods
+            of the corresponding class. For example, Java, defines a single-tree class hierarchy
+            with a common superclass, <literal>Object</literal>, which provides
+            a default implementation of a <literal>clone()</literal> service
+            which is a polymorphic version of a copy constructor.
+        </para>
+        <note>
+            <para>
+                Traditional copy constructors do not copy objects polymorphically because constructors 
+                are class services which are not resolved polymorphically. For example, the following
+                C++ code snippet
+                <programlisting><![CDATA[
+class A 
+{
+  public:
+    A(const A& a) {...}
+    
+    virtual A clone() {...}
+};
+        
+class B: public virtual A
+{
+  public:
+    B(const B& b) {...}
+    
+    B clone() {...}  
+};        
+
+int main()
+{
+  A* a = new B();
+  A* copy = new A(a);
+  
+  A* copy2 = a->clone();
+}  
+        ]]></programlisting>
+                defines a class, <literal>A</literal> with a subclass, <literal>B</literal>,
+                both of which provide a copy constructor. In <literal>main</literal> we
+                create an instance of <literal>B</literal> and refer to that instance via a pointer
+                of type <literal>A</literal>. We then make a copy of the instance of B using the
+                copy constructor. The copy constructor is not resolved polymorphically and the copy of
+                the instance of <literal>B</literal> ends up being an <literal>A</literal>.
+            </para>
+            <para>
+                Both class also supply a virtual <literal>clone()</literal> service which is
+                a factory method. Using this method does result in polymorphic copying of the object
+                and the copy of the instance of <literal>B</literal> is now also a
+                <literal>B</literal>.
+            </para>
+        </note>
+    </section>  
+    
+</section>

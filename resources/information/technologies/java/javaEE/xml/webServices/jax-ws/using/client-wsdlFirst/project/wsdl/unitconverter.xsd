@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    targetNamespace="http://example.co.za/unitconverter/"
+    xmlns:uc="http://example.co.za/unitconverter/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xs:annotation>
+        <xs:documentation>
+            This schema specifies types for the exchanged value objects
+            of a simple and generic unit conversion service.
+        </xs:documentation>
+    </xs:annotation>
+    
+    <xs:complexType name="UnitConversionRequest">
+        <xs:sequence>
+            <xs:element name="from" type="uc:UnitValue"/>
+            <xs:element name="to" type="uc:UnitReference"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="unitConversionRequest" type="uc:UnitConversionRequest"/>
+    
+    <xs:complexType name="UnitConversionResponse">
+        <xs:sequence>
+            <xs:element name="result" type="uc:UnitValue"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="unitConversionResponse" type="uc:UnitConversionResponse"/>
+    
+    <xs:complexType name="UnsupportedUnit"/>
+    <xs:element name="unsupportedUnit" type="uc:UnsupportedUnit"/>
+    
+    <xs:complexType name="SupportedUnitsRequest"/>
+    <xs:element name="supportedUnitsRequest" type="uc:SupportedUnitsRequest"/>
+    
+    <xs:complexType name="SupportedUnitsResponse">
+        <xs:sequence>
+            <xs:element name="supportdUnits" type="uc:SupportedUnits" 
+                maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="supportedUnitsResponse" type="uc:SupportedUnitsResponse"/>
+    
+    <xs:complexType name="UnitValue" abstract="true">
+        <xs:sequence>
+            <xs:element name="magnitude" type="xs:double"/>
+        </xs:sequence>
+        <xs:attribute name="unit" type="uc:UnitReference" use="required"/>
+    </xs:complexType>
+    
+    <xs:simpleType name="UnitReference">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    
+    <xs:complexType name="Distance">
+        <xs:complexContent>
+            <xs:extension base="uc:UnitValue"/>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="Temperature">
+        <xs:complexContent>
+            <xs:extension base="uc:UnitValue"/>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="SupportedUnits">
+        <xs:sequence>
+            <xs:element name="valueType" type="uc:UnitValue"/>
+            <xs:element name="unit" type="uc:UnitReference" 
+                maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+</xs:schema>

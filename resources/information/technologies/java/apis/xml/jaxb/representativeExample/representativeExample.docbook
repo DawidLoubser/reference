@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Representative JAXB example</title>
+    <para>
+        This section includes a more representative example which includes
+        <itemizedlist>
+            <listitem><para>
+                a vocabulary defined across a number of schemas whith class reuse across the schemas,
+            </para></listitem>
+            <listitem><para>
+                built in data types like <literal>string</literal>, <literal>positiveInteger</literal> and <literal>date</literal>,
+            </para></listitem>
+            <listitem><para>
+                derived simple data types which apply restrictions on the values of the base primitives,
+            </para></listitem>
+            <listitem><para>
+                multiplicity constraints on attributes,
+            </para></listitem>
+            <listitem><para>
+                ID/IDREFS for association relationships which are mapped onto object references,
+            </para></listitem>
+            <listitem><para>
+                abstract classes and concrete sub-classes, and
+            </para></listitem>
+            <listitem><para>
+                a polymorphic collection of legal entities.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>ContactDetails schema</title>
+        <programlisting>
+<xi:include parse="text" href="../examples/customerList/src/main/resources/schemas/contactDetails.xsd"/>            
+        </programlisting>
+    </section>
+    
+    <section>
+        <title>Generated ContactDetails class</title>
+        <programlisting><![CDATA[
+package za.co.solms.entities.contactdetails;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ContactDetails", propOrder = {
+    "telNo",
+    "emailAddress",
+    "postalAddress",
+    "physicalAddress"
+})
+public class ContactDetails {
+
+    @XmlElement(required = true)
+    protected String telNo;
+    @XmlElement(required = true)
+    protected String emailAddress;
+    @XmlElement(required = true)
+    protected Address postalAddress;
+    protected Address physicalAddress;
+
+    public String getTelNo() {return telNo;}
+    public void setTelNo(String value) {this.telNo = value;}
+
+    public String getEmailAddress() {return emailAddress;}
+    public void setEmailAddress(String value) {this.emailAddress = value;}
+
+    public Address getPostalAddress() {return postalAddress;}
+    public void setPostalAddress(Address value) {this.postalAddress = value;}
+
+    public Address getPhysicalAddress() {return physicalAddress;}
+    public void setPhysicalAddress(Address value) {this.physicalAddress = value;}
+}            
+]]></programlisting>
+        <note><para>
+            None of the constraints are fed through into the binding class - i.e. the constraints will only be enforced at
+            the XML level.
+        </para></note>
+    </section>
+    
+    <section>
+        <title>Entities schema</title>
+        <programlisting>
+<xi:include parse="text" href="../examples/customerList/src/main/resources/schemas/entities.xsd"/>            
+        </programlisting>
+    </section>
+    
+    <section>
+        <title>The generated LegalEntity class</title>
+        <para>
+            This is an abstract class
+            <programlisting><![CDATA[
+package za.co.solms.entities;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlList;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import za.co.solms.entities.contactdetails.ContactDetails;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "LegalEntity", propOrder = {
+    "contactDetails",
+    "representativeFor"
+})
+@XmlSeeAlso({
+    Organization.class,
+    Person.class
+})
+public abstract class LegalEntity {
+
+    @XmlElement(required = true)
+    protected ContactDetails contactDetails;
+    @XmlList
+    @XmlElement(required = true)
+    @XmlIDREF
+    @XmlSchemaType(name = "IDREFS")
+    protected List<Object> representativeFor;
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlID
+    @XmlSchemaType(name = "ID")
+    protected String id;
+
+    public ContactDetails getContactDetails() {
+        return contactDetails;
+    }
+    public void setContactDetails(ContactDetails value) {
+        this.contactDetails = value;
+    }
+
+    public List<Object> getRepresentativeFor() {
+        if (representativeFor == null) {
+            representativeFor = new ArrayList<Object>();
+        }
+        return this.representativeFor;
+    }
+
+    public String getId() {return id;}
+    public void setId(String value) {this.id = value;}
+}                
+                ]]></programlisting>
+        </para>
+    </section>
+
+    <section>
+        <title>The concrete Organization subclass</title>
+        <programlisting><![CDATA[
+package za.co.solms.entities;
+
+import java.math.BigInteger;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "Organization", propOrder = {
+    "name",
+    "vatNumber",
+    "numEmployees"
+})
+public class Organization
+    extends LegalEntity
+{
+    @XmlElement(required = true)
+    protected String name;
+    @XmlElement(required = true)
+    protected String vatNumber;
+    @XmlElement(required = true)
+    @XmlSchemaType(name = "positiveInteger")
+    protected BigInteger numEmployees;
+
+    public String getName() {return name;}
+    public void setName(String value) {this.name = value;}
+
+    public String getVatNumber() {return vatNumber;}
+    public void setVatNumber(String value) {this.vatNumber = value;}
+
+    public BigInteger getNumEmployees() {
+        return numEmployees;
+    }
+    public void setNumEmployees(BigInteger value) {
+        this.numEmployees = value;
+    }
+}
+            ]]></programlisting>
+    </section>
+
+</section>

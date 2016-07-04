@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Implementation guidelines</title>
+    <para>
+        One of the core issues which need to be addressed when implementing the visitor pattern is
+        that in most current object-oriented programming languages <emphasis>methods are 
+            resolved polymorphically on message recipients, not on message parameters</emphasis>.
+        This poses a problem because we need polymorphism on message arguments in the visitor
+        pattern on the invitation request, <literal>accept(:Visitor)</literal>.
+    </para>
+    <para>
+        To support this we need to
+        <orderedlist>
+            <listitem><para>
+                Override the <literal>accept(:Visitor)</literal>  method in each element
+                of the class hierarchy to which the polymorphic service is added with the identical code:
+                <programlisting><![CDATA[
+visitor.visit(this);        
+        ]]></programlisting>
+                The reason why this addresses part of the problem is that the <literal>this</literal>
+                pointer has a different type for each member of the class hierarchy.
+            </para></listitem>
+            <listitem><para>
+                The interface must provide a separate  <literal>visit</literal> method
+                for each element being visited.
+            </para></listitem>
+        </orderedlist>
+        
+    </para>
+    
+    <figure>
+        <title>VisitorTest.java</title>
+        <programlisting>
+            <xi:include parse="text" href="VisitorTest.java" />      
+        </programlisting>
+    </figure>
+</section>

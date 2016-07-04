@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.platforms.linux.sed.substituting"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Substituting text</title>
+  <para>
+    We have already seen simple substitution via <command>sed</command>. Here
+    we shall look at the <command>sed</command> <emphasis>substitute</emphasis>
+    command in more detail.
+  </para>
+  
+  <section>
+    <title>Syntax of substitute command</title>
+    <para>
+      The format of the <command>substitute</command> command is
+      <programlisting><![CDATA[
+[address1[,address2]]s/matchPattern/replacementText/[flags]      
+      ]]></programlisting>
+      where the flags are shown in
+      <xref linkend="resources.information.platforms.linux.sed.substitution.commandFlags"/>.
+      
+      <table id="resources.information.platforms.linux.sed.substitution.commandFlags">
+        <title>Sed substitute command flags</title>
+        <tgroup cols="2">
+          <thead>
+            <row><entry>Flag</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>g</entry>
+              <entry>
+                <emphasis>global:</emphasis> replace every occurrence of 
+                <literal>matchPattern</literal> in each line.
+              </entry>
+            </row>
+            <row>
+              <entry>n</entry>
+              <entry>
+                Replace only the <literal>n</literal>'th occurrence of the <literal>matchPattern</literal>
+                in each line where <literal>n</literal> is a positive integer.
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </para>
+  </section>
+  
+  <section>
+    <title>Specifying addresses</title>
+    <para>
+       Addresses commonly used include
+       <itemizedlist>
+         <listitem><para>a line number,</para></listitem>
+         <listitem><para>a range of line numbers,</para></listitem>
+         <listitem><para>a match pattern itself, and</para></listitem>
+         <listitem><para>the last line of the stream specified via a <literal><![CDATA[$]]></literal>.</para></listitem>
+       </itemizedlist>
+    </para>
+    
+    <section>
+      <title>Using a line number as address</title>
+      <para>
+        We can specify that a particular command only applies to a particular line number. 
+        To this end we insert the line number in front of the substitute command,
+        <command>s</command>.
+      </para>
+      <para>
+        For example, if we want to substitute <literal><![CDATA[#!/bin/sh]]></literal> only
+        in the first line with <literal><![CDATA[#!/bin/sh]]></literal>, then we can use
+        <programlisting><![CDATA[
+sed '1s/#!\/bin\/sh/#!\/bin\/bash/' myShellScript.sh
+        ]]></programlisting>
+        <note>
+          <para>
+            We have to escape the path separator character, <command>/</command>.
+          </para>
+        </note>
+      </para>
+    </section>
+    
+    <section>
+      <title>Substituting within a range of line numbers</title>
+      <para>
+        To specify a range of line numbers across which a substitution is to be
+        applied, we specify the bounding line numbers separated by a comma. Thus
+        <programlisting><![CDATA[
+ sed '2,9s/Mrs/Ms/g' myLetter
+        ]]></programlisting>
+        replaces <quote>Mrs</quote> by <quote>Ms</quote> between lines 2 and 9.
+      </para>
+    </section>
+    
+    
+    <section>
+      <title>Using a match pattern as address</title>
+      <para>
+        Finally, you can also specify addresses implicitly by specifying that the target,
+        across which the substitution (or deletion, ...) should be applied, includes
+        all lines in which a particular match can be made.
+      </para>
+      <para>
+        For example, to specify that <quote>Smith</quote> should be replaced by
+        <quote>Kumalo</quote> in all lines which contain a <quote>Karin</quote>
+        we can specify
+        <programlisting><![CDATA[
+sed '/Karin/s/Smith/Kumalo/g' clientTransactions 
+        ]]></programlisting>
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>Substituting with the result of a command</title>
+    <para>
+      You can use the normal backslash syntax to substitute a match with the output
+      of a command. For example, if we want to replace every occurrence of
+      <quote> today</quote> with <quote> on </quote> followed by today's date, 
+      we can use
+      <programlisting><![CDATA[
+sed "s/ today/ on`date`/g" myDocument
+      ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Using sed with regular expressions</title>
+    <para>
+      Sed supports regular expressions for its matching criteria (see
+      <xref linkend="resources.information.technologies.general.regularExpressions.regularExpressions"/>
+      for a review of regular expressions) and it is very common to do this. 
+    </para>  
+    <para>
+      For example, if we want to translate a document from <emphasis>LaTeX</emphasis> 
+      to XML <emphasis>docbook</emphasis> we could include include the following
+      command in the translation script:
+      <programlisting><![CDATA[
+ sed 's/\\section{\(.*\)}/<section><title>\1>\/title>/g'
+      ]]></programlisting>
+      <note>
+        <para>
+          Here we used the grouping construct for regular expressions (the round paranthesis)
+          and in the substitution text we insert the first group, <abbrev>i.e.</abbrev> the first
+          round brackets.
+        </para>
+      </note>
+       Applying this to
+       <programlisting><![CDATA[
+\section{The period of happy dreams}
+       ]]></programlisting>
+       yields the docbook version of the section header
+       <programlisting><![CDATA[
+<section><title>The period of happy dreams>/title>
+       ]]></programlisting>
+     </para> 
+      <note><para>
+        The <quote>*</quote> character is said to be <emphasis>greedy</emphasis> 
+        in the sense that it will try and include as many characters as it can. For example,
+        if we apply
+        <programlisting><![CDATA[
+sed 's/V.*ion/Dreams/g'
+        ]]></programlisting>
+        to
+        <programlisting><![CDATA[
+Vission, mission and goals
+        ]]></programlisting>
+        we get
+        <programlisting><![CDATA[
+Dreams and goals
+        ]]></programlisting>
+      </para></note>
+    </section>
+</section>
+  

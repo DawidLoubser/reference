@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.tools.ant.examples.midp.midpBuildExample"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Developing an Ant build script to build our MIDP applications</title>
+    <para> Now, let us finally put what we learnt to good use and write a generic Ant build
+        script which we will use for all our MIDP projects. The Ant script will <orderedlist>
+            <listitem>
+                <para> Create/clean-up the directory structure required for our builds. </para>
+            </listitem>
+            <listitem>
+                <para> Compile the Java classes of our projects. </para>
+            </listitem>
+            <listitem>
+                <para> Perform the pre-verification of the compiled classes. </para>
+            </listitem>
+            <listitem>
+                <para> Write the Manifest file if it does not exist. </para>
+            </listitem>
+            <listitem>
+                <para> Archives the preverified classes, any resources used by the application
+                    (e.g. icon files) and the manifest file within a <filename>jar</filename>
+                    file. </para>
+            </listitem>
+            <listitem>
+                <para> Write a <filename>jad</filename> file for the application and inserts the
+                    element for the size of the generated <filename>jar</filename> file as a
+                    property into the <filename>jas</filename> file. </para>
+            </listitem>
+            <listitem>
+                <para> Runs the application within the emulator supplied with the wireless
+                    toolkit. </para>
+            </listitem>
+        </orderedlist>
+    </para>
+    <para> We shall separate the build files into 5 different files, 3 files which are common
+        accross all MIDP projects and two files which are specific to the individual projects.
+        The 3 common files are located in a directory, <filename>common</filename>, while the
+        project specific files are in the relevant project directories which are at the same
+        level in the directory hierarchy as the <filename>common</filename> directory. </para>
+    <section>
+        <title>Defining general environmental parameters</title>
+        <para> The first file defines the location of the <filename>MIDP-jar</filename> as well
+            as the <application>preverifier</application> and the
+            <application>emulator</application> supplied with the wireless toolkit. </para>
+        <para> In addition to these it specifies the versions of CLDC, MIDP, MIDlet and Manifest
+            files which are used by the projects: <programlisting>&envProperties;</programlisting>
+        </para>
+    </section>
+    <section>
+        <title>Specifying the generic build properties</title>
+        <para> In the generic build properties file we specify the directory structure for our
+            projects as well as the naming conventions used for the jar and jad files to be
+            generated: <programlisting>&commonBuildProperties;</programlisting>
+        </para>
+    </section>
+    <section>
+        <title>The generic build targets</title>
+        <para> Now we define the generic build targets: <programlisting>&commonBuildTargets;</programlisting>
+        </para>
+    </section>
+    <section>
+        <title>Specifying project-specific properties</title>
+        <para> Now, each application will have its own specific properties like application
+            name, icon file names and so on. We specify these for each project in a file,
+            <filename>build.properties</filename> located in the project directory: <programlisting>&helloWorldBuildProperties;</programlisting>
+        </para>
+    </section>
+    <section>
+        <title>The project build file</title>
+        <para> The build file for the individual properties have typically no targets of their
+            own and simply use the generic targets defines in the common
+            <filename>targets.xml</filename> file: <programlisting>&helloWorldBuild;</programlisting>
+        </para>
+    </section>
+    <section>
+        <title>Building our HelloWorldMIDlet from the generic build script</title>
+        <para> To build our <application>HelloWorldMIDlet</application> simply run
+            <application>Ant</application> on our Ant build script specifying the relevant
+            target. For example <programlisting> ant run </programlisting> will execute the run
+            target (satifying, of course, all the dependencies). </para>
+    </section>
+</section>
+		

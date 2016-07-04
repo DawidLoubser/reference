@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.tools.ant.examples.ejb.generic.usage"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="Usage">Using the generic Ant build script</title>
+  <para>
+    We have now the tools together to build, deploy and run our web application. We simply
+    run the Ant build tool for different targets.
+  </para>
+  
+  <section>
+    <title>Building the Enterprise Bean Archive</title>
+    <para>
+      To build the enterprise bean archive we specify the  
+      <literal>ejbJar</literal> target:
+<programlisting><![CDATA[
+ant ejbJar
+]]></programlisting>      
+    </para>
+    <para>
+      This creates the server side Java archive file for the
+      enterprise bean. It contains the classes and interfaces required for the enterprise bean
+      in a directory structure mirroring the package structure and a  
+      <literal>META-INF</literal> directory with the generic  
+      <literal>ejb-jar.xml</literal> and the JBoss-specific 
+      <literal>jboss.xml</literal> deployment descriptors.
+    </para>
+  </section>
+  
+    <section>
+      <title>Deploying the Enterprise Bean Archive</title>
+      <para>
+        To deploy the server side archive,  
+        <literal>LoanCalculator.jar</literal>, we simply copy it into JBoss's deploy directory
+<programlisting><![CDATA[
+JBOSS-HOME/server/configurationDir/deploy
+]]></programlisting>
+        where the <literal>configurationDir</literal> is the directory for the JBoss
+        configuration one is running which, by default, is the  
+        <literal>default</literal> directory.
+      </para>
+      <para>
+        JBoss will automatically detect the new enterprise bean, generate the EJB object
+        which network enables the bean, demarshalls the service request and applies the enterprise
+        beans at this inception level and makes the bean available to EJB clients. This all
+        happens without having to bring down the application server.
+      </para>
+      <para>
+        For convenience sake the build file contains a target for deploying the enterprise
+        bean. It is run via
+<programlisting><![CDATA[
+ant deployEjbJar
+]]></programlisting>
+      </para>
+    </section>
+    
+  <section>
+      <title>Running the Client Application</title>
+      <para>
+        The client application files are archived into a Java archive via the  
+        <literal>jarClientApp</literal> Ant target. Note that the JBoss client
+      </para>
+      <para>
+        Finally we simply start our client (potentially on another machine on the network)
+        supplying the client-side jar files located in the client directory of JBoss to the classpath.
+      </para>
+  </section>
+  
+    <section>
+      <title>Running the Client</title>
+      <para>
+        To run the client from a local or a remote machine one simply runs the application
+        from the client-side jar file, <literal>LoanCalculatorClient.jar</literal> with the client-side J2EE
+        files in the class path. These jar files could be packaged within the client jar. However,
+        clients do not have to use the JBoss client-side jar files but could use client J2EE jar
+        files supplied by another EJB application server provider.
+      </para>
+      <para>
+        Note that the <literal>jndi.properties</literal> file is included in
+        the client jar. For remote deployment the <literal>localhost</literal>
+        must be changed to the host name or IP address of the host of the naming service with
+        which the enterprise bean has been registered.
+      </para>
+    </section>
+  </section>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+   <title>Overview</title>
+  <para>
+    The EJB developer can choose to have the container manage transactions by setting the
+    transaction attributes for a bean or for individual bean services or can manage the
+    transactions programmatically.
+  </para>
+  
+  <section>
+    <title>JTS and JTA in EJB</title>
+    <para>
+      The <emphasis>Java Transaction Service</emphasis> (JTS) is a Java binding
+      of the <emphasis>CORBA Transaction Service</emphasis> (OTS) 1.1 specification. JTS thus provides
+      transaction support across technologies by using the standard transaction propagation support
+      provided by CORBA's IIOP protocol.
+    </para>
+    <para>
+      The EJB specification does not require the EJB server to implement JTS. It only requires the
+      the application server Supports the Java Transaction API (JTA) and the Java Connnector API
+      (JCA). The latter supports the ability to propagate the transactional context across to other
+      enterprise systems which are potentially realized in very different enterprise technologies.
+    </para>
+  </section>
+  
+  <section>
+    <title>Transaction managers</title>
+    <para>
+      In the case of programmatic transaction demarcation (<abbrev>i.e.</abbrev> bean managed
+      transactions), one interacts directly with a transaction manager. 
+      <literal>TransactionManager</literal> offers the following services: 
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>void begin()</title>
+          <para>
+            Create a new transaction and associate it with the current thread.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>void commit()</title>
+          <para>
+            Complete the transaction associated with the current thread. 
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>int getStatus()</title>
+          <para>
+            Obtain the status of the transaction associated with the current thread.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Transaction getTransaction()</title>
+          <para>
+            Get the transaction object that represents the transaction
+            context of the calling thread.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>void resume(Transaction tobj)</title>
+          <para>
+            Resume the transaction context association of the calling thread 
+            with the transaction represented by the supplied Transaction object.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>void rollback()</title>
+          <para>
+            Roll back the transaction associated with the current thread. 
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>void setRollbackOnly()</title>
+          <para>
+            Modify the transaction associated with the current thread such that the only 
+            possible outcome of the transaction is to roll back the transaction.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>void setTransactionTimeout(int seconds)</title>
+          <para>
+            Modify the value of the timeout value that is associated with the 
+            transactions started by the current thread with the begin method.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Transaction suspend()</title>
+          <para>
+            Suspend the transaction currently associated with the calling thread and return a
+            Transaction object that represents the transaction context being suspended.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>JTA transactions</title>
+    <para>
+      One can also interface with the transaction itself via 
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>void commit()</title>
+          <para>
+            Complete the transaction represented by this 
+            <literal>Transaction</literal> object. 
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>boolean delistResource(XAResource xaRes, int flag)</title>
+          <para>
+            Delist the resource specified from the current transaction associated with the
+            calling thread.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>boolean enlistResource(XAResource xaRes)</title>
+          <para>
+            Enlist the resource specified with the current transaction context of the calling thread.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>int getStatus()</title>
+          <para>
+            Obtain the status of the transaction associated with the current thread.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>void registerSynchronization(Synchronization sync)</title>
+          <para>
+            Register a synchronization object for the
+            transaction currently associated with the calling thread.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>void rollback()</title>
+          <para>
+            Rollback the transaction represented by this Transaction object.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>void setRollbackOnly()</title>
+          <para>
+            Modify the transaction associated with the current thread such that the only 
+            possible outcome of the transaction is to roll back the transaction.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+    
+    <section>
+      <title>The status of a transaction</title>
+      <para>
+        The status of a transaction can be one of the following: 
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>Status.STATUS_ACTIVE</title>
+            <para>
+              A transaction is associated with the target object and it is in the active state.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Status.STATUS_COMMITTED</title>
+            <para>
+              A transaction is associated with the target object and it has been committed.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Status.STATUS_COMMITTING</title>
+            <para>
+              A transaction is associated with the target object and it is in the process of committing.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Status.STATUS_MARKED_ROLLBACK</title>
+            <para>
+              A transaction is associated with the target object and it has been marked for 
+              rollback, perhaps as a result of a <literal>setRollbackOnly</literal> operation.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Status.STATUS_NO_TRANSACTION</title>
+            <para>
+              No transaction is currently associated with the target object.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Status.STATUS_PREPARED</title>
+            <para>
+              A transaction is associated with the target object and it has been prepared.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Status.STATUS_PREPARING</title>
+            <para>
+              A transaction is associated with the target object and it is in the process of preparing.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Status.STATUS_ROLLEDBACK</title>
+            <para>
+              A transaction is associated with the target object and the outcome
+              has been determined as rollback.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Status.STATUS_ROLLING_BACK</title>
+            <para>
+              A transaction is associated with the target object and it is in the process of rolling back.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Status.STATUS_UNKNOWN</title>
+            <para>
+              A transaction is associated with the target object but its current status cannot be 
+              determined.
+            </para>
+          </formalpara></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Marking a transaction as failed</title>
+      <para>
+        The <literal>setRollbackOnly()</literal> is used quite frequently to
+        mark a transaction as failed.
+      </para>
+      <para>
+        Thus, in programmatic transaction demarcation one calls  
+        <literal>transactionManager.begin()</literal> to start a new transaction and calls
+        <literal>transaction.commit()</literal> to commit a transaction or
+        alternatively <literal>transaction.abort()</literal> to abort a transaction
+        resulting in an automatic roll-back of 
+        <itemizedlist>
+          <listitem>
+            <para>this transaction, </para>
+          </listitem>
+          <listitem>
+            <para>all its parent transactions and </para>
+          </listitem>
+          <listitem>
+            <para>all all other transactions hosted by the highest-level parent transaction.</para>
+          </listitem>
+        </itemizedlist>
+      </para>  
+    </section>
+  </section>
+  
+  <section>
+    <title>Support for multiple resources</title>
+    <para>
+      JTA supports enlisting multiple resources into the same transaction and committing or rolling
+      back a transaction across multiple resources. In order to decrease the likelyhood of false
+      commits across multiple resources, a two phase commit algorithm is used.
+    </para>
+  </section>
+  
+</section>

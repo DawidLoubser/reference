@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/samples/docbook/xml/docbookx.dtd">
+-->
+    
+<section id="resources.information.technologies.objectOrientation.introduction.ooConcepts"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Introduction into the core object-oriented concepts</title>
+  
+  <xi:include href="../concepts/objectOrientation/introduction/introParagraph.xdoc" />
+  <xi:include href="../concepts/objectOrientation/introduction/ooAsNaturalLanguage.xdoc" />
+  <xi:include href="../concepts/objectOrientation/introduction/whatIsAnObject.xdoc" />
+  <xi:include href="../concepts/objectOrientation/introduction/whatIsAComponent.xdoc" />
+  
+  
+  
+  <section><title>Service request messages</title>
+    <para>
+      We request services from an object by sending a message to it.
+      For example, stepping on the accelerator sends an 
+      <emphasis>accelerate</emphasis> message to the car.
+    </para>
+    <para>
+      Within the context of individual service requests, the object requesting
+      the service is called the <emphasis>client</emphasis> and the object 
+      providing the service is called the <emphasis>service provider</emphasis>
+      or <emphasis>server</emphasis>. Clients can request a service from a
+      service provider via different types of messages. One typically defines
+      the following types of messages:
+      <itemizedlist>
+        <listitem><para>synchronous</para></listitem>
+        <listitem><para>asynchronous</para></listitem>
+        <listitem><para>timeout</para></listitem>
+        <listitem><para>balking</para></listitem>
+      </itemizedlist>
+    </para>
+    <section><title>Synchronous messages</title>
+      <para>
+        A synchronous message is one where the client waits for a response before
+        continuing with its workflow. For example, when you request a telephone
+        connection by dialing a telephone number, you wait until you received
+        a response before starting to talk.
+      </para>
+    </section>
+    <section><title>Asynchronous messages</title>
+      <para>
+        An asynchronous message are messages which are sent by clients without them
+        waiting for a response. The client sends the message and continues with 
+        his/her/its workflow directly. The response would be a separate message in
+        the context of a <emphasis>call-back</emphasis>.
+      </para>
+    </section>
+    <section><title>Timeout messages</title>
+      <para>
+        Timeout messages are really synchronous messages where the client has finite 
+        patience, <abbrev>i.e.</abbrev> the client does not wait indefinetily for a 
+        response and <emphasis>if a response is not obtained within the timeout period, 
+        the message is abandoned from the clients perspective</emphasis>. 
+      </para>
+      <para>
+        Note that the message is abandoned from the client's perspective. The service 
+        provider may still continue to try and provide the requested service.
+      </para>
+    </section>
+    <section><title>Balking messages</title>
+      <para>
+        A balking message is a timeout message where the timeout period tends to zero,
+        <abbrev>i.e.</abbrev> if there is no <emphasis>immediate</emphasis> response
+        the message is abandoned. The concept of <emphasis>immediate</emphasis> is
+        context-specific. Immediate in the context of a web client may mean 2 seconds
+        while in the context of monitoring a formula 1 racing car it may mean 20 
+        milli seconds.
+      </para>
+    </section>
+  </section>
+        
+  <section><title>Encapsulation</title>
+    <para>
+      We need not know the way in which the service is supplied by the object.
+      We only need to know what message we have to send to request the service.
+      For example, we do not need to know the implementation details of the
+      engine and gearbox to be able to request the accelerate service. Those
+      implementation details are hidden from the user. The hiding of
+      implementation details is called <emphasis>encapsulation</emphasis>.
+    </para>
+  </section>
+
+  <section><title>Composition</title>
+    <para>
+      An object is usually composed of a number of components which are themselves
+      objects. The question which is not always trivial to answer is 
+      <blockquote><para><emphasis>
+        What makes one object a component of another? 
+      </emphasis></para></blockquote>
+      To this end we need to understand the implications of a composition relationship.
+      Composition implies
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>Ownership</title>
+          <para>
+            Linguistically one would say that the aggregate object (the
+            container object) <emphasis>has</emphasis> a component. For example
+            <blockquote><para><emphasis>
+              The car has an engine.
+            </emphasis></para></blockquote>
+            The container object must be able to say with a good conscience
+            that the component is his/hers.              
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Adopting Responsibility for Component</title>
+          <para>
+            If a car is yours then you are responsible for it. For example,
+            if the car crashes into a building because the brakes failed,
+            then you are responsible for the damage. Similarly, if the car is
+            yours, nobody should be able to make use of it or to change its
+            state without your permission. We shall see later that a lot of
+            object-oriented modeling revolves around judicious distribution 
+            of responsibilities.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Coincident life spans</title>
+          <para>
+            In object-oriented software systems composition may imply
+            that the life span of the component is limited to that of its
+            owner/container. For example, when an account is closed and
+            deleted, its balance and account number will no longer exist.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  
+  <section><title>Links and associations</title>
+    <para>
+      In order to send a message to an object you have to have a link to it. Thus
+      a <emphasis>link provides a message path</emphasis> between two objects. 
+      For example, my
+      clutch pedal is linked to my clutch, enabling me to send service request
+      messages to the clutch. Message paths are typically uni-directional. I can
+      send  messages from my clutch pedal to the clutch but the clutch may not be
+      able to send messages back to me.
+    </para>
+    <para>
+      The message path itself is an object (it is a noun). For example, the clutch
+      cable has attributes and can provide services. It's abstraction is a class.
+      On a class level one says that clutch pedals are associated with clutches.
+      Associations between classes implies links between instances of the
+      corresponding classes. For example, a particular clutch pedal is linked to
+      a particular clutch.
+    </para>  
+    <para>
+      The difference between composition and association is that the former implies
+      ownership and coincident life spans. A good example illustrating the difference
+      between the two is a financial contract like a bond. If you buy a bond from
+      an institution (government or corporate) then that institution usually
+      agrees to pay a specific interest rate on your investment over a certain
+      period. For example, the R150 is a South African government bond which pays
+      12.5% interest biannually. The notional (<abbrev>i.e.</abbrev> amount invested)
+      and the interest
+      you earn are part of the contract. You cannot change these without changing the
+      actual contract and hence these attributes are components of the contract.
+      However, once you bought the contract, its value depends on environmental
+      factors which are not part of the contract. In the case of a bond these would
+      include the prevailing interest rates. Assume the remaining period of the bond
+      is for 5 years. Then, if the interest you can earn by investing for 5 years
+      increases (<abbrev>i.e.</abbrev> if rates go up), the value of your bond diminishes, because
+      you could earn higher interest elsewhere. On the other hand, if rates fall,
+      then the value of your bond increases because you could sell it at a higher
+      price to somebody who wants to invest his/her money over the 5 year period at
+      a higher rate than the prevailing interest rate.
+    </para>
+    <para>
+      Thus the interest the bond pays (<abbrev>i.e.</abbrev> the coupon) is part of the contract
+      while the prevailing interest rate is part of the environment in which the
+      contract lives. The relationship between the bond and its coupon is a composition
+      relationship while you need an link between the bond and the environmental
+      5-year rate in order to value the bond. Once your contract is annulled, its
+      coupon is annulled, but the 5-year interest rate prevailing in the market
+      still exists. Also, the prevailing interest rate changes due to a series of
+      factors, while the coupon can only be changed by changing the bon contract
+      -- the bond takes responsibility/ownership of its coupon.
+    </para>
+  </section>
+  
+  <section><title>Abstraction via superclasses</title>
+    <para>
+      We generally think and talk at various levels of abstraction. We may say that
+      <blockquote><para><emphasis>
+        Volvo's are reliable.
+      </emphasis></para></blockquote>
+      referring quite abstractly to all Volvos. On the other hand we may be more
+      specific, saying
+      <blockquote><para><emphasis>
+        The Volvo T80 is a large car.
+      </emphasis></para></blockquote>
+      Or even more specific via
+      <blockquote><para><emphasis>
+        My Volvo T80 has given me excellent service.
+      </emphasis></para></blockquote>
+    </para>
+    <para>
+      In the first example we talk about the <emphasis>abstract class</emphasis>
+      of Volvos. Why is it abstract. Because you can't simply go into a car dealer 
+      and say you want to buy a Volvo. He/she will ask you to be more specific, 
+      <abbrev>i.e.</abbrev> to specify which model you would like to buy.
+      Thus the class of Volvos is more abstract than the class of Volvo T80s. The class
+      <emphasis>Volvo</emphasis> is a super-class to the class 
+      <emphasis>Volvo T80</emphasis>. Conversely, the class
+      <emphasis>Volvo T80</emphasis> is a subclass of the class <emphasis>Volvo</emphasis>.
+    </para>
+    <para>
+      The class <emphasis>Volvo T80</emphasis> may still be abstract since the T80 
+      may not specify the model completely, but a further subclass, say 
+      <emphasis>Volvo T80E</emphasis> is not abstract because
+      you can instantiate it, <abbrev>i.e.</abbrev> they are actually manufactured. 
+      This class is a <emphasis>concrete class</emphasis>. Thus the difference
+      between an abstract and a concrete class is that the latter can be instantiated, while
+      the former cannot.
+    </para>
+    <para>
+      Talking about <emphasis>my Volvo T80E</emphasis> we are even more specific. 
+      Now we are not referring
+      to a class anymore, we are referring to a specific instance of a concrete class.
+      Thus, going from my Volvo T80 to the concrete class of Volvo T80s to the abstract class
+      of Volvo's and perhaps further to the class of vehicles, we are becoming more and more
+      abstract. Going in the reverse direction, each level is a specialization of the higher,
+      more abstract level.
+    </para>
+    <para>
+      The superclass encapsulates attributes and services that are common among instances
+      of itself (a superclass need not be abstract) and all its subclasses. For example,
+      all Volvo T80s may be station wagons and may supply the 
+      <emphasis>open back door</emphasis> service
+      via a common interface (the same switch, say). Hence, these attributes and services
+      can be specified at the more abstract level of <emphasis>Volvo T80</emphasis> 
+      and will be inherited
+      among all Volvo T80s, <abbrev>e.g.</abbrev> Volvo T80Es and T80Ss.
+    </para>
+  </section>
+  
+  <section><title>Abstraction via Interfaces</title>
+    <para>
+      But we can have abstract concepts without referring to a type or a class of objects.
+      We can abstractly group otherwise non-related objects together by common services
+      they supply.
+    </para>
+    <para>
+      For example, various objects which are otherwise quite unrelated could process
+      switch on/off messages. These could include the car engine, the radio, the main
+      power switch in your house and perhaps a toy. They may have nothing else in common
+      bar the fact that they can process these two messages, they all implement the
+      <emphasis>Switchable</emphasis> interface.
+    </para>
+  </section>
+  
+
+  <section><title>Polymorphism</title>
+    <para>
+      Polymorphism in the OO sense is a direct consequence of the fact that you request
+      services by sending messages, NOT by calling functions. The object which receives
+      the message decides how it is going to provide the service, i.e.\ what function is
+      going to be called. You as client simply send the message and you do not have a say
+      in the matter.
+    </para>
+    <para>
+      Simply think of Frank Sinatra's <quote>I do it my way</quote>. You can request
+      a service from a range of objects, but may realize the service in a 
+      different way.
+    </para>
+  </section>
+  
+  <section><title>The state of an object, events and state transitions</title>
+    <para>
+      The state of an object is defined by
+      <itemizedlist>
+        <listitem><para>
+          the value of its attributes,
+        </para></listitem>
+        <listitem><para>
+          services which are available while the object is in that state,
+        </para></listitem>
+        <listitem><para>
+          the links it currently has to other objects, and
+        </para></listitem>
+        <listitem><para>
+          the operations it currently is busy performing.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      If any of these change the object undergoes a state transition. For example, my
+      telephone has certain attributes (<abbrev>e.g.</abbrev> color), has a link to an exchange and
+      might be in the idle state. If I paint it, or if it starts ringing or if I change
+      the connection of the phone to another exchange, the telephone has undergone a
+      state transition. If on, the other hand the state of the exchange changes (<abbrev>e.g.</abbrev>
+      the number of connections it currently serves), the state of my telephone does
+      not.
+    </para>
+  </section>
+</section>

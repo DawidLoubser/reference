@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section SYSTEM "file:/usr/share/sgml/db42xml/docbookx.dtd"-->
+<section id="resources.information.platforms.linux.kernel.architecture.memoryManager"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>The memory manager</title>
+  <para>
+    The memory manager is responsible for allocating memory to processes.
+  </para>
+  
+  <section>
+    <title>Goals of the memory manager</title>
+    <para>
+      The design goals of the Linux memory management subsystem are
+      <orderedlist>
+        <listitem><formalpara>
+          <title>To provide a large address space</title>
+          <para>
+            Users can use more memory than what is physically available. The memory manager
+            shifts memory around between physical memory and virtual memory residing in
+            swap space.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Memory protection</title>
+          <para>
+            The memory of a process is private and cannot be accessed directly by another
+            process. Furthermore, the memory containing the code of the process is
+            protected from the procecss itself.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Memory mapping</title>
+          <para>
+            Processes use virtual addresses which are mapped by the memory manager onto
+            physical memory addresses. This allows Linux 
+            <itemizedlist>
+              <listitem><para>
+                to shift memory allocations around without affecting the process, and  
+              </para></listitem>
+              <listitem><para>
+                have virtual addresses outside the physical address range which are
+                swapped in and out of physical memory.
+              </para></listitem>
+            </itemizedlist>
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Shared memory</title>
+          <para>
+            The memory manager allows processes to share a specified amount of memory. For example,
+            executable code may, at times, be shared accross processes.
+          </para>
+        </formalpara></listitem>
+      </orderedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Services offered by the memory management subsystem</title>
+    <para>
+      The memory manager provides 2 interfaces
+      <itemizedlist>
+        <listitem><para>
+          a <emphasis>system call interface</emphasis>  used by use processes, and
+        </para></listitem>
+        <listitem><para>
+          an <emphasis>intra-kernel interface</emphasis>  used by other kernel sub-systems.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    
+    <section>
+      <title>The system call interface</title>
+      <para>
+        This contains a collection of  services which are used by user processes when requesting
+        or releasing memory. They include
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>malloc()</title>
+            <para>Request memory for a process.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>free()</title>
+            <para>Release procecss memory.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>mmap(), munmap(), msync() and mremap()</title>
+            <para>
+              Map, unmap, synchronize and remap files into virtual memory.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>mprotect()</title>
+            <para>Change the protection on a region of virtual memory.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>mlock(), munlock(), mlockall(), munlockall()</title>
+            <para>
+              Services used from processes running under super-user access for preventing
+              and allowing memory swapping for a process or for all processes.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>swapon(), swapoff()</title>
+            <para>
+              Super-user routines for adding and removing swap files for the system.
+            </para>
+          </formalpara></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+  </section>
+</section>

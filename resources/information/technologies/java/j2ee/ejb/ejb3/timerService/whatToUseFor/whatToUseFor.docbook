@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    
+    <title>What can the EJB Timer Service be used for?</title>
+    
+    <indexterm>
+        <primary>EJB</primary>
+        <secondary>Timer Service</secondary>
+        <tertiary>uses</tertiary>
+    </indexterm>
+    
+    <para>
+        The timer service support scalendar based scheduling to schedule tasks to occur either once or repetitatively
+        <itemizedlist>
+            <listitem><para>
+               at specific particular date-times,                 
+            </para></listitem>
+            <listitem><para>
+                in specific intervals, or
+            </para></listitem>
+            <listitem><para>
+                at durations after the previous task has been completed.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <para>
+        The EJB timer service primarily exists to support long-running business processes.
+        Since session beans conceptually only last for the duration of a session, the
+        timer service extends the usefulness of EJBs in situations such as the following:
+        <itemizedlist>
+            <listitem>
+                <formalpara>
+                    <title>Time-based workflow steps</title>
+                    <para>
+                        For example, imposing a fine when a rented item (library book, video, car)
+                        is not returned on time, or prompting a client to renew their support
+                        contract a month before it expires.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Monitoring / Polling</title>
+                    <para>
+                        Periodically making sure that certain services, resources or devices are
+                        available and responding.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Periodical reminders</title>
+                    <para>
+                        Sending a monthly reminder to users of a system to remind them to
+                        update their password for security purposes.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Initiating asynchronous / background tasks</title>
+                    <para>
+                        Since EJBs may not create or manage their own threads, the traditional mechanism
+                        for this has always been to post a message on a message queue, to be processed
+                        by a message-driven bean. Scheduling an immediate call-back via the timer service
+                        provides a simple and light-weight alternative.
+                    </para>
+                </formalpara>
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    <para>
+        Scheduled timers are <emphasis>reliable</emphasis> and <emphasis>robust</emphasis> - they must survive application server
+        crashes or machine restarts.
+    </para>
+    
+    <para>
+        Timers may be used in both <literal>Stateless Session Beans</literal> as well as <emphasis>Message-Driven Beans</emphasis>.
+    </para>
+    
+</section>

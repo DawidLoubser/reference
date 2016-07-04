@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xml:id="resources.information.technologies.java.lang.abstraction.interfaces.specialisation">
+  <title>Interface Specialisation </title>
+  <para>
+    Consider the following two interfaces:
+    <programlisting language="Java"><![CDATA[
+public interface Valuable
+{
+   public Payment value(Date date);
+}
+ ]]></programlisting>
+    <programlisting language="Java"><![CDATA[
+public interface Expires
+{
+   public Date getExpiryDate();
+   public boolean hasExpired(Date date);
+}
+    ]]></programlisting>
+  </para>
+  <para>
+    Perishable stock items (for example fruit or vegetables) are valuable (they can be sold)
+    and expire. We could define a new interface, <literal>Perishable</literal> as follows:
+    <programlisting><![CDATA[
+public interface Perishable extends Valuable, Expires {}
+    ]]></programlisting>
+  </para>
+  <para>
+    This is a join interface which does not define any new method signatures itself (it could have).
+    It simply combines two interfaces and any class implementing the
+    <literal>Perishable</literal> interface must implement all three services
+    specified in the <literal>Valuable</literal> and <literal>Expires</literal> interfaces.
+  </para>
+</section>

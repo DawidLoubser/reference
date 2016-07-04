@@ -1,0 +1,86 @@
+<section id="resources.information.platforms.linux.networkServices.dns.client"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>DNS clients</title>
+	<para>
+	The configured DNS server is accessed on every request made to a domain name by the operating system or an application.
+	</para>
+	<section>
+		<title>nslookup</title>
+		<para>
+	 	Sends a request to a DNS server	
+		</para>
+		<screen>
+			<userinput>
+				<command>nslookup</command> <replaceable>flags</replaceable> <replaceable>target</replaceable> <replaceable>-DNS Server</replaceable>
+			</userinput>
+		</screen>
+		<programlisting>
+[root@teddy root]# nslookup teddy.earth
+Note:  nslookup is deprecated and may be removed from future releases.
+Consider using the `dig' or `host' programs instead.  Run nslookup with
+the `-sil[ent]' option to prevent this message from appearing.
+Server:         192.168.0.1
+Address:        192.168.0.1#53
+
+Name:   teddy.earth
+Address: 192.168.0.1
+
+[root@teddy root]# 
+		</programlisting>
+	</section>	
+	
+	<section>
+		<title>dig</title>
+		<para>
+		Dig is are replacement for nslookup, and has been included in most distributions.
+		</para>
+		<screen>
+			<userinput>
+				<command>dig</command> <replaceable>flags</replaceable> <replaceable>target</replaceable>
+			</userinput>
+		</screen>
+		<table frame="all">
+			<title>dig Flags</title>
+			<tgroup cols="2">
+				<thead>
+					<row><entry>Flag</entry><entry>Description</entry></row>
+				</thead>	
+				<tbody>
+					<row><entry>-t</entry><entry>The type of the query. MX=mail exchange, ANY=all</entry></row>
+					<row><entry>-x</entry><entry>Performs a reverse lookup</entry></row>
+					<row><entry>@server</entry><entry>The DNS server queried</entry></row>
+				</tbody>
+			</tgroup>
+		</table>	
+		<programlisting>
+		<![CDATA[
+[root@teddy root]# dig teddy.earth
+
+; <<>> DiG 9.2.0 <<>> teddy.earth
+;; global options:  printcmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 50128
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;teddy.earth.                   IN      A
+
+;; ANSWER SECTION:
+teddy.earth.            259200  IN      A       192.168.0.1
+
+;; AUTHORITY SECTION:
+earth.                  259200  IN      NS      teddy.earth.
+
+;; Query time: 7 msec
+;; SERVER: 192.168.0.1#53(192.168.0.1)
+;; WHEN: Wed Sep  3 21:06:25 2003
+;; MSG SIZE  rcvd: 59
+
+[root@teddy root]# 
+		]]>
+		</programlisting>
+	</section>	
+</section>	

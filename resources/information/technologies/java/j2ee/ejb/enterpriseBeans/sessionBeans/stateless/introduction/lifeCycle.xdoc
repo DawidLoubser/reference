@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"-->
+
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateless.introduction.lifeCycle"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="Life-cycle of stateless session bean">Life-cycle of a stateless session bean</title>
+  <para>
+    The life cycle of a stateless session bean is depicted in
+    <xref linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateless.introduction.lifeCycle_fig"/>. 
+  
+    <figure id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateless.introduction.lifeCycle_fig">
+      <title>The life-cycle of a stateless session bean</title>
+      <graphic fileref="lifeCycle.jpg"/>
+    </figure>
+  </para>
+  
+  <section>
+    <title>Physical versus virtual bean</title>
+    <para>
+       From a client's perspective an enterprise bean exists from the time the client calls
+       <literal>create()</literal> on the home interface until he calls <literal>remove()</literal>
+       on the remote interface.
+    </para>  
+    <para>
+      The life span of the physical bean may, however, be very different. The bean typically exists
+      physically in an object (thread) pool prior to the client creating a virtual instance (represented
+      by an object handle). But even after the client creates his virtual bean instance, the
+      different service requests to that instance may be realized by different physical bean
+      instances, <abbrev>i.e.</abbrev> different threads.
+    </para>
+    <para>
+       Before a service can be realized by a stateless session bean, it's session context must be set
+       to that of the client. The session context contains client identity information and may
+       potentially also include other context information like transaction context information.
+       After the session context has been assigned the bean is in the method-ready pool. Upon 
+       <literal>remove()</literal>, or when a container chooses to unbind the physical bean
+       from the virtual client bean, the bean is put back into the object (thread) pool.
+       <note><para>
+         Some application servers unbind stateless session beans after every service request.  
+       </para></note>
+    </para>
+  </section>
+</section>

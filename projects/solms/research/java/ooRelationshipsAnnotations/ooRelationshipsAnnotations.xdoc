@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    @todo This is a stub
+-->
+<article xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      id="projects.solms.research.java.ooRelationshipsAnnotations.ooRelationshipsAnnotations">
+    
+    <articleinfo>
+        <title>Using Java Annotations to realise correct UML relationships between objects</title>
+    </articleinfo>
+    
+    <abstract>
+        <para>
+            The UML Relationships (association, aggregation, composition) have specific
+            implementation impacts to exhibit correct behaviour. In vanilla Java, these have to be
+            manually coded (usually by applying standard mappings and conventions, resulting in code bulk).
+            As a more productive alternative, behaviour could be <emphasis>inferred</emphasis> by frameworks
+            (or the runtime environment) if the nature of these relationships are declared
+            using Java annotations (which would thus not require extensions to the language itself).
+        </para>
+        <para>
+            These annotations have the potential of transforming the Java language into a modern, UML-aware
+            productivity tool, without breaking compatibility with the core language / existing frameworks. 
+            TODO: This article is just a random stub of ideas, and needs to be organised.
+        </para>
+    </abstract>
+    
+    <section>
+        <title>Proposed Annotations</title>
+        
+        <section>
+            <title>@Associate</title>
+            <para>Indicates that an attribute plays an association role.</para>
+            <para>...</para>
+        </section>
+        
+        <section>
+            <title>@Aggregate</title>
+            <para>Indicates that an attribute is an aggregate.</para>
+            <para>...</para>
+        </section>
+        
+        <section>
+            <title>@Composite</title>
+            <para>Indicates that an attribute is a component.</para>
+            <para>...</para>
+        </section>
+        
+        <section>
+            <title>@????</title>
+            <para>...</para>
+        </section>
+        
+        <!-- TODO: Maybe rather @Assocation, @Aggregation, @Composition ? (more familiar UML naming convention for the relationships) -->
+        
+    </section>
+    
+    
+    <section>
+        <title>Implications / Behaviour</title>
+        
+        <para>
+            These annotations (which could either be processed by a source code pre-processor (simpler),
+            or dynamically at class loading time (more complex, but more intuitive) would provide
+            annotated objects with standard behaviour based on established mappings and expectations.
+        </para>
+        
+        <section>
+            <title>Basic Object Behaviour</title>
+            <para>...</para>
+            
+            <section>
+                <title>Equality</title>
+                <para>
+                    Typical <literal>equals()</literal> implementations all look similar: compare the
+                    <emphasis>state</emphasis> of <literal>components</literal> and <literal>aggregates</literal>
+                    (by invoking their respective <literal>equals()</literal> services), and compare the
+                    <emphasis>object identity</emphasis> of <literal>associations</literal> (by using
+                    <literal>==</literal>).
+                </para>
+                <para>
+                    A default implementation could provide this behaviour for all the attributes of an object, 
+                    and further annotations could be provided to <quote>exclude</quote> attributes from being
+                    part of the equality test.
+                </para>
+            </section>
+            
+            <section>
+                <title>Hashcode</title>
+                <para>
+                    Same behaviour as for equality - using the hashcodes of the <literal>components</literal> and
+                    <literal>aggregates</literal>, and the <literal>object identity</literal> of <literal>associates</literal> 
+                    to derive a hashcode. Using object identity as a number (and thus the pointer) might pose
+                    a minor problem, i.e. one might have to revert to native code to get it (TODO: Have a look
+                    at the <literal>hashcode()</literal> implementation in <literal>java.lang.Object</literal>.)
+                </para>
+            </section>
+            
+            <section>
+                <title>Observation</title>
+                <para>
+                    Observer / Observables are automatically associated with each other, in order for <literal>component</literal>
+                    and <literal>aggregate</literal> attributes to become "part of the state of" an object. Changes to these
+                    attributes will automatically result in the parent object broadcasting state change events, as it's state
+                    has effectively changed.
+                </para>
+            </section>
+            
+            <section>
+                <title>Getting / Setting Attributes</title>
+                <para>
+                    The rules of encapsulation (e.g. making copies of <emphasis>components</emphasis> in getters or setters) 
+                    can automatically be applied based on the role the attributes. The parent object can also automatically
+                    be registered / de-registered as observer for these components, and change events (when setting the
+                    attributes) can automatically be generated.
+                </para>
+                <para>
+                    Further annotations can be introduced to exclude this behaviour for certain attributes, if desired.
+                </para>
+            </section>
+            
+            <section>
+                <title>Cloning</title>
+                <para>...</para>
+            </section>
+            
+        </section>
+        
+        <section>
+            <title>Persistence</title>
+            
+            <section>
+                <title>Object-Relational Mapping (EJB)</title>
+                <para>...</para>
+            </section>
+            
+        </section>
+        
+        <section>
+            <title>Graphical User Interfaces</title>
+            <para>...</para>
+        </section>
+        
+        
+    </section>
+    
+    
+</article>
+

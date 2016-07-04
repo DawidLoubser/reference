@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.interception.interceptors.methodLevel.methodLevel"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Method level interceptors</title>
+  <para>
+    Method level interceptors are used when one wants to apply an interceptor to only one specific
+    business service.
+  </para>
+  
+  <section>
+    <title>Applying method level interceptors via annotations</title>
+    <para>
+      One can simply annotate the relevant business method of an enterprise bean if one wants to
+      apply an interceptor to only that business service:
+      <programlisting><![CDATA[
+@Interceptors({za.co.solms.comms.email.EMailInterceptor.class})
+public String generateForecast(PersonInfo personInfo) throws WontSayException
+{
+  String period = forecastPeriods[rng.nextInt(forecastPeriods.length)];
+  
+  String outcome = forecastOutcomes[rng.nextInt(forecastOutcomes.length)];
+  
+  if (outcome.endsWith("no longer with us"))
+  		throw new WontSayException();
+  
+  return "During the next " + period + " you will " + outcome +".";
+}
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Applying method level interceptors in the deployment descriptor of a bean</title>
+    <para>
+      Instead of applying an method-level interceptor in the source code of a bean via an annotation, we can
+      also apply the interceptor in a separate deployment descriptor. This is done in a
+      <literal>interceptor-bindings</literal> section of the <literal>assembly-descriptor</literal>
+      of the <literal>ejb-jar.xml</literal> deployment descriptor.
+    </para>
+    <para>
+      For example, below we specify that the <literal>NotifyForecastRequestInterceptor</literal>
+      is applied to that <literal>generateForecast</literal> business service of the
+      <literal>AstrologyFeeder</literal> bean which obtains a <literal>PersonInfo</literal>
+        as method parameter:
+      <programlisting><![CDATA[
+<assembly-descriptor>
+  ...
+  <interceptor-binding>
+    <ejb-name>AstrologyFeeder</ejb-name>
+    <interceptor-class>
+        za.co.solms.comms.email.NotifyForecastRequestInterceptor
+    </interceptor-class>
+    <method-name>generateForecast</method-name>
+    <method-params>
+      <method-param>
+          za.co.solms.astrology.AstrologyFeeder.PersonInfo
+      </method-param>
+    </method-params>
+  </interceptor-binding>
+</assembly-descriptor>
+        ]]></programlisting>
+    </para>
+  </section>
+</section>
+  
+  

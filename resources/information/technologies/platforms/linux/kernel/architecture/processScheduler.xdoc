@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section SYSTEM "file:/usr/share/sgml/db42xml/docbookx.dtd"-->
+<section id="resources.information.platforms.linux.kernel.architecture.processScheduler"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>The process scheduler</title>
+  <para>
+    The process scheduler is the heart of the kernel. All other kernel systems are conceptually
+    and physically dependent on it.
+  </para>
+  <section>
+    <title>Responsibilities of the process scheduler</title>
+    <para>
+      The process scheduler has the following responsibilities:
+      <itemizedlist>
+        <listitem><para>
+          provide and switch access of the processes to the CPU,
+        </para></listitem>
+        <listitem><para>
+          allow processes to create new copies of themselves, spawning new processes,  
+        </para></listitem>
+        <listitem><para>
+          clean-up process resouces when a process has terminated,  
+        </para></listitem>
+        <listitem><para>
+          receive interrupts and route them to the appropriate  kernel sub-system,
+        </para></listitem>
+        <listitem><para>
+            send signals to user processes,
+        </para></listitem>
+        <listitem><para>
+           manage the timer hardware and
+        </para></listitem>
+        <listitem><para>
+          to provide a mechanism to dynamically extend and removing kernel functionalities.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+
+  <section>
+    <title>The interface to the process scheduler</title>
+    <para>
+      The process scheduler sub-system publishes a very compact interface.
+    </para>
+    
+    <section>
+      <title>Creating and terminating processes</title>
+      <para>
+        After the kernel is booted there is only one running process, <command>init</command>.
+        This process then spawns further processes which then can themselves spawn copies 
+        of themselves. The kernel services used in this process are
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>fork()</title>
+            <para>
+              which generates a <emphasis>child process</emphasis> which is a copy of
+              the parent process, and
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>_exit()</title>
+            <para>
+              which is called either explicitly or implicitly upon process termination.
+            </para>
+          </formalpara></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Loading, initializing and removing modules</title>
+      <para>
+        Linux provides a mechanism for dynamically adding and removing functionalities
+        by loading or deleting <emphasis>kernel modules</emphasis>.
+        The module-related services offered by the kernel are
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>create_module()</title>
+            <para>
+              which 
+              <itemizedlist>
+                <listitem><para>
+                  allocates sufficient memory for the module and 
+                </para></listitem>
+                <listitem><para>
+                  initializes the module structure which will be populated with
+                  <itemizedlist>
+                    <listitem><para>
+                      a pointer to the module's symbol table, and
+                    </para></listitem>
+                    <listitem><para>
+                      a field for the module name.  
+                    </para></listitem>
+                  </itemizedlist>
+                </para></listitem>
+              </itemizedlist>
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>init_module()</title>
+            <para>loads the module from disk and activates it, and</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>delete_module()</title>
+            <para>unloads a module, <abbrev>i.e.</abbrev> removes the module from the kernel.</para>
+          </formalpara></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Signals</title>
+      <para>
+        Signals provide a way for inter-procecss communication. The
+        <command>signal()</command> service allows a user process to register
+        a function handler with a signal, <abbrev>i.e.</abbrev> the function handler
+        will be called if such a signal is sent to the user process.
+        <note>
+          <para>
+            Signals are covered in more detail in the inter-process communication sub-system.
+          </para>
+        </note>
+      </para>
+    </section>
+    
+    
+    <section>
+      <title>Timer management</title>
+      <para>
+        The kernel provides
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>setitimer()</title>
+            <para>to set a particular timer, and</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>getitimer()</title>
+            <para>to retrieve the current value of a timer.</para>
+          </formalpara></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>The scheduling algorithm</title>
+    <para>
+      The schedule algorithm re-assigns CPU access to potentially another process. It is
+      called
+      <itemizedlist>
+        <listitem><para>
+          after every system call,          
+        </para></listitem>
+        <listitem><para>
+          after every <emphasis>slow interrupt</emphasis>,
+        </para></listitem>
+        <listitem><para>
+          and if <command>sleep()</command> is called for a process.
+        </para></listitem>
+      </itemizedlist>
+      <note>
+        <para>
+          Linux uses a timer interrupt every 10 milliseconds and hence the process
+          scheduler is called at least once every 10 milliseconds.
+        </para>
+      </note>
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Interrupts</title>
+    <para>
+      Linux distinguishes between <emphasis>fast interrupts</emphasis> and
+      <emphasis>slow interrupts</emphasis>.
+    </para>
+    <section>
+      <title>Slow interrupts</title>
+      <para>
+        this is the normal interrupt during which
+        <itemizedlist>
+          <listitem><para>
+            further interrupts can be processed, and  
+          </para></listitem>
+          <listitem><para>
+            the process scheduler functional as normal, scheduling between the various
+            <quote><emphasis>slow</emphasis></quote> interrupt handlers and
+            the other processes.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+
+    <section>
+      <title>Fast interrupts</title>
+      <para>
+        A fast interrupt disables other interrupts (except if it explicitly re-enables them).
+        It is used for simple and important interrupt handling,like processing keyboard
+        signals.
+      </para>
+    </section>
+  </section>
+  
+</section>

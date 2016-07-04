@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1523:section xmlns:ns1523="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.lifeCycle.lifeCycle">
+
+  <ns1524:title xmlns:ns1524="http://docbook.org/ns/docbook">The Life Cycle of an Entity Bean</ns1524:title>
+  <ns1525:para xmlns:ns1525="http://docbook.org/ns/docbook">
+    In <ns1526:xref xmlns:ns1526="http://docbook.org/ns/docbook" linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.lifeCycle.lifeCycle"/>
+     we show the life cycle of an entity bean. 
+  </ns1525:para>
+  
+  <ns1527:figure xmlns:ns1527="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.lifeCycle.lifeCycle_fig">
+    <ns1528:title xmlns:ns1528="http://docbook.org/ns/docbook">Life cycle of an entity bean</ns1528:title>
+    <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="lifeCycle.jpg"/></imageobject></mediaobject>
+  </ns1527:figure>
+  
+  <ns1529:section xmlns:ns1529="http://docbook.org/ns/docbook">
+    <ns1530:title xmlns:ns1530="http://docbook.org/ns/docbook">Instantiating Entity Beans</ns1530:title>
+    <ns1531:para xmlns:ns1531="http://docbook.org/ns/docbook">
+      The Entity Bean's implementation class is instantiated when the container wants to
+      increase the number of available entity bean instances (perhaps because the bean pool is
+      depleted). Thus, entity beans are not necessarily instantiated upon client service requests.
+    </ns1531:para>
+    <ns1532:para xmlns:ns1532="http://docbook.org/ns/docbook">
+      Like session beans, entity beans are instantiated via the  
+      <ns1533:literal xmlns:ns1533="http://docbook.org/ns/docbook">newInstance()</ns1533:literal> method of their class descriptor which in turn
+      calls the default constructor of the bean implementation class.
+    </ns1532:para>
+    <ns1534:para xmlns:ns1534="http://docbook.org/ns/docbook">
+      After the bean has been instantiated, it receives a call-back,  
+      <ns1535:literal xmlns:ns1535="http://docbook.org/ns/docbook">setEntityContext</ns1535:literal> from the container which associates an entity
+      context to it. The entity context contains environmental information like the
+      transactional state of the entity bean and the client's security role and identity.
+    </ns1534:para>
+  </ns1529:section>
+  
+  <ns1536:section xmlns:ns1536="http://docbook.org/ns/docbook">
+    <ns1537:title xmlns:ns1537="http://docbook.org/ns/docbook">Entity Beans in the Pool</ns1537:title>
+    <ns1538:para xmlns:ns1538="http://docbook.org/ns/docbook">
+      While entity beans reside in the bean pool, they are not assigned to database
+      information and do not have any open connections to any database.
+    </ns1538:para>
+  </ns1536:section>
+  
+  <ns1539:section xmlns:ns1539="http://docbook.org/ns/docbook">
+    <ns1540:title xmlns:ns1540="http://docbook.org/ns/docbook">Creating New Entity Beans</ns1540:title>
+    <ns1541:para xmlns:ns1541="http://docbook.org/ns/docbook">
+      The home interface can also be used to create new entity beans resulting in new
+      information entities which will be inserted into the corresponding database.</ns1541:para>
+    <ns1542:para xmlns:ns1542="http://docbook.org/ns/docbook">When the home object receives a <ns1543:literal xmlns:ns1543="http://docbook.org/ns/docbook">create</ns1543:literal> message it
+      asks the container for an instance from the bean pool and initializes the instance via a
+        <ns1544:literal xmlns:ns1544="http://docbook.org/ns/docbook">ejbCreate</ns1544:literal> message. Upon  
+      <ns1545:literal xmlns:ns1545="http://docbook.org/ns/docbook">ejbCreate</ns1545:literal> the entity bean fields are initialized and the
+      information is inserted into the appropriate database.
+    </ns1542:para>
+  </ns1539:section>
+  
+  <ns1546:section xmlns:ns1546="http://docbook.org/ns/docbook">
+    <ns1547:title xmlns:ns1547="http://docbook.org/ns/docbook">The Bean's Ready State</ns1547:title>
+    <ns1548:para xmlns:ns1548="http://docbook.org/ns/docbook">
+      While the entity bean is in the ready state it offers the business services defined
+      in the remote interface. If any of these service requests modify the state of the bean,
+      this modification is fed through via <ns1549:literal xmlns:ns1549="http://docbook.org/ns/docbook">ejbStore</ns1549:literal>.
+    </ns1548:para>
+    <ns1550:para xmlns:ns1550="http://docbook.org/ns/docbook">
+      The container synchronizes all views onto an entity bean. Every time an entity bean
+      is updated through one of the bean instances assigned to some or other client, the other
+      views (typically held by other clients) are automatically updated via <ns1551:literal xmlns:ns1551="http://docbook.org/ns/docbook">ejbStore</ns1551:literal>.
+    </ns1550:para>
+  </ns1546:section>
+  
+  <ns1552:section xmlns:ns1552="http://docbook.org/ns/docbook">
+    <ns1553:title xmlns:ns1553="http://docbook.org/ns/docbook">Activation and Passivation</ns1553:title>
+    <ns1554:para xmlns:ns1554="http://docbook.org/ns/docbook">
+      To protect the memory resources of the application server, the container passifies
+      entity beans as they time out or as resources need to be freed. Before sending the
+        corresponding<ns1555:literal xmlns:ns1555="http://docbook.org/ns/docbook">ejbPassivate()</ns1555:literal> message, the container
+      first calls <ns1556:literal xmlns:ns1556="http://docbook.org/ns/docbook">ejbStore()</ns1556:literal> so that the bean feeds its
+      state through to persistent storage. A passivated entity bean is inserted back into the
+      bean pool and the resources it may have held (e.g. database connections) are released.
+    </ns1554:para>
+    <ns1557:para xmlns:ns1557="http://docbook.org/ns/docbook">
+      After reactivation (via <ns1558:literal xmlns:ns1558="http://docbook.org/ns/docbook">activate()</ns1558:literal>) the container
+      send an <ns1559:literal xmlns:ns1559="http://docbook.org/ns/docbook">ejbLoad()</ns1559:literal> message to your bean so that it is
+      once again synchronized with the database.
+    </ns1557:para>
+  </ns1552:section>
+  
+  <ns1560:section xmlns:ns1560="http://docbook.org/ns/docbook">
+    <ns1561:title xmlns:ns1561="http://docbook.org/ns/docbook">Removing Entity Beans</ns1561:title>
+    <ns1562:para xmlns:ns1562="http://docbook.org/ns/docbook">
+      If entity beans are removed, the data they represent will be deleted from the
+      peristent storage (<ns1563:abbrev xmlns:ns1563="http://docbook.org/ns/docbook">i.e.</ns1563:abbrev> database).
+    </ns1562:para>
+  </ns1560:section>
+  
+</ns1523:section>

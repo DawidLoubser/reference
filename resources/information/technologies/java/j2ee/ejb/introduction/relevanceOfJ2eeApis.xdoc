@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"-->
+<section id="resources.information.technologies.java.j2ee.ejb.introduction.relevanceOfJ2eeApis"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Relevance of J2EE APIs to Enterprise Java Beans</title>
+  <para>
+    Many of the J2EE APIs have a direct relevance when developing or using
+    Enterprise Java Beans.
+  </para>
+  
+  <section>
+    <title>Web Containers and EJB Application Servers</title>
+    <para>
+      Many EJB application servers come standardly packaged with both, an EJB container
+      for the business logic components and a web container for web-based presentation layer
+      components. JBoss itself can be downloaded within a package which hosts both, the JBoss
+      application server and a servlet container (typically TomCat or Jerry). In some
+      of these (<abbrev>e.g.</abbrev> JBoss with Jerry), the web and EJB containers run within 
+      the same Java   virtual machine.
+    </para>
+  </section>
+
+  <section>
+    <title>Web Services Supplied by Enterprise Java Beans</title>
+    <para>
+      EJB application servers are typically expected to process Web-Services based
+      service requests. Many application servers offer frameworks which automate the
+      publishing of EJB-based services as web services. JBoss provides to this end JBoss.Net
+      which automates the web-service generation across the Apache Axis Web Services
+      framework. However, axis can be easily replaced by JAX-RPC.
+    </para>
+    <para>
+      Furthermore, enterprise beans may advertise the services they offer in technologies
+      provided by the web services standards (UDDI in particular).
+    </para>
+  </section>
+  
+  <section>
+    <title>JDBC and Enterprise Java Beans</title>
+    <para>
+      Enterprise beans often have to make use of information available in persistent
+      storage. This is usually done via JDBC. Furthermore, the EJB specification provides for
+      entity beans which represent persistent objects with persistent state. EJB containers
+      provide services for automatic persistence to a range of persistence technologies. If
+      the underlying persistence technology is a SQL-supporting data storage (e.g. a
+      relational database), then the applications server will usually make use of JDBC to
+      access the storage.
+    </para>
+    <para>
+      JBoss provides JBossCMP, JBoss Container Managed Persistence as a persistence
+      engine for entity beans.
+    </para>
+  </section>
+
+  <section>
+    <title>JTA and EJB Application Servers</title>
+    <para>
+      The EJB specification provides support for specifying transaction boundaries as
+      well as transaction isolation levels declaratively (in XML deployment descriptors). They
+      make use of a Java transaction service through the JTA.
+    </para>
+    <para>
+      It is interesting to note that the decoupling of the transaction logic from the
+      business logic -- the former is specified declaratively when enterprise beans are
+      deployed while the latter is contained in the code of the enterprise beans opens the
+      doors for business logic component vendors. These vendors can develop business logic
+      units outside the context of the transactional requirements which are often specific to
+      the higher level business processes in which these components are to be deployed.
+    </para>
+    <para>
+      JBoss provides JBossTX, the JBoss Transaction eXtension as an implementation of a
+      Java transaction service.
+    </para>
+  </section>
+
+  <section>
+    <title>JAAS and Enterprise Java Beans</title>
+    <para>
+      Authentication is not within the responsibility domain of Enterprise Java Beans
+      (the business logic layer). Here authorization is the core responsibility and the EJB
+      specification provides a mechanism for specifying security roles and service access
+      control for these roles.
+    </para>
+    <para>
+      Clients are usually authenticated in the presentation layer and these authenticated
+      principals are mapped onto security roles.
+    </para>
+    <para>
+      JBoss provides JBossSX, the JBoss Security eXtension as a framework for role-based
+      authorization. In addition to this, JBossSX also provides mechanism for generating login modules.
+    </para>
+  </section>
+
+  <section>
+    <title>Relevance of JNDI for EJBs</title>
+    <para>
+      Java clients typically obtain references to enterprise beans via JNDI. Furthermore,
+      resource handles (<abbrev>e.g.</abbrev> for database servers) are also obtained through JNDI. Finally one
+      enterprise bean gets a handle to another enterprise bean via JNDI.
+    </para>
+    <para>
+      JBoss provides JBossNS, the JBoss Naming Service as a JNDI implementation.
+    </para>
+  </section>
+
+  <section>
+    <title>Relevance of JMS to EJB Application Servers</title>
+    <para>
+      The EJB specification now includes message-driven beans. The purpose of
+      message-driven beans is to process asynchronous service requests, 
+      <abbrev>i.e.</abbrev> they receive the
+      service request from a messaging service. EJB application service are hence required to
+      provide integration with JMS implementations.
+    </para>
+    <para>
+      JBoss provides JBossMQ as a powerful implementation of a JMS.
+    </para>
+  </section>
+
+  <section>
+    <title>JCA and EJB Application Servers</title>
+    <para>
+      EJB application servers are required to provide connection pooling. JBoss provides
+      JBossCX, the JBoss Connectivity eXtension, as an implementation of a JCA.
+    </para>
+  </section>
+
+  <section>
+    <title>JBoss and JMX</title>
+    <para>
+      The entire JBoss Application Server has been designed around JMX. This makes JBoss
+      particularly flexible enabling one. Any service is typically installed as a managed bean
+      which can then be managed at a higher, more abstract, level.
+    </para>
+  </section>
+
+</section>

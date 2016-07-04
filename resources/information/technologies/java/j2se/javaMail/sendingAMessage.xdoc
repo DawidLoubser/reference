@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.networking.eMail.sendingAMessage"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/Docs/re_schema/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="Sending a Message">Sending a Message</title>
+
+<para>The first step is to open a session to the SMTP host through which the mail will be sent. 
+That is done via</para>
+
+<para><programlisting>
+Properties props = new Properties();
+props.put("mail.smtp.host", hostName);
+
+Session session = Session.getDefaultInstance(props, null);
+</programlisting></para>
+
+<para>Next we simply create an instance of a message using the appropriate messaging standard, for
+example</para>
+
+<para><programlisting>
+Message msg = new MimeMessage(session);
+</programlisting></para>
+
+<para>The sender and recipients addresses are specified via</para>
+
+<para><programlisting>
+msg.setFrom(new InternetAddress(senderAddress));
+
+msg.setRecipients(Message.RecipientType.TO, recipientAddresses);
+</programlisting></para>
+
+<para>where <emphasis role="verb">recipientsAddresses</emphasis> is of type <emphasis role="verb">InternetAddress[]</emphasis>. We can also set 
+recipients individually and the recipient types may be <emphasis role="verb">TO</emphasis>, <emphasis role="verb">CC</emphasis> or <emphasis role="verb">BCC</emphasis>.</para>
+
+<para>The subject and sent-date can be set via appriate set methods and the content of 
+the message may be of any type supported by MIME. Below we set the content to be
+a plain text message:</para>
+
+<para><programlisting>
+String msgText = "Hi there";
+
+msg.setContent(msgText, "text/plain"); 
+</programlisting></para>    
+</section>

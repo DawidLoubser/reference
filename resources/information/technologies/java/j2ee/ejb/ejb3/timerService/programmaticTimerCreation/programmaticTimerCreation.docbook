@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook
+         http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>Programmatic timer creation</title>
+    <para>
+        At times you want to schedule tasks in response to certain business events. To this end the EJB specification
+        supports the programmatic
+        timer creation. This is done by asking a timer service provided by the EJB container to create an appropriate
+        timer for a given
+        schedule expression. Upon timeout event of the created timer, the application server will call the
+        <literal>@Timeout</literal>
+        annotated service of that stateless session bean from which the timer was created.
+    </para>
+    <para>
+        For example, in order to ensure that an invoice is paid on its due date, one could schedule, for each received
+        invoice, an appropriate
+        timer programmatically.
+
+        <programlisting language="Java"><![CDATA[
+@Stateless
+public class InvoiceProcessorBean
+{
+   public void processInvoice(Invoice invoice)
+   {
+      entityManager.persist(invoice);
+      
+      Calendar dueDate = invoice.getDueDate();
+      int dayOfMonth = dueDate.get(Calendar.DAY_OF_MONTH);
+      int month = dueDate.get(Calendar.MONTH);
+      int year = dueDate.get(Calendar.YEAR);
+      
+      ScheduleExpression payDateExpr = new ScheduleExpression().dayOfMonth(dayOfMonth).month(month).year(year);
+      
+      // Now ask timer service to create persistent timer (true parameter)
+      timerService.createCalendarTimer(payDateExpr, new TimerConfig(invoice, true);
+   }
+
+   @Timeout
+    public void payInvoice(Timer timer)
+    {
+       Invoice invoice = (Invoice) timer.getInfo();
+       paymentProcessor.payInvoice(invoice);
+    }
+
+   @Inject
+   PaymentProcessor paymentProcessor;
+
+   @PersistenceContext
+   private EntityManager entityManager;
+
+   @Resource
+   private TimerService timerService;
+}
+            ]]></programlisting>
+    </para>
+</section>    

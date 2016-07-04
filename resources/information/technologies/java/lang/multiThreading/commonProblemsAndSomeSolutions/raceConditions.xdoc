@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.lang.multiThreading.commonProblemsAndSomeSolutions.raceConditions"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+ xmlns:xi="http://www.w3.org/2001/XInclude">
+ 
+    <title role="Race Conditions">Race Conditions</title>
+
+<para>A <emphasis>race condition</emphasis> occurs when two threads try to access the same object 
+at the same time and the behaviour of the application depends on which thread
+gets the monitor first.</para>
+
+<para>A typical such problem is when several thread wait on the same condition. When 
+that condition satisfied they may be all released via a <emphasis role="verb">notifyAll()</emphasis> 
+message. The threads will race and the first thread could change the condition
+of the resource such the remaining threads are not able to complete
+their task successfully. Still, they have been released and will be able to
+get the resource's monitor after the first thread exited the synchronized
+code. If they do not recheck the condition things may go terribly wrong.</para>
+
+<para>For example, below we list a variant of our familiar consumer/producer
+application, this time with multiple data processing threads.</para>
+
+    <para><programlisting>
+    <xi:include parse="text" href="source/RaceCondition.java"/>
+        </programlisting></para>
+
+<para>The data processing threads will all be released when the producer supplies
+new data. If the threads check the condition via a <emphasis role="verb">if</emphasis> statement the
+first thread will extract the new data and the second thread might try and 
+extract from an empty queue resulting in a <emphasis role="verb">NoSuchElementException</emphasis> being
+thrown by the linked list:</para>
+
+<para><programlisting>    
+#0 received data: 12:17:32:15 on 04/04/99 => 0.8858
+java.util.NoSuchElementException
+        at java.util.LinkedList.remove(LinkedList.java:562)
+        at java.util.LinkedList.removeFirst(LinkedList.java:122)
+        at DataProcessor.run(Compiled Code)
+        at java.lang.Thread.run(Thread.java:479)
+#0 received data: 12:17:33:25 on 04/04/99 => 0.8929
+#0 received data: 12:17:34:25 on 04/04/99 => 0.6783
+...
+</programlisting></para>
+
+<para>It is unfortunately not good enough for a producer to send a <emphasis role="verb">notify()</emphasis> 
+message instead of a <emphasis role="verb">notifyAll()</emphasis> message to the resource. The reason 
+for this is that another non-blocked thread might acquire the monitor between 
+that instant where the blocked thread is unblocked and that moment when it
+regains the monitor of the resource. The waiting thread is thus prevented from
+accessing the synchronized code until the other thread exited the synchronized
+code. When the thread enters the synchronized block the condition may
+have once again changed and hence it will once again try to extract from an 
+empty list.</para>
+
+<para>The solution is to retest the condition before continuing, <abbrev>i.e.</abbrev> after the 
+blocked thread has been released via <emphasis role="verb">notify()</emphasis> or <emphasis role="verb">notifyAll()</emphasis>. 
+This is done via a <emphasis role="verb">while</emphasis> loop like the following:</para>
+
+<para><programlisting>
+while ((list.size() == 0) &amp;&amp; (!stopRequested))
+ try {dataSource.wait(50);}
+</programlisting></para>
+
+<para>
+Such a while loop is called a <emphasis>spin lock</emphasis>.
+</para>    
+</section>

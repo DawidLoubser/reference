@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.c.fundamentals.functions"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Functions and Procedures</title>
+  <para>
+    Conceptually we have <emphasis>functions</emphasis> which perform operations
+    which result in a return value (e.g. the caluclation of a result) and
+    <emphasis>procedures</emphasis> which perform a sequence of operations but
+    do not return a result. In <emphasis>C</emphasis> both are represented by
+    functions, the former by a function with a return value and the latter by
+    a function without a return value (returning <command>void</command>).
+  </para>  
+  <section><title>Functions</title>
+    <para>
+      A function 
+      <itemizedlist>
+        <listitem><para>has a name,</para></listitem>
+        <listitem><para>receives a number of arguments and</para></listitem>
+        <listitem><para>has a return value of a specified type.</para></listitem>
+      </itemizedlist>  
+      <programlisting>
+        returnType functionName(arg1Type, arg1, ..., argNType, argN)
+        {
+          functionBodyStatements;
+          returnType x = ...;
+          return x;
+        }
+      </programlisting>  
+      The variable (or constant) returned must be of the return type of the function.
+    </para> 
+    <example id="power.c"><title>power.c</title>
+      <programlisting><xi:include href="source/power.c" parse="text"/></programlisting>
+    </example>
+  </section>
+
+  <section><title>Procedures</title>
+    <para>
+      A procedure has no return value. This is specified in <emphasis>C</emphasis>
+      by making the return type <command>void</command> and omitting a return statement.
+    </para>  
+    <example id="procedure.c"><title>procedure.c</title>
+      <programlisting><xi:include href="source/procedure.c"  parse="text"/></programlisting>
+    </example>
+  </section>
+  
+  <section><title>How are function arguments passed?</title>
+    <para>
+      Function arguments are always copied from the calling code to the function
+      (i.e. passed by value).
+      Modifying the arguments in the function body will thus not affect the source
+      arguments as is demonstrated in <xref linkend="passByValue.c"/>. 
+    </para>
+    <example id="passByValue.c"><title>passByValue.c</title>
+      <programlisting><xi:include href="source/passByValue.c"  parse="text"/></programlisting>
+      <para>
+        The output of the program is
+        <programlisting>
+a, b in main before calling f = 1,1
+a, b at start of f = 1,1
+a, b at end of f = 2,3
+a, b in main after calling f = 1,1
+        </programlisting>  
+      </para>  
+    </example>  
+    <para>
+      After having discussed pointers we shall see how variables can be effectively 
+      passed by reference.
+    </para>  
+  </section>
+  
+  <section><title>Static variables</title>
+    <para>
+      Local variables of a function (including function arguments) exist for the 
+      duration. Their values are not preserved accross function calls. If you 
+      need a variable whose value is maintained accross function calls, you
+      declare it <command>static</command>. <xref linkend="staticVariables.c"/>
+      demonstrates the difference between statis and non-static variables.
+      <example id="staticVariables.c"><title>staticVariables.c</title>
+        <para>
+          The function <command>testStatic</command> has a static and a non-static
+          integer variable. Both are initialized to zero and incremented within
+          the function. 
+        </para>  
+        <programlisting><xi:include href="source/staticVariables.c"  parse="text"/></programlisting>
+        <para>            
+          The static variable is initialized only once, the first
+          time the function is called, and its value is preserved accross service
+          requests. The output of the proram is listed below:
+          <programlisting>
+i, j = 0, 0
+i, j = 0, 1
+i, j = 0, 2
+i, j = 0, 3
+i, j = 0, 4
+i, j = 0, 5
+i, j = 0, 6
+i, j = 0, 7
+i, j = 0, 8
+i, j = 0, 9            
+          </programlisting>  
+        </para>
+      </example>  
+    </para>  
+  </section>
+  <section><title>Recursion</title>
+    <para>
+      If a function calls itself directly or indirectly, it is called recursion.
+      Recursive algorithms can be very compact and conceptually simple and clean.
+      Typical examples include certain mathematical functions like the factorial
+      function discussed in <xref linkend="factorial.c"/> and tree processing 
+      algorithms (e.g. directory trees or XML DOM trees).
+    </para>
+    <example id="factorial.c"><title>factorial.c</title>
+      <para>
+        The factorial function is defined by
+        <programlisting>
+n! = n x (n-1) x (n-2) x ... x 2 x 1
+        </programlisting>
+        with <literal>0!</literal> defined as 1.
+      </para>  
+      <programlisting><xi:include href="source/factorial.c"  parse="text"/></programlisting>
+    </example>  
+    <warning>
+      <para>
+        One should, however, be aware that recursive algorithms may put significant 
+        strain on the stack (which is a limited resource) and may incur significant 
+        processing overheads in the construction and unraveling of the stack frames.
+        For each level of recursion a new stack frame must be constructed keeping
+        track of the local variable and the function pointer for that level.
+      </para>
+      <para>
+        Recursive algorithms can always be mapped onto non-recursive algorithms and 
+        in cases where there are potentially many levels of recursion, they should 
+        typically be avoided.
+      </para>
+    </warning>  
+  </section>
+
+  <section id="secPrototyping"><title>Function prototyping</title>
+    <para>
+      For the compiler to resolve the function calls, the function must be known
+      when it is used. That is why we declared the <command>factorial</command> 
+      function, for example, before <command>main</command> where we call
+      <command>factorial</command>.
+    </para>
+    <para>
+      This may not always be possible. For example, if two functions call each other
+      we need a mechanism to inform the compiler of a function which is defined
+      lower in the listing.
+    </para>
+    <para>
+      Prototyping enables one to publish the function interface (header) separately
+      from the implementation. This mechanism will also be useful when we 
+      seperate the interface and implementation into different files (header and 
+      c-implementation files) which will enable us to distribute compiled libraries
+      and to speed up the compilation of large applications.
+    </para>  
+    <example id="prototyping.c"><title>prototyping.c</title>
+      <para>
+        Below we define a prototype for the <command>factorial</command> function
+        separately from its implementation which is lower down in the code:
+      </para>  
+      <programlisting><xi:include href="source/prototyping.c"  parse="text"/></programlisting>
+    </example>
+  </section>
+</section>

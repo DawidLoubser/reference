@@ -1,0 +1,339 @@
+\section{Objects and Classes}
+
+In object-oriented programming the central concept is obviously an object.
+Let us first clarify the concepts of objects and classes, before going 
+into the C++ language syntax for defining classes adn creating and using
+objects.
+
+%----------------------------------------------------------------------------
+
+\subsection{What is an Object?}
+
+The central concept of object-oriented programming is an object. An object is
+a unit which
+\begin{itemize}
+  \item has identity,
+  \item has attributes and
+  \item can perform operations.
+\end{itemize}  
+
+We think object-oriented. When we use a nouns in a sentence structure we
+generally refer to objects. For example,
+
+\centerline{\em ``The green car drives along the lane.''}
+
+Here the nouns, {\em car} and {\em lane}, are objects. The objects have attributes, 
+i.e.\ the car is {\em green}, and can perform operations, \i.e.\ the car {\em drives}.
+Hence, object orientation is not an unfamiliar concept in human thought -- it is our
+natural way of thinking.
+
+%----------------------------------------------------------------------------
+
+\subsection{Identifying Objects}
+
+We have already mentioned one way to identify objects. That is by extracting the nouns 
+from a linguistic description of the system we are modeling. Otherwise we can try
+and identify units which have a clear conceptual meaning and which can be assigned
+an identity which makes them unique. Typically these units would have attributes
+and typically they can conceptually perform certain operations, i.e.\ it is natural
+to give thjem responsibilities for certain tasks.
+
+Another approach is to think of a system and identify its components. Each of the 
+components would be an object in their own right. In this way you can go on to
+deeper and deeper levels of components.
+
+Alternatively you can look at an object and identify any messages it sends in order
+to request certain services (i.e.\ identify the recipients of the function calls).
+The recipients of these messages would themselves be objects.
+
+%----------------------------------------------------------------------------
+
+\subsection{Classes as Abstractions of Objects}
+
+A class is a template from which objects are created. It encapsulates the commonalities
+of all instances (objects) of that class. Objects are instances of classes.
+
+A class defines the attribute types as well as the operations (services) which 
+its instances have. For example, an account may have an account number, a reference
+to an owner, a balance and may offer services for crediting, debiting and
+querying the balance. A particular account is an instance of the class. The
+class itself is a more abstract concept. One can discuss features of the
+class of accounts which apply to all account instances.
+
+%-------------------------------------------------------------------------
+
+\section{Defining Classes}
+
+A class is a template from which objects are generated. Conceptually
+one defines in a class the commonalities (common attributes and services)
+of the instances of the class. 
+
+%------------------------------------------------------------------------
+
+\subsection{A Simple Account Class \label{secSimpleAccount}}
+
+Below we show a simple account class which specifies that instances of
+that class can be credited and debited and that the balance can be queried:
+
+\noindent {\small \input{OOIntro/Programs/Account1.cpp}}
+
+
+%------------------------------------------------------------------------
+
+\subsection{Methods/Services}
+
+A Method interface or header specifies how users can interface with the method,
+i.e.\ how to call the method. The interface of a method
+is defined by the name of the method, the argument types and the type of
+the return value if any. The syntax for a method interface definition is
+
+\noindent{\footnotesize \begin{verbatim}
+<ReturnType> <methodName>(Argument1Type arg1Name, Argumet2Type arg2Name, ...)
+\end{verbatim}}
+
+%----------------------------
+
+\subsubsection{Method names}
+
+The method name should start with a lower case letter with word boundaries 
+capitalized. Otherwise the same rules hold as those for all other identifier
+names (see section \ref{secIdentifiers}).
+
+%----------------------------
+
+\subsection{Access levels}
+
+For the time being we shall look at only two access levels, \verb+public+
+and \verb+private+. The former specifies that a class member is publically
+accessible from anywhere. The latter specifies that a member can only be 
+accessed from within the class itself. We shall return to the issue of
+access levels in section \ref{secAccessLevels}.
+
+In C++ an access level is specified for a blocks. The access level applies
+for all consecutive elements until it is changed.
+
+\noindent{\small \begin{verbatim}
+class Account
+{
+  public:
+     void debit(double amount);
+     void credit(double amount);
+     ...
+     
+  private:
+    double balance;
+};
+\end{verbatim}}       
+
+%------------------------------------------------------------------------
+
+\subsubsection{Encapsulation}
+
+The \verb+public+ elements of a class are those which are meant for
+general use. They typically include the public services offered by
+instances of the class.
+
+All the implementation details should be encapsulated within the class,
+i.e.\ should not be visible from outside the class. This ensures that
+users of the class don't develop dependencies on these implementation
+details.
+
+Consider the following scenario: Assume you wrote a \verb+Date+ class
+with 3 public data fields:
+\noindent{\small \begin{verbatim}
+class Date
+{
+  public:
+    increment();
+    addDays(int numDays);
+    ...
+ 
+  public: 
+    int day, month, year;
+};  
+\end{verbatim}}
+
+Of course, the \verb+increment()+ and \verb+addDays(numDays)+ methods
+are non-trivial, having to check for end-of-year, end-of-month and
+potentially for leap years and after using significant amounts of code
+of the form
+
+\noindent{\small \begin{verbatim}
+for (Date d = d1; d<d2; d.increment())
+   ...;
+\end{verbatim}}
+
+\noindent
+it may seem an excessive burden to do all this work for every increment.
+At some stage you might come to the conclusion that your for-father's
+idea of using the earth's rotation around its own axis, the moon and 
+the earth's rotation around the sun as reference was not such a good idea
+after all and you may decide to work with days in some new units. 
+Keeping still the earth's rotation around it's own axis, you may decide
+to store a date as an absolute date, choosing your favourite date (e.g.\
+the first time you came home after midnight and youre parents actually
+accepted it) as day number 1 and counting days sequentially. After 2 years
+you'll reach day 730 and you were born on day -5475. Now, incrementing 
+and decrementing dates or adding a number of days to a date and many other
+functions become trivial and the only time you are faced with any of the 
+old complexity is when you have to convert between your snazy internal
+units and the archaic day, month, year units of your for-fathers. 
+
+If your data fields (day, month, year) had been declared private to start 
+off with, you could simply make the implementation changes to your class
+and that would be it. If, on the other hand, they were declared public,
+they may be accessed from any other code distributed throughout your 
+organization and you would have to search for sny such code and make
+the corresponding changes there.
+
+Furthermore, you cannot guarantee the integrity of instances of your class
+if you give public access to your data fields. Anybody could go ahead
+and set the month to 27, bypassing any form of sanity checking you may
+havein your set-methods.
+
+%------------------------------------------------------------------------
+
+\subsection{Constructors \label{secConstructors}}
+
+Constructors are used to construct (create) instances of classes -- i.e.\
+objects. A constructor has the name of the class and no return value --
+not even \verb+void+. You can give a constructor as many arguments as you 
+like and you can write multiple constructors, each with different arguments.
+Below we added two constructors to our account class. The first one takes no
+arguments (the default constructor) and the second one takes the initial 
+balance as argument.
+
+\noindent {\small \input{OOIntro/Programs/Account2.cpp}}
+
+%----------------------------
+
+\subsubsection{Member Initialization via the Constructor's Parameter List}
+
+In the second constructor the private data field, \verb+_balance+, was
+initialized within the body of the constructor. Alternatively we could have 
+initioalized the private data field from the argument in the parameter
+list like this:
+
+\noindent{\small\begin{verbatim}
+class Account
+{
+  public:
+    ...
+
+    Account(double balance): _balance(balance) {}
+    ...
+}    
+\end{verbatim}}
+
+This is effectively done in the first, the default constructor. If a new
+account is created it is automatically credited by 50 whatevers.
+
+%----------------------------
+
+\subsubsection{Compiler-Generated Default Constructor}
+
+Recall that in our earlier \verb+Account+ class example (see section
+\ref{secSimpleAccount}) we did not define a constructor at all. Yest, 
+we were able to create accounts via
+
+\noindent{\small\begin{verbatim}
+Account acc1;
+\end{verbatim}}
+
+How was this possible? The compiler wrote a default constructor -- one
+which takes no arguments and has an empty body -- for us. However, if
+we had added a constructor which takes arguments (e.g.\ the one which
+takes the initial balance as argument) without adding a default 
+constructor, we can no longer create an account in this way:
+
+\noindent {\small \input{OOIntro/Programs/Account3.cpp}}
+
+The reason for this is that C++ (like Java) creates a default constructor 
+for you if and only if you did not define any constructor whatsoever
+for your class. In general you should write your own default constructor
+if you want a default constructor and disable it if you don't. If you want 
+a class without any constructor whatsoever, you can define a \verb+private+
+default constructor.
+
+%------------------------------------------------------------------------
+
+\subsection{The OO Naming Convention}
+
+We have adhered to the OO naming convention which is very simple, clean
+and effective. It is used throughout the C++ community (except in the
+Microsoft community), in Java, Smalltalk and UML (the Unified Modeling
+Language) and simply states:
+\begin{itemize}
+  \item Class names start with capital letter. Word boundaries are
+        capitalized.
+  \item Everything else (variable names, method names, function names and
+        object names) start with lower case letter. Word boundaries are 
+        still capitalized.
+\end{itemize}
+
+%----------------------------------------------------------------------
+
+\section{Requesting services from objects}
+
+In section \ref{secConstructors} we requested several services from
+different accpount instances (objects).
+In object-orientation one requests a service from an object by
+sending a message to it. One does not call a function -- we shall 
+see later that the client often does not know which actual function
+is called.
+
+To send a message to an object one uses the member selection operator,
+the dot. For example, if we want to send a message to an account asking 
+for the balance we can do it as follows:
+
+\noindent{\small\begin{verbatim}
+double bal = acc1.balance();
+\end{verbatim}}
+
+Similarly, if we want to debit that same account, we can send a debit
+message:
+
+\noindent{\small\begin{verbatim}
+double bal = acc1.debit(500);
+\end{verbatim}}
+
+%-------------------------------------------------------------------------
+
+\section{The Life-Span of an Object on the Stack}
+
+So far we have created objects on the stack, i.e.\ they life in the
+same stack frame as other local variables. An object on the stack then
+also has a life span similar to that of local variables. It exists
+from where it is declared until the end of the block (the closing
+curly bracket) in which it is declared.
+
+%--------------------------------------------------
+
+\subsection{Destructors}
+
+Destructors are called when the object is deleted. Destructors are 
+responsible for releasing any memory which the class grabbed from the
+heap as well as releasing other resources like closing files or network
+sockets. We shall see that when
+objects are created on the heap, the destructor has to be called manually.
+However, for objects which have been created on the stack, the destructor
+is called automatically.
+
+Like constructors, the destructor also carries the name of the class, but
+it is preceded by a tilda and it may not have any arguments. The following
+example shows a destructor which simply laments the death of an object and
+illustrates how the destructor is called automatically as the object leaves
+its scope.
+
+\noindent {\small \input{OOIntro/Programs/Account4.cpp}}
+
+The output of the application looks something like this:
+
+\noindent{\small\begin{verbatim}
+Entered f().
+About to leave f()
+I, 0012FF44, am destroyed.
+Created acc1, entering block.
+Created acc2 in block,leaving block.
+I, 0012FF7C, am destroyed.
+\end{verbatim}}

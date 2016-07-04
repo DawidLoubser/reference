@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.byte.buffering.bufferingTest">
+    
+    <title>Applying (and measuring the effects of) Buffering</title>
+    
+    <para>
+        In this section we explain how to apply buffering to I/O operations, and how to
+        measure the performance improvements. There are various methods of measuring the time
+        a program takes to execute, but for the most accurate results, we should measure the
+        time the physical I/O operation takes from within our program. Let us first write a simple
+        class to help us measure performance:
+        
+    <programlisting language="Java">
+<xi:include href="src/StopWatch.java" parse="text"/>
+    </programlisting>
+    </para>
+    
+    <para>
+        Applying our stop watch to an unbuffered file copy program (called 
+        <literal>TimedCopy.java</literal>) and running it produces the following output:
+        <programlisting><![CDATA[
+$ java TimedCopy 5mbSongFile.mp3 copy.mp3
+Copied file in 27.058 seconds.
+        ]]></programlisting>
+        The source code:
+    </para>
+    <para>
+        <programlisting language="Java">
+<xi:include href="src/TimedCopy.java" parse="text"/>
+        </programlisting>
+    </para>
+    
+    <para>
+        Here we chain buffers (filter streams) to the low-level file streams in our revised
+        copy program (called <literal>TimedBufferCopy.java</literal>): 
+        <programlisting language="Java">
+<xi:include href="src/TimedBufferCopy.java" parse="text"/>
+        </programlisting>
+      Running it produces the following output:
+        <programlisting><![CDATA[
+$ java TimedBufferCopy 5mbSongFile.mp3 copy.mp3
+Copied file in 0.401 seconds.
+        ]]></programlisting>
+    </para>
+    <note>
+        <para>
+            By simply adding a small buffer (2 lines of code) we effect a more than
+            <emphasis>50-fold increase in efficiency</emphasis>. The optimum buffer size depends on the particular 
+            I/O domain - for example, when dealing with slow networks, increased buffer sizes
+            increase performance (up to a point), but also increase the cost (and likelihood) of having to
+            retransmit data because of lost packets / line noise / etc.
+        </para>
+    </note>
+    <para>
+        Buffers are among the most commonly-used filter streams, and careful usage of them will benefit
+        almost all I/O applications. The method used here for <emphasis>chaining</emphasis> (by providing
+        the low-level stream to the constructor of the next stream in the chain) is also the standard method 
+        of chaining all I/O streams together.
+    </para>
+</section>

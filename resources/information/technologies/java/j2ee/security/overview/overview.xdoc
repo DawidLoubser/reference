@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Changed root to <section> for EJB course -->
+<section
+    id="resources.information.technologies.java.j2ee.security.overview.overview"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Java EE Security Overview</title>
+    
+    <para>
+        Java EE Applications typically consist of different component types, deployed
+        into different containers (such as the Web Container and the EJB Container).
+        These component containers provide <emphasis>security services</emphasis> that
+        can provide restricted access to services in your application, based on the
+        developer abstractly specifying
+        <itemizedlist>
+            <listitem>
+                <para>
+                    The different <emphasis>roles</emphasis> played by users in the system (typically
+                    a direct mapping of the <emphasis>actors</emphasis> in your use-case model)
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    The behaviour of service requests made by users in the different roles. This
+                    is either done simply and declaratively (allowed/denied) or may be customised
+                    to the application's needs (for example, by showing a role-customised user interface, or
+                    returning role-specific results in an operation) by programmatically writing
+                    behaviour. Often, a combination of both are implemented.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    The mechanism to interact with the user, and request security <emphasis>credentials</emphasis>
+                    when needed.
+                </para>
+            </listitem>
+        </itemizedlist>
+        None of these aspects in Java EE are designed to reside with your logic components, but are typically
+        <quote>layered</quote> on top of application components. This ensures that, even in the context of elaborate
+        security schemes, your logic components remain loosely coupled, portable, and simple to maintain.
+    </para>
+    <para>
+        Only when your Java EE Server is configured or your application is deployed, are decisions made such as the 
+        security <emphasis>realm</emphasis> (users database) to be used, and how user <emphasis>roles</emphasis> are 
+        resolved (for example, against your company's existing LDAP-based user authentication system). 
+    </para>
+    
+    <section>
+        <title>Mechanisms to specify security services</title>
+        <para>
+            Throughout the Java EE environment, there are typically three mechanisms used to specify
+            how security is applied to your components:
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>Metadata Annotations</title>
+                        <para>
+                            Enables the specification of the security requirements of a component in
+                            a declarative style, without incurring the complexity of maintaining
+                            the information externally in a deployment descriptor. When the application
+                            is deployed, the container may use these annotations to configure security,
+                            or may override it if configured to do so.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Declarative Security</title>
+                        <para>
+                            Expresses all an application’s security structure, including security roles, 
+                            access control, and authentication requirements in a deployment descriptor, 
+                            which is external to the application. Each module type has it's own XML-based 
+                            descriptor vocabulary. <emphasis>Configuration specified in the deployment
+                                descriptor overrides that specified using metadata annotatons.</emphasis>
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Programmatic security</title>
+                        <para>
+                            Coded logic in an application and is used to make security decisions. Programmatic 
+                            security is useful when declarative security alone is not sufficient to express the 
+                            security model of an application. This is still typically <emphasis>layered</emphasis>
+                            on top of logic components, for example by using EJB Interceptors or Servlet filters.
+                        </para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Containers Shared Security</title>
+        <figure>
+            <title>Java EE Container Security</title>
+            <graphic fileref="images/trust.jpg"/>
+        </figure>
+        <para>
+            Several of the different containers present in a Java EE platform (EJB, Web, Persistence, etc)
+            often participate in the context of realising a single service. In this regard, security
+            and permissions information needs to be shared, and this done automatically and transparently.
+        </para>
+        <para>
+            For example, when a user makes an authenticated request to the presentation layer running in the web
+            container, and that presentation layer requests services from a secured Session Bean in the EJB container,
+            authentication and role information is automatically propagated.
+        </para>
+        <para>
+            This scheme, however, relies on trust between the different containers, as the user is not re-authenticated 
+            every time the services of a different container are accessed based on his request.
+        </para>
+    </section>
+    
+</section>  

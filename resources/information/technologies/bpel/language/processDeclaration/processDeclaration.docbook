@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>The process root</title>
+  
+  <para>
+    The root of any WS-BPEL business process specification is a <literal>process</literal> element 
+    defined within the WS-BPEL name space:
+    <programlisting>
+http://docs.oasis-open.org/wsbpel/2.0/process/executable
+    </programlisting>
+    The schema for WS-BPEL Executable, version 2.0 (the first official version) is published at:
+    <programlisting>
+http://docs.oasis-open.org/wsbpel/2.0/CS01/process/executable/ws-bpel_executable.xsd
+    </programlisting>
+    
+    The structure of a process specification is shown below:
+  </para>
+  
+  <figure>
+    <title>The high level structure of a WS-BPEL process</title>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="Process.jpg"/>
+      </imageobject>
+    </mediaobject>
+  </figure>
+  
+  <para>
+    A process is a scope within which activities occur and within which information is maintained.
+    Every process is given a name which typically is related to the use case which is realized in
+    that business process. 
+    The elements defined within a BPEL process are thus scoped to within that process. The process
+    defines
+    <itemizedlist>
+      <listitem><para>
+        partners and partner links through which the process interacts with the different role
+        players in the business process,
+      </para></listitem>
+      <listitem><para>
+        variables used to maintain state information on the process as well as to construct
+        data objects exchanged with partners,
+      </para></listitem>
+      <listitem><para>
+        correlation sets used to couple asynchronous requests with their corresponding responses,
+      </para></listitem>
+      <listitem><para>
+        a collection of activities which may themselves be structured activities (<abbrev>e.g.</abbrev> 
+        sequential or concurrent flow) or basic activities like receiving a messages, assigning
+        variables, invoking requests, throwing faults, ...
+      </para></listitem>
+      <listitem><para>
+        various types of events which result in a different flow in the business process,
+      </para></listitem>
+      <listitem><para>
+        optionally a fault handler for the scope, and  
+      </para></listitem>
+      <listitem><para>
+        optionally a compensation handler (for executing inverse transactions
+        which effectively reverse aspects of the workflow which are not reversed automatically
+        within the transaction management context).
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  <para>
+    A business process may have several <emphasis>sub-scopes</emphasis> which localize variables and
+    definitions to within a particular region of the business process.
+  </para>
+  
+  <para>
+    A typical BPEL process would have the following structure:
+    <programlisting language="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    targetNamespace="http://my.proces/target/namespace"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://docs.oasis-open.org/wsbpel/2.0/process/executable 
+    http://docs.oasis-open.org/wsbpel/2.0/CS01/process/executable/ws-bpel_executable.xsd"
+    name="myProcess">
+    
+    <!-- Import partner links definition, service contracts, schema, etc -->
+    <import importType="..." location="..."/>
+    ...
+    
+    <!-- What role do we play in the partnership ? -->
+    <partnerLinks>
+        <partnerLink name="..." partnerLinkType="..." myRole="..."/>
+        ...
+    </partnerLinks>
+    
+    <!-- Global variables / 'process state' -->
+    <variables>
+        <variable name="..." messageType="..."/>
+        ...
+    </variables>
+
+    <!-- Main process flow -->
+    <sequence>
+        <!-- Receive request -->
+        <receive partnerLink="..." operation="..." variable="..." createInstance="yes"/>
+        ...
+    </sequence>
+
+</process> 
+      ]]></programlisting>
+  </para>
+  
+  <para>
+    To illustrate, the interfacing with the partners, look at the sketch of a business process for
+    an insurance claim shown below.
+  </para>
+  
+  <figure>
+    <title>The high level structure of a BPEL process</title>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="processInsuranceClaim.jpg"/>
+      </imageobject>
+    </mediaobject>
+  </figure>
+  
+</section>  

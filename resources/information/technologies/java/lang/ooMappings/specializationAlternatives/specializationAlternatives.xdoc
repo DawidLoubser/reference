@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.lang.ooMappings.specializationAlternatives.specializationAlternatives"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Alternatives to inheritance</title>
+  <para>
+    Inheritance is used for two purposes
+    <orderedlist>
+      <listitem><para>
+        To facilitate pluggability (substitutability) of instances of specialized classes.
+      </para></listitem>
+      <listitem><para>
+        To facilitate code and state reuse.
+      </para></listitem>
+    </orderedlist>
+  </para>
+  <para>
+    However, designs based on inheritance hierarchies are often found to be very inflexible and
+    design practitioners have recommended for a long time to use delegation in preference to
+    inheritance or specialization.
+  </para>
+  
+  
+  
+  <section>
+    <title>Common problems of specialization hierarchies</title>
+    <para>
+      One can find many examples where specialization may turn out to be a sub-optimal design
+      choice. In fact, it is no easy to find examples of classes with significant business logic for
+      which specialization cannot be shown to introduce significant problems.
+    </para>
+    <para>
+      Inheritance usually results in very rigid designs which result in
+      <itemizedlist>
+        <listitem><para>
+          high maintenance cost, and
+        </para></listitem>
+        <listitem><para>
+          a design which does not naturally support objects whose behaviour changes over time.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    
+    <section>
+      <title>Modeling roles via specialization</title>
+      <para>
+        This is a common mistake made. For example, on first sight a design which has
+        <literal>Employee</literal> as a subclass of <literal>Person</literal> with various types of
+        employees like <literal>Manager</literal>, <literal>Developer</literal>,
+        <literal>BusinessAnalyst</literal> as further subclasses, is not ideal. 
+      </para>
+      <para>
+        To understand the inflexibility of such a design, consider what you would have to do if, for
+        example, a <literal>Developer</literal> becomes a <literal>Manager</literal>. We would have
+        to
+        <itemizedlist>
+          <listitem><para>
+            create a new employee which now is a manager,
+          </para></listitem>
+          <listitem><para>
+            copy state information like the employment history and so on over into the new employee
+            object (which now is an instance of a <literal>Manager</literal>),
+          </para></listitem>
+          <listitem><para>
+            find all references to the original developer object and change them to refer to the
+            manager object, and
+          </para></listitem>
+          <listitem><para>
+            delete the original employee, <abbrev>i.e.</abbrev> the <literal>Developer</literal>.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+      <para>
+        This is not only excessively complex and error prone, it also is all wrong since the object
+        identity has changed. We now have a new employee while it actually is still the same
+        employee who only plays another role within the organization.
+      </para>
+      <para>
+        A much better approach would be to define for an employee that he or she <emphasis>has a
+          current role</emphasis> which he/she plays within the organization. The current role for an
+        employee can now change without us having to create a new employee.
+        Furthermore, it is now also easy to keep track of any historic roles.
+      </para>
+    </section>
+    
+    <section>
+      <title>Modeling different service profiles via specialization</title>
+      <para>
+        It may seem very natural to model different types of accounts within a class hierarchy which
+        introduces a base account encapsulating the concept of an account and all the commonalities
+        across the various types of accounts. We could then have card accounts, checking accounts
+        and loan accounts as specialization of <literal>Account</literal>. These accounts would
+        have further specializations. For example, home loan, vehicle loan and personal loan
+        accounts could all be specializations of <literal>LoanAccount</literal>.
+      </para>
+      <para>
+        On first sight such a design may seem the obvious solution. However, the rigidness of the
+        class hierarchy may, once again, result in high maintenance costs due to its inflexibility.
+      </para>
+      <para>
+        For example, one day the company may change the business model to allow checking, card and
+        loan services on a single account which has a single balance and a single transaction
+        history. The design based on a class hierarchy would not at all be able to cater for this
+        change in business model and the entire accounts framework would most probably have to be
+        re-implemented.
+      </para>
+      <para>
+        A better solution would possibly be to have an account class which supports pluggable
+        services like loan services, checking services and card services. This design would still
+        cater for the traditional business model of having separate accounts which would be standard
+        some account templates with standard service packages. But such a design would be a lot more
+        flexible than an inheritance based design.
+      </para>
+    </section>
+    
+    <section>
+      <title>Using specialization when only substitutability is required</title>
+      <para>
+        If only substitutability is required, one should use that relationship which provides only
+        this - realization. Using specialization instead forces all developers of plug-in components
+        to subclass a particular class where they may want to have a completely different
+        realization which could even be based on another superclass. 
+      </para>
+      <para>
+        Using an abstract superclass for the base of the pluggable component would prevent any
+        developer from inheriting from any other superclass as Java only supports single
+        inheritance. Furthermore, even if this was not a problem,  using a abstract class instead of
+        an interface does incur significant unnecessary overheads as the abstract class would still
+        be instantiated and ultimately garbage collected -- unnecessary creation and deletion of
+        objects can be a major contributor to performance problems in object oriented systems.  
+      </para>
+    </section>
+    
+    <section>
+      <title>Using specialization for code reuse</title>
+      <para>
+        If the reason for using specialization is code reuse, then one should most probably use
+        composition or even a weaker relationship like aggregation, association or a dependency
+        instead of specialization.
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>Use the weakest suitable relationship</title>
+    <para>
+      Inheritance or specialization is the strongest object-oriented relationship. It is a special
+      form of composition which enforces full ownership of a superclass instance. 
+    </para>
+    <para>
+      In general, designers will recommend to use the weakest relationship which realizes your
+      requirements. This results in looser couplings and more flexible systems. Inheritance, being
+      the strongest relationship, should thus only be used sparingly.
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Alternative solutions to inheritance</title>
+    <para>
+       If specialization is in many cases undesirable, what should one use instead?   
+    </para>
+  
+  <section>
+    <title>Using realization instead of specialization</title>
+    <para>
+      This buys one substitutability/pluggability without introducing implementation locking or
+      locking into a class hierarchy. Behind the scenes one may still use a class hierarchy, but the
+      user code would not lock into the class hierarchy.
+    </para>
+  </section>
+  
+  <section>
+    <title>Using delegation instead of specialization</title>
+    <para>
+      Often, particularly when the main motivation behind using specialization has been code reuse,
+      one can and should use delegation in preference. This may be in the form of composition or in
+      the weaker forms of aggregation (if state, but not full ownership is required) or even
+      association (if neither ownership nor state is required).
+    </para>
+  </section>
+  
+  <section>
+    <title>Using a combination of realization and composition</title>
+    <para>
+      If one requires the full behaviour of specialization without introducing the inflexibility
+      which class hierarchies introduce, one can use the solution the <emphasis>decorator
+      pattern</emphasis> provides, <abbrev>i.e.</abbrev> to use the combination of composition and
+      realization instead of specialization. In this way we get code reuse and ownership as well as
+      pluggability at the cost of not having the automatic request delegation to the superclass.
+    </para>
+    <para>
+      However, now, we can dynamically (at-run-time) change the behaviour of objects and even
+      construct pipes and filters based workflows (as is, for example, done in the Java streaming
+      library).
+    </para>
+  </section>
+  </section>
+  
+  
+  <section>
+    <title>When and how should one use specialization and when should one not use it?</title>
+    <para>
+      We would recommend following the following guidelines around the use of specialization:
+      <orderedlist>
+        <listitem><para>
+          For substitutability prefer realization.
+        </para></listitem>
+        <listitem><para>
+          For code reuse, use the weakest relationship which buys you what you need,
+          <abbrev>i.e.</abbrev> one of composition, aggregation, association or even only a dependency.
+        </para></listitem>
+        <listitem><para>
+          If you need both, consider using the combination of realization and composition.
+        </para></listitem>
+        <listitem><para>
+          Using class hierarchies for value objects is usually safe. 
+        </para></listitem>
+        <listitem><para>
+          For classes which perform any
+          significant business logic, one should avoid exposing the class  hierarchy, and provide
+          access via an interface hierarchy instead. Using a class hierarchy behind the scenes may be
+          ok, since one can change this at a later stage without affecting the user code.
+        </para></listitem>
+      </orderedlist>
+    </para>
+  </section>
+</section>
+  

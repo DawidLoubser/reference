@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1311:section xmlns:ns1311="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.relationships.entityBeans.entityBeanRelationships">
+
+  <ns1312:title xmlns:ns1312="http://docbook.org/ns/docbook">Entity bean relationships</ns1312:title>
+  <ns1313:para xmlns:ns1313="http://docbook.org/ns/docbook">
+    Value objects are often not that satisfactory. Firstly, if they are persisted as
+    serialized BLOBS, then the information they carry is not readily available for standard
+    reporting tools -- the information must be accessed from Java.
+  </ns1313:para>
+  <ns1314:para xmlns:ns1314="http://docbook.org/ns/docbook">
+    Furthermore, value objects can only be used to realize composition relationships.
+    Association relationships have to be modeled as a more loose relationship which, if a
+    relational database is used for the storage technology, should persist in the form of a link
+    between tables.
+  </ns1314:para>
+  <ns1315:para xmlns:ns1315="http://docbook.org/ns/docbook">
+    As an example of a one-to-one unary relationship between entity beans, consider the
+    relationship between a task and a client who requested the task. If we want to support
+    querying client information from the task, the task has to maintain a reference to the client.
+  </ns1315:para>
+
+  <ns1316:section xmlns:ns1316="http://docbook.org/ns/docbook">
+    <ns1317:title xmlns:ns1317="http://docbook.org/ns/docbook">Entity Bean Implementation</ns1317:title>
+    <ns1318:para xmlns:ns1318="http://docbook.org/ns/docbook">
+      As was the case for value objects, we still specify the related entity bean via
+      abstract accessor methods:
+<ns1319:programlisting xmlns:ns1319="http://docbook.org/ns/docbook">
+public abstract class ProjectBean implements EntityBean
+{
+  public abstract Client getClient();
+  public abstract void setClient(Client newClient);
+  
+  ...
+}
+</ns1319:programlisting>    
+    </ns1318:para>
+    <ns1320:para xmlns:ns1320="http://docbook.org/ns/docbook">
+      But the <ns1321:literal xmlns:ns1321="http://docbook.org/ns/docbook">Client</ns1321:literal> class need not (but still may be)
+      serializable and we do not specify a CMP-field for the related entity object. Instead we
+      shall specify a relationship between the entity beans as a container-managed relationship.
+    </ns1320:para>
+  </ns1316:section>
+  
+  <ns1322:section xmlns:ns1322="http://docbook.org/ns/docbook">
+    <ns1323:title xmlns:ns1323="http://docbook.org/ns/docbook">Deployment Specification</ns1323:title>
+    <ns1324:para xmlns:ns1324="http://docbook.org/ns/docbook">The container will 
+      <ns1325:itemizedlist xmlns:ns1325="http://docbook.org/ns/docbook">
+        <ns1326:listitem xmlns:ns1326="http://docbook.org/ns/docbook">
+          <ns1327:para xmlns:ns1327="http://docbook.org/ns/docbook">provide the implementation for the reference specified as abstract accessor and </ns1327:para>
+        </ns1326:listitem>
+        <ns1328:listitem xmlns:ns1328="http://docbook.org/ns/docbook">
+          <ns1329:para xmlns:ns1329="http://docbook.org/ns/docbook">persist the relationship to the database.</ns1329:para>
+        </ns1328:listitem>
+      </ns1325:itemizedlist>
+    </ns1324:para>
+    <ns1330:para xmlns:ns1330="http://docbook.org/ns/docbook">
+      To this end we have to publish the relationship to the container. This is done by
+      specifying the two endpoints of the relationship. For each of the endpoints (roles) we
+      specify the object which hosts the role and a multiplicity which is going to be  
+      <ns1331:literal xmlns:ns1331="http://docbook.org/ns/docbook">One</ns1331:literal> on both sides if we have a one-to-one relationship.
+    </ns1330:para>
+    <ns1332:para xmlns:ns1332="http://docbook.org/ns/docbook">
+      Note that the source side of a unary association (and, in the case of a binary
+      association, both sides) hosts a container-managed relationship (cmr) field. This is the
+      datafield for the reference which is queried and set via the abtract accessor methods.
+<ns1333:programlisting xmlns:ns1333="http://docbook.org/ns/docbook">
+&lt;ejb-jar&gt;
+  &lt;enterprise-beans&gt;
+
+   &lt;entity&gt;
+     &lt;ejb-name&gt;Task&lt;/ejb-name&gt;
+     ...
+     &lt;ejb-ref&gt;
+       &lt;ejb-ref-name&gt;ejb/Client&lt;/ejb-ref-name&gt;
+       &lt;ejb-ref-type&gt;Entity&lt;/ejb-ref-type&gt;
+       &lt;home&gt;za.co.SolmsTraining.clients.ClientHome&lt;/home&gt;
+       &lt;remote&gt;za.co.SolmsTraining.clients.Client&lt;/remote&gt;
+       &lt;ejb-link&gt;Client&lt;/ejb-link&gt;
+     &lt;/ejb-ref&gt;
+  &lt;/entity&gt;
+  
+  &lt;entity&gt;
+     &lt;ejb-name&gt;Client&lt;/ejb-name&gt;
+     ...
+  &lt;/entity&gt;
+  
+  &lt;relationships&gt;
+   &lt;ejb-relation&gt;
+     &lt;ejb-relation-name&gt;Task-Client&lt;/ejb-relation-name&gt;
+     &lt;ejb-relationship-role&gt;
+       &lt;ejb-relationship-role-name&gt;
+         Task has association to Client
+       &lt;/ejb-relationship-role-name&gt;
+       &lt;multiplicity&gt;One&lt;/multiplicity&gt;
+       &lt;relationship-role-source&gt;
+         &lt;ejb-name&gt;Task&lt;/ejb-name&gt;
+       &lt;/relationship-role-source&gt;
+       &lt;cmr-field&gt;
+         &lt;cmr-field-name&gt;client&lt;/cmr-field-name&gt;
+       &lt;/cmr-field&gt;
+     &lt;/ejb-relationship-role&gt;
+     &lt;ejb-relationship-role&gt;
+       &lt;ejb-relationship-role-name&gt;
+         Client associated to Task
+       &lt;/ejb-relationship-role-name&gt;
+       &lt;multiplicity&gt;One&lt;/multiplicity&gt;
+       &lt;relationship-role-source&gt;
+         &lt;ejb-name&gt;Client&lt;/ejb-name&gt;
+       &lt;/relationship-role-source&gt;
+     &lt;/ejb-relationship-role&gt;
+   &lt;/ejb-relation&gt;
+  &lt;/relationships&gt;
+
+&lt;/ejb-jar&gt;
+</ns1333:programlisting>
+    </ns1332:para>
+    <ns1334:para xmlns:ns1334="http://docbook.org/ns/docbook">
+      The responsibility of persisting the relationship is left to the persistence manager of
+      the container. In the case of JBossCMP, the relationships are persisted to a relational
+      database in reverse order. This, client will have the task as a foreign key and not vice versa.
+    </ns1334:para>
+    <ns1335:para xmlns:ns1335="http://docbook.org/ns/docbook">
+      The reason for this is that this mapping works well also with one-to-many associations.
+    </ns1335:para>
+  </ns1322:section>
+  
+  <ns1336:section xmlns:ns1336="http://docbook.org/ns/docbook">
+    <ns1337:title xmlns:ns1337="http://docbook.org/ns/docbook">One-to-Many and Many-to-Many Relationships</ns1337:title>
+    <ns1338:para xmlns:ns1338="http://docbook.org/ns/docbook">
+      The many side(s) of an association are specified by simply assigning a  
+      <ns1339:literal xmlns:ns1339="http://docbook.org/ns/docbook">Many</ns1339:literal> multiplicity to the corresponding role.
+    </ns1338:para>
+    <ns1340:para xmlns:ns1340="http://docbook.org/ns/docbook">
+      For example, assume a task has many time stretches (time periods spent working on
+      that task like from 13h30 to 16h00 on some date). Each time stretch will be spent on one
+      task only and hence the relationship is a one-to-many relationship. Below we show the
+      implementation of a binary one-to-many relationship:
+<ns1341:programlisting xmlns:ns1341="http://docbook.org/ns/docbook">
+
+&lt;ejb-relation&gt;
+  &lt;ejb-relation-name&gt;Task-TimeStretch&lt;/ejb-relation-name&gt;
+    &lt;ejb-relationship-role&gt;
+     &lt;ejb-relationship-role-name&gt;
+       task-has-timeStretches
+     &lt;/ejb-relationship-role-name&gt;
+     &lt;multiplicity&gt;One&lt;/multiplicity&gt;
+     &lt;relationship-role-source&gt;
+       &lt;ejb-name&gt;Task&lt;/ejb-name&gt;
+     &lt;/relationship-role-source&gt;
+     &lt;cmr-field&gt;
+       &lt;cmr-field-name&gt;timeStretches&lt;/cmr-field-name&gt;
+       &lt;cmr-field-type&gt;java.util.Set&lt;/cmr-field-type&gt;
+     &lt;/cmr-field&gt;
+    &lt;/ejb-relationship-role&gt;
+  &lt;ejb-relationship-role&gt;
+   &lt;ejb-relationship-role-name&gt;
+     timeStretch-for-task
+   &lt;/ejb-relationship-role-name&gt;
+   &lt;multiplicity&gt;Many&lt;/multiplicity&gt;
+   &lt;relationship-role-source&gt;
+     &lt;ejb-name&gt;TimeStretch&lt;/ejb-name&gt;
+   &lt;/relationship-role-source&gt;
+   &lt;cmr-field&gt;
+      &lt;cmr-field-name&gt;task&lt;/cmr-field-name&gt;
+   &lt;/cmr-field&gt;
+  &lt;/ejb-relationship-role&gt;
+&lt;/ejb-relation&gt;
+</ns1341:programlisting>
+    </ns1340:para>
+    <ns1342:para xmlns:ns1342="http://docbook.org/ns/docbook">
+      The datatype for implementing the many side of the association is currently restricted to
+      one of <ns1343:literal xmlns:ns1343="http://docbook.org/ns/docbook">java.util.Collection</ns1343:literal> or <ns1344:literal xmlns:ns1344="http://docbook.org/ns/docbook">java.util.Set</ns1344:literal>.
+    </ns1342:para>
+    <ns1345:para xmlns:ns1345="http://docbook.org/ns/docbook">
+      On the database level this relationship will be implemented, once again in reverse
+      direction, simplifying it considerably. Note, however, that the object access has to still
+      provided in the direction of navigatability. To this end we need to be able to query for
+      collections of objects. This is still supported without you having to manage it. Once
+      again you'll just supply the abstract accessor methods returning and receiving this time
+      either a<ns1346:literal xmlns:ns1346="http://docbook.org/ns/docbook">Collection</ns1346:literal> or a <ns1347:literal xmlns:ns1347="http://docbook.org/ns/docbook">Set</ns1347:literal>:
+    </ns1345:para>
+    <ns1348:para xmlns:ns1348="http://docbook.org/ns/docbook">
+      Look, for example at the following excerpt of the task bean show how we specify
+      accessor methods for the one-to-many association return/receive a set:
+<ns1349:programlisting xmlns:ns1349="http://docbook.org/ns/docbook">
+package za.co.SolmsTraining.pm;
+
+import java.util.Set;
+
+public abstract class TaskBean implements javax.ejb.EntityBean
+{
+public TaskBean() {}
+...
+
+public abstract Set getTimeStretches(); // related entity beans
+public abstract void setTimeStretches(Set timeStretches); // related entity beans
+...
+}
+</ns1349:programlisting>
+    </ns1348:para>
+  </ns1336:section>
+</ns1311:section>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.ooLanguage.compositionVersusAssociation.whyImmutableObjects"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/dist/resources/components/za/co/solms/solmsDoc/schema/solmsDoc.xsd">
+    
+    <title role="Why Immutable Objects">Why Immutable Objects?</title>
+
+<para>Because the differentiation between composition and association is so subtle
+and because giving away handles to component objects which can then be modified
+by external objects is so dangerous, it is very common in Java to make objects
+immutable, <abbrev>i.e.</abbrev> objects whose states cannot change.</para>
+
+<para>One example of an immutable object from the standard Java class is the
+<emphasis role="verb">String</emphasis> class. You can create Strings, but you can never modify them.
+There are no methods which change the string, only methods which return a new
+string. For example, string concatenation is achieved via the addition operator
+(recall that this is an unfortunate Java quirk of having internally overloaded
+the addition and assignment operators, even though Java does not support
+operator overloading).</para>
+
+<para>Similarly, we can define the <emphasis role="verb">CashFlow</emphasis> class to be immutable. Recall that
+a cash flow was a payment on a specific date.
+
+<programlisting><![CDATA[
+public class CashFlow
+{
+  public CashFlow(Payment payment, Date date)
+  {
+    this.payment = payment;
+    this.date    = date.clone();
+  }
+
+  public Payment value(Date date)
+    {/* calculate value of cash flow on another date*/}
+
+  public Payment getPayment() {return payment;}
+
+  public Date getDate() {return date.clone();}
+
+  private Payment payment;
+  private Date date;
+}
+]]></programlisting></para>
+
+<para>Note that we have query-methods for the date and the payment, but that we do
+not have corresponding set-methods. The date and the payment are thus instance
+attributes of the class to which users have only read access. Furthermore,
+since Java's <emphasis role="verb">Date</emphasis> class is mutable (via <emphasis role="verb">setTime()</emphasis>), we should not
+return a reference to the date itself in <emphasis role="verb">getDate()</emphasis>, but a copy. This is
+done via the <emphasis role="verb">clone()</emphasis> method (we shall discuss cloning in more detail in
+section \ref{secCloning}). For the same reason our class keeps a copy of the
+date passed as argument to the constructor.</para>
+
+<para>On the other hand, we have not cloned the payment returned by <emphasis role="verb">getPayment()</emphasis>
+or the one received in the constructor. The reason for this is that the
+<emphasis role="verb">Payment</emphasis> class is immutable (similar to <emphasis role="verb">CashFlow</emphasis>) and we can thus
+safely return a reference to the actual class attribute. It cannot be modified
+anyway. If somebody wants to change the <emphasis role="verb">Payment</emphasis> they have to create a new
+<emphasis role="verb">Payment</emphasis>, leaving the <emphasis role="verb">payment</emphasis> object of our <emphasis role="verb">cashFlow</emphasis> intact.</para>
+
+<para>The <emphasis role="verb">date</emphasis> is certainly a true component of a <emphasis role="verb">CashFlow</emphasis> instance. It
+has the same life span as the object itself and it can only be modified by the
+object. The <emphasis role="verb">payment</emphasis> can be also viewed as a component. It cannot be
+modified at all and for reasons of efficiency we might as well share the object
+with other objects.</para>
+    
+</section>

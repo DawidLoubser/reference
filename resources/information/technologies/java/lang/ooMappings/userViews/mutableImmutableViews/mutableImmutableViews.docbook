@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns240:section xmlns:ns240="http://docbook.org/ns/docbook"
+               xml:id="resources.information.technologies.java.lang.ooMappings.userViews.mutableImmutableViews.mutableImmutableViews"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <ns241:title xmlns:ns241="http://docbook.org/ns/docbook">Mutable and Immutable views for an object</ns241:title>
+    <ns242:para xmlns:ns242="http://docbook.org/ns/docbook">
+        A common scenario is that certain objects should only obtain a read-only view of an object
+        while other objects may modify the object itself. For example, a user interface through
+        which an order is created may modify the order as it is constructed, but anything processing
+        the order may no longer modify the order.
+    </ns242:para>
+    <ns243:para xmlns:ns243="http://docbook.org/ns/docbook">
+        To support read-only and read-write views onto objects, one can define a read only interface
+        which only exposes those services which do not alter the state of the object. One can then
+        define an extended contract which adds those services which do change the state of the object.
+        A neat way to do this is to have the default interface read-only and to define a nested
+        interface,<ns244:literal xmlns:ns244="http://docbook.org/ns/docbook">Mutable</ns244:literal>, which extends the
+        base interface.
+    </ns243:para>
+    <ns245:para xmlns:ns245="http://docbook.org/ns/docbook">
+        In exceptional cases one may even want to break encapsulation by providing certain external
+        object a direct handle to one's components. A scenario which requires this is a component based
+        user interface within a model-view-controller framework. Here the user interfaces for object
+        components require direct access to components of the domain object. This can be provided
+        through a special mutable interface which provides direct access to the component
+        This is illustrated by the following example:
+    </ns245:para>
+    <ns246:para xmlns:ns246="http://docbook.org/ns/docbook">
+        If a component can be exposed through a read-only view, it has the positive effect of not
+        requiring the component to be cloned every time a client requests it, as the client cannot
+        (without resorting to typecasting) request services of the component to change its state.
+    </ns246:para>
+
+    <ns247:section xmlns:ns247="http://docbook.org/ns/docbook">
+        <ns248:title xmlns:ns248="http://docbook.org/ns/docbook">Example: A client with an account</ns248:title>
+        <ns249:para xmlns:ns249="http://docbook.org/ns/docbook">
+            Consider the following two interfaces, and their implementations:
+        </ns249:para>
+        <ns250:para xmlns:ns250="http://docbook.org/ns/docbook">
+            <ns251:programlisting xmlns:ns251="http://docbook.org/ns/docbook" language="Java">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text"
+                            href="source/Account.java"/>
+            </ns251:programlisting>
+        </ns250:para>
+        <ns252:para xmlns:ns252="http://docbook.org/ns/docbook">
+            <ns253:programlisting xmlns:ns253="http://docbook.org/ns/docbook" language="Java">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text"
+                            href="source/Client.java"/>
+            </ns253:programlisting>
+        </ns252:para>
+        <ns254:para xmlns:ns254="http://docbook.org/ns/docbook">
+            <ns255:programlisting xmlns:ns255="http://docbook.org/ns/docbook"  language="Java">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text"
+                            href="source/AccountImpl.java"/>
+            </ns255:programlisting>
+        </ns254:para>
+        <ns256:para xmlns:ns256="http://docbook.org/ns/docbook">
+            <ns257:programlisting xmlns:ns257="http://docbook.org/ns/docbook"  language="Java">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text"
+                            href="source/ClientImpl.java"/>
+            </ns257:programlisting>
+        </ns256:para>
+        <ns258:para xmlns:ns258="http://docbook.org/ns/docbook">
+            These objects may now naturally be used through their interfaces:
+            <ns259:programlisting xmlns:ns259="http://docbook.org/ns/docbook" language="Java">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text"
+                            href="source/ClientTest.java"/>
+            </ns259:programlisting>
+        </ns258:para>
+    </ns247:section>
+
+
+    <ns260:section xmlns:ns260="http://docbook.org/ns/docbook" role="example">
+        <ns261:title xmlns:ns261="http://docbook.org/ns/docbook">Example: Random one-dimensional variable</ns261:title>
+        <ns262:para xmlns:ns262="http://docbook.org/ns/docbook">
+            Consider the following interfaces for a simple one dimensional random variable:
+            <ns263:programlisting xmlns:ns263="http://docbook.org/ns/docbook" language="Java">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text"
+                            href="source/RandomVariable1D.java"/>
+            </ns263:programlisting>
+            Note that the default
+            <ns264:literal xmlns:ns264="http://docbook.org/ns/docbook">RandomVariable1D</ns264:literal>
+            interface provides only read access to a
+            vector, while the nested
+            <ns265:literal xmlns:ns265="http://docbook.org/ns/docbook">RandomVariable1D.Mutable</ns265:literal>
+            extended interface provides also
+            write access. Furthermore, a further nested interface,
+            <ns266:literal xmlns:ns266="http://docbook.org/ns/docbook">RandomVariable1D.Mutable.Direct</ns266:literal>
+            provides direct access to the components.
+            Users would only in very exceptional cases obtain a handle to the object via the direct
+            interface (e.g. for MVC based GUIS).
+        </ns262:para>
+        <ns267:para xmlns:ns267="http://docbook.org/ns/docbook">
+            The implementation class implements the full interface. Users would, however not get a direct
+            object handle, but would access the object through a suitable interface. Read-only access
+            would be provided through the
+            <ns268:literal xmlns:ns268="http://docbook.org/ns/docbook">RandomVariable1D</ns268:literal>
+            interface while read-write
+            access is given through the
+            <ns269:literal xmlns:ns269="http://docbook.org/ns/docbook">RandomVariable1D.Mutable</ns269:literal>
+            interface. In
+            exceptional cases users may even get a handle which provides a direct handle to the component
+            references via the
+            <ns270:literal xmlns:ns270="http://docbook.org/ns/docbook">RandomVariable1D.Mutable.Direct</ns270:literal>
+            interface. The
+            implementation class implements the direct interface which extends the other two:
+            <ns271:programlisting xmlns:ns271="http://docbook.org/ns/docbook" language="Java">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text"
+                            href="source/RandomVariable1DImpl.java"/>
+            </ns271:programlisting>
+        </ns267:para>
+        <ns272:note xmlns:ns272="http://docbook.org/ns/docbook">
+            <ns273:para xmlns:ns273="http://docbook.org/ns/docbook">
+                Providing various levels of access through different interfaces enables one to remove the
+                cloning for getters as the getters return a direct immutable (read-only) handle to the
+                component.
+            </ns273:para>
+        </ns272:note>
+    </ns260:section>
+</ns240:section>

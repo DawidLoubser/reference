@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"-->
+<section id="resources.information.platforms.linux.security.groups"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Assigning users to security groups</title>
+  <para>
+    Access to system resources (file access in Linux) can be set on either user level, or
+    on group level. Multiple users can belong to the same group and setting file
+    authorization at a group level, and is typically much more maintenance friendly and 
+    indirectly more secure.
+  </para>
+  <para>
+    Each user is in at least one security group -- recall that the default primary group for 
+    a new user was specified in the <filename>/etc/default/useradd</filename> file.
+    You can view the group memberships in the <filename>/etc/group</filename>
+    file. Below we show an excerpt of a group file:
+    <programlisting><![CDATA[
+root:x:0:
+mail:x:12:fritz
+dialout:x:16:fritz,solms,alex,ernst
+audio:x:17:fritz,solms,alex,ernst
+floppy:x:19:
+cdrom:x:20:
+console:x:21:
+at:x:25:
+video:x:33:fritz,solms,alex,ernst
+games:x:40:
+ftp:x:49:
+man:x:62:
+sshd:x:65:
+nobody:x:65533:nobody
+nogroup:x:65534:nobody
+users:x:100:
+solms:x:500:fritz,solms,alex,ernst,root
+xcdwrite:x:501:fritz
+    ]]></programlisting>
+  </para>
+  <para>
+    Note that a Linux system typically has many groups and often changing a user's permissions
+    only involves adding him/her to or removing her/him from a group.
+  </para>
+  
+  <section>
+    <title>Adding a new group via <command>groupadd</command></title>
+    <para>
+      You can add a new group by editing the <filename>/etc/group</filename>
+      file. Alternatively you can use the <command>groupadd</command> which
+      is typically used in its simplest form:
+      <cmdsynopsis><command>
+groupadd <![CDATA[<groupName>]]>        
+      </command></cmdsynopsis>
+    </para>
+  </section>
+  
+  <section>
+    <title>Deleting a group via <command>groupdel</command></title>
+    <para>
+      Once again you can delete a group by deleting the group's entry in the
+      <filename>/etc/group</filename> file. Alternatively you can use the 
+      <command>groupdel</command> command:
+      <cmdsynopsis><command>
+groupdel <![CDATA[<groupName>]]>        
+      </command></cmdsynopsis>
+      <note>
+        <para>
+          You will have to reallocate the permissions of all those files which were allocated to
+          that group to another existing group. (see
+          <xref linkend="resources.information.platforms.linux.security.filePermissions"/>)
+        </para>
+      </note>
+    </para>
+  </section>
+</section>

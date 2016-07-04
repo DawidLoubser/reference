@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.businessInterfaces.remote.remote">
+	  <title>Remote interfaces</title>
+	  <para>
+		A remote interface provides access to an enterprise bean from outside the
+		run-time environment in which the bean itself is deployed. This enables
+		remote clients to directly access the business services and processes offered by
+		session beans.
+	</para>
+	  <para>
+		Remote clients can be client applications or applets,
+		servlets deployed in a servlet container running in a separate Java run-time
+		environment or other enterprise beans deployed in another EJB container
+		(potentially deployed within the same cluster). 
+	</para>
+	
+	  <section>
+		    <title>Defining a remote interface</title>
+		    <para>
+			There are two ways of specifying which interface is the <literal>Remote</literal>
+			interface for a session bean: Either by classifying the interface itself,
+			or by referring to an interface from within the bean, and indicating the role
+			this interface plays (local or remote). In either case, the annotation
+			<literal>javax.ejb.Remote</literal> is applied
+		</para>
+		    <para>
+			In the former scenario, the remote interface is a standard Java interface which has been annotated with
+			<literal>@Remote</literal>. For example
+			<programlisting language="Java">
+import javax.ejb.*;
+
+@Remote 
+public interface OrderProcessorRemote
+{
+  public Invoice processOrder(Order order) 
+           throws InsufficientFundsException;
+}
+				</programlisting>
+		    </para>
+		    <para>
+			The Bean realising the interface may now simply state that it <emphasis>implements</emphasis>
+			it:
+		    	<programlisting language="Java">
+import javax.ejb.*;
+
+@Stateless
+public class OrderProcessorBean implements OrderProcessorRemote
+{
+  ...
+}
+			</programlisting>
+			In the latter scenario, the interface itself is unclassified/plain,
+			which means it is not intrinsically tied to realisation within EJB:
+	    	<programlisting language="Java">
+public interface OrderProcessor
+{
+  public Invoice processOrder(Order order) 
+           throws InsufficientFundsException;
+}
+				</programlisting>
+			in which case the implementing bean must now contain the <literal>Remote</literal> annotation,
+			indicating the <literal>class</literal> of the interface which should act as remote:
+	    	<programlisting language="Java">
+import javax.ejb.*;
+
+@Stateless
+@Remote({OrderProcessor.class})
+public class OrderProcessorBean implements OrderProcessor
+{
+  ...
+}
+				</programlisting>
+			The latter approach is preferable, as the interface is now a pure contract, which could even be realised
+			using technology other than EJB, without affecting existing clients.
+		</para>
+	  </section>
+	
+	  <section>
+		    <title>A bean realising the business contract</title>
+		    <para>
+			Remote or external clients access session beans via the remote interface. 
+			These can be <emphasis>stateless</emphasis> or <emphasis>stateful</emphasis>. 
+			In either case the bean may implement a remote or a local interface, or both:
+	    	<programlisting language="Java">
+import javax.ejb.*;
+
+@Stateless
+@Remote({OrderProcessor.class})
+@Local({OrderProcessor.class})
+public class OrderProcessorBean implements OrderProcessor
+{
+  public Invoice processOrder(Order order) 
+    throws InsufficientFundsException
+  {
+    ...
+  }			
+}
+				</programlisting>
+			
+		    </para>
+	  </section>
+	
+	
+	  <section>
+		    <title>Access path when using a remote interface</title>
+		    <para>
+			Service requests provided via the remote interface go through a number of
+			steps:
+			<orderedlist>
+				        <listitem>
+               <para>
+					Remote clients will use the bean services via a local stub (which may be a
+					RMI or a CORBA stub). 
+				</para>
+            </listitem>
+				        <listitem>
+               <para>
+					The client stub will marshall the service request onto IIOP (or RMI/IIOP in
+					the case of a Java client).
+				</para>
+            </listitem>
+				        <listitem>
+               <para>
+					An RMI server tie will de-marshal the IIOP message and map it onto a call
+					onto the <literal>EJBObject</literal>.
+				</para>
+            </listitem>
+				        <listitem>
+               <para> 
+					             <literal>EJBObject</literal> provides the interception layer which
+					<itemizedlist>
+						               <listitem>
+                        <para>
+							associates a physical bean instance with the conceptual user object,
+						</para>
+                     </listitem>
+						               <listitem>
+                        <para>
+							applies enterprise services like security and transaction (<abbrev>e.g.</abbrev>
+							checking whether the user has the security roles required to access the
+							requested service, starting a transaction and enlisting resources within
+							that transaction, ...)
+						</para>
+                     </listitem>
+						               <listitem>
+                        <para>
+							delegates the business logic responsibilities to the bean instance, and
+						</para>
+                     </listitem>
+						               <listitem>
+                        <para>
+							applies further enterprise services upon completion (<abbrev>e.g.</abbrev>
+							commit a transaction on successful completion or roll it back on failure).
+						</para>
+                     </listitem>
+					             </itemizedlist>
+				           </para>
+            </listitem>
+				        <listitem>
+               <para>
+					The server skeleton will then marshal any responses (return values or
+					exceptions) back onto the IIOP stream.
+				</para>
+            </listitem>
+				        <listitem>
+               <para>
+					The client stub will de-marshal the response and pass it on to the client
+					object.
+				</para>
+            </listitem>
+			      </orderedlist>
+		    </para>
+	  </section>
+	
+</section>

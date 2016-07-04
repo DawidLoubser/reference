@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.commands.commit"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Committing changes</title>
+  <para>
+    Once a developer has completed the changes, modified the testing framework
+    accordingly and re-run the tests successfully, he/she would want to
+    commit these changes to the repository.
+  </para>
+  <para>
+    The commit can be done for all project files modified via
+    <synopsis>
+cvs -d /usr/local/cvs/testRepository/ 
+    -m 'corrected error in maximum loan amount calculation' 
+      commit LoanCalculator    
+    </synopsis>
+    where the <option>-m</option> CVS option provides the log message for the
+    update.  If the log message is not supplied, CVS will prompt you for it.
+  </para>
+  <para>
+    One can also commit a single file (or other parts of the working copy recursively)
+    via
+    <synopsis>
+cvs -d /usr/local/cvs/testRepository/ commit 
+      LoanCalculator/za/co/stcd/finance/calculators
+      /presentation/swing/LoanCalculatorClient.java    
+    </synopsis>
+  </para>
+  
+  <para>
+    The working copy directory has information about the repository project and
+    hence the project name can be left out. One can, from the directory hosting
+    the working copy simply check in without specifying the project name:
+    <synopsis>
+cvs -d /usr/local/cvs/testRepository/ commit 
+    </synopsis>
+    
+  </para>
+  
+  <section>
+    <title>Revision numbers</title>
+    <para>
+      Every time a file in the repository is updated it's right-most digit is
+      incremented by one. 
+      <synopsis><![CDATA[
+  Checking in LoanCalculator/za/co/stcd/finance/calculators...
+                /presentation/swing/LoanCalculatorClient.java;
+  /usr/local/cvs/testRepository//LoanCalculator/za/co/stcd...
+  /finance/calculators/presentation/swing/LoanCalculatorClient.java,v  
+    <--  LoanCalculatorClient.java
+  new revision: 1.2; previous revision: 1.1
+      ]]></synopsis>
+      After some modifications have been done the different files in a project will 
+      typically end up with different revision numbers.
+    </para>
+    <para>
+      Note that revision numbers are primarily there for the internal functioning
+      of CVS and have nothing to do with versioning. The latter is achieved in CVS
+      through tagging which is discussed in 
+      <xref linkend="resources.information.technologies.tools.versionControl._cvs.commands.tagging"/>.
+    </para>
+    <note><title>Shortcut for <command>commit</command> command</title>
+      <para>
+        The CVS shortcut for the <command>commit</command> command is
+        <command>ci</command>. Thus, 
+        <synopsis>
+cvs ci        
+        </synopsis>
+        will commit the working copy hosted by the current directory into the
+        default repository as specified via the <varname>CVSROOT</varname>
+        environment variable.
+      </para>
+    </note>    
+  </section>
+  
+</section>

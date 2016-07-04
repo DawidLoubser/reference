@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns4962:section xmlns:ns4962="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.sed.substituting">
+
+  <ns4963:title xmlns:ns4963="http://docbook.org/ns/docbook">Substituting text</ns4963:title>
+  <ns4964:para xmlns:ns4964="http://docbook.org/ns/docbook">
+    We have already seen simple substitution via <ns4965:command xmlns:ns4965="http://docbook.org/ns/docbook">sed</ns4965:command>. Here
+    we shall look at the <ns4966:command xmlns:ns4966="http://docbook.org/ns/docbook">sed</ns4966:command> <ns4967:emphasis xmlns:ns4967="http://docbook.org/ns/docbook">substitute</ns4967:emphasis>
+    command in more detail.
+  </ns4964:para>
+  
+  <ns4968:section xmlns:ns4968="http://docbook.org/ns/docbook">
+    <ns4969:title xmlns:ns4969="http://docbook.org/ns/docbook">Syntax of substitute command</ns4969:title>
+    <ns4970:para xmlns:ns4970="http://docbook.org/ns/docbook">
+      The format of the <ns4971:command xmlns:ns4971="http://docbook.org/ns/docbook">substitute</ns4971:command> command is
+      <ns4972:programlisting xmlns:ns4972="http://docbook.org/ns/docbook">
+[address1[,address2]]s/matchPattern/replacementText/[flags]      
+      </ns4972:programlisting>
+      where the flags are shown in
+      <ns4973:xref xmlns:ns4973="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.sed.substitution.commandFlags"/>.
+      
+      <ns4974:table xmlns:ns4974="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.sed.substitution.commandFlags">
+        <ns4975:title xmlns:ns4975="http://docbook.org/ns/docbook">Sed substitute command flags</ns4975:title>
+        <ns4976:tgroup xmlns:ns4976="http://docbook.org/ns/docbook" cols="2">
+          <ns4977:thead xmlns:ns4977="http://docbook.org/ns/docbook">
+            <ns4978:row xmlns:ns4978="http://docbook.org/ns/docbook"><ns4979:entry xmlns:ns4979="http://docbook.org/ns/docbook">Flag</ns4979:entry><ns4980:entry xmlns:ns4980="http://docbook.org/ns/docbook">Description</ns4980:entry></ns4978:row>
+          </ns4977:thead>
+          <ns4981:tbody xmlns:ns4981="http://docbook.org/ns/docbook">
+            <ns4982:row xmlns:ns4982="http://docbook.org/ns/docbook">
+              <ns4983:entry xmlns:ns4983="http://docbook.org/ns/docbook">g</ns4983:entry>
+              <ns4984:entry xmlns:ns4984="http://docbook.org/ns/docbook">
+                <ns4985:emphasis xmlns:ns4985="http://docbook.org/ns/docbook">global:</ns4985:emphasis> replace every occurrence of 
+                <ns4986:literal xmlns:ns4986="http://docbook.org/ns/docbook">matchPattern</ns4986:literal> in each line.
+              </ns4984:entry>
+            </ns4982:row>
+            <ns4987:row xmlns:ns4987="http://docbook.org/ns/docbook">
+              <ns4988:entry xmlns:ns4988="http://docbook.org/ns/docbook">n</ns4988:entry>
+              <ns4989:entry xmlns:ns4989="http://docbook.org/ns/docbook">
+                Replace only the <ns4990:literal xmlns:ns4990="http://docbook.org/ns/docbook">n</ns4990:literal>'th occurrence of the <ns4991:literal xmlns:ns4991="http://docbook.org/ns/docbook">matchPattern</ns4991:literal>
+                in each line where <ns4992:literal xmlns:ns4992="http://docbook.org/ns/docbook">n</ns4992:literal> is a positive integer.
+              </ns4989:entry>
+            </ns4987:row>
+          </ns4981:tbody>
+        </ns4976:tgroup>
+      </ns4974:table>
+    </ns4970:para>
+  </ns4968:section>
+  
+  <ns4993:section xmlns:ns4993="http://docbook.org/ns/docbook">
+    <ns4994:title xmlns:ns4994="http://docbook.org/ns/docbook">Specifying addresses</ns4994:title>
+    <ns4995:para xmlns:ns4995="http://docbook.org/ns/docbook">
+       Addresses commonly used include
+       <ns4996:itemizedlist xmlns:ns4996="http://docbook.org/ns/docbook">
+         <ns4997:listitem xmlns:ns4997="http://docbook.org/ns/docbook"><ns4998:para xmlns:ns4998="http://docbook.org/ns/docbook">a line number,</ns4998:para></ns4997:listitem>
+         <ns4999:listitem xmlns:ns4999="http://docbook.org/ns/docbook"><ns5000:para xmlns:ns5000="http://docbook.org/ns/docbook">a range of line numbers,</ns5000:para></ns4999:listitem>
+         <ns5001:listitem xmlns:ns5001="http://docbook.org/ns/docbook"><ns5002:para xmlns:ns5002="http://docbook.org/ns/docbook">a match pattern itself, and</ns5002:para></ns5001:listitem>
+         <ns5003:listitem xmlns:ns5003="http://docbook.org/ns/docbook"><ns5004:para xmlns:ns5004="http://docbook.org/ns/docbook">the last line of the stream specified via a <ns5005:literal xmlns:ns5005="http://docbook.org/ns/docbook">$</ns5005:literal>.</ns5004:para></ns5003:listitem>
+       </ns4996:itemizedlist>
+    </ns4995:para>
+    
+    <ns5006:section xmlns:ns5006="http://docbook.org/ns/docbook">
+      <ns5007:title xmlns:ns5007="http://docbook.org/ns/docbook">Using a line number as address</ns5007:title>
+      <ns5008:para xmlns:ns5008="http://docbook.org/ns/docbook">
+        We can specify that a particular command only applies to a particular line number. 
+        To this end we insert the line number in front of the substitute command,
+        <ns5009:command xmlns:ns5009="http://docbook.org/ns/docbook">s</ns5009:command>.
+      </ns5008:para>
+      <ns5010:para xmlns:ns5010="http://docbook.org/ns/docbook">
+        For example, if we want to substitute <ns5011:literal xmlns:ns5011="http://docbook.org/ns/docbook">#!/bin/sh</ns5011:literal> only
+        in the first line with <ns5012:literal xmlns:ns5012="http://docbook.org/ns/docbook">#!/bin/sh</ns5012:literal>, then we can use
+        <ns5013:programlisting xmlns:ns5013="http://docbook.org/ns/docbook">
+sed '1s/#!\/bin\/sh/#!\/bin\/bash/' myShellScript.sh
+        </ns5013:programlisting>
+        <ns5014:note xmlns:ns5014="http://docbook.org/ns/docbook">
+          <ns5015:para xmlns:ns5015="http://docbook.org/ns/docbook">
+            We have to escape the path separator character, <ns5016:command xmlns:ns5016="http://docbook.org/ns/docbook">/</ns5016:command>.
+          </ns5015:para>
+        </ns5014:note>
+      </ns5010:para>
+    </ns5006:section>
+    
+    <ns5017:section xmlns:ns5017="http://docbook.org/ns/docbook">
+      <ns5018:title xmlns:ns5018="http://docbook.org/ns/docbook">Substituting within a range of line numbers</ns5018:title>
+      <ns5019:para xmlns:ns5019="http://docbook.org/ns/docbook">
+        To specify a range of line numbers across which a substitution is to be
+        applied, we specify the bounding line numbers separated by a comma. Thus
+        <ns5020:programlisting xmlns:ns5020="http://docbook.org/ns/docbook">
+ sed '2,9s/Mrs/Ms/g' myLetter
+        </ns5020:programlisting>
+        replaces <ns5021:quote xmlns:ns5021="http://docbook.org/ns/docbook">Mrs</ns5021:quote> by <ns5022:quote xmlns:ns5022="http://docbook.org/ns/docbook">Ms</ns5022:quote> between lines 2 and 9.
+      </ns5019:para>
+    </ns5017:section>
+    
+    
+    <ns5023:section xmlns:ns5023="http://docbook.org/ns/docbook">
+      <ns5024:title xmlns:ns5024="http://docbook.org/ns/docbook">Using a match pattern as address</ns5024:title>
+      <ns5025:para xmlns:ns5025="http://docbook.org/ns/docbook">
+        Finally, you can also specify addresses implicitly by specifying that the target,
+        across which the substitution (or deletion, ...) should be applied, includes
+        all lines in which a particular match can be made.
+      </ns5025:para>
+      <ns5026:para xmlns:ns5026="http://docbook.org/ns/docbook">
+        For example, to specify that <ns5027:quote xmlns:ns5027="http://docbook.org/ns/docbook">Smith</ns5027:quote> should be replaced by
+        <ns5028:quote xmlns:ns5028="http://docbook.org/ns/docbook">Kumalo</ns5028:quote> in all lines which contain a <ns5029:quote xmlns:ns5029="http://docbook.org/ns/docbook">Karin</ns5029:quote>
+        we can specify
+        <ns5030:programlisting xmlns:ns5030="http://docbook.org/ns/docbook">
+sed '/Karin/s/Smith/Kumalo/g' clientTransactions 
+        </ns5030:programlisting>
+      </ns5026:para>
+    </ns5023:section>
+  </ns4993:section>
+  
+  <ns5031:section xmlns:ns5031="http://docbook.org/ns/docbook">
+    <ns5032:title xmlns:ns5032="http://docbook.org/ns/docbook">Substituting with the result of a command</ns5032:title>
+    <ns5033:para xmlns:ns5033="http://docbook.org/ns/docbook">
+      You can use the normal backslash syntax to substitute a match with the output
+      of a command. For example, if we want to replace every occurrence of
+      <ns5034:quote xmlns:ns5034="http://docbook.org/ns/docbook"> today</ns5034:quote> with <ns5035:quote xmlns:ns5035="http://docbook.org/ns/docbook"> on </ns5035:quote> followed by today's date, 
+      we can use
+      <ns5036:programlisting xmlns:ns5036="http://docbook.org/ns/docbook">
+sed "s/ today/ on`date`/g" myDocument
+      </ns5036:programlisting>
+    </ns5033:para>
+  </ns5031:section>
+  
+  <ns5037:section xmlns:ns5037="http://docbook.org/ns/docbook">
+    <ns5038:title xmlns:ns5038="http://docbook.org/ns/docbook">Using sed with regular expressions</ns5038:title>
+    <ns5039:para xmlns:ns5039="http://docbook.org/ns/docbook">
+      Sed supports regular expressions for its matching criteria (see
+      <ns5040:xref xmlns:ns5040="http://docbook.org/ns/docbook" linkend="resources.information.technologies.general.regularExpressions.regularExpressions"/>
+      for a review of regular expressions) and it is very common to do this. 
+    </ns5039:para>  
+    <ns5041:para xmlns:ns5041="http://docbook.org/ns/docbook">
+      For example, if we want to translate a document from <ns5042:emphasis xmlns:ns5042="http://docbook.org/ns/docbook">LaTeX</ns5042:emphasis> 
+      to XML <ns5043:emphasis xmlns:ns5043="http://docbook.org/ns/docbook">docbook</ns5043:emphasis> we could include include the following
+      command in the translation script:
+      <ns5044:programlisting xmlns:ns5044="http://docbook.org/ns/docbook">
+ sed 's/\\section{\(.*\)}/&lt;section&gt;&lt;title&gt;\1&gt;\/title&gt;/g'
+      </ns5044:programlisting>
+      <ns5045:note xmlns:ns5045="http://docbook.org/ns/docbook">
+        <ns5046:para xmlns:ns5046="http://docbook.org/ns/docbook">
+          Here we used the grouping construct for regular expressions (the round paranthesis)
+          and in the substitution text we insert the first group, <ns5047:abbrev xmlns:ns5047="http://docbook.org/ns/docbook">i.e.</ns5047:abbrev> the first
+          round brackets.
+        </ns5046:para>
+      </ns5045:note>
+       Applying this to
+       <ns5048:programlisting xmlns:ns5048="http://docbook.org/ns/docbook">
+\section{The period of happy dreams}
+       </ns5048:programlisting>
+       yields the docbook version of the section header
+       <ns5049:programlisting xmlns:ns5049="http://docbook.org/ns/docbook">
+&lt;section&gt;&lt;title&gt;The period of happy dreams&gt;/title&gt;
+       </ns5049:programlisting>
+     </ns5041:para> 
+      <ns5050:note xmlns:ns5050="http://docbook.org/ns/docbook"><ns5051:para xmlns:ns5051="http://docbook.org/ns/docbook">
+        The <ns5052:quote xmlns:ns5052="http://docbook.org/ns/docbook">*</ns5052:quote> character is said to be <ns5053:emphasis xmlns:ns5053="http://docbook.org/ns/docbook">greedy</ns5053:emphasis> 
+        in the sense that it will try and include as many characters as it can. For example,
+        if we apply
+        <ns5054:programlisting xmlns:ns5054="http://docbook.org/ns/docbook">
+sed 's/V.*ion/Dreams/g'
+        </ns5054:programlisting>
+        to
+        <ns5055:programlisting xmlns:ns5055="http://docbook.org/ns/docbook">
+Vission, mission and goals
+        </ns5055:programlisting>
+        we get
+        <ns5056:programlisting xmlns:ns5056="http://docbook.org/ns/docbook">
+Dreams and goals
+        </ns5056:programlisting>
+      </ns5051:para></ns5050:note>
+    </ns5037:section>
+</ns4962:section>

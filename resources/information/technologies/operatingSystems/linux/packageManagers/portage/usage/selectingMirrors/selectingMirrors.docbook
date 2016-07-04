@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Selecting Portage Mirrors</title>
+    <para>
+        Gentoo Portage provides a utility, <literal>app-portage/mirrorselect</literal> to conveniently select mirrors which should be used 
+        when synchronizing the portage tree and downloading software. It can automatically find the first <emphasis>n</emphasis>
+        mirrors for you.
+    </para>
+    <para>
+        To automatically select the 5 fastest mirrors you can use
+        <programlisting><![CDATA[
+mirrorselect -s5 -b10 -D -o >> /etc/make.conf          
+]]></programlisting>
+        The <literal>-D</literal> (deep) option it downloads 100kB from each mirror, I order to determine the relative 
+        speeds of the mirror connections. You might want to omit that option for slow network connections as it will
+        try and download this amount from well over 200 mirrors.        
+        You can add a <literal>-H</literal> flag if you want to restrict the selection to only HTTP-mirrors.
+    </para>
+    <para>
+        You can use the <emphasis>interactive</emphasis> ( <literal>-i</literal> ) mode to manually select from a list of 
+        mirrors and add the selected mirrors to your <literal>make.conf</literal> file use
+        <programlisting><![CDATA[
+mirrorselect -i -o >> /etc/make.conf            
+            ]]></programlisting>
+    </para>
+</section>

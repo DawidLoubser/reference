@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Immediate and deferred expression evaluation</title>
+    <para>
+        EL supports both <emphasis>immediate</emphasis> and <emphasis>deferred</emphasis>
+        expression evaluation. 
+    </para>
+    <para>
+        In most cases it is sufficient to have expressions evaluated by the JSF framework
+        whenever the information is required in the standard phase when business services
+        are executed, i.e. in the <literal>update-model-values</literal>, 
+        <emphasis>invoke application</emphasis> and <literal>render-view</literal>
+        phases. If this is sufficient (and for most things it is), then one will request
+        deferred evaluation by prepending the EL expression with a # as is done in the 
+        following two EL expressions
+        <programlisting><![CDATA[
+<h:inputText value="#{createPersonBinding.name}"/>
+
+
+<h:commandButton action="#{createPersonBinding.persistPerson()}"/>
+            ]]></programlisting>
+    </para>
+    <para>
+        You can mix JSF component tags with JSTL (JSP Tag Library) tags 
+        (e.g. the core JSTL action tags). Preferably this should be done 
+        only in exceptional cases and one needs to take care as JSP EL
+        expressions (those used in the JSTL tags) are evaluated immediately
+        whilst the expressions used in JSF component tags are evaluated
+        at the appropriate time in the JSF life cycle.
+    </para>
+    <para>
+        For this reason there is a need to be able to request immediate
+        evaluation of EL expressions when using JSTL tags. This can be 
+        done by preprending the EL expression with a <literal>$</literal> sign:
+        <programlisting><![CDATA[
+<c:forEach var=”lineItem” items=”${order.lineItems}” >            
+]]></programlisting>
+        <note><para>
+            The expressions for which immediate evaluation is requested are, of course,
+            read-only.
+        </para></note>
+    </para>
+    <para>
+        Expressions for which <emphasis>immediate evaluation</emphasis> is requested
+        are compiled when the page is compiled and are executed once when the JSP
+        or JSF is executed.
+        <note><para>
+            For JSPs <literal>#{someExpression}</literal> and <literal>${someExpression}</literal>
+            are both evaluated in the same way, using immediate evaluation.
+        </para></note>
+    </para>
+</section>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1800:section xmlns:ns1800="http://docbook.org/ns/docbook" xml:id="resources.information.tecnologies.java.j2se.java2D.paintStyles.paintStyles">
+    
+    <ns1801:title xmlns:ns1801="http://docbook.org/ns/docbook">Paint Styles</ns1801:title>
+    
+   
+    <ns1802:figure xmlns:ns1802="http://docbook.org/ns/docbook" xml:id="resources.information.tecnologies.java.j2se.java2D.paintStyles.paintStyles.shapeTest_gif">
+    <ns1803:title xmlns:ns1803="http://docbook.org/ns/docbook">ShapeTest</ns1803:title>
+   <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="ShapeTest.gif"/></imageobject></mediaobject> 
+</ns1802:figure>
+    <ns1804:para xmlns:ns1804="http://docbook.org/ns/docbook"> 
+        Arc closures, general shapes with quad curve components and 
+           various filling methods are illustrated in this demonstration
+           application. The arc types are OPEN, CHORD and PIE and the
+           filling methods are solid color, color-gradient and texture.
+</ns1804:para>
+<ns1805:para xmlns:ns1805="http://docbook.org/ns/docbook">
+Paint styles are used to fill shapes. One can fill shapes with solid colors,
+    color gradients or textures. This is illustrated in figure 
+    <ns1806:xref xmlns:ns1806="http://docbook.org/ns/docbook" linkend="resources.information.tecnologies.java.j2se.java2D.paintStyles.paintStyles.shapeTest_gif"/>.
+Below we list the complete application:
+<ns1807:programlisting xmlns:ns1807="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="ShapeTest.java"/>
+</ns1807:programlisting>
+</ns1805:para>
+
+<ns1808:para xmlns:ns1808="http://docbook.org/ns/docbook">    The paint style is specified via an object of a class which implements the
+<ns1809:emphasis xmlns:ns1809="http://docbook.org/ns/docbook" role="verb">Paint</ns1809:emphasis> interface. Java 2D supplies three classes which implement this
+interface, <ns1810:emphasis xmlns:ns1810="http://docbook.org/ns/docbook" role="verb">Color</ns1810:emphasis>, <ns1811:emphasis xmlns:ns1811="http://docbook.org/ns/docbook" role="verb">GradientPaint</ns1811:emphasis> and <ns1812:emphasis xmlns:ns1812="http://docbook.org/ns/docbook" role="verb">TexturePaint</ns1812:emphasis>.
+</ns1808:para>
+<ns1813:para xmlns:ns1813="http://docbook.org/ns/docbook">    
+Gradient paints are defined by specifying two colors at two anchor points.
+Between the two anchor points the color varies continuously, of course 
+subject to device capabilities. Thus
+
+<ns1814:programlisting xmlns:ns1814="http://docbook.org/ns/docbook">
+GradientPaint blueToYellow 
+  = new GradientPaint(x1, y1, Color.blue, x2, y2, Color.yellow);
+gc2D.setPaint(blueToYellow);
+</ns1814:programlisting>
+
+selects a blue-to-yellow gradient for the device context.
+</ns1813:para>
+    
+<ns1815:para xmlns:ns1815="http://docbook.org/ns/docbook">Texture paints are usually created from <ns1816:emphasis xmlns:ns1816="http://docbook.org/ns/docbook" role="verb">BufferedImage</ns1816:emphasis>s. These
+can be either constructed manually by drawing onto the device context
+of the buffered image or it can be constructed from an image read in from
+a file. Below we do the former, <ns1817:abbrev xmlns:ns1817="http://docbook.org/ns/docbook">i.e.</ns1817:abbrev> we create a texture of blue rectangles
+and gray ellipses by drawing these onto the device context of the buffered
+image.
+
+<ns1818:programlisting xmlns:ns1818="http://docbook.org/ns/docbook">
+int blockSize = 5;                                       
+BufferedImage bufferedImage
+  = new BufferedImage(blockSize, blockSize, BufferedImage.TYPE_INT_RGB);
+                    
+Graphics2D bufferedImageGC = bufferedImage.createGraphics();
+bufferedImageGC.setColor(Color.blue);
+bufferedImageGC.fillRect(0, 0, blockSize, blockSize);
+bufferedImageGC.setColor(Color.lightGray);
+bufferedImageGC.fillOval(0, 0, blockSize, blockSize);
+Rectangle rectangle = new Rectangle(0, 0, blockSize, blockSize);
+gc2D.setPaint(new TexturePaint(bufferedImage, rectangle));
+</ns1818:programlisting>
+</ns1815:para>    
+</ns1800:section>

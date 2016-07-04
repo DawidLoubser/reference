@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.concepts.transactions.distributedResources.distributedResources"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Transactions across distributed resources</title>
+  <para>
+    One of the ACID properties of transactions is durability, i.e. that data which has been
+    committed to a database are permanent -- at most they may be effectively reversed via a
+    compensating transaction.
+  </para>
+  <para>
+    Durability is non-trivial for distributed transactions, i.e. if multiple datasources
+    are involved in the same transaction. In that case you cannot complete a successful workflow
+    by simply committing the modifications to the various datasources sequentially. Otherwise
+    one may commit the modifications to one datasource and thereafter another datasource may
+    fail to commit (perhaps due to a database crash or a network problem).
+  </para>
+  <para>
+    The problem of committing transactions which span multiple datasources is tackled via a
+    two-phase commit.
+  </para>
+
+  <section>
+    <title>Two-Phase Commit</title>
+    <para>
+      The first phase is a preparation phase where every element of the transaction (e.g.
+      each database statement) is ready to commit. The transaction to be committed is written
+      into a database log before the database acknowldges its readyness to commit. If all the
+      resources are ready to commit the second phase of actually committing the transaction
+      elements is launched.
+    </para>
+    <para>
+      Should one of the databases crash within this process, the committing of the data is
+      performed upon restart -- the information of outstanding commits is obtained from the
+      database log.
+    </para>
+  </section>
+  
+</section>

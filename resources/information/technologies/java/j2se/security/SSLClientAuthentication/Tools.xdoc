@@ -1,0 +1,108 @@
+<section id="resources.information.technologies.java.j2se.security.SSLClientAuthentication.Tools"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Tools</title>
+  <para>
+    Generate a X509 certificate from a signed certificate
+  </para>
+  <programlisting>
+openssl x509 -in server_cert.pem -out server.x509
+  </programlisting>
+  <para>
+    Generate a PKCS12 certificate form a signed certificate
+  </para>
+  <programlisting>
+openssl pkcs12 -export -in server_cert.pem -inkey server_key.pem 
+               -out server.p12  
+  </programlisting>
+  <para>
+    Generate a public / private key using keytool
+  </para>
+  <programlisting>
+alex% keytool -genkey -keystore clientstore -alias meAsClient 
+              -storepass changeit
+What is your first and last name?
+  [Unknown]:  meAsClient.org.za
+What is the name of your organizational unit?
+  [Unknown]:  clientUnit
+What is the name of your organization?
+  [Unknown]:  clientOrg
+What is the name of your City or Locality?
+  [Unknown]:  Johannesburg
+What is the name of your State or Province?
+  [Unknown]:  Gauteng
+What is the two-letter country code for this unit?
+  [Unknown]:  ZA
+Is CN=meAsClient.org.za, OU=clientUnit, O=clientOrg, L=Johannesburg, 
+      ST=Gauteng, C=ZA correct?
+  [no]:  y
+
+Enter key password for &lt;meAsClient&gt;
+        (RETURN if same as keystore password):  
+alex% 
+  </programlisting>
+  <para>
+    This will create a new keystore with password <emphasis role="strong">changeit</emphasis> persisted in the <emphasis role="strong">clientstore</emphasis> file. The following entries in this keystore are also created.
+  </para>
+  <programlisting>
+alex% keytool -list -keystore clientstore 
+Enter keystore password:  changeit
+
+Keystore type: jks
+Keystore provider: SUN
+
+Your keystore contains 1 entry
+
+measclient, Aug 3, 2003, keyEntry,
+Certificate fingerprint (MD5): 1F:64:B5:95:10:D2:7B:43:76:CD:D6:01:39:C8:7E:E8
+alex% 
+  </programlisting>
+  <para> 
+    Note the entry type : <emphasis role="strong">keyEntry</emphasis>. A keystore can maintain 2 different types of entries, one being a keyEntry containing a private key and certificate and the other being a trustedCertEntry which only contains a certificate.
+  </para>
+  <para>
+    Generate a CSR using keytool
+  </para>
+  <programlisting>
+alex% keytool -keystore clientstore -certreq -alias measclient 
+              -file client.csr -storepass changeit
+  </programlisting>
+  <para>
+    Sign the CSR with OPENSSL
+  </para>
+  <programlisting>
+openssl x509   -req -CA cacert.pem -CAkey cakey.pem -extensions v3_ca 
+               -in client.csr -inform DER -out client_cert.x509 
+               -CAcreateserial
+
+eg :
+
+alex% openssl x509   -req -CA demoCA/cacert.pem -CAkey demoCA/private/cakey.pem  
+                     -extensions v3_ca -in client.csr -inform DER 
+                     -out client_cert.x509 -CAcreateserial
+Signature ok
+subject=/C=ZA/ST=Gauteng/L=Johannesburg/O=clientOrg
+        /OU=clientUnit/CN=meAsClient.org.za
+Getting CA Private Key
+Enter PEM pass phrase: [password[
+alex% ls
+  </programlisting>
+  <para>
+    Import the CA's self signed certificate into the truststore
+  </para>
+  <programlisting>
+alex# keytool -import -alias butterflyCA 
+              -keystore /Syst.. ..urity/cacerts -file ../CA/demoCA/cacert.pem    
+  </programlisting>
+  <para>
+    Import the signed certificate response into the keystore. This requires the CA to be added to the truststore. Note the alias is the same as was used in the creation of the CSR.
+  </para>
+  <programlisting>
+alex% keytool -import -alias measclient -keystore clientstore -trustcacerts 
+              -file client_cert.x509
+Enter keystore password:  changeit
+Certificate reply was installed in keystore
+  </programlisting>
+</section>

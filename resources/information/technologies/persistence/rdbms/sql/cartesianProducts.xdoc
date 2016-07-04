@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.persistence.rdbms.sql.cartesianProducts"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    
+    <title>Cartesian Products</title>
+    <para>In order to understand SQL, one needs to understand the concept of a cartesian products.
+        The concept is derived from linear algebra.</para>
+    <para>A cartesian product between two tables results in a new table which has
+    <itemizedlist>
+        <listitem>
+            <para>as columns the columns of the first table followed by the columns of the second
+                table and</para>
+        </listitem>
+        <listitem>
+            <para>as rows all possible combinations of the rows of the first table with the rows of
+                the second table.</para>
+        </listitem>
+    </itemizedlist>
+    </para>
+    <para>For example, consider the following a <emphasis>Lecturer</emphasis> table</para>
+   
+    <table>
+        <title>Lecturers</title>
+        <tgroup cols="2">
+            <thead>
+                <row>
+                    <entry><para>Identity No</para></entry>
+                    <entry><para>Name</para></entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry><para>638327652</para></entry>
+                    <entry><para>John Visagie</para></entry>
+                </row>
+                <row>
+                    <entry><para>712675167</para></entry>
+                    <entry><para>Temba Mjojo</para></entry>
+                </row>
+            </tbody>
+        </tgroup>
+    </table>
+  
+    <para> and a <emphasis>Course</emphasis> table</para>
+    <table>
+        <title>Courses</title>
+        <tgroup cols="3">
+            <thead>
+                <row>
+                    <entry><para>CourseCode</para></entry>
+                    <entry><para>CourseName</para></entry>
+                    <entry><para>Duration</para></entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry><para>OOAD</para></entry>
+                    <entry><para>Object-Oriented Analysis and Design using UML</para> </entry>
+                    <entry><para>5 days</para></entry>
+                </row>
+                <row>
+                    <entry><para>AdJv</para></entry>
+                    <entry> <para>Advanced Java</para></entry>
+                    <entry> <para>5 days</para></entry>
+                </row>
+                <row>
+                    <entry><para>WbSv</para></entry>
+                    <entry><para>Web Services</para></entry>
+                    <entry><para>4 days</para></entry>
+                </row>
+            </tbody>
+        </tgroup>
+    </table>
+    <para>The cartesian join between these 2 tables which is obtained via</para>
+    <para><programlisting>SELECT * FROM Lecturer, Course</programlisting></para>
+    <para>and via</para>
+    <para><programlisting>SELECT Object(c) FROM Course c, Lecturer l</programlisting></para>
+    <para>would yield the following result set which can itself be viewed as a table:</para>
+    <table>
+        <title>cartesian join between Lecturer and Course</title>
+        <tgroup cols="5">
+            <thead>
+                <row>
+                    <entry><para>CourseCode</para></entry>
+                    <entry><para>CourseName</para></entry>
+                    <entry><para>Duration</para></entry>
+                    <entry> <para>Identity No</para></entry>
+                    <entry> <para>Name</para></entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry><para>OOAD</para></entry>
+                    <entry><para>Object-Oriented Analysis and Design using UML</para></entry>
+                    <entry><para>5 days</para></entry>
+                    <entry><para>638327652</para> </entry>
+                    <entry><para>John Visagie</para></entry>
+                </row>
+                <row>
+                    <entry><para>OOAD</para></entry>
+                    <entry><para>Object-Oriented Analysis and Design using UML</para></entry>
+                    <entry><para>5 days</para></entry>
+                    <entry><para>712675167</para></entry>
+                    <entry><para>Temba Mjojo</para></entry>
+                </row>
+                <row>
+                    <entry><para>AdJv</para></entry>
+                    <entry><para>Advanced Java</para></entry>
+                    <entry><para>5 days</para></entry>
+                    <entry><para>638327652</para></entry>
+                    <entry><para>John Visagie</para></entry>
+                </row>
+                <row>
+                    <entry><para>AdJv</para></entry>
+                    <entry><para>Advanced Java</para></entry>
+                    <entry><para>5 days</para></entry>
+                    <entry><para>712675167</para></entry>
+                    <entry><para>Temba Mjojo</para></entry>
+                </row>
+                <row>
+                    <entry><para>WbSv</para></entry>
+                    <entry><para>Web Services</para></entry>
+                    <entry> <para>4 days</para></entry>
+                    <entry><para>638327652</para></entry>
+                    <entry><para>John Visagie</para></entry>
+                </row>
+                <row>
+                    <entry><para>WbSv</para></entry>
+                    <entry><para>Web Services</para></entry>
+                    <entry> <para>4 days</para></entry>
+                    <entry><para>712675167</para></entry>
+                    <entry><para>Temba Mjojo</para></entry>
+                </row>
+            </tbody>
+        </tgroup>
+    </table>
+</section>

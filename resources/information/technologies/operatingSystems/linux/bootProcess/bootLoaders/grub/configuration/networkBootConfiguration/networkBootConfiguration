@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Configure GRUB to boot from the network</title>
+    <para>
+        For diskless machines 
+    </para>
+
+
+You will need to edit the boot/grub/menu.lst file for this.
+
+This is an example for adding a new Media Director. First I added this as the top "target":
+
+title New Media Director
+dhcp
+root (nd)
+kernel /tftpboot/default/vmlinuz root=/dev/nfs acpi=off vga=normal ramdisk_size=10240 rw ip=all apicpmtimer
+initrd /tftpboot/default/initrd
+
+And here is what I added above that for one of my Media Directors (device #100), lateron after it was added to the system:
+
+title moon100
+dhcp
+root (nd)
+kernel /tftpboot/100/vmlinuz ramdisk=10240 rw root=/dev/nfs boot=nfs nfsroot=192.168.80.1:/usr/pluto/diskless/100
+initrd /tftpboot/100/initrd.img
+
+After modifying the boot/grub/menu.lst there is no need to run or install GRUB itself again. This floppy can now be used not only to boot but also to install GRUB on other systems or media. 
+
+
+grub> bootp
+Probing... [NE*000]
+NE2000 base ...
+Address: 192.168.110.23    Netmask: 255.255.255.0
+Server: 192.168.110.14     Gateway: 192.168.110.1
+
+grub> root (nd)
+grub> kernel /tftproot/gnumach.gz root=sd0s1
+grub> module /tftproot/serverboot.gz
+grub> boot
+

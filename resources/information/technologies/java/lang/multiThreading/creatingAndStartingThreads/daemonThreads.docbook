@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.tecnologies.java.lang.multiThreading.creatingAndStartingThreads.daemonThreads">
+
+  <title>Daemon Threads</title>
+
+  <para>We have seen that an application ends when the last execution
+    thread terminates. Thus, normal threads prevent an application from
+    terminating until they have all completed. 
+    This is not the case for <emphasis>daemon</emphasis> threads. A daemon thread
+    does not prevent an application from terminating.</para>
+
+  <para>Daemon threads are typically used to provide some background
+    service which is continually available while the application is
+    running. Threads which supply a service to other threads which is only
+    useful while other threads exist are typically declared daemon
+    threads. Example use-cases for daemon threads include: <itemizedlist>
+      <listitem>
+        <para>A mail client application could have a daemon thread which
+          regularly checks with the mail server whether new mail has
+          arrived.</para>
+      </listitem>
+      <listitem>
+        <para>The Java VM uses a low priority daemon thread for garbage
+          collection.</para>
+      </listitem>
+    </itemizedlist>
+  </para>
+  <para>In the following example, we have added one daemon thread which simply prints the
+    letter `x' repetitively (in an infinite loop). </para>
+  <para>
+    <programlisting language="Java"><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" href="source/MyDaemonThread.java"/><![CDATA[
+        ]]></programlisting>
+  </para>
+
+  <para>One declares a thread a daemon thread via the instance service </para>
+  <para>
+    <programlisting><![CDATA[
+    thread.setDaemon(true);
+]]></programlisting>
+  </para>
+  <para>This message must be sent to the thread while it is not active.
+    Typically one does this after creating the thread object. Note that
+    the application still terminates after the last user (non-daemon)
+    thread terminates. </para>
+  <para>
+    <programlisting><![CDATA[
+All threads started. Main thread terminates.
+
+x123xxxxxxxxxxxxxxxx123123131313131313131313131313132x132x13x12x1x1x1
+1x1x1x1x123x23x3x3x3x3x3x3x3x3x3x3x3x3x3x3x2132132x132131313131313131
+12x12x3x2xxxxxxxxxxxxxx213233333333333333332x13x13x13x13x13x13x13x13x
+x13x132x132x132x132x32x32x32x32x32x32x32x32x32x32x32x32x3213x13x123x1
+23x123x123x123x123x123x13x12x2x2x2x2x2x2x2x2x2x2x2x2x2x231231231x31x3
+2x312x312x312x312x312x312x312x312x312x312x12x231x231x231x231x231x231x
+2312312312312312312312312312312312312312x32x321x31x321x321x321x321x32
+21x321x321x321x321x321321x2x2xxxxxxxxxxxxxxx312312x312x312x312x312x31
+12x312x312x312x312x312x
+Thread3 terminates.
+12x12x1x1x1x1x1x1x1x1x1x1x1x1x1x1x2x21212x12x121212121212121212121212
+Thread1 terminates.
+2x2x2x2x2x2x2x2x2x2x2x2x22xxxxxxxxxxxxxxxxx22222222222222222xxxxxxxxx
+xxxxxx2xxxxxxxxx22222222222222xxxxxxxxxxxxxxxxx222222222222222
+Thread2 terminates.
+xxxxxxxxxxxxxxxx
+]]></programlisting>
+  </para>
+
+  <para>If a daemon thread spawns further threads, these threads are by
+    default also daemon threads. It can, of course, modify the daemonality by
+    sending a <emphasis role="verb">setDaemon(false)</emphasis> message to
+    the newly spawned thread while the latter is still inactive.</para>
+
+  <!-- para>Notice that we create a <emphasis role="verb"
+    >Thread</emphasis> which wraps our <emphasis role="verb"
+    >Daemon</emphasis>. The <emphasis role="verb">Daemon</emphasis> class
+    is not a subclass of <emphasis role="verb">Thread</emphasis> and hence
+    its instances have to send the <emphasis role="verb"
+    >yield()</emphasis> message to the <emphasis role="verb"
+    >Thread</emphasis> class via <emphasis role="verb"
+    >Thread.yield()</emphasis>. </para -->
+
+</section>

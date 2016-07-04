@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+   version="5.0"
+   xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.stateless.stateful">
+   <title>Stateful session beans</title>
+   <para> Stateful session beans maintain state across service requests. The state services only for
+      the duration of the session and is only accessible from within the user session. </para>
+
+   <section>
+      <title>Stateful session beans as workflow managers</title>
+      <para> Since stateful session beans exist and maintain state for the duration of a user
+         session, they may be used to as workflow managers. </para>
+   </section>
+
+   <section>
+      <title>Life cycle of a stateful session bean</title>
+      <para> Stateful session beans maintain state for the duration of the user session across bean
+         passivation and re-activation. That requires that the state of the bean's object identity
+         and state needs to be persisted upon bean passivation (<abbrev>i.e.</abbrev> when the bean
+         is released to the bean pool) and reconstructed upon re-activation. </para>
+
+      <para> For every service request the application server activates any bean from the method
+         ready pool by binding the flyweight object to the user session bean object. After having
+         applied the enterprise services, the application server delegates the realisation of that
+         request to the flyweight. </para>
+
+      <para>
+         The following image illustrates the life cycle of a stateful session bean including the passivation and
+         re-activation of the physical bean instance. </para>
+
+      <figure
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.stateful.lifeCycle_fig">
+         <title>Life cycle of a stateful session bean</title>
+         <mediaobject>
+            <imageobject>
+               <imagedata fileref="lifeCycle.jpg"/>
+            </imageobject>
+         </mediaobject>
+      </figure>
+
+      <section>
+         <title>Stateful session beans are realised using flyweight and memento patterns</title>
+         <para> In order to facilitate the representation of potentially many stateful session bean
+            objects by a limited number of physical bean instances, EJB makes use of the flyweight
+            pattern. Object identity and state is externalised; the EJB-Object maintains an external
+            identity for the conceptual user session bean which may be realised by different
+            physical bean instances over time and the persistent storage maintains the beans state
+            externally. </para>
+         <para> Object serialisation is used to grab a memento (the encapsulated state of the bean
+            instance) without breaking encapsulation as the serialised state can only be used to
+            reconstruct the bean instance state. </para>
+      </section>
+   </section>
+
+   <section>
+      <title>Writing the business interfaces</title>
+      <para> As an example, let us implement a stateful shopping cart session bean which has only a
+         remote interface. </para>
+      <section>
+         <title>ShoppingCart.java</title>
+         <para>
+            <programlisting language="Java">
+               <xi:include parse="text" href="../../../examples/shoppingCart/src/common/za/co/solms/ejb3/shopping/cart/ShoppingCart.java"/>
+            </programlisting>
+         </para>
+         <para> This interface must be available to both, server and client side and hence it is
+            packed in the common source folder. </para>
+      </section>
+
+      <section>
+         <title>Value objects: CartContent.java and Product.java</title>
+         <para> Similarly, the value objects transferred between the stateful session bean.
+            Furthermore, the value object classes must be serializable so that they can be
+            serialized across the RMI/IIOP connection. The product class is very simple:
+            <programlisting language="Java">
+               <xi:include parse="text" href="../../../examples/shoppingCart/src/common/za/co/solms/ejb3/shopping/cart/CartContent.java"/>
+            </programlisting>
+         </para>
+         <para> The cart content maintains a mapping of products onto number of instances included
+            in the cart:
+            <programlisting language="Java">
+               <xi:include parse="text" href="../../../examples/shoppingCart/src/common/za/co/solms/ejb3/shopping/products/Product.java"/>
+            </programlisting>
+         </para>
+      </section>
+
+      <section>
+         <title>ShoppingCartBean.java</title>
+         <para> Stateful session bean implementations must be annotated as
+            <literal>@Stateful</literal>. Furthermore, since object serialization is used for bean
+            passivation and re-activation, the bean class must implement
+               <literal>java.io.Serializable</literal>.
+            <programlisting language="Java">
+               <xi:include parse="text" href="../../../examples/shoppingCart/src/server/businessLogic/za/co/solms/shopping/cart/ShoppingCartBean.java"/>
+            </programlisting>
+         </para>
+      </section>
+
+      <section>
+         <title>Building and deploying the bean</title>
+         <para> To build and deploy the bean you only need to run the ant task,
+               <literal>deploy.server.businessLogic</literal>. </para>
+      </section>
+   </section>
+</section>

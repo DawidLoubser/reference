@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>How are the elements in the blackboard architecture realized in software systems?</title>
+    <para>
+        The core elements are
+        <itemizedlist>
+            <listitem><para>the blackboard which stores data and messages,</para></listitem>
+            <listitem><para>the knowledge sources or experts which perform the processing,</para></listitem>
+            <listitem><para>and the controller which controls what feeds into the processes.</para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>The blackboard</title>
+        <para>
+            <indexterm><primary>blackboard</primary></indexterm>
+            The blackboard will be some or other form of database to which data objects and messages can be persisted.
+            <indexterm><primary>database</primary></indexterm>
+            <indexterm><primary>database</primary><secondary>relational</secondary></indexterm>
+            <indexterm><primary>database</primary><secondary>object</secondary></indexterm>
+            <indexterm><primary>database</primary><secondary>XML</secondary></indexterm>
+            <indexterm><primary>persisistence</primary><secondary>to file system</secondary></indexterm>
+            <indexterm>
+                <primary>persistence</primary>
+                <seealso><indexterm><primary>database</primary></indexterm></seealso>
+            </indexterm>
+            If a relational database is used for the persistence, the blackboard will usually require include an object-relational
+            mapper. Alternatively persistence may be done to an object or XML database or even directly to the file
+            system.
+        </para>
+        <para>
+            <indexterm><primary>application programmer interface (API)</primary></indexterm>
+            <indexterm>
+                <primary>API</primary>
+                <see><indexterm><primary>application programmer interface</primary></indexterm></see>
+            </indexterm>
+            The blackboard implementation must support an API through which information can be added to or
+            removed from the blackboard and through which information can be modified. In addition
+            the blackboard would typically enable processing units to register for events (either through database
+            triggers or through a higher level framework in the persistence layer).
+            <indexterm><primary>event</primary></indexterm>
+        </para>
+    </section>
+    
+    <section>
+        <title>The experts</title>
+        <para>
+            <indexterm><primary>expert</primary></indexterm>
+            <indexterm><primary>knowledge</primary><secondary>source</secondary></indexterm>
+            <indexterm><primary>processing unit</primary></indexterm>
+            In a software system the experts or knowledge sources are the processing units
+            <indexterm><primary>algorithm</primary></indexterm>
+            which contain the algorithms with the business logic. 
+            <indexterm><primary>business</primary><secondary>logic</secondary></indexterm>
+            These processing units typically have very well defined responsibilities which usually
+            <indexterm><primary>responsibility</primary></indexterm>
+            encapsualted within a contract.
+            <indexterm><primary>contract</primary><secondary>for processing unit</secondary></indexterm>
+        </para>
+        <para>
+            The processing units should preferably not contain anything else but the business logic. They would normally be
+            deployed in some component container like an EJB, Spring or Web Services container.
+            Furthermore, the processing units can be distributed across machines. 
+            <indexterm><primary>distributed</primary></indexterm>
+            In either case, they can interface with the blackboard and the environment for the processing units
+            needs to be able to marchall and demarchall requests and messages between the blackboard and
+            the processing units. The protocol and integration logic should thus be outside the actual processing unit, typically
+            in a separate integration layer provided by the container hosting the processing units.
+            <indexterm><primary>integration</primary><secondary>layers</secondary></indexterm>
+        </para>
+    </section>
+    
+    <section>
+        <title>The controller</title>
+        <para>
+            <indexterm><primary>controller</primary><secondary>in software implementations of blackboard</secondary></indexterm>
+            The controller is the front end system which feeds service requests into the blackboard. As such the
+            controller will typically enforce security, ensuring that the requester is duely authenticated and that
+            <indexterm><primary>security</primary></indexterm>
+            <indexterm><primary>authentication</primary></indexterm>
+            <indexterm><primary>authorization</primary></indexterm>
+            it/he/she has the required authorization to make use of the service requested.
+        </para>
+        <para>
+            In implementations where the experts themselves do not register as event listeners with the
+            blackboard, it is usually the controller which receives the events. In such implementations the controller
+            may make the decision on which experts are potentially able to contribute to the next phase of
+            solving the problem/realizing the service and request those processing units to try and do so.
+        </para>
+        <para>
+            The controller may also manage the sized of object pools (for data objects and processing units), 
+            thread pools and connection pools in order to ensure optimized processing.
+            <indexterm><primary>object pool</primary></indexterm>
+            <indexterm><primary>connection pool</primary></indexterm>
+        </para>
+    </section>
+</section>    

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns255:section xmlns:ns255="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.documenting.examples.interpharm.architecture.strategies.strategies">
+  <ns256:title xmlns:ns256="http://docbook.org/ns/docbook">Architectural strategies</ns256:title>
+  <ns257:para xmlns:ns257="http://docbook.org/ns/docbook">
+    This section discusses the architectural strategies employed to realize the non-functional
+    requirements for the claims switching system.  
+  </ns257:para>
+  
+  <ns258:section xmlns:ns258="http://docbook.org/ns/docbook">
+    <ns259:title xmlns:ns259="http://docbook.org/ns/docbook">Strategies used to realize reliability and availability</ns259:title>
+    <ns260:para xmlns:ns260="http://docbook.org/ns/docbook">
+      Ultimately this is perhaps the most critical of all quality requirements. It is intended to be
+      realized through a number of strategies.
+    </ns260:para>
+    
+    <ns261:section xmlns:ns261="http://docbook.org/ns/docbook">
+      <ns262:title xmlns:ns262="http://docbook.org/ns/docbook">Clustering</ns262:title>
+      <ns263:para xmlns:ns263="http://docbook.org/ns/docbook">
+        The core processing layer is deployed within a cluster where 
+        <ns264:itemizedlist xmlns:ns264="http://docbook.org/ns/docbook">
+          <ns265:listitem xmlns:ns265="http://docbook.org/ns/docbook"><ns266:para xmlns:ns266="http://docbook.org/ns/docbook">
+            the cluster members publish their availability through asynchronous messaging (including
+            heartbeats),
+          </ns266:para></ns265:listitem>
+          <ns267:listitem xmlns:ns267="http://docbook.org/ns/docbook"><ns268:para xmlns:ns268="http://docbook.org/ns/docbook">
+            the client proxies used in the HTTP request processing layer are smart proxies which
+            <ns269:itemizedlist xmlns:ns269="http://docbook.org/ns/docbook">
+              <ns270:listitem xmlns:ns270="http://docbook.org/ns/docbook"><ns271:para xmlns:ns271="http://docbook.org/ns/docbook">
+                are continuously informed about the machines available in the business
+                logic cluster,
+              </ns271:para></ns270:listitem>
+              <ns272:listitem xmlns:ns272="http://docbook.org/ns/docbook"><ns273:para xmlns:ns273="http://docbook.org/ns/docbook">
+                provide support for pluggable load balancing algorithms.
+              </ns273:para></ns272:listitem>
+            </ns269:itemizedlist>
+          </ns268:para></ns267:listitem>
+          <ns274:listitem xmlns:ns274="http://docbook.org/ns/docbook"><ns275:para xmlns:ns275="http://docbook.org/ns/docbook">
+            support for farming where business logic components which are deployed on any cluster
+            node are automatically deployed across all nodes in the cluster.
+          </ns275:para></ns274:listitem>
+        </ns264:itemizedlist>
+      </ns263:para>
+    </ns261:section>
+    
+    <ns276:section xmlns:ns276="http://docbook.org/ns/docbook">
+      <ns277:title xmlns:ns277="http://docbook.org/ns/docbook">Passive redundancy for the request originators</ns277:title>
+      <ns278:para xmlns:ns278="http://docbook.org/ns/docbook">
+        The socket connection layer is a potential single point of failure. Clients connect to a
+        single IP address. If the machine falls over a stand-by machine which monitors the
+        availability of the first machine automatically brings its networking interface up with the
+        IP address used by clients. These machines perform an absolute minimum of processing,
+        performing essentially only the following tasks:
+        <ns279:orderedlist xmlns:ns279="http://docbook.org/ns/docbook">
+          <ns280:listitem xmlns:ns280="http://docbook.org/ns/docbook"><ns281:para xmlns:ns281="http://docbook.org/ns/docbook">
+            forwarding received messages on top of the HTTP transport protocol,  
+          </ns281:para></ns280:listitem>
+          <ns282:listitem xmlns:ns282="http://docbook.org/ns/docbook"><ns283:para xmlns:ns283="http://docbook.org/ns/docbook">
+            simple load balancing across the HTTP request processors,
+          </ns283:para></ns282:listitem>
+          <ns284:listitem xmlns:ns284="http://docbook.org/ns/docbook"><ns285:para xmlns:ns285="http://docbook.org/ns/docbook">
+            processing of HTTP responses and passing the message body back to the pharmacy via the
+            socket connection.
+          </ns285:para></ns284:listitem>
+        </ns279:orderedlist>
+      </ns278:para>
+    </ns276:section>
+    
+    <ns286:section xmlns:ns286="http://docbook.org/ns/docbook">
+      <ns287:title xmlns:ns287="http://docbook.org/ns/docbook">Standard tested components</ns287:title>
+      <ns288:para xmlns:ns288="http://docbook.org/ns/docbook">
+          Reliability is meant to be improved by reducing complexity and reducing the amount of
+          in-house maintained components by replacing them by standard tested components which are
+          maintained  and QA'd within the open source community.
+      </ns288:para>
+    </ns286:section>
+    
+    
+    <ns289:section xmlns:ns289="http://docbook.org/ns/docbook">
+      <ns290:title xmlns:ns290="http://docbook.org/ns/docbook">Hot deployment</ns290:title>
+      <ns291:para xmlns:ns291="http://docbook.org/ns/docbook">
+        The architecture needs to support hot deployment of updated components in order to allow for system maintenance without down-time.
+      </ns291:para>
+    </ns289:section>
+    
+    <ns292:section xmlns:ns292="http://docbook.org/ns/docbook">
+      <ns293:title xmlns:ns293="http://docbook.org/ns/docbook">Passive redundancy on the persistence layer</ns293:title>
+      <ns294:para xmlns:ns294="http://docbook.org/ns/docbook">
+        Data written to one database is synchronized over to a backup  database server which is used when
+        the main database server fails.
+      </ns294:para>
+    </ns292:section>
+    
+    <ns295:section xmlns:ns295="http://docbook.org/ns/docbook">
+      <ns296:title xmlns:ns296="http://docbook.org/ns/docbook">Transaction management</ns296:title>
+      <ns297:para xmlns:ns297="http://docbook.org/ns/docbook">
+        Transaction boundaries are set from the receipt of the original HTTP message up to the HTTP
+        response. This allows for reasonable transactional control without requiring the deployment
+        of a new pharmacy client or transaction management up to the socket connection layer. 
+      </ns297:para>
+    </ns295:section>
+    
+    <ns298:section xmlns:ns298="http://docbook.org/ns/docbook">
+      <ns299:title xmlns:ns299="http://docbook.org/ns/docbook">Resource pooling</ns299:title>
+      <ns300:para xmlns:ns300="http://docbook.org/ns/docbook">
+        In order to improve scaleability and performance, resources should be pooled as far as
+        possible. This should include the pooling of 
+        <ns301:itemizedlist xmlns:ns301="http://docbook.org/ns/docbook">
+          <ns302:listitem xmlns:ns302="http://docbook.org/ns/docbook"><ns303:para xmlns:ns303="http://docbook.org/ns/docbook">database connections,</ns303:para></ns302:listitem>
+          <ns304:listitem xmlns:ns304="http://docbook.org/ns/docbook"><ns305:para xmlns:ns305="http://docbook.org/ns/docbook">connections to medical aid administrators,</ns305:para></ns304:listitem>
+          <ns306:listitem xmlns:ns306="http://docbook.org/ns/docbook"><ns307:para xmlns:ns307="http://docbook.org/ns/docbook">connections to messaging services,</ns307:para></ns306:listitem>
+          <ns308:listitem xmlns:ns308="http://docbook.org/ns/docbook"><ns309:para xmlns:ns309="http://docbook.org/ns/docbook">thread pooling, and</ns309:para></ns308:listitem>
+          <ns310:listitem xmlns:ns310="http://docbook.org/ns/docbook"><ns311:para xmlns:ns311="http://docbook.org/ns/docbook">object pooling.</ns311:para></ns310:listitem>
+        </ns301:itemizedlist>
+      </ns300:para>
+    </ns298:section>
+  </ns258:section>
+  
+  <ns312:section xmlns:ns312="http://docbook.org/ns/docbook">
+    <ns313:title xmlns:ns313="http://docbook.org/ns/docbook">Strategies used to realize scaleability</ns313:title>
+    <ns314:para xmlns:ns314="http://docbook.org/ns/docbook">
+       Scaleability is achieved through
+      <ns315:itemizedlist xmlns:ns315="http://docbook.org/ns/docbook">
+        <ns316:listitem xmlns:ns316="http://docbook.org/ns/docbook"><ns317:para xmlns:ns317="http://docbook.org/ns/docbook">clustering,</ns317:para></ns316:listitem>
+        <ns318:listitem xmlns:ns318="http://docbook.org/ns/docbook"><ns319:para xmlns:ns319="http://docbook.org/ns/docbook">resource pooling,</ns319:para></ns318:listitem>
+        <ns320:listitem xmlns:ns320="http://docbook.org/ns/docbook"><ns321:para xmlns:ns321="http://docbook.org/ns/docbook">reducing the amount of database synchronization required,</ns321:para></ns320:listitem>
+        <ns322:listitem xmlns:ns322="http://docbook.org/ns/docbook"><ns323:para xmlns:ns323="http://docbook.org/ns/docbook">
+          deploying several software layers onto the same hardware layer with
+          efficient Java object based integration between these layers.
+        </ns323:para></ns322:listitem>
+      </ns315:itemizedlist>
+    </ns314:para>
+  </ns312:section>
+  
+  <ns324:section xmlns:ns324="http://docbook.org/ns/docbook">
+    <ns325:title xmlns:ns325="http://docbook.org/ns/docbook">Strategies used to realize maintainability</ns325:title>
+    <ns326:para xmlns:ns326="http://docbook.org/ns/docbook">
+        Maintainability is realized through
+      <ns327:itemizedlist xmlns:ns327="http://docbook.org/ns/docbook">
+        <ns328:listitem xmlns:ns328="http://docbook.org/ns/docbook"><ns329:para xmlns:ns329="http://docbook.org/ns/docbook">
+          The hardware architecture is simplified by 
+          <ns330:itemizedlist xmlns:ns330="http://docbook.org/ns/docbook">
+            <ns331:listitem xmlns:ns331="http://docbook.org/ns/docbook"><ns332:para xmlns:ns332="http://docbook.org/ns/docbook">
+              reducing the number of machines used,
+            </ns332:para></ns331:listitem>
+            <ns333:listitem xmlns:ns333="http://docbook.org/ns/docbook"><ns334:para xmlns:ns334="http://docbook.org/ns/docbook">
+              reducing the number of hardware layers, and
+            </ns334:para></ns333:listitem>
+            <ns335:listitem xmlns:ns335="http://docbook.org/ns/docbook"><ns336:para xmlns:ns336="http://docbook.org/ns/docbook">
+              reducing the database synchronization requirements,
+            </ns336:para></ns335:listitem>
+          </ns330:itemizedlist>
+        </ns329:para></ns328:listitem>
+        
+        <ns337:listitem xmlns:ns337="http://docbook.org/ns/docbook"><ns338:para xmlns:ns338="http://docbook.org/ns/docbook">
+          The software architecture is simplified by
+          <ns339:itemizedlist xmlns:ns339="http://docbook.org/ns/docbook">
+            <ns340:listitem xmlns:ns340="http://docbook.org/ns/docbook"><ns341:para xmlns:ns341="http://docbook.org/ns/docbook">
+              significantly reducing the code bulk,
+            </ns341:para></ns340:listitem>
+            <ns342:listitem xmlns:ns342="http://docbook.org/ns/docbook"><ns343:para xmlns:ns343="http://docbook.org/ns/docbook">
+              removing a lot of the complex thread pooling logic and replacing it by standard
+              components, 
+            </ns343:para></ns342:listitem>
+            <ns344:listitem xmlns:ns344="http://docbook.org/ns/docbook"><ns345:para xmlns:ns345="http://docbook.org/ns/docbook">
+              not tying the system to any particular database synchronization method.
+            </ns345:para></ns344:listitem>
+          </ns339:itemizedlist>
+        </ns338:para></ns337:listitem>
+        
+        <ns346:listitem xmlns:ns346="http://docbook.org/ns/docbook"><ns347:para xmlns:ns347="http://docbook.org/ns/docbook">
+          The architecture is based on a standard enterprise reference architecture which is well
+          understood by many developers, designers and architects. This will enable client to
+          realize cost effective maintainability, even in the context of critical staff
+          replacements.
+        </ns347:para></ns346:listitem>
+        <ns348:listitem xmlns:ns348="http://docbook.org/ns/docbook"><ns349:para xmlns:ns349="http://docbook.org/ns/docbook">
+          The new architecture is a component based architecture supporting simple addition to the
+          business logic components, replacing of defective or inferior components with new
+          components using hot component deployment for maintenance on the life system. 
+        </ns349:para></ns348:listitem>
+        <ns350:listitem xmlns:ns350="http://docbook.org/ns/docbook"><ns351:para xmlns:ns351="http://docbook.org/ns/docbook">
+          The architecture supports pluggable, contract based, connectors with support for resource pooling
+          as well as potentially future support for transactions. This facilitates rapid and cost
+          effective support for new medical aid administrators. 
+        </ns351:para></ns350:listitem>
+      </ns327:itemizedlist>
+    </ns326:para>
+  </ns324:section>
+  
+  <ns352:section xmlns:ns352="http://docbook.org/ns/docbook">
+    <ns353:title xmlns:ns353="http://docbook.org/ns/docbook">Strategies used to realize performance</ns353:title>
+    <ns354:para xmlns:ns354="http://docbook.org/ns/docbook">
+        Improved performance is realized through
+      <ns355:itemizedlist xmlns:ns355="http://docbook.org/ns/docbook">
+        <ns356:listitem xmlns:ns356="http://docbook.org/ns/docbook"><ns357:para xmlns:ns357="http://docbook.org/ns/docbook">
+          removing the internal usage of XML and using XML purely for when communicating with
+          external parties, 
+        </ns357:para></ns356:listitem>
+        <ns358:listitem xmlns:ns358="http://docbook.org/ns/docbook"><ns359:para xmlns:ns359="http://docbook.org/ns/docbook">
+          reducing the communication requirements by deploying multiple software
+          layers onto a single hardware layer,
+        </ns359:para></ns358:listitem>
+        <ns360:listitem xmlns:ns360="http://docbook.org/ns/docbook"><ns361:para xmlns:ns361="http://docbook.org/ns/docbook">
+          using a light-weight persistence framework based on hibernate instead of an XML based
+          persistence mechanism, and
+        </ns361:para></ns360:listitem>
+        <ns362:listitem xmlns:ns362="http://docbook.org/ns/docbook"><ns363:para xmlns:ns363="http://docbook.org/ns/docbook">
+          general support for reusable resources in the context of connection, object and thread
+          pooling.
+        </ns363:para></ns362:listitem>
+      </ns355:itemizedlist>
+    </ns354:para>
+  </ns352:section>
+  
+  <ns364:section xmlns:ns364="http://docbook.org/ns/docbook">
+    <ns365:title xmlns:ns365="http://docbook.org/ns/docbook">Strategies used to realize auditability</ns365:title>
+    <ns366:para xmlns:ns366="http://docbook.org/ns/docbook">
+        All messages received or sent by the system are logged in their raw form.
+    </ns366:para>
+  </ns364:section>
+  
+  <ns367:section xmlns:ns367="http://docbook.org/ns/docbook">
+    <ns368:title xmlns:ns368="http://docbook.org/ns/docbook">Strategies used to realize integrability</ns368:title>
+    <ns369:para xmlns:ns369="http://docbook.org/ns/docbook">
+      The integrability requirements can be expected to increase over time. The architecture
+      supports pluggable entry and integration layers.      
+    </ns369:para>
+    
+    <ns370:section xmlns:ns370="http://docbook.org/ns/docbook">
+      <ns371:title xmlns:ns371="http://docbook.org/ns/docbook">Adaptors </ns371:title>
+      <ns372:para xmlns:ns372="http://docbook.org/ns/docbook">
+        Pluggable adaptors are used to interface with medical administrators. They are responsible for 
+        <ns373:itemizedlist xmlns:ns373="http://docbook.org/ns/docbook">
+          <ns374:listitem xmlns:ns374="http://docbook.org/ns/docbook"><ns375:para xmlns:ns375="http://docbook.org/ns/docbook">
+            establishing and maintaining connections,
+          </ns375:para></ns374:listitem>
+          <ns376:listitem xmlns:ns376="http://docbook.org/ns/docbook"><ns377:para xmlns:ns377="http://docbook.org/ns/docbook">
+            marshaling outgoing messages onto the protocol used by the administrator, and
+          </ns377:para></ns376:listitem>
+          <ns378:listitem xmlns:ns378="http://docbook.org/ns/docbook"><ns379:para xmlns:ns379="http://docbook.org/ns/docbook">
+            demarshaling of incoming responses onto the internal object model.
+          </ns379:para></ns378:listitem>
+        </ns373:itemizedlist>
+      </ns372:para>
+    </ns370:section>
+    
+    
+    <ns380:section xmlns:ns380="http://docbook.org/ns/docbook">
+      <ns381:title xmlns:ns381="http://docbook.org/ns/docbook">Standard protocols</ns381:title>
+      <ns382:para xmlns:ns382="http://docbook.org/ns/docbook">
+        Whereever possible standard protocols are to used. This includes both, to the
+        administrator systems (currently already largely in XML) and through to the pharmacy
+        (currently in a text based protocol called superformat).
+      </ns382:para>
+    </ns380:section>
+    
+    <ns383:section xmlns:ns383="http://docbook.org/ns/docbook">
+      <ns384:title xmlns:ns384="http://docbook.org/ns/docbook">Separation of application services/business logic layer</ns384:title>
+      <ns385:para xmlns:ns385="http://docbook.org/ns/docbook">
+        The presentation and integration layers are devoid of any business logic. The business logic
+        layer can be accessed from various presentation layers, offering the same services across
+        the different presentation layers. Similarly, the integration layer is decoupled from the
+        application services/business logic layer enabling easy integration with further
+        administrators.
+      </ns385:para>
+    </ns383:section>
+    
+    <ns386:section xmlns:ns386="http://docbook.org/ns/docbook">
+      <ns387:title xmlns:ns387="http://docbook.org/ns/docbook">Web services interface</ns387:title>
+      <ns388:para xmlns:ns388="http://docbook.org/ns/docbook">
+        It is envisaged that in future both communication channels (that to the pharmacies and that
+        to the medical aid administrators) will be encouraged to move to web services based
+        integration. This will facilitate
+        <ns389:itemizedlist xmlns:ns389="http://docbook.org/ns/docbook">
+          <ns390:listitem xmlns:ns390="http://docbook.org/ns/docbook"><ns391:para xmlns:ns391="http://docbook.org/ns/docbook">standard, contract-based, technology neutral integration,</ns391:para></ns390:listitem>
+          <ns392:listitem xmlns:ns392="http://docbook.org/ns/docbook"><ns393:para xmlns:ns393="http://docbook.org/ns/docbook">reduced code bulk and system complexity, and</ns393:para></ns392:listitem>
+          <ns394:listitem xmlns:ns394="http://docbook.org/ns/docbook"><ns395:para xmlns:ns395="http://docbook.org/ns/docbook">publishing of services through XML based registries.</ns395:para></ns394:listitem>
+        </ns389:itemizedlist>
+      </ns388:para>
+    </ns386:section>
+  </ns367:section>
+</ns255:section>

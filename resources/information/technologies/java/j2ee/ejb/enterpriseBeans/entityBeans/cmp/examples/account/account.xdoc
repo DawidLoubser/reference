@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+  <section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.examples.account.account"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>A simple entity bean using CMP</title>
+    <para>
+      In this section we shall modify our <literal>Account</literal> entity bean to use
+      container managed persistence instead of bean managed persistence. 
+      <note><para>
+        Whether one uses BMP or CMP is an implementation detail. The client application and
+        even the home and remote interfaces are independent of the persistence method used.
+      </para></note>  
+    </para>
+    
+    <section>
+      <title>The Entity Bean Implementation Class</title>
+      <para>
+<programlisting>
+<xi:include parse="text" href="../../../../../source/Account/src/businessLogic/AccountBean.java" />
+</programlisting>
+     </para>
+    </section>
+    
+    <section>
+      <title>The ejb-jar deployment descriptor</title>
+      <para>
+        The ejb-jar deployment descriptor specifies, as for session beans, the remote and home
+        interfaces and the bean implementation class. In addition one specifies 
+        <itemizedlist>
+          <listitem>
+            <para>that the persistence type is <literal>Container</literal> and that the version is
+              2.x, </para>
+          </listitem>
+          <listitem>
+            <para>the type of the primary key field, </para>
+          </listitem>
+          <listitem>
+            <para>the container managed fields and </para>
+          </listitem>
+          <listitem>
+            <para>the queries to be executed for the bean's finder methods.</para>
+          </listitem>
+        </itemizedlist>
+        <note><para>
+          The latter is specified in EJB-Query Language which is covered (together with bean
+          relationships) elsewhere.
+        </para></note>
+        For example:
+<programlisting>
+<xi:include parse="text" href="../../../../../source/Account/META-INF/ejb-jar.xml" />
+</programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>The jboss.xml deployment descriptor</title>
+      <para>
+<programlisting>
+<xi:include parse="text" href="../../../../../source/Account/META-INF/jboss.xml" />
+</programlisting>
+       </para> 
+    </section>
+    
+    <section>
+      <title>The jbosscmp-jdbc deployment descriptor</title>
+      <para>
+        This deployment descriptor specifies whether the tables should be created upon
+        bean deployment and whether they should be removed on undeployment. The latter
+        should most prabably be set to false.
+<programlisting>
+<xi:include parse="text" href="../../../../../source/Account/META-INF/jbosscmp-jdbc.xml" />
+</programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>Build, Deploy and Run the CMP Bean</title>
+      <para>
+        We build, deploy and run the bean as usual.
+      </para>
+      <para>
+        Note that the table for the <literal>Account</literal> is automatically created when the
+        entity bean is deployed. Note also that records are added as you open new accounts. Use a
+        database client GUI (<abbrev>e.g.</abbrev> mycc) to see how the database is updated autmatically.
+      </para>
+      <para>
+        Note that entity beans can also be added manually by directly adding the required
+        records to the database.
+      </para>
+    </section>
+  </section>

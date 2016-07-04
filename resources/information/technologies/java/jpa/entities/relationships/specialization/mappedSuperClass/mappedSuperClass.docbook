@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Mapped superclass</title>
+    <para>
+        At times one wants to embedd only the elements of an abstract superclass in the tables of its concrete subclasses. In such cases one
+        declares the abstract superclass a <emphasis>mapped superclass</emphasis>. They are similar to embeddable classes, just that they 
+        map onto specialization instead of composition and hence provide pluggability.
+        <note><para>
+            Since no table is created for a mapped superclass, the abstract superclass is <emphasis>not annotated as an entity</emphasis>.
+        </para></note>
+    </para>
+    <para>
+        Using a mapped superclass still provides pluggability and clean mapping onto class hierarchies
+        <itemizedlist>
+            <listitem><para>
+                without the overheads of a query across another, potentially very small, table, but
+            </para></listitem>
+            <listitem><para>
+                at the cost of having a non-normalized database.
+            </para></listitem>
+        </itemizedlist>
+        They are commonly used for abstract classes which often only have the object identifier and perhaps one or two other fields.
+    </para>
+    <para>
+        When using annotations, a mapped superclass is specified via the <literal>@MappedSuperclass</literal> annotation. In addition one typically
+        stil specifies the inheritance strategy for the class hierarchy.
+    </para>
+    
+    <section>
+        <title>Example</title>
+        <para>
+            Consider, for example, we could introduce the concept of a <literal>Chargeable</literal> as a <emphasis>mapped superclass</emphasis>.
+            It holds only the object identifier and a reference to the income account. The <literal>Product</literal> class adds only a price and the
+            <literal>Service</literal> class only introduces the concept of a service without adding anything. All three are abstract super classes which
+            could potentially be implemented as <literal>@MappedSuperclass</literal>:
+        </para>
+        <figure>
+            <title>Using mapped super classes for Chargeables, Products and Services</title>
+            <mediaobject><imageobject>
+                <imagedata fileref="chargeables.png"/>
+            </imageobject></mediaobject>
+        </figure>
+        
+        <section>
+            <title>Chargeable.java</title>
+            <programlisting language="java"><![CDATA[
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToOne;
+
+@MappedSuperclass
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class Chargeable 
+{
+	public Chargeable() {}
+	
+	public Account getIncomeAccount() {return incomeAccount;}
+
+	public void setIncomeAccount(Account incomeAccount) 
+	{
+		this.incomeAccount = incomeAccount;
+	}
+
+	public long getCode() {return code;}
+
+	public void setCode(long code) {this.code = code;}
+
+	@OneToOne
+	private Account incomeAccount;
+	
+	@Id
+	@GeneratedValue
+	private long code;
+}                
+                ]]></programlisting>
+        </section>
+        
+        
+        <section>
+            <title>Service.java</title>
+            <programlisting language="java"><![CDATA[
+import javax.persistence.MappedSuperclass;
+
+@MappedSuperclass
+public class Service extends Chargeable 
+{
+	public Service() {}
+}
+            ]]></programlisting>
+        </section>        
+        
+        <section>
+            <title>Product.java</title>
+            <programlisting language="java"><![CDATA[
+package dummy;
+
+import javax.persistence.MappedSuperclass;
+
+@MappedSuperclass
+public class Product extends Chargeable 
+{
+	public Product() {}
+	
+	public double getPrice() {return price;}
+
+	public void setPrice(double price) {this.price = price;}
+
+	double price;
+}
+            ]]></programlisting>
+        </section>        
+        
+        <section>
+            <title>Consultation.java</title>
+            <programlisting language="java"><![CDATA[
+import javax.persistence.Entity;
+
+@Entity
+public class Consultation extends Service 
+{
+	public Consultation() {}
+
+	public double getDuration() {return duration;}
+
+	public void setDuration(double duration) 
+	{
+		this.duration = duration;
+	}
+
+	private double duration;
+}
+        ]]></programlisting>
+        </section>        
+        
+        <section>
+            <title>BloodTest.java</title>
+            <programlisting language="java"><![CDATA[
+import java.util.Set;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+
+@Entity
+public class BloodTest extends Service 
+{
+	public BloodTest() {}
+
+	public Set<Disease> getDiseaseCheckList() 
+	{
+		return diseaseCheckList;
+	}
+
+	public void setDiseaseCheckList(Set<Disease> diseaseCheckList) 
+	{
+		this.diseaseCheckList = diseaseCheckList;
+	}
+
+	@OneToMany
+	private Set<Disease> diseaseCheckList;
+}
+        ]]></programlisting>
+        </section>        
+        
+    </section>    
+</section>

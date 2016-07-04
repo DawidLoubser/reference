@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"-->
+<section id="resources.information.platforms.linux.security.userAccounts"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>User Accounts</title>
+  <para>
+    User accounts verify that users who try to access the system are allowed to access
+    the system, and provides work space for users.
+  </para>
+  
+  <section>
+    <title>When should you create a user?</title>
+    <para>
+      For each user of the system who is allowed to maintain some information on the system,
+      there should be a user account with a unique username. Users which are not allowed to
+      maintain information on the system can log on with a generic username like 
+      <emphasis>guest</emphasis>
+    </para>
+  </section>
+  
+  <section>
+    <title>Adding users</title>
+    <para>
+      You can add a user via the <command>useradd</command> command. In its
+      simplest form you use
+      <cmdsynopsis>
+<command>useradd <![CDATA[<username]]></command>
+      </cmdsynopsis>
+      This creates a user with the specified username, no password, no expiry date, and
+      with <filename><![CDATA[/home/<username>]]></filename> as home directory.
+    </para>
+    <para>
+      The <command>useradd</command> command can take a number of arguments
+      including
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>-d <![CDATA[<homeDirectory>]]></title>
+          <para>
+            Use this parameter to specify a home directory other than the default,
+            <filename><![CDATA[/home/<username>]]></filename>. This option
+            is used in conjunction with the <command>-m</command> parameter
+            discussed below.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>-e <![CDATA[<expiryDate>]]></title>
+          <para>
+            Use this command-line option to specify an expiry date for the account 
+            in <literal>MM/DD/YYYY</literal> format.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>-f <![CDATA[<numDays>]]></title>
+          <para>
+            If this parameter is specified, the account expires <literal>numDays</literal>
+            after the password for the account has expired. A value of 0 permanently removes the
+            user account as soon as the password expires. A value of -1 does not expire the
+            account, even if the password has expired a long time ago.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>-g <![CDATA[<primaryGroup>]]></title>
+          <para>
+            This option specifies the primary group for the user (groups are discussed in 
+            <xref linkend="resources.information.platforms.linux.security.groups"/>). Otherwise the default group
+            for users (as specified in <filename>/etc/default/useradd</filename> -- see
+            <xref linkend="resources.information.platforms.linux.security.userAccounts.defaultAttributes"/>) is used.            
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>-G <![CDATA[groupsList]]></title>
+          <para>
+            Use this option to specify the list of groups the user should belong to. The group names
+            should be separated by a comma only (no spaces after the comma). Groups are
+            discussed in more detail in <xref linkend="resources.information.platforms.linux.security.groups"/>.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>-m</title>
+          <para>
+            Automatically creates a home directory for the new user, and copies the files from
+            the skeleton directory, <filename>/etc/skel</filename>, to the user directory.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>-k <![CDATA[<skeletonDirectory>]]></title>
+          <para>
+            This parameter is used in conjunction with <command>-m</command> to
+            specify a skeleton directory to be used when creating the user's home directory --
+            the content of the skeleton directory will be copied into the user's home
+            directory.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>-M</title>
+          <para>
+            Use this parameter if <command>useradd</command> should <emphasis>not</emphasis>
+            create a home directory for the user.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>-s <![CDATA[<shallName>]]></title>
+          <para>
+            This option enables you to specify the default command shell for the user.
+          </para>
+        </formalpara></listitem>        
+        <listitem><formalpara>
+          <title>-u <![CDATA[<userId>]]></title>
+          <para>
+            This enables you to specify the user id for the user. If this option is not used,
+            <command>useradd</command> will pick the next available user id.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>-c <![CDATA[<userDescription>]]></title>
+          <para>
+            This parameter enables you to specify a user description which is typically
+            the full name of the user.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section id="resources.information.platforms.linux.security.userAccounts.defaultAttributes">
+    <title>Specifying default user attributes in <filename>/etc/default/useradd</filename></title>
+    <para>
+      The values for the command-line parameters of <command>useradd</command> are 
+      specified in a file <filename>/etc/default/useradd</filename>:
+      <programlisting><![CDATA[
+GROUP=100
+HOME=/home
+INACTIVE=-1
+EXPIRE=
+SHELL=/bin/bash
+SKEL=/etc/skel      
+      ]]></programlisting>
+    </para>
+    <para>
+      These can be edited directly, or via <command>useradd</command> itself, using the
+      one command-line argument not yet discussed, <command>-D</command>. This
+      parameter is used in conjunction with the <command>-g</command>,
+      <command>-b</command> to specify the default home directory, as well as with the
+      standard <command>-f</command>, <command>-e</command>
+      and <command>-s</command> command line parameters
+      to change these default values.
+    </para>
+  </section>
+  
+  <section>
+    <title>Specifying further user defaults in <filename>/etc/login.defs</filename></title>
+    <para>
+      Additional defaults for users can be specified in the <filename>/etc/login.defs</filename>
+      file. Below we list the default <filename>login.defs</filename> file shipped with the
+      <emphasis>SUSE 8.2</emphasis> distribution. The comments provide an excellent
+      explanation of the file content.
+      <programlisting><![CDATA[
+#
+# /etc/login.defs - Configuration control definitions for the login package.
+#
+# Comment lines (lines beginning with "#") and blank lines are ignored.
+#
+# Please read the manual page for more information (login.defs.5).
+#
+
+#
+# Delay in seconds before being allowed another attempt after a login failure
+#
+FAIL_DELAY		3
+
+#
+# Enable logging and display of /var/log/faillog login failure info.
+#
+FAILLOG_ENAB		yes
+
+#
+# Enable display of unknown usernames when login failures are recorded.
+#
+LOG_UNKFAIL_ENAB	no
+
+#
+# Enable logging and display of /var/log/lastlog login time info.
+#
+LASTLOG_ENAB		yes
+
+#
+# Enable additional checks upon password changes.
+#
+OBSCURE_CHECKS_ENAB	yes
+
+#
+# If defined, ":" delimited list of "message of the day" files to
+# be displayed upon login.
+#
+MOTD_FILE	/etc/motd
+#MOTD_FILE	/etc/motd:/usr/lib/news/news-motd
+
+#
+# If defined, file which maps tty line to TERM environment parameter.
+# Each line of the file is in a format something like "vt100  tty01".
+#
+TTYTYPE_FILE	/etc/ttytype
+
+#
+# If defined and the file exist, login failures will be logged here
+# in a utmp format.
+# last, when invoked as lastb, will read /var/log/btmp, so...
+#
+FTMP_FILE	/var/log/btmp
+
+#
+# If defined, file which inhibits all the usual chatter during the login
+# sequence.  If a full pathname, then hushed mode will be enabled if the
+# user's name or shell are found in the file.  If not a full pathname, then
+# hushed mode will be enabled if the file exists in the user's home directory.
+#
+#HUSHLOGIN_FILE	.hushlogin
+HUSHLOGIN_FILE	/etc/hushlogins
+
+#
+# The default PATH settings.
+#
+ENV_PATH                /usr/local/bin:/usr/bin:/bin
+
+#
+# The default PATH settings for root:
+#
+ENV_ROOTPATH            /sbin:/bin:/usr/sbin:/usr/bin
+
+#
+# Terminal permissions
+#
+#	TTYGROUP	Login tty will be assigned this group ownership.
+#	TTYPERM		Login tty will be set to this permission.
+#
+# If you have a "write" program which is "setgid" to a special group
+# which owns the terminals, define TTYGROUP to the group number and
+# TTYPERM to 0620.  Otherwise leave TTYGROUP commented out and assign
+# TTYPERM to either 622 or 600.
+#
+TTYGROUP	tty
+TTYPERM		0620
+
+#
+# Permissions of new created home directories
+#
+#      UMASK           Default "umask" value.
+#
+# This is the umask which is used by useradd and newusers for creating
+# new home directories.
+#
+UMASK          022
+
+#
+# Password aging controls:
+#
+#	PASS_MAX_DAYS	Maximum number of days a password may be used.
+#	PASS_MIN_DAYS	Minimum number of days allowed between password changes.
+#	PASS_MIN_LEN	Minimum acceptable password length.
+#	PASS_WARN_AGE	Number of days warning given before a password expires.
+#
+PASS_MAX_DAYS	99999
+PASS_MIN_DAYS	0
+PASS_MIN_LEN	5
+PASS_WARN_AGE	7
+
+#
+# If compiled with cracklib support, where are the dictionaries
+#
+CRACKLIB_DICTPATH	/usr/lib/cracklib_dict
+
+#
+# Min/max values for automatic uid selection in useradd
+#
+UID_MIN			  500
+UID_MAX			60000
+
+#
+# Min/max values for automatic gid selection in groupadd
+#
+GID_MIN			  500
+GID_MAX			60000
+
+#
+# Max number of login retries if password is bad
+#
+LOGIN_RETRIES		3
+
+#
+# Max time in seconds for login
+#
+LOGIN_TIMEOUT		60
+
+#
+# Maximum number of attempts to change password if rejected (too easy)
+#
+PASS_CHANGE_TRIES	3
+
+#
+# Warn about weak passwords (but still allow them) if you are root.
+#
+PASS_ALWAYS_WARN	yes
+
+#
+# Number of significant characters in the password for crypt().
+# Default is 8, don't change unless your crypt() is better.
+# Ignored if the "md5" or "blowfish" option is given to the
+# pam_pwcheck module.
+#
+PASS_MAX_LEN		8
+
+#
+# Require password before chfn/chsh can make any changes.
+#
+CHFN_AUTH		yes
+
+#
+# Which fields may be changed by regular users using chfn - use
+# any combination of letters "frwh" (full name, room number, work
+# phone, home phone).  If not defined, no changes are allowed.
+# For backward compatibility, "yes" = "rwh" and "no" = "frwh".
+#
+CHFN_RESTRICT		rwh
+
+#
+# Should login be allowed if we can't cd to the home directory?
+# Default is yes.
+#
+DEFAULT_HOME		yes
+
+#
+# If defined, this command is run when removing a user.
+# It should remove any at/cron/print jobs etc. owned by
+# the user to be removed (passed as the first argument).
+#
+#USERDEL_CMD	/usr/sbin/userdel_local
+
+#
+# This enables userdel to remove user groups if no members exist.
+#
+USERGROUPS_ENAB		no
+      ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Creating a skeleton configuration for users in <filename>/etc/skel</filename></title>
+    <para>
+     The user's home directory (if it is created) is populated with a number of files including a
+     number of initialization scripts. Put any files which should be copied into a user's home directory
+     when creating a user with <command>useradd -m</command> in this directory.
+     <note><para>
+       You can also put a default desktop in the <filename>/etc/skel/Desktop</filename>  
+       directory.
+     </para></note>
+    </para>
+  </section>
+  
+  <section>
+    <title>Initializing a user's bash shell via the <filename>.bashrc</filename> file</title>
+    <para>
+      The <filename>./bashrc</filename> file in the user's home directory contains an
+      initialization script which is run when a user opens a bash shell. It may contain
+      additions to the path via
+      <cmdsynopsis><command>
+export PATH=$PATH:/usr/bin:/usr/local/bin        
+      </command></cmdsynopsis>
+      and initialization of other environment variables, for example the default editor to be used:
+      <cmdsynopsis><command>
+export EDITOR=/usr/bin/vim
+      </command></cmdsynopsis>
+      Redhat distributions also typically specify aliases for the remove, copy and move commands
+      forcing users into the interactive modes for these commands (for example to confirm
+      the deletion of a file):
+      <cmdsynopsis><command>
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'        
+      </command></cmdsynopsis>
+    </para>
+  </section>
+  
+  <section>
+    <title>Setting and changing user passwords via <command>passwd</command></title>
+    <para>
+      Once a user has been created, you should set the password for the user via the
+      <command>passwd <![CDATA[<username>]]></command> command.
+    </para>
+  </section>
+  
+  <section>
+    <title>Removing users via <command>userdel</command></title>
+    <para>
+      To remove a user, you can use the command <command>userdel</command>. The
+      <command>-r</command> option also removes the home directory. Thus
+      <cmdsynopsis>
+<command>userdel -r <![CDATA[<username>]]></command>
+      </cmdsynopsis>
+      removes a user and removes the home directory of the user too.
+    </para>
+  </section>
+  
+  <section>
+    <title>Changing the user</title>
+    <para>
+      At times you want to temporarily change to another user. Very often you would want
+      to issue a few commands from the root user and then go back to your normal user.
+    </para>
+    <section>
+      <title>Changing a shell to <emphasis>root</emphasis>user</title>
+      <para>
+        To change to the root user, use the
+        <cmdsynopsis>
+<command>su</command>      
+        </cmdsynopsis>
+        command which will prompt you for the root password. After entering it, you are
+        operating from within your command shell as the <emphasis>root</emphasis>
+        user. To exit the root user, simply type <command>exit</command>.
+      </para>
+    </section>
+    
+    <section>
+      <title>Changing to another user</title>
+      <para>
+        Via
+        <cmdsynopsis>
+<command>su <![CDATA[<username>]]></command>        
+        </cmdsynopsis>
+        you can change your shell to execute from the specified user. You will once again be prompted
+        for the password for that user.
+      </para>
+    </section>
+    
+    
+  </section>
+  
+</section>

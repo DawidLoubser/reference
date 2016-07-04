@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.dotnet.remoting.remotingExample"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Remoting Example </title>
+    <para>This shows how to write a simple "Hello World" remote application. The client passes a
+        String to the remote object that appends the words "Hi There" to the string and returns the
+        result back to the client. In order to modify this sample to use HTTP rather than TCP,
+        simply replace TCP with HTTP in the source files.</para>
+    <para>Save this code as server.cs: <programlisting><![CDATA[
+        using System;
+        using System.Runtime.Remoting;
+        using System.Runtime.Remoting.Channels;
+        using System.Runtime.Remoting.Channels.Tcp;
+        
+        namespace RemotingSamples {
+        public class Sample {
+        
+        public static int Main(string [] args) {
+        
+        TcpChannel chan = new TcpChannel(8085);
+        ChannelServices.RegisterChannel(chan);
+        RemotingConfiguration.RegisterWellKnownServiceType
+        (Type.GetType("RemotingSamples.HelloServer,object"), 
+        "SayHello", WellKnownObjectMode.SingleCall);
+        System.Console.WriteLine("Hit <enter> to stop the server...");
+        System.Console.ReadLine();
+        return 0;
+        }
+        }
+        }]]></programlisting>
+    </para>
+    <para>Save this code as client.cs: <programlisting><![CDATA[
+        using System;
+        using System.Runtime.Remoting;
+        using System.Runtime.Remoting.Channels;
+        using System.Runtime.Remoting.Channels.Tcp;
+        
+        namespace RemotingSamples {
+        public class Client
+        {
+        public static int Main(string [] args)
+        {
+        TcpChannel chan = new TcpChannel();
+        ChannelServices.RegisterChannel(chan);
+        HelloServer obj = 
+        (HelloServer)Activator.GetObject(typeof(RemotingSamples.HelloServer)
+        , "tcp://localhost:8085/SayHello");
+        if (obj == null) 
+        System.Console.WriteLine("Could not locate server");
+        else Console.WriteLine(obj.HelloMethod("Caveman"));
+        return 0;
+        } 
+        }
+        }
+        ]]></programlisting>
+    </para>
+    <para>Save this code as object.cs:<programlisting><![CDATA[
+        using System;
+        using System.Runtime.Remoting;
+        using System.Runtime.Remoting.Channels;
+        using System.Runtime.Remoting.Channels.Tcp;
+        
+        namespace RemotingSamples 
+        {
+        public class HelloServer : MarshalByRefObject 
+        {
+        public HelloServer() {
+        Console.WriteLine("HelloServer activated");
+        }
+        public String HelloMethod(String name) {
+        Console.WriteLine("Hello.HelloMethod : {0}", name);
+        return "Hi there " + name;
+        }
+        }
+        }
+        ]]></programlisting>
+    </para>
+    <para>Here's the makefile:<programlisting><![CDATA[
+        all: object.dll server.exe client.exe
+        
+        object.dll: share.cs
+        csc /debug+ /target:library /out:object.dll object.cs
+        
+        server.exe: server.cs
+        csc /debug+ /r:object.dll /r:System.Runtime.Remoting.dll server.cs
+        
+        client.exe: client.cs server.exe
+        csc /debug+ /r:object.dll /r:server.exe 
+        /r:System.Runtime.Remoting.dll client.cs
+        ]]></programlisting>
+    </para>
+</section>

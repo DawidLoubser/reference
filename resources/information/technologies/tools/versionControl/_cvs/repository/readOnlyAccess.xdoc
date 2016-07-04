@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.repository.readOnlyAccess"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Read-only access to CVS repositries</title>
+  <para>
+    For local users rea-only access is simply done via file permissions.
+    This section focuses thus on provoding read-only access to
+    password-authenticated users.
+  </para>
+  <para>
+    In CVS you can either 
+    <itemizedlist>
+      <listitem><para>
+        specify read-only access inclusively by listing the users who
+        should be granted read-only access in a <filename>readers</filename>
+        file, or
+      </para></listitem>
+      <listitem><para>
+        specify read-only access for all users who are not listed in a
+        <filename>writers file</filename>.
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>
+      The <filename>readers</filename> and <filename>writers</filename> files
+    </title>
+    <para>
+      The <filename>readers</filename> file explicitly provides read-only
+      access to specified users, while the <filename>writers</filename>
+      file explictly provides write access. The algorithm used by CVS
+      to assign read-only or read-write access to users from these files
+      is dicussed below. Let us first look at how we generate these files.
+    </para>
+    <para>
+      If they exist, both, the <filename>readers</filename> and 
+      <filename>writers</filename> files are located in the 
+      <filename>CVSROOT</filename> directory containing the
+      administrative files (neither actually needs to exist).
+    </para>
+    <para>
+      You can check out <filename>CVSROOT</filename>, create one or both
+      of these files, add them to the repository and commit. As usual, CVS
+      should tell you that it is rebuilding the administrative files.
+    </para>
+    <para>
+      The contents of either of the files is simply a list of CVS users.
+      For example,
+      <synopsis><![CDATA[
+anonymous
+ernst
+tandi
+joe
+      ]]></synopsis>
+      <note>
+        <para>
+          The users listed in the <filename>readers</filename>
+          and <filename>writers</filename> files are the CVS users, NOT
+          the system users they map onto.
+        </para>
+      </note>
+    </para>
+  </section>
+
+  <section>
+    <title>
+      Understanding the access rules which CVS constructs from these files
+    </title>
+    <para>
+      The rules are as follows:
+      <orderedlist>
+        <listitem><para>
+          If a <filename>writers</filename> file exists, then only those
+          users listed in that file will have write access. The other users
+          will only have read access.
+        </para></listitem>
+        <listitem><para>
+          If a <filename>readers</filename> file exists, users listed in it
+          will have only read access.
+        </para></listitem>
+        <listitem><para>
+          If a user is listed in both, the <filename>readers</filename> and
+          <filename>writers</filename> files then there is a conflict in the 
+          access specification and CVS will choose the more restrictive
+          option, <abbrev>i.e.</abbrev> that of giving these users only
+          read access.
+        </para></listitem>
+      </orderedlist>
+    </para>
+  </section>
+ 
+</section>

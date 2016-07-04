@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Repeated template application</title>
+    <para>
+        The <literal><![CDATA[<ui:composition/>]]></literal> tag cannot be used to
+        insert a content multiple times as the latest insertion will replace the
+        previous insertion.
+    </para>
+    <para>
+        If we want to have similar content to be inserted multiple times into a page, we
+        may want to be able to define that each insertion should conform to a template.
+        For this purpose the <literal><![CDATA[<ui:decorate/>]]></literal> tag is used.
+    </para>
+    <para>
+        In our example we have an <literal>auxillaryContent</literal> region in our
+        main template which is meant to host auxillary information to the main information
+        conveyed with the page. It can, for example, be used to render news items of
+        our weather buro. Each auxillary content item, however, has a header and a body and 
+        we may want to define a template on how an auxillary content item is to be rendered.
+        To this end we would define an <literal>auxillaryContentTemplate</literal>:
+        <programlisting>
+<xi:include parse="text" href="../../examples/weatherBuro/web/src/main/webapp/faces/auxillaryContentTemplate.xhtml"/>     
+        </programlisting>
+        Here <literal>#title</literal> specifies a <literal>title</literal> parameter for our
+        template.
+    </para>
+    <para>    
+        Our page needs to allow us to insert multiple auxillary content (news) items
+        into the page. We supply each item with an <literal><![CDATA[<ui:decorate/>]]></literal> tag,
+        specifying the title as a template parameter:
+        <programlisting>
+<xi:include parse="text" href="../../examples/weatherBuro/web/src/main/webapp/faces/news.xhtml"/>     
+        </programlisting>
+    </para>
+</section>    

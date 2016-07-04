@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+--><ns3979:section xmlns:ns3979="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.processControl.priorities">
+
+  <ns3980:title xmlns:ns3980="http://docbook.org/ns/docbook">Process Priorities</ns3980:title>
+  <ns3981:para xmlns:ns3981="http://docbook.org/ns/docbook">
+    Linux supports scheduling priorities ranging from a maximum priority -20 (minimum niceness)
+    to the lowest scheduling priority of +19 (maximum niceness). 
+  </ns3981:para>
+  
+  <ns3982:section xmlns:ns3982="http://docbook.org/ns/docbook">
+    <ns3983:title xmlns:ns3983="http://docbook.org/ns/docbook">Requesting a priority for a job via <ns3984:command xmlns:ns3984="http://docbook.org/ns/docbook">nice</ns3984:command></ns3983:title>
+    <ns3985:para xmlns:ns3985="http://docbook.org/ns/docbook">
+      If you start a process without requesting a particular priority, it gets the default priority, 0.          
+      Normal users can decrease the priority (increase the niceness) by starting a process with
+      the <ns3986:command xmlns:ns3986="http://docbook.org/ns/docbook">nice</ns3986:command> command:
+      <ns3987:cmdsynopsis xmlns:ns3987="http://docbook.org/ns/docbook"><ns3988:command xmlns:ns3988="http://docbook.org/ns/docbook">
+nice -10 find / -name *.java &gt; javaFiles.txt
+      </ns3988:command></ns3987:cmdsynopsis>
+    </ns3985:para>
+    <ns3989:para xmlns:ns3989="http://docbook.org/ns/docbook">
+      As a super-user, you can specify a priority which is higher than the default priority. For example,
+      to sort the files names found with the previous command in a process with a niceness of -5:
+      <ns3990:cmdsynopsis xmlns:ns3990="http://docbook.org/ns/docbook"><ns3991:command xmlns:ns3991="http://docbook.org/ns/docbook">
+nice --5 srt javaFiles.txt javaFilesSorted.txt          
+      </ns3991:command></ns3990:cmdsynopsis>
+    </ns3989:para>
+  </ns3982:section>
+  
+  <ns3992:section xmlns:ns3992="http://docbook.org/ns/docbook">
+    <ns3993:title xmlns:ns3993="http://docbook.org/ns/docbook">Changing the priority of a running process with <ns3994:command xmlns:ns3994="http://docbook.org/ns/docbook">renice</ns3994:command></ns3993:title>
+    <ns3995:para xmlns:ns3995="http://docbook.org/ns/docbook">
+      Linux also enables you to modify the priority of a running process. For this you will need the
+      process id (PID). The process id may be obtained as usual via <ns3996:command xmlns:ns3996="http://docbook.org/ns/docbook">ps</ns3996:command>:
+      <ns3997:cmdsynopsis xmlns:ns3997="http://docbook.org/ns/docbook"><ns3998:command xmlns:ns3998="http://docbook.org/ns/docbook">
+ps -e | grep srt      
+      </ns3998:command></ns3997:cmdsynopsis>
+      and the renice command is run with the new niceness and the process id via
+      <ns3999:cmdsynopsis xmlns:ns3999="http://docbook.org/ns/docbook"><ns4000:command xmlns:ns4000="http://docbook.org/ns/docbook">
+renice +10 11111    
+      </ns4000:command></ns3999:cmdsynopsis>
+    </ns3995:para>
+    <ns4001:para xmlns:ns4001="http://docbook.org/ns/docbook">
+      There are a few constraints on <ns4002:command xmlns:ns4002="http://docbook.org/ns/docbook">renice</ns4002:command>:
+      <ns4003:orderedlist xmlns:ns4003="http://docbook.org/ns/docbook">
+        <ns4004:listitem xmlns:ns4004="http://docbook.org/ns/docbook"><ns4005:para xmlns:ns4005="http://docbook.org/ns/docbook">
+          Users can renice only the processes they own. Only super-users can renice
+          other processes.
+        </ns4005:para></ns4004:listitem>
+        <ns4006:listitem xmlns:ns4006="http://docbook.org/ns/docbook"><ns4007:para xmlns:ns4007="http://docbook.org/ns/docbook">
+          Users can only decrease the priority of a process via renice. To increase a priority
+          (even after having decreased yourself), you need to be a super-user.
+        </ns4007:para></ns4006:listitem>
+      </ns4003:orderedlist>
+      
+    </ns4001:para>
+  </ns3992:section>
+  
+  
+</ns3979:section>

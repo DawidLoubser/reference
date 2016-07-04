@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+
+    <title>Java EE best practices</title>
+    <para>
+        Even though the architecture is to a large extend prescribed with the Java EE reference architecture,
+        there is still ample room for developing applications which do not perform well or which are
+        not modifiable, reliable or secure.
+        <note>
+            <para>
+                Many of these practices are equally applicable for other distributed
+                systems like CORBA or web-services based systems.
+            </para>
+        </note>
+    </para>
+
+
+    <!--  <section>
+        <title>Best practices addressing performance issues</title>  -->
+    <para>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <emphasis>Minimize the number of network round-trips</emphasis>
+                    required by the application,
+                    perhaps using the
+                    <emphasis>session facade</emphasis>
+                    or
+                    <emphasis>message facade</emphasis>
+                    pattern.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    If network bandwidth is a problem, consider
+                    <emphasis>compressing the data</emphasis>
+                    which is transferred.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <emphasis>
+                        Work object-oriented within the application server and services oriented outside.
+                    </emphasis>
+                    Thus, publish high-level user services in a
+                    <emphasis>services facade</emphasis>
+                    (
+                    <abbrev>e.g.</abbrev>
+                    a session or web-services facade) from which your entity and other domain objects are accessed.
+                    <note>
+                        <title>Simple example</title>
+                        <para>
+                            Instead of clients executing a transfer between accounts by interacting with the account
+                            objects
+                            directly via
+                            <literal>acc1.debit(x)</literal>
+                            and<literal>acc2.credit(x)</literal>, we rather
+                            publish a higher-level
+                            <literal>transfer service</literal>
+                            receiving the two account numbers and
+                            the transfer amount as arguments.
+                        </para>
+                    </note>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    In some cases you may want to reduce overheads incurred when looking up the bean home interface from
+                    the naming
+                    repository by<emphasis>caching home interface references</emphasis>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    You may want to use
+                    <emphasis>local interfaces</emphasis>
+                    for local calls in order to reduce the marshalling and
+                    communication overheads. In practice application servers will automatically map calls to local beans
+                    as local calls.
+                    The decision should of whether to make a local or remote call should preferably be left to the
+                    application server.
+                    <note>
+                        <para>
+                            It is usually safe to map remote calls onto local calls, but not vice versa due to the
+                            differences in parameter passing
+                            between local and remote calls.
+                        </para>
+                    </note>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    In stateful session beans, reduce the serialization overhead by declaring working data
+                    which does not need to maintain state as<emphasis>transient</emphasis>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Declare non-transactional methods with either
+                    <emphasis>Never</emphasis>
+                    or
+                    <emphasis>NotSupported</emphasis>
+                    transactional attribute.
+                </para>
+            </listitem>
+        </itemizedlist>
+
+    </para>
+    <!--  </section>  -->
+
+</section>

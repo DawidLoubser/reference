@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Annotating a data class (value object or entity)</title>
+    <para>
+       JSR 303 also supports the annotation of a class with state constraints.
+       This is done by 
+       <itemizedlist>
+           <listitem><para>
+               declaring the target of the constraint annotation a <literal>TYPE</literal>
+               <programlisting><![CDATA[
+@Constraint(validatedBy = MyConstraintValidator.class)
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface MyConstraints
+{
+	String message() default "my default message";
+	
+	Class<?>[] groups() default {};
+	
+	Class<? extends Payload>[] payload() default {};
+}
+]]></programlisting>
+               and
+           </para></listitem>
+           <listitem><para>
+               annotating a data class (e.g. detachable entity) with that constraint:
+               <programlisting><![CDATA[
+@MyConstraint
+public class myDataClass
+{
+   ...
+}
+                   ]]></programlisting>
+           </para></listitem>
+       </itemizedlist>
+    </para>
+    
+    <xi:include href="examples/examples.docbook"/>
+    <!--
+    <xi:include href="exercises/exercises.docbook"/>
+    -->
+</section>    

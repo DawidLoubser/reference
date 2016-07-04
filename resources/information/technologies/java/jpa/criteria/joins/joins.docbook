@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Joins</title>
+    <para>
+        If queries are based on multiple entities one may need to use joins. For this purpose JPA introduces the
+        <literal>Join</literal> and <literal>SetJoin</literal> classes, both of which are generic, taking the
+        joinging <literal>from</literal> and the binding type as template parameters.
+    </para>
+    <para>
+        For example, if we want to to find all students who have one or more enrollments which are not canceled,
+        we could use the following join:
+        <programlisting language="java"><![CDATA[
+CriteriaQuery<Student> q = cb.createQuery(Student.class);
+Root<Student> c = q.from(Student.class);
+SetJoin<Student, Enrollment> o = c.join(Student_.enrollments);
+
+Predicate p = cb.equal(o.get(Enrollment_.status), Status.Canceled).negate();
+c.where(p);
+            ]]></programlisting>
+    </para>
+</section>    

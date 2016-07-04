@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbook.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+xml:id="resources.information.technologies.java.lang.exercises.exercisesIntro" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+  <!-- TODO: Replace with multiple lower-level exercises -->
+  
+  <title>Exercises</title>
+  <section>
+    <title>ICD</title> 
+      <para>
+        The medical industry uses <literal>ICD-10</literal> (International Statistical Classification of Diseases and Related Health Problems)
+        codes to classify various different ailments and diseases, which we refer to as "Conditions". As a gross simplification, let us assume the
+        following partial list of codes, and the conditions they represent:
+        <itemizedlist>
+          <listitem>
+            <formalpara>
+              <title>11</title>
+              <para>The Common cold</para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>12</title>
+              <para>Tooth ache</para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>13</title>
+              <para>Foot ache</para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>14</title>
+              <para>Blindness</para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>15</title>
+              <para>Stomach ache</para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>27</title>
+              <para>Acute over-exertion of the right thumb</para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>28</title>
+              <para>Acute over-exertion of the left thumb</para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>30</title>
+              <para>General stress</para>
+            </formalpara>
+          </listitem>
+        </itemizedlist>
+      </para>
+    <para>
+      Write a class <literal>Condition</literal>, which represents a particular condition
+      as well as its code. It also offers a service, <literal>public boolean matches( String name )</literal>
+      in which it could indicate whether it matches a particular name (i.e. the condition <quote>Stomach ache</quote>
+      will match the name <quote>stomach</quote>) - have a look at the Java API documentation for
+      <literal>java.lang.String</literal>, and in particular the services <literal>.contains(...)</literal>,
+      <literal>.toLowerCase()</literal>, etc.
+    </para>
+    <para>
+      Write a class which offers two services to allow medical professionals
+      to look up a condition by code, or to find the condition(s) that match
+      a condition name provided by the client:
+    </para>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="icdCodes.jpg"/>
+      </imageobject>
+    </mediaobject>
+    <para>
+      The <literal>ICDCatalog</literal> should store all known conditions internally
+      (as instances of class<literal>Condition</literal>) in an array. This array is
+      fully encapsulated (never directly exposed to clients.) The services are:
+      <itemizedlist>
+        <listitem>
+          <formalpara>
+            <title>public Condition getCondition( int code ) throws Exception</title>
+            <para>
+              Returns the condition which has the specified code, or, if no such
+              condition exists, throws an Exception with an appropriate message.
+            </para>
+          </formalpara>          
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>public Condition[] findConditions( String conditionName )</title>
+            <para>
+              Returns an array of all conditions which match the given condition name,
+              by making use of the <literal>.matches(...)</literal> service of
+              <literal>Condition</literal>
+            </para>
+          </formalpara>          
+        </listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      Write a small command-line application which uses your <literal>ICDCatalog</literal>. It accepts command-line arguments: The first argument
+      should indicate whether you want to <emphasis>look up a condition by code</emphasis>, or
+      <emphasis>find all conditions that match a given name.</emphasis> For example, it should be executed as:
+      <programlisting>
+java ICDLookup -code 15
+      </programlisting>
+      or
+      <programlisting>
+java ICDLookup -name stomach
+      </programlisting>
+      and then display the list of conditions to the user. The program should handle - and communicate to the user - exceptions 
+      thrown by the <literal>ICDCatalog</literal> in a friendly and concise manner.
+    </para>
+    
+  </section>
+  
+</section>

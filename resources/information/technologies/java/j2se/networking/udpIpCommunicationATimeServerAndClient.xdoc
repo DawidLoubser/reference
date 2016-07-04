@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2se.networking.udpIpCommunicationATimeServerAndClient"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="UDP/IP Communication: A time server and client">UDP/IP Communication: A time server and client</title>
+
+<para>Consider a <emphasis>Datagram</emphasis> server which, every time the server
+receives a datagram from a client, it sends back a datagram
+containing the local date and time. We shall thus have to write a
+server application, and  a client application.</para>
+
+<para>The server application opens a datagram socket on a specific port
+and waits until it receives a datagram packet from a client. It
+then prints on the server window the fact that it received a
+datagram packet from a specific IP address, creates a <literal>Date</literal>
+object via the default constructor of the Date class which
+initializes the date/time to the  current date/time, and converts
+it to a string in <emphasis>local</emphasis> format. 
+</para>
+    <para>It then uses the <literal>getBytes()</literal> method 
+        of the <emphasis role="bf">String</emphasis> class to copy the characters
+of that string into an array of bytes. The server creates a
+datagram packet for the client containing the array of bytes. To do
+this the server queries the packet it received from the client for
+the originating IP address and port. Finally the  datagram packet
+is sent (the packet itself knows the destination IP address and
+port) and the server waits for the next datagram packet (perhaps
+from a different client).</para>
+
+    <para>
+    <programlisting>
+    <xi:include  parse="text" href="TimeServer.java"/>
+    </programlisting>
+    </para>
+    
+<para>
+The client simply sends a <emphasis role="bf">DatagramPacket</emphasis> to the server, receives
+the packet containing the date and time and prints the time on the
+screen:</para>
+
+    <para>
+    <programlisting>
+    <xi:include parse="text" href="TimeClient.java"/>
+    </programlisting>
+    </para>
+    
+</section>

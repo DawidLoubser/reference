@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns2027:section xmlns:ns2027="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateful.lifeCycle.lifeCycle">
+
+  <ns2028:title xmlns:ns2028="http://docbook.org/ns/docbook">Life cycle of a stateful session bean</ns2028:title>
+  <ns2029:para xmlns:ns2029="http://docbook.org/ns/docbook">
+    <ns2030:xref xmlns:ns2030="http://docbook.org/ns/docbook" linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateful.lifeCycle.lifeCycle_fig"/>
+    depicts the life cycle of a stateless session bean. The difference between
+    stateless and stateful session beans is that the latter can be passivated, saving its state
+    to persistent storage, and that beans can be automatically removed after a time-out period
+    resulting in the permanent loss of state information. 
+  </ns2029:para>
+  
+  <ns2031:figure xmlns:ns2031="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateful.lifeCycle.lifeCycle_fig">
+    <ns2032:title xmlns:ns2032="http://docbook.org/ns/docbook">The life-cycle of a stateful session bean</ns2032:title>
+    <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="lifeCycle.jpg"/></imageobject></mediaobject>
+  </ns2031:figure>
+  
+  <ns2033:section xmlns:ns2033="http://docbook.org/ns/docbook">
+    <ns2034:title xmlns:ns2034="http://docbook.org/ns/docbook">Passivation and Activation of Stateful Session Beans</ns2034:title>
+    <ns2035:para xmlns:ns2035="http://docbook.org/ns/docbook">
+      In the case of stateless session beans the container could simply maintain a pool of
+      method-ready session bean instances and delegate client service requests to them. After the
+      service has been provided the bean could be reused for another client. No information had to
+      be kept across method calls.
+    </ns2035:para>
+    <ns2036:para xmlns:ns2036="http://docbook.org/ns/docbook">
+      In the case of stateful session beans pooling is not that simple. We may not be able to
+      keep each stateful session bean in memory until the client disconnects. There may be a very
+      huge number of clients and many of which could potentially remain connected over an extended
+      period of time. This would bring the server down to its knees.
+    </ns2036:para>
+    <ns2037:para xmlns:ns2037="http://docbook.org/ns/docbook">
+      To avoid this stateful session beans are passified -- swapped out onto disk if they are
+      currently not in use and re-activated upon receiving a new service request from the client
+      serviced by the stateful session bean.
+    </ns2037:para>
+  
+    <ns2038:section xmlns:ns2038="http://docbook.org/ns/docbook">
+      <ns2039:title xmlns:ns2039="http://docbook.org/ns/docbook">Automatic removal of inactive session beans</ns2039:title>
+      <ns2040:para xmlns:ns2040="http://docbook.org/ns/docbook">
+        The container may destroy your stateful session bean (and hence its state) if there
+        was inactivity over a period exceeding the time-out period. This time-out period can
+        usually be specified for stateless session beans individually.
+      </ns2040:para>
+    </ns2038:section>
+  </ns2033:section>
+  
+  <ns2041:section xmlns:ns2041="http://docbook.org/ns/docbook">
+    <ns2042:title xmlns:ns2042="http://docbook.org/ns/docbook">State Representation Requirements</ns2042:title>
+    <ns2043:para xmlns:ns2043="http://docbook.org/ns/docbook">
+      The state must be persistent across re-activations. To this end it is required from the
+      bean developer that the state can be serialized onto a stream (e.g. to a database). The
+      state is defined by non-transient primitives or objects and in the latter case the object
+      must be an instance of a class which implements
+  <ns2044:programlisting xmlns:ns2044="http://docbook.org/ns/docbook">
+  java.io.Serializable.
+  </ns2044:programlisting>
+     <ns2045:note xmlns:ns2045="http://docbook.org/ns/docbook"><ns2046:para xmlns:ns2046="http://docbook.org/ns/docbook">
+       <ns2047:literal xmlns:ns2047="http://docbook.org/ns/docbook">javax.ejb.EnterpriseBean</ns2047:literal>, the interface from which both  
+       <ns2048:literal xmlns:ns2048="http://docbook.org/ns/docbook">Session Bean</ns2048:literal> and<ns2049:literal xmlns:ns2049="http://docbook.org/ns/docbook">EntityBean</ns2049:literal>
+        are derived is itself an extension of <ns2050:literal xmlns:ns2050="http://docbook.org/ns/docbook">java.io.Serializable</ns2050:literal>.
+     </ns2046:para></ns2045:note>  
+   </ns2043:para>  
+   <ns2051:para xmlns:ns2051="http://docbook.org/ns/docbook">
+      EJB containers use object serialization to
+      save the state of a stateful session bean. The state must be represented by either
+      non-transient primitives ornon-transient serializable objects. The exact details about how
+      the stateless session beans are swapped out of and into memory is left to the container vendor.
+   </ns2051:para>
+  </ns2041:section>
+
+  <ns2052:section xmlns:ns2052="http://docbook.org/ns/docbook">
+    <ns2053:title xmlns:ns2053="http://docbook.org/ns/docbook">Stateful Session Beans may Survive Server Crashes</ns2053:title>
+    <ns2054:para xmlns:ns2054="http://docbook.org/ns/docbook">
+      From EJB 1.1 onwards there is a timeout transition to the bean-does-not-exist state.
+      The<ns2055:literal xmlns:ns2055="http://docbook.org/ns/docbook">ejbRemove()</ns2055:literal> method is NOT called in this case.
+      This enables application servers to let their stateful session beans survive server crashes.
+    </ns2054:para>
+    <ns2056:para xmlns:ns2056="http://docbook.org/ns/docbook">
+      Though this is not required by the EJB 1.1 standard, many do. For example, the Borland
+      Application Server persists stateful session beans to the last passivated state.
+    </ns2056:para>
+  </ns2052:section>
+</ns2027:section>

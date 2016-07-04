@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns3383:section xmlns:ns3383="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.sendmail.server">
+
+	<ns3384:title xmlns:ns3384="http://docbook.org/ns/docbook">Mail server using Sendmail</ns3384:title>
+	<ns3385:para xmlns:ns3385="http://docbook.org/ns/docbook">
+	The installation of sendmail, if not already done during the installation, is performed via the rpm utility. Once the installation is completed, the sendmail service should be available to be started. (<ns3386:emphasis xmlns:ns3386="http://docbook.org/ns/docbook" role="strong">/etc/init.d/sendmail start</ns3386:emphasis>). Before we start sendmail, we have to ensure that the hostname and name resolution are configured correctly, as sendmail makes use of these features. Once you have made certain that the network parameters are correct, create a set of users to test your mail server installation and start the service. 
+	</ns3385:para>
+	<ns3387:para xmlns:ns3387="http://docbook.org/ns/docbook">
+	The mail command is used to send and receive mail to an email address using the local sendmail server. As both mail accounts are on the same server, sendmail is able to deliver the message. When invoked without any parameters, the uses mailbox is listed. 
+	</ns3387:para>
+	<ns3388:screen xmlns:ns3388="http://docbook.org/ns/docbook">
+		<ns3389:userinput xmlns:ns3389="http://docbook.org/ns/docbook">
+			<ns3390:command xmlns:ns3390="http://docbook.org/ns/docbook">mail</ns3390:command> <ns3391:replaceable xmlns:ns3391="http://docbook.org/ns/docbook">flag</ns3391:replaceable> <ns3392:replaceable xmlns:ns3392="http://docbook.org/ns/docbook">recipient</ns3392:replaceable> 
+		</ns3389:userinput>
+	</ns3388:screen>
+	<ns3393:table xmlns:ns3393="http://docbook.org/ns/docbook" frame="all">
+		<ns3394:title xmlns:ns3394="http://docbook.org/ns/docbook">mail Flags</ns3394:title>
+		<ns3395:tgroup xmlns:ns3395="http://docbook.org/ns/docbook" cols="2">
+			<ns3396:thead xmlns:ns3396="http://docbook.org/ns/docbook">
+				<ns3397:row xmlns:ns3397="http://docbook.org/ns/docbook"><ns3398:entry xmlns:ns3398="http://docbook.org/ns/docbook">Flag</ns3398:entry><ns3399:entry xmlns:ns3399="http://docbook.org/ns/docbook">Description</ns3399:entry></ns3397:row>
+			</ns3396:thead>	
+			<ns3400:tbody xmlns:ns3400="http://docbook.org/ns/docbook">
+				<ns3401:row xmlns:ns3401="http://docbook.org/ns/docbook"><ns3402:entry xmlns:ns3402="http://docbook.org/ns/docbook">-c ccaddress</ns3402:entry><ns3403:entry xmlns:ns3403="http://docbook.org/ns/docbook">add addresses (comma separated) which will receive a carbon copy of the message</ns3403:entry></ns3401:row>
+				<ns3404:row xmlns:ns3404="http://docbook.org/ns/docbook"><ns3405:entry xmlns:ns3405="http://docbook.org/ns/docbook">-b bccaddress</ns3405:entry><ns3406:entry xmlns:ns3406="http://docbook.org/ns/docbook">add addresses (comma separated) which will receive a blind carbon copy of the message</ns3406:entry></ns3404:row>
+			</ns3400:tbody>
+		</ns3395:tgroup>
+	</ns3393:table>	
+	<ns3407:programlisting xmlns:ns3407="http://docbook.org/ns/docbook">
+	
+[alex@client8 alex]$ mail user@client8.solmshome.co.za
+Subject: Hi there						
+Cc: 
+Null message body; hope that's ok
+[alex@client8 alex]$ 
+[alex@client8 alex]$ ls |mail user@client8.solmshome.co.za
+[alex@client8 alex]$ 
+
+[user@client8 user]$ mail
+Mail version 8.1 6/6/93.  Type ? for help.
+"/var/spool/mail/user": 1 message 1 new
+&gt;N  1 alex@client8.solmsho  Thu Sep  4 11:39  17/678  
+&amp; 
+Message 1:
+From alex@client8.solmshome.co.za  Thu Sep  4 11:39:16 2003
+Date: Thu, 4 Sep 2003 11:39:16 +0200
+From: alex@client8.solmshome.co.za
+To: user@client8.solmshome.co.za
+
+dud.txt
+mail
+mbox
+
+&amp; 
+	
+	</ns3407:programlisting>
+	<ns3408:note xmlns:ns3408="http://docbook.org/ns/docbook">
+	<ns3409:para xmlns:ns3409="http://docbook.org/ns/docbook">Press CTRL+D to go to the next step / field. CTRL+D is the EOF character indicating that a particular field has been completed.</ns3409:para>
+	</ns3408:note>
+	<ns3410:para xmlns:ns3410="http://docbook.org/ns/docbook">
+	So far we have only sent messages on the same workstation. To network enable the webserver, we need to start another service, either POP3 or IMAP. POP3 allows the message to be transferred to the clients workstation. IMAP stores the messages on the server. Both these services are controlled by XINETD (<ns3411:xref xmlns:ns3411="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.networkServices.xinetd.xinetd"/>). The default installations of sendmail may not allow for remote connection. To enable this feature, a minor change is required to the sendmail configuration file <ns3412:emphasis xmlns:ns3412="http://docbook.org/ns/docbook" role="strong">/etc/mail/sendmail.mc</ns3412:emphasis>. This configuration file has to be processed by the M4 utility to generate the configuration file used by sendmail <ns3413:emphasis xmlns:ns3413="http://docbook.org/ns/docbook" role="strong">/etc/mail/sendmail.cf</ns3413:emphasis>.
+	</ns3410:para>
+	<ns3414:para xmlns:ns3414="http://docbook.org/ns/docbook">
+	This line
+	</ns3414:para>
+	<ns3415:programlisting xmlns:ns3415="http://docbook.org/ns/docbook">
+DAEMON_OPTIONS(`Port=smtp,Addr=127.0.0.1, Name=MTA')dnl
+	</ns3415:programlisting>
+	<ns3416:para xmlns:ns3416="http://docbook.org/ns/docbook">
+	is replace with this line.
+	</ns3416:para>
+	<ns3417:programlisting xmlns:ns3417="http://docbook.org/ns/docbook">
+dnl # DAEMON_OPTIONS(`Port=smtp,Addr=127.0.0.1, Name=MTA')dnl
+	</ns3417:programlisting>
+	<ns3418:para xmlns:ns3418="http://docbook.org/ns/docbook">
+	It might be desirable to forward messages designated for an outside address to a corporate mail server. To configure sendmail to forward all messages which does not know how to process to another mail server, configure the SMARTHOST parameter. If you don't want to go via the M4 processing, you can also modify the DS property in  the sendmail.cf file directly. This is, however, not recommended, as this file is overwritten on the M4 invocation.
+	</ns3418:para>
+	<ns3419:para xmlns:ns3419="http://docbook.org/ns/docbook">
+	Uncomment this line
+	</ns3419:para>
+	<ns3420:programlisting xmlns:ns3420="http://docbook.org/ns/docbook">
+dnl define(`SMART_HOST',`smtp.your.provider')		
+	</ns3420:programlisting>
+	<ns3421:para xmlns:ns3421="http://docbook.org/ns/docbook">
+	so that is looks like this
+	</ns3421:para>
+	<ns3422:programlisting xmlns:ns3422="http://docbook.org/ns/docbook">
+define(`SMART_HOST',`smtp.your.provider')		
+	</ns3422:programlisting>
+	<ns3423:para xmlns:ns3423="http://docbook.org/ns/docbook">
+	The example below illustrates the use of the M4 processor. Certain distributions also provide a make file used to package the configuration. After a change to the configuration has been made, the sendmail server has to be restarted. 
+	</ns3423:para>
+	<ns3424:programlisting xmlns:ns3424="http://docbook.org/ns/docbook">
+[root@client8 mail]# m4 sendmail.mc &gt; sendmail.cf
+[root@client8 mail]# make
+[root@client8 mail]# /etc/init.d/sendmail restart
+	</ns3424:programlisting>
+</ns3383:section>

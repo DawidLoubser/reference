@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.architecture.patterns.pipesAndFilters.solution"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Solution</title>
+  <para>
+    The <emphasis>pipes and filters</emphasis> architectural pattern introduces
+    a network of filters connected through pipes. The idea is that the filters resemble
+    processing or decision making elements and that one can easily assemble new
+    work flows by connecting different combinations of filters to one another.
+  </para>
+  
+  <section>
+    <title>Responsibility allocation</title>
+    <para>
+      The responsibilities of pipes and filters are shown in
+      <xref linkend="resources.information.concepts.architecture.patterns.pipesAndFilters.responsibilityAllocation_fig"/>.
+    </para>
+    
+    <figure id="resources.information.concepts.architecture.patterns.pipesAndFilters.responsibilityAllocation_fig">
+      <title>Responsibility allocation for the pipes and filters architectural pattern.</title>
+      <graphic fileref="responsibilityAllocation.jpg"/>
+    </figure>
+    
+  </section>
+  
+  <section>
+    <title>Structure</title>
+  
+    <figure id="resources.information.concepts.architecture.patterns.pipesAndFilters.structure_fig">
+      <title>Pipes and filters architectural pattern: structure</title>
+      <graphic fileref="structure.jpg"/>
+    </figure>
+  
+    <para>
+      Structurally each filter has one or more input pipes and zero or more output pipes.
+      Each pipe may or may not be connected to a filter on both, the input and output ends.
+      An example pipes-and-filters configuration is shown in
+      <xref linkend="resources.information.concepts.architecture.patterns.pipesAndFilters.example_fig"/>.
+    </para>
+  
+    <figure id="resources.information.concepts.architecture.patterns.pipesAndFilters.example_fig">
+      <title>Pipes and filters architectural pattern: example</title>
+      <graphic fileref="example.jpg"/>
+    </figure>
+  </section>
+  
+  
+  <section>
+    <title>Requirements for filters</title>
+    <para>
+      The pipes and filters architectural pattern enforces the following core requirements
+      on filters:
+      <orderedlist>
+        <listitem><formalpara>
+          <title>Filters must be independent</title>
+          <para>
+            Filters should not share state with other filters and one should be able to assemble
+            a system by assembling it from the filters one requires.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Filters should not know what type of filter they connect to</title>
+          <para>
+            Filters may specify what type of input they require and what type of output
+            they generate, but they should not have a direct dependency on either
+            the filter it receives information from or the filter it sends information to.
+          </para>
+        </formalpara></listitem>
+      </orderedlist>
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Types of filters</title>
+    <para>
+       The filters process the information they receive through the input pipes and
+       send the processed information to the output pipes. Typically four broad
+       groups of filters are identified
+       <itemizedlist>
+         <listitem><para>processing elements,</para></listitem>
+         <listitem><para>decision elements,</para></listitem>
+         <listitem><para>transformation elements, and</para></listitem>
+         <listitem><para>interface elements.</para></listitem>
+       </itemizedlist>
+    </para>
+    <section>
+      <title>Processing elements</title>
+      <para>
+        Processing elements perform some processing on the received information
+        and feed the result into the output stream.
+      </para>
+    </section>
+    
+    <section>
+      <title>Routing elements</title>
+      <para>
+        Routing elements make routing decision based on the content of the received
+        message or some other parameters (<abbrev>e.g.</abbrev> load distribution
+        criteria) and feed the received message onto some output pipe based on the
+        routing decision.
+      </para>
+    </section>
+    
+    <section>
+      <title>Transformation elements</title>
+      <para>
+        Transformation elements are special types of processing elements which
+        perform a transformation on the received message without modifying the
+        conceptual content. This could, for example, be a transformation from 
+        some native data  structure to XML or from one XML data structure to 
+        another.
+      </para>
+    </section>
+    
+    <section>
+      <title>Interface elements</title>
+      <para>
+        Interface elements are on the border of the system which process the received
+        information by interfacing with external elements. They have a direct dependency
+        on service providers which are external to the system and may feed the
+        processed information onto the output pipe.
+      </para>
+    </section>
+    
+  </section>
+  
+  <section>
+    <title>Types of pipes</title>
+    <para>
+      Often filters have a number of output pipes for different types of messages.
+      Examples are 
+      <itemizedlist>
+        <listitem><para>standard output pipes,</para></listitem>
+        <listitem><para>error pipes, and</para></listitem>
+        <listitem><para>logging pipes.</para></listitem>
+      </itemizedlist>
+      
+    </para>
+    
+    <section>
+      <title>Standard output pipes</title>
+      <para>
+        Standard output pipes receive the processed information which is sent onto the
+        next filter in the work flow.
+      </para>
+    </section>
+    
+    <section>
+      <title>Error pipes</title>
+      <para>
+        Error pipes receive error messages which need to be fed into some error
+        handling filter.
+      </para>
+    </section>
+    
+    <section>
+      <title>Logging pipes</title>
+      <para>
+        Logging pipes receive logging messages which can be stored for auditing purposes.
+      </para>
+    </section>
+    
+  </section>
+  
+  
+</section>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The core tag library</title>
+    <para>
+        This tag library has the core components and functionality which is independent 
+        of any specific rendering kit (and hence independent of HTML). Its namespace is
+        <literal>http://java.sun.com/jsf/core</literal> and its elements are commonly
+        imported into a namespace prefix <literal>f</literal>:
+        <programlisting><![CDATA[
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        
+			<html xmlns="http://www.w3.org/1999/xhtml"
+    		xmlns:f="http://java.sun.com/jsf/core">
+    		                        
+                        ]]></programlisting>
+    </para>
+    <para>
+        The core tag library is often directly used to access functionality which is independent
+        of the rendering. Examples include
+        <itemizedlist>
+            <listitem><formalpara>
+                <title>Validation and conversion</title>
+                <para>
+                    The standard validation and conversion functions are all part of the
+                    core tag library.
+                    For example
+                    <programlisting><![CDATA[
+<h:inputText value="#{myBackingBean.myDate}">
+   <f:convertDateTime dateStyle="short" locale="za"/>
+   <f:validator validatorIf="za.co.solms.IsWeekendValidator"/>
+</h:inputText>
+                        ]]></programlisting>
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>Observer (event listener) registration</title>
+                <para>
+                    The services for registering event listeners to JSF components are
+                    provided by the core tag library. This includes the registration of
+                    <itemizedlist>
+                        <listitem><para>
+                            phase event listeners,                            
+                        </para></listitem>
+                        <listitem><para>
+                            action event listeners,
+                        </para></listitem>
+                        <listitem><para>
+                            property action listeners, and
+                        </para></listitem>
+                        <listitem><para>
+                            value change listeners.
+                        </para></listitem>
+                    </itemizedlist>
+                    For example,
+                    <programlisting><![CDATA[
+<h:selectBooleanCheckbox onclick="this.form.submit()"
+    value="#{captureOrderBinding.requireShipping}" immediate="true"
+        <f:valueChangeListener="#{captureOrderBinding.shippingRequirementsChanged}"/>
+                        ]]></programlisting>
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>Specifying Ajax functionality which should be used for a view</title>
+                <para>
+                    the inserton of Ajax functionality on a component, e.g.
+                    <programlisting><![CDATA[
+<h:table id="coursesTable" var="course" value="#{manageCoursesBinding.courses}">
+    ...
+    <f:commandLink action="deleteCourse" value="delete course">
+        <f:ajax render=":form:coursesTable"/>
+    </f:commandLink>
+    ...    
+</h:table>
+                        ]]></programlisting>
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>Adding configurable attributes</title>
+                <para>
+                    You can specify component attributes and add configurable attributes
+                    to components via the attribute tag:
+                    <programlisting><![CDATA[
+<h:commandButton action="#{doSomethingBinding.doSomething}">
+    <f:attribute name="value" value="press me"/>
+    <f:attribute name="myAttributeName" value="myAttributeValue"/>
+</h:commandButton>    
+                        ]]></programlisting>
+                </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+                <title>Facets</title>
+                <para>
+                    Structured components like <literal>panelGrid</literal> and 
+                    <literal>dataTable</literal> allow you to specify that a
+                    particular component should be used to represent a particuler 
+                    facet (aspect) of the parent component. For example
+                    <programlisting><![CDATA[
+<h:dataTable value="#{order.orderItems}" var="item">
+
+    <h:column>
+    	<f:facet name="header">Product Name</f:facet>
+    	#{item.productName}
+    </h:column>
+
+    <h:column>
+    	<f:facet name="header">Quantity</f:facet>
+    	#{item.quantity}
+    </h:column>
+
+</h:dataTable>
+                        ]]></programlisting>
+                </para>
+            </formalpara></listitem>
+        </itemizedlist>
+    </para>
+</section>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.platforms.linux.fileSystem.journalingFileSystem"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Journaling file systems</title>
+  <para>
+    When performing write operations, one often needs to make multiple device I/Os
+    before the write is complete, storing not only the data itself, but also the meta data
+    (like the updates to the inode table). If a crash happens during this process the file system
+    may be left in an inconsistent state and infomation may be lost.
+  </para>
+  <para>
+    Most modern Linux distributions use a <emphasis>journaling file system</emphasis> 
+    which introduces the concept of a <emphasis>transaction</emphasis> for file
+    systems. Transactions are regarded as atomic and must be either completed in
+    their entirity or otherwise completely undone.
+  </para>
+  <para>
+    In a <emphasis>journaling file system</emphasis> (sometime called a 
+    <emphasis>log-enhanced file system</emphasis> the following sequence
+    of activities takes place:
+    <orderedlist>
+      <listitem><para>
+        All meta-data updates are first written onto a separate area on the disk reserved
+        for use as a journal,
+      </para></listitem>
+      <listitem><para>
+        Further meta-data update requests are accumulated in the journal until a
+        <emphasis>commit</emphasis> record is written into the journal.
+      </para></listitem>
+      <listitem><para>
+        Only after the <emphasis>commit</emphasis> are the changes to the meta-data
+        transferred to
+      </para></listitem>
+    </orderedlist>
+    The transactional steps are written to a log and if a crash occurs the log records may
+    be applied after the system has come up again.
+  </para>
+  <para>
+    <emphasis>Ext3</emphasis> and <emphasis>reiserfs</emphasis> are both journaling file
+    systems. To make a journaling file system you can use <command>mkfs.ext3</command>
+    OR <command>mkfs.reiserfs</command>.
+    <note>
+      <para>
+        You can also resize a <emphasis>reiserfs</emphasis> an existing file system 
+        which is not mounted via <command>resize_reiserfs</command>.
+      </para>
+    </note>
+  </para>
+  
+</section>

@@ -1,0 +1,450 @@
+
+\documentclass[10pt]{article}
+
+\usepackage{calc}
+
+\makeatletter
+\newlength{\bibhang}
+\setlength{\bibhang}{1em}
+\newlength{\bibsep}
+ {\@listi \global\bibsep\itemsep \global\advance\bibsep by\parsep}
+\newenvironment{bibsection}
+    {\minipage[t]{\linewidth}\list{}{%
+        \setlength{\leftmargin}{\bibhang}%
+        \setlength{\itemindent}{-\leftmargin}%
+        \setlength{\itemsep}{\bibsep}%
+        \setlength{\parsep}{\z@}%
+        }}
+    {\endlist\endminipage}
+\makeatother
+
+% Layout: Puts the section titles on left side of page
+\reversemarginpar
+
+%
+%         PAPER SIZE, PAGE NUMBER, AND DOCUMENT LAYOUT NOTES:
+%
+% The next \usepackage line changes the layout for CV style section
+% headings as marginal notes. It also sets up the paper size.
+
+\usepackage[paper=a4paper,
+            includefoot, % Uncomment to put page number above margin
+            marginparwidth=30.5mm,    % Length of section titles
+            marginparsep=1.5mm,       % Space between titles and text
+            margin=25mm,              % 25mm margins
+            includemp]{geometry}
+
+%% More layout: Get rid of indenting throughout entire document
+\setlength{\parindent}{0in}
+
+%% This gives us fun enumeration environments. compactitem will be nice.
+\usepackage{paralist}
+
+%% Reference the last page in the page number
+%
+% NOTE: comment the +LP line and uncomment the -LP line to have page
+%       numbers without the ``of ##'' last page reference)
+%
+% NOTE: uncomment the \pagestyle{empty} line to get rid of all page
+%       numbers (make sure includefoot is commented out above)
+%
+\usepackage{fancyhdr,lastpage}
+\pagestyle{fancy}
+%\pagestyle{empty}      % Uncomment this to get rid of page numbers
+\fancyhf{}\renewcommand{\headrulewidth}{0pt}
+\fancyfootoffset{\marginparsep+\marginparwidth}
+\newlength{\footpageshift}
+\setlength{\footpageshift}
+          {0.5\textwidth+0.5\marginparsep+0.5\marginparwidth-2in}
+\lfoot{\hspace{\footpageshift}%
+       \parbox{4in}{\, \hfill %
+                    \arabic{page} of \protect\pageref*{LastPage} % +LP
+%                    \arabic{page}                               % -LP
+                    \hfill \,}}
+
+% Finally, give us PDF bookmarks
+\usepackage{color,hyperref}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.3}
+\hypersetup{colorlinks,breaklinks,
+            linkcolor=darkblue,urlcolor=darkblue,
+            anchorcolor=darkblue,citecolor=darkblue}
+
+%%%%%%%%%%%%%%%%%%%%%%%% End Document Setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The title (name) with a horizontal rule under it
+%
+% Usage: \makeheading{name}
+%
+% Place at top of document. It should be the first thing.
+\newcommand{\makeheading}[1]%
+        {\hspace*{-\marginparsep minus \marginparwidth}%
+         \begin{minipage}[t]{\textwidth+\marginparwidth+\marginparsep}%
+                {\large \bfseries #1}\\[-0.15\baselineskip]%
+                 \rule{\columnwidth}{1pt}%
+         \end{minipage}}
+
+% The section headings
+%
+% Usage: \section{section name}
+%
+% Follow this section IMMEDIATELY with the first line of the section
+% text. Do not put whitespace in between. That is, do this:
+%
+%       \section{My Information}
+%       Here is my information.
+%
+% and NOT this:
+%
+%       \section{My Information}
+%
+%       Here is my information.
+%
+% Otherwise the top of the section header will not line up with the top
+% of the section. Of course, using a single comment character (%) on
+% empty lines allows for the function of the first example with the
+% readability of the second example.
+\renewcommand{\section}[2]%
+        {\pagebreak[2]\vspace{1.3\baselineskip}%
+         \phantomsection\addcontentsline{toc}{section}{#1}%
+         \hspace{0in}%
+         \marginpar{
+         \raggedright \scshape #1}#2}
+
+% An itemize-style list with lots of space between items
+\newenvironment{outerlist}[1][\enskip\textbullet]%
+        {\begin{itemize}[#1]}{\end{itemize}%
+         \vspace{-.6\baselineskip}}
+
+% An environment IDENTICAL to outerlist that has better pre-list spacing
+% when used as the first thing in a \section
+\newenvironment{lonelist}[1][\enskip\textbullet]%
+        {\vspace{-\baselineskip}\begin{list}{#1}{%
+        \setlength{\partopsep}{0pt}%
+        \setlength{\topsep}{0pt}}}
+        {\end{list}\vspace{-.6\baselineskip}}
+
+% An itemize-style list with little space between items
+\newenvironment{innerlist}[1][\enskip\textbullet]%
+        {\begin{compactitem}[#1]}{\end{compactitem}}
+
+% To add some paragraph space between lines.
+% This also tells LaTeX to preferably break a page on one of these gaps
+% if there is a needed pagebreak nearby.
+\newcommand{\blankline}{\quad\pagebreak[2]}
+
+% 
+
+%%%%%%%%%%%%%%%%%%%%%%%% End Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Begin CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\makeheading{Curriculum Vitae: Dr Friedemann (Fritz) Solms}
+
+\section{Contact Information}
+%
+% NOTE: Mind where the & separators and \\ breaks are in the following
+%       table.
+%
+% ALSO: \rcollength is the width of the right column of the table
+%       (adjust it to your liking; default is 1.85in).
+%
+\newlength{\rcollength}\setlength{\rcollength}{1.85in}%
+%
+\begin{tabular}[t]{@{}p{\textwidth-\rcollength}p{\rcollength}}
+33 Jenvey Rd      & \textit{Cell:} 072 128 2314 \\
+Summerstrand            & \textit{Tel:} 041 583 4832 \\
+Port Elizabeth           & \textit{E-mail:} \href{mailto:fritz@solms.co.za}{fritz@solms.co.za}\\
+6001    & \textit{WWW:} \href{http://www.solms.co.za/}{www.solms.co.za}\\
+\end{tabular}
+
+\section{Objective}
+%
+Acceptance for PhD in Computer Science 
+
+\section{Citizenship}
+%
+South African and German (RSA ID No: 631017 5157 087)
+
+\section{Family}
+%
+Married to Ellen Lawton Solms with two children, Edwin and Alexander Solms.
+
+\section{Research Interests}
+%
+Model-Driven Development, Architecture, Technology Neutral Design (URDAD)
+
+\blankline
+
+\section{Degrees}
+%
+PhD. Theoretical Physics, University of Pretoria
+        \begin{innerlist}
+	  \item 1988-1991
+	  \item Thesis Topic: \emph{Finite Size effects in Poly-Crystalline high-temperature superconductors}
+	  \item Supervisor: Professor Hank Miller
+        \end{innerlist}
+
+\blankline
+
+MSc Theoretical Physics, UNISA
+        \begin{innerlist}
+	  \item Thesis Topic: \emph{An Improved SCF Iteration Scheme} (67\%)
+	  \item Supervisor: Dr Piotr Badziag
+	  \item Courses: Advanced Solid State Physics (I \& II), Advanced Quantum Mechanics, Particle Physics, 
+Quantum Field Theory (Avg: 69\%)
+        \end{innerlist}
+
+\blankline
+
+BSc Honours, University of Pretoria
+        \begin{innerlist}
+	  \item 1985
+	  \item Physics
+        \end{innerlist}
+
+\blankline
+
+BSc, University of Pretoria
+        \begin{innerlist}
+	  \item 1982-1984
+	  \item primary subjects (taken to 3rd year level): Mathematics and Physics
+	  \item secondary subjects: Applied Mathematics and Chemistry
+        \end{innerlist}
+
+\section{Additional courses}
+Courses passed for non-degree purposes:
+\begin{innerlist}
+  \item OMG Advanced UML Certification, 2005
+  \item Psychology 1a and 2a (Rand Afrikaans University, 1994)
+  \item Theoretical Computer Science I \& II (UNISA, 1987/8)
+  \item Computer Programming I \& II (UNISA, 1987/8)
+  \item Informatics I (1987)
+  \item Syferrekenaar 330 (University of Pretoria, 1984)
+\end{innerlist}
+
+\section{Bursaries}
+Bursaries received:
+\begin{innerlist}
+  \item Foundation of Research and Development, 1990-1992
+  \item Pretoria Portlans Cement, 1982-1984
+\end{innerlist}
+
+\section{Journal Papers}
+Publications in refereed scientific journals:
+    \begin{innerlist}
+      \item  Fritz Solms and Dawid Loubser, URDAD as a semi-formal approach to analysis and design,
+	     Journal Innovations in Systems and Software Engineering, Springer London, 1614-5046, 
+	     1 January 2010.
+      \item Fritz Solms and Dawid Loubser, Generating MDA's platform independent model using URDAD,
+	    Knowledge-Based Systems, vol 22, 174--185, 2009.
+      \item F. Solms and W.-H. Steeb, Distributed Monte Carlo Integration using CORBA and Java,
+	    International Journal of Modern Physics C, vol. 9, 903--915, 1998.
+		\item F. Solms, P.G.W. van Rooyen and J.S. Kunicki
+      \item W.-H. Steeb, F. Solms, Tan Kiat Shi and R. Stoop, Cubic Map, Complexity and Ljapunov Exponent,
+	    Physica Scripta, vol. 55, 520--522, 1997.
+      \item W.-H. Steeb and F. Solms, Complexity, Chaos and One-Dimensional Maps,
+	    South African Journal of Science, vol. 92, 353--354, 1996
+		\item F. Solms, P.G.W. van Rooyen and J.S. Kunicki, Maximum Entropy Performance Analysis of Spread Spectrum
+				Multiple-Access Communications, in Maximum Entropy and Bayesian Methods, pp101--108, Kluwer, Academic Publishers, 1996.
+      \item F. Solms, P.G.W. van Rooyen and J.S. Kunicki, Maximum Entropy and Minimum Relative Entropy in 
+	    Performance Evaluation of Digital Communication Systems, IEE Proceedings: Communications, 
+	    vol. 142, no. 5, 250--254, August 1995.
+      \item W.-H. Steeb W-H, F. Solms and K. S. Tan, Genetic Algorithms and Object-Oriented Programming,
+	    Int. J. Mod. Phys. C, 853--869, vol. 6, 1995.
+      \item F. Solms, R.M. Quick and H.G. Miller, Finite Size Effe cts and Polycrystalline high-Tc Materials,
+	    Physical Review B, Vol 49, 15945-15951, 1994.
+      \item W.-H. Steeb, F. Solms and R. Stoop, Chaotic Systems and Maximum Entropy Formalism,
+	    Journal of Physics A, L399--L402, vol. 27, 1994.
+      \item M. Marinus, H.G. Miller, R.M. Quick, F. Solms and D.M. van der Walt, Order Parameter for pairing systems, 
+	    Physical Review C, vol. 48, 1713--1718, 1993.
+      \item F. Solms, N.J. Davidson, H.G. Miller, R.M. Quick and H.L. Gaigher, BCS and Polycrystalline high-Tc materials,
+	    Physics Letters A, vol 170, 84--88, 1992.
+		\item R. Rossignoli, R.M. Quick, H.G. Miller and F.Solms, Correlated finite temperature BCS approximation in
+			 finite systems, Physics Letters A, vol 167, 84--88, 1992.
+      \item S.M. Peres, R.M. Quick, N.J. Davidson, H.G. Miller and F. Solms, Reconstruction of the Spin Dependence of 
+	    One Neutron Transfer Spectroscopic Sums from Incomplete Information, Physical Review C, Vol 45, 870-872, 1992.
+      \item E.D. Malaza, R.A. Ritchie, F. Solms, D.W. von Oertzen and H.G. Miller, Predictions of LEP hadronic
+	    multiplicity distributions using the maximum entropy principle, Physics Letters B, vol 266, 169--, 1991.
+      \item F. Solms, H.G. Miller and A. Plastino, Geometric Treatment of Finite Size Effects in Interacting Systems, 
+	    Physics Letters A, vol 157, 286-289, 1991.
+      \item P. Badziag and F. Solms, An Improved SCF Iteration Scheme, Computers and Chemistry, vol 12, 233--236, 1988.
+    \end{innerlist}
+
+\section{Conferences}
+Publications in refereed and non-refereed conference proceedings:
+    \begin{innerlist}
+      \item Fritz Solms and Dawid Loubser, URDAD as a Semi-Formal Approach to Analysis and Design, 
+	    presented at the International Conference on Formal Engineering Methods, ICFEM'09, Rio de Janeiro,December 2009.
+      \item Fritz Solms, Technology Neutral Business Process Design using URDAD,
+	    New Trends in Software Methodologies, Tools and Techniques: Frontiers in Artificial Intelligence and Applications 
+	    IOS Press, vol 161, 52--70, 2007 .
+      \item F. Solms, E. Smit and Z.J. Nel, A neural network diagnostic tool for the chronic fatigue syndrome,
+	    IEEE International Conference on Neural Networks, Washington DC,
+	    vol. 2, 778--781, 1996.
+      \item P. van Rooyen and F. Solms, Maximum entropy investigation of the inter user interference distribution in a DS/SSMA system,
+	    Personal, Indoor and Mobile Radio Communications, 
+	    Sixth IEEE International Symposium on Wireless: Merging onto the Information Superhighway,
+	    1308--, 1995.
+      \item F. SOLMS, P.G.W. van Rooyen, J.S. Kunicki, Maximum entropy and performance analysis of spread spectrum
+	    multiple access systems, MaxEnt'94, Proceedings of the 14th International Maximum Entropy Workshop,
+            St John's College, Cambridge, England, August 1994.
+      \item F. Solms, R.M. Quick and H.G. Miller, Finite Size Effects in Polycrystalline high-Tc materials, 
+	    Proceedings of the XVIII International Workshop on Condensed Matter Theories, Valencia, Spain, 6-10 June 1994.
+      \item F. Solms, P. van Rooyen and J. Kunicki, Maximum entropy and average error rates in digital communication
+	    systems, COMSIG-94., Proceedings of the 1994 IEEE South African Symposium on Communications and Signal Processing,
+	    11--15, Oct 1994.
+      \item F. Solms, H.G. Miller and A. Plastino, Geometric Treatment of Finite Size Effects in Interacting Systems,
+	    Proceedings of the 8'th International Conference on Dynamical Processes in Excited States in Solids, Leiden,
+	    The Netherlands, published in Journal Of Luminescence, vol 53, 143--, 1992.
+      \item F. Solms, N.J. Davidson, H.G. Miller, R.M. Quick and H.L. Gaigher, BCS and Polycrystalline high-Tc materials,
+	    Proceedings of the 27'th Annual Seminar on Theoretical Physics at the SAIP meeting at Wits, Johannesburg, 1992.
+      \item R.A. Ritchie, F. Solms, D.W. von Oertzen, H.G. Miller and E.D. Malaza, Predictions of LEP hadronic multiplicity
+	    distributions using the maximum entropy principle, Proceedings of the 26'th Annual Seminar on Theoretical Physics
+	    at the SAIP meeting in Bloemfontein, 1991.
+      \item R.A. Ritchie, F. Solms D.W. von Oertzen, H.G. Miller and E.D. Malaza, The Maximum Entropy Principle Applied to
+	    Hadron Multiplicity Distributions, Proceedings of the 17'th South African Symposium on Numerical Mathematics, 
+	    Umhlanga Rocks, July 1991.
+    \end{innerlist}
+
+\section{Books}
+Books published with international publishers:
+    \begin{innerlist}
+      \item Willie-Hans Steeb and Fritz Solms, Applications of C++ Programming,
+	    World Scientific Press, Singapore, 1995, ISBN 981-02-2313-7 - reprinted in 2000.
+    \end{innerlist}
+
+\section{Patents}
+Co-owner of the following patent:
+    \begin{innerlist}
+      \item SA Patent Application No. 95/3147, "The Determination of Individual Gas Concentrations", Friedemann (Fritz) Solms
+      and Campbell John Cairns, filed 19 April 1995
+    \end{innerlist}
+\blankline
+
+\section{Invited Speaker}
+Selected invites as guest speaker at conferences and meetings:
+    \begin{innerlist}
+      \item Enterprise Architecture in the Context of a Services Oriented Enterprise, 
+	    Enterprise Architecture Practitioners Conference, Gallagher Estates, 1-2 September 2009.
+      \item Enterprise Architecture, Meeting of the International Institute of Business Analysts, JSE, 16 September 2008.
+    \end{innerlist}
+
+\section{Courses Developed \& Presented}
+
+  Applied Mathematics courses
+  \begin{innerlist}
+    \item Information Theory and Maximum Entropy Inference
+    \item Neural Networks and Fuzzy Logic
+    \item Numerical methods with applications in C++ (second year)
+  \end{innerlist}
+
+  Architecture and Design courses
+  \begin{innerlist}
+    \item Information Theory and Maximum Entropy Inference
+    \item Neural Networks and Fuzzy Logic
+    \item Numerical methods with applications in C++ (second year)
+    \item Architecture
+    \item Enterprise Architecture
+    \item Object-Oriented Analysis and Design using UML and URDAD
+    \item Design Patterns
+    \item Enterprise Integration
+  \end{innerlist}
+
+\blankline
+
+  Business Analysis courses
+  \begin{innerlist}
+    \item Business Analysis using UML and URDAD
+    \item Organization Architecture
+  \end{innerlist}
+
+\blankline
+
+  Technology courses
+  \begin{innerlist}
+    \item Java, Advanced Java, Enterprise Java Beans, Java EE Presentation Layer Development
+    \item XML and Web Services
+    \item Object-Oriented Programming using C++, Object-Oriented Programming using ANSI-C
+    \item Linux
+  \end{innerlist}
+
+\blankline
+
+  Scientific courses
+  \begin{innerlist}
+    \item Numerical Methods (2nd year level)
+    \item Maximum Entropy Inference (4th year level)
+    \item Neural networks (4th year level)
+  \end{innerlist}
+
+\section{Employment}
+Solms Training \& Consulting (2000--present)
+\begin{innerlist}
+   \item Founder and CEO of company
+   \item Focus on organizational and systems architecture, technology neutral design and open standards based IT technologies.
+   \item Training and consulting services for the corporate sector.
+   \item Strong emphasis on research.
+\end{innerlist}
+
+\blankline
+
+IBM South Africa (1999, part-time)
+\begin{innerlist}
+  \item Trainer in Object-Oriented Technologies (presenting OOAD, Java and C++ courses)
+\end{innerlist}
+
+\blankline
+
+Standard Corporate and Merchant Bank (1998--2000)
+\begin{innerlist}
+  \item Mathematical modeling of financial instruments, their pricing and risk profiling.
+  \item Software architect, lead designer and developer for the Quantitative Analysis team.
+  \item Pricing and risk analysis with particular focus on the derivatives market.
+  \item Architect of core of trading system which was later used by Standard Bank, Brazil.
+  \item Liason with business and clients.
+\end{innerlist}
+
+\blankline
+
+Rand Afrikaans University (1992--1998)
+\begin{innerlist}
+  \item Senior lecturer in Applied Mathematics
+  \item Co-founder of the International School for Scientific Development
+\end{innerlist}
+
+\blankline
+
+South African Microelectronic Systems (SAMES) (1988)
+\begin{innerlist}
+  \item Quality assurance specialist with some limited software development responsibilities.
+\end{innerlist}
+
+\blankline
+
+UNISA (1986/7)
+\begin{innerlist}
+  \item Research assistent and lead developer of the Solid State Physics research group.
+\end{innerlist}
+
+
+\section{References}
+%
+\begin{tabular}{ll}
+  Prof C.M. Viller & Prof W.H. Steeb  \\
+  Applied Mathematics & Applied Mathematics \\
+  University of Johannesburg & University of Johannesburg \\
+  cmvillet@uj.ac.za & whsteeb@uj.ac.za \\
+  \\
+  Prof H.G. Miller  &  Dr. M. van Rooyen \\
+ Theoretical Physics & Head of Quantitative Analysis \\
+ University of Pretoria & Standard Bank \\
+  hmiller@maple.up.ac.za & marchand.vanrooyen@gmail.com \\
+\end{tabular}
+
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% End CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%%

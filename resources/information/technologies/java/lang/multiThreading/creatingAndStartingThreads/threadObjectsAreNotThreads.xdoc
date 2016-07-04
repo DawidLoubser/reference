@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="threadObjectsAreNotThreads"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+ xmlns:xi="http://www.w3.org/2001/XInclude">
+ 
+    <title role="Thread Objects are not Threads">Thread Objects are not Threads</title>
+
+<para>Note that both, the <emphasis>yield()</emphasis> and <emphasis>sleep()</emphasis> services are class 
+(static) services. They suspend the thread from which they are called.
+The question might arise why these are not instance services. The reason 
+for this is that a thread object <emphasis>is not</emphasis> a thread. </para>
+
+<para>This may at first be very confusing. A thread is not an object at all. It 
+is simply a series of instructions comprising a task. The starting point
+of a thread is the first statement in the run method. Of course you can 
+immediately request a service from another object or class. That service
+will be performed within the same thread. Since the <emphasis>yield()</emphasis> and
+<emphasis>sleep()</emphasis> methods are class services, they can be requested at any
+stage, even outside the actual <emphasis>Thread</emphasis> class.</para>
+
+<para>In OO objects request services from other objects or classes by sending
+messages to them. These messages are processed by message handlers. By
+default the service request and the message handling run on the same 
+thread. Often, however, a message handler spawns a new thread which
+provides the service in the background. The message handler can thus return
+before the service has been completed allowing service requester to
+continue while the processing for the requested service is done in the
+background.</para>
+    
+</section>

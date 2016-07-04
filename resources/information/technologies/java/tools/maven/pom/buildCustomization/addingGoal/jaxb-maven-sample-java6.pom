@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>za.co.solms.example</groupId>
+    <artifactId>jaxb-maven-sample-java6</artifactId>
+    <packaging>jar</packaging>
+    <version>0.1</version>
+    
+    <name>JAXB / Maven Sample (Java 6+)</name>
+    
+    <description> 
+        A Sample Maven 2.x project that illustrates usage of the 
+        JAXB Maven plugin to compile XML Schema resources to Java.
+        This is suitable for isolated work on XML documents. For
+        web services, usage of the JAX-WS is recommended.
+    </description>
+    
+    <developers>
+        <developer>
+            <organization>Solms TCD</organization>
+            <organizationUrl>http://www.solms.co.za/</organizationUrl>
+            <email>info@solms.co.za</email>
+        </developer>
+    </developers>
+    
+    <build>
+        <plugins>
+            <!-- Configuration to compile all schemas in the
+                resources/schemas directory. Automatically
+                invoke during the 'generate-sources' phase -->
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <schemaDirectory>src/main/resources/schemas</schemaDirectory>
+                    <schemaIncludes>
+                        <include>*.xsd</include>
+                    </schemaIncludes>
+                </configuration>
+            </plugin>
+            <!-- Assume a Java SE 6 environment, which includes JAXB.
+                For Java 5, extra dependencies on the JAXB Implementation
+                should be specified -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            
+        </plugins>
+    </build>
+    
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>[4.1,]</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <repositories>
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Maven 2 Repository</name>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven2-repository.dev.java.net</id>
+            <url>http://download.java.net/maven/2</url>
+        </pluginRepository>
+    </pluginRepositories>
+    
+</project>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+    id="resources.information.technologies.java.j2se.swing.developingSwingInterfaces.designOverview.rootpane"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title role="JRootPane">JRootPane</title>
+    <para>The fundamental class for containers is <literal>JRootPane</literal>. In Java 2 one
+        distinguishes between "heavyweight" containers such as <literal> JWindow</literal>,
+            <literal>JFrame</literal>,<literal> JDialog</literal>, and <literal>JApplet</literal>
+        and "lightweight" containers <literal>JInternalFrame</literal> and all<literal>
+        JComponent</literal>s. Both delegate their operations to a <literal> JRootPane</literal>.
+        <literal>JRootPane</literal> is the fundamental class of swing containers, just like
+        <literal>JComponent</literal> is the central class for swing components.</para>
+    <figure id="resources.information.technologies.java.j2se.swing.developingSwingInterfaces.designOverview.componentContainerModel.JRootPane">
+        <title>Component Diagram</title>
+        <graphic fileref="./JRootPane.jpg"/>
+    </figure>
+    <para>Figure <ulink url="#x1-1750013">
+            <!--ref: figJRootPane-->
+        </ulink> shows the structure of a <literal>JRootPane</literal>. Every
+        <literal>JRootPane</literal> contains The Content Pane holds the actual components added to
+        the container. Thus, to add to a <literal>JRootPane</literal> one says </para>
+    <para>
+        <programlisting>
+rootPane.getContentPane().add(component);
+        </programlisting>
+    </para>
+    <para>The default layout manager used for the content pane is <literal>BorderLayout</literal>.
+        The Glass Pane sits on top of all other components in the <literal>JRootPane</literal>. This
+        makes it possible to intercept mouse events before they reach the components. Note that the
+        glass pane is an ordinary component. One can thus use a canvas and draw above all other
+        components in the root pane. One is thus not limited to the boundaries of the components in
+        the content pane. The Menu Bar is the only optional component of a
+        <literal>JRootPane</literal>. The menu bar and content pane are packaged in a
+        <literal>JLayeredPane</literal>. Both, the glass pane and the layered pane extend over the
+        entire viewable area of the root pane. This is not the case for the content pane and the
+        menu bar. If the root pane has a menu bar, it is positioned at the upper edge of the pane.
+        The content pane fills the remaining area of the root pane.</para>
+    <para>The <literal>JLayeredPane</literal> provides the ability to add components at several
+        layers. This capability is very useful when working with menu popups, dialog boxes, and
+        dragging -- situations in which you need to place a component on top of all other components
+        in the pane.</para>
+    <para>Generally you do not have to know of the underlying root panes when using swing
+        components. Exceptions are those cases where you want to intercept mouse event or when you
+        want to draw over multiple components. </para>
+</section>

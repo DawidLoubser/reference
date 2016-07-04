@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Elements of Space Based Architectures (SBAs)</title>
+    <para>   
+        SBAs are built out of a set of self-sufficient units, known as processing-units (PUs). 
+        <indexterm><primary>space based architecture</primary></indexterm>
+        <indexterm><primary>processing</primary><secondary>unit</secondary></indexterm>
+        These units are independent of each other, so that the application can scale by adding more units.
+        <indexterm><primary>scalability</primary></indexterm>
+    </para>
+    <para>
+        SBAs typically have the following components:
+        <itemizedlist>
+            <listitem><para>
+                processing units,
+                <indexterm><primary>processing</primary><secondary>unit</secondary></indexterm>
+            </para></listitem>
+            <listitem><para>
+                virtual middleware,
+                <indexterm><primary>middleware</primary></indexterm>
+            </para></listitem>
+            <listitem><para>
+                a POJO-driven services model, and
+            </para></listitem>
+            <listitem><para>
+                a SLA-driven container.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>Processing units</title>
+        <para>
+            The processing units are business logic components. They are usually simple units which have
+            no information about the infrastructure/architecture within which they are used. They could be,
+            for example, plain Java objects (POJOs).
+        </para>
+    </section>   
+    
+    <section>
+        <title>Virtual middleware</title>
+        <para>
+            The virtual middleware provides a common runtime and clustering model, used across the 
+            entire middleware stack.  The core middleware components in a typical SBA architecture are
+            <itemizedlist>
+                <listitem><para>
+                    the data and messaging grid, and
+                </para></listitem>
+                <listitem><para>
+                    the processing grid.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+        
+        <section>
+            <title>The data and messaging grid</title>
+            <para>
+                The data and messaging grid provides an infrastructure within which 
+                <itemizedlist>
+                    <listitem><para>
+                        durability and rapid, scalabe access to information and messages, and 
+                    </para></listitem>
+                    <listitem><para>
+                        supports mechanisms through which processes can request to be notofied
+                        of certain types of messages which are available within the space.
+                    </para></listitem>
+                </itemizedlist>
+            </para>
+            <para>
+                Behind the scenes the information is persisted onto durable storage (often distributed data base with
+                data replication and synchronization). 
+                The data grid provides automatic caching and supports that any resources/data objects
+                can partake within transactions.
+            </para>
+        </section>
+        
+        <section>
+            <title>The processing grid</title>
+            <para>
+                The processing grid contains the event processors. These may be distributed, heterogenous
+                implementations of event processors. Often the actual processing units are hosted within
+                containers which support thread, object and connection pooling. Examples include EJB
+                (Enterprise Java Beans) containers, Spring containers and web services containers.
+            </para>
+        </section>    
+    </section>   
+    
+    <section>
+        <title>POJO-driven services model</title>
+        <para>
+            A lightweight services model that can take any standard Java implementation and turn it 
+            into a loosely coupled distributed service. 
+            The model is ideal for interaction with services that run within the same processing-unit.  
+        </para>
+    </section>   
+    
+    <section>
+        <title>SLA-driven container</title>
+        <para>
+            The SLA-driven container enables the deployment of the application on a dynamic pool of 
+            machines based on Service Level Agreements. SLA definitions include the number of instances that need 
+            to run in order to comply with the application scaling and fail-over policies, as well as other policies.
+        </para>
+    </section>   
+    
+</section>  

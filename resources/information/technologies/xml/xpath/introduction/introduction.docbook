@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Introduction</title>
+  
+  <indexterm>
+    <primary>XPath</primary>
+    <secondary>introduction</secondary>
+  </indexterm>
+  
+  <para>
+    XPath is a standard language for addressing parts of an XML document. It is widely used in 
+    <itemizedlist>
+      <listitem><para>
+        XQuery based query definitions,
+      </para></listitem>
+      <listitem><para>
+        XSLT transformation specifications, and even in    
+      </para></listitem>
+      <listitem><para>
+        specification of XML schemas (particularly when defining keys and key references).
+      </para></listitem>
+    </itemizedlist>
+  </para>
+
+  <section>
+    <title>Getting a feeling for XPath expressions</title>
+    <para>  
+      An XPath expression is a pattern, which could be used to find all the
+      nodes in an XML document which matches that pattern. Unlike other
+      pattern languages like regular expressions, XPath does not work with
+      XML at a text level, but rather directly with the parsed tree structure.
+      It can thus distinguish between elements, attributes, text, comments,
+      and so on.
+    </para>
+    <para>
+      For example, if a fleet of vehicles were represented as
+      <programlisting language="XML">
+<xi:include href="src/fleet.xml" parse="text"/>
+    </programlisting>
+      Consider the following example XPath expressions we could use to query
+      the document:
+    </para>
+    <para>
+      <literal>/fleet/vehicle</literal> to select
+      all the vehicle elements which are sub-elements of the root node.
+    </para>
+    <para>
+      <literal>/fleet/vehicle[@colour='white']</literal> to select
+      all the vehicle elements that have a white colour.
+    </para>
+    <para>
+      <literal>/fleet/vehicle[registration='ABC 123 GP']/make/text()</literal>
+      to select the text in the <quote>make</quote> element of the vehicle with registration
+      <quote>ABC 123 GP</quote>.
+    </para>
+    <para>
+      <literal>count(/fleet/vehicle)</literal> to count the number of vehicles
+      in the fleet.
+    </para>
+    <note>
+      <para>
+        These expressions all use the short-hand version of XPath. It is beneficial,
+        upon first learning, to be aware of the expanded syntax. For example, the
+        first expression above is fully specified as:
+        <literal>/child::fleet/child::vehicle</literal>
+      </para>
+    </note>
+  </section>
+</section>

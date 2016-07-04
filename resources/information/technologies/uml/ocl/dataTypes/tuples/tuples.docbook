@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>
+        Tuples
+    </title>
+    <indexterm><primary>Object Constraint Language</primary><secondary>tuples</secondary></indexterm>
+    <para>
+        Tuples can be used to construct new composite data structures. They are assembled as a collection of
+        name-value pairs. The value can be of any valid OCL type. 
+    </para>
+    <para>
+        Consider, for example, the case that we want to define a query whose result contains all
+        <programlisting><![CDATA[
+context Bank
+  def: statistics: Set(TupleType(accountId:String, balance:Real, client:Person, otherAccounts: Set(Account))) =
+      self.accounts->select(balance>100000)->collect(acc:Account |
+          Tuple { 
+                      accountId = acc.id,
+                      balance = acc.balance,
+                      client = acc.accountHolder,
+                      otherAccounts = acc.accountHolder.accounts->excluding(acc) 
+                    }
+            )        
+            ]]></programlisting>
+        
+        <note><para>
+            Tuples enable one to obtain a table-based query-result view which is in some ways similar as what is
+            often created with SQL database queries.
+        </para></note>
+    </para>
+</section>    

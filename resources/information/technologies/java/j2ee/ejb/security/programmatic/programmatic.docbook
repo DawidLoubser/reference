@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"--><ns2822:section xmlns:ns2822="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.security.programmatic.programmatic">
+
+    <ns2823:title xmlns:ns2823="http://docbook.org/ns/docbook">Programmatic Authorization</ns2823:title>
+    <ns2824:para xmlns:ns2824="http://docbook.org/ns/docbook">
+      Declarative security is generally nice because it clearly separates the
+      responsibilities of developing the bean with the business logic and restricting access to
+      the bean services for security reasons. The security settings can be modified without
+      digging into the code.
+    </ns2824:para>
+    <ns2825:para xmlns:ns2825="http://docbook.org/ns/docbook">
+      At times the straight-forward security architecture of setting permissions to methods
+      is not sophisticated enough to handle the business requirements.
+    </ns2825:para>
+    <ns2826:para xmlns:ns2826="http://docbook.org/ns/docbook">
+      For example, the requirements could be that bank managers may withdraw any amount from
+      bank accounts while tellers may only withdraw up to some limit (say R50 000.00). In this
+      case the simple declarative security model is not good enough and authorization must be
+      handled programmatically.
+    </ns2826:para>
+    
+    <ns2827:section xmlns:ns2827="http://docbook.org/ns/docbook">
+      <ns2828:title xmlns:ns2828="http://docbook.org/ns/docbook">Querying Security Principals and Roles</ns2828:title>
+      <ns2829:para xmlns:ns2829="http://docbook.org/ns/docbook">
+        EJB defines the context of the enterprise bean. This includes information about the
+        identity of the client and of the security role the client has been placed in. This is
+        compatible with the Java 2 security model.
+      </ns2829:para>
+      <ns2830:para xmlns:ns2830="http://docbook.org/ns/docbook">
+        The security principal is an entity with a name. It could, for example, be a person
+        or, a company, a smart-card or a login id.
+      </ns2830:para>
+      <ns2831:para xmlns:ns2831="http://docbook.org/ns/docbook">
+        The EJB context can be queried for the principal as well as whether the client is in
+        a particular security role via:
+<ns2832:programlisting xmlns:ns2832="http://docbook.org/ns/docbook">
+public interface javax.ejb.EJBContext
+{
+ ...
+ public java.security.Principal getCallerPrincipal();
+
+ public boolean isCallerInRole(String roleName);
+ ...
+}
+</ns2832:programlisting>        
+      </ns2831:para>
+    </ns2827:section>
+    
+    <ns2833:section xmlns:ns2833="http://docbook.org/ns/docbook">
+      <ns2834:title xmlns:ns2834="http://docbook.org/ns/docbook">Controlling Access from Your Code</ns2834:title>
+      <ns2835:para xmlns:ns2835="http://docbook.org/ns/docbook">
+        For example, in the following code snippet the entity bean queries the security role
+        of the caller which is available from the session context and, under certain conditions
+        which depend on the security role and on other variables, a security exception is thrown:
+<ns2836:programlisting xmlns:ns2836="http://docbook.org/ns/docbook">
+public class AccountBean implements EntityBean
+{
+ ...
+ public void withdraw(double amount)
+               throws java.lang.SecurityException
+ {
+   if (context.isCallerInRole("teller") &amp;amp;&amp;amp; (amount &gt; 10000))
+     throw new SecurityException
+       ("Amount exceeds authorized withdrawal limit.");
+
+   balance -= amount;
+ }
+ ...
+}
+</ns2836:programlisting>
+      </ns2835:para>
+    </ns2833:section>
+    
+    <ns2837:section xmlns:ns2837="http://docbook.org/ns/docbook">
+      <ns2838:title xmlns:ns2838="http://docbook.org/ns/docbook">Obtaining an Enterprise Bean's EJB Context</ns2838:title>
+      <ns2839:para xmlns:ns2839="http://docbook.org/ns/docbook">
+        Each service request occurs within some EJB context. In the case of session beans it
+        is a<ns2840:literal xmlns:ns2840="http://docbook.org/ns/docbook">SessionContext</ns2840:literal> and in the case of entity beans it
+        is an <ns2841:literal xmlns:ns2841="http://docbook.org/ns/docbook">EntityContext</ns2841:literal>. Both,  
+        <ns2842:literal xmlns:ns2842="http://docbook.org/ns/docbook">SessionContext</ns2842:literal> and 
+        <ns2843:literal xmlns:ns2843="http://docbook.org/ns/docbook">EntityContext</ns2843:literal> are specializations of <ns2844:literal xmlns:ns2844="http://docbook.org/ns/docbook">EJBContext</ns2844:literal>.
+      </ns2839:para>
+      <ns2845:para xmlns:ns2845="http://docbook.org/ns/docbook">
+        The bean context can be made available to the enterprise bean. All you have to do is
+        to supply a<ns2846:literal xmlns:ns2846="http://docbook.org/ns/docbook">setSessionContext</ns2846:literal> method for session beans
+        method and a <ns2847:literal xmlns:ns2847="http://docbook.org/ns/docbook">setEntityContext</ns2847:literal> for entity beans. In
+        either case you will simply keep a reference to the bean context within the bean. For
+        example which enables your bean to keep a reference to the bean context:
+      </ns2845:para>
+
+<ns2848:programlisting xmlns:ns2848="http://docbook.org/ns/docbook">
+public class AccountBean implements EntityBean
+{
+ ...
+ public void setEntityContext(javax.ejb.EntityContext context)
+               throws java.lang.SecurityException
+ {
+   this.context = context;
+ }
+ ...
+ private javax.ejb.EntityContext context;
+}
+</ns2848:programlisting>
+  <ns2849:para xmlns:ns2849="http://docbook.org/ns/docbook">
+        Your <ns2850:literal xmlns:ns2850="http://docbook.org/ns/docbook">setEntityContext</ns2850:literal> method will be called by the
+        bean container as a new bean instance is created and when the bean context changes.
+  </ns2849:para>
+    </ns2837:section>
+    
+    <ns2851:section xmlns:ns2851="http://docbook.org/ns/docbook">
+      <ns2852:title xmlns:ns2852="http://docbook.org/ns/docbook">Bean Security Role References and Actual Security Roles</ns2852:title>
+      <ns2853:para xmlns:ns2853="http://docbook.org/ns/docbook">
+        The EJB 1.1 standard differentiates between enterprise bean security role references
+        used in the bean implementation and the actual security roles of the various applications
+        which make use of the enterprise bean, <ns2854:abbrev xmlns:ns2854="http://docbook.org/ns/docbook">i.e.</ns2854:abbrev>. the security roles which exist at run-time.
+      </ns2853:para>
+      <ns2855:para xmlns:ns2855="http://docbook.org/ns/docbook">
+        As bean developer you specify security roles which are referenced by your bean. These
+        security role references are your local security roles which are used within the
+        enterprise bean implementation itself.
+      </ns2855:para>
+      <ns2856:para xmlns:ns2856="http://docbook.org/ns/docbook">
+        The actual security roles which exist at run-time will be mapped onto the bean's
+        security roles.
+      </ns2856:para>
+      
+      <ns2857:section xmlns:ns2857="http://docbook.org/ns/docbook">
+        <ns2858:title xmlns:ns2858="http://docbook.org/ns/docbook">Specifying the Security Roles Used by Your Enterprise Bean</ns2858:title>
+        <ns2859:para xmlns:ns2859="http://docbook.org/ns/docbook">
+          The bean's security roles are specified in the enterprise bean's deployment
+          descriptor. This notifies people who use your enterprise bean (e.g. deployers and
+          application assemblers) that your enterprise bean requires a specific set of security roles.
+        </ns2859:para>
+        <ns2860:para xmlns:ns2860="http://docbook.org/ns/docbook">
+          In our account example the security roles used are  
+          <ns2861:literal xmlns:ns2861="http://docbook.org/ns/docbook">manager</ns2861:literal> and <ns2862:literal xmlns:ns2862="http://docbook.org/ns/docbook">teller</ns2862:literal>:
+<ns2863:programlisting xmlns:ns2863="http://docbook.org/ns/docbook">
+&lt;ejb-jar&gt;
+ &lt;enterprise-bean&gt;
+   &lt;entity&gt;
+     &lt;ejb-name&gt;Account&lt;/ejb-name&gt;
+     &lt;ejb-class&gt;AccountBean&lt;/ejb-class&gt;
+     ...
+     &lt;security-role-ref&gt;
+       &lt;description&gt;Managers have full control over accounts and may
+                    withdraw any amount from accounts.
+       &lt;role-name&gt;manager&lt;/role-name&gt;
+     &lt;/security-role-ref&gt;
+     &lt;security-role-ref&gt;
+       &lt;description&gt;Tellers may only withdraw up to some daily limit
+                    from an account.&lt;/descriptor&gt;
+       &lt;role-name&gt;teller&lt;/role-name&gt;
+     &lt;/security-role-ref&gt;
+   &lt;/entity&gt;
+ &lt;/enterprise-bean&gt;
+&lt;/ejb-jar&gt;
+</ns2863:programlisting>
+        </ns2860:para>
+      </ns2857:section>
+      
+      <ns2864:section xmlns:ns2864="http://docbook.org/ns/docbook">
+        <ns2865:title xmlns:ns2865="http://docbook.org/ns/docbook">Mapping Security Role References onto Actual Security Roles</ns2865:title>
+        <ns2866:para xmlns:ns2866="http://docbook.org/ns/docbook">
+          The above is all the bean developer usually does. The deployer, on the other hand,
+          will add elements to your deployment descriptor which 
+          <ns2867:itemizedlist xmlns:ns2867="http://docbook.org/ns/docbook">
+            <ns2868:listitem xmlns:ns2868="http://docbook.org/ns/docbook">
+              <ns2869:para xmlns:ns2869="http://docbook.org/ns/docbook">will define the actual security roles which will be present at run-time, and </ns2869:para>
+            </ns2868:listitem>
+            <ns2870:listitem xmlns:ns2870="http://docbook.org/ns/docbook">
+              <ns2871:para xmlns:ns2871="http://docbook.org/ns/docbook">will map your bean's security role references onto the actual security roles.</ns2871:para>
+            </ns2870:listitem>
+          </ns2867:itemizedlist>
+        </ns2866:para>  
+        <ns2872:para xmlns:ns2872="http://docbook.org/ns/docbook">
+          The former is done as in the case of declarative authentication, <ns2873:abbrev xmlns:ns2873="http://docbook.org/ns/docbook">i.e.</ns2873:abbrev>. the security
+          role definitions will be added to the assembly descriptor section of the deployment descriptor.
+        </ns2872:para>
+        <ns2874:para xmlns:ns2874="http://docbook.org/ns/docbook">
+          The mapping of the bean's security role references onto the actual security roles
+          is done by adding role links to the security role reference declarations. After the
+          deployer has added these features, the deployment descriptor will look something like
+          the following:
+<ns2875:programlisting xmlns:ns2875="http://docbook.org/ns/docbook">
+&lt;ejb-jar&gt;
+ &lt;enterprise-bean&gt;
+   &lt;entity&gt;
+     &lt;ejb-name&gt;Account&lt;/ejb-name&gt;
+     &lt;ejb-class&gt;AccountBean&lt;/ejb-class&gt;
+     ...
+
+     &lt;security-role-ref&gt;
+       &lt;description&gt;Managers have full control over accounts and may
+                    withdraw any amount from accounts.
+       &lt;role-name&gt;manager&lt;/role-name&gt;
+       &lt;role-link&gt;administrator&lt;/role-link&gt;
+     &lt;/security-role-ref&gt;
+
+     &lt;security-role-ref&gt;
+       &lt;description&gt;Tellers may only withdraw up to some daily limit
+                    from an account.&lt;/descriptor&gt;
+       &lt;role-name&gt;teller&lt;/role-name&gt;
+       &lt;role-link&gt;operator&lt;/role-link&gt;
+     &lt;/security-role-ref&gt;
+
+   &lt;/entity&gt;
+ &lt;/enterprise-bean&gt;
+
+ &lt;assembly-descriptor&gt;
+
+   &lt;security-role&gt;
+     &lt;description&gt;Administrators have fill access to the account.&lt;/description&gt;
+     &lt;role-name&gt;administrator&lt;/role-name&gt;
+   &lt;/security-role&gt;
+
+   &lt;security-role&gt;
+     &lt;description&gt;operators are the bank tellers which have only
+                  limited account access.&lt;/description&gt;
+     &lt;role-name&gt;operator&lt;/role-name&gt;
+   &lt;/security-role&gt;
+
+ &lt;/assembly-descriptor&gt;
+
+&lt;/ejb-jar&gt;
+</ns2875:programlisting>
+        </ns2874:para>
+      </ns2864:section>
+    </ns2851:section>
+</ns2822:section>

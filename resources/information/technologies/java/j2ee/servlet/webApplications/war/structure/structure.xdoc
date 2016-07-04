@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Web Application Structure</title>
+    <para>
+        If one considers a standard website, it usually consists of a set
+        of files within a "content root" directory. It may contain <emphasis>default</emphasis> pages as configured by the
+        server, e.g. <literal>index.html</literal>, as well as images, style sheets, and
+        so forth.
+    </para>
+    <para>
+        A J2EE Web Application is simply this, with the addition of a special directory
+        inside it called <literal>WEB-INF</literal>:
+    </para>
+    <figure>
+        <title>Web Application (WAR) Structure</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="./structure.jpg"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+    <para>
+        Within the <literal>WEB-INF</literal> directory are the three essential elements:
+        <itemizedlist>
+            <listitem>
+                <formalpara>
+                    <title>web.xml (Deployment Descriptor)</title>
+                    <para>
+                        This XML configuration file contains all deployment instructions, security,
+                        preferences, session configuration, mime types, etc. It is this file which
+                        specifies the overall behaviour and mappings of your application. Having this 
+                        information bundled <emphasis>inside</emphasis> the web application is partly
+                        what gives web archives true portability.
+                    </para>
+                </formalpara>                
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>classes/</title>
+                    <para>
+                        This directory plays the role of standard class path in your application. Any classes referred
+                        to by your application be searched for in here first. The directory structure follows
+                        standard Java package practise, so the class <literal>com.company.MyServlet</literal>
+                        should reside in <literal>/WEB-INF/classes/com/company/MyServlet.class</literal>.
+                        Most of the Servlet API components your application consists of will be placed here.
+                    </para>
+                </formalpara>                
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>lib/ (Library)</title>
+                    <para>
+                        Any additional, external JAR libraries your application may require, such as
+                        Database Drivers, utilities, etc. must reside in this directory. All JARs here
+                        are automatically loaded, and all classes within them are then available to the
+                        application. At runtime, no distinction is made whether a class was loaded from here,
+                        or from <literal>classes/</literal>.
+                    </para>
+                </formalpara>                
+            </listitem>
+        </itemizedlist>        
+    </para>
+    <para>
+        Using Java's standard <literal>jar</literal> utility, the directory structure outlined above is compressed
+        into a single archive with a <literal>.war</literal> extension, ready for deployment.
+    </para>
+    <note>
+        <para>
+            The deployment descriptor is a standard XML document based on an XML schema, which means that it
+            can be authored using your XML editor of choice. The schema (for version 2.5) 
+            is located at:
+            <programlisting>
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd
+            </programlisting>
+            This schema has references to (imports) other schemas on the world wide web, and thus, in internet connection is often required
+            in order to validate your deployment descriptors (during authoring time). This can be overcome by using an XML Catalog (in, for
+            example, your XML editor, in which you map remote URLs to local copies). This is however typically not an issue during deployment,
+            because the relevant server usually already contains copies of these schemas internally.
+        </para>
+    </note>
+    
+    <!-- TODO: Add example to create, and open / read -->
+</section>

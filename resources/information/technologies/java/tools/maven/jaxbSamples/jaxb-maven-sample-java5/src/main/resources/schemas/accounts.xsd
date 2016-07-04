@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    targetNamespace="http://example.solms.co.za/accounts"
+    xmlns:a="http://example.solms.co.za/accounts"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xs:complexType name="Account" abstract="true">
+        <xs:sequence>
+            <xs:element name="balance" type="xs:double" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="accountNumber" type="a:AccountNumber" use="optional"/>
+    </xs:complexType>
+    
+    <xs:simpleType name="AccountNumber">
+        <xs:annotation>
+            <xs:documentation>
+                10-digit account number
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{10}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="CreditAccount">
+        <xs:complexContent>
+            <xs:extension base="a:Account">
+                <xs:sequence>
+                    <xs:element name="minBalance" type="xs:double" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="ChequeAccount">
+        <xs:complexContent>
+            <xs:extension base="a:Account">
+                <xs:sequence>
+                    <xs:element name="chequeFee" type="xs:double" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="Client">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" minOccurs="0"/>
+            <xs:element name="account" type="a:Account" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="client" type="a:Client">
+        <xs:annotation>
+            <xs:documentation>
+                An instance document containing a single client.
+                Accounts must be unique by account number.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:key name="uniqueAccounts">
+            <xs:selector xpath="a:account"/>
+            <xs:field xpath="@accountNumber"/>
+        </xs:key>
+    </xs:element>
+
+</xs:schema>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Composite predicates</title>
+    <para>
+         The criteria builder can be used to create composite logical expressions from multiple predicates. For example,
+         if one wants to find all weather readings for a particular location for which the temperature was above 40 degrees
+         celcius, it can be done as follows:
+    </para>
+    <para>
+        <programlisting language="java"><![CDATA[
+Predicate atLocation 
+  = criteriaBuilder.equal(weatherReading.get(WeatherReading_.location), location);
+Predicate tempGe40 
+  = criteriaBuilder.ge(weatherReading.get(WeatherReading_.temperature), 40);
+criteriaQuery.where(criteriaBuilder.and(atLocation,tempGe40));
+
+TypedQuery<WeatherReading> query = entityManager.createQuery(criteriaQuery);
+return query.getResultList();
+            ]]></programlisting>
+    </para>
+</section>    

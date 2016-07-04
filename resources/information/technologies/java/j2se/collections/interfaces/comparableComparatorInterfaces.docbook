@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1274:section xmlns:ns1274="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.collections.collections.collections.interfaces.comparableComparatorInterfaces">
+    <ns1275:title xmlns:ns1275="http://docbook.org/ns/docbook">The Comparable and Comparator Interfaces</ns1275:title>
+    <ns1276:para xmlns:ns1276="http://docbook.org/ns/docbook">In order to support sorted collections of objects, there must be some way of specifying
+        how instances of your classes are compared (i.e. sorted).</ns1276:para>
+    <ns1277:para xmlns:ns1277="http://docbook.org/ns/docbook">The means to query the ordering between instances of classes is specified in the
+        <ns1278:literal xmlns:ns1278="http://docbook.org/ns/docbook">Comparable</ns1278:literal> and <ns1279:literal xmlns:ns1279="http://docbook.org/ns/docbook">Comparator</ns1279:literal> interfaces. The services
+        specified in these interfaces are used by sorting algorithms (e.g.
+        <ns1280:literal xmlns:ns1280="http://docbook.org/ns/docbook">Collections.sort()</ns1280:literal>) as well as by sorted collections (e.g.
+        <ns1281:literal xmlns:ns1281="http://docbook.org/ns/docbook">TreeSet</ns1281:literal> and <ns1282:literal xmlns:ns1282="http://docbook.org/ns/docbook">TreeMap</ns1282:literal>).</ns1277:para>
+    <ns1283:para xmlns:ns1283="http://docbook.org/ns/docbook"/>
+    <ns1284:section xmlns:ns1284="http://docbook.org/ns/docbook">
+        <ns1285:title xmlns:ns1285="http://docbook.org/ns/docbook">The Comparable Interface</ns1285:title>
+        <ns1286:para xmlns:ns1286="http://docbook.org/ns/docbook">This interface should be implemented by classes for which there is a natural ordering.
+            For example, a natural ordering of persons could be their surname and first names (in
+            that order).</ns1286:para>
+        <ns1287:para xmlns:ns1287="http://docbook.org/ns/docbook">The <ns1288:literal xmlns:ns1288="http://docbook.org/ns/docbook">Comparable</ns1288:literal> interface thus specifies a way for obtaining the
+            natural ordering of instances of certain classes. The primitive data types as well as
+            quite a few standard Java classes (e.g. the <ns1289:literal xmlns:ns1289="http://docbook.org/ns/docbook">Date</ns1289:literal> and the
+            <ns1290:literal xmlns:ns1290="http://docbook.org/ns/docbook">String</ns1290:literal> classes) implement the <ns1291:literal xmlns:ns1291="http://docbook.org/ns/docbook">Comparable</ns1291:literal>
+            interface. For any other class one should specify that that class does implement this
+            interface. The interface is very simple indeed:</ns1287:para>
+        <ns1292:para xmlns:ns1292="http://docbook.org/ns/docbook"/>
+        <ns1293:para xmlns:ns1293="http://docbook.org/ns/docbook">
+            <ns1294:programlisting xmlns:ns1294="http://docbook.org/ns/docbook">
+ public interface Comparable
+ {
+   public int compareTo(Object o);
+ }                
+                </ns1294:programlisting>
+        </ns1293:para>
+        <ns1295:para xmlns:ns1295="http://docbook.org/ns/docbook">The <ns1296:literal xmlns:ns1296="http://docbook.org/ns/docbook">compareTo(Object)</ns1296:literal> method should return a negative number if the
+            argument object is before the <ns1297:literal xmlns:ns1297="http://docbook.org/ns/docbook">this</ns1297:literal> object within the ordering, zero
+            if one cannot decide which of the two object should be first in an ordered list and
+            positive otherwise.</ns1295:para>
+        <ns1298:para xmlns:ns1298="http://docbook.org/ns/docbook">For example, we might want to sort persons on their names, comparing first surnames
+            and then first names:</ns1298:para>
+        <ns1299:para xmlns:ns1299="http://docbook.org/ns/docbook"/>
+        <ns1300:para xmlns:ns1300="http://docbook.org/ns/docbook">
+            <ns1301:programlisting xmlns:ns1301="http://docbook.org/ns/docbook">        
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="./src/Person.java" parse="text"/>
+            </ns1301:programlisting>
+        </ns1300:para>
+        <ns1302:para xmlns:ns1302="http://docbook.org/ns/docbook"> The <ns1303:literal xmlns:ns1303="http://docbook.org/ns/docbook">compareTo()</ns1303:literal> method does the required comparison using the
+            corresponding method of the <ns1304:literal xmlns:ns1304="http://docbook.org/ns/docbook">String</ns1304:literal> class. There is, however, one
+            unfortunate aspect about the Java language definition, namely that there are three
+            methods which have to be mutually consistent. These are the
+            <ns1305:literal xmlns:ns1305="http://docbook.org/ns/docbook">compareTo()</ns1305:literal>, <ns1306:literal xmlns:ns1306="http://docbook.org/ns/docbook">equals()</ns1306:literal> and verb+hashCode()+
+            methods. The requirement is that when the <ns1307:literal xmlns:ns1307="http://docbook.org/ns/docbook">compareTo()</ns1307:literal> method returns
+            zero for two objects, then the <ns1308:literal xmlns:ns1308="http://docbook.org/ns/docbook">equals()</ns1308:literal> method should return true and
+            the <ns1309:literal xmlns:ns1309="http://docbook.org/ns/docbook">hashCode()</ns1309:literal> method should return the same hash code for the two objects.</ns1302:para>
+        <ns1310:para xmlns:ns1310="http://docbook.org/ns/docbook">This is unfortunate because the responsibility for this consistency relies with the
+            developer. Furthermore, at least the first two methods supply the same information.
+            Fortunately one can (and should!) implement the <ns1311:literal xmlns:ns1311="http://docbook.org/ns/docbook">equals()</ns1311:literal> method in
+            terms of the <ns1312:literal xmlns:ns1312="http://docbook.org/ns/docbook">compareTo()</ns1312:literal> method as is done in our
+            <ns1313:literal xmlns:ns1313="http://docbook.org/ns/docbook">Person</ns1313:literal> class.</ns1310:para>
+        <ns1314:para xmlns:ns1314="http://docbook.org/ns/docbook">We can now insert persons randomly in one of the sorted collections. In the following
+            example we have chosen a <ns1315:literal xmlns:ns1315="http://docbook.org/ns/docbook">TreeSet</ns1315:literal>:</ns1314:para>
+        <ns1316:para xmlns:ns1316="http://docbook.org/ns/docbook"/>
+        <ns1317:para xmlns:ns1317="http://docbook.org/ns/docbook">
+            <ns1318:programlisting xmlns:ns1318="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="./src/TreeSetOfPersons.java" parse="text"/>
+            </ns1318:programlisting>
+        </ns1317:para>
+        <ns1319:para xmlns:ns1319="http://docbook.org/ns/docbook"> The output of this program is shown below: </ns1319:para>
+        <ns1320:para xmlns:ns1320="http://docbook.org/ns/docbook">
+            <ns1321:programlisting xmlns:ns1321="http://docbook.org/ns/docbook">
+ Mohammed Ali
+ Tandi Khumalo
+ Alfred Johannes Motaung
+ Francois Pieterse
+ Jenny Smith
+ Jenny Ellen Smith
+ Peter Smith              
+              </ns1321:programlisting>
+        </ns1320:para>
+        <ns1322:para xmlns:ns1322="http://docbook.org/ns/docbook"> The above method works fine for sorting algorithms but not necessarily for sorted
+            collections. The reason for this is that if two objects which are equal (i.e. for which
+            the <ns1323:literal xmlns:ns1323="http://docbook.org/ns/docbook">compareTo()</ns1323:literal> method returns zero) are inserted in a sorted
+            collection (e.g. <ns1324:literal xmlns:ns1324="http://docbook.org/ns/docbook">TreeSet</ns1324:literal> or <ns1325:literal xmlns:ns1325="http://docbook.org/ns/docbook">TreeMap</ns1325:literal>), then the
+            second insertion will be ignored because the collection assumes that that object is
+            already contained in the collection. To remedy this we need to create a unique ordering
+            such that two persons are never equal (except when they are physically the same object,
+            having the same identity or reference). This can be done by sorting on an additional,
+            unique field when the names are equal. The identity number would be a good candidate for this.</ns1322:para>
+        <ns1326:para xmlns:ns1326="http://docbook.org/ns/docbook"/>
+    </ns1284:section>
+    <ns1327:section xmlns:ns1327="http://docbook.org/ns/docbook">
+        <ns1328:title xmlns:ns1328="http://docbook.org/ns/docbook">Comparators</ns1328:title>
+        <ns1329:para xmlns:ns1329="http://docbook.org/ns/docbook">The above method of having your class implement <ns1330:literal xmlns:ns1330="http://docbook.org/ns/docbook">Comparable</ns1330:literal> works
+            fine as long as </ns1329:para>
+        <ns1331:para xmlns:ns1331="http://docbook.org/ns/docbook">
+            <ns1332:itemizedlist xmlns:ns1332="http://docbook.org/ns/docbook">
+                <ns1333:listitem xmlns:ns1333="http://docbook.org/ns/docbook">
+                    <ns1334:para xmlns:ns1334="http://docbook.org/ns/docbook">Your class either implements <ns1335:literal xmlns:ns1335="http://docbook.org/ns/docbook">Comparable</ns1335:literal> or you are in a
+                        position to define a subclass which does. </ns1334:para>
+                </ns1333:listitem>
+                <ns1336:listitem xmlns:ns1336="http://docbook.org/ns/docbook">
+                    <ns1337:para xmlns:ns1337="http://docbook.org/ns/docbook">You are happy with the natural ordering for that type and you do not want
+                        to order on some other criterion.</ns1337:para>
+                </ns1336:listitem>
+            </ns1332:itemizedlist>
+        </ns1331:para>
+        <ns1338:para xmlns:ns1338="http://docbook.org/ns/docbook">Assume somebody wants to sort persons on first names instead of on surnames and assume
+            other services still have to use the natural ordering on surnames. In this case we have
+            to define the new ordering separately to the natural ordering. This is done in a
+            separate class which contains a <ns1339:literal xmlns:ns1339="http://docbook.org/ns/docbook">compareTo()</ns1339:literal> method receiving the two
+            objects (persons in our case) which have to be compared as arguments and returning again
+            a negative, zero or positive integer for the ordering information. The method is usually
+            implemented in another stand-alone class which implements the
+            <ns1340:literal xmlns:ns1340="http://docbook.org/ns/docbook">Comparator</ns1340:literal> interface:</ns1338:para>
+        <ns1341:para xmlns:ns1341="http://docbook.org/ns/docbook"/>
+        <ns1342:para xmlns:ns1342="http://docbook.org/ns/docbook">
+            <ns1343:programlisting xmlns:ns1343="http://docbook.org/ns/docbook">
+ public interface Comparator
+ {
+   public int compare(Object object1, Object object2);
+ }              
+              </ns1343:programlisting>
+        </ns1342:para>
+        <ns1344:para xmlns:ns1344="http://docbook.org/ns/docbook"> We can now implement a <ns1345:literal xmlns:ns1345="http://docbook.org/ns/docbook">FirstNameComparator</ns1345:literal>:</ns1344:para>
+        <ns1346:para xmlns:ns1346="http://docbook.org/ns/docbook">
+            <ns1347:programlisting xmlns:ns1347="http://docbook.org/ns/docbook">
+ ...
+ class MyApplication
+ {
+   ...
+   static final private class FirstNamesComparator implements Comparator
+   {
+     public int compareTo(Object object1, Object object2)
+     {
+       Person person1 = (Person)object1;
+       Person person2 = (Person)object2;
+ 
+       int firstNameComparison = person1.getFirstNames().compareTo
+                                   (person2.getFirstNames());
+       if (firstNameComparison != 0)
+         return firstNameComparison;
+       else
+         return person1.getIdentityNumber().compareTo
+                  (person2.getIdentityNumber());
+     }
+   }
+   ...
+ }
+                  
+      </ns1347:programlisting>
+        </ns1346:para>
+        <ns1348:para xmlns:ns1348="http://docbook.org/ns/docbook"> Note that this comparator was specifically created for
+            <ns1349:literal xmlns:ns1349="http://docbook.org/ns/docbook">MyApplication</ns1349:literal>. We are only going to use it from within instances of
+            <ns1350:literal xmlns:ns1350="http://docbook.org/ns/docbook">MyApplication</ns1350:literal>. Furthermore, it does not need to know the state of the
+            application. It really is only a utility function used by our application. We thus
+            declare the class a static nested class.</ns1348:para>
+    </ns1327:section>
+</ns1274:section>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <title>Use mediators to decouple collaborating or linked classes</title>
+    <para>
+        At times one still ends up with a tangled network of dependencies and messages exchanged
+        all over the show. This dilemma can be effectively addressed using the mediator pattern.
+    </para>
+    
+    <section>
+        <title>Controller as natural mediator</title>
+        <para>
+            In an URDAD based design the individual service providers are decoupled through the controller.
+            At design level the controller can be seen as a mediator. In the implementation mapping on will
+            insert adapters to the various concrete service providers participating in the process
+            orchestration and will often factor the actual message routing out of the controller.
+        </para>
+    </section>
+    
+    <section>
+        <title>Factoring mediator out of controller</title>
+        <para>
+            Even better is to factor the mediator itself out of the work flow controller. This is, for example
+            done in services oriented architectures where the mediator responsibility is assigned to
+            the services bus and the work flow controller is a business process engine which sources
+            the process spec from a service choreography (e.g. in BPEL).
+        </para>
+    </section>
+
+    <section>
+        <title>Higher level event listeners as mediators</title>
+        <para>
+            At times the states of various objects are coupled with state transitions in individual objects
+            triggering state transition in potentially a range of other objects. This is, for example, not
+            uncommon in user interface designs. In such cases a higher level observer (e.g. the panel or
+            better a separate pure mediator) is introduced to remove the direct coupling between the
+            various objects.  
+        </para>
+    </section>
+</section>    

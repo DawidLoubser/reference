@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Unit testing</title>
+    <para>
+        The services layer should be unit-tested. We use here JUnit as our unit testing framework and perform the testing
+        in an embedded container and embedded database, both of which are running in the JavaSE virtual machine within
+        which the test is executed.
+        <note><para>
+            JavaEE-6 specifies the requirement for supporting embedded containers and JavaSE-6 specifies the requirement
+            for supporting embedded databases and object-relational mappers.
+        </para></note>
+    </para>
+    <para>
+        In a Maven project the unit tests are, by default, stored in a <literal><![CDATA[src/test/java]]></literal> directory
+        and all tests found here are automatically executed.
+    </para>
+    
+    <section>
+        <title>Initializing the embedded container and registering the enterprise beans</title>
+        <para>
+            The embedded container needs to be initialized and the session beans need to be registered
+            in the embedded container. For this we annotate a service with <literal><![CDATA[@BeforeClass]]></literal>
+            which specifies that the service should be executed once when the test class is loaded:
+            <programlisting><![CDATA[
+@BeforeClass
+public static void initialize()
+{
+    context = EjbContainerUtility.getContainer().getContext();		
+    lookupServiceBeans();
+}
+                ]]></programlisting>
+        </para>
+        <para>
+            This makes use of our EjbContainerUtility as well as of a separate service to load the beans. The container utility
+            simply creates the EJBContainer if it has not yet been created:
+            <programlisting>
+<xi:include href="../weatherBuro/businessLogic/src/test/java/za/co/solms/javaee/glassfish/container/embedded/EjbContainerUtility.java" parse="text"/>                
+            </programlisting>
+        </para>
+        <para>
+            The <literal>lookupServiceBeans()</literal> service looks up the required beans using the global context and uses an assertion to
+            check that the beans have indeed been found:
+            <programlisting><![CDATA[
+private static void lookupServiceBeans() 
+{  
+    try
+    {
+        locationServices = (LocationServices)context.lookup
+        ("java:global/classes/LocationServicesBean");
+        assertNotNull(locationServices);		 
+    }
+    catch (NamingException e)
+    {
+        fail("Could not lookup session bean " + e.toString());
+    }
+}        
+                ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>LocationServicesTest</title>
+        <para>
+            The test classes have, in addition to the above, the various test services annotated as a <literal>JUnit</literal> test.
+            A static import ensures that the static assertion and fail services do not have to be qualified with the class name:
+            <programlisting>
+<xi:include href="../weatherBuro/businessLogic/src/test/java/za/co/solms/location/LocationServicesTest.java" parse="text"/>                
+            </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>WeatherServicesTest</title>
+        <para>
+            The weather services test is a little more involved as it requires both session beans and needs to construct and test more
+            complex data objects and business services:
+            <programlisting>
+<xi:include href="../weatherBuro/businessLogic/src/test/java/za/co/solms/weather/WeatherServicesTest.java" parse="text"/>                
+            </programlisting>
+        </para>
+    </section>
+</section>    

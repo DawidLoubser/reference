@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.concepts.architecture.documenting.examples.interpharm.architecture.referenceArchitecture.referenceArchitecture"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title role="J2EE reference architecture">Using the J2EE reference architecture</title>
+  <para>
+    The architecture is defined ontop of the J2EE reference architecture. In this section we discuss
+    to what extend and how the architectural patterns and strategies are realized within this
+    reference architecture.
+  </para>
+  <para>
+    The core reasons for choosing J2EE as a reference architecture are:
+    <itemizedlist>
+      <listitem><para>
+        J2EE supports the architectural patterns and architectural strategies required to realize the
+        quality requirements for the system.
+      </para></listitem>
+      <listitem><para>
+        J2EE is a proven reference architecture supported by many mature frameworks.
+      </para></listitem>
+      <listitem><para>
+        There are many deployment environments available supporting the J2EE reference architecture.
+        The system need thus not be vendor locked.
+      </para></listitem>
+      <listitem><para>
+        The architecture can be realized using solely open source solutions. Open source solutions
+        <itemizedlist>
+          <listitem><para>
+            may provide a cost advantage,
+          </para></listitem>
+          <listitem><para>
+            typically enforce public standards more strongly the proprietary vendor solutions,
+          </para></listitem>
+          <listitem><para>
+            have solid QA support by the open source community,
+          </para></listitem>
+          <listitem><para>
+            and often provide a solution with lower long-term risk.
+          </para></listitem>
+        </itemizedlist>
+      </para></listitem>
+      <listitem><para>
+        The J2EE architecture can be deployed on a variety of platforms, both, in terms of hardware
+        platforms as well as in terms of operating system platforms. This may result in cost and
+        risk benefits. 
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>Realizing the architectural patterns within J2EE</title>
+    <para>
+      J2EE provides a template for a layered enterprise architecture. The defined architecture for
+      the claims switching system has the following layers:
+      <itemizedlist>
+        <listitem><para>
+          The raw sockets connection layer is not deployed within a J2EE framework, but is provided
+          by a proprietary legacy component developed by AttuneTech. The latter 
+          <itemizedlist>
+            <listitem><para>
+              receives and maintains socket connections,  
+            </para></listitem>
+            <listitem><para>
+              forwards the text/TCP/IP messages received over the HTTP protocol onto the servlet processing HTTP
+              based claim requests,
+            </para></listitem>
+            <listitem><para>
+              receives HTTP responses and forwards them via text/TCP/IP back to the pharmacy.
+            </para></listitem>
+          </itemizedlist>
+        </para></listitem>
+        <listitem><para>
+          The HTTP request processing is realized within servlets deployed within a servlet
+          container. The current architecture uses an embedded TomCat servlet container packaged
+          within the JBoss J2EE application server.  
+        </para></listitem>
+        <listitem><para>
+          The application services/business logic layers are deployed as enterprise beans
+          and plain Java deployed onto the JBoss application server.
+        </para></listitem>
+        <listitem><para>
+          The connectivity layer is deployed as a layer of JCA connectors talking communicating with
+          the medical aid administrator systems.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      The algorithm for the claims processing has not been modified. 
+    </para>
+  </section>
+  
+  <section>
+    <title>Realizing the architectural strategies within J2EE</title>
+    <para>
+       J2EE has direct support for most of the strategies used to realize the quality requirements
+      for the system. These strategies are realized in the following way:
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>Clustering, load balancing and hot deployment</title>
+          <para>
+            Clustering is supported with session replication on both, the business logic and
+            presentation layers, JNDI tree replication, farming (cluster wide hot deployment), automatic
+            cluster configuration and state monitoring as well as smart proxies with pluggable load
+            balancing algorithms.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Transaction management</title>
+          <para>
+            J2EE supports declarative transaction management, keeping transactional logic separate
+            form the business logic. All resources which support transactions are automatically
+            enlisted within the transaction.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Resource pooling</title>
+          <para>
+            J2EE directly supports object and thread pooling via the flyweight pattern, database
+            connection pooling and pooling of connections managed within JCA adapters.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Web services integration</title>
+          <para>
+            J2EE has direct support for web services integration.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+</section>  

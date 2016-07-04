@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  id="components.concepts.architecture.concepts.managedEnvironment">
+  <title>Managed environments</title>
+  <para>
+    More and more software is developed to be employed and executed within managed environments
+    which provide a level of resource management to the application.
+  </para>
+  
+  <section>
+    <title>What is a managed environment?</title>
+    <para>
+      A managed environment is an environment where the application logic cannot directly access
+      any resources. Resources which are managed in a managed environment typically include
+      <itemizedlist>
+        <listitem><para>
+          the management of CPU resources via thread pooling,
+        </para></listitem>
+        <listitem><para>
+          the management of memory resources via re-use of pooled objects and garbage collection, and
+        </para></listitem>
+        <listitem><para>
+          the management of re-usable connection resources via connection pooling.
+        </para></listitem>
+      </itemizedlist>
+      In a fully managed environment application developers are forbidden to directly access any
+      resources. The application code may thus not
+      <itemizedlist>
+        <listitem><para>
+          spawn any threads as that would interfere with the management of CPU resources,
+        </para></listitem>
+        <listitem><para>
+          open any connections to any external system as that would prevent the managed environment
+          from managing the connection resources,
+        </para></listitem>
+        <listitem><para>
+          delete any objects (this is left to the garbage collector). Furthermore, pools of entity and session
+          objects are managed within the managed environment. Instances of these are not created by
+          the application itself, but are requested from the managed environment. 
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    
+    <section>
+      <title>Examples of managed environments</title>
+      <para>
+        Examples of managed environments include
+        <itemizedlist>
+          <listitem><para>
+            the web based presentation layer and the business logic layer of J2EE application
+            servers, <abbrev>i.e.</abbrev> the web and EJB containers of a J2EE application server,
+          </para></listitem>
+          <listitem><para>
+            the Microsoft .Net platform,
+          </para></listitem>
+          <listitem><para>
+            to a lesser extend Java Runtime Environments (they only provide limited support for
+            memory management via garbage collection), 
+          </para></listitem>
+          <listitem><para>
+            implementations of an enterprise services bus which typically, but not necessarily use
+            an application server under the hood for the managed environment.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+  </section>    
+</section>
+  

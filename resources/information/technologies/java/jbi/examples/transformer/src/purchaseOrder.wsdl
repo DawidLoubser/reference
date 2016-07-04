@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+  name="unitconverter" 
+  targetNamespace="http://example.co.za/purchaseOrder/service/"
+  xmlns:pos="http://example.co.za/purchaseOrder/service/"
+  xmlns:po="http://example.co.za/purchaseOrder/"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://schemas.xmlsoap.org/wsdl/ 
+                      http://schemas.xmlsoap.org/wsdl/wsdl.xsd">
+
+  
+  <!-- Types used for exchanged value objects -->
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://example.co.za/purchaseOrder/service/" 
+      elementFormDefault="qualified" 
+      attributeFormDefault="unqualified">
+      
+      <xsd:import namespace="http://example.co.za/purchaseOrder/" 
+      schemaLocation="purchaseOrder.xsd"/>
+      
+      <xsd:import namespace="http://www.w3.org/1999/xhtml" 
+      schemaLocation="http://www.w3.org/MarkUp/SCHEMA/xhtml11.xsd"/>
+      
+    </xsd:schema>
+  </wsdl:types>
+
+
+  <!-- Bind Exchanged value objects to schema types -->
+  <wsdl:message name="RenderToXHTMLRequest">
+    <wsdl:part  name="body" element="po:purchaseOrder"/>
+  </wsdl:message>
+  <wsdl:message name="RenderToXHTMLResponse">
+    <wsdl:part  name="body" element="xhtml:html"/>
+  </wsdl:message>
+
+
+  <!-- Service contract (interface) -->
+  <wsdl:portType name="PurchaseOrderRenderer">
+    
+    <wsdl:operation name="renderToXHTML">
+      <wsdl:input message="pos:RenderToXHTMLRequest"/>
+      <wsdl:output message="pos:RenderToXHTMLResponse"/>
+    </wsdl:operation>
+    
+  </wsdl:portType>
+  
+  <!-- Specify a SOAP/HTTP binding -->
+  <wsdl:binding name="PurchaseOrderRendererSOAP" type="po:PurchaseOrderRenderer">
+    <soap:binding style="document" 
+      transport="http://schemas.xmlsoap.org/soap/http"/>
+    
+    <wsdl:operation name="renderToXHTML">
+      <soap:operation soapAction=""/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    
+  </wsdl:binding>
+  
+  
+  <!-- Specify a concrete service endpoint, listening at a particular address -->
+  <wsdl:service name="PurchaseOrderRendererSOAPService">
+    <wsdl:port name="PurchaseOrderRendererSOAP" binding="po:PurchaseOrderRendererSOAP">
+      <soap:address 
+        location="http://localhost:8080/purchaseOrder/renderer" />
+    </wsdl:port>
+  </wsdl:service>
+  
+</wsdl:definitions>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2se.exceptionHandling.uncaughtExceptionHandlers.settingUncaughtExceptionHandlerForThread.settingUncaughtExceptionHandlerForThread"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">  
+  <title role="Setting uncaught exception handler for thread">Setting uncaught exception handler for thread</title>
+  <para>
+    To specify an uncaught exception handler for a particular thread,, we simply call the
+    <literal>setUncaughtExceptionHandler</literal> method on that thread.
+  </para>
+  <para>
+    This is illustrated in the following little program which
+    <itemizedlist>
+      <listitem><para>creates an instance of some thread which may throw some exception,</para></listitem>
+      <listitem><para>sets the uncaught exception handler for the thread to our logging exception
+        handler,</para></listitem>
+      <listitem><para>and then goes to sleep, yawning now and then.</para></listitem>
+    </itemizedlist>
+    The thread in the mean time is  a time bomb which, after some time throws an exception which is
+    not caught within the calling hierarchy of the thread:
+    <programlisting>
+<xi:include parse="text" href="../../src/UncaughtExceptionTest.java"/>      
+     </programlisting>
+  </para>
+  <para>
+    The output of the program is shown below:
+    <programlisting><![CDATA[
+MySpecialThread is starting ...
+      
+Yawn ...
+Yawn ...
+Yawn ...
+Yawn ...
+Yawn ...
+Yawn ...
+Aug 12, 2005 12:19:13 PM za.co.solms.exceptions.UncaughtExceptionLogger 
+      uncaughtException
+SEVERE: java.lang.RuntimeException: ^%!!??!^%%^??!## thrown 
+      in thread MySpecialThread from file UncaughtExceptionTest.java 
+      on line 19
+Yawn ...
+Yawn ...
+Yawn ...
+Yawn ...
+      ]]></programlisting>
+  </para>
+</section>  

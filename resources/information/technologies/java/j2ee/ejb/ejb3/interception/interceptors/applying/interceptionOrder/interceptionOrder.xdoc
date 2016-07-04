@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.interception.interceptors.applying.interceptionOrder.interceptionOrder"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+  <title>Interception order</title>
+  <para>
+    If multiple interceptors are applicable for a particular service request, then they are applied
+    in the following order
+    <itemizedlist>
+      <listitem><para>
+        Default interceptors are applied first in order of their specification in the deployment
+        descriptor.
+      </para></listitem>
+      <listitem><para>
+        Class level interceptors are applied prior to method level interceptors.
+      </para></listitem>
+      <listitem><para>
+        Interceptor classes are applied prior to interception methods. They are applied in the order
+        they are requested in either the bean annotation or the deployment descriptor.
+      </para></listitem>
+      <listitem><para>
+        If the interception context (<abbrev>e.g.</abbrev> the bean to which the interception is
+        applied) has a superclass then the superclass interceptions take preference to the subclass
+        interceptions.
+      </para></listitem>
+      <listitem><para>
+        The <literal>@AroundInvoke</literal> method of a superclass of an interceptor class is
+        applied prior to that of the subclass.
+        <note><para>
+          There may be only a single <literal>@AroundInvoke</literal> method in any class, though
+          an interceptor class. However, applying an interceptor class can still result in multiple
+          interceptions for a single service request as the interceptor methods of the superclass of
+          the interceptor class are also applied. These are applied in order of the class hierarchy
+          with superclass interceptor methods taking preference above subclass interceptor methods.
+        </para></note>
+      </para></listitem>
+    </itemizedlist>
+  </para>
+</section>

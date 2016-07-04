@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.messageDrivenBeans.developing.developing"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Developing Message-Driven Beans</title>
+  <para>
+    Message driven beans are written as standard Java classes that implement the
+    <literal>javax.jms.MessageListener</literal> interface, and are annotated with
+    the <literal>javax.ejb.MessageDriven</literal> annotation. A simple example
+    could be written as such
+<programlisting><![CDATA[
+import javax.ejb.MessageDriven;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+
+@MessageDriven(mappedName="NameOfTopicHere") 
+public class MessageProcessor implements MessageListener
+{
+  public void onMessage(Message message)
+  {
+    // Extract contents of message and perform logic here
+    //...
+  }
+]]></programlisting>
+  </para>
+  
+  <section>
+    <title>Developing message senders</title>
+    <para>
+      A common scenario is to develop a session bean that receives
+      client requests, and as part of the workflow places a message on
+      the queue or topic. A simple bean, that receives a news article
+      as a simple piece of text could be developed as follows:
+      <programlisting><![CDATA[
+import javax.annotation.Resource;
+import javax.ejb.*;
+import javax.jms.*;
+
+@Stateless
+@Local({NewsSubmitter.class})
+@Remote({NewsSubmitter.class})
+public class NewsSubmitterBean implements NewsSubmitter 
+{
+	public void submitNews( String news ) throws Exception 
+	{
+		// Setup connection to topic
+		 Session session = topicConnectionfactory.createTopicConnection()
+		 .createSession(false, Session.AUTO_ACKNOWLEDGE);
+		 MessageProducer sender = session.createProducer( topic );
+		 
+		 // Create message and place on topic
+		 TextMessage msg = session.createTextMessage( news );
+		 sender.send(msg);
+	}
+	
+	// Use dependency injection to get a handle to the
+	// messaging infrastructure (as per application 
+	// server configuration )
+	
+	@Resource(mappedName="TopicConnectionFactory")
+	private TopicConnectionFactory topicConnectionfactory;
+	
+	@Resource(mappedName="NewsTopic")
+	private Topic topic;
+}
+      ]]></programlisting>
+    </para>
+  </section>
+
+  <section>
+    <title>Deploying Message-driven beans</title>
+    <para>
+      Message-driven bean classes can simply be packaged within a standard
+      EJB module (ejb-jar) with no special configuration required. The
+      relevant message queues and/or topics need to have been created (via
+      application server or messaging service configuration) before deploying 
+      the EJB module.
+    </para>
+  </section>
+  
+  
+</section>

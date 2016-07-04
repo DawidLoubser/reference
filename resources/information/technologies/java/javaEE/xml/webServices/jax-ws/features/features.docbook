@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Features of JAX-WS</title>
+    
+    <indexterm>
+        <primary>JAX-WS</primary>
+        <secondary>features</secondary>
+    </indexterm>
+    
+    
+    <para>
+        JAX-WS typically
+        <itemizedlist>
+            <listitem>
+                <para>Translates between the Web Services protocol(s), and Java Objects / method calls.</para>
+            </listitem>
+            <listitem>
+                <para>Generates a proxy (both for clients and servers) so that either contain
+                only standard Java code, interacting with generated objects that implement business
+                interfaces.</para>
+            </listitem>
+            <listitem>
+                <para>Provides compiler tools to generate Java artifacts from WSDL (web services contract) documents,
+                    or to generate WSDL document(s) from Java contracts.</para>
+            </listitem> 
+            <listitem>
+                <para>Incrementally adds support for emerging web services technologies (security, transactions,
+                metadata exchange, etc) as they become available, without the need to update one's client / server 
+                business logic code.</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <indexterm>
+        <primary>proxy</primary>
+    </indexterm>
+    
+    
+    <section>
+        <title>Web Services to Java Mapping</title>
+        
+        <para>
+            JAX-WS maps all aspects of a web service (contracts, exchanged value objects, etc. as described by WSDL) to corresponding
+            Java artifacts. Business logic code then interacts only with these Java objects.
+        </para>
+        
+        
+        <section>
+            <title>Annotations-driven</title>
+            <para>
+                Like JAXB (for XML Binding), using JAX-WS typically consists of
+                <quote>plain</quote> Java code which is annotated with JAX-WS annotations. 
+                JAX-WS performs on-the-fly operations (such as message marshalling or de-marshalling)
+                based on the instructions contained within the annotations, or (when absent) based on
+                defaults.
+            </para>
+            <indexterm>
+                <primary>Annotations</primary>
+            </indexterm>
+        </section>
+        
+        <section>
+            <title>Service Interface</title>
+            <indexterm>
+                <primary>services contract</primary>
+            </indexterm>
+            <para>
+                The core of the web services contract, the <literal>portType</literal>, specifies the
+                <emphasis>operations</emphasis> (use-cases) offered, as well as the messages which are
+                exchanged when they are invoked.
+            </para>
+            <para>
+                JAX-WS maps the <literal>portType</literal> to a Java interface, with a like-named 
+                service (method) for each operation.
+            </para>
+        </section>
+        
+        <section>
+            <title>Exchanged messages</title>
+            <indexterm>
+                <primary>exchanged value objects</primary>
+            </indexterm>
+            <para>
+                Each operation in a WSDL indicates which messages are exchanged in order to invoke
+                the service, and one or more XML schemas specify the structure of these messages.
+            </para>
+            <para>
+                JAX-WS uses JAXB (the Java API for XML Binding) for all data-binding purposes. JAXB
+                provides a clean and efficient implementation for binding XML schema types to Java
+                classes; and likewise XML instances (documents) to Java object instances.
+            </para>
+            <para>
+                The JAX-WS developer thus never needs to process messages as XML (e.g. DOM, SAX), 
+                or - even worse - as text. They are instead automatically marshalled to/from Java objects.
+            </para>
+        </section>
+        
+        <section>
+            <title>Faults</title>
+            <indexterm>
+                <primary>pre-condition</primary>
+            </indexterm>
+            <para>
+                One of the most important aspects of any contract are the <emphasis>pre-conditions</emphasis>
+                of the services, i.e. the reason(s) that a provider
+                may refuse a service without breaking the implied contract (such as a client only being able
+                to withdraw money from an account if there are sufficient funds).
+            </para>
+            <para>
+                In addition to pre-conditions, a provider must also be able to indicate to clients that
+                it is unable to fulfil a service because it had encountered an internal error.
+            </para>
+            <para>
+                SOAP uses the <emphasis>fault</emphasis> mechanism in both cases, with an optional
+                fault detail message (defined in XML schema) indicating the pertinent information.
+                As with exchanged messages, JAX-WS uses JAXB to bind these fault messages, in this case
+                to Java exceptions which are declared on the services in the service provider interface.
+            </para>
+        </section>
+        
+    </section>
+    
+    <section>
+        <title>WS-I Compliance</title>
+        <indexterm>
+            <primary>WS-I</primary>
+        </indexterm>
+        <para>
+            The <acronym>WS-I</acronym> (Web Services Interoperability) organisation prescribes a subset of the
+            various web services standards, together with various best practises, in order to maximise the interoperability
+            of services (in light of the current implementation frameworks, etc). 
+            JAX-WS formally adheres to the WS-I basic profile.
+        </para>
+    </section>
+    
+    <section>
+        <title>Message Validation</title>
+        <indexterm>
+            <primary>JAX-WS</primary>
+            <secondary>validation</secondary>
+        </indexterm>
+        <para>
+            Because JAX-WS delegates data binding to JAXB, it can be configured to perform schema validation
+            on incoming and outgoing messages. This ensures greater reliability and robustness of clients
+            and service providers.
+        </para>
+    </section>
+    
+    <section>
+        <title>Message processing pipeline (handler framework)</title>
+        <para>JAX-WS provides a flexible plug-in framework for message processing modules, known 
+            as handlers, that may be used to extend the capabilities of a JAX-WS runtime system.
+            JAX-WS differentiates between logical handlers (i.e. which operate only abstractly
+            on the business information of a message) and protocol handlers (which may operate on
+            protocol-specific features, such as encryption, compression, and so on).
+        </para>
+        <para>
+            The handler framework ensures that one's business code is not polluted by message and 
+            protocol-processing code.
+        </para>
+    </section>
+    
+    <section>
+        <title>Hosting of providers with various qualities</title>
+        <para>JAX-WS allows service providers to be hosted in different ways based on the required
+        qualities. For example, simple providers may be hosted as a single, lightweight HTTP server
+        even in a standard Java SE runtime; as a servlets-based server in a Java EE web module (WAR);
+        or as a stateless Enterprise JavaBean (EJB) - each with varying qualities / capabilities.</para>
+    </section>
+
+    <section>
+        <title>Tools support</title>
+        <indexterm>
+            <primary>JAX-WS</primary>
+            <secondary>tools</secondary>
+        </indexterm>
+        <para>
+            Though JAX-WS is a standard part of the Java operating environment (Java SE and EE), one still needs to use
+            implementation-specific tools to, for example, generate one's Java contracts from the WSDL contracts.
+            To that end, JAX-WS implementations typically provide
+            <itemizedlist>
+                <listitem>
+                    <para>command-line tools</para>
+                </listitem>
+                <listitem>
+                    <para>Apache Maven plug-ins</para>
+                </listitem>
+                <listitem>
+                    <para>Apache Ant custom tasks</para>
+                </listitem>
+                <listitem>
+                    <para>IDE (Integrated Development Environment) plug-ins</para>
+                </listitem>
+            </itemizedlist>
+            to perform various tasks.
+        </para>
+    </section>
+    
+</section>

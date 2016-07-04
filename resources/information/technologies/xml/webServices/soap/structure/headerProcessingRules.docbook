@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.technologies.xml.webServices.soap.structure.headerProcessingRules">
+  <title>Header Attributes and Processing Rules</title>
+
+  <para> Because nodes are allowed to modify the Header, as well as
+    selectively act on them, SOAP defines two special attributes that
+    dictate the behaviour of nodes that encounter headers. </para>
+
+  <section>
+    <title>The 'actor' attribute</title>
+    <para> The <literal>actor</literal> attribute is defined in the
+      standard SOAP namespace, and is used to identify a function to be
+      performed by a particular node. </para>
+    <note>
+      <para> Just as a person can perform one or more roles, i.e. both
+          <literal>parent</literal> and <literal>employer</literal>, a
+        node can play one or more roles. For example, the same node can
+        perform both <literal>logging</literal> and
+        <literal>security</literal> services. To that end, the
+          <literal>actor</literal> attribute really indicates a
+          <quote>role</quote>. The designers of SOAP recognises this
+        mistake, and in the formalising SOAP 1.2 specification, this
+        header has been renamed <literal>role</literal> (retaining the
+        existing meaning in terms of header processing) </para>
+    </note>
+    <para> The <literal>actor</literal> attribute uses a
+      <literal>URI</literal> to identify the role that a node must
+      perform, in order for it to act on a given header block. For
+      example, let's presume an established role is that of a
+        <emphasis>message age validator</emphasis>, i.e. it must check
+      that a message has been in transit for no longer than a certain
+      amount of time, or otherwise it must reject the message. This role
+      might be called <programlisting><![CDATA[
+http://realtime.org/soap/agevalidator
+            ]]></programlisting> Let's presume a certain
+      real-time-messaging application sent a message that must be
+      guaranteed delivery within one second, otherwise it must be sent
+      back to the client. The message might look like: <programlisting language="XML"><![CDATA[
+]]><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/timeHeader.xml" parse="text"/><![CDATA[
+            ]]></programlisting> Any node that plays the age validation
+      role (and understands the header block) may then act upon the header
+      (sending a fault to the client if the message has expired). </para>
+    <para> Nodes which <emphasis>do not</emphasis> play an indicated role,
+      should never act upon or alter header blocks which do not target
+      them. </para>
+    <para> In addition to custom URIs, SOAP defines two built-in actors
+      (roles): <literal>next</literal> and <literal>ultimate
+      receiver</literal>: <itemizedlist>
+        <listitem>
+          <formalpara>
+            <title>next</title>
+            <para>Identified by the URI
+                <literal>http://schemas.xmlsoap.org/soap/actor/next</literal>,
+              this actor implies that the next node, regardless of role,
+              should act on the header.</para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>ultimate receiver</title>
+            <para>This role is implied if no <literal>actor</literal>
+              header is present, and it indicates the <emphasis>only the
+                ultimate receiver</emphasis> (web service) should act on
+              the header.</para>
+          </formalpara>
+        </listitem>
+      </itemizedlist>
+    </para>
+    <para> When a node processes a header block, it <emphasis>must remove
+        it from the SOAP message</emphasis>. It may also add new header
+      blocks, or even add the block it has removed, though this must then
+      be a conscious processing step, i.e. with the specific intention
+      that another node should also process that header. </para>
+  </section>
+
+  <section>
+    <title>The 'mustUnderstand' attribute</title>
+    <para> Header blocks may indicate whether processing is
+        <emphasis>mandatory</emphasis> by adding the
+        <literal>mustUnderstand</literal> attribute (also in the standard
+      SOAP namespace), similar to how the <literal>actor</literal>
+      attribute is added. </para>
+    <para> This attribute may contain the value "<literal>0</literal>"
+      (for false) or "<literal>1</literal>" (for true). The "Understand"
+      in <literal>mustUnderstand</literal> means that a node playing the
+      indicated role, must understand the structure of the header block,
+      and know how to process it. If a node doesn't understand a mandatory
+      header block, it must generate a <emphasis>SOAP Fault</emphasis>,
+      and discard the message. <emphasis>It must not forward the message
+        to the next node in the message path.</emphasis>
+    </para>
+  </section>
+</section>

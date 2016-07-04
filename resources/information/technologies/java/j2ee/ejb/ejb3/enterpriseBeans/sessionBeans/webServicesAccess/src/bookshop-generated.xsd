@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Published by JAX-WS RI -->
+<xs:schema xmlns:tns="http://impl.example.solms.co.za/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    version="1.0" targetNamespace="http://impl.example.solms.co.za/">
+
+    <xs:element name="InsufficientInformationException" type="tns:InsufficientInformationException"/>
+
+    <xs:element name="UnknownBookException" type="tns:UnknownBookException"/>
+
+    <xs:element name="enquireBookAvailability" type="tns:enquireBookAvailability"/>
+
+    <xs:element name="enquireBookAvailabilityResponse" type="tns:enquireBookAvailabilityResponse"/>
+
+    <xs:complexType name="enquireBookAvailability">
+        <xs:sequence>
+            <xs:element name="arg0" type="tns:bookAvailabilityRequest" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="bookAvailabilityRequest">
+        <xs:sequence>
+            <xs:element name="bookAuthor" type="xs:string" minOccurs="0"/>
+            <xs:element name="bookName" type="xs:string" minOccurs="0"/>
+            <xs:element name="publisherName" type="xs:string" minOccurs="0"/>
+            <xs:element name="yearOfPublication" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="enquireBookAvailabilityResponse">
+        <xs:sequence>
+            <xs:element name="return" type="tns:bookAvailabilityResponse" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="bookAvailabilityResponse">
+        <xs:sequence>
+            <xs:element name="estimatedDeliveryTimeInDays" type="xs:double"/>
+            <xs:element name="numberInStock" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="UnknownBookException">
+        <xs:sequence>
+            <xs:element name="message" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="InsufficientInformationException">
+        <xs:sequence>
+            <xs:element name="message" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

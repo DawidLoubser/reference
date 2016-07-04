@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns301:section xmlns:ns301="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.jboss.resources.persistence.installation.installation">
+
+  <ns302:title xmlns:ns302="http://docbook.org/ns/docbook">Installing a JBoss data source</ns302:title>
+  <ns303:para xmlns:ns303="http://docbook.org/ns/docbook">
+    An application server must make use of a data source to persist entity beans. At times
+    information is even directly obtained from data sources through session beans.
+  </ns303:para>
+  <ns304:para xmlns:ns304="http://docbook.org/ns/docbook">
+    JBoss supports any database for which there is a JDBC driver available. Class 4 JDBC drivers
+    are from a performance perspective superior to others, particularly compared to class 1 drivers
+    which us the JDBC-ODBC bridge. They also have portability and security benefits.
+  </ns304:para>
+  <ns305:para xmlns:ns305="http://docbook.org/ns/docbook">
+    To install a datasource into JBoss we have to perform the following steps: 
+    <ns306:orderedlist xmlns:ns306="http://docbook.org/ns/docbook">
+      <ns307:listitem xmlns:ns307="http://docbook.org/ns/docbook">
+        <ns308:para xmlns:ns308="http://docbook.org/ns/docbook">Make the JDBC driver available to JBoss. </ns308:para>
+      </ns307:listitem>
+      <ns309:listitem xmlns:ns309="http://docbook.org/ns/docbook">
+        <ns310:para xmlns:ns310="http://docbook.org/ns/docbook">Create and deploy service descriptor file. </ns310:para>
+      </ns309:listitem>
+    </ns306:orderedlist>
+  </ns305:para>
+  
+  <ns311:section xmlns:ns311="http://docbook.org/ns/docbook">
+    <ns312:title xmlns:ns312="http://docbook.org/ns/docbook">Making a JDBC driver available to JBoss</ns312:title>
+    <ns313:para xmlns:ns313="http://docbook.org/ns/docbook">
+      This is trhe easiest step. You simply copy the jar file for the JDBC driver into
+      the<ns314:literal xmlns:ns314="http://docbook.org/ns/docbook">server/configuration/lib</ns314:literal> directory (i.e. if you are using the default
+      configuration it will be the <ns315:literal xmlns:ns315="http://docbook.org/ns/docbook">server/default/lib</ns315:literal> directory (replace forward
+      slashes with back-slashes on Windows).
+    </ns313:para>
+  </ns311:section>
+  
+  <ns316:section xmlns:ns316="http://docbook.org/ns/docbook">
+    <ns317:title xmlns:ns317="http://docbook.org/ns/docbook">Creating and deploying a service descriptor for the data source</ns317:title>
+    <ns318:para xmlns:ns318="http://docbook.org/ns/docbook">
+      Data sources are deployed in JBoss as managed beans. Each managed bean is deployed in the
+      deploy directory with a service descriptor. The service descriptor for a data source typically
+      contains 
+      <ns319:itemizedlist xmlns:ns319="http://docbook.org/ns/docbook">
+        <ns320:listitem xmlns:ns320="http://docbook.org/ns/docbook">
+          <ns321:para xmlns:ns321="http://docbook.org/ns/docbook">The URL and port number for obtaining database connections. </ns321:para>
+        </ns320:listitem>
+        <ns322:listitem xmlns:ns322="http://docbook.org/ns/docbook">
+          <ns323:para xmlns:ns323="http://docbook.org/ns/docbook">The class name for the database driver. </ns323:para>
+        </ns322:listitem>
+        <ns324:listitem xmlns:ns324="http://docbook.org/ns/docbook">
+          <ns325:para xmlns:ns325="http://docbook.org/ns/docbook">
+            Connection pool settings like the minimum and maximum number of connections 
+            in the pool.
+          </ns325:para>
+        </ns324:listitem>
+      </ns319:itemizedlist>
+    </ns318:para>  
+    <ns326:para xmlns:ns326="http://docbook.org/ns/docbook">
+      Here is the file, <ns327:literal xmlns:ns327="http://docbook.org/ns/docbook">mysqldb-ds.xml</ns327:literal> which you should copy into the
+      deploy directory:
+<ns328:programlisting xmlns:ns328="http://docbook.org/ns/docbook">
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../technologies/java/j2ee/ejb/source/Account/mySqlFiles/mysqldb-ds.xml"/>
+</ns328:programlisting>      
+   </ns326:para>
+  </ns316:section>
+</ns301:section>

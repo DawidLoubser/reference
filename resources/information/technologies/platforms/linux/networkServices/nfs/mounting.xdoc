@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"-->
+<section id="resources.information.platforms.linux.networkServices.nfs.mounting"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>NFS clients</title>
+  <para>
+    NFS clients will mount a NFS directory exported by a NFS server.
+  </para>
+  
+  <section>
+    <title>Prerequisites for NFS clients</title>
+    <para>
+      A NFS client will need to
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>The <command>mount</command> program</title>
+          <para>
+            Check that your kernel is compiled to support NFS (most Linux distributions
+            come with NFS). This can be done by viewing <filename>/proc/filesystems</filename>.
+            This file contains all the file systems supported by the kernel, and looks typically
+            something like the following:
+            <programlisting>
+nodev   rootfs
+nodev   bdev
+nodev   proc
+nodev   sockfs
+nodev   futexfs
+nodev   tmpfs
+nodev   shm
+nodev   pipefs
+        ext2
+nodev   ramfs
+        minix
+        iso9660
+<emphasis>nodev   nfs</emphasis>
+nodev   devpts
+        reiserfs
+        ntfs
+nodev   usbdevfs
+nodev   usbfs
+        vfat
+            </programlisting>
+            If it does not contain a <command>nfs</command> entry, you can add the 
+            <command>nfs</command> module on the fly, via
+            <cmdsynopsis>
+<command>insmod nfs</command>            
+            </cmdsynopsis>
+            If this still does not work, you will need to rebuild the kernel with NFS support.
+            For NFS 3 you will need <command>mount</command> version 2.1 or later.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>The portmapper daemon must be running on the client</title>
+          <para>
+            It is responsible for RPC requests for service names mapped onto ports. To check
+            that it is running, you can use the command
+            <cmdsynopsis>
+<command>rpcinfo -p host</command>
+            </cmdsynopsis>
+            which will show the programs listening on the various ports
+            <programlisting>
+program vers proto   port
+  100000    2   tcp    111  portmapper
+  100000    2   udp    111  portmapper
+  100024    1   udp  32768  status
+  100024    1   tcp  32768  status
+  100003    2   udp   2049  nfs
+  100003    3   udp   2049  nfs
+  100021    1   udp  32770  nlockmgr
+  100021    3   udp  32770  nlockmgr
+  100021    4   udp  32770  nlockmgr
+  100005    1   udp  32771  mountd
+  100005    1   tcp  32769  mountd
+  100005    2   udp  32771  mountd
+  100005    2   tcp  32769  mountd
+  100005    3   udp  32771  mountd
+  100005    3   tcp  32769  mountd
+            </programlisting>  
+            Most recent distributions have <command>portmap</command> started in their
+            boot scripts. You may want to add it, if not. The command is typically found in
+            <filename>/usr/bin</filename> or <filename>/usr/sbin</filename>.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title><command>rpc.statd</command> and <command>rpc.lockd</command></title>
+          <para>
+            To be able to use NFS file locking, you will also need <command>rpc.statd</command> 
+            and <command>rpc.lockd</command> running on both the client and the server. 
+            Most recent distributions start those services by default at boot time. 
+            The <command>lockd</command> daemon is called by <command>nfsd</command> 
+            upon demand and you don't have to start it. The <command>statd</command> daemon
+            will, however, need to be started separately. It is typically found in
+            <filename>/usr/bin</filename> or <filename>/usr/sbin</filename>.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Mounting a NFS volume</title>
+    <para>
+      To mount a NFS volume you use the syntax
+      <cmdsynopsis>
+<command><![CDATA[mount <host>:<pathToNfsVolume]]>mount </command>        
+      </cmdsynopsis>
+      For example, 
+      <cmdsynopsis>
+<command>mount nsfServer.solmstraining.co.za:/home/solms/resources /mnt/resources</command>      
+      </cmdsynopsis>
+      mounts the <filename>/home/solms/resources</filename> directory as published
+      by the NFS server with domain name <filename>nfsServer.solmstraining.co.za</filename>
+      as the <filename>/mnt/resources</filename> directory.
+    </para>
+    <para>
+      This assumes, of course, that <filename>/mnt/resources</filename> exists. If not, 
+      you will have to create it as usual via
+      <cmdsynopsis>
+<command>mkdir /mnt/resources</command>      
+      </cmdsynopsis>
+    </para>
+  </section>
+
+  <section>
+    <title>Unmounting a NFS directory</title>
+    <para>
+      To unmount a the NFS directory, you simply use <command>umount</command>
+      as usual:
+      <cmdsynopsis>
+<command>umount </command>      
+      </cmdsynopsis>
+    </para>
+  </section>
+  
+  <section>
+    <title>Automatically mounting NFS file systems</title>
+    <para>
+      Often you want to automatically mount shared file systems at boot time. To do this
+      you add entries to <filename>/etc/fstab</filename>, the <emphasis>static file
+      system table</emphasis>. The structure of the <filename>/etc/fstab</filename>
+      file is discussed in <xref linkend="resources.information.platforms.linux.fileSystem.fstab"/>.
+      To mount a NFS volume at boot time, you can add a line like the following:
+      <cmdsynopsis><command>
+chameleon:/home/solms/Documents /mnt/solms      nfs     rw 0 0
+      </command></cmdsynopsis>
+      with the first entry being the file system to be mounted, the second entry being
+      the mount point, the third specifying the file system type as NFS, the options
+      being read/write and we need neither dumping nor file system checking.
+    </para>
+  </section>
+  
+  <section>
+    <title>Soft vs hard mounting</title>
+    <para>
+      There are two distinct ways in which NFS clients can handle failures on NFS requests. 
+      The error handling mode is determined by whether the NFS file system is mounted on
+      <emphasis>soft</emphasis> or <emphasis>hard</emphasis> mode.
+    </para>
+    
+    <section>
+      <title>Soft NFS mounts</title>
+      <para>
+        In this mode the NFS client will return an exception to the application requesting the
+        NFS file access. Some applications can process the error gracefully, but many others
+        may themselves crash or come into an unstable or invalid state.
+      </para>
+      <para>
+        A soft mounts is requested by adding <emphasis>soft</emphasis> to the mount
+        options:
+        <cmdsynopsis><command>
+chameleon:/home/solms/Documents /mnt/solms      nfs     rw,soft 0 0
+        </command></cmdsynopsis>
+      </para>
+    </section>
+    
+    <section>
+      <title>Hard NFS mounts</title>
+      <para>
+        In this mode the NFS client will hang until it can re-establish the communication.
+        Applications which made the request may hang during this period too and can
+        continue normally once the comms are up again.
+      </para>
+      <para>
+        A hard mounts is requested by adding <emphasis>hard</emphasis> to the mount
+        options:
+        <cmdsynopsis><command>
+chameleon:/home/solms/Documents /mnt/solms      nfs     rw,hard 0 0
+        </command></cmdsynopsis>
+      </para>
+    </section>
+    
+    <section>
+      <title>Requesting hard, interruptible mounts</title>
+      <para>
+        A process which makes a file access request to a NFS client using a <emphasis>hard</emphasis>
+        mount cannot be interrupted except through an unconditional kill (via the <literal>SIGKILL</literal>
+        signal, 9 -- see <xref linkend="resources.information.platforms.linux.processControl.sigkill"/>), except if
+        the <emphasis>hard</emphasis> mount option is combined with <emphasis>intr</emphasis>
+        requesting interruptibility:
+        <cmdsynopsis><command>
+chameleon:/home/solms/Documents /mnt/solms      nfs     rw,hard,intr 0 0
+        </command></cmdsynopsis>
+      </para>
+      <para>
+        It is generally recommended that you mount your NFS volumes in 
+        <filename>/etc/fstab</filename> as a hard, interruptible mount.
+      </para>  
+    </section>
+    
+    
+  </section>
+  
+  
+</section>

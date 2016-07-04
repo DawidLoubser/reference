@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1112:section xmlns:ns1112="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.navigatingObjectGraphs.navigatingObjectGraphs">
+
+  <ns1113:title xmlns:ns1113="http://docbook.org/ns/docbook">Navigating Through Object Graphs </ns1113:title>
+  <ns1114:para xmlns:ns1114="http://docbook.org/ns/docbook">
+    Before we can discuss navigation through object graphs, we have to discuss single and
+    multi-valued paths.
+  </ns1114:para>
+  
+  <ns1115:section xmlns:ns1115="http://docbook.org/ns/docbook">
+    <ns1116:title xmlns:ns1116="http://docbook.org/ns/docbook">Simple Paths</ns1116:title>
+    <ns1117:para xmlns:ns1117="http://docbook.org/ns/docbook">
+      Assume we have a <ns1118:literal xmlns:ns1118="http://docbook.org/ns/docbook">Bond</ns1118:literal> entity bean which has the
+      structure shown in 
+      <ns1119:xref xmlns:ns1119="http://docbook.org/ns/docbook" linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.navigatingObjectGraphs.bond_fig"/>.
+      One of the strengths of EJB-QL is its ability to smoothly navigate across
+      relationships, <ns1120:abbrev xmlns:ns1120="http://docbook.org/ns/docbook">i.e.</ns1120:abbrev> through object graphs. Consider, as an example, the UML 
+      diagram for a bond shown in 
+      <ns1121:xref xmlns:ns1121="http://docbook.org/ns/docbook" linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.navigatingObjectGraphs.bond_fig"/>.
+    </ns1117:para>
+    
+    <ns1122:figure xmlns:ns1122="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.navigatingObjectGraphs.bond_fig">
+      <ns1123:title xmlns:ns1123="http://docbook.org/ns/docbook">UML diagram for a bond</ns1123:title>
+      <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="bond.jpg"/></imageobject></mediaobject>
+    </ns1122:figure>
+    
+    <ns1124:para xmlns:ns1124="http://docbook.org/ns/docbook">
+      In EJB-QL one can traverse relationships in an object-oriented fashion using the Java
+      element access operator. For example, we could specify the following SELECT statement to
+      select all bond accounts
+<ns1125:programlisting xmlns:ns1125="http://docbook.org/ns/docbook">
+SELECT b.bondAccount FROM Bond b
+</ns1125:programlisting>      
+      returns a collection of
+      accounts, each of which is a bond account. The <ns1126:literal xmlns:ns1126="http://docbook.org/ns/docbook">Bond</ns1126:literal>
+      entity bean must supply an abstract accessor method to query the related bond account. The
+      equivalent SQL statement would look something like this
+<ns1127:programlisting xmlns:ns1127="http://docbook.org/ns/docbook">
+SELECT account from Account, Bond
+WHERE Bond.bondAccount = Account.id
+</ns1127:programlisting>      
+   </ns1124:para>
+   <ns1128:para xmlns:ns1128="http://docbook.org/ns/docbook">
+      We can have paths of multiple nodes. For example,
+<ns1129:programlisting xmlns:ns1129="http://docbook.org/ns/docbook">
+SELECT bond.bondAccount.balance FROM Bond bond
+</ns1129:programlisting>  
+    </ns1128:para>
+  </ns1115:section>  
+  
+  <ns1130:section xmlns:ns1130="http://docbook.org/ns/docbook">
+    <ns1131:title xmlns:ns1131="http://docbook.org/ns/docbook">Single-Valued versus Multi-Valued Paths</ns1131:title>
+    <ns1132:para xmlns:ns1132="http://docbook.org/ns/docbook">
+      A single valued path is a path without any branching below the highest layer (i.e.
+      the layer connected to the result objects). SELECT clauses and most WHERE clauses require
+      a single-valued path.
+    </ns1132:para>
+    <ns1133:para xmlns:ns1133="http://docbook.org/ns/docbook">For example, all the queries discussed in the previous section use single valued
+      paths in the SELECT statement and are hence valid EJB-QL statements. On the other hand,
+      querying all the bond accounts of all the clients via
+<ns1134:programlisting xmlns:ns1134="http://docbook.org/ns/docbook">
+SELECT client.bonds.account FROM Client client      -&gt; INVALID
+</ns1134:programlisting>      
+      resembles a multi-valued path because c refers to a collection of clients each 
+      of which has a collection of bonds which each has an account. 
+    </ns1133:para>
+    
+    <ns1135:figure xmlns:ns1135="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.navigatingObjectGraphs.courseSchedule_fig">
+      <ns1136:title xmlns:ns1136="http://docbook.org/ns/docbook">UML diagram for presentations of courses for a course schedule</ns1136:title>
+      <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="../../../../../resources/information/technologies/java/j2ee/ejb/enterpriseBeans/entityBeans/cmp/ejbQuery/navigatingObjectGraphs/courseSchedule.jpg"/></imageobject></mediaobject>
+    </ns1135:figure>
+
+    <ns1137:para xmlns:ns1137="http://docbook.org/ns/docbook">
+      As a second example, consider the UML diagram for a course schedule shown in figure
+      <ns1138:xref xmlns:ns1138="http://docbook.org/ns/docbook" linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.navigatingObjectGraphs.courseSchedule_fig"/>.
+      In a relational database this object graph could be represented as 4 tables, one
+      for each entity bean.
+    </ns1137:para>
+    <ns1139:para xmlns:ns1139="http://docbook.org/ns/docbook">
+      If we wanted to extract all course names which are currently scheduled 
+      (<ns1140:abbrev xmlns:ns1140="http://docbook.org/ns/docbook">i.e.</ns1140:abbrev> for
+      which there exists a presentation), we could do this via the following SQL query:
+<ns1141:programlisting xmlns:ns1141="http://docbook.org/ns/docbook">
+SELECT Course.name from Course, Presentation WHERE Presentation.course = Course.id
+</ns1141:programlisting>      
+    </ns1139:para>
+    <ns1142:para xmlns:ns1142="http://docbook.org/ns/docbook">
+      To achieve the same in EJB-QL we can specify the following query:
+<ns1143:programlisting xmlns:ns1143="http://docbook.org/ns/docbook">
+SELECT p.course.name FROM Presentation p
+</ns1143:programlisting>      
+      This is a single-valued
+      path and hence the query is valid. On the other hand, the query
+<ns1144:programlisting xmlns:ns1144="http://docbook.org/ns/docbook">
+SELECT p.presenters.course.name FROM Presentation p   -&gt; INVALID
+</ns1144:programlisting>      
+      is incorrect because we have, once again, a multi-valued path. 
+      In <ns1145:xref xmlns:ns1145="http://docbook.org/ns/docbook" linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.multiValuedPaths.collapsing"/>
+      we shall discuss how multi-valued paths are handled using collection variables. 
+    </ns1142:para>
+  </ns1130:section>
+</ns1112:section>

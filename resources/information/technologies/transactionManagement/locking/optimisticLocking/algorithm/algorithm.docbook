@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Optimistic locking algorithm</title>
+    <para>
+        Effectively optimistic locking observes the state of the affected resource at the start of the transaction
+        and then acquires the lock for these resources only when the business logic has been completed and the effects
+        of the transaction are to be made durable.
+    </para>
+    <para>
+        At this stage the original resource states is compared to their state after the locks have been acquired.
+        If the state of any of the affected resources has changed, the transaction is aborted.
+    </para>
+    
+    <section>
+        <title>Phases of optimistic locking</title>
+        <para>
+            The optimistic locking algorithm has effectively four phases:
+            <orderedlist>
+                <listitem><formalpara>
+                    <title>Read</title>
+                    <para>
+                        For each resource (<abbrev>e.g.</abbrev> object or record)
+                        <itemizedlist>
+                            <listitem><para>
+                                a read lock is acquired,
+                            </para></listitem>
+                            <listitem><para>
+                                the resource state is read and a copy, teh validation copy, is stored,
+                            </para></listitem>
+                            <listitem><para>
+                                the read lock is released.
+                            </para></listitem>
+                        </itemizedlist>
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>Execute</title>
+                    <para>
+                        The business logic is executed and the resultant state changes are accumulated, typically by updating
+                        local copies of the object, leaving the validation copy of the object untouched.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>Conflict detection</title>
+                    <para>
+                        The validate and commit/abort phase goes through the following steps:
+                        <orderedlist>
+                            <listitem><para>
+                                The write lock for each resource is obtained.
+                            </para></listitem>
+                            <listitem><para>
+                                The state of each resource is read and compared to that of the validation copy.
+                                If none of the resources has been modified since the start of the transaction,
+                                then no conflict has been detected. If, on the other hand, any of the resources has
+                                been modified since transaction start, then a conflict has been detected.
+                            </para></listitem>
+                            <listitem><para>
+                                The abort/commit desicion is executed. If the transaction is to be commited,
+                                If the state of none of the affected resources has been altered since the start
+                                of the transaction, the resources are persisted and the transaction is committed.
+                            </para></listitem>
+                        </orderedlist>
+                        <note><para>
+                            The write lock is NOT released after the conflict detection phase.
+                        </para></note>
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>Commit/abort</title>
+                    <para>
+                        Depending on whether a conflict has been detected or not, the transaction is either committed or
+                        aborted. In the former case the state of each resource is first updated.
+                    </para>
+                </formalpara></listitem>														
+            </orderedlist>
+        </para>
+    </section>
+</section>    

@@ -1,0 +1,163 @@
+<section id="resources.information.platforms.linux.applications.cdwriting"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>CD Writing</title>
+	<para>
+	Linux does not directly support writing to IDE CD writers, but with SCSI emulation, it is possible to emulate a SCSI interface through which the IDE cd writer can be accessed. This is performed by appending hdc=ide-scsi and hdclun=0 to the kernel parameters at boot time. SCSI emulation support also needs to be built into the kernel, which it is by default on Redhat and Suse distributions. The parameters can also be included in the bootloader configuration file as follows :
+	</para>
+	<programlisting>
+...
+kernel (hd0,1)/boot/vmlinuz root=/dev/hda2 vga=0x31a  <emphasis role="strong">hdc=ide-scsi hdclun=0</emphasis>	
+...
+	</programlisting>
+	  	
+	<section>
+		<title>Configuration</title>
+		<para>Once the SCSI emulation module is loaded, the cdrecord utility can be used to identify which scsi bus is to be used.
+		</para>
+		<programlisting>
+		<![CDATA[
+chameleon:~ # cdrecord -scanbus
+Cdrecord 2.0 (i686-suse-linux) Copyright (C) 1995-2002 JZrg Schilling
+Linux sg driver version: 3.1.24
+Using libscg version 'schily-0.7'
+cdrecord: Warning: using inofficial libscg transport code version 
+(okir@suse.de-scsi-linux-sg.c-1.75-resmgr-patch '@(#)scsi-linux-sg.c  
+1.75 02/10/21 Copyright 1997 J. Schilling').
+scsibus0:
+        0,0,0     0) 'SONY    ' 'CD-RW  CRX175E2 ' 'S002' Removable CD-ROM
+        0,1,0     1) *
+        0,2,0     2) *
+        0,3,0     3) *
+        0,4,0     4) *
+        0,5,0     5) *
+        0,6,0     6) *
+        0,7,0     7) *
+chameleon:~ #
+		]]>
+		</programlisting>
+	</section>	
+	<section>
+		<title>Creating an ISO image</title>
+		<para>
+		The easiest option is to create an iso image containing the date to be burned onto the cd, and then burn the entire image. An image can be created from an existing cdrom, as well as a set of folders.
+		</para>
+		<section>
+			<title>Creating an image from a set of folders using <emphasis role="strong">mkisofs</emphasis></title>
+			<para>
+			Often it is desirable to copy the contents of a set of folders onto a cdrom. To begin, we create an iso image with the contents intended for the cdrom. The mkisofs (Make ISO filesystem) utility does exactly that. 
+			</para>
+			<table frame="all">
+				<title>cp Flags</title>
+				<tgroup cols="2">
+					<thead>
+						<row><entry>Flag</entry><entry>Description</entry></row>
+					</thead>	
+					<tbody>
+						<row><entry>-l</entry><entry>Allows filename of up to 31 characters</entry></row>
+						<row><entry>-L</entry><entry>Allows for filenames to begin with a period. This breaks ISO9660 but seems to work on many systems. If omitted periods are replaced with underscores</entry></row>
+						<row><entry>-r</entry><entry>Adjusts ownership and permissions</entry></row>
+						<row><entry>-o</entry><entry>The image file name to be created</entry></row>
+						<row><entry></entry><entry></entry></row>
+					</tbody>
+				</tgroup>
+			</table>	
+			<programlisting>
+chameleon:~ # mkisofs -l -L -r -o [isoimage]	[path]			
+			</programlisting>
+		</section>	
+		<section>
+			<title>Creating an image from an existing disk</title>
+			<para>
+			To take an image from an existing disk, use the <emphasis role="strong">dd</emphasis> command. The dd command is required in an input file, as well as an output file, where a file in this context could also be a handle to a device such as /dev/cdrom. This 
+			</para>
+			<programlisting>
+chameleon:~ # dd if=/dev/cdrom of=myIsoFile.iso	
+			</programlisting>
+		</section>	
+		<section>
+			<title>Mounting the ISO image</title>
+			<para>
+			Once an iso image is created, it can be mounted, thus providing access to read and browse the content of the image file.
+			</para>
+			<programlisting>
+chameleon:~ # mount -t iso9660 -o ro,loop=/dev/loop0 [isoimage] [mount point]				
+			</programlisting>
+		</section>	
+	</section>	
+	
+	<section>
+		<title>Burning the image to disk</title>
+		<para>
+		To burn the created image the <emphasis role="strong">cdrecord</emphasis> command is used.
+		</para>
+		<programlisting>
+chameleon:~ # cdrecord -v myIsoFile.iso			
+		</programlisting>
+		<para>
+		cdrecord offer features to control writing speed and devices.	The speed option, for example, suggests a speed to be used and can be enforced with the <emphasis role="strong">forcespeed</emphasis> option. The dev directive specifies the bus (obtained from cdrecord -scanbus), and the eject option ejects the cd after the burn process is completed.
+		</para>
+		<programlisting>
+		<![CDATA[
+chameleon:~ # cdrecord -eject -v speed=20 dev=0,0,0 redhat9_disk1.iso 
+Cdrecord 2.0 (i686-suse-linux) Copyright (C) 1995-2002 J�rg Schilling
+TOC Type: 1 = CD-ROM
+scsidev: '0,0,0'
+scsibus: 0 target: 0 lun: 0
+Linux sg driver version: 3.1.24
+Using libscg version 'schily-0.7'
+cdrecord: Warning: using inofficial libscg transport code version 
+(okir@suse.de-scsi-linux-sg.c-1.75-resmgr-patch '@(#)scsi-linux-sg.c  
+1.75 02/10/21 Copyright 1997 J. Schilling').
+atapi: 1
+Device type    : Removable CD-ROM
+Version        : 0
+Response Format: 1
+Vendor_info    : 'SONY    '
+Identifikation : 'CD-RW  CRX175E2 '
+Revision       : 'S002'
+Device seems to be: Generic CD-ROM.
+Using generic SCSI-3/mmc CD-R driver (mmc_cdr).
+Driver flags   : MMC-2 SWABAUDIO BURNFREE FORCESPEED 
+Supported modes: TAO PACKET SAO SAO/R96P SAO/R96R RAW/R96R
+Drive buf size : 1359872 = 1328 KB
+FIFO size      : 4194304 = 4096 KB
+Track 01: data   638 MB        
+Total size:      732 MB (72:35.65) = 326674 sectors
+Lout start:      733 MB (72:37/49) = 326674 sectors
+Current Secsize: 2048
+ATIP info from disk:
+  Indicated writing power: 6
+  Is not unrestricted
+  Is not erasable
+  Disk sub type: Medium Type B, low Beta category (B-) (4)
+  ATIP start of lead in:  -11524 (97:28/26)
+  ATIP start of lead out: 359849 (79:59/74)
+Disk type:    Short strategy type (Phthalocyanine or similar)
+Manuf. index: 13
+Manufacturer: Multi Media Masters & Machinary SA
+Blocks total: 359849 Blocks current: 359849 Blocks remaining: 33175
+Forcespeed is OFF.
+Starting to write CD/DVD at speed 12 in real TAO mode for single session.
+Last chance to quit, starting real write    0 seconds. Operation starts.
+Waiting for reader process to fill input buffer ... input buffer ready.
+BURN-Free is ON.
+Turning BURN-Free off
+Performing OPC...
+Starting new track at sector: 0
+Track 01:  638 of  638 MB written (fifo 100%) [buf  97%]  21.8x.
+Track 01: Total bytes read/written: 669024256/669024256 (326672 sectors).
+Writing  time:  213.549s
+Average write speed  21.1x.
+Min drive buffer fill was 96%
+Fixating...
+Fixating time:   24.002s
+cdrecord: fifo had 10538 puts and 10538 gets.
+cdrecord: fifo was 0 times empty and 6641 times full, min fill was 68%.
+chameleon:~ #
+		]]>
+		</programlisting>
+	</section>	
+</section>	

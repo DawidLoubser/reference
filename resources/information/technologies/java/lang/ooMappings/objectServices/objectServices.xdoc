@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TODO: Move sections to their own sub-directories -->
+<section id="resources.information.technologies.java.lang.ooMappings.objectServices.objectServices"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+  <title>Standard Object Services</title>
+  
+  <para>
+    All Java classes either directly or indirectly extend <literal>java.lang.Object</literal>, through
+    which a number of services are inherited (often referred to as the <quote>standard object services</quote>).
+  </para>
+  <para>
+    These services are widely relied upon by different frameworks, yet are often neglected by developers.
+    The different UML relationships a class has with its attributes has a significant impact on how these
+    object services should be written, and in this section we clarify the exact meaning of these object
+    services.
+  </para>
+  
+  <section>
+    <title>Obtaining a simple String representation</title>
+    <para>
+      The <literal>public String toString()</literal> service is meant to return a concise but informative representation 
+      that is easy for a person to read. It typically represents all important aspects of the state of an object,
+      in order for a human being to, at a glance, identify the object.
+    </para>
+    <para>
+      This service should never be relied upon in any technical manner, by, for example, using it to
+      externalise or persist the state of the object. <emphasis>Unexpectedly changing the format of
+      the return value should never affect any aspect of a system.</emphasis>
+    </para>
+  </section>
+  
+  <section>
+    <title>Performing a logical equality test</title>
+    <para>
+      As part of the set of basic java operators, the <literal>==</literal>, when used with
+      two object references, is used to determine whether the two operands <literal>refer to
+      the same object (instance)</literal>.
+    </para>
+    <para>
+      To compliment the capability to test for <emphasis>instance equality</emphasis>, all objects provide the
+      <literal>public boolean equals( Object o )</literal> service to determine whether the state
+      of given object is <emphasis>logically equal</emphasis> to the state of another object,
+      according to the business/design rules of the system.
+    </para>
+    <para>
+      The typical strategy for implementing <literal>equals(...)</literal> is to simply compare
+      all the attributes which are, according to business rules, to be considered in such a test.
+      For example, a person whose state consists of a name and a birth date, both of which are important
+      in comparing state for logical equality:
+      <programlisting>
+<xi:include href="equality/src/Person.java" parse="text"/>
+      </programlisting>
+      The manner in which the attributes are compared depends on the UML relationship through which
+      they are related to the owner object.
+    </para>
+    
+    <section>
+      <title>Comparing attributes</title>
+      <para>
+        Attributes related through <emphasis>association</emphasis> and <emphasis>aggregation</emphasis>
+        should be tested for <emphasis>instance equality</emphasis> (i.e. whether the attribute of each
+        object points to the same instance). This means that they should be tested using <literal>==</literal>,
+        and not using <literal>equals(...)</literal>.
+      </para>
+      <para>
+        Attributes related through <emphasis>composition</emphasis>, on the other hand, should be tested
+        for <emphasis>logical equality</emphasis>, as the attribute of each object could not refer to the
+        same object instance (because only the owner of a component may directly refer to it).
+        <programlisting>
+<xi:include href="equality/src/Client.java" parse="text"/>
+        </programlisting>
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>Obtaining the hash code</title>
+    <para>
+      The <literal>public int hashCode()</literal> service is somewhat unfortunate (though necessary) in that
+      it dictates that, for any class, the following rule should always hold:
+      <blockquote>
+        <para>
+          If two instances are considered logically equal, based on the equals() service, then those two
+          instances should always report the same hash code.
+        </para>
+      </blockquote>
+    </para>
+    <para>
+      The <emphasis>intent</emphasis> of the hashCode() service is somewhat poorly explained by the official
+      Java documentation, but in use, it is most commonly used to improve the performance of various 
+      data structures used to store object instances (such as <literal>java.util.Set</literal>, which
+      only stores logically distinct objects). In this regard, a data structure may make use of the service
+      to test if two objects are <literal>definitely not logically equals</literal> (because they report
+      different hash codes), or whether they <emphasis>might be equal</emphasis> (because they report
+      the same hash code, and the potentially more expensive <literal>equals(...)</literal> service
+      may be called to confirm this).
+    </para>
+    <para>
+      As such, the hash code service may be considered as a high-performance <quote>pre-check</quote> for logical equality.
+      The nature of the relationships do not play an important role in generating a hash code, and the
+      simplest strategy is to pick one (or more, if you like) of the attributes that is used in the
+      state comparison performed in <literal>equals(...)</literal>, and generate a hash code from it (ideally by delegating
+      to it's <literal>hashCode()</literal> service.) It is important to ensure that this service is much
+      less expensive than the logical equality test (by eliminating casting or several service invocations),
+      for example:
+      <programlisting>
+<xi:include href="hashCode/src/Client.java" parse="text"/>
+      </programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Creating a copy (clone) of an object</title>
+    <para>
+      To enable clients to externally request a clone (a logically identical copy) of your
+      objects, the class should implement the <literal>java.lang.Cloneable</literal> marker
+      interface (to indicate to the inherited <literal>clone()</literal> service that it
+      is indeed legal to request such a clone), and the class should override the <literal>protected Object clone()</literal>
+      service, and in most cases you would want to change the access level modifier to <literal>public</literal>.
+    </para>
+    <para>
+      The default (inherited) behaviour of the clone service is for Java to create a <emphasis>shallow copy</emphasis>
+      of your object, which means that a new instance of the same class is created, and that all attributes are simply
+      copied across (i.e. by reference). The inherited behaviour is thus sufficient, if all the attributes
+      are either <emphasis>primitive types</emphasis>, or related through <emphasis>association</emphasis>.
+    </para>
+    <section>
+      <title>Cloning attributes</title>
+      <para>
+        The logic written in the <literal>clone()</literal> service is mostly concerned
+        with correctly cloning aggregate and component objects, and does not have to be concerned
+        with associate objects, nor with primitive types (both of which automatically 
+        are correctly dealt with).
+      </para>
+      <section>
+        <title>Aggregation</title>
+        <para>
+          Aggregate attributes are also simply copied by reference, but if any of the mechanisms to fully
+          realise aggregation (such as state change notification) are employed, the clone should be
+          registered as an observer in order to also receive state change events from the (now shared)
+          aggregate object.
+        </para>
+      </section>
+      <section>
+        <title>Composition</title>
+        <para>
+          Attributes related through <emphasis>Composition</emphasis> should <emphasis>each also be cloned and
+          handed to the cloned object</emphasis>, in order to maintain the requirement that component objects
+          should be fully encapsulated, and that no object except the owner may maintain a reference
+          to the component. In this regard, <emphasis>all components of cloneable objects must also
+          be cloneable</emphasis>. For example:
+          <programlisting>
+<xi:include href="cloning/src/Client.java" parse="text"/>
+          </programlisting>
+        </para>
+      </section>
+    </section>
+    
+  </section>
+  
+  
+  
+  
+  
+</section>

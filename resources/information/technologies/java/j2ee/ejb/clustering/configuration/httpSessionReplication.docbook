@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns504:section xmlns:ns504="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.clustering.configuration.httpSessionReplication">
+ <ns505:title xmlns:ns505="http://docbook.org/ns/docbook">HTTP session replication</ns505:title>
+  <ns506:para xmlns:ns506="http://docbook.org/ns/docbook">
+    <ns507:emphasis xmlns:ns507="http://docbook.org/ns/docbook">JBoss 3</ns507:emphasis>
+      supports HTTP session replication with both, <ns508:emphasis xmlns:ns508="http://docbook.org/ns/docbook">Jetty</ns508:emphasis>
+      and <ns509:emphasis xmlns:ns509="http://docbook.org/ns/docbook">Tomcat</ns509:emphasis> web containers. In this section we discuss
+      <ns510:itemizedlist xmlns:ns510="http://docbook.org/ns/docbook">
+        <ns511:listitem xmlns:ns511="http://docbook.org/ns/docbook"><ns512:para xmlns:ns512="http://docbook.org/ns/docbook">
+           aspects of load balancing on the presentation layer,
+        </ns512:para></ns511:listitem>
+        <ns513:listitem xmlns:ns513="http://docbook.org/ns/docbook"><ns514:para xmlns:ns514="http://docbook.org/ns/docbook">
+           what is and why use HTTP session replication, and
+        </ns514:para></ns513:listitem>
+        <ns515:listitem xmlns:ns515="http://docbook.org/ns/docbook"><ns516:para xmlns:ns516="http://docbook.org/ns/docbook">
+          how to setup JBoss with Tomcat/Jetty to support HTTP
+          session replication.
+        </ns516:para></ns515:listitem>
+      </ns510:itemizedlist>
+  </ns506:para>
+  
+  <ns517:section xmlns:ns517="http://docbook.org/ns/docbook">
+    <ns518:title xmlns:ns518="http://docbook.org/ns/docbook">Load balancing in the presentation layer</ns518:title>
+    <ns519:para xmlns:ns519="http://docbook.org/ns/docbook">
+      While session state replication is handled by JBoss,
+      load-balancing of incoming HTTP requests itself is
+      outside the domain of JBoss. For this one typically uses
+      either
+      <ns520:itemizedlist xmlns:ns520="http://docbook.org/ns/docbook">
+        <ns521:listitem xmlns:ns521="http://docbook.org/ns/docbook"><ns522:para xmlns:ns522="http://docbook.org/ns/docbook">
+          specialized hardware switches and routers (<ns523:abbrev xmlns:ns523="http://docbook.org/ns/docbook">e.g.</ns523:abbrev>
+          <ns524:emphasis xmlns:ns524="http://docbook.org/ns/docbook">Cisco load balancer</ns524:emphasis>) or
+        </ns522:para></ns521:listitem>
+        <ns525:listitem xmlns:ns525="http://docbook.org/ns/docbook"><ns526:para xmlns:ns526="http://docbook.org/ns/docbook">
+          dedicated load-balancing software like <ns527:emphasis xmlns:ns527="http://docbook.org/ns/docbook">Apache
+          mod_jk</ns527:emphasis>.
+        </ns526:para></ns525:listitem>
+      </ns520:itemizedlist>
+    </ns519:para>  
+  </ns517:section>
+  
+  <ns528:section xmlns:ns528="http://docbook.org/ns/docbook">
+    <ns529:title xmlns:ns529="http://docbook.org/ns/docbook">Hardware load balancers</ns529:title>
+    <ns530:para xmlns:ns530="http://docbook.org/ns/docbook">
+      A load-balancing switch/router looks to the network like a
+      single IP address, but routes HTTP traffic to any HTTP server
+      plugged into it.
+    </ns530:para>
+    
+    <ns531:section xmlns:ns531="http://docbook.org/ns/docbook">
+      <ns532:title xmlns:ns532="http://docbook.org/ns/docbook">Sticky sessions</ns532:title>
+      <ns533:para xmlns:ns533="http://docbook.org/ns/docbook">
+        One problem with implementing load balancing naively is that
+        consecutive TTP requests may be routed to different servers
+        and hence there session information would not persist accross
+        HTTP requests.
+      </ns533:para>
+      <ns534:para xmlns:ns534="http://docbook.org/ns/docbook">
+        To this end, both, load-balancing routers/switches and software
+        solutions for HTTP request load balancing support the concept
+        of <ns535:emphasis xmlns:ns535="http://docbook.org/ns/docbook">sticky sessions</ns535:emphasis>.
+      </ns534:para>
+      <ns536:para xmlns:ns536="http://docbook.org/ns/docbook">
+        In this case the load balancer (either software or hardware)
+        will route all requests from a specific session to the same
+        node.
+      </ns536:para>
+      <ns537:para xmlns:ns537="http://docbook.org/ns/docbook">
+        This results in load-balancing with session information being
+        maintained accross HTTP requests and, in many cases, this
+        solution may be sufficient.
+      </ns537:para>
+      <ns538:para xmlns:ns538="http://docbook.org/ns/docbook">
+        Of course, if the node hosting the client session fails, the
+        session information is lost and the client will have to start
+        from the beginning again. While this may be acceptable in many
+        realistic environments, there are some business environments
+        which require <ns539:emphasis xmlns:ns539="http://docbook.org/ns/docbook">fail-over safety</ns539:emphasis> at the presentation layer,
+        <ns540:abbrev xmlns:ns540="http://docbook.org/ns/docbook">i.e.</ns540:abbrev> that another node can take over that session with all its
+        session information and the client continues without even
+        knowing that he/she is now being served by another node.
+      </ns538:para>
+    </ns531:section>
+  </ns528:section>  
+  <ns541:section xmlns:ns541="http://docbook.org/ns/docbook">
+    <ns542:title xmlns:ns542="http://docbook.org/ns/docbook">Fail-Over safety via HTTP session replication?</ns542:title>
+    <ns543:para xmlns:ns543="http://docbook.org/ns/docbook">
+      So, while load-balancing with sticky session provide load
+      balancing with the session state maintained accross service
+      requests, they do not provide fail-over safety. If the node
+      to which the sticky session is bound, the client has to
+      reconnect and looses any session information which he had.
+    </ns543:para>
+    <ns544:para xmlns:ns544="http://docbook.org/ns/docbook">
+      To support fail-over safety one requires session replication.
+      While load-balancing of the incoming HTTP requests is not
+      handled by <ns545:emphasis xmlns:ns545="http://docbook.org/ns/docbook">JBoss</ns545:emphasis>, session replication is. It is supported for
+      both, the default web container, <ns546:emphasis xmlns:ns546="http://docbook.org/ns/docbook">Jetty</ns546:emphasis>, and 
+      <ns547:emphasis xmlns:ns547="http://docbook.org/ns/docbook">Tomcat</ns547:emphasis>.
+    </ns544:para>
+  </ns541:section>
+  
+  <ns548:section xmlns:ns548="http://docbook.org/ns/docbook">
+    <ns549:title xmlns:ns549="http://docbook.org/ns/docbook">What is session replication?</ns549:title>
+    <ns550:para xmlns:ns550="http://docbook.org/ns/docbook">
+      Session replication implies that the session state of the node
+      currently hosting the session is replicated accross other nodes
+      in the cluster.
+    </ns550:para>
+    <ns551:para xmlns:ns551="http://docbook.org/ns/docbook">
+      When one node fails the client is redirected to another node in
+      the cluster which has a copy of the session and hence no
+      information is lost.
+    </ns551:para>
+  </ns548:section>  
+
+  <ns552:section xmlns:ns552="http://docbook.org/ns/docbook">
+    <ns553:title xmlns:ns553="http://docbook.org/ns/docbook">Session replication algorithms</ns553:title>
+    <ns554:para xmlns:ns554="http://docbook.org/ns/docbook">
+      The session replication algorithm may differ significantly from
+      application server to application server.
+    </ns554:para>
+    
+    <ns555:section xmlns:ns555="http://docbook.org/ns/docbook">
+      <ns556:title xmlns:ns556="http://docbook.org/ns/docbook">Single node replication</ns556:title>
+      <ns557:para xmlns:ns557="http://docbook.org/ns/docbook">
+        In some application servers (<ns558:abbrev xmlns:ns558="http://docbook.org/ns/docbook">e.g.</ns558:abbrev> BEA WebLogic) the node to
+        which the client is currently connected hosts a primary session.
+        This session is replicated on to one other node which hosts
+        the secondary session.
+      </ns557:para>
+      <ns559:para xmlns:ns559="http://docbook.org/ns/docbook">
+          If the node hosting the primary session fails, the client is
+          redirected to the node hosting the secondary session. That session
+          becomes the primary session and another secondary session is
+          spawned on another node.
+      </ns559:para>
+    </ns555:section>
+    
+    <ns560:section xmlns:ns560="http://docbook.org/ns/docbook">
+      <ns561:title xmlns:ns561="http://docbook.org/ns/docbook">Cluster/partition-wide session replication</ns561:title>
+     <ns562:para xmlns:ns562="http://docbook.org/ns/docbook">
+        In the case of <ns563:emphasis xmlns:ns563="http://docbook.org/ns/docbook">JBoss</ns563:emphasis> the cluster is not configured manually.
+        It is automatically configured by different nodes publishing
+        their existence and partition allocation to other nodes in
+        the cluster.
+     </ns562:para>
+     <ns564:para xmlns:ns564="http://docbook.org/ns/docbook">
+      In this scenario a session is replicated across all nodes
+      in the partition, or, if sub-partition (if sub-partitioning
+      is used). This may incur significant communication
+      overheads and hence one it advised not to make individual
+      partitions/sub-partitions too large.
+     </ns564:para>
+   </ns560:section>  
+  </ns552:section>
+  
+  <ns565:section xmlns:ns565="http://docbook.org/ns/docbook">
+    <ns566:title xmlns:ns566="http://docbook.org/ns/docbook">Configuring web containers for session replication</ns566:title>
+    <ns567:para xmlns:ns567="http://docbook.org/ns/docbook">
+      When using <ns568:emphasis xmlns:ns568="http://docbook.org/ns/docbook">JBoss</ns568:emphasis> for session replication, the servlet container
+      does not use any of its own replication code and relies solely
+      on the session replication service deployed in <ns569:emphasis xmlns:ns569="http://docbook.org/ns/docbook">JBoss</ns569:emphasis>.
+    </ns567:para>
+    
+    <ns570:section xmlns:ns570="http://docbook.org/ns/docbook">
+      <ns571:title xmlns:ns571="http://docbook.org/ns/docbook">Deploying the HTTP session replication service</ns571:title>
+      <ns572:para xmlns:ns572="http://docbook.org/ns/docbook">
+        <ns573:emphasis xmlns:ns573="http://docbook.org/ns/docbook">JBoss</ns573:emphasis>'s HTTP session replication service is contained in the jar file,
+        <ns574:literal xmlns:ns574="http://docbook.org/ns/docbook">jbossha-hhtpsession.sar</ns574:literal>. To deploy it one simply copies it into
+        the appropriate deploy directory. This is independent of whether one
+        uses <ns575:emphasis xmlns:ns575="http://docbook.org/ns/docbook">Tomcat</ns575:emphasis> or <ns576:emphasis xmlns:ns576="http://docbook.org/ns/docbook">Jetty</ns576:emphasis>.
+      </ns572:para>
+    </ns570:section>
+    
+    <ns577:section xmlns:ns577="http://docbook.org/ns/docbook">
+      <ns578:title xmlns:ns578="http://docbook.org/ns/docbook">Declaring your servlet distributable</ns578:title>
+      <ns579:para xmlns:ns579="http://docbook.org/ns/docbook">
+        You will have to declare your servlet <ns580:emphasis xmlns:ns580="http://docbook.org/ns/docbook">distributable</ns580:emphasis> in your
+        <ns581:literal xmlns:ns581="http://docbook.org/ns/docbook">WEB-INF/web.xml</ns581:literal> deployment descriptor for your web application.
+        <ns582:emphasis xmlns:ns582="http://docbook.org/ns/docbook">Distributable</ns582:emphasis> is a subelement of the 
+        <ns583:emphasis xmlns:ns583="http://docbook.org/ns/docbook">web-app</ns583:emphasis> element following the 
+        <ns584:emphasis xmlns:ns584="http://docbook.org/ns/docbook">description</ns584:emphasis> element of the <ns585:emphasis xmlns:ns585="http://docbook.org/ns/docbook">web-app</ns585:emphasis>.
+      <ns586:programlisting xmlns:ns586="http://docbook.org/ns/docbook">
+
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd"&gt;
+&lt;web-app&gt;
+  &lt;distributable&gt;true&lt;/distributable&gt;
+  &lt;!-- Servlets --&gt;
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;LoanCalculatorServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;za.co.SolmsTraining.finance.calculators.LoanCalculatorServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;LoanCalculatorServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/LoanCalculatorServlet&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+  &lt;welcome-file-list&gt;
+    &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+  &lt;/welcome-file-list&gt;
+  &lt;!-- EJB References (java:comp/env/ejb) --&gt;
+  &lt;ejb-ref&gt;
+    &lt;ejb-ref-name&gt;ejb/LoanCalculator&lt;/ejb-ref-name&gt;
+    &lt;ejb-ref-type&gt;Session&lt;/ejb-ref-type&gt;
+    &lt;home&gt;za.co.SolmsTraining.finance.calculators.LoanCalculatorHome&lt;/home&gt;
+    &lt;remote&gt;za.co.SolmsTraining.finance.calculators.LoanCalculator&lt;/remote&gt;
+  &lt;/ejb-ref&gt;
+&lt;/web-app&gt;
+      
+      </ns586:programlisting>
+      </ns579:para>
+      <ns587:para xmlns:ns587="http://docbook.org/ns/docbook">
+          In addition to this one may want to set some configuration parameters
+          for the web container you are using. These configuration parameters
+          are different for Jetty and Tomcat.
+      </ns587:para>
+    </ns577:section>
+    
+    <ns588:section xmlns:ns588="http://docbook.org/ns/docbook">
+      <ns589:title xmlns:ns589="http://docbook.org/ns/docbook">Selecting replication events for Tomcat</ns589:title>
+      <ns590:para xmlns:ns590="http://docbook.org/ns/docbook">
+        A replication is like taking a snap-shot. By default, <ns591:emphasis xmlns:ns591="http://docbook.org/ns/docbook">Tomcat</ns591:emphasis>
+        is configured to use <ns592:emphasis xmlns:ns592="http://docbook.org/ns/docbook">instant</ns592:emphasis> snap-shotting. You may want to
+        change this to improve the performance of the replication
+        algorithm. The snap-shot modes available in <ns593:emphasis xmlns:ns593="http://docbook.org/ns/docbook">Tomcat</ns593:emphasis> are:
+        <ns594:itemizedlist xmlns:ns594="http://docbook.org/ns/docbook">
+          <ns595:listitem xmlns:ns595="http://docbook.org/ns/docbook"><ns596:formalpara xmlns:ns596="http://docbook.org/ns/docbook">
+            <ns597:title xmlns:ns597="http://docbook.org/ns/docbook">instant</ns597:title>
+            <ns598:para xmlns:ns598="http://docbook.org/ns/docbook">
+              The session is replicated after each HTTP request.
+            </ns598:para>
+          </ns596:formalpara></ns595:listitem>
+          <ns599:listitem xmlns:ns599="http://docbook.org/ns/docbook"><ns600:formalpara xmlns:ns600="http://docbook.org/ns/docbook">
+            <ns601:title xmlns:ns601="http://docbook.org/ns/docbook">[interval:</ns601:title>
+            <ns602:para xmlns:ns602="http://docbook.org/ns/docbook">
+              The session changes are collected and replicated
+              in one block in the chosen interval period.
+            </ns602:para>
+          </ns600:formalpara></ns599:listitem>
+        </ns594:itemizedlist>
+      </ns590:para>
+      <ns603:para xmlns:ns603="http://docbook.org/ns/docbook">
+        For each of these modes you can specify another attribute, <ns604:literal xmlns:ns604="http://docbook.org/ns/docbook">economy</ns604:literal>
+        which sets that only calls to <ns605:literal xmlns:ns605="http://docbook.org/ns/docbook">HTTPSession.setAttribute</ns605:literal> are
+        interpreted as session changes.
+      </ns603:para>  
+      <ns606:para xmlns:ns606="http://docbook.org/ns/docbook">
+        So, in the <ns607:literal xmlns:ns607="http://docbook.org/ns/docbook">tomcat4-service.xml</ns607:literal> found in the 
+        <ns608:emphasis xmlns:ns608="http://docbook.org/ns/docbook">deploy</ns608:emphasis>
+        directory you can add/modify the snap-shot attributes. For example,
+        <ns609:programlisting xmlns:ns609="http://docbook.org/ns/docbook">
+
+        &lt;mbean code="org.jboss.web.catalina.EmbeddedCatalinaServiceSX"
+          name="jboss.web:service=EmbeddedCatalinaSX"&gt;
+          &lt;attribute name="CatalinaHome"&gt;&amp;catalina.home&lt;/attribute&gt;
+          &lt;attribute name="SnapShotMode"&gt;interval&lt;/attribute&gt;
+          &lt;attribute name="SnapShotInterval"&gt;3000&lt;/attribute&gt;
+          &lt;attribute name="EconomicSnapshotting"&gt;true&lt;/attribute&gt;
+          ...
+        &lt;/mbean&gt;
+        
+        </ns609:programlisting>
+      </ns606:para>
+    </ns588:section>
+    
+    <ns610:section xmlns:ns610="http://docbook.org/ns/docbook">
+      <ns611:title xmlns:ns611="http://docbook.org/ns/docbook">Jetty-specific configuration</ns611:title>
+      <ns612:para xmlns:ns612="http://docbook.org/ns/docbook">
+        In addition to the web-container neutral configuration, you may want to
+        modify the default session replication strategy for Jetty. To this
+        end you may want to update the file
+        <ns613:literal xmlns:ns613="http://docbook.org/ns/docbook">deploy/jbossweb.sar/META-INF/jboss-service.xml</ns613:literal>. The relevant
+        section is shown below
+        <ns614:programlisting xmlns:ns614="http://docbook.org/ns/docbook">
+
+      &lt;Set name="DistributableSessionManagerPrototype"&gt;
+       &lt;New class="org.mortbay.j2ee.session.Manager"&gt;
+        &lt;Set name="scavengerPeriod"&gt;600&lt;/Set&gt;
+        &lt;Set name="interceptorStack"&gt;
+         &lt;Array type="org.mortbay.j2ee.session.StateInterceptor"&gt;
+          &lt;Item&gt;&lt;New class="org.mortbay.j2ee.session.ValidatingInterceptor"/&gt;&lt;/Item&gt;
+          &lt;Item&gt;&lt;New class="org.mortbay.j2ee.session.TypeCheckingInterceptor"/&gt;&lt;/Item&gt;
+          &lt;Item&gt;&lt;New class="org.mortbay.j2ee.session.BindingInterceptor"/&gt;&lt;/Item&gt;
+          &lt;Item&gt;&lt;New class="org.mortbay.j2ee.session.PublishingInterceptor"/&gt;&lt;/Item&gt;
+          &lt;Item&gt;&lt;New class="org.mortbay.j2ee.session.SubscribingInterceptor"/&gt;&lt;/Item&gt;
+          &lt;Item&gt;&lt;New class="org.mortbay.j2ee.session.SynchronizingInterceptor"/&gt;&lt;/Item&gt;
+         &lt;/Array&gt;
+        &lt;/Set&gt;
+       &lt;/New&gt;
+      &lt;/Set&gt;
+
+      &lt;!-- For testing the Distributable SessionManager with e.g. Watchdog --&gt;
+      &lt;!--
+      &lt;Set name="forceDistributable"&gt;true&lt;/Set&gt;
+      --&gt;
+
+      &lt;/Configure&gt;
+     &lt;/attribute&gt;
+        
+        </ns614:programlisting>
+      </ns612:para>
+    </ns610:section>
+    </ns565:section>
+    
+    <ns615:section xmlns:ns615="http://docbook.org/ns/docbook">
+      <ns616:title xmlns:ns616="http://docbook.org/ns/docbook">Some architectural solutions</ns616:title>
+      <ns617:para xmlns:ns617="http://docbook.org/ns/docbook">
+        In this section we discuss a number of possible architectural
+        solutions trying to address load-balancing and fail-over safety
+        in an efficient way.
+      </ns617:para>
+      
+      <ns618:section xmlns:ns618="http://docbook.org/ns/docbook">
+        <ns619:title xmlns:ns619="http://docbook.org/ns/docbook">Load-balancing across clusters</ns619:title>
+        <ns620:para xmlns:ns620="http://docbook.org/ns/docbook">
+          One solution which is scales well while providing fail-over safety
+          is to have
+          <ns621:itemizedlist xmlns:ns621="http://docbook.org/ns/docbook">
+            <ns622:listitem xmlns:ns622="http://docbook.org/ns/docbook"><ns623:para xmlns:ns623="http://docbook.org/ns/docbook">
+              <ns624:emphasis xmlns:ns624="http://docbook.org/ns/docbook">multiple clusters</ns624:emphasis>, each cluster having only a few nodes
+              (say less than 6),
+            </ns623:para></ns622:listitem>
+            <ns625:listitem xmlns:ns625="http://docbook.org/ns/docbook"><ns626:para xmlns:ns626="http://docbook.org/ns/docbook">
+              assign a hardware or software load balancer to each cluster and
+            </ns626:para></ns625:listitem>
+            <ns627:listitem xmlns:ns627="http://docbook.org/ns/docbook"><ns628:para xmlns:ns628="http://docbook.org/ns/docbook">
+              have an additional load balancer which sprays HTTP requests
+              across the load balancers for the individual clusters.
+            </ns628:para></ns627:listitem>
+          </ns621:itemizedlist>
+        </ns620:para>
+        <ns629:para xmlns:ns629="http://docbook.org/ns/docbook">
+          This ensures that
+          <ns630:itemizedlist xmlns:ns630="http://docbook.org/ns/docbook">
+            <ns631:listitem xmlns:ns631="http://docbook.org/ns/docbook"><ns632:para xmlns:ns632="http://docbook.org/ns/docbook">
+              state replication is limited to replicate over only relatively
+              few nodes, and
+            </ns632:para></ns631:listitem>
+            <ns633:listitem xmlns:ns633="http://docbook.org/ns/docbook"><ns634:para xmlns:ns634="http://docbook.org/ns/docbook">
+              that the system can scale efficiently to a very large number
+              of machines.
+            </ns634:para></ns633:listitem>
+          </ns630:itemizedlist>
+        </ns629:para>
+      </ns618:section>
+    </ns615:section>
+</ns504:section>

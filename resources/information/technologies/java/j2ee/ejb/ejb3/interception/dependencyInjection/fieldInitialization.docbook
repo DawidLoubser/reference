@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.dependencyInjection.fieldInitialization">
+  <title>Field injection</title>
+  <para>
+    The EJB specification supports dependency injection directly to
+    fields, reducing the amount of code in a component with dependencies
+    by removing the need to write a setter method, unless you want to take
+    additional action when a resource is injected.
+  </para>
+    <para>
+        Consider a sports events planning service, which may need to make use of
+        a booking engine, as well a weather forecasting service. One has merely to
+        declare object references to these objects (via their interfaces) and
+        annotate them with <literal>@javax.ejb.EJB</literal>, and the container
+        will provide implementations before any of the bean's business services
+        are invoked.
+<programlisting language="Java">
+import javax.ejb.*;
+
+@Stateless
+@Remote({SportsEventPlanner.class})
+public class SportsEventPlannerBean implements SportsEventPlanner
+{
+  ...
+
+  @EJB
+  private WeatherService weatherService;
+  
+  @EJB
+  private ResourceBookingService bookingEngine;
+}
+    
+  </programlisting>
+  </para>
+  <section>
+      <title>Injecting context objects</title>
+      <para>
+      Dependency injection is also commonly used to provide a bean access to the
+      context objects maintained by the application server for that bean. This
+      is done by injecting variables into the class:
+<programlisting>
+@Resource javax.ejb.SessionContext sessionContext;
+@Resource javax.ejb.UserTransaction userTransaction;
+@Resource javax.ejb.TimeService timer;  
+</programlisting>      
+      </para>
+      <para>
+          These objects provide access to the details of the current user session, the current
+          transaction, time-scheduling services, etc.
+      </para>
+  </section>
+    
+    <section>
+        <title>Field access level modifier</title>
+        <para>
+            The container also supports the injection of fields with all access levels, including <literal>protected</literal>
+            and even <literal>private</literal> fields.
+        </para>
+    </section>
+</section>

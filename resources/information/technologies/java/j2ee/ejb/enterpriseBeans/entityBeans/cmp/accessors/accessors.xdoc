@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.accessors.accessors"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="Abstract accessors">Abstract accessors</title>
+  <para>
+    The first major change between EJB 1.1 and EJB 2.0 peristence is that in EJB 1.1 the
+    bean developer provided a concrete entity bean class which published the attributes and
+    dependent objects as public data fields
+<programlisting><![CDATA[
+public class Order extends javax.ejb.EntityBean
+{
+  public String orderNo;
+  public Customer customer;
+  public Collection lineItems;
+
+...
+}
+]]></programlisting>
+      while in EJB 2.0 the bean developer provides an abstract class with abstract 
+      accessor methods for the attributes 
+<programlisting><![CDATA[
+public abstract class Order extends javax.ejb.EntityBean
+{
+  public abstract String getOrderNo();
+  public abstract Customer getCustomer();
+  public abstract Collection getLineItems();
+
+  public abstract void setOrderNo(String newOrderNo);
+  public abstract void setCustomer(Customer newCustomer);
+  public abstract void setLineItems(Collection newLineItems);
+  ...
+}
+]]></programlisting>
+      <note><para>
+      Note that the naming of the abstract accessor methods comply to the standard rules
+      for<literal>getXXX</literal> and <literal>setXXX</literal> JavaBeans property access methods.
+      </para></note>
+    </para>  
+    <para>
+      This looks simple enough, but what are the legal types for arguments and return values
+      of the accessor methods?
+    </para>
+
+    <section>
+      <title>Legal Types for Accessors</title>
+      <para>
+        The accessor fields must be published in the deployment descriptor as
+        <literal><![CDATA[<cmp-field>]]></literal>s, i.e. as container-managed persistence fields.
+      </para>
+      <para>
+        Furthermore, the objects returned by the query methods and those received by the set
+        methods must be one of the following types: 
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>Java primitives</title>
+            <para>
+               which are typically stored in seperate, generally accessible columns as specified 
+               by the mapping for individual databases.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Serializable objects</title>
+            <para>
+              implementing the <literal>java.io.Serializable</literal>
+              interface which are typically generally stored either as 
+              <itemizedlist>
+                <listitem>
+                  <para>blobs or </para>
+                </listitem>
+                <listitem>
+                  <para>
+                    by an object-relational mapper in a more conventional form which is useful for
+                    general database (e.g. SQL-based) access.
+                  </para>
+                </listitem>
+              </itemizedlist>   
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Remote entity beans</title>
+            <para>
+               published as remote objects via the home and remote interfaces.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Local entity beans</title>
+            <para>
+               which provide local and local-home interfaces.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Collections of any of the above</title>
+            <para>
+              returned as in one-to-many relationships. The collection used must currently
+              implement either the <literal>java.util.Collection</literal> or the
+              <literal>java.util.Set</literal> interface.
+            </para>
+          </formalpara></listitem>
+        </itemizedlist>  
+      </para>
+    </section>
+    <section>
+      <title>So, Where Are the Concrete Implementation?</title>
+      <para>
+        Note that the EJB 2.0 entity bean class supplied by the bean developer is an abstract
+        class:
+        <itemizedlist>
+          <listitem><para>
+            All accessor methods are abstract methods. 
+          </para></listitem>
+          <listitem><para>
+            The bean developer does not specify any datafields for the persistent entity bean properties.
+          </para></listitem>
+        </itemizedlist>
+      </para>  
+      <para>
+        The concrete implementation class is provided by the EJB container. The EJB container
+        thus provides 
+      <itemizedlist>
+        <listitem><para>
+          concrete implementations for the accessor methods and 
+        </para></listitem>
+        <listitem><para>
+          if required, may define its own data fields (instance variables) for the persistent
+          bean properties.
+        </para></listitem>
+      </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>What about further state variables?</title>
+      <para>
+        The bean developer may define further state variables (bean attributes), potentially
+        as<literal>private</literal> variables and corresponding accessor methods. But these 
+        may not form part of the persistent state of the entity bean and would thus not be 
+        published as<literal><![CDATA[<cmp-field>]]></literal>s.
+      </para>
+    </section>
+    
+  </section>
+  

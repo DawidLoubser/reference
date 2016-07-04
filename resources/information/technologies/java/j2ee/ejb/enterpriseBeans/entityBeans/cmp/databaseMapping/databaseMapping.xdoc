@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.databaseMapping.databaseMapping"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Mapping Entity onto Existing Database Tables </title>
+  <para>
+    So far we relied on the automatic mapping of our entity beans onto the default database
+    (Hypersonic SQL) shipped with JBoss. In this section we provide an example where we map entity
+    beans onto a relational database structure whilst still making use of container-managed persistence.
+  </para>
+  <para>
+    In order to define a mapping between the container-managed persistence fields and the
+    corresponding database columns, we supply a <literal>jbosscmp-jdbc.xml</literal> descriptor file
+    which contains an enterprise beans section for the mapping:
+<programlisting><![CDATA[
+ <?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE jbosscmp-jdbc PUBLIC "-//JBoss//DTD JBOSSCMP-JDBC 3.0//EN"
+           "http://www.jboss.org/j2ee/dtd/jbosscmp-jdbc_3_0.dtd">
+ <jbosscmp-jdbc>
+   <enterprise-beans>
+     <entity>
+       <ejb-name>Account</ejb-name>
+       <table-name>ACCOUNT_TBL</table-name>
+       <cmp-field>
+         <field-name>id</field-name>
+         <column-name>ACC_NO</column-name>
+       </cmp-field>
+       <cmp-field>
+         <field-name>balance</field-name>
+         <column-name>BAL</column-name>
+       </cmp-field>
+     </entity>
+   </enterprise-beans>
+   <defaults>
+     <datasource>java:/MySQLtestDS</datasource>
+     <datasource-mapping>mySQL</datasource-mapping>
+     <create-table>true</create-table>
+     <remove-table>true</remove-table>
+     <pk-constraint>true</pk-constraint>
+   </defaults>
+ </jbosscmp-jdbc>
+]]></programlisting>
+  </para>
+</section>

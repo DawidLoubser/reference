@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.ooLanguage.compositionVersusAssociation.tightBindingViaComposition"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/dist/resources/components/za/co/solms/solmsDoc/schema/solmsDoc.xsd">
+    
+    <title>Tight-Binding via Composition</title>
+
+<para>Some of the objects are components (attributes) of other objects. For
+example a cash flow has a payment and a date. The attributes
+of a class are thus the components of the class. These components typically
+have themselves attributes, <abbrev>i.e.</abbrev> further components. For example, the payment
+itself has an amount and a currency.</para>
+
+<para>Composition revolves around
+<itemizedlist>
+  <listitem><formalpara><title>Ownership</title><para> If something belongs to me nobody is allowed to use it
+                   without asking me. Similarly, a cashflow has a date and
+                   an amount and these should be modified only via the cash
+                   flow itself.</para></formalpara></listitem>
+  <listitem><formalpara><title>Responsibility</title><para> If there is a problem with the date, then there is a problem
+                   with the cash flow itself. The aggregate object acquires
+                   responsibility for its components.</para></formalpara></listitem>
+  <listitem><formalpara><title>Tight State Coupling</title><para> A change in the date or the amount results in
+                   a change in the cashflow itself, <abbrev>i.e.</abbrev> a state transition in one
+                   of the components of an aggregate object results in a state
+                   transition of the aggregate object itself.</para></formalpara></listitem>
+  <listitem><formalpara><title>Coincident Life Span</title><para> The life span of the components is limited by
+       the life span of the aggregate object. For example, if an account
+       is destroyed, its balance is destroyed too.</para></formalpara></listitem>
+</itemizedlist>
+</para>
+<para>In Java we keep references to objects. True aggregation is achieved when the
+container object is the only object which has handles (references) to its
+components. In that case the components will be garbage collected when the
+container is garbage collected (see section on LifeCycle). Furthermore,
+if no other objects have references to the component objects no other object
+can modify the component objects by sending messages to them. To achieve this
+none of the methods, and in particular, none of the container object's query
+methods, should return a reference to a component object. Instead they should
+return a copy made via the <emphasis role="verb">clone()</emphasis> method (see section on Cloning).</para>
+    
+</section>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1564:section xmlns:ns1564="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.primaryKey.class.primaryKeyClass">
+
+    <ns1565:title xmlns:ns1565="http://docbook.org/ns/docbook">Primary Key Classes</ns1565:title>
+    <ns1566:para xmlns:ns1566="http://docbook.org/ns/docbook">
+      The primary key is used to uniquely identify entity objects -- the identity of an entity
+      bean is the value of its primary key. Often the primary key of an entity bean is a simple
+      field. The primary key may, however, be any datatype (i.e. any class)
+      which fulfills certain requirements.
+    </ns1566:para>
+
+    <ns1567:section xmlns:ns1567="http://docbook.org/ns/docbook">
+      <ns1568:title xmlns:ns1568="http://docbook.org/ns/docbook">Requirements for Primary Keys</ns1568:title>
+      <ns1569:para xmlns:ns1569="http://docbook.org/ns/docbook">
+        Any objects of any class can be used forprimary keys as long as 
+        <ns1570:itemizedlist xmlns:ns1570="http://docbook.org/ns/docbook">
+          <ns1571:listitem xmlns:ns1571="http://docbook.org/ns/docbook">
+            <ns1572:para xmlns:ns1572="http://docbook.org/ns/docbook">The type is a legal type for RMI/IIOP -- i.e. instances of the primary key class are
+              serializable. </ns1572:para>
+          </ns1571:listitem>
+          <ns1573:listitem xmlns:ns1573="http://docbook.org/ns/docbook">
+            <ns1574:para xmlns:ns1574="http://docbook.org/ns/docbook">The method <ns1575:literal xmlns:ns1575="http://docbook.org/ns/docbook">hashCode()</ns1575:literal> supplies unique identifier. </ns1574:para>
+          </ns1573:listitem>
+          <ns1576:listitem xmlns:ns1576="http://docbook.org/ns/docbook">
+            <ns1577:para xmlns:ns1577="http://docbook.org/ns/docbook">The <ns1578:literal xmlns:ns1578="http://docbook.org/ns/docbook">equals()</ns1578:literal> method has been overridden to return true if objects
+              of the primary key class are equal and false otherwise. </ns1577:para>
+          </ns1576:listitem>
+          <ns1579:listitem xmlns:ns1579="http://docbook.org/ns/docbook">
+            <ns1580:para xmlns:ns1580="http://docbook.org/ns/docbook">Any primary key object is unique within the entire set of beans for which it
+             supposed to be a primary key. </ns1580:para>
+          </ns1579:listitem>
+          <ns1581:listitem xmlns:ns1581="http://docbook.org/ns/docbook">
+            <ns1582:para xmlns:ns1582="http://docbook.org/ns/docbook">A <ns1583:literal xmlns:ns1583="http://docbook.org/ns/docbook">toString()</ns1583:literal> method which returns a string represetation for the
+              primary key which is unique accross all instances of the class.</ns1582:para>
+          </ns1581:listitem>
+        </ns1570:itemizedlist>
+      </ns1569:para>  
+      <ns1584:para xmlns:ns1584="http://docbook.org/ns/docbook">
+        In general one should always use a primary key class, even if the primary key could have
+        been represented by a basic data type like an integer or a string. This makes it easier if
+        the problem domain changes and further requirements are placed on the primary key class.
+      </ns1584:para>
+    </ns1567:section>
+    
+    <ns1585:section xmlns:ns1585="http://docbook.org/ns/docbook">
+      <ns1586:title xmlns:ns1586="http://docbook.org/ns/docbook">WeatherStation Remote Interface</ns1586:title>
+      <ns1587:para xmlns:ns1587="http://docbook.org/ns/docbook">
+        Let us have a look at an example where we use a custom primary key class. Assume an
+        account we have a weather station which accumulates temperature readings from different
+        locations. It supplies two services, 
+        <ns1588:itemizedlist xmlns:ns1588="http://docbook.org/ns/docbook">
+          <ns1589:listitem xmlns:ns1589="http://docbook.org/ns/docbook">
+            <ns1590:para xmlns:ns1590="http://docbook.org/ns/docbook">one for supplying temperature readings to the weather station and </ns1590:para>
+          </ns1589:listitem>
+          <ns1591:listitem xmlns:ns1591="http://docbook.org/ns/docbook">
+            <ns1592:para xmlns:ns1592="http://docbook.org/ns/docbook">one for querying the average temperature over a period.</ns1592:para>
+          </ns1591:listitem>
+        </ns1588:itemizedlist>
+        The weather station offers these services through a stateless session bean:
+<ns1593:programlisting xmlns:ns1593="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../source/WeatherStation/src/common/WeatherStation.java"/>
+</ns1593:programlisting>
+      </ns1587:para>
+    </ns1585:section>
+    
+    <ns1594:section xmlns:ns1594="http://docbook.org/ns/docbook">
+      <ns1595:title xmlns:ns1595="http://docbook.org/ns/docbook">A Local Interface for Weather Readings</ns1595:title>
+      <ns1596:para xmlns:ns1596="http://docbook.org/ns/docbook">
+        Weather reading entity beans will only be accessed locally by the session bean. We thus
+        supply only a local interface:
+<ns1597:programlisting xmlns:ns1597="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../source/WeatherStation/src/businessLogic/WeatherReadingLocal.java"/>
+</ns1597:programlisting>
+       </ns1596:para>
+    </ns1594:section>
+    
+    <ns1598:section xmlns:ns1598="http://docbook.org/ns/docbook">
+      <ns1599:title xmlns:ns1599="http://docbook.org/ns/docbook">The Primary Key Class: WeatherReadingPK.java</ns1599:title>
+      <ns1600:para xmlns:ns1600="http://docbook.org/ns/docbook">
+        Our weather station which receives temperature readings from different locations. Each
+        reading must be uniquely identified by, say the date/time together with the location. These
+        two fields together can thus be used for the primary key of the weather reading entity beans:
+      </ns1600:para>
+      <ns1601:para xmlns:ns1601="http://docbook.org/ns/docbook">
+        The primary key class must implement <ns1602:literal xmlns:ns1602="http://docbook.org/ns/docbook">java.io.Serializable</ns1602:literal> so that the
+        container can serialize its instances as BLOBs (binary large objects) to the database.
+      </ns1601:para>
+      <ns1603:para xmlns:ns1603="http://docbook.org/ns/docbook">
+        Our primary key class combines the fields which make up the primary key and supplies
+        an<ns1604:literal xmlns:ns1604="http://docbook.org/ns/docbook">equals</ns1604:literal> method which returns true if the argument object is a weather
+        reading for the same date and location and false otherwise:
+<ns1605:programlisting xmlns:ns1605="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../source/WeatherStation/src/businessLogic/WeatherReadingPK.java"/>
+</ns1605:programlisting>
+      </ns1603:para>        
+    </ns1598:section>
+    
+    <ns1606:section xmlns:ns1606="http://docbook.org/ns/docbook">
+      <ns1607:title xmlns:ns1607="http://docbook.org/ns/docbook">The Local Home Interface: WeatherReadingLocalHome.java</ns1607:title>
+      <ns1608:para xmlns:ns1608="http://docbook.org/ns/docbook">
+        We have to modify the home interface such that the create method takes at least all
+        arguments used to construct the primary key (alternatively our class could automatically
+        generate primary keys):
+<ns1609:programlisting xmlns:ns1609="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../source/WeatherStation/src/businessLogic/WeatherReadingLocalHome.java"/>
+</ns1609:programlisting>
+
+        We have specified a variety of finder methods which return collections of primary keys.</ns1608:para>
+      <ns1610:para xmlns:ns1610="http://docbook.org/ns/docbook"/>
+    </ns1606:section>
+    
+    <ns1611:section xmlns:ns1611="http://docbook.org/ns/docbook">
+      <ns1612:title xmlns:ns1612="http://docbook.org/ns/docbook">The Entity Bean Implementation Class: WeatherReadingBean.java</ns1612:title>
+      <ns1613:para xmlns:ns1613="http://docbook.org/ns/docbook">
+        The bean implementation class hosts the accessors, and supplies an
+        <ns1614:literal xmlns:ns1614="http://docbook.org/ns/docbook">ejbCreate</ns1614:literal> service:
+<ns1615:programlisting xmlns:ns1615="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../source/WeatherStation/src/businessLogic/WeatherReadingBean.java"/>
+</ns1615:programlisting>
+      </ns1613:para>
+    </ns1611:section>
+    
+    <ns1616:section xmlns:ns1616="http://docbook.org/ns/docbook">
+      <ns1617:title xmlns:ns1617="http://docbook.org/ns/docbook">The Weather Station Client Class</ns1617:title>
+      <ns1618:para xmlns:ns1618="http://docbook.org/ns/docbook">
+        The weather station client does not interface directly with the weather reading entity
+        bean. It cannot since we only published local interfaces for it. It looks up the session
+        bean with the naming context and uses the services supplied by it to create and query entity
+        beans indirectly:
+<ns1619:programlisting xmlns:ns1619="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../source/WeatherStation/src/client/application/WeatherStationClient.java"/>
+</ns1619:programlisting>
+       </ns1618:para>
+    </ns1616:section>
+    
+    <ns1620:section xmlns:ns1620="http://docbook.org/ns/docbook">
+      <ns1621:title xmlns:ns1621="http://docbook.org/ns/docbook">The ejb-jar deployment descriptor</ns1621:title>
+      <ns1622:para xmlns:ns1622="http://docbook.org/ns/docbook">
+        The ejb-jar deployment descriptor specifies the remote and local interfaces as well as
+        the bean implementation classes for our two beans. Note that the primary key class is
+        specified as our primary key class. This will be typically stored as a serialized Java
+        object (as a BLOB).
+<ns1623:programlisting xmlns:ns1623="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../source/WeatherStation/META-INF/ejb-jar.xml"/>
+</ns1623:programlisting>
+      </ns1622:para>
+
+      <ns1624:note xmlns:ns1624="http://docbook.org/ns/docbook"><ns1625:para xmlns:ns1625="http://docbook.org/ns/docbook">
+        We specified the implementation of the finder methods in EJB-QL. This should be
+        readable to you, but we shall cover the EJB Query Language in more detail in the following chapter.
+      </ns1625:para></ns1624:note>
+    </ns1620:section>
+    
+    <ns1626:section xmlns:ns1626="http://docbook.org/ns/docbook">
+      <ns1627:title xmlns:ns1627="http://docbook.org/ns/docbook">Compiling, Deploying and Running our WeatherStation</ns1627:title>
+      <ns1628:para xmlns:ns1628="http://docbook.org/ns/docbook">
+        Once again we use our generic targets.xml to do this steps via ant in the standard way.
+      </ns1628:para>
+    </ns1626:section>
+    
+  </ns1564:section>

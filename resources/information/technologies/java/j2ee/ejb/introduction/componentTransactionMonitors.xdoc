@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.introduction.componentTransactionMonitors"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>TMs, ORBs, CTMs and EJB</title>
+  <para>
+    Enterprise Java Beans actually defines a portable standard for Component Transaction
+    Monitors (CTMs). So, what are CTMs. CTMs are the result of the merger between Transaction
+    Processing Monitors (TP Monitors) and Object Request Brokers.</para>
+  <para/>
+  
+  <section>
+    <title>Transaction Processing Monitors (TP Monitors)</title>
+    <para>
+      TP Monitors have been around since the late 1960's (IBM introduced CICS in 1968).
+      They provided a fault tolerant environment for distributed procedural systems which were
+      typically written in COBOL. In addition to providing fault tolerance, they also provided
+      resource management and full support for transactions and support for synchronous and
+      asynchronous messages.
+    </para>
+    <para>
+      However, transaction monitors do not support the concept of objects with state
+      information and polymorphic service requests. They support procedural transaction
+      processing. Furthermore, the code was typically not portable between vendors (e.g. CICS
+      applications could not be directly ported onto TUXEDO).
+    </para>
+  </section>
+  
+  <section>
+    <title>Object Request Brokers</title>
+    <para>
+      Object request brokers are used to broker service requests to remote objects. They
+      thus provide a communication backbone between remote objects, but they do not supply
+      automatical support for concurreny, transactions, resource management, security and fault
+      tolerance. Even though the primitives for these may be available, it is still the
+      developer's responsibility to incorporate the required support into the business objects.
+      This is often a non-trivial, expensive and error-prone task.
+    </para>
+    <para>
+      The most well known Object Request Brokers are CORBA, DCOM and Java's RMI.
+    </para>
+    
+    <section>
+      <title>CORBA</title>
+      <para>
+        CORBA stands for Common Object Request Broker Architecture. It is a common (public)
+        standard maintained by the Object Management Group which is a non-profit organization
+        supported by virtually the entire IT industry.
+      </para>
+      <para>
+        The former is the industry standard which supplies a way for one object to request
+        services from another object without knowing 
+        <itemizedlist>
+          <listitem>
+            <para>the implementation language of the object supplying the service, </para>
+          </listitem>
+          <listitem>
+            <para>details of the platform hosting the object (e.g. machine or operating system), </para>
+          </listitem>
+          <listitem>
+            <para>the location of the object, </para>
+          </listitem>
+          <listitem>
+            <para>the communication protocol used to communicate with the object.</para>
+          </listitem>
+        </itemizedlist>
+      </para>  
+      <para>
+        CORBA implements a complete object model including polymorphism, multiple
+        inheritence, exceptions, event notification, automatic object activation and other
+        features. In addition to this, CORBA specifies a range standard interfaces for common
+        services and industry specific facilities. CORBA's Internet Inter-ORB Protocol (IIOP)
+        ensures that Object Request Brokers from different vendors can communicate directly,
+        i.e. that I can request a service of a remote object residing within one vendor's ORB
+        from another object using another vendor's ORB.
+      </para>
+      <para>
+        Many companies including Sun, Inprise, IBM, HP, BEA, Orbix, ...have their own
+        COERBA implementation. Many operating systems and many software development products
+        ship with CORBA. Even the Java Development Kit ships with a simple Object Request Broker.
+      </para>
+    </section>
+    
+    <section>
+      <title>DCOM</title>
+      <para>
+        DCOM is Microsoft's proprietry response to CORBA. It shares many features with
+        CORBA and most of Microsoft's applications support DCOM. However, DCOM is not truly
+        object-oriented because it does not fully support object identity. Furthermore, it is a
+        proprietry standard which largely binds you to the Microsoft platform which does not
+        define industry wide service interfaces.
+      </para>
+    </section>
+    
+    <section>
+      <title>Java RMI</title>
+      <para>
+        Java's Remote Method Invocation framework offers a Java specific ORB. Except for the
+        language transparency and industry-wide standards for service interfaces, it shares
+        virtually all features with CORBA. In addition it supports run-time relocation of
+        objects as well as classes.
+      </para>
+      <para>
+        The later versions of the RMI protocol are built on top CORBA's IIOP so that Java
+        objects can call (non-Java) CORBA objects directly through RMI.
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>Component Transaction Monitors (CTMs)</title>
+    <para>
+      Component Transaction Monitors aim to provide developers with features from both,
+      transaction monitors and object request brokers. They aim to provide a communication
+      backbone between objects (components) with automatic support for transactions, resource
+      management (e.g. component activation and resource pooling), security and persistence.
+    </para>
+    <para>
+      Although the big TP vendors like IBM and BEA started working on CTMs soon after the
+      first release of CORBA, the first CTM on the market was the Microsoft Transaction Server
+      (MTS). It is built on top of Microsoft's component model (DCOM).
+    </para>
+    <para>
+      However, MTS has a number of drawbacks, most of them arising from the fact that MTS
+      is built on top of DCOM and not on top of CORBA. Because DCOM is not truly object-oriented
+      by not supporting object identity, MTS itself only supports stateless components. Other,
+      CORBA-based CTMs typically support stateful and persistent components. Also, the fact that
+      MTS is DCOM-based makes integration with components on non-Microsoft platforms diffcult.
+    </para>
+    <para>
+      All other CTMs use CORBA for their communication backbone. However, the remaining
+      problem was the code portability between CTM vendors. Clients were naturally reluctant to
+      lock into a specific vendor.
+    </para>
+  </section>
+  
+  <section>
+    <title>EJB as a open standard for CTMs</title>
+    <para>
+      Enterprise Java Beans aims to specify an industry-wide standard for Component
+      Transaction Monitors.
+    </para>
+    <para>
+      The CTM vendor community has embraced the EJB standard enthusistically and already at
+      this stage most CTMs implement one of the EJB standards. The server side component model
+      is directly portable between products from different CTM vendors implementing the EJB standard.
+    </para>
+  </section>
+</section>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.repository.binaryFiles"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Managing binary files with CVS</title>
+  <para>
+    CVS provides quite extensive version control functionality for text files.
+    Its abilities in the context of binary files is a lot more limited. 
+  </para>  
+  <section>
+    <title>Functional limitations fror binary files</title>
+    <para>
+      The following functionalities are available for text files,but not for 
+      binary files:
+      <orderedlist>
+        <listitem><para>
+          Though CVS identifies when binary files have been changed, it
+          cannot reliably spot the differences. The <command>diff</command>
+          command only works for text files. Modifications must hence be 
+          tracked via log messages.
+        </para></listitem>
+        <listitem><para>
+          Because CVS is not aware of the file format of the binary file, it
+          cannot merge the differences. Nor can it resolve any conflicts.
+          It can only let users choose between the versions and the merging
+          and conflict resolution is left to the user who could potentially
+          use external tools.
+        </para></listitem>
+      </orderedlist>
+    </para>
+  </section>
+  
+
+  <section>
+    <title>Storing binary files in CVS</title>
+    <para>
+      CVS makes a number of modifications to text files when they are
+      committed into the repository or when they are extracted from the
+      repository. These modifications would potentially corrupt binary
+      files. The modifications include
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>Changing line delimiters</title>
+          <para>
+            By default CVS converts line delimiters between its internal 
+            representation and that used by the file system onto which 
+            the file is copied or from which the file is sourced. This 
+            enables clients running on different operating systems to 
+            effectively work off the same repository.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Keyword substitution</title>
+          <para>
+            However,this substitution process will typically corrupt binary files.
+            Furthermore, CVS provides a mechnism, <emphasis>keywords</emphasis>,
+            to embedd additional information in text files. These keyword tags are 
+            modified by CVS when a file is committed or updated. Binary data may,
+            by chance, map onto one of these keywords and is thus in danger of being
+            altered.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>  
+  </section>
+  
+  <section>
+    <title>Storing binary files in CVS</title>
+    <para>
+      Thus, to store binary files in CVS one has to switch off both, conversion 
+      of line delimiters and keyword substitution. This is done via the
+      <option>-kb</option>:
+      <synopsis><![CDATA[
+cvs add -kb <binaryFile>
+
+cvs commit -m "added binary file ..." <binary file>
+      ]]></synopsis>
+    </para>
+    <note>
+      <para>
+        At times may want to switch of keyword substitution even for text
+        files -- perhaps because they may contain text which would be interpreted
+        as keyword strings. This can be done via the <option>-ko</option>
+        option.
+      </para>
+    </note>
+  </section>
+  
+  
+</section>
+ 

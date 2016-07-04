@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xml:id="resources.information.concepts.architecture.patterns.pipesAndFilters.qualityAttributeMeasures" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+
+  <title>Quality attribute measures</title>
+  <para>
+    In the spirit of ABAS (Attribute-Based Architectural Styles) we want to see the relationship
+    of the various patterns with the quality attributes.
+  </para>
+  
+  <section>
+    <title>Performance</title>
+    <para>
+      <emphasis>Performance</emphasis> is often difficult to achieve with pipes-and filters 
+      based architectures due to the multiple decoupled processing steps.
+    </para>     
+  </section>
+  
+  <section>
+    <title>Availability/reliability</title>  
+    <para>
+      Many aspects of the availability/reliability quality attribute may be naturally realized 
+      within the context of a pipes and filters based architecture by introducing
+      <itemizedlist>
+        <listitem><para>
+          pipes which provide <emphasis>guaranteed delivery</emphasis>,  
+        </para></listitem>
+        <listitem><para>
+          and basing routing decisions across processing resources (filter instances)
+          on load principles.
+        </para></listitem>
+      </itemizedlist>
+      The one aspect which may prove problematic in a <emphasis>pipes and filters</emphasis>
+      based architecture is <emphasis>consistency</emphasis>. The independence of the
+      filters and the lack of a controller element across filters makes the introduction of
+      transactions difficult.
+    </para>
+  </section>
+
+  <section>
+    <title>Modifiability</title>
+    <para>
+      The modifiability quality attribute is generally well supported in a pipes and filters
+      based architecture where new flows can easily be assembled by connecting
+      different filters to one another. However, because filters are only indirectly coupled the
+      ripple affect of a modification to a filter may be more difficult to establish.
+    </para>
+  </section>
+  
+  <section>
+    <title>Time-to-market</title>
+    <para>
+      This quality attribute is often one of the main drivers behind a pipes-and-filters
+      based architecture where new applications may be rapidly assembled from
+      filters which may partially exist already. Pipes and filters based architectures naturally
+      leverage of filter re-use.
+    </para>
+  </section>
+  
+  <section>
+    <title>Integrability</title>
+    <para>
+      The idea of pipes feeding into filters which may transform messages into a format
+      suitable for integration with a service provider is attractive. On the other hand, existing
+      implementations of service providers are often not directly integrable via a service
+      request message sent along a pipe and just hence be explicitly called from
+      within a filter.
+    </para>
+    <para>
+      Often integrability is achieved by chaining  linkage filter to an interface filter
+      to another transformation filter.
+    </para>
+  </section>
+  
+  <section>
+    <title>Security</title>
+    <para>
+      Security if often more difficult to achieve in the context of a pipes and filters based
+      architecture where filters can be combined to form new work flows. Often the
+      first filter needs to perform authorization for the entire work flow. Alternatively
+      and additionally the security credentials typically need to be passed along with
+      the message enabling each filter to do its own authentication.
+    </para>
+  </section>
+</section>

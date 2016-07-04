@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The Business Process Execution Engine (BPEE)</title>
+    <para>
+        The business process execution engine executes business processes defined for services. It takes a business
+        process specification through the process of executing the business process across lower level services,
+        routing and transformations.
+    </para>
+    
+    <section>
+        <title>Languages used to specify business processes</title>
+        <para>
+            Business processes may be specified in a number of languages. Usually business analysts
+            use a diagramatic language like UML or BPMN to specify business processes. These can be
+            executed directly by a business process execution engine, or they may be compiled into
+            a standard lower level language like the <emphasis>Business Process Execution Language</emphasis>
+            (BPEL), <emphasis>Business Process Modeling Language</emphasis> (BPML) or one of a number
+            of proprietary or vendor specific business process execution languages. The BPEE loads the
+            business process definition as provided in one of the business process execution languages 
+            and executes it.
+            <note><para>
+                For certain services the business processes may be encoded in a programming language like Java
+                or C#. In such cases the run-time environment for these software artifacts acts as a BPEE.
+            </para></note>
+        </para>
+    </section>
+    
+    <section>
+        <title>Maintaining the state of a business process</title>
+        <para>
+            The BPEE engine is responsible for maintaining the state of a business process and for
+            correlating responses with requests.
+        </para>
+    </section>
+    
+    <section>
+        <title>Manual work flow steps</title>
+        <para>
+            A BPEE engine typically alows for certain work flow steps to be executed manually, In this case
+            the BPEE submits a request through some portal for manual processing and receives the deliverables
+            through some other portal.
+        </para>        
+    </section>
+    
+    <section>
+        <title>Long running business processes</title>
+        <para>
+            Some business processes may run for a very long time (<abbrev>e.g.</abbrev> for several months.
+            BPEEs have explicit support for long-running business processes.
+        </para>
+    </section>
+    
+    <section>
+        <title>Compensation</title>
+        <para>
+            Since business processes may be long-running, the default approach to maintaining environmental integrity
+            is through compensating processes and not through transactions which require resource locking and result
+            in the transaction being either committed or rolled back.
+        </para>
+        <para>
+            The approach is thus to define for each work flow a compensating work flow which effectively undoes the
+            original work flow. Upon reaching an unhandled error or exception, the BPEE rolls back the business process
+            for the work flow by executing the corresponding compendating work flows.
+        </para>
+    </section>
+    
+</section>        

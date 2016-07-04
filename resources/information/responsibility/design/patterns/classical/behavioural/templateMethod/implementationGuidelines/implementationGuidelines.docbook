@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Implementation guidelines</title>
+    <para>
+        The implementation requires that an abstract class provides either an interface
+        specification for a work flow step or a concrete implementation which may or may
+        not be overridden.
+    </para> 
+    
+    <section>
+        <title>Specifying the requirements for work flow step realizations</title>
+        <para>
+            The template method may specify one of the following for the realization of
+            individual work flow steps:
+            <orderedlist>
+                <listitem><formalpara>
+                    <title>A realization must be provided by concrete work flows</title>
+                    <para>
+                        In this case the method is declared abstract.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>A default realization may be overridden</title>
+                    <para>
+                        In this case the abstract work flow provides a normal concrete, virtual
+                        method.              
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>A fixed implementation which must be used by concrete work flows</title>
+                    <para>
+                        In this case the abstract work flow provides a <emphasis>{complete}</emphasis>
+                        method which may not be overridden. In Java the method would be declared
+                        <emphasis>final</emphasis>.
+                    </para>
+                </formalpara></listitem>
+            </orderedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Overriding work flow steps</title>
+        <para>
+            When overriding work flow steps one should be guided by insight from design-by-contract
+            which states that when overriding a service
+            <orderedlist>
+                <listitem><para>
+                    preconditions may never be increased, and
+                </para></listitem>
+                <listitem><para>
+                    post-conditions may never be decreased.
+                </para></listitem>
+            </orderedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Minimize number of services which must be realized by sub-classes</title>
+        <para>
+            The following guidelines may assist in reducing the number of methods which
+            concrete templates need to implement:
+            <itemizedlist>
+                <listitem><para>
+                    If there are sensible default implementations, provide them.
+                </para></listitem>
+                <listitem><para>
+                    If a work flow step is optional, provide a default implementation with an empty body.  
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    
+    
+</section>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <title>Orchestrating Services</title>
+    
+    <indexterm>
+        <primary>service orchestration</primary>
+        <secondary>with JBI</secondary>
+    </indexterm>
+    
+    <para>
+       Service Orchestration is a blanket term for any service which itself makes use of 
+       (usually multiple) other services via the ESB. As such, it is not all that much of
+       a special case, and it likely more common that any other type of service.
+    </para>
+    <para>
+        When viewed in the context of, say, the URDAD design methodology, we see that orchestration
+        is usually performed by the <emphasis>use-case controller</emphasis> at a particular level
+        of granularity. A use-case controller assembles a business process across multiple other
+        services purely based on their contracts. The actual services may be hosted by a service engine
+        on the ESB, or by an external party. Furthermore, the service (as invoked by the use-case controller)
+        may in fact be offered by an adaptor that adapts its requirements to the offering of a particular
+        provider.
+    </para>
+    <para>
+        JBI offers immense value in fully isolating a high-level service from the details of the services which
+        it uses, in terms of
+        <itemizedlist>
+            <listitem>
+                <para>location (internal or external to the environment)</para>
+            </listitem>
+            <listitem>
+                <para>implementation technology</para>
+            </listitem>
+            <listitem>
+                <para>transport protocol (if the services are external), and</para>
+            </listitem>
+            <listitem>
+                <para>functional differences in terms of service contract, which may be absorbed by an adaptor
+                that implement's the contract required by the high-level service</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        In practice, there are different types of high-level (orchestrator) services based on the implementation technology,
+        such as
+        <itemizedlist>
+            <listitem>
+                <para>short-running, often transactional services, similar to what one would build in straightforward Java / EJB, and</para>
+            </listitem>
+            <listitem>
+                <para>long-running, stateful business processes which may span many client-service interactions.</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        Recall, however, that JBI itself treats the details of service units as <quote>black boxes</quote>, and in both cases the JBI
+        environment only cares about the static service linkages, i.e. the provides / consumes relationships. So, regardless of
+        implementation technology or style, a high-level service (such as an instance claim submissions service) may look as follows:
+    </para>
+    
+    <figure>
+        <title>Orchestrating services</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="serviceOrchestration.png"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+    
+    <section>
+        <title>What defines orchestration ?</title>
+        <para>
+            Since orchestration simply involves the invocation of other services via the ESB (which a number of other
+            scenarios - such as building adaptors - also involves) one is tempted to ask why certain services are classified
+            as performing orchestration, whilst other are not? Orchestration generally describes services implemented in
+            a technology which can invoke other services with the following qualities amongst others:
+            <itemizedlist>
+                <listitem>
+                    <para>the high-level service can construct request messages to low-level services
+                    using any information at its disposal, including the output(s) of low-level services
+                    which were previously invoked</para>
+                </listitem>
+                <listitem>
+                    <para>the high-level service has mechanisms to deal with individual low level services failing
+                    or being refused (because a precondition was not met), and can itself follow a different
+                    business process to <quote>deal</quote> with such failures (such as the <literal>try { ... } catch (...) { ... }</literal>
+                    block in the Java programming language.</para>
+                </listitem>
+                <listitem>
+                    <para>the high-level service has a mechanism(s) at its disposal to ensure the reliability
+                    and consistency of the business process, by ether enlisting low-level services in a transaction
+                    which can eb rolled back if necessary, or by being able to invoke compensating services to
+                    compensate for / undo partial failure (such as the <literal><![CDATA[<compensationHandler>]]></literal>
+                    element of WS-BPEL</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            
+        </para>
+    </section>
+    
+    <section>
+        <title>Dynamic endpoint resolution</title>
+        <para>
+            By default, most JBI orchestration services are analogous to EJB or Spring-based services, in that they declare
+            a set of static service requirements to the environment (via each service unit's <literal>jbi.xml</literal>), for
+            which the environment <quote>injects</quote> suitable service endpoints based on what is currently available. Each
+            service thus specifies the services it would like to use up-front.
+        </para>
+        <para>
+            Some high-level services, however, do not know up-front which specific service providers they will use.
+            A simple example could be a high-level home selling service, which would like to find and use all currently
+            available real-estate agent services on the ESB. They will require the ability to look up service endpoints 
+            (by service name or type) on-the-fly, and most service engines / technologies that allow for orchestration 
+            provide a means for this, such as
+            <itemizedlist>
+                <listitem>
+                    <para>being able to assign instances of <literal>WS-Addressing</literal> endpoint references
+                        (which may have been created in the context of the business process) to service invocations,
+                    as in <literal>WS-BPEL</literal>, or</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        providing programmatic access to the JBI API (such as in Java-based service providers) in order
+                        for the process to query the environment (similar to a Java JNDI lookup) for service endpoints.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+</section>

@@ -1,0 +1,94 @@
+<!DOCTYPE project [
+  <!ENTITY targets SYSTEM "../common/targets.xml">
+]>
+
+<project name="Velocity based URDAD documentation generation" 
+         default="run" 
+         basedir=".">
+  
+  <property file="build.properties"/>
+  
+    <path id="resources">
+    <fileset dir="resources">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  
+  <target name="clean"
+    description="Removes the build directories">
+    <delete dir="${buildDir}" />
+  </target>
+  
+  <target name="prepareDirectories" depends="clean">
+    <echo message="Creating build and distribution directories ..." />
+    <mkdir dir="${buildDir}" />
+    <mkdir dir="${distDir}" />
+  </target>
+  
+  <target name="compile" depends="prepareDirectories">
+    <echo message="Compiling ..."/>
+    <javac srcdir="${srcDir}"
+      destdir="${buildDir}"
+      deprecation="${compile.deprecation}"
+      debug="${compile.debug}"
+      includes="**/*.java"
+      >
+      <classpath path="${classpath}">
+        <path refid="resources"/>
+        <path location="${buildDirCommon}"/>
+      </classpath>
+    </javac>
+  </target>
+  
+  
+  <target name="jar" depends="compile">
+    <echo message="Creating jar ..."/>
+    <delete file="${distDir}/${jar}"/>
+    <jar jarfile="${distDir}/${jar}"> 
+      <fileset dir="${buildDir}" includes="**/*.class"/>
+    </jar>
+  </target>
+  
+  <target name="runDocGen" depends="jar">
+    <echo message="Running the ${docGenAppName} application:" />
+	<echo message='Usage: ant runDocGen -Dargs="pathToTemplate pathToModel qualifiedUseCaseName"'/> 
+	<echo message='Example: ant runDocGen -Dargs="templates/urdadStandardReport.vm models/insurance.xml insurer::claims::Claims::processClaim"'/> 
+    <java fork="on" classname="${docGenAppName}" >
+      <jvmarg value="-Xmx80m"/>
+      <classpath path="${classpath}" >
+        <path refid="resources"/>
+        <pathelement location="${distDir}/${jar}"/>
+      </classpath>
+      <arg line="${args}"/>
+    </java>
+  </target>
+	  
+	  <target name="runModelValidation" depends="jar">
+	    <echo message="Running the ${modelValidationAppName} application:" />
+		<echo message='Usage: ant runmodelValidation -Dargs="pathToModel"'/> 
+		<echo message='Example: ant runModelValidation -Dargs="models/insurance.xml"'/> 
+	    <java fork="on" classname="${modelValidationAppName}" >
+	      <jvmarg value="-Xmx80m"/>
+	      <classpath path="${classpath}" >
+	        <path refid="resources"/>
+	        <pathelement location="${distDir}/${jar}"/>
+	      </classpath>
+	      <arg line="${args}"/>
+	    </java>
+	  </target>
+  
+  <target name="test" depends="jar">
+    <echo message="Running the test: ${testDocGenAppName} 
+    ${appName} application:" />
+    <java fork="on" classname="${testDocGenAppName}" >
+      <jvmarg value="-Xmx80m"/>
+      <classpath path="${classpath}" >
+        <path refid="resources"/>
+        <pathelement location="${distDir}/${jar}"/>
+      </classpath>
+      <arg line="${args}"/>
+    </java>
+  </target>
+  
+  
+</project>

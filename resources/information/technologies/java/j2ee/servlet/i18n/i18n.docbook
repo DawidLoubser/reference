@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Internationalisation of Web Applications</title>
+    
+    <indexterm>
+        <primary>Internationalisation</primary>
+        <secondary>web applications</secondary>
+    </indexterm>
+    
+    <para>
+        Web applications deployed on the public internet (or even in large organisations, especially
+        in a country like South Africa which has eleven official languages) must seek to cater for
+        their clients as conveniently as possible.
+    </para>
+    <para>
+        One of the most effective ways to place a potential client at ease is to offer a service in his
+        own language, and to adhere to his conventions regarding the formatting of information (such
+        as numbers and dates). The Java Servlets API, together with JSTL (JSP Standard Tag Library) tags
+        in JSP web pages, make it comparatively simple to localise your application, by
+        <itemizedlist>
+            <listitem>
+                <para>allowing you to store application messages in Java resource bundles,</para>
+            </listitem>
+            <listitem>
+                <para>automatically selecting localised messages based on incoming requests, and by</para>
+            </listitem>
+            <listitem>
+                <para>providing a range of numeric and date formatting options</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>Resource Bundles</title>
+        <indexterm>
+            <primary>Resource Bundle</primary>
+        </indexterm>
+        <para>
+            The most common mechanism for specifying user interface messages in different languages, is to
+            keys (message identifiers) and messages as <emphasis>Java Property Files</emphasis> (text files).
+            These text files are packaged together with your classes in your package structure.
+        </para>
+        <para>
+            For example, a couple of english user interface messages could be specified in a file as follows:
+            <programlisting><![CDATA[
+# Example user interface messages
+greeting = Good day to you
+error.fileNotFound = Sorry, we couldn't locate the file
+company.industry = Insurance Industry
+]]></programlisting>
+        </para>
+        <para>
+            The name of your Property Files for resource bundles must adhere to a naming convention, which is specified as
+            <programlisting><![CDATA[
+BaseName_languageCode.properties
+]]></programlisting>
+            for example
+            <programlisting><![CDATA[
+UIMessages_en.properties
+]]></programlisting>
+            <note>
+                <para>
+                    The language code used is the standard ISO 639 language code (<literal>en</literal> = English, <literal>af</literal> = Afrikaans)
+                    which may also include a regional specifier, such as <literal>en_US</literal> or <literal>en_GB</literal>.
+                </para>
+            </note>
+        </para>
+        <para>
+            Your properties file(s) may now be translated (often by a professional translator with little technical knowledge) to
+            include other languages. For out example above, we may produce a corresponding <literal>UIMessages_af.properties</literal>
+            containing
+            <programlisting><![CDATA[
+# Voorbeeldige gebruikerskoppelvlakboodskappe
+greeting = Goeie dag
+error.fileNotFound = Jammer, ons kon die leer nie opspoor nie
+company.industry = Versekeringsindustrie
+]]></programlisting>
+        </para>
+        <para>
+            These files are packaged together with your Java code in the package structure, for example
+            <programlisting><![CDATA[
+myProject/
+    src/
+        za/
+            co/
+                myApp/
+                    ui/
+                        UIMessages_en.properties
+                        UIMessages_af.properties
+                        ...
+                ]]></programlisting>
+        </para>
+        <para>
+            Different application environments typically have different mechanisms for easily loading
+            these resource bundles. For Java EE web applications, one may use resource bundles when creating
+            standard JSP/Servlets applications, or when using the Java Server Faces framework.
+        </para>
+    </section>
+    
+    <section>
+        <title>Localising JSP + Servlets Web Applications</title>
+        <para>
+            One of the features of the <acronym>JSTL</acronym> (JSP Standard Tag Library) is a set of
+            custom tags for localisation. We can configure JSTL to load and/or use specified bundles, either
+            on a page-by-page basis, or globally in the <literal>web.xml</literal> deployment descriptor.
+        </para>
+        <para>
+            For small applications, it is often customary to have all user interface messages specified in
+            a single resource bundle. Even for larger applications, one may still wish to specify one
+            <quote>default</quote> resource bundle. This is done by specifying a <literal>javax.servlet.jsp.jstl.fmt.localizationContext</literal>
+            context parameter in your application's <literal>web.xml</literal> descriptor, and indicating the
+            <emphasis>base name</emphasis> (package name and base file name, omitting the language code
+            and file extension) of your bundle:
+            <programlisting language="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+    <!-- Globally configure a default resource bundle
+    for internationalisation -->
+    <context-param>
+    	<param-name>
+    	  javax.servlet.jsp.jstl.fmt.localizationContext
+    	</param-name>
+    	<param-value>example.basic.Messages</param-value>
+    </context-param>
+    
+    ...
+    
+</web-app>
+                ]]></programlisting>
+            
+        </para>
+        
+        <section>
+            <title>Displaying localised messages</title>
+            <para>
+                JSP pages within the application may now output messages by using the
+                <literal><![CDATA[<fmt:message>]]></literal> tag. The tag will be substituted
+                by the message from the resource bundle, and (by default) the message in the
+                correct language for the requesting user will be displayed (based on the requestor's HTTP
+                headers).
+            </para>
+            <programlisting language="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/1999/xhtml 
+    http://www.w3.org/MarkUp/SCHEMA/xhtml11.xsd"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:jsp="http://java.sun.com/JSP/Page"
+    xmlns:fmt="http://java.sun.com/jsp/jstl/fmt">
+    <head>
+    	<title><fmt:message key="greeting"/></title>
+    </head>
+    <body>
+    	<h1>
+    	    <fmt:message key="greeting"/>
+    	</h1>
+    	<p>
+    	    <fmt:message key="intro"/>
+    	</p>
+    </body>
+</html>
+                ]]></programlisting>
+        </section>
+        
+        
+        <section>
+            <title>Selecting a fall-back locale</title>
+            <para>
+                In many cases, the application may not support (have resource bundles for) a specific user's
+                language. In such a case, the application would have to select one language as the <quote>default</quote>
+                (or <emphasis>fall-back</emphasis>) language. This is also specified globally via a context parameter
+                i the <literal>web.xml</literal> descriptor:
+                <programlisting language="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+    ...
+    
+    <context-param>
+    	<param-name>
+    	  javax.servlet.jsp.jstl.fmt.fallbackLocale
+    	</param-name>
+    	<param-value>en</param-value>
+    </context-param>
+    
+    ...
+    
+</web-app>
+
+                    ]]></programlisting>
+            </para>
+        </section>
+        
+    </section>
+    
+    
+    <!-- TODO: JSF (simpler with the fully configuration-based loading of bundles into variables?) -->
+    <!-- TODO: additional bundles in pages (i.e. not just one default global one)-->
+    
+</section>

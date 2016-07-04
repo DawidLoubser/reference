@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.c.io.closingFiles"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Closing files</title>
+  <para>
+     Files are simply closed via
+    <programlisting><![CDATA[
+int fclose(FILE *fp);  
+    ]]></programlisting>
+    which returns <returnvalue>0</returnvalue> on success and <returnvalue>-1</returnvalue>
+    if the file could not be closed successfully.
+  </para>
+  <para>
+    You can also close <emphasis>all non-standard streams</emphasis> (<abbrev>i.e.</abbrev>
+    except <literal>stdin</literal>, <literal>stdout</literal>, <literal>stdprn</literal>,
+    <literal>stderr</literal> and <literal>stdaux</literal>) via
+    <programlisting><![CDATA[
+int fcloseall()   
+    ]]></programlisting>
+    which returns the number of streams closed.
+  </para>
+  
+  <section>
+    <title>What happens with open streams when the program ends?</title>
+    <para>
+       If the application ends normally (by reaching the end of <literal>main</literal> or via the
+       <literal>exit()</literal> function), then all buffers are flushed and all streams are closed.
+    </para>
+    <para>
+      However, if the application crashes, files may not be closed and buffers may not be flushed.
+    </para>
+  </section>
+  
+  <section>
+    <title>Flushing buffers</title>
+    <para>
+      To flush the buffer associated with a particular file pointer, you can use 
+      <programlisting><![CDATA[
+int flush(FILE *fp);      
+      ]]></programlisting>
+      which returns <returnvalue>0</returnvalue> on success or <returnvalue>EOF</returnvalue>
+      upon error.
+    </para>
+    <para>
+      Alternatively you can flush all non-standard streams via
+      <programlisting><![CDATA[
+int flushall()      
+      ]]></programlisting>
+      which returns the number of open streams.
+    </para>
+  </section>
+  
+</section>

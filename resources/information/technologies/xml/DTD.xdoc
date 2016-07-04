@@ -1,0 +1,963 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="resources.information.technologies.xml.DTD"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+        
+    <title>Document Type Definitions (DTDs) </title>
+    <section>
+        <title>Introduction </title>
+        <para> In the previous chapter we covered the XML syntax. So far, provided you did not
+            violate the XML syntax rule, you could do anything you like. Often, however you would
+            like to contrain the structure of the XML document further, enforcing certain standards
+            which facilitate the sensible exchange of information. This is where the Document Type
+            Definition (DTD) comes in. </para>
+        <section>
+            <title>What is a DTD?</title>
+            <para> The document type definition is a document which specifies rules which other XML
+                documents should adhere to. </para>
+        </section>
+
+        <section>
+            <title>Why DTDs?</title>
+            <itemizedlist>
+                <listitem>
+                    <para>Have standards for information exchange within industry sector. </para>
+                    <itemizedlist>
+                        <listitem>
+                            <para>e-business</para>
+                        </listitem>
+                    </itemizedlist>
+                </listitem>
+                <listitem>
+                    <para>Enforce standard documentation rules within company.</para>
+                </listitem>
+            </itemizedlist>
+        </section>
+
+    </section>
+
+    <section>
+        <title>A Very Simple Example </title>
+        <para> Let us revisit our simple travel log example and show a simple DTD for it. The XML
+            file could look like this: </para>
+        <figure>
+            <title>Simple Example</title>
+            <programlisting>
+            <xi:include href="DTD/travelLog.xml" parse="text"/>
+            </programlisting>
+        </figure>
+        <para> Note that we have inserted the following line</para>
+        <programlisting>
+        <![CDATA[ <!DOCTYPE travelLog SYSTEM "travelLog.dtd"> ]]>
+        </programlisting>
+        <para> which specifies that file DTD file, <emphasis>travelLog.dtd</emphasis>, should be
+            associated with the root element, <emphasis>travelLog</emphasis>. The keyword
+            <emphasis>SYSTEM</emphasis> is used when a Uniform Resource Identifier (URI) is used to
+            specify a DTD. In the above example the DTD is simply in a file in located the same
+            directory as the XML file itself. </para>
+        <para> Below we show a DTD for the above XML file. The details of the DTD syntax will be
+            explained later in the chapter. For now, let us simply have a look at the DTD:</para>
+        <figure>
+            <title>travelLog DTD</title>
+            <programlisting>
+            <xi:include href="DTD/travelLog.dtd" parse="text"/>
+            </programlisting>
+        </figure>
+        <para> The first line specifies that the <emphasis>travelLog</emphasis> element contains
+            multiple <emphasis>trip</emphasis>s. The second line specifies that each
+            <emphasis>trip</emphasis> contains the elements listed in the round brackets. Finally,
+            the last 6 lines specify that each element contains character data. </para>
+        <para> So, the DTD defines the permissable structure of any XML document which implements
+            the DTD (i.e.which is associated with the DTD). What happens if you associate an XML
+            document which does not comply to the DTD specifications with a DTD. The XML document
+            will fail parsing. There are many parsers which enable you to parse an XML document
+            against a DTD. </para>
+    </section>
+
+    <section>
+        <title>Associating DTD with XML file</title>
+        <para> Let us first have a look at the different ways in which we can associate a DTD with
+            an XML document. </para>
+        <para> To associate a DTD with an XML document, one uses the <emphasis>DOCTYPE</emphasis> tag</para>
+        <programlisting><![CDATA[<!DOCTYPE elementName ...DTD specification ...>]]></programlisting>
+        <para> where <emphasis>elementName</emphasis> referes to the element onto which the DTD will
+            be attached. There are basically 3 ways in which we can specify a DTD: </para>
+        <itemizedlist>
+            <listitem>
+                <para>It can be included in the XML document itself. </para>
+            </listitem>
+            <listitem>
+                <para>It can be specified via a Uniform Resourec Identifier (URI). </para>
+            </listitem>
+            <listitem>
+                <para>It can be specified that the DTD is cataloged elsewhere.</para>
+            </listitem>
+        </itemizedlist>
+        <section>
+            <title>A DTD as Part of the XML Document</title>
+            <para> Instead of referring in the document type declaration to a DTD resource we can
+                put the DTD effectively inline into the XML document. This is done by inserting the
+                DTD specification within square brackets into the <emphasis>DOCTYPE</emphasis>
+                declaration. The syntax is </para>
+            <programlisting><![CDATA[<!DOCTYPEelementName[DTDspecification]>]]></programlisting>
+            <para> This approach is illustrated in the following listing:</para>
+            <figure>
+                <title>DTD in XML document.</title>
+                <programlisting>
+                <xi:include href="DTD/travelLogWithDTD.xml" parse="text"/>              
+                </programlisting>
+            </figure>
+            <para> The advantage of this approach is that the DTD is always available with the XML
+                document. However, you have the overhead of always transmitting the DTD with the
+                data and, especially for small data sets or large DTDs, this overhead may be
+                unacceptable. </para>
+        </section>
+
+        <section>
+            <title>Specifying the DTD via a URI</title>
+            <para> This is the most common approach. The syntax is</para>
+            <programlisting><![CDATA[<!DOCTYPE elementName SYSTEM "URI_Specification">]]></programlisting>
+            <para> In our simple example we associated a local DTD file (which resided in the same
+                directory as the XML file) to the XML document.</para>
+            <programlisting><![CDATA[<!DOCTYPE travelLog SYSTEM "travelLog.dtd">]]></programlisting>
+            <para> One can also specify a relative path for the DTD. For example</para>
+            <programlisting><![CDATA[<!DOCTYPE travelLog SYSTEM "../DTDs/travelLog.dtd">]]></programlisting>
+            <para>specifies that the DTD file, <emphasis>travelLog.dtd</emphasis>, is located in a
+                <emphasis>DTDs</emphasis> subdirectory of the parent directory of the directory
+                which hosts the XML document. </para>
+            <para> Generally we can associate any resource accessible by the processing machine. For
+                example </para>
+            <programlisting><![CDATA[<!DOCTYPE travelLog SYSTEM "http://www.AutomobileAssociation.org/DTDs/travelLog.dtd">]]></programlisting>
+            <para>locates a DTD on the web, while</para>
+            <programlisting><![CDATA[<!DOCTYPE travelLog SYSTEM "file://usr/DTDs/travelLog.dtd">]]></programlisting>
+            <para>locates a DTD on the local file system.</para>
+        </section>
+
+        <section id="secPublicDTDID">
+            <title>Public DTD Identifiers</title>
+            <para> Public DTD identifiers are used when the XML processor itself is given the
+                responsibility of selecting where the DTD is obtained from. Often this is done so
+                that the XML processor can manage local copies of DTDs, i.e.to avoid the overheads
+                of everytime obtaining the DTD remotely. </para>
+            <para> The XML processor must maintain a reference list of public DTD identifiers versus
+                their associated URIs. In the XML document the document type declaration specifies a
+                public identifier which the XML processor then maps onto a DTD specifed (typically)
+                via an URI. The syntax is</para>
+            <programlisting><![CDATA[<!DOCTYPE elementName PUBLIC "URI_Specification">]]></programlisting>
+            <para> For example,</para>
+            <programlisting><![CDATA[<!DOCTYPE travelLog PUBLIC "TRAVEL_LOG">]]></programlisting>
+            <para>or</para>
+            <programlisting><![CDATA[<!DOCTYPE travelLog PUBLIC "DTDs/transport/travelLog">]]></programlisting>
+            <para>could be specifying two different DTD identifiers for the
+                <emphasis>travelLog</emphasis> element.</para>
+        </section>
+
+        <section>
+            <title>Specifying both, System and Public DTDs</title>
+            <para> Often one specifies a public identifier as well as a system URI. This allows
+                processors to use a local copy of the DTD if it is available and download the DTD
+                from a URI if it is not available. The public identifier must precede the system
+                identifier so that the XML processor makes a local search before it tries to locate
+                the DTD remotely.</para>
+        </section>
+
+    </section>
+
+    <section>
+        <title>DTD Syntax </title>
+        <section>
+            <title>Defining Valid Elements </title>
+            <para> The syntax for element definitions is as follows:</para>
+            <programlisting>&lt;!ELEMENTelementName(contentSpecification)></programlisting>
+            <section>
+                <title>Element Content Specification</title>
+                <para> The content specification is one of the following: PCDATA : Parsed character
+                    data (i.e.text). Leaf elements often, but not always, contain parsed character
+                    data. EMPTY : Specifies that the element may not have a content. Such elements
+                    are usually used for their attributes. Empty elements are always leaf elements.
+                    ANY : This specifier means that the element can contain any other specified in
+                    the DTD. No structure is thus specified for the element. Since the point of a
+                    DTD is to specify a structure for the data model, the <emphasis>#ANY</emphasis>
+                    element is very seldom used in final DTD files. They are more often used while
+                    the DTD is still under development. In this context one can use
+                    <emphasis>#ANY</emphasis> elements and have a perhaps incomplete, but usable
+                    DTD. Sub-element list : A list of sub-element names with optional cardinality specification.</para>
+            </section>
+
+            <section>
+                <title>Sub-Element Lists</title>
+                <para> Sub-element lists are used when an element contains further elements. The
+                    list elements are separated by either sequence-operator,
+                    (<emphasis>,</emphasis>) and/or choice-operators (<emphasis>|</emphasis>).</para>
+                <para> An optional cardinality constraint can be supplied for each sub-element. XML
+                    defines the following cardinality contraints:</para>
+                <informaltable>
+                    <tgroup cols="2">
+                        <tbody>
+                            <row>
+                                <entry>
+                                    <para>
+                                        <emphasis>?</emphasis>
+                                    </para>
+                                </entry>
+                                <entry>
+                                    <para>optional (0 or 1).</para>
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <para>
+                                        <emphasis>*</emphasis>
+                                    </para>
+                                </entry>
+                                <entry>
+                                    <para>zero or more. </para>
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <para>
+                                        <emphasis>+</emphasis>
+                                    </para>
+                                </entry>
+                                <entry>
+                                    <para>1 or more. </para>
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </informaltable>
+                <para> For example, if we specify a <emphasis>Contact</emphasis> element and its
+                    sub-elements via the following DTD:</para>
+                <figure>
+                    <title>Contacts.dtd</title>
+                    <programlisting>
+                    <xi:include href="DTD/Contacts.dtd" parse="text"/>
+                    </programlisting>
+                </figure>
+                <para> Each contact has one surname, one or more first names, zero or more telephone
+                    numbers, an optional e-mail number, either an id number or a passport number.
+                    The following XML file can be parsed with the above DTD: </para>
+                <figure>
+                    <title>Contacts.xml</title>
+                    <programlisting>
+                    <xi:include href="DTD/Contacts.xml" parse="text"/>                 
+                    </programlisting>
+                </figure>
+            </section>
+
+            <section>
+                <title>Empty Elements</title>
+                <para> An empty element is usually used for the value of its attributes. For
+                    example, to specify an XML version for the HTML image tag we could have the
+                    following element declaration:</para>
+                <programlisting> 
+<![CDATA[
+<!ELEMENT image EMPTY> 
+<!ATTLIST imagefile CDATA #REQUIRED>
+]]>
+                </programlisting>
+                <para> This would parse an XML element of the following form:</para>
+                <programlisting><![CDATA[<imagefile="geek.gif"/>]]></programlisting>
+            </section>
+
+        </section>
+
+        <section>
+            <title>Specifying Parsable Element Structures</title>
+            <para> XML processors (nad parsers) must be able to decide which part of the data model
+                applies by using only the information read in thus far, i.e.without looking forward
+                into the XML document.</para>
+            <para> The following exmaple defines a non-parsable data model:</para>
+            <programlisting><![CDATA[<!ELEMENTContact((name,telNo)|(name,eMailNo))>]]></programlisting>
+            <para>because when the processor reaches a <emphasis>name</emphasis> it does not know
+                whether the name is part of a <emphasis>name,telNo)</emphasis> or a
+                <emphasis>(name,eMailNo)</emphasis> structure. The processor would have to look
+                ahead into the XML document to make that decision.</para>
+            <para> Fotunately the problem can be easily resolved by rewriting the data model into
+                the following form:</para>
+            <programlisting> &lt;!ELEMENTContact(name,(telNo|eMailNo))></programlisting>
+            <para>Now the XML processor knows for each element (as it is read) which data model applies.</para>
+        </section>
+
+        <section>
+            <title>Parsing XML documents</title>
+            <para> Many XML editors (like XML-Spy) have a built in validating parsers. A validating
+                parser not only checks whether the syntax of the XML document is correct, but also
+                validates the XML document against a DTD. XML-Spy validates your XML document
+                automatically when you attempt to save any changes.</para>
+            <para> Alternatively you can use parsers which you can download freely from, for
+                example, IBM, Sun and Microsoft. Another option is to use one of the on-line
+                parsers, like the one available from the Scolarly Technology group at Brown
+                University (see http://www.stg.brown.edu/service/xmlvalid/).</para>
+        </section>
+
+        <section>
+            <title>Attribute Definition </title>
+            <para> The DTD also specifies the attributes which may be assigned to elements. For example,</para>
+            <programlisting>
+            <![CDATA[ 
+<!ELEMENTtelNo(#PCDATA)> 
+<!ATTLISTtelNopreferred(true|false)"false">
+            ]]>
+            </programlisting>
+            <para>specifies that the <emphasis>telNo</emphasis> has an attribute specifying whether
+                the telephone number is the preferred telephone number or not and</para>
+            <programlisting> 
+            <![CDATA[
+<!ELEMENTPackage(Sender,Item+)> 
+<!ATTLISTPackage shippingCompanyCDATA#REQUIRED insured(true|false)"false">
+            ]]>
+            </programlisting>
+            <para>specifies two attributes for the element <emphasis>Package</emphasis>, the name of
+                the shipping company as a character string and an attribute,
+                <emphasis>insured</emphasis>, which can aquire the values, <emphasis>true</emphasis>
+                and <emphasis>false</emphasis> with default value <emphasis>false</emphasis>.</para>
+            <section>
+                <title>DTD Syntax for Attribute Specification</title>
+                <para> The general syntax for attribute specifications is</para>
+                <programlisting><![CDATA[<!ATTLISTelementNameattributeList>]]></programlisting>
+                <para>where each attribute in the attribute list is defined by supplying a name, a
+                    type and optionally a specification for the default value handling:</para>
+                <programlisting> attributeNameattributeType[defaultValueSpecification]</programlisting>
+                <para> Attributes in the attribute list are separated by white spaces (e.g.space,
+                    tab or end-of-line).</para>
+            </section>
+
+            <section>
+                <title>Attribute Types</title>
+                <para> The attribute type may be one of the following:</para>
+                <para> CDATA : A character string attribute. ID : A name which is unique within the
+                    document and which is used as an identifier. IDREF : This type specifies that
+                    the attribute value must be the value of an ID used elsewhere in the same
+                    document. <emphasis>IDREF</emphasis>s are used to create links within the same
+                    document. IDREFS : A list of references to IDs separated by spaces. ENTITY :
+                    name of a pre-defined external entity. ENTITIES : A list of entity names
+                    separated by spaces. Enumerated values : An enumeration of named tokens for
+                    discrete values. NMTOKEN : Named tokens which are not predefined in an
+                    enumeration list. NMTOKENS : A list of named tokens. NOTATION : Enables you to
+                    specify how a notation type should be interpreted.</para>
+            </section>
+
+            <section>
+                <title>Default Values for Attributes</title>
+                <para> Default values for attributes may be supplied. Alternatively one can specify
+                    in the DTD the handling of default values. Recall the attribute specification
+                    (how each attribute in the elements attribute list is specified)</para>
+                <programlisting> attributeNameattributeType[defaultValueSpecification]</programlisting>
+                <para>Here the <emphasis>defaultValueSpecification</emphasis> may be one of the following:</para>
+                <para> Supplying a default value : When a default value is supplied the dafult value
+                    will be used for elements which do not contain the specified attribute.
+                    #REQUIRED : Used to specify that the attribute must be supplied with every
+                    instance of the element &quot; no default values will be assumed. #IMPLIED : The
+                    attribute may be supplied as an attribute or as a sub-element within the content
+                    of the element. #FIXED : The <emphasis> #FIXED</emphasis> keyword must be
+                    followed by the attribute value. The attribute value is expected to be always
+                    equal to the supplied fixed value. If it is not, parsing will fail. If the
+                    attribute is not at all supplied, the default value will be assumed.</para>
+            </section>
+
+        </section>
+
+        <section>
+            <title>General Entities </title>
+            <para> Entities are really macros which are expanded by XML processors. General entities
+                are specified in the DTD or document definition block using the following syntax:</para>
+            <programlisting><![CDATA[ <!ENTITY entityName "replacementText">]]></programlisting>
+            <section>
+                <title>A Very Simple Entity</title>
+                <para>For example, we could define an entity, <emphasis>STC</emphasis>, within a DTD
+                    in the following way</para>
+                <programlisting><![CDATA[ <!ENTITY STC "Solms Training and Consulting"> ]]></programlisting>
+                <para>and every reference to the entity, <programlisting>&amp;STC;</programlisting>, would be replaced 
+                by<emphasis>Solms Training and Consulting</emphasis>.</para>
+            </section>
+
+            <section>
+                <title>Referencing Entities</title>
+                <para> To reference an entity from within an XML document one uses the syntax</para>
+                <programlisting> &amp;entityName;</programlisting>
+                <para>The entity name must thus be prepended by an ampersand
+                    (<emphasis>&amp;</emphasis>). The entity reference is terminated by a
+                    semi-colon. For example,</para>
+                <programlisting> &lt;TrainingInstitution> &amp;STC; &lt;/TrainingInstitution></programlisting>
+                <para>would be expanded to</para>
+                <programlisting> &lt;TrainingInstitution> SolmsTrainingandConsulting &lt;/TrainingInstitution></programlisting>
+            </section>
+
+            <section>
+                <title>Nested Entities</title>
+                <para> We can nest entities in the following way:</para>
+                <para> we might define an entity, <emphasis>STC</emphasis>, within a DTD in the
+                    following way:</para>
+                <programlisting>
+                    <xi:include href="DTD/STCEntity.dtd" parse="text"/>
+                </programlisting>
+                <para> then, in an XML document referencing the DTD we could use the entity as follows</para>
+                <programlisting>
+                    <xi:include href="DTD/STCEntity.xml" parse="text"/>
+                </programlisting>
+                <para> and the entities would be expanded to yield:</para>
+                <programlisting>
+                    
+                <![CDATA[
+<!--SolmsTraining&Consulting:STCEntity.xml-->
+<!DOCTYPEContactsSYSTEM"D:\fs\SolmsTraining\courses\XML\Book\DTD\STCEntity.dtd">
+<Contacts> 
+    <Contact> 
+        <Name>AlfredMotaung</Name>
+        <WebAddress>www.AlfredMotaung.com</WebAddress>
+        <EMailAddress>MotaungA@initiative.org</EMailAddress> 
+    </Contact>
+    <Contact> 
+        <CompanyName>SolmsTrainingandConsulting</CompanyName>
+        <WebAddress>www.SolmsTraining.co.za</WebAddress>
+        <EMailAddress>enrolments.SolmsTraining.co.za</EMailAddress> 
+    </Contact>
+    <Contact> 
+        <CompanyName>SolmsTrainingandConsulting</CompanyName>
+        <WebAddress>www.SolmsTraining.co.za</WebAddress>
+        <EMailAddress>queries@SolmsTraining.co.za</EMailAddress>
+        <TelephoneNo>+27114864271</TelephoneNumber>
+        <TelephoneNo>+27834120779</TelephoneNumber> 
+    </Contact> 
+</Contacts>
+                ]]>    
+                </programlisting>
+            </section>
+
+            <section>
+                <title>Circular Entity References</title>
+                <para> Even though one entity may refer to another in entity, entities may not refer
+                    to themselves either directly or indirectly (e.g.A refering to B refering back
+                    to A).</para>
+            </section>
+
+            <section>
+                <title>External Entities</title>
+                <para> While internal entities are stored in the XML document itself, external
+                    entities refer to some external text source identified by a URI or a public
+                    identifier. The external source must contain parsable XML or text which is
+                    acceptable to XML parsers as <emphasis>PCDATA</emphasis>.</para>
+                <para> The following examples are legal external entity definitions:</para>
+                <programlisting>
+&lt;!ENTITY STC-Contact SYSTEM &quot;STCContact.xml&quot;>
+    &lt;!ENTITY copyright SYSTEM &quot;http://www.SolmsTraining.co.za/copyrights/XMLBook.txt&quot;> 
+                </programlisting>
+                <para> Another option is to define an entity via a public id which the processing
+                    application will map onto a source from which the entity will be obtained. This
+                    approach is similar to defining public DTD references (see 
+                    <xref linkend="secPublicDTDID"/>).</para>
+            </section>
+
+            <section>
+                <title>Predefined Entities</title>
+                <para> Because XML uses certain characters for its own syntax, these characters must
+                    be supplied in another way. For example,</para>
+                <programlisting> &lt;company>SolmsTraining&amp;Consulting &lt;/company> </programlisting>
+                <para> and</para>
+                <programlisting>
+                <![CDATA[
+<ParkingArea> 
+    <bay number="25"> Peter'scar</bay>
+</ParkingArea> 
+                ]]>
+                </programlisting>
+                <para>are invalid XML syntax because the <emphasis>&amp;</emphasis> is used for
+                    entity references and the single quotation mark, <emphasis>&quot;</emphasis> is
+                    used to delimit string literals. For this reason XML introduces 5 standard
+                    entity references:</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <emphasis>&amp;lt;</emphasis> and <emphasis>&amp;gt;</emphasis>
+                        </para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>These entity references should be used for literal left and
+                                    right angle brackets which are used in XML as element tag delimiters.</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>&amp;apos;</emphasis> and <emphasis>&amp;quot;</emphasis>
+                        </para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>These entity references should be used for single and double
+                                    quotes (<emphasis>&quot;</emphasis> and
+                                    <emphasis>&quot;</emphasis>) which are used in XML for literal
+                                    string delimiters.</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>&amp;amp;</emphasis>
+                        </para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>
+                                    <emphasis>&amp;amp</emphasis> should be used for literal
+                                    ampersands. Ampersands are used in XML for entity references.</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                </itemizedlist>
+                <para> Hence, our two invalid XML examples shown above should be modified as follows:</para>
+                <programlisting> &lt;company>SolmsTraining&amp;amp;Consulting &lt;/company> </programlisting>
+                <para> and</para>
+                <programlisting> &lt;ParkingArea> &lt;baynumber=&quot;25&quot;> Peter&amp;apos;scar
+                    &lt;/bay> &lt;/ParkingArea> </programlisting>
+                <para> Additionally there is also <emphasis>&amp;#160;</emphasis> which expands to
+                    the html non-breaking space entity refrence <emphasis>&amp;nbsp;</emphasis>.</para>
+            </section>
+
+            <section>
+                <title>Character References</title>
+                <para> One can also refer to a particular character of the character set used by the
+                    XML document (e.g. UTF 16) using either its hexadecimal or decimal character
+                    code. Character references start with an ampersand followed by a hash
+                    (<emphasis>#</emphasis>) and either the decimal caharcter code or the
+                    hexadecimal character code prepended by an <emphasis>x</emphasis>. In both cases
+                    the character reference is ended by a semicolon. For example,
+                        <emphasis>&amp;#10; </emphasis> and <emphasis>#xA;</emphasis> both refer to
+                    the 10'th Unicode character which is a line-feed character (LF).</para>
+            </section>
+
+        </section>
+
+        <section>
+            <title>Parameter Entities</title>
+            <para> General entities are expanded to become part of the XML document. They cannot be
+                used for text which is not expanded ultimately into document content. For example,
+                we cannot use a general entity which expands into text which forms part of the DTD logic.</para>
+            <para> For this purpose, XML defines parameter entities. The syntax for parameter
+                entities is</para>
+            <programlisting> &lt;!ENTITY%entityName&quot;replacementText&quot;> </programlisting>
+            <para>The difference between the syntax of general and parameter entitities is thus
+                simply the insertion of a percentage (<emphasis>%</emphasis>) infront of the entity name.</para>
+            <para> Parameter entities can be used only within DTDs, they cannot be used to expand
+                within an XML document itself. For example, we might define a
+                <emphasis>Boolean</emphasis> parameter entity via</para>
+            <programlisting> &lt;!ENTITY%Boolean&quot;(true|false)&quot;false&quot;)&quot;> </programlisting>
+            <para>and we could use the <emphasis>Boolean</emphasis> entity in a DTD in, for example,
+                the following way:</para>
+            <programlisting> 
+&lt;!ELEMENTContact(name,eMailAddress*,telephoneNumber+)>
+&lt;!ELEMENTname(#PCDATA)> &lt;!ELEMENTeMailAddress(#PCDATA)>
+&lt;!ATTLISTeMailAddresspreferred%Boolean> 
+&lt;!ELEMENTtelephoneNumber(#PCDATA)> 
+            </programlisting>
+            <para>Here, the parameter entity, <emphasis>Boolean</emphasis>, is expanded so that the
+                attribute list for the e-mail address reads</para>
+            <programlisting> &lt;!ATTLISTeMailAddresspreferred(true|false)&quot;false&quot;> </programlisting>
+        </section>
+
+        <section>
+            <title>Intra-Document References</title>
+            <para> We have already mentioned that attributes of type <emphasis>ID</emphasis> are
+                used to define identities in XML documents and that each identity (or label) must be
+                unique within the document.</para>
+            <para> We have also mentioned that attributes of type <emphasis>IDREF</emphasis> a
+                references to identities defined in the document. This enables us to define
+                intra-document links similar to the table links found in relational databases.</para>
+            <para> Let us consider a simple example of having courses and presenters and wanting to
+                establish links from courses to presenters. Assume you have a presenters element
+                which contains one or more presenters. The DTD specification could be something
+                along the following lines</para>
+            <programlisting> 
+&lt;!ELEMENTlecturers(lecturer+)>
+&lt;!ELEMENTlecturer(name,telNo+,eMailNo+)> 
+&lt;!ATTLISTlectureridNoID#REQUIRED> 
+            </programlisting>
+            <para> We can now establish references (links) from courses to presenters. The DTD
+                specification could look as follows:</para>
+            <programlisting> 
+&lt;!ELEMENTcourses(course+)>
+&lt;!ELEMENTcourse(name,duration,prerequisites*)>
+&lt;!ATTLISTcoursepresenterIDREF#REQUIRED> 
+            </programlisting>
+            <para> An extract of an XML document which implements the DTD could look like this:</para>
+            <programlisting>
+            
+&lt;lecturers> 
+    &lt;lecturer idNo=&quot;id_625423654&quot;>
+        &lt;name>JillKnox&lt;/name> 
+        &lt;telNo>0114566545&lt;/telNo>
+        &lt;eMailNo>Jill@SolmsTraining.co.za&lt;/eMailNo> 
+    &lt;/lecturer> 
+    &lt;lecturer> ...
+    &lt;/lecturer> ... 
+&lt;/lecturers> ... 
+
+&lt;courses>
+    &lt;course presenter=&quot;id_625423654&quot;>
+        &lt;name>Software Requirements Analysis and Specification&lt;/name>
+        &lt;duration>3days&lt;/duration> 
+    &lt;/course> ... 
+&lt;/courses>
+ 
+            </programlisting>
+            
+            <para> Note that attribute values must comply to XML naming conventions and can thus not
+                start with a numeral. This problem is alleviated in XML schemas.</para>
+        </section>
+
+        <section>
+            <title>Notations: Including non-XML Data in a XML Document</title>
+            <para> At times you will want to include data which is to be handled by external
+                applications and not by the XML processor (or parser). To this end XML defines a
+                <emphasis>&lt;!NOTATION</emphasis> tag.</para>
+            <section>
+                <title>Syntax for NOTATION Definitions</title>
+                <para> The standard syntax for notation definitions is</para>
+                <programlisting> &lt;!NOTATIONnotationNameSYSTEM&quot;externalDataHandler&quot;> </programlisting>
+                <para>where the external data handler refers to some application available to the
+                    system. For example, we could specify in the DTD that &quot;jpeg&quot; notations
+                    should be processed by the application <emphasis>JPegViewer.exe</emphasis>
+                </para>
+                <programlisting> &lt;!NOTATIONjpegSYSTEM&quot;JPegViewer.exe&quot;></programlisting>
+            </section>
+
+            <section>
+                <title>Defining NOTATION Attributes</title>
+                <para> We can then define attributes of this notation type as is done below:</para>
+                <programlisting> 
+&lt;!ELEMENTimageEMPTY> 
+&lt;!ATTLISTimagesourceENTITY#REQUIRED>
+&lt;!ATTLISTimageviewerNOTATION#REQUIRED> 
+                </programlisting>
+            </section>
+
+            <section>
+                <title>Using Notations in the XML Document</title>
+                <para> This allows us to include image information into our XML document via</para>
+                <programlisting>
+&lt;imagesource=&quot;SmilingCustomer.jpg&quot;viewer=&quot;jpeg&quot;/> 
+                </programlisting>
+            </section>
+
+            <section>
+                <title>Using File Associations instead of Handler Applications</title>
+                <para> The problem with the notation tag is that we require the external data
+                    handler to be vailable on any system processing the XML document. A slightly
+                    less restrictive setup can be constructed by using file associations instead.</para>
+                <para> Assuming the system, on which the XML document will be processed, has the
+                    required file associations we could define the NOTATION as follows:</para>
+                <programlisting> &lt;!NOTATIONnotationNameSYSTEM&quot;fileAssociation&quot;> </programlisting>
+                <para>For example, if systems associate files having the extension
+                    <emphasis>GIF</emphasis> with a viewer which can also view JPEG files, we could
+                    define the following notation:</para>
+                <programlisting> &lt;!NOTATIONjpegSYSTEM&quot;GIF&quot;></programlisting>
+                <para>This decouples us from the actual image viewer but requires that a GIF files
+                    are associated with a JPEG-supporting image viewer.</para>
+            </section>
+
+        </section>
+
+    </section>
+
+    <section>
+        <title>Data Modeling </title>
+        <para> We think about information in language concepts. Conceptually we </para>
+        <itemizedlist>
+            <listitem>
+                <para>Break complex concepts up into simpler ones. </para>
+            </listitem>
+            <listitem>
+                <para>Identify specializations and generalizations of concepts. </para>
+            </listitem>
+            <listitem>
+                <para>Identify associations between concepts.</para>
+            </listitem>
+        </itemizedlist>
+        <para> Let us illustrate these three concepts with an example for each: </para>
+        <itemizedlist>
+            <listitem>
+                <para>A car has a body, a power unit, a transmission system and a braking system. </para>
+            </listitem>
+            <listitem>
+                <para>We can conceptualize passanger cars, cars and vehicles and build logical
+                    constructs at these different levels of abstraction. </para>
+            </listitem>
+            <listitem>
+                <para>We can associate cars with owners and drivers.</para>
+            </listitem>
+        </itemizedlist>
+        <para> The three main relationships between concepts (objects) are </para>
+        <itemizedlist>
+            <listitem>
+                <para>specialization relationships, </para>
+            </listitem>
+            <listitem>
+                <para>composition relationships and </para>
+            </listitem>
+            <listitem>
+                <para>association relationships.</para>
+            </listitem>
+        </itemizedlist>
+        <section>
+            <title>Specialization Relationships</title>
+            <para> Specialization revolves around the concept that every instance of a specialized
+                concept (object) is also an instance of the more general concept.</para>
+            <para> For example, managers and drivers are employees and employees and clients are
+                persons. For persons we might have elements for name and identity numbers. These
+                will be inherited by employees which might, in addition to these inherited elements,
+                have a salary and job-description elements.</para>
+            <para> Central to the concept of specialization is the requirement of substitutibility,
+                i.e.that one may always substitute an instance of a more specialized class for an
+                instance of a more general class. For example, if you require the details about a
+                person, I could supply you a client instead. After all, a client is a person.</para>
+        </section>
+
+        <section>
+            <title>Composition Relationships</title>
+            <para> Composition relationships evolve around ownership. For example, a governemnt bond
+                has an amount invested in the bond (the notional), pays a specific interest (the
+                coupon rate) on specific dates (the coupon dates) and pays your initial investement
+                (plus the interest for the last interest period) back on the maturity date of the
+                bond. A bond is a contract between the issuer and the investor. If any of the above
+                details change, the bond itself (the contract) is changed. Hance these elements are
+                components of the contract.</para>
+        </section>
+
+        <section>
+            <title>Association Relationships</title>
+            <para> Association is a weaker coupling than composition. While a change in a component
+                element results in a state change of the aggregate element (revisit the bond example
+                of the previous section if you are uncertain about this), there is no such effect in
+                association relationships.</para>
+            <para> For example, course presentations may be associated to lecture rooms. If the
+                course content changes the lecture room itself does not change. Similarly, if the
+                lecture room is modified, the course itself does not necessarily change.</para>
+        </section>
+
+        <section>
+            <title>The Unified Modeling Language</title>
+            <para> One of the benefits of object-oriented modeling techniques is that they can
+                formalize natural language concepts. Natural language sentences can be mapped
+                directly onto a formal diagramatic representation.</para>
+            <para> In particular, from 1996 onwards the diagrammatic languages used for
+                object-oriented modeling have been unified into one standard language, the Unified
+                Modeling Language (UML). This standard is not owned or maintained by a specific
+                company, but is administered by the Object Management Group (OMG), a non-profit
+                organization which is supported by virtually the entire IT industry. Its mandate is
+                the general promotion of object-oriented software engeneering practices and standards.</para>
+        </section>
+
+        <section>
+            <title>DTDs and Object-Oriented Modeling</title>
+            <para> This is not an Object-Oriented Analysis and Design course and we shall restrict
+                ourselves to pointing out that when you develop a DTD for your domain, it is most
+                probably a good idea to go through a standard requirements elicitation and
+                specification process, followed by an object-oriented analysis and design process.</para>
+            <para> The static model from your design will map more or less directly onto DTDs.
+                Composition relationships map onto elements containing sub-elements. Association
+                relationships map onto identity references. The only concept which is not directly
+                supported is specialization. Specialization relationships would have to be mapped
+                onto composition relationships (An employee or client structure has a person
+                structure) and this is not entirely satisfactory and is one of the shortcomings of
+                XML DTDs,</para>
+        </section>
+
+        <section>
+            <title>A Simple Example</title>
+            <para> In this section we look at a simple example of how one can map a UML diagram onto
+                a DTD and vice versa.</para>
+            <section>
+                <title>The UML diagram</title>
+                <para> <xref linkend="trainingInstitution"/> shows a simple UML diagram for presentations
+                    offered by a training institution. A presentation is a presentation of a course
+                    at a particular venue over a particular period. Each presentation is associated
+                    with one lecturer and with one course. </para>
+                    
+                <figure id="trainingInstitution">
+                    <title>A simple UML diagram for presentations offered by a training institution.</title>
+                    <mediaobject>
+                        <imageobject>
+                            <imagedata fileref="DTD/TrainingInstitution.gif"/>
+                        </imageobject>
+                    </mediaobject>
+                </figure>
+                
+            </section>
+
+            <section>
+                <title>The DTD</title>
+                <programlisting> &lt;?xmlversion=&quot;1.0&quot;encoding=&quot;UTF-8&quot;?>
+                    &lt;!ELEMENTTrainingInstitution(Presentation+,Lecturer+,Course+,Venue+)>
+                    &lt;!ELEMENTPresentation(period)> &lt;!ATTLISTPresentation courseIDREF#REQUIRED
+                    lecturerIDREF#REQUIRED venueIDREF#REQUIRED> &lt;!ELEMENTVenue(name)>
+                    &lt;!ATTLISTVenue registeredNameID#REQUIRED>
+                    &lt;!ELEMENTperiod(startDate,endDate)> &lt;!ELEMENTstartDate(#PCDATA)>
+                    &lt;!ELEMENTendDate(#PCDATA)> &lt;!ELEMENTLecturer(name,telNo+)>
+                    &lt;!ELEMENTname(#PCDATA)> &lt;!ELEMENTtelNo(#PCDATA)> &lt;!ELEMENTCourse(name)>
+                    &lt;!ATTLISTCourse idID#REQUIRED> &lt;!ATTLISTLecturer idID#REQUIRED> </programlisting>
+            </section>
+
+            <section>
+                <title>An example XML file which will be parsed by the DTD</title>
+                <programlisting> &lt;?xmlversion=&quot;1.0&quot;encoding=&quot;UTF-8&quot;?>
+                    &lt;!DOCTYPETrainingInstitutionSYSTEM&quot;TrainingInstitution.dtd&quot;>
+                    &lt;TrainingInstitution>
+                    &lt;Presentationcourse=&quot;STC_05&quot;lecturer=&quot;Lect01&quot;venue=&quot;Emmy01&quot;>
+                    &lt;period> &lt;startDate>6-8-2001&lt;/startDate>
+                    &lt;endDate>8-8-2001&lt;/endDate> &lt;/period> &lt;/Presentation>
+                    &lt;Presentationcourse=&quot;STC_02&quot;lecturer=&quot;Lect01&quot;venue=&quot;Emmy01&quot;>
+                    &lt;period> &lt;startDate>17-9-2001&lt;/startDate>
+                    &lt;endDate>21-9-2001&lt;/endDate> &lt;/period> &lt;/Presentation>
+                    &lt;Lecturerid=&quot;Lect01&quot;> &lt;name>Fritz&lt;/name>
+                    &lt;telNo>+27114864270&lt;/telNo> &lt;/Lecturer>
+                    &lt;Lecturerid=&quot;Lect02&quot;> &lt;name>Tandi&lt;/name>
+                    &lt;telNo>+27114864001&lt;/telNo> &lt;/Lecturer>
+                    &lt;Courseid=&quot;STC_05&quot;> &lt;name>XML&lt;/name> &lt;/Course>
+                    &lt;Courseid=&quot;STC_02&quot;>
+                    &lt;name>Object-OrientedAnalysisandDesignusingUML&lt;/name> &lt;/Course>
+                    &lt;VenueregisteredName=&quot;Emmy01&quot;>
+                    &lt;name>EmmarentiaGardensTrainingCentre&lt;/name> &lt;/Venue>
+                    &lt;/TrainingInstitution> </programlisting>
+            </section>
+
+        </section>
+
+    </section>
+
+    <section>
+        <title>DTD Shortcomings</title>
+        <para> XML was originally designed as subset of SGML. Consequently XML DTDs are very closely
+            modeled on SGML DTDs. They have, however, several shortcomings and the W3C is in the
+            process of finalizing the Schema specification which will ultimately replace DTDs.</para>
+        <para> So what are the problems? The main shortcomings of DTDs are the following: </para>
+        <orderedlist>
+            <listitem>
+                <para>DTD&quot;s are not specified in XML. </para>
+            </listitem>
+            <listitem>
+                <para>DTD&quot;s have limited syntax. </para>
+            </listitem>
+            <listitem>
+                <para>DTD&quot;s support only textual information. </para>
+            </listitem>
+            <listitem>
+                <para>There are XML documents for which a valid DTD cannot be developed. </para>
+            </listitem>
+            <listitem>
+                <para>Many restrictions one may want to specify are not supported in DTDs. </para>
+            </listitem>
+            <listitem>
+                <para>One cannot assemble DTDs from lower level DTDs.</para>
+            </listitem>
+        </orderedlist>
+        <section>
+            <title>DTDs do not Conform to XML Syntax Rules</title>
+            <para> DTD&quot;s have their own syntax &quot; DTD specifications are not written in
+                XML. This has a number of direct drawbacks including </para>
+            <itemizedlist>
+                <listitem>
+                    <para>One cannot use standard tools like XML editors and browsers for the
+                        development and visualization of DTDs. </para>
+                </listitem>
+                <listitem>
+                    <para>One cannot use XML parsers to parse or to dynamically construct DTDs.</para>
+                </listitem>
+            </itemizedlist>
+        </section>
+
+        <section>
+            <title>The Limited Syntax of DTDs</title>
+            <para> Unlike XML itself, the DTD specification language is not extensible &quot;
+                i.e.you cannot define your own tags for DTDs. This as such may not be serious. After
+                all, if it is extensibility you want, i.e.if you want to define your own vocabulary,
+                then you can use XML which was designed for that purpose.</para>
+            <para> However, the DTD syntax is limiting in some serious ways. For starters, DTDs are
+                not ameanable to a component based development approach. This is largely due to the
+                fact that each DTD is a closed unit and that you cannot extract elements from one
+                DTD and use them in another &quot; you cannot assemble one DTD from components (or
+                entire units) of other DTDs.</para>
+            <para> We have pointed out that DTDs can be used to define composition and association
+                relationships directly (via contents and references). Specialization relationships
+                (inheritance, on the other hand is only supported implicitly by mapping a
+                specialization relationship onto a composition relationship. More explicit and
+                direct support for specialization relationships would make the data modeling process
+                cleaner and simpler.</para>
+            <para> Finally there are also some technical shortcomings. For example, the DTD syntax
+                supports only the following cardinality constraints: </para>
+            <itemizedlist>
+                <listitem>
+                    <para>zero or one, </para>
+                </listitem>
+                <listitem>
+                    <para>exactly one, </para>
+                </listitem>
+                <listitem>
+                    <para>zero or more and </para>
+                </listitem>
+                <listitem>
+                    <para>one or more.</para>
+                </listitem>
+            </itemizedlist>
+            <para>You could not, for example, specify that a particular component must appear at
+                least twice but no more than 4 times.</para>
+        </section>
+
+        <section>
+            <title>Limited Data Format Support</title>
+            <para> DTDs only really support the specification of elements with text data and does
+                not support full data typing. One could not specify a date or ffoating point number
+                as a data type.</para>
+            <para> There are, of course, the notations which allow you to include or reference
+                non-XML data types and reference the appropriate data handler in XML douments. This
+                does not, however, resemble true data typing.</para>
+        </section>
+
+        <section>
+            <title>XML documents for which a valid DTD cannot be developed</title>
+            <para> Nothing in XML prevents one from mixing text and markup tags. For example</para>
+            <programlisting> &lt;letter> &lt;opening>DearSir&lt;/opening> &lt;body> &lt;paragraph>
+                Wehopethatyouhavereceivedyourorder&lt;orderNumber>o12541&lt;/orderNumber>
+                whichyouplacedon&lt;date>2001_08_20&lt;/date>.... &lt;/paragraph> &lt;/body> &lt;/letter></programlisting>
+            <para> In the above XML document the paragraph element contains both, text and
+                sub-elements. One cannot write an DTD which parses the above structure without using
+                <emphasis>ANY</emphasis> elements. The latter defeats the purpose of specifying the
+                constraints for XML document structure precisely.</para>
+        </section>
+
+        <section>
+            <title>Restrictions not supported in DTDs</title>
+            <para> Besides the lack of data types which would restrict the values of an element to,
+                for example, a ffoating point number or a date in a specific date format, there are
+                a number of other limitations of which limit the ways in which DTDs can restrict the
+                valid syntax of an XML document implementing it.</para>
+            <para> For example, the multiplicity contraints are very limited &quot; one cannot
+                specify, for example, that an element must occur either twice or thrice (one would
+                have to use the <emphasis>+</emphasis> multiplicity restrictor which specifies one
+                or more).</para>
+        </section>
+
+        <section>
+            <title>One cannot assemble DTDs from lower level DTDs</title>
+            <para> Even though one can import multiple DTDs into an XML document, one cannot import
+                a DTD into a DTD. It is thus not possible to follow a component-based approach to
+                developing a vocabulary for a specific application domain.</para>
+        </section>
+
+        <section>
+            <title>Should you use DTDs?</title>
+            <para> The short answer is NO. Schemas solve all the problems mentioned above and even
+                support a form of polymorphism at data level (supporting substitutability of types
+                by specialized types within instance documents). The only reason you may want to use
+                DTDs is backward compatibility and perhaps because the organizations you exchange
+                information with still use DTDs. In that case it is advisable that you develop your
+                own shemas which parse the information more thoroughly. The instance documents
+                parsed by these schemas should be compatible with the DTDs used i.e. the
+                instance documents would be parsed by both, the DTD and the schema, but the schema
+                validates the information more thoroughly.</para>
+        </section>
+
+    </section>
+
+</chapter>

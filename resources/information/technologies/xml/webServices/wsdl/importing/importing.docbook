@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+
+    <title>Importing resources into a WSDL</title>
+    
+    <indexterm>
+        <primary>WSDL</primary>
+        <secondary>importing</secondary>
+    </indexterm>
+
+    <para>
+        Since WSDL is just a container for any number and combination of <emphasis>abstract</emphasis>
+        and <emphasis>concrete</emphasis> service description artifacts, it often makes sense to
+        split these across two WSDL documents. This has the benefit of being able to publish
+        <emphasis>only one abstract WSDL document for the service contract</emphasis>, which only
+        needs to change when the service's functional requirements change.
+    </para>
+    <para>
+        On the other hand, the service's protocol bindings, endpoint locations, etc. continually evolve,
+        and different service providers / consumers have their own WSDLs expressing these. They could all, however,
+        refer to the same copy of the abstract service definition.
+    </para>
+    <para>
+        Another resource which is typically externally specified is the XML schema containing the type definitions.
+        Though each service contract should be seen in isolation as supporting a specific use-case, it is common to
+        re-use lower-level data objects across services contracts, and have the data objects specification maintained
+        in a separate document.
+    </para>
+    
+    <section>
+        <title>Splitting WSDL abstract and concrete service descriptions</title>
+        <para>
+            Based upon the functional requirements of a simple Clock, an abstract WSDL contract could be written
+            as follows:
+            <programlisting language="XML">
+<xi:include href="src/abstractContract.wsdl" parse="text"/>
+            </programlisting>
+        </para>
+        <para>
+            In the abstract contract, no mention is made to transport protocols or service endpoints, it 
+            is <emphasis>purely functional</emphasis>. In a separate WSDL document, we specify a particular binding
+            and a particular service endpoint where clients may use a clock:
+            <programlisting language="XML">
+<xi:include href="src/concreteContract.wsdl" parse="text"/>
+            </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Defining the structure of exchanged value objects in a separate schema</title>
+        <para>
+            Though it is recommended that the request/response messages for the services be directly
+            specified as part of the WSDL (for they are not re-usable outside of the service being
+            described), the embedded schema may, of course, import any number of external schemas
+            using the <literal><![CDATA[<xsd:import ... />]]></literal> mechanism.
+        </para>
+        <para>
+            This is commonly used for lower-level, re-usable data types which are shared between contracts.
+        </para>
+    </section>
+        
+    
+
+</section>

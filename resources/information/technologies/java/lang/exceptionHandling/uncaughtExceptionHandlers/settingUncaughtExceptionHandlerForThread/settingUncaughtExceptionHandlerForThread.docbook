@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6521:section xmlns:ns6521="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.exceptionHandling.uncaughtExceptionHandlers.settingUncaughtExceptionHandlerForThread.settingUncaughtExceptionHandlerForThread">  
+  <ns6522:title xmlns:ns6522="http://docbook.org/ns/docbook">Setting uncaught exception handler for thread</ns6522:title>
+  <ns6523:para xmlns:ns6523="http://docbook.org/ns/docbook">
+    To specify an uncaught exception handler for a particular thread,, we simply call the
+    <ns6524:literal xmlns:ns6524="http://docbook.org/ns/docbook">setUncaughtExceptionHandler</ns6524:literal> method on that thread.
+  </ns6523:para>
+  <ns6525:para xmlns:ns6525="http://docbook.org/ns/docbook">
+    This is illustrated in the following little program which
+    <ns6526:itemizedlist xmlns:ns6526="http://docbook.org/ns/docbook">
+      <ns6527:listitem xmlns:ns6527="http://docbook.org/ns/docbook"><ns6528:para xmlns:ns6528="http://docbook.org/ns/docbook">creates an instance of some thread which may throw some exception,</ns6528:para></ns6527:listitem>
+      <ns6529:listitem xmlns:ns6529="http://docbook.org/ns/docbook"><ns6530:para xmlns:ns6530="http://docbook.org/ns/docbook">sets the uncaught exception handler for the thread to our logging exception
+        handler,</ns6530:para></ns6529:listitem>
+      <ns6531:listitem xmlns:ns6531="http://docbook.org/ns/docbook"><ns6532:para xmlns:ns6532="http://docbook.org/ns/docbook">and then goes to sleep, yawning now and then.</ns6532:para></ns6531:listitem>
+    </ns6526:itemizedlist>
+    The thread in the mean time is  a time bomb which, after some time throws an exception which is
+    not caught within the calling hierarchy of the thread:
+    <ns6533:programlisting xmlns:ns6533="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../src/UncaughtExceptionTest.java"/>      
+     </ns6533:programlisting>
+  </ns6525:para>
+  <ns6534:para xmlns:ns6534="http://docbook.org/ns/docbook">
+    The output of the program is shown below:
+    <ns6535:programlisting xmlns:ns6535="http://docbook.org/ns/docbook">
+MySpecialThread is starting ...
+      
+Yawn ...
+Yawn ...
+Yawn ...
+Yawn ...
+Yawn ...
+Yawn ...
+Aug 12, 2005 12:19:13 PM za.co.solms.exceptions.UncaughtExceptionLogger 
+      uncaughtException
+SEVERE: java.lang.RuntimeException: ^%!!??!^%%^??!## thrown 
+      in thread MySpecialThread from file UncaughtExceptionTest.java 
+      on line 19
+Yawn ...
+Yawn ...
+Yawn ...
+Yawn ...
+      </ns6535:programlisting>
+  </ns6534:para>
+</ns6521:section>

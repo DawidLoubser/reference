@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      id="resources.information.technologies.xml.webServices.soap.structure.documentVsRPC">
+    <title>Document versus RPC Messaging?</title>
+    
+    <para>
+        RPC style messaging is based on the more conventional notion of a <emphasis>rigidly specified interface</emphasis>,
+        such as those found in most programming languages. Explicitly defined are:
+        <itemizedlist>
+            <listitem>
+                <para>function (or method) names</para>
+            </listitem>
+            <listitem>
+                <para>a list of parameters (or arguments)</para>
+            </listitem>
+            <listitem>
+                <para>a return value</para>
+            </listitem>
+        </itemizedlist>
+        The drawback of this method is a much less flexible service interface: Every time a new variation of a request
+        (method) is required, a whole new service interface needs to be published. Furthermore, conceptually,
+        the full information (of the <quote>invocation</quote>) is not contained within the data itself, as the
+        <quote>method</quote> name plays an important role. The SOAP Body is structured according to a fixed
+        convention to represent these items (e.g. parameters).
+    </para>
+    
+    <para>
+        Contrast to this the Document messaging style, which is based on the concept of <emphasis>polymorphism on
+        message arguments</emphasis>, a feature which is still lacking from most object-oriented programming languages.
+        Conceptually, one still has a contract that specifies which messages a component is willing to accept (in the
+        case of SOAP, this is contained in the <literal>WSDL</literal>) but these messages can be freely extended (to
+        add additional information or state) by clients without the server's knowledge. If a receiver does not understand
+        the extended message, it may continue to process the message at the level of abstraction that it <emphasis>does</emphasis>
+        understand.
+    </para>
+    <para>
+        If the component that receives the messages is developed in an environment that is aware of <emphasis>polymorphism on
+        message arguments</emphasis> (that is, it will automatically route the messages to the module or method that processes 
+        the message at the most specific (concrete) level of abstraction) there are significant benefits in terms of 
+        simplicity and flexibility.
+    </para>
+    <para>
+        In effect, this biggest difference between RPC and Document style is that Document style makes no assumptions
+        as to the structure of the request message - it is simply a self-contained request message, which describes
+        its own structure by its associated XML Schema.
+    </para>
+    
+    <figure>
+        <title>Document versus RPC Messaging</title>
+        <graphic fileref="images/documentVsRPC.jpg"/>
+    </figure>
+    
+    <note>
+        <para>
+            A SOAP message itself does not explicitly contain (or advertise) it's encoding or messaging style. Though this can, to
+            some extent, be inferred from a message, it is the web services <emphasis>contract</emphasis> (<literal>WSDL</literal>)
+            the explicitly contains this information.
+        </para>
+    </note>
+    
+</section>

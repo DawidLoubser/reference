@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Runtime type identification via getClass()</title>
+  
+  <para>
+    An important aspect of a dynamically linked and flexible language like
+    Java, is the ability to inspect the <emphasis>type</emphasis> of an
+    object at runtime. This is because we may have a more abstract
+    reference to an object, and the type of that reference may not tell
+    us enough about the full capability of the object it refers to.
+  </para>  
+  <note>
+    <para>
+      This is usually a good thing. The ability to have abstract
+      references to specific objects means that we are shielded from any
+      of the complexity, implementation details, or future changes to
+      that object's class. Runtime type identification should thus be
+      avoided in typical business or logic code, and is more typically
+      used in low-level technical frameworks, such as persistence
+      providers, automatic user interface generation, etc.
+    </para>
+  </note>
+  <para>
+    We may obtain a reference to an instance of <literal>java.lang.Class</literal>
+    (the class descriptor for that particular object) by invoking the
+    <literal>getClass()</literal> service:
+    <programlisting language="Java"><![CDATA[
+public class Object
+{
+  ...
+  
+  public Class getClass()
+  {
+    ...
+  }
+}
+    ]]></programlisting>
+    For example:
+    <programlisting language="Java"><![CDATA[
+public class X
+{
+  public void f( Object o )
+  {
+    Class c = o.getClass();
+    
+    // Now we may inspect the name, type, services, attributes, etc.
+    System.out.println( c.getName() );
+    
+    // For example, we can compare o'c class to the one we're in
+    if ( this.getClass().equals( c ) )
+    {
+      //...
+    }
+  }
+    ]]></programlisting>
+  </para>
+  
+  <section>
+    <title>A prelude to reflection</title>
+    <para>
+      A powerful feature of Java is <emphasis>reflection</emphasis> - the
+      ability to not only inspect and identify object at runtime, but to
+      also traverse the class hierarchy, programmatically invoke services,
+      etc. This is accomplished through the many services provided by
+      <literal>java.lang.Class</literal>, as well as several other classes
+      and interfaces in the package <literal>java.lang.reflect</literal>.
+    </para>
+  </section>  
+  
+</section>

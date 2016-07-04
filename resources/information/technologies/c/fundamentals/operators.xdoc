@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->    
+<section id="resources.information.technologies.c.fundamentals.operators"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Operators</title>
+  <para>
+    <emphasis>C</emphasis> defines a set of binary and unary operators similar
+    to that found in most languages including arithmetic, assignment, logical, 
+    relational and bit operators.
+  </para>
+
+  <section><title>Arithmetic operators</title>
+    <para>
+      Arithmetic operators include <command>+</command>, <command>-</command>,
+      <command>*</command>, <command>/</command> and <command>%</command> for
+      addition, subtration, multiplication, division and remainder (modulus)
+      respectively.
+    </para>
+  </section>
+  
+  <section><title>Increment/Decrement operators</title>
+    <para>
+        There are two increment and two decrement operators. The pre- and post-increment
+        operators both increment the variable they operate on, but while the former,
+        <command>++k</command> increments the variable and returns the result, the latter,
+        <command>k++</command> increments the variable, but returns the original value of
+        the variable.
+    </para>
+    <example id="prePostIncrement.c"><title>prePostIncrement.c</title>
+      <programlisting role="C" linenumbering="numbered"><xi:include href="source/prePostIncrement.c" parse="text" /></programlisting>
+    </example>   
+    <para>
+      The code in <xref linkend="prePostIncrement.c"/> demonstrates the difference between
+      pre- and post-increment. While the value of <token>k</token> is incremented in both
+      cases, the value of <token>l</token> is equal to the final value of <token>k</token>
+      in the case of using the increment operator in prefix mode, while it is equal to
+      the original value of <token>k</token> when used in postfix mode. The output
+      of the application is
+      <programlisting>
+initial value of k: 3
+l=++k;  ->  k=4, l=4
+l=k++;  ->  k=4, l=3
+      </programlisting>
+    </para>
+  </section>
+  
+  <section><title>Assignment operators</title>
+    <para>
+      The assignment operator is simply <command>=</command>. There are however
+      a number of abbreviated operators (contractions) like <command>+=</command>,
+      <command>-=</command>, <command>*=</command>, <command>/=</command> and
+      <command>%=</command> which resemble the following abbreviations:
+      <informaltable frame="none">
+        <tgroup cols="2">
+          <tbody>
+            <row><entry>x += y</entry><entry>x = x + y</entry></row>
+            <row><entry>x -= y</entry><entry>x = x - y</entry></row>
+            <row><entry>x *= y</entry><entry>x = x * y</entry></row>
+            <row><entry>x /= y</entry><entry>x = x / y</entry></row>
+            <row><entry>x %= y</entry><entry>x = x % y</entry></row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </para>
+  </section>
+  
+  <section><title>Type-cast operator</title>
+    <para>
+      <emphasis>C</emphasis> enables one to cast one type to another via the type-cast
+      operator. Consider the code shown in <xref linkend="testCast.c"/>. The first 
+      statement performs <command>2 / 3</command> which is the division of one integer
+      by another. The operator used is the division operator for the integer data type
+      which results in an answer of zero.
+    </para>
+   <example id="testCast.c"><title>testCast.c</title>
+       <programlisting role="C" linenumbering="numbered"><xi:include href="source/testCast.c" parse="text" /></programlisting>
+   </example>   
+   <section><title>Up-casting</title>
+     <para>
+       If we want to perform floating-point division to the resolution of one of the
+       floating point data types (e.g. <type>float</type>, <type>double</type> or
+       <type>long double</type>), then we have to cast one of the operands to that
+       data type. <emphasis>C</emphasis> will perform the calculation to the resolution
+       of the longest data type.
+     </para>
+     <para>
+       So, in <xref linkend="testCast.c"/> we show that casting either the first or the 
+       second operand to a floating point data type results in floating point division
+       being used.
+     </para>
+   </section>  
+   <section><title>Down-casting</title>
+     <para>
+       We can also down-cast a higher-resolution variable via the cast operator as is 
+       done in line 19 in <xref linkend="testCast.c"/>. This will typically result in
+       loss of information.
+       <warning>
+         <para>
+           <emphasis>C</emphasis> will allow you to implicitly down-cast as is done
+           in the last code block, but we strongly recommend that you refrain from
+           doing this and most compilers will provide the settings which will issue 
+           compiler warnings in such cases.
+         </para>
+       </warning>
+     </para>
+   </section>
+  </section>
+  
+  <section><title>Relational operators</title>
+    <para>
+      The relational operators compare expression like <command>x &lt;= y</command> and
+      the result evaluates to either <emphasis>true</emphasis> 
+      (<command>1</command>) or <emphasis>false</emphasis> (<command>0</command>). 
+    </para>
+    <para>
+      They include <command>==</command> for the logical <emphasis>is equal to</emphasis>,
+      the standard <command>&gt;</command>, <command>&lt;</command>, <command>&gt;=</command>
+      and <command>&lt;=</command> as well as the logical <emphasis>is not equal to</emphasis>
+      represented in <emphasis>C</emphasis> by <command>!=</command>.
+    </para>
+  </section>  
+  
+  <section><title>Logical operators</title>
+    <para>
+      Logical operators evaluate logical statements and return either <emphasis>true</emphasis> 
+      (<command>1</command>) or <emphasis>false</emphasis> (<command>0</command>). They
+      include <command>&amp;&amp;</command> for logical AND, <command>||</command> for
+      logcal OR and <command>!</command> for logical NOT.
+    </para>
+    <para>
+      Logical operators are often used to assemble a logical expression from a combination
+      of relational expressions like <command>(x &amp; y) &amp;&amp; (x != 4)</command> returns 
+      <constant>1</constant> (<emphasis>true</emphasis>) if <varname>x</varname> is less than
+      <varname>y</varname> and the value of <varname>x</varname> is not equal to 4. 
+      Otherwise this expression returns <constant>0</constant>.
+    </para>
+    <important>
+      <para>
+        The logical operators in <emphasis>C</emphasis> stretch the concept of truth a little
+        by regarding any expression which results in a value 0 as <emphasis>false</emphasis>
+        and any expression which results in a non-zero result as <emphasis>true</emphasis>.
+        Thus, if <varname>x</varname> has a value - <constant>-2.5</constant> then
+        the expression <command>if (x) ...</command> will evaluate to <emphasis>true</emphasis>
+        and <command>!x</command> will evaluate to <emphasis>false</emphasis>.
+      </para>
+    </important>  
+  </section>
+  
+  <section><title>Binary operators</title>
+    <para>
+      Binary operators perform operations which conceptually apply to the individual bits.
+      In order to understand their functioning one needs to understand the binary
+      representation of numbers in bits. Any integral number can be  expanded in a
+      series in powers of 2. For example, 10 is 1x2^3 + 0x2^2 + 1x2^1 + 0*2^0 and hence
+      is represented by the binary number 1010.
+    </para>
+    
+    <section><title>Bitwise AND</title>
+    <para>
+    The bitwise AND operator, <command>&amp;</command>, sets a bit if and only if 
+    the corresponding bits of both operands is set. <xref linkend="andTable"/> 
+    shows the truth table for the bitwise AND operator.
+    <table frame="none" id="andTable"><title>Bitwise AND</title>
+      <tgroup cols="3">
+        <thead>
+          <row rowsep="1"><entry>&amp;</entry><entry>0</entry><entry>1</entry></row>
+        </thead>
+        <tbody>
+          <row><entry>0</entry><entry>0</entry><entry>0</entry></row>
+          <row><entry>1</entry><entry>0</entry><entry>1</entry></row>
+        </tbody>
+      </tgroup>
+    </table>
+    </para>
+
+    <example><title>Bitwise AND</title>
+      <para>
+        3 &amp; 6 = 0000 0011 &amp; 0000 0110 = 0000 0010 = 2 
+      </para>    
+   </example>
+   </section>
+    
+    <section><title>Bitwise OR</title>
+    <para>
+    The bitwise OR operator, <command>|</command>, sets a bit if either one the 
+    corresponding bits of both operands is set. <xref linkend="orTable"/> shows 
+    the truth table for the bitwise OR operator.
+    <table frame="none" id="orTable"><title>Bitwise OR</title>
+      <tgroup cols="3">
+        <thead>
+          <row rowsep="1"><entry>|</entry><entry>0</entry><entry>1</entry></row>
+        </thead>
+        <tbody>
+          <row><entry>0</entry><entry>0</entry><entry>1</entry></row>
+          <row><entry>1</entry><entry>1</entry><entry>1</entry></row>
+        </tbody>
+      </tgroup>
+    </table>
+    </para>
+
+    <example><title>Bitwise OR</title>
+      <para>
+         3 | 6 = 0000 0011 | 0000 0110 = 0000 0111 = 7
+      </para>    
+   </example>
+   </section>
+    
+    <section><title>Bitwise XOR</title>
+    <para>
+    The bitwise exclusive-or operator, <command>^</command>, sets a bit if and only if 
+    the corresponding bit is set in only one of the operands.
+    <xref linkend="xorTable"/> shows the truth table for the bitwise XOR operator.
+    <table frame="none" id="xorTable"><title>Bitwise XOR</title>
+      <tgroup cols="3">
+        <thead>
+          <row rowsep="1"><entry>^</entry><entry>0</entry><entry>1</entry></row>
+        </thead>
+        <tbody>
+          <row><entry>0</entry><entry>0</entry><entry>1</entry></row>
+          <row><entry>1</entry><entry>1</entry><entry>0</entry></row>
+        </tbody>
+      </tgroup>
+    </table>
+    </para>
+
+    <example><title>Bitwise XOR</title>
+      <para>
+        3 &amp; 6 = 0000 0011 ^ 0000 0110 = 0000 0101 = 5
+      </para>    
+   </example>
+   </section>
+    
+    <section><title>Bitwise NOT</title>
+    <para>
+    The NOT operator, <command>~</command>, is a unary operator which
+    inverts the bits of its operands.
+    <xref linkend="notTable"/> shows the truth table for the bitwise NOT operator.
+    <table frame="none" id="notTable"><title>Bitwise NOT</title>
+      <tgroup cols="2">
+        <thead>
+          <row rowsep="1"><entry>~</entry><entry></entry></row>
+        </thead>
+        <tbody>
+          <row><entry>0</entry><entry>1</entry></row>
+          <row><entry>1</entry><entry>0</entry></row>
+        </tbody>
+      </tgroup>
+    </table>
+    </para>
+
+    <example><title>Bitwise NOT</title>
+      <para>
+         ~6 = ~(0000 0110) = 1111 1001 = 249 
+      </para>    
+   </example>
+   </section>
+    
+    <section><title>Shit-left operator</title>
+    <para>
+    The shift-left operator, <command>&lt;&lt;</command> shifts each bit <command>n</command>
+    binary digits to the left, padding with zeros from the rear.
+    </para>
+
+    <example><title>Shift-Left</title>
+      <para>
+         6 &lt;&lt; 2 = (0000 0110) &lt;&lt; 2 = 0001 1000 = 24
+      </para>    
+   </example>
+   </section>
+    
+    <section><title>Shit-right operator</title>
+    <para>
+    The shift-right operator, <command>&gt;&gt;</command> shifts each bit <command>n</command>
+    binary digits to the right, padding with zeros from the front.
+    </para>
+
+    <example><title>Shift-right</title>
+      <para>
+         6 &gt;&gt; 2 = (0000 0110) &gt;&gt; 2 = 0000 0001 = 1
+      </para>    
+   </example>
+   </section>
+    
+  </section>
+  
+  <section><title>Precedence levels of operators</title>
+    <para>
+      <emphasis>C</emphasis> preserves the presedence levels of the algebraic
+      operators. For example,
+      <informalexample><programlisting>
+         1 - 8/2 + 2*2 
+      </programlisting></informalexample>
+      yields <constant>1</constant>, i.e. multiplication and division take presedence 
+      over addition and subtraction. The presedence can be modified via brackets. 
+      For example,
+      <informalexample><programlisting>
+         1 - 8/(2 + 2)*2 
+      </programlisting></informalexample>
+      yields <constant>-3</constant>. <xref linkend="operatorsTable"/> shows the
+      <emphasis>C</emphasis> operators in order of their presendence levels.
+    </para>
+    <table id="operatorsTable"><title>C Operators in decreasing presedence level. 
+        The precedence levels are separated by horizontal lines.</title>
+      <tgroup cols="3">
+        <thead><row rowsep="1">
+            <entry>Operator</entry>
+            <entry>Operator name</entry>
+            <entry>Example</entry>
+        </row></thead>
+        <tbody>
+          <row>
+            <entry>()</entry>
+            <entry>function call</entry>
+            <entry><emphasis>functionName(expressionList)</emphasis></entry>
+          </row>    
+          <row>
+            <entry>[]</entry>
+            <entry>array element access</entry>
+            <entry><emphasis>arrayName[elementNo]</emphasis></entry>
+          </row>
+          <row>
+            <entry>-&gt;</entry>
+            <entry>element access</entry>
+            <entry><emphasis>pointerToStructure-&gt;memberName</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>.</entry>
+            <entry>element access</entry>
+            <entry><emphasis>structureName.memberName</emphasis></entry>
+          </row>
+          <row>
+            <entry>!</entry>  
+            <entry>logical NOT (true if non-zero)</entry>
+            <entry><emphasis>!expression</emphasis></entry>
+          </row>
+          <row>
+            <entry>~</entry>
+            <entry>bitwise NOT</entry>
+            <entry><emphasis>~expression</emphasis></entry>
+          </row>
+          <row>
+              <entry>++, --</entry>
+              <entry>pre- and post-increment/decrement</entry>
+              <entry><emphasis>++expression</emphasis> or <emphasis>expression++</emphasis></entry>
+          </row>
+          <row>
+            <entry>+, -</entry>
+            <entry>unary plus and minus</entry>
+            <entry><emphasis>-k</emphasis></entry>
+          </row>
+          <row>
+            <entry>*</entry>
+            <entry>dereference</entry>
+            <entry><emphasis>*pointerVariable</emphasis></entry>
+          </row>
+          <row>
+            <entry>&amp;</entry>
+            <entry>address-of</entry>
+            <entry><emphasis>&amp;variableName</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>sizeof</entry>  
+            <entry>size-of memory area</entry>
+            <entry><emphasis>sizeof expression</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>()</entry>
+            <entry>type-cast operator</entry>
+            <entry><emphasis>(type)expression</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>*, /, %</entry>
+            <entry>multiply, divide, remainder (modulus)</entry>
+            <entry><emphasis>expression * expression</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>&lt;&lt;, &gt;&gt;</entry>
+            <entry>shift-left and shift-right bit operators</entry>
+            <entry><emphasis>expression &lt;&lt; expression</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>&lt;, &lt;=, &gt;, &gt;=</entry>
+            <entry>relational operators</entry>
+            <entry><emphasis>expression &lt;= expression</emphasis></entry>
+          </row>
+          <row>
+            <entry>==</entry>
+            <entry>relational equal</entry>
+            <entry><emphasis>expression == expression</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>!=</entry>
+            <entry>relational not-equal</entry>
+            <entry><emphasis>expression != expression</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>&amp;, |</entry>
+            <entry>bitwise AND and OR</entry>
+            <entry><emphasis>expression | expression</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>^</entry>
+            <entry>bitwise exclusive OR</entry>
+            <entry><emphasis>expression ^ expression</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>&amp;&amp;</entry>
+            <entry>logical AND</entry>
+            <entry><emphasis>expression &amp;&amp; expression</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>||</entry>
+            <entry>logical OR</entry>
+            <entry><emphasis>expression || expression</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>? :</entry>
+            <entry>conditional</entry>
+            <entry><emphasis>expression ? expression : expression</emphasis></entry>
+          </row>
+          <row>
+            <entry>=</entry>
+            <entry>assignment</entry>
+            <entry><emphasis>lvalue = expression</emphasis></entry>
+          </row>
+          <row>
+            <entry>+=, -=, *=, /=, %=</entry>
+            <entry>arithmetic-operator-and-assign</entry>
+            <entry><emphasis>lvalue += expression</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>&amp;=, |=, ^=, &lt;&lt;=, &gt;&gt;=</entry>
+            <entry>bitwise-operator-and-assign</entry>
+            <entry><emphasis>lvalue &amp;= expression</emphasis></entry>
+          </row>
+          <row rowsep="1">
+            <entry>,</entry>
+            <entry>sequencing</entry>
+            <entry><emphasis>expression, expression</emphasis></entry>
+          </row>
+        </tbody>  
+      </tgroup>
+    </table>  
+  </section>
+  
+  <section><title>Operator directionality</title>
+    <para>
+      The directionality of most operators in <emphasis>C</emphasis> is left-to-right,
+      i.e. that the left operand is evaluated prior to the right operand being evaluated.
+      Exceptions are:
+      <itemizedlist>
+        <listitem><para>
+          The logical NOT operator <command>!</command>.
+        </para></listitem>
+        <listitem><para>
+          The bitwise NOT operator <command>~</command>.    
+        </para></listitem>
+        <listitem><para>
+          The unary increment, <command>++</command>, decrement, <command>--</command>,
+          and negative (unary minus), <command>-</command>, operators.
+        </para></listitem>
+        <listitem><para>
+          The dereferencing, <command>*</command>, and address-of, <command>&amp;</command>
+          operators.
+        </para></listitem>
+        <listitem><para>
+          The type-cast operator, <command>()</command>.  
+        </para></listitem>
+        <listitem><para>
+          The assignment operators, <command>=</command>, <command>+=</command>,
+          <command>-=</command>, <command>*=</command>, <command>/=</command>,
+          <command>%=</command>, <command>&amp;=</command>, <command>|=</command>,
+          <command>&lt;&lt;=</command> and <command>&gt;&gt;=</command>.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+</section>

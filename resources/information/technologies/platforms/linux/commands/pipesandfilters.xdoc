@@ -1,0 +1,162 @@
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"-->
+<section id="resources.information.platforms.linux.commands.pipesandfilters"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Pipes and Filters</title>
+	<para>
+	Unix, and by inheritance, Linux provides a sophisticated pipe and filter mechanism facilitating the communication between processes. This feature, together with the philosophy of having many utilities, each focusing on a single feature, empowers the user to create complex utilities by chaining commands together. Pipes can be used to redirect <emphasis role="strong">input</emphasis> and <emphasis role="strong">output</emphasis> between commands. Filters filter, according to a specified pattern (usually a regular expression), the information passed between commands.
+	</para>
+	<para>
+	Each process has access to two streams, an input stream (stdin) and an output stream (stdout [1]). Sometimes a process also makes use of the error stream (stderr [2]).
+	</para>
+
+	<section>
+		<title>|</title>
+		<para>
+		The <emphasis role="strong">PIPE</emphasis> redirects the output (stdout) from one process to the input (stdin) from another process.
+		<programlisting>
+alex@bumblebee alex $ ls -1 |sort
+Documents
+EDON
+GNUstep
+Movies
+Music
+Resources
+Video
+Vim
+bin
+alex@bumblebee alex $ 			
+		</programlisting>
+		<note>
+			<para>
+			The output redirected to the input stream of a process must be read by that process, otherwise the stream will block and will not provide the desired result. Example : 
+			<screen>
+				<userinput>
+					<command>cat file1 file2 | ls * |sort</command> 
+				</userinput>
+			</screen>
+			</para>
+		</note>
+        </para>
+	</section>
+	
+	<section>
+		<title>&gt;</title>
+		<para>
+		<emphasis role="strong">stdout</emphasis> is redirected to a new file. If the file already exists, it is overwritten.
+			<screen>
+				<userinput>
+					<command>ls / >rootfiles</command> 
+				</userinput>
+			</screen>
+		</para>
+	</section>
+
+	<section>
+		<title>&gt;&gt;</title>
+		<para>
+		<emphasis role="strong">stdout</emphasis> is redirected and appended to a file.
+			<screen>
+				<userinput>
+					<command>ls /usr >>rootfiles</command> 
+				</userinput>
+			</screen>
+		</para>
+	</section>
+
+	<section>
+		<title>&lt;</title>
+		<para>
+		Accepts input from a file. It can also be replaced with "cat file |".
+		</para>
+		<programlisting>
+[root@teddy root]# grep alex &lt;/etc/passwd
+alex:x:500:500::/home/alex:/bin/bash
+[root@teddy root]# cat /etc/passwd |grep alex
+alex:x:500:500::/home/alex:/bin/bash
+[root@teddy root]# 
+		</programlisting>
+	</section>
+
+	<section>
+		<title>&lt;&lt;</title>
+		<para>
+		(see <xref linkend="resources.information.platforms.linux.commands.pipesandfilters.heredocument"/>)
+		</para>
+	</section>	
+	
+	<section>
+		<title>Joining stdout and stderr into one stream</title>
+		<para>
+		Redirection (&gt;) by default used stdout, but in many scenarios output on stderr is also required to be included. To solve this problem stderr is redirected to stdout, which in turn is redirected elsewhere. stderr is given an index of 2 and stdout the index of 1. The target stream is prefixed with a &amp; character.  
+		</para>
+		<screen>
+			<userinput>
+				<command>command 2&gt;&amp;1 1&gt;file.log</command> 
+			</userinput>
+		</screen>
+	</section>	
+	
+	<section id="resources.information.platforms.linux.commands.pipesandfilters.heredocument">
+		<title>Here Document</title>
+		<para>
+		This feature allows the processing of data contained within a script file. The location specified should be unique within the file. 
+		</para>
+		<programlisting>
+#!/bin/bash
+
+cat &lt;&lt;endoffile
+---------------------------------
+This is line 1
+This is line 2
+---------------------------------
+endoffile
+wall &lt;&lt;endofmessage
+-------------------------
+This is my message
+-------------------------
+endofmessage
+#Lets first wait for the message to appear
+sleep 2
+echo But not this as this is done via echo
+		</programlisting>
+		<programlisting>
+But not lex $ ./test.sh           
+---------------------------------
+This is line 1
+This is line 2
+---------------------------------
+
+Broadcast message from alex (Wed Sep  3 16:29:41 2003):
+
+-------------------------
+This is my message
+-------------------------
+But not this as this is done via echo
+alex@bumblebee alex $ 			
+		</programlisting>
+	</section>	
+	
+	<section>
+		<title>T as in tee</title>
+		<para>
+		To redirect stdin to stdout, as well as write it to a file or many files, the tee command is used. The example below pipes stdout from the ls command into a <emphasis role="strong">T</emphasis> which writes it to the files, cat, mouse and rat, as well as forwarding it to the next redirect into donkey. The result is 4 files (cat, mouse, rat and donkey) containing the directory listing of the current directory.
+		</para>
+		<screen>
+			<userinput>
+				<command>ls |tee cat mouse rat > donkey</command> 
+			</userinput>
+		</screen>
+	</section>	
+	
+  <xi:include href="grep.xdoc" />
+	
+	<section>
+		<title>Exercise</title>
+		<para>
+
+		</para>
+	</section>	
+</section>	

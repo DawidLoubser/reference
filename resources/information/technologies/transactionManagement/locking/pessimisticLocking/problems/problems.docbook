@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Problems caused by pessimisitic locking</title>
+    <para> 
+        The primary disadvantage of pessimistic locking is that it does not provide a scalable solution and may result in
+        excessive wait periods.
+    </para>
+    
+    <section>
+        <title>Pessimistic locking does not scale well with high level of concurrencies</title>
+        <para>
+            If a system has many users or if an organization serves many clients concurrently, then the
+            holding of locks for the entire life span of the iteration results in excessive waiting for
+            resources.
+        </para>
+    </section>
+    
+    <section>
+        <title>Pessimistic locking does not cater well for long-lived transactions</title>
+        <para>
+            Since resources are locked for the entire life span of a transaction, pessimistic locking is 
+            usually not suited for log loved transactions.
+        </para>
+    </section>
+    
+    <section>
+        <title>Pessimistic locking is not appropriate if (some) resource managers support only course grained locking</title>
+        <para>
+            Some resource managers may support only course grained locks, <abbrev>i.e.</abbrev> locks with a large scope.
+            If pessimistic locking is used one may end up locking an entire page of records or object, an entire table/class
+            or even an entire database for the duration of the transaction.			 
+        </para>
+    </section>
+    
+    <section>
+        <title>Pessimistic locking is not suitable for transactions which require the locks of many resources</title>
+        <para>
+            If a transaction accesses many resources, then pessimistic locking may result in blocking a large
+            number of transactions.
+        </para>
+    </section>
+</section>    

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.dotnet.remoting.parameterPassing.parameterPassing"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Remote parameter passing</title>
+    <para>
+        Parameters and return values which are objects may be passed either by value or by reference.
+    </para>
+    
+    
+    <section>
+        <title>Passing objects by value</title>
+        <para>
+            In order to pass an object by value to a remote recipient, the class must either implement the <literal>ISerializable</literal> interface
+            or it must be annotated with the <literal>Serializable</literal> attribute:
+            <programlisting><![CDATA[
+namespace Retail
+{
+                
+    [serializable] public class Order
+    {
+       ...
+    }                
+}                
+             ]]></programlisting>
+        </para>
+        <para>
+            Either of these gives the .Net Runtime the go-ahead to serialize the object across the stream when passed as a parameter
+            or as a return value in the context of a remote service request.
+        </para>
+    </section>
+    
+    <section>
+        <title>Passing objects by reference</title>
+        <para>
+            .Net Remoting supports the passing of a remote handle to another object which can be accessed via .Net Remoting, <abbrev>i.e.</abbrev>
+            to pass a remotely accessible object by reference. The object which is passed by reference must derived from the <literal>MarshalByRefObject</literal>
+            base class provided by .Net Remoting:
+            <programlisting><![CDATA[
+Public Class OrderProcessor: MarshalByRefObject
+{
+  ...
+}                
+             ]]></programlisting>
+        </para>
+    </section>
+    
+</section>    

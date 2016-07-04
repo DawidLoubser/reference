@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Signalling faults</title>
+    <para>
+        BPEL two ways of communicating faults:
+        <orderedlist>
+            <listitem><para>
+                On can signal a fault for internal consumption within the business process.
+            </para></listitem>
+            <listitem><para>
+                One can return a fault message to a client requesting the service.
+            </para></listitem>
+        </orderedlist>
+        
+    </para>
+    <section>
+        <title>Signalling faults for internal consumption</title>
+        <para>
+            Faults are signalled in BPEL via a <literal><![CDATA[<throw>]]></literal> activity. The tag may
+            specify just the fault type 
+            <programlisting><![CDATA[
+<throw faultName="InsufficientFundsException"/>            
+         ]]></programlisting>
+            or may also provide a variable which is resembles the fault message
+            <programlisting><![CDATA[
+<throw faultName="InsufficientFaultException" faultVariable="brokeException"/>        
+         ]]></programlisting>
+        </para>
+        <para>
+            Normally exception signalling is done within a switch statement:
+            <programlisting><![CDATA[
+<switch>
+  <case condition="...">
+     <reply .../>
+  </case>
+  <otherwise>
+    <throw faulltName="..." faultVariable="..."/>
+  </otherwise>
+</switch>                
+        ]]></programlisting>
+        </para>
+    </section>
+
+    <section>
+        <title>Notifying clients of a fault</title>
+        <para>
+            If the fault is not meant to be processed at higher level services hosted on the bus, then
+            a fault message is returned to the client who requested the high level service. This is
+            done via the normal <literal><![CDATA[<reply>]]></literal> tag:
+            <programlisting><![CDATA[
+<reply partnerlink="Client"
+                portType="..."
+                operation="..."
+                variable="myFaultVariable"
+                faultName="..."/>
+            ]]></programlisting>
+        </para>
+    </section>
+    
+</section>    

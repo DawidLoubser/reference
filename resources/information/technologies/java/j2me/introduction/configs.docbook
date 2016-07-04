@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/samples/docbook/xml/docbookx.dtd">
+--><ns62:section xmlns:ns62="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2me.introduction.configs">
+
+    <ns63:title xmlns:ns63="http://docbook.org/ns/docbook">Configurations</ns63:title>
+    <ns64:para xmlns:ns64="http://docbook.org/ns/docbook">We'll be looking at the two current configurations in the J2ME specs, namely CDC and
+        CLDC. CLDC being the <ns65:emphasis xmlns:ns65="http://docbook.org/ns/docbook">C</ns65:emphasis>onected <ns66:emphasis xmlns:ns66="http://docbook.org/ns/docbook">L</ns66:emphasis>imited
+        <ns67:emphasis xmlns:ns67="http://docbook.org/ns/docbook">D</ns67:emphasis>evice <ns68:emphasis xmlns:ns68="http://docbook.org/ns/docbook">C</ns68:emphasis>onfiguration. And CDC the <ns69:emphasis xmlns:ns69="http://docbook.org/ns/docbook">C</ns69:emphasis>onected
+        <ns70:emphasis xmlns:ns70="http://docbook.org/ns/docbook">D</ns70:emphasis>evice
+        <ns71:emphasis xmlns:ns71="http://docbook.org/ns/docbook">C</ns71:emphasis>onfiguration.
+    </ns64:para>
+    <ns72:para xmlns:ns72="http://docbook.org/ns/docbook">Configurations use a virtual machine to implement a certain
+        amount of functionality for a specific device. The smaller ones are subsets of larger more
+        capable configurations, so software is upward compatible. Configurations are essentially a
+        Virtual machine with a certain set of class libraries. Lets start with the smaller of the
+        two then; CLDC</ns72:para>
+    <ns73:section xmlns:ns73="http://docbook.org/ns/docbook">
+        <ns74:title xmlns:ns74="http://docbook.org/ns/docbook">CLDC(Conected Limited Device Configuration)</ns74:title>
+        <ns75:para xmlns:ns75="http://docbook.org/ns/docbook">As you can derive from it's name, it's architected for devices with limited resources
+            that has some kind of network connection. Essentially CLDC boils down to a specific set
+            of class libraries with a virtual machine.CLDC uses KVM as it's virtual machine</ns75:para>
+        <ns76:para xmlns:ns76="http://docbook.org/ns/docbook">Devices that will utilise CLDC are typically cell-phones, pagers, PDAs, televisions,
+            other inteligent domestic devices and even small point of sale devices. It is however
+            not limmited to these devices.</ns76:para>
+        <ns77:para xmlns:ns77="http://docbook.org/ns/docbook">CLDC needs at least <ns78:emphasis xmlns:ns78="http://docbook.org/ns/docbook">160 kilobytes non-volatile</ns78:emphasis> memory. And then
+                <ns79:emphasis xmlns:ns79="http://docbook.org/ns/docbook">32 kilobytes volatile</ns79:emphasis> memory for it's runtime.The volatile to
+            non-volatile ratio might differ between different devices and different applications. </ns77:para>
+        <ns80:para xmlns:ns80="http://docbook.org/ns/docbook">Hardware requirements increased with the new spec (1.1) to include use of floating
+            point numbers. </ns80:para>
+        <ns81:para xmlns:ns81="http://docbook.org/ns/docbook">The configuration will be extended with Profiles that will take care of certain device
+            requirements. The idea of the configuration is to cater for as large a scope of devices
+            as possible.</ns81:para>
+        <ns82:para xmlns:ns82="http://docbook.org/ns/docbook">CLDC assumes that the device has a basic operating system through which it can access
+            the required hardware.</ns82:para>
+        <ns83:para xmlns:ns83="http://docbook.org/ns/docbook">CLDC applications will have a<ns84:methodname xmlns:ns84="http://docbook.org/ns/docbook">public static void main(String
+            args[])</ns84:methodname> method which is the method that will be called. Profiles built on top
+            of CLDC can implement their own application structure. CLDC applications are assumed to
+            be downloadable but not neccasarily persistable on the device. But application
+            management will be device device spesific and outside the scope of the spec.</ns83:para>
+        <ns85:section xmlns:ns85="http://docbook.org/ns/docbook">
+            <ns86:title xmlns:ns86="http://docbook.org/ns/docbook">Security</ns86:title>
+            <ns87:para xmlns:ns87="http://docbook.org/ns/docbook">CLDC has a much smaller memmory budget than J2SE's security library and the
+                security challenges were met apropriately.</ns87:para>
+            <ns88:para xmlns:ns88="http://docbook.org/ns/docbook">Low level security is addressed with a preverifier. Where classes are usually
+                verified at runtime in J2SE, it is preverified for CLDC and unverified classes will
+                be rejected. This is to protect systems from potentially harmfull code.</ns88:para>
+            <ns89:para xmlns:ns89="http://docbook.org/ns/docbook">Applications execute in what is known as a sandbox, which has the neccesary
+                restrictions to protect the system libraries and other applications on the device
+                from executing code.</ns89:para>
+            <ns90:para xmlns:ns90="http://docbook.org/ns/docbook">End to end transaction secutiy is considered outside the scope of the CLDC spec and 
+            left to the different profiles to address.</ns90:para>
+        </ns85:section>
+        <ns91:section xmlns:ns91="http://docbook.org/ns/docbook">
+            <ns92:title xmlns:ns92="http://docbook.org/ns/docbook">Limitations</ns92:title>
+            <ns93:para xmlns:ns93="http://docbook.org/ns/docbook">As you would expect certain limitations would be unavoidable</ns93:para>
+            <ns94:para xmlns:ns94="http://docbook.org/ns/docbook">First of all; Object class in CLDC has no finalize() method and finalize will not
+                be called when an Object is garbage collected.</ns94:para>
+            <ns95:para xmlns:ns95="http://docbook.org/ns/docbook">Exception handling in CLDC only supports a subset of the J2SE exception classes.
+                Devices and their application managers will deal with exceptions in their own way and 
+                consequently some exception handling is considdered to be outside the scope of the spec.</ns95:para>
+            <ns96:para xmlns:ns96="http://docbook.org/ns/docbook">Asynchronous exceptions and some Error classes have also not been included in the spec.</ns96:para>
+            <ns97:para xmlns:ns97="http://docbook.org/ns/docbook">User defined class loaders have also been ommited since it requires security that
+                will bloat the system beyond it's memmory budget.</ns97:para>
+            <ns98:para xmlns:ns98="http://docbook.org/ns/docbook">Thread groups and thread demons are not included although the CLDC VM is thread
+                capable. Object collections can be used to handle a collection of threads.</ns98:para>
+        </ns91:section>
+        <ns99:section xmlns:ns99="http://docbook.org/ns/docbook">
+            <ns100:title xmlns:ns100="http://docbook.org/ns/docbook">Class Libraries</ns100:title>
+            <ns101:para xmlns:ns101="http://docbook.org/ns/docbook">Class libraries included in the spec can be subdived into two main categories.
+                Classes which are also available in J2SE and J2ME spesific classes which ultimately
+                maps onto J2SE classes.</ns101:para>
+            <ns102:itemizedlist xmlns:ns102="http://docbook.org/ns/docbook">
+                <ns103:title xmlns:ns103="http://docbook.org/ns/docbook">Classes in CLDC</ns103:title>
+                <ns104:listitem xmlns:ns104="http://docbook.org/ns/docbook">
+                <ns105:itemizedlist xmlns:ns105="http://docbook.org/ns/docbook">
+                    <ns106:title xmlns:ns106="http://docbook.org/ns/docbook">J2SE </ns106:title>
+                    <ns107:listitem xmlns:ns107="http://docbook.org/ns/docbook">
+                    <ns108:itemizedlist xmlns:ns108="http://docbook.org/ns/docbook">
+                        <ns109:title xmlns:ns109="http://docbook.org/ns/docbook">System Classes</ns109:title>
+                        <ns110:listitem xmlns:ns110="http://docbook.org/ns/docbook"><ns111:para xmlns:ns111="http://docbook.org/ns/docbook">java.lang.Object</ns111:para></ns110:listitem> 
+                        <ns112:listitem xmlns:ns112="http://docbook.org/ns/docbook"><ns113:para xmlns:ns113="http://docbook.org/ns/docbook">java.lang.Class</ns113:para></ns112:listitem>
+                        <ns114:listitem xmlns:ns114="http://docbook.org/ns/docbook"><ns115:para xmlns:ns115="http://docbook.org/ns/docbook">java.lang.Runtime</ns115:para></ns114:listitem>
+                        <ns116:listitem xmlns:ns116="http://docbook.org/ns/docbook"><ns117:para xmlns:ns117="http://docbook.org/ns/docbook">java.lang.System</ns117:para></ns116:listitem>
+                        <ns118:listitem xmlns:ns118="http://docbook.org/ns/docbook"><ns119:para xmlns:ns119="http://docbook.org/ns/docbook">java.lang.Thread</ns119:para></ns118:listitem>
+                        <ns120:listitem xmlns:ns120="http://docbook.org/ns/docbook"><ns121:para xmlns:ns121="http://docbook.org/ns/docbook">java.lang.Runnable (interface)</ns121:para></ns120:listitem>
+                        <ns122:listitem xmlns:ns122="http://docbook.org/ns/docbook"><ns123:para xmlns:ns123="http://docbook.org/ns/docbook">java.lang.String</ns123:para></ns122:listitem>
+                        <ns124:listitem xmlns:ns124="http://docbook.org/ns/docbook"><ns125:para xmlns:ns125="http://docbook.org/ns/docbook">java.lang.StringBuffer</ns125:para></ns124:listitem>
+                        <ns126:listitem xmlns:ns126="http://docbook.org/ns/docbook"><ns127:para xmlns:ns127="http://docbook.org/ns/docbook">java.lang.Throwable</ns127:para></ns126:listitem>
+                    </ns108:itemizedlist>
+                    <ns128:itemizedlist xmlns:ns128="http://docbook.org/ns/docbook">
+                        <ns129:title xmlns:ns129="http://docbook.org/ns/docbook">Data type classes</ns129:title>
+                        <ns130:listitem xmlns:ns130="http://docbook.org/ns/docbook"><ns131:para xmlns:ns131="http://docbook.org/ns/docbook"> java.lang.Boolean</ns131:para></ns130:listitem>
+                        <ns132:listitem xmlns:ns132="http://docbook.org/ns/docbook"><ns133:para xmlns:ns133="http://docbook.org/ns/docbook">java.lang.Byte</ns133:para></ns132:listitem>
+                        <ns134:listitem xmlns:ns134="http://docbook.org/ns/docbook"><ns135:para xmlns:ns135="http://docbook.org/ns/docbook">java.lang.Short</ns135:para></ns134:listitem>
+                         <ns136:listitem xmlns:ns136="http://docbook.org/ns/docbook"><ns137:para xmlns:ns137="http://docbook.org/ns/docbook"> java.lang.Integer</ns137:para></ns136:listitem>
+                         <ns138:listitem xmlns:ns138="http://docbook.org/ns/docbook"><ns139:para xmlns:ns139="http://docbook.org/ns/docbook">java.lang.Long</ns139:para></ns138:listitem>
+                         <ns140:listitem xmlns:ns140="http://docbook.org/ns/docbook"><ns141:para xmlns:ns141="http://docbook.org/ns/docbook">java.lang.Float</ns141:para></ns140:listitem>
+                         <ns142:listitem xmlns:ns142="http://docbook.org/ns/docbook"><ns143:para xmlns:ns143="http://docbook.org/ns/docbook">java.lang.Double</ns143:para><ns144:para xmlns:ns144="http://docbook.org/ns/docbook">Note that Floating points are only supported as of the new CLDC spec.</ns144:para></ns142:listitem>
+                         <ns145:listitem xmlns:ns145="http://docbook.org/ns/docbook"><ns146:para xmlns:ns146="http://docbook.org/ns/docbook">java.lang.Character</ns146:para></ns145:listitem>
+                    </ns128:itemizedlist>
+                    <ns147:itemizedlist xmlns:ns147="http://docbook.org/ns/docbook">
+                        <ns148:title xmlns:ns148="http://docbook.org/ns/docbook">Collection classes</ns148:title>
+                        <ns149:listitem xmlns:ns149="http://docbook.org/ns/docbook"><ns150:para xmlns:ns150="http://docbook.org/ns/docbook"> java.util.Vector</ns150:para></ns149:listitem>
+                        <ns151:listitem xmlns:ns151="http://docbook.org/ns/docbook"><ns152:para xmlns:ns152="http://docbook.org/ns/docbook">java.util.Stack</ns152:para></ns151:listitem>
+                        <ns153:listitem xmlns:ns153="http://docbook.org/ns/docbook"><ns154:para xmlns:ns154="http://docbook.org/ns/docbook">java.util.Hashtable</ns154:para></ns153:listitem>
+                        <ns155:listitem xmlns:ns155="http://docbook.org/ns/docbook"><ns156:para xmlns:ns156="http://docbook.org/ns/docbook">java.util.Enumeration (interface)</ns156:para></ns155:listitem>
+                    </ns147:itemizedlist>
+                    <ns157:itemizedlist xmlns:ns157="http://docbook.org/ns/docbook">
+                        <ns158:title xmlns:ns158="http://docbook.org/ns/docbook">I/O classes</ns158:title>
+                        <ns159:listitem xmlns:ns159="http://docbook.org/ns/docbook"><ns160:para xmlns:ns160="http://docbook.org/ns/docbook">java.io.InputStream</ns160:para></ns159:listitem>
+                        <ns161:listitem xmlns:ns161="http://docbook.org/ns/docbook"><ns162:para xmlns:ns162="http://docbook.org/ns/docbook">java.io.OutputStream</ns162:para></ns161:listitem>
+                        <ns163:listitem xmlns:ns163="http://docbook.org/ns/docbook"><ns164:para xmlns:ns164="http://docbook.org/ns/docbook">java.io.ByteArrayInputStream</ns164:para></ns163:listitem>
+                        <ns165:listitem xmlns:ns165="http://docbook.org/ns/docbook"><ns166:para xmlns:ns166="http://docbook.org/ns/docbook">java.io.ByteArrayOutputStream</ns166:para></ns165:listitem>
+                        <ns167:listitem xmlns:ns167="http://docbook.org/ns/docbook"><ns168:para xmlns:ns168="http://docbook.org/ns/docbook">java.io.DataInput (interface)</ns168:para></ns167:listitem>
+                        <ns169:listitem xmlns:ns169="http://docbook.org/ns/docbook"><ns170:para xmlns:ns170="http://docbook.org/ns/docbook">java.io.DataOutput (interface)</ns170:para></ns169:listitem>
+                        <ns171:listitem xmlns:ns171="http://docbook.org/ns/docbook"><ns172:para xmlns:ns172="http://docbook.org/ns/docbook">java.io.DataInputStream</ns172:para></ns171:listitem>
+                        <ns173:listitem xmlns:ns173="http://docbook.org/ns/docbook"><ns174:para xmlns:ns174="http://docbook.org/ns/docbook">java.io.DataOutputStream</ns174:para></ns173:listitem>
+                        <ns175:listitem xmlns:ns175="http://docbook.org/ns/docbook"><ns176:para xmlns:ns176="http://docbook.org/ns/docbook">java.io.Reader</ns176:para></ns175:listitem>
+                        <ns177:listitem xmlns:ns177="http://docbook.org/ns/docbook"><ns178:para xmlns:ns178="http://docbook.org/ns/docbook">java.io.Writer</ns178:para></ns177:listitem>
+                        <ns179:listitem xmlns:ns179="http://docbook.org/ns/docbook"><ns180:para xmlns:ns180="http://docbook.org/ns/docbook">java.io.InputStreamReader</ns180:para></ns179:listitem>
+                        <ns181:listitem xmlns:ns181="http://docbook.org/ns/docbook"><ns182:para xmlns:ns182="http://docbook.org/ns/docbook">java.io.OutputStreamWriter</ns182:para></ns181:listitem>
+                        <ns183:listitem xmlns:ns183="http://docbook.org/ns/docbook"><ns184:para xmlns:ns184="http://docbook.org/ns/docbook">java.io.PrintStream</ns184:para></ns183:listitem>
+                    </ns157:itemizedlist>
+                    <ns185:itemizedlist xmlns:ns185="http://docbook.org/ns/docbook">
+                        <ns186:title xmlns:ns186="http://docbook.org/ns/docbook">Calendar and time classes</ns186:title>
+                        <ns187:listitem xmlns:ns187="http://docbook.org/ns/docbook"><ns188:para xmlns:ns188="http://docbook.org/ns/docbook">java.util.Calendar</ns188:para></ns187:listitem>
+                        <ns189:listitem xmlns:ns189="http://docbook.org/ns/docbook"><ns190:para xmlns:ns190="http://docbook.org/ns/docbook">java.util.Date</ns190:para></ns189:listitem> 
+                            <ns191:listitem xmlns:ns191="http://docbook.org/ns/docbook"><ns192:para xmlns:ns192="http://docbook.org/ns/docbook">java.util.TimeZone</ns192:para></ns191:listitem>
+                    </ns185:itemizedlist>
+                    <ns193:itemizedlist xmlns:ns193="http://docbook.org/ns/docbook">
+                        <ns194:title xmlns:ns194="http://docbook.org/ns/docbook">Additional utility classes</ns194:title>
+                        <ns195:listitem xmlns:ns195="http://docbook.org/ns/docbook"><ns196:para xmlns:ns196="http://docbook.org/ns/docbook">java.util.Random</ns196:para></ns195:listitem>
+                        <ns197:listitem xmlns:ns197="http://docbook.org/ns/docbook"><ns198:para xmlns:ns198="http://docbook.org/ns/docbook">java.lang.Math</ns198:para></ns197:listitem>
+                    </ns193:itemizedlist>
+                    <ns199:itemizedlist xmlns:ns199="http://docbook.org/ns/docbook">
+                        <ns200:title xmlns:ns200="http://docbook.org/ns/docbook">Exception classes</ns200:title>
+                        <ns201:listitem xmlns:ns201="http://docbook.org/ns/docbook"><ns202:para xmlns:ns202="http://docbook.org/ns/docbook">java.lang.Exception</ns202:para></ns201:listitem>
+                        <ns203:listitem xmlns:ns203="http://docbook.org/ns/docbook"><ns204:para xmlns:ns204="http://docbook.org/ns/docbook">java.lang.ArithmeticException</ns204:para></ns203:listitem>
+                        <ns205:listitem xmlns:ns205="http://docbook.org/ns/docbook"><ns206:para xmlns:ns206="http://docbook.org/ns/docbook">java.lang.ArrayIndexOutOfBoundsException</ns206:para></ns205:listitem>
+                        <ns207:listitem xmlns:ns207="http://docbook.org/ns/docbook"><ns208:para xmlns:ns208="http://docbook.org/ns/docbook">java.lang.ArrayStoreException</ns208:para></ns207:listitem>
+                        <ns209:listitem xmlns:ns209="http://docbook.org/ns/docbook"><ns210:para xmlns:ns210="http://docbook.org/ns/docbook">java.lang.ClassCastException</ns210:para></ns209:listitem>
+                            <ns211:listitem xmlns:ns211="http://docbook.org/ns/docbook"><ns212:para xmlns:ns212="http://docbook.org/ns/docbook">java.lang.ClassNotFoundException</ns212:para></ns211:listitem>
+                            <ns213:listitem xmlns:ns213="http://docbook.org/ns/docbook"><ns214:para xmlns:ns214="http://docbook.org/ns/docbook">java.lang.IllegalAccessException</ns214:para></ns213:listitem>
+                            <ns215:listitem xmlns:ns215="http://docbook.org/ns/docbook"><ns216:para xmlns:ns216="http://docbook.org/ns/docbook">java.lang.IllegalArgumentException</ns216:para></ns215:listitem>
+                            <ns217:listitem xmlns:ns217="http://docbook.org/ns/docbook"><ns218:para xmlns:ns218="http://docbook.org/ns/docbook">java.lang.IllegalMonitorStateException</ns218:para></ns217:listitem>
+                            <ns219:listitem xmlns:ns219="http://docbook.org/ns/docbook"><ns220:para xmlns:ns220="http://docbook.org/ns/docbook">java.lang.IllegalThreadStateException</ns220:para></ns219:listitem>
+                            <ns221:listitem xmlns:ns221="http://docbook.org/ns/docbook"><ns222:para xmlns:ns222="http://docbook.org/ns/docbook">java.lang.IndexOutOfBoundsException</ns222:para></ns221:listitem>
+                            <ns223:listitem xmlns:ns223="http://docbook.org/ns/docbook"><ns224:para xmlns:ns224="http://docbook.org/ns/docbook">java.lang.InstantiationException</ns224:para></ns223:listitem>
+                           <ns225:listitem xmlns:ns225="http://docbook.org/ns/docbook"><ns226:para xmlns:ns226="http://docbook.org/ns/docbook">java.lang.InterruptedException</ns226:para></ns225:listitem>
+                           <ns227:listitem xmlns:ns227="http://docbook.org/ns/docbook"><ns228:para xmlns:ns228="http://docbook.org/ns/docbook">java.lang.NegativeArraySizeException</ns228:para></ns227:listitem>
+                            <ns229:listitem xmlns:ns229="http://docbook.org/ns/docbook"><ns230:para xmlns:ns230="http://docbook.org/ns/docbook">java.lang.NullPointerException</ns230:para></ns229:listitem>
+                            <ns231:listitem xmlns:ns231="http://docbook.org/ns/docbook"><ns232:para xmlns:ns232="http://docbook.org/ns/docbook">java.lang.NumberFormatException</ns232:para></ns231:listitem>
+                            <ns233:listitem xmlns:ns233="http://docbook.org/ns/docbook"><ns234:para xmlns:ns234="http://docbook.org/ns/docbook">java.lang.RuntimeException</ns234:para></ns233:listitem>
+                            <ns235:listitem xmlns:ns235="http://docbook.org/ns/docbook"><ns236:para xmlns:ns236="http://docbook.org/ns/docbook">java.lang.SecurityException</ns236:para></ns235:listitem>
+                            <ns237:listitem xmlns:ns237="http://docbook.org/ns/docbook"><ns238:para xmlns:ns238="http://docbook.org/ns/docbook">java.lang.StringIndexOutOfBoundsException</ns238:para></ns237:listitem>
+                            <ns239:listitem xmlns:ns239="http://docbook.org/ns/docbook"><ns240:para xmlns:ns240="http://docbook.org/ns/docbook">java.util.EmptyStackException</ns240:para></ns239:listitem>
+                            <ns241:listitem xmlns:ns241="http://docbook.org/ns/docbook"><ns242:para xmlns:ns242="http://docbook.org/ns/docbook">java.util.NoSuchElementException</ns242:para></ns241:listitem>
+                            <ns243:listitem xmlns:ns243="http://docbook.org/ns/docbook"><ns244:para xmlns:ns244="http://docbook.org/ns/docbook">java.io.EOFException</ns244:para></ns243:listitem>
+                            <ns245:listitem xmlns:ns245="http://docbook.org/ns/docbook"><ns246:para xmlns:ns246="http://docbook.org/ns/docbook">java.io.InterruptedIOException</ns246:para></ns245:listitem>
+                            <ns247:listitem xmlns:ns247="http://docbook.org/ns/docbook"><ns248:para xmlns:ns248="http://docbook.org/ns/docbook">java.io.IOException</ns248:para></ns247:listitem>
+                            <ns249:listitem xmlns:ns249="http://docbook.org/ns/docbook"><ns250:para xmlns:ns250="http://docbook.org/ns/docbook">java.io.UnsupportedEncodingException</ns250:para></ns249:listitem>
+                            <ns251:listitem xmlns:ns251="http://docbook.org/ns/docbook"><ns252:para xmlns:ns252="http://docbook.org/ns/docbook">java.io.UTFDataFormatException</ns252:para></ns251:listitem>
+                    </ns199:itemizedlist>
+                    <ns253:itemizedlist xmlns:ns253="http://docbook.org/ns/docbook">
+                        <ns254:title xmlns:ns254="http://docbook.org/ns/docbook">Error classes</ns254:title>
+                        <ns255:listitem xmlns:ns255="http://docbook.org/ns/docbook"><ns256:para xmlns:ns256="http://docbook.org/ns/docbook">java.lang.Error</ns256:para></ns255:listitem>
+                        <ns257:listitem xmlns:ns257="http://docbook.org/ns/docbook"><ns258:para xmlns:ns258="http://docbook.org/ns/docbook">java.lang.NoClassDefFoundError</ns258:para></ns257:listitem>
+                        <ns259:listitem xmlns:ns259="http://docbook.org/ns/docbook"><ns260:para xmlns:ns260="http://docbook.org/ns/docbook">java.lang.OutOfMemoryError</ns260:para></ns259:listitem>
+                        <ns261:listitem xmlns:ns261="http://docbook.org/ns/docbook"><ns262:para xmlns:ns262="http://docbook.org/ns/docbook">java.lang.VirtualMachineError</ns262:para></ns261:listitem>
+                    </ns253:itemizedlist>
+                    <ns263:itemizedlist xmlns:ns263="http://docbook.org/ns/docbook">
+                        <ns264:title xmlns:ns264="http://docbook.org/ns/docbook">Weak References</ns264:title>
+                        <ns265:listitem xmlns:ns265="http://docbook.org/ns/docbook"><ns266:para xmlns:ns266="http://docbook.org/ns/docbook">java.lang.ref.Reference</ns266:para></ns265:listitem>
+                        <ns267:listitem xmlns:ns267="http://docbook.org/ns/docbook"><ns268:para xmlns:ns268="http://docbook.org/ns/docbook">java.lang.ref.WeakReference</ns268:para></ns267:listitem>
+                    </ns263:itemizedlist>
+                    </ns107:listitem>
+                </ns105:itemizedlist>
+                </ns104:listitem>
+            </ns102:itemizedlist>
+            <ns269:section xmlns:ns269="http://docbook.org/ns/docbook">
+                <ns270:title xmlns:ns270="http://docbook.org/ns/docbook">Properties</ns270:title>
+            <ns271:para xmlns:ns271="http://docbook.org/ns/docbook"><ns272:classname xmlns:ns272="http://docbook.org/ns/docbook">java.util.Properties</ns272:classname> does not exist in the CLDC spec. Some of the convenience is
+                available in the following classes. Take into consideration that different platforms
+                might implement this functionality different:</ns271:para>
+            <ns273:para xmlns:ns273="http://docbook.org/ns/docbook">You can use <ns274:classname xmlns:ns274="http://docbook.org/ns/docbook">microedition.platformName</ns274:classname>to get the host platform/device.</ns273:para>
+            <ns275:para xmlns:ns275="http://docbook.org/ns/docbook">
+                <ns276:classname xmlns:ns276="http://docbook.org/ns/docbook">microedition.encodingDefault</ns276:classname>to get the character encoding. The
+                Default is: ISO-8859-1</ns275:para>
+            <ns277:para xmlns:ns277="http://docbook.org/ns/docbook">
+                <ns278:classname xmlns:ns278="http://docbook.org/ns/docbook">microedition.configuration</ns278:classname> for the name and version of the
+                supported configuration.</ns277:para>
+            <ns279:para xmlns:ns279="http://docbook.org/ns/docbook">
+                <ns280:classname xmlns:ns280="http://docbook.org/ns/docbook">microedition.profilesNames</ns280:classname> to see which profiles are supported.</ns279:para>
+        </ns269:section>
+        <ns281:section xmlns:ns281="http://docbook.org/ns/docbook">
+            <ns282:title xmlns:ns282="http://docbook.org/ns/docbook">CLDC Spesific classes</ns282:title>
+            <ns283:para xmlns:ns283="http://docbook.org/ns/docbook"> J2SE has a very rich class library. Unfortunately it's not possible to crunch all
+                these classes into a couple a hudred kilobytes. For upward compatibilty puposes
+                classes was created that maps onto J2SE classes but they are spesific to CLDC.
+                Generic frameworks has also been utilized to overcome some of the challenges. </ns283:para>
+                <ns284:section xmlns:ns284="http://docbook.org/ns/docbook">
+            <ns285:title xmlns:ns285="http://docbook.org/ns/docbook">Connection framework:</ns285:title>
+            <ns286:para xmlns:ns286="http://docbook.org/ns/docbook">Needles to say. The rich network library available in Java 2 second edition is not
+                available in CLDC. Instead they implemented as a generic network framework</ns286:para>
+            <ns287:para xmlns:ns287="http://docbook.org/ns/docbook"> The framework consists of Interfaces that lay down the requirements of network io
+                classes for limited devices. Using interfaces abstracts the implementations to
+                fullfill the generic needs they have to meet.</ns287:para>
+            <ns288:para xmlns:ns288="http://docbook.org/ns/docbook">Connections are opened with the generic static
+                Connector.open("&lt;protocol&gt;:&lt;address&gt;;&lt;parameters&gt;"); method</ns288:para>
+            <ns289:para xmlns:ns289="http://docbook.org/ns/docbook">No protocols are defined in CLDC and it's up to the different profiles to
+                implement the protocols they require. The format of the string passed as argument to
+                the method must adhere to the IETF standard RFC2396.</ns289:para>
+            <ns290:para xmlns:ns290="http://docbook.org/ns/docbook">A open request could look like: <ns291:methodname xmlns:ns291="http://docbook.org/ns/docbook">Connector.open("http://www.SolmsTraining.co.za");</ns291:methodname>
+            </ns290:para>
+            <ns292:para xmlns:ns292="http://docbook.org/ns/docbook">The framework basically consists of interfaces for the following: 
+                <ns293:itemizedlist xmlns:ns293="http://docbook.org/ns/docbook">
+                    <ns294:title xmlns:ns294="http://docbook.org/ns/docbook">Connection Framework</ns294:title>
+                    <ns295:listitem xmlns:ns295="http://docbook.org/ns/docbook">
+                        <ns296:para xmlns:ns296="http://docbook.org/ns/docbook">Serial input connection</ns296:para>
+                    </ns295:listitem>
+                    <ns297:listitem xmlns:ns297="http://docbook.org/ns/docbook">
+                        <ns298:para xmlns:ns298="http://docbook.org/ns/docbook">Serial output connection</ns298:para>
+                    </ns297:listitem>
+                    <ns299:listitem xmlns:ns299="http://docbook.org/ns/docbook">
+                        <ns300:para xmlns:ns300="http://docbook.org/ns/docbook">Datagram connection</ns300:para>
+                    </ns299:listitem>
+                    <ns301:listitem xmlns:ns301="http://docbook.org/ns/docbook">
+                        <ns302:para xmlns:ns302="http://docbook.org/ns/docbook">Circuit connection</ns302:para>
+                    </ns301:listitem>
+                    <ns303:listitem xmlns:ns303="http://docbook.org/ns/docbook">
+                        <ns304:para xmlns:ns304="http://docbook.org/ns/docbook">Client connection notification</ns304:para>
+                    </ns303:listitem>
+                    <ns305:listitem xmlns:ns305="http://docbook.org/ns/docbook">
+                        <ns306:para xmlns:ns306="http://docbook.org/ns/docbook">Webserver connection</ns306:para>
+                    </ns305:listitem>
+                </ns293:itemizedlist>
+            </ns292:para>
+            <ns307:section xmlns:ns307="http://docbook.org/ns/docbook">
+                <ns308:title xmlns:ns308="http://docbook.org/ns/docbook">Connection interface</ns308:title>
+                <ns309:para xmlns:ns309="http://docbook.org/ns/docbook"> The very basic interface. SInce you allready use the
+                    static <ns310:methodname xmlns:ns310="http://docbook.org/ns/docbook">Connector.open(...)</ns310:methodname> it only specifies one Method:
+                        <ns311:methodname xmlns:ns311="http://docbook.org/ns/docbook">public void close() throws IOException;</ns311:methodname>
+                </ns309:para>
+            </ns307:section>
+            <ns312:section xmlns:ns312="http://docbook.org/ns/docbook">
+                <ns313:title xmlns:ns313="http://docbook.org/ns/docbook">InputConnection interface </ns313:title>
+                <ns314:para xmlns:ns314="http://docbook.org/ns/docbook">An interface to a device from which an input stream can be opened. Specifies
+                    the following two methods: <ns315:methodname xmlns:ns315="http://docbook.org/ns/docbook">public InputStream openInputStream()
+                        throws IOException;</ns315:methodname>
+                    <ns316:methodname xmlns:ns316="http://docbook.org/ns/docbook">public DataInputStream openDataInputStream() throws IOException;</ns316:methodname>
+                </ns314:para>
+            </ns312:section>
+            <ns317:section xmlns:ns317="http://docbook.org/ns/docbook">
+                <ns318:title xmlns:ns318="http://docbook.org/ns/docbook">OutputConnection interface</ns318:title>
+                <ns319:para xmlns:ns319="http://docbook.org/ns/docbook">Interface to a device to which an output stream can be opened. Implementations
+                    has to implement: <ns320:methodname xmlns:ns320="http://docbook.org/ns/docbook">public OutputStream openOutputStream() throws IOException;</ns320:methodname>
+                    <ns321:methodname xmlns:ns321="http://docbook.org/ns/docbook">public DataOutputStream openDataOutputStream() throws IOException;</ns321:methodname>
+                </ns319:para>
+            </ns317:section>
+            <ns322:section xmlns:ns322="http://docbook.org/ns/docbook">
+                <ns323:title xmlns:ns323="http://docbook.org/ns/docbook">StreamConnection</ns323:title>
+                <ns324:para xmlns:ns324="http://docbook.org/ns/docbook">This interface extends the two preceding interfaces, InputConnection and
+                    OutputConnection. You end up with an interface for two way communication. </ns324:para>
+            </ns322:section>
+            <ns325:section xmlns:ns325="http://docbook.org/ns/docbook">
+                <ns326:title xmlns:ns326="http://docbook.org/ns/docbook">ContentConnection interface</ns326:title>
+                <ns327:para xmlns:ns327="http://docbook.org/ns/docbook">Extends StreamConnection and adds some metdata methods typically usable with a
+                    protocol like http. These meta data methods are: <ns328:methodname xmlns:ns328="http://docbook.org/ns/docbook">public String getType();</ns328:methodname>
+                    <ns329:methodname xmlns:ns329="http://docbook.org/ns/docbook"> public String getEncoding();</ns329:methodname>
+                    <ns330:methodname xmlns:ns330="http://docbook.org/ns/docbook"> public long getLength();</ns330:methodname>
+                </ns327:para>
+            </ns325:section>
+            <ns331:section xmlns:ns331="http://docbook.org/ns/docbook">
+                <ns332:title xmlns:ns332="http://docbook.org/ns/docbook">StreamConnectionNotifier Interface</ns332:title>
+                <ns333:para xmlns:ns333="http://docbook.org/ns/docbook">An Iterface that sets the specification for incoming connections. Like with
+                    any other io stream you have to close the the StreamConnection opened with
+                        <ns334:methodname xmlns:ns334="http://docbook.org/ns/docbook">public StreamConnection acceptAndOpen() throws
+                    IOException;</ns334:methodname> when you are finnished with it.</ns333:para>
+            </ns331:section>
+            <ns335:section xmlns:ns335="http://docbook.org/ns/docbook">
+                <ns336:title xmlns:ns336="http://docbook.org/ns/docbook">DatagramConnection interface</ns336:title>
+                <ns337:para xmlns:ns337="http://docbook.org/ns/docbook">A connection is opened to an address but the destination address is a part of
+                    the Datagram object. The following methods are specified:
+                    <ns338:itemizedlist xmlns:ns338="http://docbook.org/ns/docbook">
+                        <ns339:listitem xmlns:ns339="http://docbook.org/ns/docbook"><ns340:para xmlns:ns340="http://docbook.org/ns/docbook">
+                    <ns341:methodname xmlns:ns341="http://docbook.org/ns/docbook">public int getMaximumLength() throws IOException;</ns341:methodname></ns340:para></ns339:listitem>
+                    <ns342:listitem xmlns:ns342="http://docbook.org/ns/docbook"><ns343:para xmlns:ns343="http://docbook.org/ns/docbook"><ns344:methodname xmlns:ns344="http://docbook.org/ns/docbook">public int getNominalLength() throws IOException;</ns344:methodname></ns343:para></ns342:listitem>
+                    <ns345:listitem xmlns:ns345="http://docbook.org/ns/docbook"><ns346:para xmlns:ns346="http://docbook.org/ns/docbook"><ns347:methodname xmlns:ns347="http://docbook.org/ns/docbook">public void send(Datagram datagram) throws IOException;</ns347:methodname></ns346:para></ns345:listitem>
+                    <ns348:listitem xmlns:ns348="http://docbook.org/ns/docbook"><ns349:para xmlns:ns349="http://docbook.org/ns/docbook"><ns350:methodname xmlns:ns350="http://docbook.org/ns/docbook">public void receive(Datagram datagram) throws IOException;</ns350:methodname></ns349:para></ns348:listitem>
+                    <ns351:listitem xmlns:ns351="http://docbook.org/ns/docbook"><ns352:para xmlns:ns352="http://docbook.org/ns/docbook"><ns353:methodname xmlns:ns353="http://docbook.org/ns/docbook">public Datagram newDatagram(int size) throws IOException;</ns353:methodname></ns352:para></ns351:listitem>
+                    <ns354:listitem xmlns:ns354="http://docbook.org/ns/docbook"><ns355:para xmlns:ns355="http://docbook.org/ns/docbook"><ns356:methodname xmlns:ns356="http://docbook.org/ns/docbook">public Datagram newDatagram(int size, String addr) throws IOException;</ns356:methodname></ns355:para></ns354:listitem>
+                    <ns357:listitem xmlns:ns357="http://docbook.org/ns/docbook"><ns358:para xmlns:ns358="http://docbook.org/ns/docbook"><ns359:methodname xmlns:ns359="http://docbook.org/ns/docbook">public Datagram newDatagram(byte[] buf, int size) throws IOException;</ns359:methodname></ns358:para></ns357:listitem>
+                    <ns360:listitem xmlns:ns360="http://docbook.org/ns/docbook"><ns361:para xmlns:ns361="http://docbook.org/ns/docbook"><ns362:methodname xmlns:ns362="http://docbook.org/ns/docbook">public Datagram newDatagram(byte[] buf, int size, String addr)
+                        throws IOException;</ns362:methodname></ns361:para></ns360:listitem>
+                        </ns338:itemizedlist>
+                </ns337:para>
+                <ns363:para xmlns:ns363="http://docbook.org/ns/docbook">A Datagram Object adheres to DataInput and DataOutput interfaces. The Datagram
+                    interface spesifies some convenience methods, the Datagram can be used as a
+                    stream object, whith the address as additional data field.</ns363:para>
+            </ns335:section>
+        </ns284:section>
+        <ns364:section xmlns:ns364="http://docbook.org/ns/docbook">
+            <ns365:title xmlns:ns365="http://docbook.org/ns/docbook">CDC (Connected Device Configuration)</ns365:title>
+            <ns366:para xmlns:ns366="http://docbook.org/ns/docbook">CDC is a superset of CLDC and is a full java 2 platform implementation as
+                specified by the The Java Virtual Machine Specification.</ns366:para>
+            <ns367:para xmlns:ns367="http://docbook.org/ns/docbook">Any CLDC implementation with it's asociated profile will be able to run on CDC.
+                Further profiles can be used to extend CDC up to complete J2SE functionality.</ns367:para>
+            <ns368:para xmlns:ns368="http://docbook.org/ns/docbook">CDC excludes the following java security features: 
+                <ns369:itemizedlist xmlns:ns369="http://docbook.org/ns/docbook">
+                    <ns370:listitem xmlns:ns370="http://docbook.org/ns/docbook">
+                        <ns371:para xmlns:ns371="http://docbook.org/ns/docbook">Secure code signing. </ns371:para>
+                    </ns370:listitem> 
+                    <ns372:listitem xmlns:ns372="http://docbook.org/ns/docbook">
+                        <ns373:para xmlns:ns373="http://docbook.org/ns/docbook">Certificates. </ns373:para>
+                    </ns372:listitem>
+                <ns374:listitem xmlns:ns374="http://docbook.org/ns/docbook">
+                    <ns375:para xmlns:ns375="http://docbook.org/ns/docbook">Keystore.</ns375:para>
+                </ns374:listitem>
+                <ns376:listitem xmlns:ns376="http://docbook.org/ns/docbook">
+                    <ns377:para xmlns:ns377="http://docbook.org/ns/docbook">java.security.Identity</ns377:para>
+                </ns376:listitem>
+<ns378:listitem xmlns:ns378="http://docbook.org/ns/docbook">
+                    <ns379:para xmlns:ns379="http://docbook.org/ns/docbook">java.security.IdentityScope</ns379:para>
+                </ns378:listitem></ns369:itemizedlist>
+                It's left to the profiles to implement these.
+            </ns368:para>
+        </ns364:section>
+    </ns281:section>
+</ns99:section>
+</ns73:section>
+</ns62:section>

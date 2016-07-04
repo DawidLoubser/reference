@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Defining an embeddable class</title>
+    <para>
+        An class which is meant to be embeddable within entity beans must be
+        annotated as such using the <literal>@Embeddable</literal> annotation.
+        Furthermore, it must be serializable:
+        <programlisting language="Java"><![CDATA[
+@Embeddable
+class GeographicLocation implements Serializable
+{
+    // getters & setters
+    
+    private double degreesLongitude, degreesLattitude;
+}
+     ]]></programlisting>
+    </para>
+    
+    <section>
+        <title>Specifying the access type</title>
+        <para>
+            By default, the access type of an embeddable class is determined by the access type of the entity
+            within which it is embedded. This can be changed by annotating the embeddable class with an
+            <literal>@Access</literal> annotation whose value is either <literal>AccessType.Field</literal>
+            or <literal>AccessType.Property</literal>.
+            <note><para>
+                It is generally recommended to specify the access type of the embeddable explicitly in order to
+                prevent potential object-relational mapping errors caused by the entity manager loosing track
+                of the state due to access through both channels. This can happen when the embedded class
+                is contained in an entity with one access type which is, in turn, part of an entity which uses
+                another access type.
+            </para></note>    
+        </para>
+    </section>    
+</section>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>SSH key for login without password</title>
+    <para>
+        It is common for systems to have to log automatically into an ssh server without requesting a user 
+        to provide a password. This is, for example, required for cron-scheduled backups via rsync or even
+        via scp and for automated deploys within build scripts. 
+    </para>
+    <para>
+        This can be achieved by generating a private-public key pair and appending the public key to
+        the server's authorized keys.
+    </para>
+    <para>
+        To do this, log into the client machine (the one which should log int and generate a pair of authentication keys
+        specifying the encryption algorithm to be used (here DSA):
+        <programlisting><![CDATA[
+ssh-keygen -t dsa
+Generating public/private dsa key pair.
+Enter file in which to save the key (/home/clientUser/.ssh/id_dsa): 
+Enter passphrase (empty for no passphrase):                    
+Enter same passphrase again:                                   
+Your identification has been saved in /home/clientUser/.ssh/id_dsa. 
+Your public key has been saved in /home/clientUser/.ssh/id_dsa.pub. 
+The key fingerprint is:                                        
+4e:c4:73:12:a0:5e:de:40:85:df:4d:bc:1c:f5:15:b3 clientUser@clientMachine
+The key's randomart image is:                                    
++--[ DSA 1024]----+                                              
+|      o+o  . ..oo|                                              
+|     o.. .  +  .+|                                              
+|    . o.=..+ o E.|                                              
+|   . o +.+. +    |                                              
+|    . . S        |                                              
+|       o         |                                              
+|        .        |                                              
+|                 |                                              
+|                 |                                              
++-----------------+            
+            ]]></programlisting>
+    </para>
+    <para>
+        Now use ssh to create, on the server, a <literal>.ssh</literal> in the user's home directory:
+        <programlisting><![CDATA[
+ ssh serverUser@serverMachine mkdir -p .ssh  
+ Password:   
+ ]]></programlisting>
+        where <literal>serverMachine</literal> is the URL of the server machine.
+        It will still ask for the user's password.
+    </para>
+    <para>
+        Finally append the client's public key to <literal>authorized_keys</literal> file in the <literal>.ssh</literal>
+        directory in the server user's home directory. You will be once again asked for the password, but this is the 
+        last time:
+        <programlisting><![CDATA[
+cat .ssh/id_dsa.pub | ssh serverUser@serverMachine 'cat >> .ssh/authorized_keys'
+Password:            
+            ]]></programlisting>
+        From now onwards the <literal>clientUser</literal> can log into the <literal>serverMachine</literal>
+        under user <literal>serverUser</literal> without having to supply a password. You can test this via
+        <programlisting><![CDATA[
+ssh serverUser@serverMachine            
+            ]]></programlisting>
+    </para>
+    
+</section>

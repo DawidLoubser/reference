@@ -1,0 +1,36 @@
+#if ($service.getType())
+    <section>
+        <title>Output (response object): $service.type.name</title>
+        <para>
+            $report.getComment($service.getType()).body
+        </para>
+        
+        #getDataStructureDiagram($service.getType())    
+        #set($diagram = $result)
+         #set($diagramId = $diagram.qualifiedName.replaceAll('::','.').replaceAll(' ','_'))
+       
+        #if($diagram && $diagram != '')
+            #set ($diagramComment = $report.getComment($diagram).body)
+            #if ($diagramComment && $diagramComment != '')
+                <para>
+                    $diagramComment
+                </para>
+            #end  ## if (diagramComment)
+            
+            <figure xml:id="$diagramId">
+                <title>Data structure (class) diagram for $service.getType().name</title>
+                <mediaobject><imageobject>
+                    <imagedata contentwidth="150mm" scalefit="1" fileref="$diagram.image"/>
+                </imageobject></mediaobject>
+            </figure>     
+        #else
+            <note>
+                <title>ERROR: missing data structure specification</title>
+                <para>
+                    The data structure requirements for each exchanged value object needs to be specified. The data structure of 
+                    $service.getType().name has not been specified.
+                </para>
+            </note>
+        #end ## if(diagramStructureDiagram)
+    </section>
+#end ## if(service.getType())

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.immutableClasses.immutableClasses"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Immutable classes</title>
+  <para>
+    In Java, instances of certain classes cannot be modified by users (clients) of that
+    instance. A prime example is the <literal>String</literal> class. Once a
+    <literal>String</literal> has been created, it cannot be modified. Methods like string
+    concatenation, case modification, and so on do not change the string itself, but return a new string
+    object instead.
+  </para>
+  
+  <section>
+    <title>What are immutable classes</title>
+    <para>
+      Immutable classes are classes for objects whose state cannot be changed externally. It simply has no
+      public methods which can change the state of the object.
+    </para>
+  </section>
+  
+  <section>
+    <title>Why immutable classes?</title>
+    <para>
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>Reduced risk in implementing the composition relationship incorrectly</title>
+          <para>
+            When one does not implement composition relationships correctly (if one does not enforce
+            encapsulation), some other code may unknowingly alter the owned state of an object
+            without being aware of this.
+            For example, consider a <literal>Person</literal> class. It may have
+            been implemented naively via
+            <programlisting><![CDATA[
+public class Person
+{
+  public Person(String name)
+  {
+     this.name = name;
+  }
+  ...
+}          
+          ]]></programlisting>
+            In this example at least the method which called the constructor has a handle to the string
+            which represents the name of the person. It could pass that string on to another object
+            which may not even be aware that that string is used by an instance of a person for its
+            name as is illustrated in the following example
+            <programlisting><![CDATA[
+String s = "Peter";
+
+Person p = new Person(s);
+              
+f(s);
+              
+public void f(String str)
+{
+  str.append("XXX");             
+}
+              ]]></programlisting>
+            But, since the <literal>String</literal> class is immtable, the state of the
+            <literal>Person</literal> class is safe, irrespective of whether the implementation
+            correctly encapsulates the name or not.
+          </para>
+        </formalpara></listitem>
+        
+        <listitem><formalpara>
+          <title>Inherently thread safe</title>
+          <para>
+            Since the state of instances of immutable classes cannot change, they are intrinsically
+            thread safe. This means that their internal state cannot be corrupted by the simultaneous
+            requesting of services from multiple threads, a problem which is usually not
+            trivial to solve.
+          </para>
+        </formalpara></listitem>
+        
+        <listitem><formalpara>
+          <title>Caching opportunities</title>
+          <para>
+            The attributes of objects which are instances of immutable classes can be safely cached
+            as their value will never change. 
+          </para>
+        </formalpara></listitem>
+        
+        <listitem><formalpara>
+          <title>Safe from logical errors</title>
+          <para>
+            We have already seen that the object integrity of classes which use instances of
+            immutable classes for their components is easier to guarantee. But mutable classes face
+            a further risk in that operations performed within methods of the class itself or by
+            external methods which alter the state of such instances may violate the object
+            integrity.
+          </para>
+        </formalpara></listitem>
+        
+        <listitem><formalpara>
+          <title>Immutable objects make good keys</title>
+          <para>
+            Only objects which do not change their hash code value over their life span make safe
+            keys for hash sets and hash maps. Similarly, only objects whose fields evaluated in the
+            <literal>compareTo(...)</literal> or <literal>compare(...)</literal> methods remain constant over
+            time, are truly safe for sorted collections and/or the keys for sorted maps.
+          </para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Natural candidates for immutable classes</title>
+    <para>
+      Some objects are naturally immutable and these should generally be implemented via immutable
+      classes. For example, a <emphasis>colour</emphasis> remains that colour - yellow does not change over time.
+    </para>
+    <para>
+      Similarly, <emphasis>numbers</emphasis> are objects which do not change (a 2 remains a 2). Hence all realisations
+      of numbers (<abbrev>e.g.</abbrev> Integer, Double, BigDecimal, ...) are immutable classes.
+      <note><para>
+        Do not confuse the concept of a floating point number with that of a floating point
+        variable.
+      </para></note>
+    </para>
+    <para>
+      Other object which are in their nature immutable include events. An event is an event. One
+      should not change an event at a later stage. It would not represent that event anymore.
+    </para>
+  </section>
+  
+   <section>
+     <title>How would one write an immutable class?</title>
+     <para>
+       Immutable classes should
+       <itemizedlist>
+         <listitem><para>
+              provide only query methods - no set methods and no methods which change the state of
+           the instance.
+         </para></listitem>
+         <listitem><para>
+           All its mutable components should be encapsulated, in that no code outside of the class
+           obtains a handle to any of its fields.
+         </para></listitem>
+         <listitem><para>
+           No external code should ever get hold of the <literal>this</literal> reference of an
+           immutable class.
+         </para></listitem>
+         <listitem><para>
+           All fields of an immutable class should be declared <literal>final</literal>.
+         </para></listitem>
+         <listitem><para>
+           The class should be declared <literal>final</literal>, preventing anybody from defining a
+           subclass which could violate the immutability (possibly without the client expecting this, as it
+           will likely have a more abstract handle to such a subclass).
+         </para></listitem>
+       </itemizedlist>
+     </para>
+   </section>
+   
+  <section>
+    <title>Disadvantages of immutable classes</title>
+    <para>
+      We would advise against using immutable classes for objects which are not naturally immutable.
+      The reasons for this are that
+      <itemizedlist>
+        <listitem><para>
+          Using immutable classes for objects which do change over time results in a performance
+          overhead as a new object needs to be created every time the state of an instance of an
+          immutable class changes.
+        </para></listitem>
+        <listitem><para>
+          If a new object is created on state transition, all objects which have a reference to that
+          immutable object need to be updated (good luck!!!).
+        </para></listitem>
+        <listitem><para>
+          Using immutable classes may provide the illusion that one does not have to be careful in
+          implementing the composition relationship correctly - we feel that it would be better if
+          one either
+          <itemizedlist>
+            <listitem><para>
+              trains developers or code generation tools to implement composition correctly, or
+            </para></listitem>
+            <listitem><para>
+              uses a framework where one annotates the relationship in code and have a
+              pre-compiler or class loader add the code required for the implementation of the
+              various relationships.
+            </para></listitem>
+          </itemizedlist>
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Alternatives to immutable classes</title>
+    <para>
+      Besides the correct implementation of the object oriented relationships and the thread safety,
+      one may also provide to certain objects handles through interfaces which do not expose any of
+      the methods which change the state of the object.
+    </para>
+  </section>
+  
+  <section>
+    <title>Immutability wrappers</title>
+    <para>
+      At times immutablity wrappers are used. For example, the Java collection framework provides
+      immutability wrappers. We do not believe that this is a good design decision as it directly
+      violates the most basic principle of specialisation (that of substitutability). Instances of the
+      Immutability wrappers throw exceptions if any of the methods changing the collection contents
+      are called. They are thus not substitutable for standard collections, even though they
+      implement the interface. A better approach is to cater for mutable/immutable <quote>views</quote>
+      on an object upfront, by putting different interfaces in place.
+    </para>
+  </section>
+  
+</section>  

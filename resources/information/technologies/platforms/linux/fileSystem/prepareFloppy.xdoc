@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section SYSTEM "file:/usr/share/sgml/db42xml/docbookx.dtd"-->
+<section id="resources.information.platforms.linux.fileSystem.prepareFloppy"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Preparing a floppy disk</title>
+  <para>
+    To prepare a floppy disk from scratch you have to
+    <orderedlist>
+      <listitem><para>
+         Format the floppy.
+      </para></listitem>
+      <listitem><para>
+        Make the file system to be used by the floppy.
+      </para></listitem>
+    </orderedlist>
+  </para>
+  
+  <section>
+    <title>Setting the parameters for the floppy disk device</title>
+    <para>
+      The floppy disk parameters supported by the kernel are contained in
+      the file <filename>/etc/fdprm</filename>. Its contents is something
+      like this:
+      <programlisting><![CDATA[
+#               size sec/t hds trk stre gap  rate spec1 fmt_gap
+360/360          720     9   2  40    0 0x2A 0x02 0xDF     0x50
+1200/1200       2400    15   2  80    0 0x1B 0x00 0xDF     0x54
+360/720          720     9   2  40    1 0x2A 0x02 0xDF     0x50
+720/720         1440     9   2  80    0 0x2A 0x02 0xDF     0x50
+720/1440        1440     9   2  80    0 0x2A 0x02 0xDF     0x50
+360/1200         720     9   2  40    1 0x23 0x01 0xDF     0x50
+720/1200        1440     9   2  80    0 0x23 0x01 0xDF     0x50
+1440/1440       2880    18   2  80    0 0x1B 0x00 0xCF     0x6C
+
+# Non-standard disk formats:
+
+# BEWARE: They're incomplete and possibly incorrect. The only reason why
+#         they are in this file is to show how such formats are added.
+
+1440/1200       2880    18   2  80    0 ???? ???? ????     ???? # ?????
+1680/1440       3360    21   2  80    0 0x0C 0x00 0xCF     0x6C # ?????
+
+# Add user-specific formats here
+cbm1581         1600    10   2  80    2 0x2A 0x02 0xDF     0x2E
+800/720         1600    10   2  80    0 0x2A 0x02 0xDF     0x2E
+        ]]></programlisting>
+        Setting the parameter of the floppy disk device through <command>fdprm</command>
+        ensures that the <command>fdformat</command> formats disks inserted into that
+        device to that size. For example,
+        <programlisting>
+fdfprm /dev/fd0 1440/1440        
+        </programlisting>
+        sets the parameters of <filename>/dev/fd0</filename>to the standard 1.44kB floppy size
+        and floppies inserted into that device will be formatted to that size.
+    </para>
+  </section>
+  
+  <section>
+    <title>Formatting a floppy disk</title>
+    <para>
+      Once the parameters of the floppy have been set, <command>fdformat</command>,
+      will format the floppy according to those parameters. Typically one simply enters
+      <programlisting>
+fdformat /dev/fd0      
+      </programlisting>
+      <note>
+        <para>
+          The floppy disk is formatted, but it does not yet contain a file system.
+        </para>
+      </note>
+    </para>
+  </section>
+  
+  <section>
+    <title>Putting a Linux file system on the floppy</title>
+    <para>
+       To put a standard a Linux <emphasis>ext2fs</emphasis> onto a floppy we
+       use 
+       <programlisting><![CDATA[
+mke2fs /dev/fd0       
+       ]]></programlisting>
+       <note>
+         <para>
+           A floppy disk is too small for a journaling file system like <emphasis>ext3fs</emphasis>
+           (for example, <emphasis>reiserfs</emphasis>).
+         </para>
+       </note>
+       To check the file system, use
+       <programlisting><![CDATA[
+e2fsck /dev/fd0       
+       ]]></programlisting>
+       It will report something like
+       <programlisting><![CDATA[
+e2fsck 1.28 (31-Aug-2002)
+/dev/fd0: clean, 11/184 files, 41/1440 blocks
+       ]]></programlisting>
+       if everything is clean and the errors otherwise.
+    </para>
+  </section>
+  
+  <section>
+    <title>Putting a MSDOS file system on the floppy</title>
+    <para>
+       A Linux file system is nice as long as you expect to use the floppy only on Linux
+       machines. If the floppy is also to be used on Windows machines, we need to put
+       a MSDOS file system on it. This is done via
+       <programlisting><![CDATA[
+mkdosfs /dev/fd0       
+       ]]></programlisting>
+       To check the DOS file system use
+       <programlisting><![CDATA[
+dosfsck /dev/fd0       
+       ]]></programlisting>
+       It will report something like
+       <programlisting><![CDATA[
+dosfsck 2.8, 28 Feb 2001, FAT32, LFN
+/dev/fd0: 1 files, 1/2847 clusters
+       ]]></programlisting>
+       as well as the errors if there are any.
+    </para>
+  </section>
+  
+  <section>
+    <title>Mounting/unmounting the floppy</title>
+    <para>
+      We mount and unmount floppies just like any other device. For example
+      <programlisting><![CDATA[
+mount /dev/fd0 /mnt/floppy      
+      ]]></programlisting>
+      mounts a floppy disk and
+      <programlisting><![CDATA[
+umount /dev/fd0      
+      ]]></programlisting>
+      or 
+      <programlisting><![CDATA[
+umount /mnt/floppy      
+      ]]></programlisting>
+      will un-mount it again.
+    </para>
+  </section>
+</section>

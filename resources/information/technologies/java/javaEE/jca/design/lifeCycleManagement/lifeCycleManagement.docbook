@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns65:section xmlns:ns65="http://docbook.org/ns/docbook" xml:id="components.technologies.java.j2ee.connectorArchitecture.lifeCycleManagement.lifeCycleManagement">
+  
+  <ns66:title xmlns:ns66="http://docbook.org/ns/docbook">Resource Adapter Life Cycle Management</ns66:title>
+  <ns67:para xmlns:ns67="http://docbook.org/ns/docbook">
+     The managed environment (<ns68:abbrev xmlns:ns68="http://docbook.org/ns/docbook">e.g.</ns68:abbrev> application server) will  need to manage the
+     life cycle of the resource manager. This includes
+    <ns69:itemizedlist xmlns:ns69="http://docbook.org/ns/docbook">
+      <ns70:listitem xmlns:ns70="http://docbook.org/ns/docbook"><ns71:para xmlns:ns71="http://docbook.org/ns/docbook">
+        starting a resource adapter via some bootstrapping process, and
+      </ns71:para></ns70:listitem>
+      <ns72:listitem xmlns:ns72="http://docbook.org/ns/docbook"><ns73:para xmlns:ns73="http://docbook.org/ns/docbook">
+        bringing a resource adapter down.
+      </ns73:para></ns72:listitem>
+    </ns69:itemizedlist>
+  </ns67:para>
+
+  <ns74:section xmlns:ns74="http://docbook.org/ns/docbook">
+    <ns75:title xmlns:ns75="http://docbook.org/ns/docbook">The typical life cycle of a resource adapter</ns75:title>
+    <ns76:para xmlns:ns76="http://docbook.org/ns/docbook">
+       The typical life cycle of a resource adapter includes
+      <ns77:itemizedlist xmlns:ns77="http://docbook.org/ns/docbook">
+        <ns78:listitem xmlns:ns78="http://docbook.org/ns/docbook"><ns79:para xmlns:ns79="http://docbook.org/ns/docbook">
+          starting the resource adapter via a bootstrapping process,
+        </ns79:para></ns78:listitem>
+        <ns80:listitem xmlns:ns80="http://docbook.org/ns/docbook"><ns81:para xmlns:ns81="http://docbook.org/ns/docbook">
+          using the connections provided by the resource adapter, and
+        </ns81:para></ns80:listitem>
+        <ns82:listitem xmlns:ns82="http://docbook.org/ns/docbook"><ns83:para xmlns:ns83="http://docbook.org/ns/docbook">
+          bringing down a resource adpater.
+        </ns83:para></ns82:listitem>
+      </ns77:itemizedlist>
+    </ns76:para>
+    
+    <ns84:figure xmlns:ns84="http://docbook.org/ns/docbook">
+      <ns85:title xmlns:ns85="http://docbook.org/ns/docbook">Life cycle of a resource adapter</ns85:title>
+      <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="lifeCycle.jpg"/></imageobject></mediaobject>
+    </ns84:figure>
+    
+    <ns86:para xmlns:ns86="http://docbook.org/ns/docbook">
+      In either of these phases the resource adapter may require processing time. Processing time
+      could be required for 
+      <ns87:itemizedlist xmlns:ns87="http://docbook.org/ns/docbook">
+        <ns88:listitem xmlns:ns88="http://docbook.org/ns/docbook"><ns89:para xmlns:ns89="http://docbook.org/ns/docbook">
+          setting up a resource adapter including setting up polling threads to poll inbound
+          connections for information,
+        </ns89:para></ns88:listitem>
+        <ns90:listitem xmlns:ns90="http://docbook.org/ns/docbook"><ns91:para xmlns:ns91="http://docbook.org/ns/docbook">
+          work around processing requests made through connections in the context of normal use of
+          the resource adapter, and
+        </ns91:para></ns90:listitem>
+        <ns92:listitem xmlns:ns92="http://docbook.org/ns/docbook"><ns93:para xmlns:ns93="http://docbook.org/ns/docbook">
+          work around bringing down a resource adapter.
+        </ns93:para></ns92:listitem>
+      </ns87:itemizedlist>
+      In either case the adapter must submit any requests for sigificant work to the application
+      server as not to interfere with the CPU resource management of the application server.
+    </ns86:para>
+  </ns74:section>
+
+  <ns94:section xmlns:ns94="http://docbook.org/ns/docbook">
+    <ns95:title xmlns:ns95="http://docbook.org/ns/docbook">The ResourceAdapter class</ns95:title>
+    <ns96:para xmlns:ns96="http://docbook.org/ns/docbook">
+      The <ns97:literal xmlns:ns97="http://docbook.org/ns/docbook">ResourceAdapter</ns97:literal> class provides developers the opportunity to customize the life cycle
+      management services of a resource adapter. Only only needs to provide an implementation for
+      this class if there are any special tasks which need to be performed when starting or stopping
+      the resource adapter. Consequently, many resource adapter implementations do not provide their
+      own implementation of the <ns98:literal xmlns:ns98="http://docbook.org/ns/docbook">ResourceAdapter</ns98:literal>.
+    </ns96:para>
+    
+    
+    <ns99:section xmlns:ns99="http://docbook.org/ns/docbook">
+      <ns100:title xmlns:ns100="http://docbook.org/ns/docbook">The bootstrap context</ns100:title>
+      <ns101:para xmlns:ns101="http://docbook.org/ns/docbook">
+        Before bootstrapping a resource adapter, the application server will create a work manager
+        for the resource adapter. It is through this work manager that the resource adapter can
+        submit work requests to the application server.
+      </ns101:para>
+      <ns102:para xmlns:ns102="http://docbook.org/ns/docbook">
+        The resource adapter can obtain a reference to its work manager via the bootstrapping
+        context and may choose to maintain a reference over its life span in order to be able to
+        submit further work requests at a later stage.
+      </ns102:para>
+    </ns99:section>
+    
+  </ns94:section>
+  
+</ns65:section>

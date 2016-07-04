@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>UISelectOne</title>
+    <para>
+        The <literal>UISelectOne</literal> component facilitates the selection of one
+        component from a choice of multiple components. It has three sub-classes:
+        <itemizedlist>
+            <listitem><para>
+                <literal>HtmlSelectOneRadio</literal> which represents a group of 
+                mutually exclusive radio buttons, 
+                and is requested by the <literal><![CDATA[<h:selectOneRadio]]></literal> tag,
+            </para></listitem>
+            <listitem><para>
+                <literal>HtmlSelectOneMenu</literal> which represents a drop-down
+                list box,                 
+                and is requested by the <literal><![CDATA[<h:selectOneMenu]]></literal> tag,
+                and
+            </para></listitem>
+            <listitem><para>
+                <literal>HtmlSelectOneListbox</literal> which represents a list box allowing
+                for single element selection which                 
+                is requested by the <literal><![CDATA[<h:selectOneListbox]]></literal> tag,
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        All three component tags have the same attribute. A typical usage would be
+        <programlisting language="xml"><![CDATA[
+<h:selectOneRadio id="moodSelector" value="capturePersonStateBinding.mood">
+    <f:selectItems value="#{capturePersonStateBinding.moods}"/>
+</h:selectOneRadio>    
+]]></programlisting>
+        where one could have the binding bean using a <literal>Moods</literal> enumeration:
+        <programlisting language="java"><![CDATA[
+public enum Moods { extatic, happy, content, irritable, sad, furious }       
+]]></programlisting>
+        and the binding bean having a <literal>mood</literal> property as well as a 
+        <literal>moods</literal> service which returns the collection of possible moods:
+        <programlisting language="java"><![CDATA[
+@ManagedBean
+@RequestScoped
+public class CapturePersonStateBinding
+{            
+    public Mood getMood() {return mood;}
+    
+    public void setMood(Mood mood) {this.mood = mood;}
+    
+    public Mood[] getMoods() {return Mood.values();}
+
+    private Mood mood = Mood.content;
+}
+]]></programlisting>
+        <note><para>
+            The same infrastructure could be used for <literal><![CDATA[<h:selectOneMenu]]></literal>
+            and <literal><![CDATA[<h:selectOneListbox]]></literal>. They would only be rendered
+            differently.
+        </para></note>
+    </para>
+    <para>    
+        Alternatively the selectable items could be obtained from a service returning a collection
+        of objects or strings.
+    </para>
+</section>

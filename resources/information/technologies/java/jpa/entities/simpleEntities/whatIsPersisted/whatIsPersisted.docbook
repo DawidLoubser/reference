@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>What is persisted?</title>
+    <para>
+        The persistent state of an entity is defined by its fields.The fields are 
+        accessed by the entity manager either
+        <itemizedlist>
+            <listitem>
+                <para>
+                    via <emphasis>accessors</emphasis> (<literal>getXXX()</literal> methods) 
+                    following the JavaBeans specification, or
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    via <emphasis>direct access to fields</emphasis>. 
+                </para>
+            </listitem>
+        </itemizedlist>
+        The schema used for a particular object is inferred, based on whether the
+        <emphasis>primary key</emphasis> (the <literal>@javax.persistence.Id</literal> annotation) has been indicated on a field, or
+        an accessor method.
+    </para>
+    <para>
+        For example, state management would be performed through the get/set service
+        of the following class. The entity manager will call the services in order
+        to extract the state to be stored in the database, or to populate an instance with
+        information from the database.
+        <programlisting language="Java">
+@Entity
+public class Account implements Serializable
+{	
+	@Id 
+	public int getAccountNumber()
+	{
+	  return accountNumber;
+	}
+	
+	public void setAccountNumber( int accountNumber )
+	{
+	  this.accountNumber = accountNumber;
+	}
+	
+	 
+	private int accountNumber;
+	private double balance;
+}
+</programlisting>
+        whereas the state would be managed directly through the fields in the
+        following case. The entity manager will use the serialisation mechanism
+        to extract / populate the object's state.
+        <programlisting language="Java">
+@Entity
+public class Account implements Serializable
+{	
+	public int getAccountNumber()
+	{
+	  return accountNumber;
+	}
+	
+	public void setAccountNumber( int accountNumber )
+	{
+	  this.accountNumber = accountNumber;
+	}
+	
+	
+	@Id 
+	private int accountNumber;
+	private double balance;
+}
+</programlisting>
+    </para>
+    <note>
+        <para>
+            Though the latter case <quote>breaks encapsulation</quote> (as the entity manager
+            can use privately declared fields), this is usually not
+            a problem, as this effectively applies only during object creation. Encapsulation
+            usually needs to protect the state of an object from clients, not from I/O
+            frameworks.
+        </para>
+    </note>
+    
+    <section>
+        <title>Valid persistent field types</title>
+        <para>
+            The following are valid data types for persistent fields:
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        Java primitives and primitives wrappers,
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        The following built-in classes:
+                        <itemizedlist>
+                            <listitem>
+                                <para>
+                                    <literal>java.lang.String</literal>,
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <literal>java.util.Date</literal> (requiring the <literal>@Temporal</literal> annotation),
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <literal>java.math.BigDecimal</literal> and
+                                    <literal>BigInteger</literal>,
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <literal>java.sql.Time</literal> and <literal>Timestamp</literal>  (requiring the <literal>@Temporal</literal> annotation),
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <literal>byte[], Byte[], char[]</literal> and
+                                    <literal>Character[]</literal>,
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    <literal>java.sql.Blob</literal> and <literal>Clob</literal>,
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
+                </listitem>  
+                <listitem>
+                    <para>
+                        embedded classes,
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        other entities,
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        collections of primitives, and
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        any other serializable objects.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            
+        </para>
+    </section>
+    
+    <section>
+        <title>Collection variables</title>
+        <para>
+            Collection variables are persisted naturally, which allows for the standard
+            usage of <literal>java.util.Collection</literal>, <literal>java.util.List</literal>, 
+            or <literal>java.util.Set</literal> data types.
+        </para>
+        <para>
+            Generics should be used (i.e. <literal><![CDATA[List<Account>]]></literal>), and
+            the various relationship annotations (such as <literal><![CDATA[@OneToMany]]></literal>)
+            are required to control the mapping, such as putting bi-directional mappings in place.
+        </para>
+    </section>
+    
+    <section>
+        <title>Transient fields</title>
+        <para>
+            Transient fields (fields which do should not be persisted, and hence do not form part of the
+            object's persistent state) are specified by
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        in the case of property access annotating the getter or setter as
+                        <literal>@javax.persistence.Transient</literal>, or
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        by declaring the field itself as <literal>transient</literal> using the
+                        Java language keyword, in the case of field access. 
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Field validation</title>
+        <para>
+            Field validation may be done in the <emphasis>setter</emphasis> methods, which may throw an
+            exception. An exception will cause the controlling transaction (if any) to be rolled back.
+        </para>
+        <note>
+            <para>
+                It is typically questionable whether use-case specific validation should be performed on the
+                entity object at all: This should rather be enforced by controller objects (e.g. the session beans
+                managing the entities) and user interface(s).
+            </para>
+        </note>
+        
+    </section>
+    
+</section>

@@ -1,0 +1,1262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- TODO Delete Me!!! (replaced by ../webServices/*) -->
+
+<chapter id="resources.information.technologies.xml.SOAP"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>SOAP (Web Services)</title>
+    <section>
+        <title>Introduction</title>
+        <section>
+        
+            <title>What is SOAP?</title>
+            
+            <para> SOAP stands for the Simple Object Access Protocol. It is a lightweight XML- and
+                hence text-based message protocol mainly aimed as a messaging and/or service request
+                protocol encoding service requests and resultant response messages in a way which is
+                independent of </para>
+                
+            <itemizedlist>
+                <listitem>
+                    <para>development model (e.g. object-oriented or procedural), </para>
+                </listitem>
+                <listitem>
+                    <para>development languages, </para>
+                </listitem>
+                <listitem>
+                    <para>platforms and </para>
+                </listitem>
+                <listitem>
+                    <para>underlying transport protocols.</para>
+                </listitem>
+            </itemizedlist>
+            
+            <para> SOAP is a one-way protocol which does not require response but can support
+                response messages.</para>
+            <para> SOAP represents a lightweight alternative to XML-RPC/XML-RPC++. It makes use of
+                data-typing and other powerful features of the XML-Schema definition and improves on
+                XML-RPC both in robustness and decreased verbosity.</para>
+                
+        </section>
+
+        
+        
+        <section>
+        
+            <title>Who is responsible for SOAP?</title>
+            
+            <para> The first SOAP proposal (version 1.1) was developed by DevelopMentor, IBM,
+                Microsoft, Lotus and UserLand Software. Together with Ariba, Commerce One, Compaq,
+                HP, IONA and SAP these companies submitted the SOAP specification in May 2000 to the
+                World-Wide Web Consortium for ratification as a public standard. The W3C published
+                the first working draft in December 2001 and is currently working on SOAP 1.2.</para>
+                
+        </section>
+
+        
+        <section>
+        
+            <title>Core features of SOAP</title>
+            
+            <para> As mentioned earlier, SOAP is an XML based protocol and can hence be superimposed
+                on text-based protocols like HTTP or SMTP.</para>
+            <para> superimposed ontop of HTTP, SMTP</para>
+            
+        </section>
+
+        
+        
+        <section>
+        
+            <title>SOAP versus CORBA, Java RMI and DCOM</title>
+            
+            <para> One of the main application areas of SOAP is that of system integration and
+                remote procedure calls. In this context it competes with CORBA, RMI and DCOM. CORBA
+                and RMI are object-oriented middleware technologies supporting the standard
+                object-oriented concepts including </para>
+                
+            <itemizedlist>
+                <listitem>
+                    <para>persistent object references, </para>
+                </listitem>
+                <listitem>
+                    <para>persistent object state and </para>
+                </listitem>
+                <listitem>
+                    <para>passing of objects by reference and by value </para>
+                    <itemizedlist>
+                        <listitem>
+                            <para>Java RMI supports true pass-by-value via object serialization. </para>
+                        </listitem>
+                        <listitem>
+                            <para>CORBA supports quasi pass-by-value via structures which
+                                automatically instantiates and populates an instance of a class
+                                which implements the required interface.</para>
+                        </listitem>
+                    </itemizedlist>
+                </listitem>
+            </itemizedlist>
+            
+            <para> Java RMI supports additionally </para>
+            
+            <itemizedlist>
+                <listitem>
+                    <para>distributed garbage collection and </para>
+                </listitem>
+                <listitem>
+                    <para>transmission of the implementation class with the object,</para>
+                </listitem>
+            </itemizedlist>
+            
+            <para>but locks developers into the Java programming language, though the superposition
+                of the RMI protocol ontop of CORBA's IIOP protocol does relax this restriction somewhat.</para>
+                
+            <para> DCOM can be regarded as a quasi object-oriented middleware technology since it
+                does not support the core concepts of </para>
+                
+            <itemizedlist>
+                <listitem>
+                    <para>persistent object identity, </para>
+                </listitem>
+                <listitem>
+                    <para>persistent object state or </para>
+                </listitem>
+                <listitem>
+                    <para>pass-by-value.</para>
+                </listitem>
+            </itemizedlist>
+            
+            <para> Furthermore, DCOM is a Microsoft proprietary technology which is effectively
+                restricted to integration within the Microsoft platform.</para>
+            <para> CORBA, on the other hand is a non-proprietary object-oriented middleware
+                specification which is supported by virtually the entire IT industry with the
+                unfortunate exception of Microsoft. Why then do we need something like SOAP.</para>
+            <para> For starters, the fact that a very large player, Microsoft, does not support the
+                CORBA initiative does introduce problems. There are bridging technologies between
+                CORBA and DCOM but they </para>
+                
+            <itemizedlist>
+                <listitem>
+                    <para>increase the complexity of distributed systems, </para>
+                </listitem>
+                <listitem>
+                    <para>add a further performance penalty, </para>
+                </listitem>
+                <listitem>
+                    <para>and may introduce intrinsic problems due to the mismatch between a pure
+                        and a quasi object-oriented technology.</para>
+                </listitem>
+            </itemizedlist>
+            
+            <para> In addition to the problem of not enjoying universal buy-in, CORBA is a binary
+                protocol which </para>
+            <itemizedlist>
+                <listitem>
+                    <para>requires CORBA technology on both sides (though Java RMI may be used on
+                        either side since the RMI/IIOP protocol has been introcuded), </para>
+                </listitem>
+                <listitem>
+                    <para>has difficulty crossing firewalls. The latter is addressed through HTTP
+                        tunneling which basically transforms IIOP into a text-based protocol which
+                        is put ontop of HTTP and which has to be demarshalled back onto straight
+                        IIOP on the other side of the firewall. However, this introduces once again
+                        an extra layer of complexity which also impacts negatively on performance.</para>
+                </listitem>
+            </itemizedlist>
+            
+            <para> SOAP, on the other hand </para>
+            
+            <itemizedlist>
+                <listitem>
+                    <para>is a public standard maintained by the W3C, </para>
+                </listitem>
+                <listitem>
+                    <para>has universal buy-in accross the IT industry, </para>
+                </listitem>
+                <listitem>
+                    <para>is based on the public XML standard for self-describing data, </para>
+                </listitem>
+                <listitem>
+                    <para>is easily readable, </para>
+                </listitem>
+                <listitem>
+                    <para>is platform, language and technology neutral, </para>
+                </listitem>
+                <listitem>
+                    <para>can be superimposed on transport protocols like HTTP and SMTP and </para>
+                </listitem>
+                <listitem>
+                    <para>has no problems tunneling through firewalls (because it can be ported
+                        ontop of HTTP, for example).</para>
+                </listitem>
+            </itemizedlist>
+            
+        </section>
+
+        
+        
+        <section>
+        
+            <title>Disadvantages of SOAP</title>
+            
+            <para> Though there are many advantages to using SOAP, SOAP also has a number of
+                disadvantages ocer integration technologies like CORBA:</para>
+            <para> Bandwidth requirements: Being based on XML the meta-data is always sent with the
+                data. Furthermore, the fact that the encoding is text based carries in itself
+                bandwidth overheads. Performance: Besides having higher communication overheads, the
+                marshalling onto a SOAP message and the demarshalling of the received SOAP message
+                carries overheads. No underlying conceptual object model. Cannot pass objects by
+                reference. Does not specify any standard language bindings. The CORBA specification,
+                for example, specifies standard mappings from the CORBA Interface Definition
+                Language (IDL) to a wide range of implementation languages (like Java, C++, Cobol, dots).</para>
+                
+        </section>
+
+        
+    </section>
+
+    
+    
+    <section>
+    
+        <title>The Structure of a Simple SOAP Message</title>
+        
+        <para> The structure of a SOAP message wthout attachments is shown in figure <xref linkend="soapMessageStructure"/>. 
+         The massage is transmitted in a SOAP pacgage which contains a
+            transport header which typically is either HTTP or SMTP. </para>
+            
+        <figure id="soapMessageStructure">
+            <title>The actual message sent is a SOAP packet which contains a communication protocol
+                envelope encapsulating a SOAP envelope which in turn contains the SOAP header and
+                the SOAP body.</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="SOAP/MessageStructure.gif"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        
+        <para> Contained in the SOAP packet is a SOAP envelope which encapsulates the SOAP header
+            and the SOAP body. </para>
+            
+        <section>
+        
+            <title>An Example Message</title>
+            
+            <para> Below we show an example SOAP message requesting the fee for enrolling 3
+                candidates for a presentation of the Enterprise Java Beans course over a specified period:</para>
+            <programlisting>  
+            POST  /courses/queries  HTTP/1.0  Host:  www.SolmsTraining.co.za
+                 Content-Type:  text/xml;  charset=utf-8    &lt;?xml  version=&quot;1.0&quot;
+                 encoding=&quot;UTF-8&quot;?>    &lt;soap:Envelope                  
+                 xmlns:soap=&quot;http://www.w3.org/2001/12/soap-envelope&quot;                  
+                 soap:encodingStyle=&quot;http://www.w3.org/2001/soap-encoding&quot;>      
+                 &lt;soap:Header>          &lt;curr:Currency
+                 xmlns:curr=&quot;http://www.SolmsTraining.co.za/schemas/finance&quot;>            
+                 &lt;curr:code>ZAR&lt;/curr:code>              &lt;curr:symbol>R&lt;/curr:symbol>  
+                       &lt;/curr:Currency>      &lt;/soap:Header>        &lt;soap:Body
+                 xmlns:msg=&quot;http://www.SolmsTraining.co.za/schemas/soap&quot;>        
+                 &lt;msg:getCourseFee>              &lt;msg:course>Enterprise  Java
+                 Beans&lt;/msg:course>              &lt;msg:startDate>2002-07-01&lt;/msg:startDate>
+                             &lt;msg:endDate>2002-07-05&lt;/msg:endDate>            
+                 &lt;msg:numCandidates>3&lt;/msg:numCandidates>          &lt;/msg:getCourseFee>    
+                 &lt;/soap:Body>    &lt;/soap:Envelope></programlisting>
+                 
+        </section>
+
+        
+        <section>
+        
+            <title>The Communication Protocol Envelope</title>
+            
+            <para> SOAP itself does not specify a transport protocol. SOAP messages are superimposed
+                on top of a transport protocol like HTTP or SMTP. HTTP is particularly suited as a
+                transport layer for SOAP since the SOAP request model fits naturally into the HTTP
+                request/response model.</para>
+            <para> Note that the destination of the message is specified in the communication
+                envelope and not in the SOAP message. For example</para>
+                
+            <programlisting>  POST  /courses/queries  HTTP/1.0  Host:  www.SolmsTraining.co.za
+                 Content-Type:  text/xml;  charset=utf-8    &lt;?xml  version=&quot;1.0&quot;  encoding=&quot;UTF-8&quot;?></programlisting>
+                 
+            <para>specifies that message is destined for the following URL: </para>
+            <para><emphasis> http://www.SolmsTraining.co.za/courses/queries </emphasis></para>
+            <para> The transport header also specifies that the message is sent via an HTTP Post
+                request. Generally SOAP messages are sent via Post requests and SOAP servers are
+                usually set up to reject Get requests as to prevent accidental usage attempts from
+                browser requests for web pages.</para>
+            <para> The content type for SOAP messages has to be text/xml, ant the character set used
+                can be any character set supported by the server side - very typically it is 8 or 16
+                bit Unicode (UTF-8 or UTF-16).</para>
+            <para> Finally, we append the XML declaration header to the end of the transport header.</para>
+        </section>
+
+        
+        <section>
+            <title>The SOAP Envelope</title>
+            <para> The SOAP envelope is the top level element for the actual SOAP message. It
+                contains the message header and the message body.</para>
+            <para> At the level of the SOAP envelope one specifies the message encoding schema used
+                for the message. Here we specify that we are using SOAP encoding for our message.</para>
+                
+            <programlisting>  &lt;soap:Envelope                  
+                 xmlns:soap=&quot;http://www.w3.org/2001/12/soap-envelope&quot;                  
+                 soap:encodingStyle=&quot;http://www.w3.org/2001/soap-encoding&quot;>      
+                 &lt;soap:Header>          ...      &lt;/soap:Header>        &lt;soap:Body>        
+                 ...      &lt;/soap:Body>    &lt;/soap:Envelope></programlisting>
+                 
+            <para> To this end we first import the SOAP envelope vocabulary into a prefix which we
+                chose to name <emphasis>soap</emphasis>. This schema makes the
+                <emphasis>Envelope</emphasis> element itself available, as well as the
+                <emphasis>encodingStyle</emphasis> attribute and the <emphasis>Header</emphasis> and
+                <emphasis>Body</emphasis> elements.</para>
+                
+        </section>
+
+        
+        
+        <section>
+            <title>A First Look at the SOAP Header</title>
+            <para> The SOAP Header is optional. If included it usually contains contextual
+                information about the message or the required response. In our case we specify the
+                currency in which the course fee should be quoted:</para>
+                
+            <programlisting>  &lt;soap:Header>      &lt;curr:Currency
+                 xmlns=&quot;http://www.SolmsTraining.co.za/schemas/finance&quot;>        
+                 &lt;curr:code>ZAR&lt;/curr:code>          &lt;curr:symbol>R&lt;/curr:symbol>    
+                 &lt;/curr:Currency>  &lt;/soap:Header></programlisting>
+                 
+            <para> Note that we import our schema which defines the <emphasis>Currency</emphasis>
+                element into the <emphasis>curr</emphasis> namespace prefix. In this way we ensure
+                that all information can be validated, both, by the message sender and by the
+                message recipient.</para>
+        </section>
+
+        
+        <section>
+            <title>A First Look at the SOAP Body</title>
+            <para> The SOAP body contains the actual message content. It is mandatory, though an
+                empty body is acceptable. Normally one specifies a message name and then the names
+                and values of the various method arguments for our remote procedure call:</para>
+                
+            <programlisting>  &lt;soap:Body
+                 xmlns:msg=&quot;http://www.SolmsTraining.co.za/schemas/soap&quot;>    
+                 &lt;msg:getCourseFee>          &lt;msg:course>Enterprise  Java
+                 Beans&lt;/msg:course>          &lt;msg:startDate>2002-07-01&lt;/msg:startDate>    
+                     &lt;msg:endDate>2002-07-05&lt;/msg:endDate>        
+                 &lt;msg:numCandidates>3&lt;/msg:numCandidates>      &lt;/msg:getCourseFee>  &lt;/soap:Body></programlisting>
+                 
+            <para> Once again we define the service name and its required arguments (together with
+                the appropriate data types and constraints) in a schema. The relevant excerpt of
+                such a schema is shown below:</para>
+                
+            <programlisting>  &lt;xsd:simpleType  name=&quot;Course&quot;
+                 base=&quot;xsd:string&quot;>      &lt;enumeration  value=&quot;Programming  in
+                 Java&quot;/>      &lt;enumeration  value=&quot;Advanced  Java&quot;/>    
+                 &lt;enumeration  value=&quot;Enterprise  Java  Beans&quot;/>      &lt;enumeration
+                 value=&quot;XML&quot;/>      &lt;enumeration  value=&quot;Object-Oriented  Analysis
+                 and  Design  using  UML&quot;/>      &lt;enumeration  value=&quot;Web
+                 Services&quot;/>      &lt;enumeration  value=&quot;C++&quot;/>      &lt;enumeration
+                 value=&quot;Distributed  Systems  via  CORBA&quot;/>      &lt;enumeration
+                 value=&quot;Software  Requirements  Analysis  and  Specification&quot;/>    
+                 &lt;enumeration  value=&quot;Managing  Object-Oriented  Projects&quot;/>
+                 &lt;/xsd:simpleType>    &lt;xsd:element  name=&quot;getCourseFee&quot;>    
+                 &lt;xsd:sequence>          &lt;xsd:element  name=&quot;course&quot;
+                 type=&quot;Course&quot;  minOccurs=&quot;1&quot;  maxOccurs=&quot;1&quot;>        
+                 &lt;xsd:element  name=&quot;startDate&quot;  type=&quot;xsd:date&quot;
+                 minOccurs=&quot;1&quot;  maxOccurs=&quot;1&quot;/>          &lt;xsd:element
+                 name=&quot;endDate&quot;  type=&quot;xsd:date&quot;  minOccurs=&quot;1&quot;
+                 maxOccurs=&quot;1&quot;/>          &lt;xsd:element  name=&quot;numCandidates&quot;
+                 type=&quot;positiveInteger&quot;/>      &lt;/xsd:sequence>  &lt;/xsd:element></programlisting>
+                 
+            <para> Here we assume that the standard schema namespace has been imported into the
+                <emphasis>xsd</emphasis> prefix. The course field is restricted via an enumeration
+                type to the available courses. The structure of the
+                <emphasis>getCourseFee</emphasis> service request is specified via an anonymous
+                inner type, implicitly enforcing the singleton constraint on this type, i.e. there
+                is only one element (instance) of this type, the service request element itself.</para>
+        </section>
+
+    </section>
+
+    <section>
+        <title>The SOAP Header</title>
+        <para> SOAP Headers are optional. They are used to provide auxillary information about a
+            message as well as information about how a message should be processed. SOAP headers
+            provide a flexible mechanism for extending SOAP messages.</para>
+        <para> The SOAP specification requires that all immediate child elements of the SOAP header
+            must be qualified via a namespace prefix.</para>
+            
+        <section>
+            <title>Using SOAP Headers for Message Context Information</title>
+            <para> The SOAP header often includes other contextual information like security
+                credentials, transaction management attributes and optional auxillay information for messages.</para>
+            <para> For example, a message requesting an enrollment for a specific course may contain
+                the age, employer and home language as auxillary information. This information could
+                be used for statistical capturing, but could also affect the way in which the
+                service is provided (e.g.  some documentation may be available in dfferent languages
+                and certain employer companies may qualify for a discount).</para>
+                
+            <programlisting>  &lt;soap:Header>      &lt;context
+                 xmlns=&quot;http://www.SolmsTraining.co.za/schemas/requestContext&quot;>        
+                 &lt;age>31&lt;/age>          &lt;employer>IntegrateIT&lt;/employer>        
+                 &lt;homeLanguage>Xhosa&lt;/homeLanguage>      &lt;/context>  &lt;/soap:Header>  
+                 &lt;soap:Body
+                 xmlns:msg=&quot;http://www.SolmsTraining.co.za/schemas/courseAdmin&quot;>    
+                 &lt;msg:enroll>          &lt;msg:course>Object-Oriented  Analysis  and  Design
+                 using  UML&lt;/msg:course>          &lt;msg:startDate>2002-08-02&lt;/msg:startDate>
+                     &lt;/msg:enroll>  &lt;/soap:Body></programlisting>
+                     
+            <para> In this example the <emphasis>requestContext</emphasis> namespace is imported
+                into the default name space and hence we do not need to use a prefix when using the
+                elements imported from that namespace.</para>
+        </section>
+
+        <section>
+            <title>SOAP Header Attributes</title>
+            <para> SOAP defines 2 standard header atributes which are used to specify </para>
+            <itemizedlist>
+                <listitem>
+                    <para>Whether the processing of some context information is optional or
+                        mandatory. </para>
+                </listitem>
+                <listitem>
+                    <para>For whom a particular message is intended.</para>
+                </listitem>
+            </itemizedlist>
+            <para> SOAP header atributes must be specified in immediate child elements of the
+                SOAP<emphasis>Header</emphasis> element. SOAP header attributes defined in lower
+                level elements must be ignored according to the SOAP specification.</para>
+        </section>
+
+        <section>
+            <title>SOAP mustUnderstand Attributes</title>
+            <para> The <emphasis>mustUnderstand</emphasis> attribute is used to specify whether the
+                service provider must be able to process the contact information
+                    (<emphasis>mustUnderstand  =  1</emphasis>) or whether the processing of the
+                context information is optional (<emphasis>mustUnderstand  =  0</emphasis>).</para>
+            <para> For example, below we specify that the auxillary currency information for
+                the<emphasis>getCourseFee</emphasis> service request must be processed by the
+                service provider:</para>
+                
+            <programlisting>  &lt;soap:Envelope                  
+                 xmlns:soap=&quot;http://www.w3.org/2001/12/soap-envelope&quot;                  
+                 soap:encodingStyle=&quot;http://www.w3.org/2001/soap-encoding&quot;>      
+                 &lt;soap:Header>          &lt;curr:Currency
+                 xmlns:curr=&quot;http://www.SolmsTraining.co.za/schemas/finance&quot;              
+                                         soap:mustUnderstand=&quot;1&quot;>            
+                 &lt;curr:code>ZAR&lt;/curr:code>              &lt;curr:symbol>R&lt;/curr:symbol>  
+                       &lt;/curr:Currency>      &lt;/soap:Header>        &lt;soap:Body
+                 xmlns:msg=&quot;http://www.SolmsTraining.co.za/schemas/soap&quot;>        
+                 &lt;msg:getCourseFee>              &lt;msg:course>Enterprise  Java
+                 Beans&lt;/msg:course>              &lt;msg:startDate>2002-07-01&lt;/msg:startDate>
+                             &lt;msg:endDate>2002-07-05&lt;/msg:endDate>            
+                 &lt;msg:numCandidates>3&lt;/msg:numCandidates>          &lt;/msg:getCourseFee>    
+                 &lt;/soap:Body>    &lt;/soap:Envelope></programlisting>
+                 
+        </section>
+
+        <section>
+            <title>SOAP Actor Attributes and SOAP Message Routes</title>
+            <para> So far we have looked at service requests to a single destination specified in
+                the transport header. For example, we specified the following HTTP transport header</para>
+                
+            <programlisting>  POST  /courses/queries  HTTP/1.0  Host:  www.SolmsTraining.co.za
+                 Content-Type:  text/xml;  charset=utf-8</programlisting>
+                 
+            <para>specifies that the destination of the SOAP service request to be </para>
+            <para><emphasis> www.SolmsTraining.co.za/courses/queries</emphasis></para>
+            <para> If there are no <emphasis>actor</emphasis> attributes it is assumed that the
+                message recipient is the ultimate destination for the message.</para>
+            <para> However, the SOAP specification allows for service request messages for which the
+                service is supplied along a path accross multiple intermediate service providers,
+                each making a specific contribution to the service request. Each of the intermediate
+                service providers receives the message, removes the information which is meant
+                specifically for them, does its share of the processing of the service request and
+                forwards the message to the next contributer to the service request, potentially
+                adding further auxillary information which is either meant for specific members in
+                the processing chain or for all members.</para>
+            <para> For example, a purchase request may be sent along a path including the ordering
+                department, the accounting department and the warehouse. The message path could be
+                something like this: </para>
+            <orderedlist>
+                <listitem>
+                    <para>The ordering department would extract the context information relevant to
+                        it which includes, say, the client authentication information. It would
+                        verify this information and forward the message to the accounting department
+                        supplying, say, the client number and the appropriate warehouse from which
+                        the goods should be shipped as auxillary information. </para>
+                </listitem>
+                <listitem>
+                    <para>The accounting department would, say, use the client number to match it
+                        with an account which should be debited, perform the transaction and forward
+                        the message to the warehouse, providing, say, an invoice number as auxillary
+                        information. </para>
+                </listitem>
+                <listitem>
+                    <para>The warehouse would then ship the goods and return a confirmation message
+                        to the client.</para>
+                </listitem>
+            </orderedlist>
+            <para> The original message sent by the client (probably over SSL) could look something
+                like this:</para>
+                
+            <programlisting>  POST  /orders  HTTP/1.0  Host:  www.FlintStones.com  Content-Type:
+                 text/xml;  charset=utf-8    &lt;?xml  version=&quot;1.0&quot;
+                 encoding=&quot;UTF-8&quot;?>    &lt;soap:Envelope                  
+                 xmlns:soap=&quot;http://www.w3.org/2001/12/soap-envelope&quot;                  
+                 soap:encodingStyle=&quot;http://www.w3.org/2001/soap-encoding&quot;>      
+                 &lt;soap:Header>          &lt;cl:client:Currency
+                 xmlns:cl=&quot;http://www.FlintStones.com/authenticate&quot;                      
+                 soap:actor=&quot;http://www.FlintStones.com/orders&quot;                      
+                 soap:mustUnderstand=&quot;1&quot;>              &lt;name>Zak  Zap&lt;/name>        
+                     &lt;password>007&lt;/password>          &lt;/cl:client>        
+                 &lt;a:deliveryAddress  xmlns:cl=&quot;http://www.FlintStones.com/address&quot;    
+                                   soap:mustUnderstand=&quot;1&quot;>              East  Portal,
+                 StoneHenge          &lt;/a:deliveryAddress>      &lt;/soap:Header>      
+                 &lt;soap:Body  xmlns:msg=&quot;http://www.FlintStones.com/purchase&quot;>        
+                 &lt;msg:order>              &lt;item  code=&quot;ElSpurt01&quot;>                
+                 &lt;name>Shower  Elefant&lt;/name>                  &lt;quantity>1&lt;/quantity>  
+                           &lt;/item>              &lt;item  code=&quot;Woody03&quot;>              
+                   &lt;name>Woodpecker  Record  Player&lt;/name>                
+                 &lt;quantity>2&lt;/quantity>              &lt;/item>          &lt;/msg:order>    
+                 &lt;/soap:Body>    &lt;/soap:Envelope></programlisting>
+                 
+            <para> Here the header information contains the client authentication information and
+                the delivery address as auxillary information for the order, both of which must be
+                understood by the message recipient(s). The client information is, however, only
+                meant for the initial destination for the orders department which will extract thi
+                information and, after successfully verifying the client, forward the message to the
+                accounting department with the client number as auxillary information. The second
+                message could thus look something like this:</para>
+                
+            <programlisting>  POST  /accounts  HTTP/1.0  Host:  www.FlintStones.com  Content-Type:
+                 text/xml;  charset=utf-8    &lt;?xml  version=&quot;1.0&quot;
+                 encoding=&quot;UTF-8&quot;?>    &lt;soap:Envelope                  
+                 xmlns:soap=&quot;http://www.w3.org/2001/12/soap-envelope&quot;                  
+                 soap:encodingStyle=&quot;http://www.w3.org/2001/soap-encoding&quot;>      
+                 &lt;soap:Header>          &lt;cl:client:Currency
+                 xmlns:cl=&quot;http://www.FlintStones.com/authenticate&quot;                      
+                 soap:actor=&quot;http://www.FlintStones.com/accounts&quot;                      
+                 soap:mustUnderstand=&quot;1&quot;>              &lt;clientNo>Zap002&lt;/clientNo>  
+                       &lt;/cl:client>          &lt;a:deliveryAddress
+                 xmlns:cl=&quot;http://www.FlintStones.com/address&quot;                      
+                 soap:mustUnderstand=&quot;1&quot;>              East  Portal,  StoneHenge        
+                 &lt;/a:deliveryAddress>      &lt;/soap:Header>        &lt;soap:Body
+                 xmlns:msg=&quot;http://www.FlintStones.com/purchase&quot;>          &lt;msg:order>
+                             &lt;item  code=&quot;ElSpurt01&quot;>                  &lt;name>Shower
+                 Elefant&lt;/name>  &lt;quantity>1&lt;/quantity>              &lt;/item>            
+                 &lt;item  code=&quot;Woody03&quot;>                  &lt;name>Woodpecker  Record
+                 Player&lt;/name>  &lt;quantity>2&lt;/quantity>              &lt;/item>        
+                 &lt;/msg:order>      &lt;/soap:Body>    &lt;/soap:Envelope></programlisting>
+        </section>
+
+    </section>
+
+    <section>
+        <title>The SOAP Body</title>
+        <para> The SOAP <emphasis>Body</emphasis> element contains the actual message content which
+            often is </para>
+        <itemizedlist>
+            <listitem>
+                <para>either a service request together with the parameters supplied with the
+                    service request, </para>
+            </listitem>
+            <listitem>
+                <para>or a response to a service request which may contain </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>the deliverables of the service request </para>
+                    </listitem>
+                    <listitem>
+                        <para>and/or error or status information in the form of a SOAP
+                            <emphasis>Fault</emphasis> element.</para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+        </itemizedlist>
+        <section>
+            <title>An Example SOAP Request</title>
+            <para> Reconsider the example discussed earlier in the chapter</para>
+            
+            <programlisting>  POST  /courses/queries  HTTP/1.1  Host:  www.SolmsTraining.co.za
+                 Content-Type:  text/xml;  charset=utf-8    &lt;?xml  version=&quot;1.0&quot;
+                 encoding=&quot;UTF-8&quot;?>    &lt;soap:Envelope                  
+                 xmlns:soap=&quot;http://www.w3.org/2001/12/soap-envelope&quot;                  
+                 soap:encodingStyle=&quot;http://www.w3.org/2001/soap-encoding&quot;>      
+                 &lt;soap:Header>          &lt;curr:Currency
+                 xmlns:curr=&quot;http://www.SolmsTraining.co.za/schemas/finance&quot;              
+                               soap:mustUnderstand=&quot;1&quot;>            
+                 &lt;curr:code>ZAR&lt;/curr:code>              &lt;curr:symbol>R&lt;/curr:symbol>  
+                       &lt;/curr:Currency>      &lt;/soap:Header>        &lt;soap:Body
+                 xmlns:msg=&quot;http://www.SolmsTraining.co.za/schemas/soap&quot;>        
+                 &lt;msg:getCourseFee>              &lt;msg:course>Enterprise  Java
+                 Beans&lt;/msg:course>              &lt;msg:startDate>2002-07-01&lt;/msg:startDate>
+                             &lt;msg:endDate>2002-07-05&lt;/msg:endDate>            
+                 &lt;msg:numCandidates>3&lt;/msg:numCandidates>          &lt;/msg:getCourseFee>    
+                 &lt;/soap:Body>    &lt;/soap:Envelope></programlisting>
+                 
+            <para> Here the structure of the service request itself is specified in a schema
+                available from </para>
+            <para><emphasis> http://www.SolmsTraining.co.za/schemas/soap </emphasis></para>
+            <para> The schema schema definition uses the primitive data types available from the
+                standard schema definition. It could look something like this: </para>
+                
+            <programlisting>  &lt;?xml  version=&quot;1.0&quot;  encoding=&quot;UTF-8&quot;?>
+                 &lt;xs:schema  xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;          
+                 targetNamespace=&quot;http://www.SolmsTraining.co.za/schemas/soap&quot;            
+                 xmlns=&quot;http://www.SolmsTraining.co.za/schemas/soap&quot;            
+                 elementFormDefault=&quot;qualified&quot;
+                 attributeFormDefault=&quot;unqualified&quot;>        &lt;xs:element
+                 name=&quot;getCourseFee&quot;>          &lt;xs:complexType
+                 name=&quot;GetCourseFee&quot;>              &lt;xs:sequence>                
+                 &lt;xs:element  name=&quot;course&quot;  type=&quot;Course&quot;/>                
+                 &lt;xs:element  name=&quot;startDate&quot;  type=&quot;xs:date&quot;/>            
+                     &lt;xs:element  name=&quot;endDate&quot;  type=&quot;xs:date&quot;/>          
+                       &lt;xs:element  name=&quot;numCandidates&quot;
+                 type=&quot;xs:positiveInteger&quot;/>              &lt;/xs:sequence>        
+                 &lt;/xs:complexType>      &lt;/xs:element>  &lt;/xs:schema></programlisting>
+                 
+        </section>
+
+        <section>
+            <title>An Example SOAP Response</title>
+            <para> The SOAP response looks, with exception of the HTTP header, very similar to the
+                request itself. It too is a SOAP message and hence has a transport header, an
+                optional SOAP header and a SOAP body containing the response information in a XML
+                structure defined in some schema:</para>
+                
+            <programlisting>  HTTP/1.1  200  ok  Connection:  close  Content-Type:  text/xml;
+                 charset=utf-8    &lt;?xml  version=&quot;1.0&quot;  encoding=&quot;UTF-8&quot;?>  
+                 &lt;soap:Envelope                  
+                 xmlns:soap=&quot;http://www.w3.org/2001/12/soap-envelope&quot;                  
+                 soap:encodingStyle=&quot;http://www.w3.org/2001/soap-encoding&quot;>      
+                 &lt;soap:Body  xmlns:msg=&quot;http://www.SolmsTraining.co.za/schemas/soap&quot;>  
+                       &lt;msg:courseQuote>              &lt;msg:course>Enterprise  Java
+                 Beans&lt;/msg:course>              &lt;msg:startDate>2002-07-01&lt;/msg:startDate>
+                             &lt;msg:endDate>2002-07-05&lt;/msg:endDate>            
+                 &lt;msg:numCandidates>3&lt;/msg:numCandidates>              &lt;msg:price>        
+                 &lt;amount>14550&lt;/code>                  &lt;currency>zar&lt;/currency>
+                 &lt;/msg:price>          &lt;/msg:courseQuote>      &lt;/soap:Body>    &lt;/soap:Envelope></programlisting>
+        </section>
+
+        <section>
+            <title>SOAP Encoding</title>
+            <para> The soap message is usually encoded using some domain specific vocabulary which
+                is often supplied by the service provider. In addition to one can use standard data
+                types similar to the standard data types supplied by most programming languages.</para>
+            <para> The SOAP specification was published before the XML schema specification was
+                ready and hence it includes a separate encoding section for primitive and complex
+                types similar to that supplied by the XML schema specification discussed in chapter
+                refchapXML. This section of the SOAP specification is now effectively outdated and
+                one should rather stick to the standard XML schema specification instead. We shall
+                thus not discuss this part of the SOAP specifcation.</para>
+        </section>
+
+        <section>
+            <title>SOAP Faults</title>
+            <para> A SOAP <emphasis>Fault</emphasis> element can be used to convey error and/or
+                status information to the client who requested the service. It may appear at most
+                once within the <emphasis>Body</emphasis> element.</para>
+            <para> SOAP faults are able to carry a faultcode element intended for machine
+                consumption, a faultstring element intended for human consumption, a faultactor
+                element specifying the actor in the chain who is responsible for declining the
+                service request and a detail element containing further detailed information about
+                the fault. The datil can contain an information structure defined in another schema.</para>
+            <para> The first 2 of these are compulsory sub-elements of <emphasis>Fault</emphasis>,
+                while the remaining 2 are compulsory only under certain circumstances.</para>
+                
+            <section>
+                <title>Example SOAP Fault</title>
+                <programlisting>  POST  /orders  HTTP/1.0  Host:  www.FlintStones.com  Content-Type:
+                     text/xml;  charset=utf-8    &lt;?xml  version=&quot;1.0&quot;
+                     encoding=&quot;UTF-8&quot;?>    &lt;soap:Envelope                  
+                     xmlns:soap=&quot;http://www.w3.org/2001/12/soap-envelope&quot;                
+                       soap:encodingStyle=&quot;http://www.w3.org/2001/soap-encoding&quot;>      
+                     &lt;soap:Body  xmlns:msg=&quot;http://www.FlintStones.com/purchase&quot;>      
+                       &lt;soap:Fault>            
+                     &lt;soap:faultcode>credit_limit_violation&lt;/soap:faultcode>            
+                     &lt;soap:faultstring>The  transaction  would  result  in  your  organization  
+                                                         exceeding  the  credit
+                     limit.&lt;/soap:faultstring>            
+                     &lt;soap:faultactor>http://www.FlintStones.com/accounts&lt;/soap:faultactor>  
+                               &lt;detail>                  &lt;msg:creditLimitViolation>          
+                               &lt;msg:clientNo>Zap002&lt;/msg:clientNo>                    
+                     &lt;msg:accountBalance>25530&lt;/msg:accountBalance>                    
+                     &lt;msg:availableFunds>470&lt;/msg:availableFunds>                
+                     &lt;/msg:creditLimitViolation>              &lt;/detail>      &lt;/soap:Body>    &lt;/soap:Envelope></programlisting>
+            </section>
+
+        </section>
+
+    </section>
+
+    <section>
+        <title>SOAP Messages with Attachments</title>
+        <para> The content of the SOAP messages we developed thus far has been restricted to XML. If
+            one wants to include non-XML information with a SOAP message one can either embed in
+            within a <emphasis>CData</emphasis> section of the message itself or one can send the
+            XML message with one or more non-XML attachments.</para>
+        <para> SOAP has been extended to support attachments (published by the W3C as the SOAP with
+            Attachments specification). The specification defines a binding for SOAP 1.1 messages to
+            be carried within MIME multipart/related message.</para>
+        <para> Structurally a SOAP with Attachments message is embedded in a communication protocol
+            envelope contains a SOAP part and one or more attachment parts. The SOAP part contains
+            the standard SOAP envelope with the SOAP Header and SOAP Body. </para>
+            
+        <figure>
+            <title>A SOAP message with atachments</title>
+            <mediaobject>
+                <imageobject>
+                        <imagedata fileref="SOAP/SOAPMsgWithAttachments.gif"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        
+        <para> Each attachment part encapsulates a particular attachment. The attachment has a
+            header which specifies further information about the content of the attachment like the
+            content type or the content location. </para>
+            
+        <section>
+            <title>An Example SOAP Message with Attachments</title>
+            <programlisting>  MIME-Version:  1.0  Content-Type:  Multipart/Related;
+                 boundary=MIME_boundary;  type=text/xml;        
+                 start=&quot;&lt;claimA4763534.xml@insuredEntity.co.za>&quot;  Content-Description:
+                 Granny  borrowed  my  car  and  didn't  see  the  big  oak  ...    --MIME_boundary
+                 Content-Type:  text/xml;  charset=UTF-8  Content-Transfer-Encoding:  8bit
+                 Content-ID:  &lt;claimA4763534.xml@insuredEntity.co.za>    &lt;?xml
+                 version='1.0'?>  &lt;soap:Envelope
+                 xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;>    
+                 &lt;soap:Body>            ...      &lt;/soap:Body>  &lt;/soap:Envelope>  
+                 --MIME_boundary  Content-Type:  image/tiff  Content-Transfer-Encoding:  binary
+                 Content-ID:  &lt;claimA4763534.xml@insuredEntity.co.za>        ...        binary
+                 data  for  image        ...  --MIME_boundary--</programlisting>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Developing a Basic SOAP Server</title>
+        <para> Our simple SOAP server is a servlet which processes incoming SOAP/HTTP service
+            requests. In order not to process accidental browser <emphasis>GET</emphasis> requests,
+            we avoid calling<emphasis>doPost</emphasis> from <emphasis>doGet</emphasis> and return
+            an appropriate message instead.</para>
+        <para> In the <emphasis>doPost</emphasis> HTTP request handler we </para>
+        <orderedlist>
+            <listitem>
+                <para>extract the complete message, </para>
+            </listitem>
+            <listitem>
+                <para>remove the HTTP header from the message, </para>
+            </listitem>
+            <listitem>
+                <para>populate a DOM tree for the remaining SOAP message, </para>
+            </listitem>
+            <listitem>
+                <para>extract the method arguments, </para>
+            </listitem>
+            <listitem>
+                <para>process the service request and </para>
+            </listitem>
+            <listitem>
+                <para>construct either a success-response or fault message.</para>
+            </listitem>
+        </orderedlist>
+        
+        <section>
+            <title>The Election Manager Servlet</title>
+            
+            <programlisting>  package  stc.voting;    import  java.io.*;  import  java.util.*;
+                 import  java.text.*;  import  java.io.IOException;  import  java.io.PrintWriter;  
+                 import  javax.servlet.*;  import  javax.servlet.http.*;    import  org.w3c.dom.*;
+                 import  javax.xml.parsers.*;  import  javax.xml.transform.*;  import
+                 javax.xml.transform.dom.*;  import  javax.xml.transform.stream.*;    public  class
+                 ElectionManagerServlet  extends  HttpServlet  {        public  void
+                 doPost(HttpServletRequest  request,  HttpServletResponse  response)            
+                 throws  ServletException        {            try            {              
+                 BufferedReader  reader  =  request.getReader();                StringWriter  writer
+                 =  new  StringWriter();                  writer.write(reader.readLine()  +  eol);  
+                             while  (reader.ready())                  
+                 writer.write(reader.readLine()  +  eol);                writer.flush();            
+                     StringReader  in  =  new  StringReader(writer.toString());    //            
+                 javax.servlet.ServletInputStream  in  =  request.getInputStream();                
+                 DocumentBuilder  docBuilder                    =
+                 DocumentBuilderFactory.newInstance().newDocumentBuilder();                Document
+                 doc  =  docBuilder.parse(new  org.xml.sax.InputSource(in));                  Node
+                 env  =  doc.getDocumentElement();                  Node  body  =
+                 env.getLastChild();                  Node  requestMsg  =  body.getFirstChild();    
+                             NodeList  args  =  requestMsg.getChildNodes();                  Node
+                 partyElement  =  args.item(0);                  Node  numVotesElement  =
+                 args.item(1);                  String  party  =
+                 partyElement.getFirstChild().getNodeValue();                int  numVotes  =
+                 Integer.parseInt                                                    
+                 (numVotesElement.getFirstChild().getNodeValue());                
+                 createResponse(response,  party,  numVotes);            }            catch
+                 (Exception  e)            {                try                {                  
+                 createFaultResponse(response,  e);                }                catch
+                 (Exception  ex)    {throw  new  ServletException(ex);}            }        }      
+                   public  void  doGet(HttpServletRequest  request,  HttpServletResponse  response)
+                             throws  ServletException,  IOException        {          
+                 response.getWriter().println(&quot;Web  Service:  Get  not  supported&quot;);      
+                 }        public  void  createResponse(HttpServletResponse  response,              
+                                                             String  partyName,  int  numVotes)    
+                                                   throws  Exception      {          DocumentBuilder
+                 docBuilder              =
+                 DocumentBuilderFactory.newInstance().newDocumentBuilder();          Document  doc
+                 =  docBuilder.newDocument();            Element  envelope  =
+                 doc.createElementNS(soapSchema,  &quot;soap:Envelope&quot;);          Element  body
+                 =  doc.createElement(&quot;soap:Body&quot;);          doc.appendChild(envelope);  
+                       envelope.appendChild(body);            Element  responseMsg              =
+                 doc.createElementNS(requestSchema,  &quot;msg:addVotesResponse&quot;);        
+                 body.appendChild(responseMsg);          
+                 responseMsg.appendChild(doc.createTextNode              (&quot;Added  &quot;  +
+                 Integer.toString(numVotes)  +  &quot;  votes  for  &quot;  +  partyName));        
+                   response.getWriter().println(serializeResponse(doc));      }        public  void
+                 createFaultResponse(HttpServletResponse  response,                                
+                                                     Exception  exception)                          
+                             throws  Exception      {          DocumentBuilder  docBuilder          
+                   =  DocumentBuilderFactory.newInstance().newDocumentBuilder();          Document
+                 doc  =  docBuilder.newDocument();            Element  envelope  =
+                 doc.createElementNS(soapSchema,  &quot;soap:Envelope&quot;);          Element  body
+                 =  doc.createElement(&quot;soap:Body&quot;);          doc.appendChild(envelope);  
+                       envelope.appendChild(body);            Element  faultMsg              =
+                 doc.createElement(&quot;soap:Fault&quot;);          body.appendChild(faultMsg);    
+                       Element  faultCode  =  doc.createElement(&quot;faultcode&quot;);        
+                 faultCode.appendChild(doc.createTextNode(&quot;soap:Server&quot;));        
+                 faultMsg.appendChild(faultCode);            Element  faultString  =
+                 doc.createElement(&quot;faultstring&quot;);  //      
+                 faultCode.appendChild(doc.createTextNode(&quot;Server  Error&quot;));        
+                 faultCode.appendChild(doc.createTextNode(str));        
+                 faultMsg.appendChild(faultString);            Element  detail  =
+                 doc.createElement(&quot;detail&quot;);          Element  stackTrace  =
+                 doc.createElement(&quot;stacktrace&quot;);          stackTrace.appendChild        
+                     (doc.createTextNode(exception.toString()));        
+                 detail.appendChild(stackTrace);          faultMsg.appendChild(detail);          
+                 response.getWriter().println(serializeResponse(doc));      }        public
+                 StringBuffer  serializeResponse(Document  doc)                                    
+                 throws  TransformerException,                                                  
+                 TransformerConfigurationException      {          StringWriter  resultString  =
+                 new  StringWriter();          StreamResult  resultStream  =  new
+                 StreamResult(resultString);            DOMSource  source  =  new  DOMSource(doc);  
+                       StreamResult  result  =  new  StreamResult(resultString);          
+                 TransformerFactory  transformerFactory              =
+                 TransformerFactory.newInstance();            Transformer  transformer  =
+                 transformerFactory.newTransformer();            transformer.transform(source,
+                 resultStream);            return  resultString.getBuffer();      }        private
+                 String  str;        private  static  final  String          requestSchema  =
+                 &quot;http://www.SolmsTraining.co.za/voting&quot;;      private  static  final
+                 String          soapSchema  =
+                 &quot;http://schemas.xmlsoap.org/soap/envelope/&quot;;      private  static  final
+                 String          soapEncodingSchema  =
+                 &quot;http://www.w3.org/2001/soap-encoding&quot;;      private  static  final
+                 String          eol  =  System.getProperty(&quot;line.separator&quot;);  }</programlisting>
+                 
+        </section>
+
+    </section>
+
+    <section>
+        <title>Developing a SOAP Client in Java</title>
+        <para> In this section we will develop a primitive SOAP client which uses HTTP as the
+            transport protocol and which communicates with a SOAP server through a TCP/IP connection.</para>
+        <para> We shall </para>
+        <orderedlist>
+            <listitem>
+                <para>use a DOM parser to construct the SOAP request, </para>
+            </listitem>
+            <listitem>
+                <para>transform the dom into s string via the XML transformation engine, </para>
+            </listitem>
+            <listitem>
+                <para>insert a HTTP header infront of the SOAP message, </para>
+            </listitem>
+            <listitem>
+                <para>open a TCP/IP socket to the server hosting the web service, </para>
+            </listitem>
+            <listitem>
+                <para>send the SOAP/HTTP service request, </para>
+            </listitem>
+            <listitem>
+                <para>extract the response message from an input stream to the socket, </para>
+            </listitem>
+            <listitem>
+                <para>remove the HTTP header from that message and </para>
+            </listitem>
+            <listitem>
+                <para>populate a DOM tree from the remaining XML stream and </para>
+            </listitem>
+            <listitem>
+                <para>process the response message off a DOM tree.</para>
+            </listitem>
+        </orderedlist>
+        
+        <section>
+            <title>The Polling Station Web Service Client</title>
+            <programlisting>  import  java.net.*;  import  org.w3c.dom.*;  import
+                 javax.xml.parsers.*;  import  javax.xml.transform.*;  import
+                 javax.xml.transform.dom.*;  import  javax.xml.transform.stream.*;    public  class
+                 PollingStationClient  {      public  static  void  main(String[]  args)      {    
+                     new  PollingStationClient().run();      }        public  void  run()      {    
+                     try          {              System.out.println(&quot;Constructing
+                 request&quot;);              Document  soapRequest                  =
+                 createAddVotesMessage(&quot;Don  Quichote  Party&quot;,  200);              
+                 StringBuffer  request  =  serializeXmlDoc(soapRequest);              
+                 System.out.println(&quot;eol  +  The  request:&quot;  +  eol  +  request);        
+                       insertHTTPHeader(request);                System.out.println(eol  +
+                 &quot;Inserted  HTTP  header:&quot;  +  eol  +  request);              
+                 System.out.println(eol  +  &quot;connecting  to  web  service  provider:  &quot;  
+                                                                         +  hostName  +  &quot;,
+                 port:  &quot;  +  port);                Socket  socket  =  connect(hostName,
+                 port);                System.out.println(eol  +  &quot;Sending  request&quot;);    
+                           java.io.PrintStream  socketOutput                  =  new
+                 java.io.PrintStream(socket.getOutputStream());                socketInput  =
+                 socket.getInputStream();                sendRequest(request,  socketOutput);      
+                         new  Thread()                  {      public  void  run()      {          
+                               PollingStationClient.this.extractResponse(socketInput);      }
+                 }.start();                for  (int  i=0;  i&lt;300;  ++i)                
+                 System.out.println(&quot;busy  doing  other  things.&quot;);          }        
+                 catch    (Exception  e)  {e.printStackTrace();}      }        public  Document
+                 createAddVotesMessage(String  partyName,  int  numVotes)                          
+                             throws  Exception      {          DocumentBuilder  docBuilder          
+                   =  DocumentBuilderFactory.newInstance().newDocumentBuilder();          Document
+                 doc  =  docBuilder.newDocument();            Element  envelope  =
+                 doc.createElementNS(soapSchema,  &quot;soap:Envelope&quot;);          Element  body
+                 =  doc.createElement(&quot;soap:Body&quot;);          doc.appendChild(envelope);  
+                       envelope.appendChild(body);            Element  request  =
+                 doc.createElementNS(requestSchema,  &quot;msg:addVotes&quot;);        
+                 body.appendChild(request);            Element  party  =
+                 doc.createElement(&quot;msg:party&quot;);        
+                 party.appendChild(doc.createTextNode(partyName));        
+                 request.appendChild(party);            Element  noVotes  =
+                 doc.createElement(&quot;msg:numVotes&quot;);        
+                 noVotes.appendChild(doc.createTextNode(Integer.toString(numVotes)));        
+                 request.appendChild(noVotes);            return  doc;      }        public
+                 StringBuffer  serializeXmlDoc(Document  doc)                                    
+                 throws  TransformerException,                                                  
+                 TransformerConfigurationException      {          java.io.StringWriter
+                 resultString  =  new  java.io.StringWriter();          StreamResult  resultStream
+                 =  new  StreamResult(resultString);            DOMSource  source  =  new
+                 DOMSource(doc);          StreamResult  result  =  new  StreamResult(resultString);
+                           TransformerFactory  transformerFactory              =
+                 TransformerFactory.newInstance();            Transformer  transformer  =
+                 transformerFactory.newTransformer();            transformer.transform(source,
+                 resultStream);            return  resultString.getBuffer();      }        public
+                 void  insertHTTPHeader(StringBuffer  request)      {          String  httpHeader  =
+                 &quot;POST  &quot;  +  webService  +  &quot;  HTTP/1.1&quot;  +  eol              
+                                               +  &quot;Host:  &quot;  +    hostName  +  eol        
+                                                     +  &quot;Content-Type:  text/xml;
+                 charset=utf-8&quot;                                              +  eol  +  eol;  
+                         request.insert(0,  httpHeader);      }        public  Socket
+                 connect(String  hostName,  int  port)                                      throws
+                 java.io.IOException      {          InetAddress  host  =
+                 InetAddress.getByName(hostName);            return  new  Socket(host,port);      }
+                       public  void  sendRequest(StringBuffer  request,                            
+                                         java.io.PrintStream  socketOutput)                        
+                         throws  java.io.IOException      {        
+                 socketOutput.println(request.toString());      }        public  void
+                 extractResponse(java.io.InputStream  socketInput)      {          try          {  
+                               java.io.BufferedReader  in                      =  new
+                 java.io.BufferedReader                            (new
+                 java.io.InputStreamReader(socketInput));                    StringBuffer
+                 responseStr  =  new  StringBuffer();                  String  line  =
+                 in.readLine();                  while  (line  !=  null)                  {        
+                             responseStr.append(line).append(eol);                      line  =
+                 in.readLine();                  }                    System.out.println(&quot;HTTP
+                 response:  &quot;  +  responseStr);                  System.out.flush();          
+                         //  Remove  up  to  XML  declaration  header                
+                 responseStr.delete(0,  responseStr.indexOf(&quot;&lt;?xml&quot;));                
+                   DocumentBuilder  docBuilder                      =
+                 DocumentBuilderFactory.newInstance().newDocumentBuilder();                
+                 Document  doc  =  docBuilder.parse(new  org.xml.sax.InputSource                    
+                                             (new  java.io.StringReader(responseStr.toString())));  
+                                 System.out.println(&quot;SOAP  Response:&quot;  +  eol  +
+                 serializeXmlDoc(doc));              }              catch  (Exception  e)          
+                   {                  e.printStackTrace();              }      }        private
+                 static  final  String          requestSchema  =
+                 &quot;http://www.SolmsTraining.co.za/voting&quot;;      private  static  final
+                 String          soapSchema  =
+                 &quot;http://schemas.xmlsoap.org/soap/envelope/&quot;;      private  static  final
+                 String          soapEncodingSchema  =
+                 &quot;http://www.w3.org/2001/soap-encoding&quot;;        private  static  final
+                 String  hostName  =  &quot;localhost&quot;;        private  static  final  int
+                 port  =  8080;        private  static  final  String  webService  =
+                 &quot;/voting/ElectionServer&quot;;        private  static  final  String  eol  =
+                 System.getProperty(&quot;line.separator&quot;);        private            
+                 java.io.InputStream  socketInput;  }</programlisting>
+                 
+        </section>
+
+    </section>
+
+    <section>
+        <title>Compiling, Deploying and Launching the Web Service</title>
+        <section>
+            <title>The Servlet Deployment Descriptor</title>
+            <para> In the servlet deployment descriptor we </para>
+            <itemizedlist>
+                <listitem>
+                    <para>map the servlet name onto a servlet implementation class, </para>
+                </listitem>
+                <listitem>
+                    <para>provide perhaps further attribute values (e.g.  the number of servlets in
+                        the thread pool maintained by the servlet container) and </para>
+                </listitem>
+                <listitem>
+                    <para>provide the URL mapping for the servlet.</para>
+                </listitem>
+            </itemizedlist>
+            <para>Our web.xml deployment descriptor looks like this:</para>
+            
+            <programlisting>  &lt;?xml  version=&quot;1.0&quot;  encoding=&quot;UTF-8&quot;?>  
+                 &lt;!DOCTYPE  web-app          PUBLIC  &quot;-//Sun  Microsystems,  Inc.//DTD  Web
+                 Application  2.3//EN&quot;        
+                 &quot;http://java.sun.com/dtd/web-app_2_3.dtd&quot;>    &lt;web-app>      
+                 &lt;display-name>Election  Manager&lt;/display-name>        &lt;servlet>          
+                   &lt;servlet-name>ElectionManagerServlet&lt;/servlet-name>            
+                 &lt;display-name>Election  Manager&lt;/display-name>            
+                 &lt;servlet-class>stc.voting.ElectionManagerServlet&lt;/servlet-class>            
+                 &lt;load-on-startup>3&lt;/load-on-startup>        &lt;/servlet>    
+                 &lt;servlet-mapping>        
+                 &lt;servlet-name>ElectionManagerServlet&lt;/servlet-name>        
+                 &lt;url-pattern>/ElectionServer&lt;/url-pattern>      &lt;/servlet-mapping>  &lt;/web-app></programlisting>
+                 
+        </section>
+
+        <section>
+            <title>The Ant build file</title>
+            <para> We have a range of steps we have to perform, from compiling the cient and server
+                sides to packaging both sides to copying the WAR file to the web container and more.
+                Once again, Ant will come in very handy to keep track of the tasks and their
+                dependencies and to perform the build in such a way that all dependencies are satified.</para>
+                
+            <section>
+                <title>Common and application-specific build properties</title>
+                <para> This time we will make use of properties files to encapsulate </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>general properties which may change from time to time and </para>
+                    </listitem>
+                    <listitem>
+                        <para>application-specific properties which change from application to application.</para>
+                    </listitem>
+                </itemizedlist>
+                <para> The common properties file contains a few elements which we shall only make
+                    use of in later projects. In the context of the simple SOAP-based web service
+                    which we developed in this chapter only the last 4 lines specifying the paths
+                    for the directories containing the some standard Java libraries (e.g.  servlets
+                    library) and some publically endorsed libaries like the DOM and SAX libraries.
+                    In additionj to specifying the directories, the last two lines specify the jar
+                    files for JAXP (Java API for XML Processing) and for the Web Services
+                    Developer's Pack. The common properties file is listed below:</para>
+                    
+                <programlisting>  #    This  file  contains  properties  common  to  the  tutorial
+                     examples  #    for  JAX-RPC.    #    script-suffix  #  #          UNIX:      
+                     Change  the  script-suffix  from  &quot;sh&quot;  to  &quot;bat&quot;.  #      
+                       Windows:  Use  &quot;bat&quot;  (the  default).    script-suffix=sh    #  
+                     username,  password  #  #          Change  the  username  and  password  to
+                     the  values  you  entered  #          on  the  &quot;Create  Web  Application
+                     Manager  User&quot;  dialog  of  the  #          installer.    If  you  don't
+                     remember  these  values,  go  to  the  #          conf/tomcat-users.xml  file
+                     and  examine  the  element  that  #          has  &quot;manager&quot;  for  the
+                     &quot;roles&quot;  attribute.    username=Fritz  password=life00  
+                     url=http://localhost:8080/manager  docs-path=${jwsdp.home}/docs
+                     xrpcc=${jwsdp.home}/bin/xrpcc.${script-suffix}    clib=${jwsdp.home}/common/lib
+                     elib=${jwsdp.home}/common/endorsed  
+                     jwsdp-jars=${clib}/jaxrpc-ri.jar:${clib}/jaxrpc-api.jar:${clib}/activation.jar:${clib}/dom4j.jar:${clib}/jaxm-api.jar:${clib}/jaxm-client.jar:${clib}/log4j.jar:${clib}/mail.jar:${clib}/xalan.jar:${clib}/xerces.jar:${clib}/jaxp-api.jar:${clib}/soap.jar:${clib}/commons-logging.jar:${clib}/servlet.jar
+                     jaxp-jars=${elib}/dom.jar:${elib}/sax.jar:${elib}/xalan.jar:${elib}/xercesImpl.jar:${elib}/xsltc.jar</programlisting>
+                     
+                <para> The second <emphasis>build.properties</emphasis> file located in the
+                    application directory covers application specific properties:</para>
+                    
+                <programlisting>  #  Properties  file  defining  application  specific  properties  
+                     app-name=ElectionServer  client-class=PollingStationClient  context-path=voting
+                     endpoint=http://localhost:8080/${context-path}/${app-name}  
+                     war-file=${context-path}.war  src-dir=${basedir}/src
+                     build-dir=${basedir}/build  dist-dir=${basedir}/dist
+                     client-jar=${client-class}.jar  deploy-dir=${jwsdp.home}/webapps  
+                     compile.debug=true  compile.optimize=false  compile.deprecation=true</programlisting>
+                     
+            </section>
+
+            <section>
+                <title>The generic build targets</title>
+                <para> The build targets required for our manual SOAP application are the same as
+                    those we will have for JAXM (Java API for XML-based Messaging) applications.
+                    They include </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>compiling the client and server side classes, </para>
+                    </listitem>
+                    <listitem>
+                        <para>copying the compiled server-side classes and the web deployment
+                            descriptor into a directory hierarchy suitable for packaging, </para>
+                    </listitem>
+                    <listitem>
+                        <para>packaging server side elements into a web archive (a
+                            <emphasis>.war</emphasis> file), </para>
+                    </listitem>
+                    <listitem>
+                        <para>packaging the client side resources into a standard Java archive (a
+                            <emphasis>.jar</emphasis> file), </para>
+                    </listitem>
+                    <listitem>
+                        <para>deploying the server side web-archive to the servlet container and </para>
+                    </listitem>
+                    <listitem>
+                        <para>running the client application.</para>
+                    </listitem>
+                </itemizedlist>
+                <para>These targets are specified in the <emphasis>jaxmTargets.xml</emphasis> file: </para>
+                
+                <programlisting> <![CDATA[     <target  name="prepare"
+                     depends="clean"            description="Creates  the  build  and
+                     dist  directories"  >            <echo  message="Creating  the
+                     required  directories...."  />            <mkdir
+                     dir="${build-dir}/client"  />            <mkdir
+                     dir="${build-dir}/server"  />            <mkdir
+                     dir="${build-dir}/shared"  />            <mkdir
+                     dir="${dist-dir}"  />      </target>        <target
+                     name="compile-server"  depends="prepare"            
+                     description="Compiles  the  server-side  source  code">            
+                     <echo  message="Compiling  the  server-side  source  code...."/>  
+                               <javac                    srcdir="${src-dir}"          
+                             destdir="${build-dir}/shared"  
+                     deprecation="${compile.deprecation}"  
+                     optimize="${compile.optimize}"    debug="${compile.debug}"
+                                       classpath="${jwsdp-jars}"                  
+                     includes="**/*.java"                  
+                     excludes="**/*Client.java"              />      </target>      
+                     <target  name="setup-web-inf"            description="Copies
+                     files  to  ${build-dir}/WEB-INF">            <echo
+                     message="Setting  up  ${build-dir}/WEB-INF...."/>          
+                     <delete  dir="${build-dir}/WEB-INF"  />            <mkdir
+                     dir="${build-dir}/WEB-INF/classes"  />            <copy
+                     todir="${build-dir}/WEB-INF/classes">                    <fileset
+                     dir="${build-dir}/shared"  />                    <fileset
+                     dir="${build-dir}/server"  />            </copy>          
+                     <copy  file="web.xml"  todir="${build-dir}/WEB-INF"  />
+                         </target>        <target  name="compile-client"
+                     depends="prepare"              description="Compiles  the
+                     client-side  source  code"    >              <echo
+                     message="Compiling  the  client  source  code...."/>            
+                     <echo  message                
+                     ="Classpath=${jwsdp-jars}:${build-dir}/shared:${build-dir}/client"/>
+                                 <javac                    srcdir="${src-dir}"        
+                               destdir="${build-dir}/client"  
+                     deprecation="${compile.deprecation}"  
+                     optimize="${compile.optimize}"    debug="${compile.debug}"
+                                     
+                     classpath="${jwsdp-jars}:${build-dir}/shared:${build-dir}/client"    
+                                   includes="**/*Client.java"              />    
+                     </target>        <target  name="jar-client"            
+                     description="Builds  the  JAR  file  that  contains  the  client">  
+                               <echo  message="Building  the  client  JAR  
+                     file...."/>              <delete
+                     file="${dist-dir}/${client-jar}"  />              <jar
+                     jarfile="${dist-dir}/${client-jar}"  >                  <fileset
+                     dir="${build-dir}/client"  />                  <fileset
+                     dir="${build-dir}/shared"  />              </jar>    
+                     </target>        <target  name="package"
+                     depends="setup-web-inf"              description="Packages  the
+                     WAR  file">              <echo  message="Packaging  the
+                     WAR...."/>              <delete
+                     file="${dist-dir}/${war-file}"  />              <jar
+                     jarfile="${dist-dir}/${war-file}"  >                  <fileset
+                     dir="${build-dir}"  includes="WEB-INF/**"  />              
+                       <fileset  dir="${basedir}"  includes="*.html"  />    
+                                 <fileset  dir="${basedir}"  includes="*.JSP"
+                     />              </jar>      </target>        <target
+                     name="clean"            description="Removes  the  build  and
+                     dist  directories">          <delete  dir="${build-dir}"  />
+                             <delete  dir="${dist-dir}"  />      </target>      
+                     <target  name="build"          
+                     depends="clean,compile-server,package,compile-client,jar-client"    
+                           description="Executes  the  targets  needed  to  build  this
+                     example.">      </target>        <target  name="deploy"
+                     depends="package"                        description="Deploy
+                     application  resources  to  webapps">          <mkdir
+                     dir="${deploy-dir}"/>          <echo  message="Deploying  to
+                     ${deploy-dir}  ..."/>          <copy
+                     file="${dist-dir}/${war-file}"  todir="${deploy-dir}"/>    
+                         <chmod  file="${deploy-dir}/${war-file}"
+                     perm="ugo+rx"  includes="*"/>          <!--  Makes  WAR
+                     file  in  the  ${deploy-dir}  readable  and                    executable  for
+                     anyone  on  a  UNIX  system.  -->      </target>        <target
+                     name="run-client"            description="Runs  the  example
+                     client">            <echo  message="Running  the  ${client-class}
+                     program:"  />            <echo  message                ="java
+                     -classpath  ${dist-dir}/${client-jar}:${jwsdp-jars}  ${client-class}
+                     ${endpoint}"            />            <echo  message="  "  />
+                                 <java                          fork="on"              
+                             
+                     classpath="${dist-dir}/${client-jar}:${jwsdp-jars}:${jaxp-jars}"    
+                                         classname="${client-class}"  >                  
+                         <arg  value="${endpoint}"  />              </java>      </target>]]></programlisting>
+            </section>
+
+            <section>
+                <title>Application-specific build file</title>
+                <para> Finally, the application specific ANT build file </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>imports the generic and application specific properties as well as the
+                            generic targets, </para>
+                    </listitem>
+                    <listitem>
+                        <para>specifies a base directory for the application and </para>
+                    </listitem>
+                    <listitem>
+                        <para>specifies the default target.</para>
+                    </listitem>
+                </itemizedlist>
+                
+                <programlisting>  &lt;!DOCTYPE  project  [      &lt;!ENTITY  jaxmTargets  SYSTEM
+                     &quot;../common/jaxmTargets.xml&quot;>      &lt;!ENTITY  installTargets  SYSTEM
+                     &quot;../common/installTargets.xml&quot;>  ]>    &lt;project
+                     name=&quot;Election  Manager  Web  Service&quot;  default=&quot;build&quot;
+                     basedir=&quot;.&quot;>        &lt;property
+                     file=&quot;../common/build.properties&quot;/>      &lt;property
+                     file=&quot;build.properties&quot;/>        &amp;jaxmTargets;    
+                     &amp;installTargets;  &lt;/project></programlisting>
+                     
+            </section>
+
+        </section>
+
+        <section>
+            <title>Using the Ant Build File</title>
+            <para> To build the application, simply type in</para>
+            <programlisting>  ant</programlisting>
+            <para>on any platform. This will execute the build target. To deploy the application run</para>
+            <programlisting>  ant  deploy</programlisting>
+            <para>and start/restart the Tomcat servlet engine by entering</para>
+            <programlisting>  ./shutdown.sh  ./startup.sh</programlisting>
+            <para>on Linux and</para>
+            <programlisting> shutdown  startup</programlisting>
+            <para>on Windows machines.</para>
+            <para> You can then run the client via</para>
+            <programlisting>  ant  run-client</programlisting>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Exercises</title>
+        <para>Develop a simple counter web service which provides the following 2 services:</para>
+                    <itemizedlist>
+                        <listitem>
+                            <para>Incrementing the counter. </para>
+                        </listitem>
+                        <listitem>
+                            <para>Querying the total count of the counter.</para>
+                        </listitem>
+                    </itemizedlist>
+                    <para>The server side should be a simple servlet using SAX or DOM to extract the
+                        service requests. Develop, deploy and test the servlet realizing the web
+                        service. Develop a simple GUI client and test it. </para>
+    </section>
+
+</chapter>

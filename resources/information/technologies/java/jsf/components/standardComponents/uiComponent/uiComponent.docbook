@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>UIComponent</title>
+    <para>
+        This is the base class for all faces components. It provides the common under-the hood
+        functionality required by the JSF framework from any component and also enables the user
+        to specify, amongst other things, 
+        <itemizedlist>
+            <listitem><para>
+                whether the component should be rendered or not (using the <literal>rendered</literal>
+                attribute for the corresponding component tag), e.g.
+                <programlisting><![CDATA[
+<h:commandButton value="#{msgs.placeOrder}"
+                 rendered="#{captureOrderBinding.conditionsAccepted"}
+                 action="#{captureOrderBinding.submitOrder()"}/>                 
+                    ]]></programlisting>
+            </para></listitem>
+            <listitem><para>
+                a <literal>disabled</literal> attribute which is a boolean flag that, 
+                when set to <literal>true</literal>, indicates that this component should 
+                not receive focus or be included in a form submit.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>Components and component tags</title>
+        <para>
+            The use of components is usually not directly requested in Java code. Presentation layer
+            developers normally request the use of components by inserting component tags into the
+            facelet XHTML file. 
+        </para>
+        <para>
+            Thus, for concrete JSF component there is a corresponding component tag.
+            For example, the component tag for <literal>HtmlCommandButton</literal> is 
+            <literal><![CDATA[<h:commandButton/>]]></literal>.
+        </para>
+    </section>
+    
+    <section>
+        <title>Assigning standard (X)HTML tags to component tags</title>
+        <para>
+            Since components are requested through standard XHTML tags, the user can specify any of the
+            standard (X)HTML tags for any component.
+        </para>
+        <para>
+            <itemizedlist>
+                <listitem><formalpara>
+                    <title>accesskey</title>
+                    <para>
+                        The <literal>accesskey</literal> attribute is a standard HTML attribute 
+                        that sets the access key that transfers focus to this element when pressed.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>alt</title>
+                    <para>
+                        The <literal>alt</literal> attribute is a standard HTML attribute that sets 
+                        the alternate textual description rendered by this component.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>id</title>
+                    <para>
+                        A unique identifier (unique for the page) for the component. This can
+                        be used to, for example, uniquely associate labels with the component, 
+                        or to assign some styling to a particular component.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>onblur</title>
+                    <para>
+                        The <literal>onblur</literal> attribute sets the JavaScript code to execute 
+                        when this component loses focus.
+                        <note><para>
+                            In JSF JavaScript is usually used within the AJAX framework.
+                        </para></note>
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>onchange</title>
+                    <para>
+                        The <literal>onchange</literal> attribute sets the JavaScript code to 
+                        execute when this component loses focus and its value changes after gaining focus.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>onclick and ondblclick</title>
+                    <para>
+                        The <literal>onclick</literal> and <literal>ondblclick</literal> attributes 
+                        set the JavaScript code to execute when the mouse pointer is clicked 
+                        or double-clicked over this component.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>onfocus</title>
+                    <para>
+                        The <literal>onfocus</literal> attribute sets the JavaScript code to execute 
+                        when the component receives focus.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>onkeydown, onkeyup, onkeypress</title>
+                    <para>
+                        The <literal>onkeydown</literal>, <literal>onkeyup</literal> and
+                        <literal>onkeypress</literal> attributes set the JavaScript code 
+                        to execute when a key is pressed down, up or pressed-and-released 
+                        over this component.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>onmouseover, onmouseout, and onmousemove</title>
+                    <para>
+                        The <literal>onmouseover</literal>, <literal>onmouseout</literal>, and
+                        <literal>onmousemove</literal> attributes set the JavaScript code to 
+                        execute when the mouse pointer is moved onto, away from or within this component.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>onmousedown and onmouseup</title>
+                    <para>
+                        The <literal>onmousedown</literal> and <literal>onmouseup</literal>
+                        attributes set the JavaScript code to execute when the mouse pointer 
+                        is pressed down or released over this component.
+                        <note><para>
+                            The JavaScript/AJAX receives the event and from the event it will
+                            be able to query which mouse button triggered the event.
+                        </para></note>
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>onselect</title>
+                    <para>
+                        The <literal>onselect</literal> attribute sets the JavaScript code to 
+                        execute when the user selects the text contained by this component.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>style</title>
+                    <para>
+                        The style attribute sets the CSS style definition to be applied to this
+                        component when it is rendered.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>styleClass</title>
+                    <para>
+                        The <literal>styleClass</literal> attribute sets the CSS class to apply 
+                        to this component when it is rendered.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>tabindex</title>
+                    <para>
+                        The <literal>tabindex</literal> attribute is a standard HTML attribute 
+                        that sets the order in which this element receives focus when the user 
+                        cycles through the elements using the TAB key. The value for this 
+                        attribute must be a short non-signed integer, i.e. an integer 
+                        between 0 and 32767. 
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>title</title>
+                    <para>
+                        The <literal>title</literal> attribute is a standard HTML attribute that 
+                        sets the tooltip text to display for the rendered component.                    
+                    </para>
+                </formalpara></listitem>
+            </itemizedlist>
+        </para>
+    </section>    
+</section>    

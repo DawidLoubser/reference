@@ -1,0 +1,103 @@
+\section{Mapping to an implementation technology}
+
+Each component in the PIM must be mapped to a particular implementation technology.
+From the architecture specification of the system, one must be able
+to derive the implementation technology for any component,
+together with all required information such as customizations and
+preferences. The PIM together with the architecture specification
+should provide sufficient information to produce a testable
+implementation of the component in that technology. Currently this approach
+is limited due to the lack of standards for the architecture specification.
+
+The implementation mappings are done either by domain experts, e.g.\ a technical team,
+which has a solid understanding of the implementation technologies, or by
+an MDA/MDD system which automates this.
+
+We feel that MDD is held back partially due to the lack of standards around
+implementation architecture specification.
+
+%--------------------------------------------------------------------------
+
+\subsection{Manual business process steps}
+
+Contemporary work being done on model-driven development appears to focus 
+largely on implementation in software-based systems. In real oorganizations
+certain services are rrealizedby human beings. Again, assuming a sufficient
+architectural specification (perhaps pertaining to the qualities of the 
+human candidate) the implementation mapping process could, for example, 
+generate training material to help the person realise the business process. 
+Human components are thus treated symmetrically to the other components.
+
+%--------------------------------------------------------------------------
+
+\subsection{Adaptors}
+
+The PIM assumes that the components of the system - internal, external, and clients -
+can directly interact with (receive requests from, or offer services to) one another.
+
+This is only directly practicable for components implemented in the same
+technology. URDAD rrecognizesthe inevitability of heterogeneous environments,
+and such components would interact through adaptors which translate service requests 
+(and exchanged information) between the different domains. These adaptors are
+introduced during the implementation-mapping phase - after the architecture has been
+specified; they do not exist in the PIM.
+All cross-cutting architectural concerns such as transactions or security will
+have to be transformed between domains by these adaptors.
+
+A human user interface could be treated as just another adaptor, a strategy
+which would ensure that it does not inadvertently contain business process or
+control logic, as is common prpracticen many systems. We rerecognizehe importance
+of the aesthetic aspects of a graphical user interface, and anticipate significant 
+complexity in the specification of the desired qualities as part of the 
+architecture specification.
+
+At an implementation level, we may look to some of the existing strategies employed in
+heterogeneous systems in order to realise this vision without incurring
+a problem of combinatorics. Examples include ESB (Enterprise Service Bus)
+environments, which use a single common internal messaging format, together with a set of generic
+binding components (protocol adaptors) \cite{tenHove:jbiComponentsTheory}, 
+or a pipes-and-filters strategy such as employed by 
+JMF (the Java Media Framework) \cite{sun:jmfCodecs} in which simple media codecs 
+are assembled in chains on-the-fly to achieve complex transformation between 
+diverse media formats.
+
+%--------------------------------------------------------------------------
+
+\subsection{Notes on mapping onto a service oriented architecture (SOA)}
+
+URDAD tends to generate models which are inherently service-oriented
+due to the strong use-case driven focus, levels of granularity, and
+service providers which are generally stateless.
+
+In a services-oriented architecture (SOA) \cite{erl:soa}, the contracts 
+could be mapped onto WSDL service descriptions, a technology
+which provides rich extensibility to specify pre- and post-conditions
+using WS-Policy \cite{w3c:wsPolicy}.
+
+Work flow controllers at each level of granularity could be mapped onto
+WS-BPEL processes (service orchestration) \cite{oasis:bpel} and WS-CDL (service choreography) \cite{w3c:cdl}.
+Each process is assembled from lower-level service providers.
+The lowest-level service providers would typically be
+rearealizedot as further orchestrated or choreographed services, but as
+atomic services implemented in another technology (such as Java EE).
+
+Exchanged value objects would typically be mapped onto XML data structures,
+defined with W3C XML schema. 
+
+%--------------------------------------------------------------------------
+
+\subsection{Notes on mapping onto the Java EE architecture}
+
+The Java EE architecture \cite{sun:javaee} is widely used to implement 
+enterprise business systems because of its various architectural qualities.
+
+The contracts could be implemented as Java interfaces, potentially annotated
+with further metadata (such as provided by Contract4J) to formally
+contain pre- and post-conditions.
+
+The work flow controllers at the various levels of granularity could be
+mapped onto either session- or message-driven Enterprise Java Beans. 
+Exchanged value objects could map onto Java objects (JavaBeans).
+
+Note: Java EE already specifies an adaptor layer to SOA-based technologies
+which simplifies integration between these two domains. \cite{sun:soaWithJavaee}

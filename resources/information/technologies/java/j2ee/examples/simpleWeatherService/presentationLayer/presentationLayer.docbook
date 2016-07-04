@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns3035:section xmlns:ns3035="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.examples.simpleWeatherService.presentationLayer.presentationLayer">
+    
+    <ns3036:title xmlns:ns3036="http://docbook.org/ns/docbook">The Presentation Layer</ns3036:title>
+    <ns3037:para xmlns:ns3037="http://docbook.org/ns/docbook">
+        The presentation layer is a highly simplistic application implemented using
+        <ns3038:itemizedlist xmlns:ns3038="http://docbook.org/ns/docbook">
+            <ns3039:listitem xmlns:ns3039="http://docbook.org/ns/docbook">
+                <ns3040:formalpara xmlns:ns3040="http://docbook.org/ns/docbook">
+                    <ns3041:title xmlns:ns3041="http://docbook.org/ns/docbook">Servlets</ns3041:title>
+                    <ns3042:para xmlns:ns3042="http://docbook.org/ns/docbook">Each Servlet acts as the use-case <ns3043:emphasis xmlns:ns3043="http://docbook.org/ns/docbook">controller</ns3043:emphasis>
+                        for a particular use-case (in this case, only one). Servlets typically interact
+                        with the business layer.
+                    </ns3042:para>
+                </ns3040:formalpara>
+            </ns3039:listitem>
+            <ns3044:listitem xmlns:ns3044="http://docbook.org/ns/docbook">
+                <ns3045:formalpara xmlns:ns3045="http://docbook.org/ns/docbook">
+                    <ns3046:title xmlns:ns3046="http://docbook.org/ns/docbook">JSP Documents</ns3046:title>
+                    <ns3047:para xmlns:ns3047="http://docbook.org/ns/docbook">
+                        Each JSP (.jspx) is a <ns3048:emphasis xmlns:ns3048="http://docbook.org/ns/docbook">view</ns3048:emphasis>, that either renders
+                        information handed to it, or submits information to the Servlet. JSP
+                        is an elegant, XML-compliant templatting language that introduces minimal
+                        interference in your XML-based <ns3049:quote xmlns:ns3049="http://docbook.org/ns/docbook">template data</ns3049:quote> (e.g. XHTML).
+                    </ns3047:para>
+                </ns3045:formalpara>
+            </ns3044:listitem>
+        </ns3038:itemizedlist>
+    </ns3037:para>
+    <ns3050:figure xmlns:ns3050="http://docbook.org/ns/docbook">
+        <ns3051:title xmlns:ns3051="http://docbook.org/ns/docbook">Presentation Layer UML Robustness Diagram</ns3051:title>
+        <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="images/robustnessDiagram.jpg"/></imageobject></mediaobject>
+    </ns3050:figure>
+    
+    
+    <ns3052:section xmlns:ns3052="http://docbook.org/ns/docbook">
+        <ns3053:title xmlns:ns3053="http://docbook.org/ns/docbook">Writing the Components</ns3053:title>
+        <ns3054:para xmlns:ns3054="http://docbook.org/ns/docbook">
+            When the application's <ns3055:emphasis xmlns:ns3055="http://docbook.org/ns/docbook">default page</ns3055:emphasis> is requested by a user,
+            an input form is sent back to the user. This is a very simple XHTML page, generated
+            using JSP, and styled with a bit of CSS:
+        </ns3054:para>
+        <ns3056:figure xmlns:ns3056="http://docbook.org/ns/docbook">
+            <ns3057:title xmlns:ns3057="http://docbook.org/ns/docbook">The Weather Service Input Form</ns3057:title>
+            <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="images/weatherInput.jpg"/></imageobject></mediaobject>
+        </ns3056:figure>
+        <ns3058:figure xmlns:ns3058="http://docbook.org/ns/docbook">
+            <ns3059:title xmlns:ns3059="http://docbook.org/ns/docbook">The Weather Service Input Form (Source Code)</ns3059:title>
+            <ns3060:programlisting xmlns:ns3060="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/source/web/index.jspx" parse="text"/>
+            </ns3060:programlisting>
+        </ns3058:figure>
+        <ns3061:para xmlns:ns3061="http://docbook.org/ns/docbook">
+            When the form is submitted (to the URI "<ns3062:literal xmlns:ns3062="http://docbook.org/ns/docbook">weatherForecast</ns3062:literal>"),
+            our controller, a simple <ns3063:literal xmlns:ns3063="http://docbook.org/ns/docbook">Servlet</ns3063:literal>, receives the HTTP
+            request. It:
+            <ns3064:itemizedlist xmlns:ns3064="http://docbook.org/ns/docbook">
+                <ns3065:listitem xmlns:ns3065="http://docbook.org/ns/docbook">
+                    <ns3066:para xmlns:ns3066="http://docbook.org/ns/docbook">De-marshals user-provided information, for example by construction
+                    a <ns3067:literal xmlns:ns3067="http://docbook.org/ns/docbook">Locality</ns3067:literal> instance from user input.</ns3066:para>
+                </ns3065:listitem>
+                <ns3068:listitem xmlns:ns3068="http://docbook.org/ns/docbook">
+                    <ns3069:para xmlns:ns3069="http://docbook.org/ns/docbook">
+                        Makes use of the service provided by the Weather Service bean (which it acquired
+                        during initialisation (the <ns3070:literal xmlns:ns3070="http://docbook.org/ns/docbook">init()</ns3070:literal> service) by looking up
+                        via <ns3071:literal xmlns:ns3071="http://docbook.org/ns/docbook">JNDI</ns3071:literal>) to get forecast results.
+                    </ns3069:para>
+                </ns3068:listitem>
+                <ns3072:listitem xmlns:ns3072="http://docbook.org/ns/docbook">
+                    <ns3073:para xmlns:ns3073="http://docbook.org/ns/docbook">
+                        Hands this information to a view, for rendering. It does so by attaching any relevant objects
+                        to the current <ns3074:literal xmlns:ns3074="http://docbook.org/ns/docbook">request</ns3074:literal> and then dispatching it to the JSP document
+                        that renders a list of forecasts.
+                    </ns3073:para>
+                </ns3072:listitem>
+            </ns3064:itemizedlist>
+        </ns3061:para>
+        <ns3075:figure xmlns:ns3075="http://docbook.org/ns/docbook">
+            <ns3076:title xmlns:ns3076="http://docbook.org/ns/docbook">The Use-Case controller Servlet</ns3076:title>
+            <ns3077:programlisting xmlns:ns3077="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/source/java/za/org/weather/presentationLayer/ForecastRequestServlet.java" parse="text"/>
+            </ns3077:programlisting>
+        </ns3075:figure>
+        <ns3078:para xmlns:ns3078="http://docbook.org/ns/docbook">
+            The response is then rendered to the user by the JSP (also very simplistic,
+            and styled using CSS):
+        </ns3078:para>
+        <ns3079:figure xmlns:ns3079="http://docbook.org/ns/docbook">
+            <ns3080:title xmlns:ns3080="http://docbook.org/ns/docbook">The Weather Service Forecast Results</ns3080:title>
+            <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="images/weatherResults.jpg"/></imageobject></mediaobject>
+        </ns3079:figure>
+        <ns3081:figure xmlns:ns3081="http://docbook.org/ns/docbook">
+            <ns3082:title xmlns:ns3082="http://docbook.org/ns/docbook">The Weather Service Forecast Results (Source Code)</ns3082:title>
+            <ns3083:programlisting xmlns:ns3083="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/source/web/weatherForecastView.jspx" parse="text"/>
+            </ns3083:programlisting>
+        </ns3081:figure>
+        <ns3084:note xmlns:ns3084="http://docbook.org/ns/docbook">
+            <ns3085:para xmlns:ns3085="http://docbook.org/ns/docbook">
+                This example uses a very small subset of JSP functionality to render
+                a more complex response, and uses the JSP Standard Tag Library (JSTL)
+                for view logic, such as iteration and number/date formatting.
+            </ns3085:para>
+        </ns3084:note>
+        
+        <ns3086:section xmlns:ns3086="http://docbook.org/ns/docbook">
+            <ns3087:title xmlns:ns3087="http://docbook.org/ns/docbook">Standards-Compliance, and other devices</ns3087:title>
+            <ns3088:para xmlns:ns3088="http://docbook.org/ns/docbook">
+                Our presentation-layer is based on W3C-standard XHTML and CSS. JSP functionality
+                is integrated using the (natural) XML name spaces mechanism, which means that
+                at no point does JSP make our documents ill-formed, or invalid.
+            </ns3088:para>
+            <ns3089:para xmlns:ns3089="http://docbook.org/ns/docbook">
+                Adhering to the stricter XHTML standard as we do here, and fully splitting content
+                from presentation, our application is automatically fully usable on even the most
+                limited of mobile devices. Here, the presentation layer is accessed using a Motorola
+                V3 cellular phone, which has a very limited graphical browser:
+            </ns3089:para>
+            <ns3090:figure xmlns:ns3090="http://docbook.org/ns/docbook">
+                <ns3091:title xmlns:ns3091="http://docbook.org/ns/docbook">Accessing using Mobile Devices</ns3091:title>
+                <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="images/weatherServiceMobilePhone.jpg"/></imageobject></mediaobject>
+            </ns3090:figure>
+            <ns3092:para xmlns:ns3092="http://docbook.org/ns/docbook">
+                Adhering to XHTML, and using the Java EE framework, we have <ns3093:emphasis xmlns:ns3093="http://docbook.org/ns/docbook">no need to create
+                special versions</ns3093:emphasis> or <ns3094:quote xmlns:ns3094="http://docbook.org/ns/docbook">portals</ns3094:quote> to access limited functionality using
+                mobile devices. This approach has been shown to scale to pages that are much more
+                complex than our simple example here.
+            </ns3092:para>
+        </ns3086:section>
+        
+        <ns3095:section xmlns:ns3095="http://docbook.org/ns/docbook">
+            <ns3096:title xmlns:ns3096="http://docbook.org/ns/docbook">Deployment Descriptor</ns3096:title>
+            <ns3097:para xmlns:ns3097="http://docbook.org/ns/docbook">
+                The web application is configured through its standard (<ns3098:literal xmlns:ns3098="http://docbook.org/ns/docbook">web.xml</ns3098:literal>)
+                deployment descriptor:
+            </ns3097:para>
+            <ns3099:figure xmlns:ns3099="http://docbook.org/ns/docbook">
+                <ns3100:title xmlns:ns3100="http://docbook.org/ns/docbook">Web Application Deployment Descriptor</ns3100:title>
+                <ns3101:programlisting xmlns:ns3101="http://docbook.org/ns/docbook">
+                    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/source/web/WEB-INF/web.xml" parse="text"/>
+                </ns3101:programlisting>
+            </ns3099:figure>
+        </ns3095:section>
+        
+    </ns3052:section>
+    
+    
+    <ns3102:section xmlns:ns3102="http://docbook.org/ns/docbook">
+        <ns3103:title xmlns:ns3103="http://docbook.org/ns/docbook">Structuring and Building the Project</ns3103:title>
+        <ns3104:para xmlns:ns3104="http://docbook.org/ns/docbook">
+            We assemble the project into a self-contained directory structure, which
+            uses <ns3105:literal xmlns:ns3105="http://docbook.org/ns/docbook">ant</ns3105:literal> to automate compilation and assembly. Unlike
+            the EJB business-layer, presentation-layer modules have a fixed high-level
+            structure, and a deployment descriptor (<ns3106:literal xmlns:ns3106="http://docbook.org/ns/docbook">web.xml</ns3106:literal>).
+        </ns3104:para>
+        <ns3107:figure xmlns:ns3107="http://docbook.org/ns/docbook">
+            <ns3108:title xmlns:ns3108="http://docbook.org/ns/docbook">Project Directory Structure</ns3108:title>
+            <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="images/presentationLayerFileStructure.jpg"/></imageobject></mediaobject>
+        </ns3107:figure>
+        <ns3109:para xmlns:ns3109="http://docbook.org/ns/docbook">
+            As part of of our <ns3110:quote xmlns:ns3110="http://docbook.org/ns/docbook">shelf</ns3110:quote> (resources on which we have a compile-time dependency, but
+            which is not deployed or packaged with the application) we now have both the Java EE API (<ns3111:literal xmlns:ns3111="http://docbook.org/ns/docbook">javaee5.jar</ns3111:literal>)
+            and our business-layer contract (<ns3112:literal xmlns:ns3112="http://docbook.org/ns/docbook">weatherService-api.jar</ns3112:literal>). We do here, however, deploy the
+            <ns3113:literal xmlns:ns3113="http://docbook.org/ns/docbook">JSTL</ns3113:literal> with the application, which can be avoided if JSTL support is installed
+            in your application server.
+        </ns3109:para>
+        <ns3114:para xmlns:ns3114="http://docbook.org/ns/docbook">
+            Our client is compiled and assembled using the following (re-usable) Ant build script:
+        </ns3114:para>
+        <ns3115:figure xmlns:ns3115="http://docbook.org/ns/docbook">
+            <ns3116:title xmlns:ns3116="http://docbook.org/ns/docbook">The Ant Build Script</ns3116:title>
+            <ns3117:programlisting xmlns:ns3117="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/build.xml" parse="text"/>
+            </ns3117:programlisting>
+        </ns3115:figure>
+        <ns3118:para xmlns:ns3118="http://docbook.org/ns/docbook">
+            Running
+            <ns3119:programlisting xmlns:ns3119="http://docbook.org/ns/docbook">
+ant build
+                </ns3119:programlisting>
+            Produces a deployable Web Archive (WAR), 
+            called <ns3120:literal xmlns:ns3120="http://docbook.org/ns/docbook">weatherServicePL.war</ns3120:literal>. This is also simply
+            deployed to your application server (for exmaple, on JBOSS to:)
+            <ns3121:programlisting xmlns:ns3121="http://docbook.org/ns/docbook">
+$JBOSS_HOME/server/default/deploy
+                </ns3121:programlisting>
+            Which, by default installs the application to the <ns3122:emphasis xmlns:ns3122="http://docbook.org/ns/docbook">context root</ns3122:emphasis> with
+            the same as the archive, e.g. with the server running locally on port 8080
+            <ns3123:programlisting xmlns:ns3123="http://docbook.org/ns/docbook">
+http://localhost:8080/weatherServicePL/
+            </ns3123:programlisting>
+        </ns3118:para>
+    </ns3102:section>
+    
+    <ns3124:section xmlns:ns3124="http://docbook.org/ns/docbook">
+        <ns3125:title xmlns:ns3125="http://docbook.org/ns/docbook">Further Enhancements</ns3125:title>
+        <ns3126:para xmlns:ns3126="http://docbook.org/ns/docbook">
+            With little or no additional complexity to the components themselves,
+            we may now add the following:
+            <ns3127:itemizedlist xmlns:ns3127="http://docbook.org/ns/docbook">
+                <ns3128:listitem xmlns:ns3128="http://docbook.org/ns/docbook">
+                    <ns3129:formalpara xmlns:ns3129="http://docbook.org/ns/docbook">
+                        <ns3130:title xmlns:ns3130="http://docbook.org/ns/docbook">Dependency Injection</ns3130:title>
+                        <ns3131:para xmlns:ns3131="http://docbook.org/ns/docbook">
+                            As part of the Java EE 5 standard, presentation layer components do not have to
+                            perform their own JNDI lookups. They simply declaratively express the need for a
+                            particular type of component, and the container <ns3132:emphasis xmlns:ns3132="http://docbook.org/ns/docbook">injects</ns3132:emphasis> it
+                            at runtime.
+                        </ns3131:para>
+                    </ns3129:formalpara>
+                    
+                </ns3128:listitem>
+                <ns3133:listitem xmlns:ns3133="http://docbook.org/ns/docbook">
+                    <ns3134:formalpara xmlns:ns3134="http://docbook.org/ns/docbook">
+                        <ns3135:title xmlns:ns3135="http://docbook.org/ns/docbook">Internationalization (i18n)</ns3135:title>
+                        <ns3136:para xmlns:ns3136="http://docbook.org/ns/docbook">
+                            User can automatically have numbers and dates formatted, and page text provided
+                            in their native language (as automatically detected from their browser) by using
+                            the JSTL i18n and Resource Bundles tags within JSP pages.
+                        </ns3136:para>
+                    </ns3134:formalpara>
+                </ns3133:listitem>
+                <ns3137:listitem xmlns:ns3137="http://docbook.org/ns/docbook">
+                    <ns3138:formalpara xmlns:ns3138="http://docbook.org/ns/docbook">
+                        <ns3139:title xmlns:ns3139="http://docbook.org/ns/docbook">Declarative Error Handling</ns3139:title>
+                        <ns3140:para xmlns:ns3140="http://docbook.org/ns/docbook">
+                            Friendly error pages and/or workflows are declaratively
+                            configured in the deployment descriptor (for example, requesting weather for
+                            a non-existent locality)
+                        </ns3140:para>
+                    </ns3138:formalpara>
+                </ns3137:listitem>
+                <ns3141:listitem xmlns:ns3141="http://docbook.org/ns/docbook">
+                    <ns3142:formalpara xmlns:ns3142="http://docbook.org/ns/docbook">
+                        <ns3143:title xmlns:ns3143="http://docbook.org/ns/docbook">Common Infrastructure</ns3143:title>
+                        <ns3144:para xmlns:ns3144="http://docbook.org/ns/docbook">
+                            Custom Tags and inclusion mechanisms can be used to create common, yet still dynamic,
+                            infrastructure, such as menus, headers/footers, etc.
+                        </ns3144:para>
+                    </ns3142:formalpara>
+                </ns3141:listitem>
+                <ns3145:listitem xmlns:ns3145="http://docbook.org/ns/docbook">
+                    <ns3146:formalpara xmlns:ns3146="http://docbook.org/ns/docbook">
+                        <ns3147:title xmlns:ns3147="http://docbook.org/ns/docbook">JSF for improved data binding</ns3147:title>
+                        <ns3148:para xmlns:ns3148="http://docbook.org/ns/docbook">
+                            The JSF (Java Server Faces) framework may be used to perform binding of
+                            user input/output to Java objects, with decent validation and data conversion.
+                            This will simplify the controller servlet(s), and integrates smoothly in
+                            existing JSP Documents infrastructure.
+                        </ns3148:para>
+                    </ns3146:formalpara>
+                </ns3145:listitem>
+                <ns3149:listitem xmlns:ns3149="http://docbook.org/ns/docbook">
+                    <ns3150:formalpara xmlns:ns3150="http://docbook.org/ns/docbook">
+                        <ns3151:title xmlns:ns3151="http://docbook.org/ns/docbook">Role-based security</ns3151:title>
+                        <ns3152:para xmlns:ns3152="http://docbook.org/ns/docbook">Configured declaratively, rather than coded.</ns3152:para>
+                    </ns3150:formalpara>
+                </ns3149:listitem>
+                <ns3153:listitem xmlns:ns3153="http://docbook.org/ns/docbook">
+                    <ns3154:para xmlns:ns3154="http://docbook.org/ns/docbook">General application event handling and filtering in a 
+                        <ns3155:emphasis xmlns:ns3155="http://docbook.org/ns/docbook">Pipes and Filters</ns3155:emphasis> architecture.</ns3154:para>
+                </ns3153:listitem>
+            </ns3127:itemizedlist>  
+        </ns3126:para>
+    </ns3124:section>
+    
+</ns3035:section>

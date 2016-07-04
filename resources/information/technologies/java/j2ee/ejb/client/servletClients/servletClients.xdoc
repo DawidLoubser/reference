@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"-->
+<section id="resources.information.technologies.java.j2ee.ejb.client.servletClients.servletClients"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="Servlet clients">Servlet clients</title>
+  <para>
+    The J2EE architecture aims to enforce a clean separation of the business logic,
+    presentation and back-end layers. Business logic components (the enterprise
+    beans) should thus be accessible through a variety of presentation layer
+    components. 
+  </para>
+  <para>
+    A heavy-weight client like a Java Swing application could thus use
+    an enterprise bean via RMI. Web-based clients could be served by servlets which
+    could access the enterprise bean either
+    <itemizedlist>
+      <listitem><para>
+        by using the remote interface, or  
+      </para></listitem>
+      <listitem><para>
+        by using a local interface for the bean.  
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>Servlets using the remote interface</title>
+    <para>
+      When the servlet container runs in a different Java virtual machine (which may reside on a
+      different physical machine) than the EJB container, then the servlets are forced to use the 
+      remote interface. The service requests are thus marshaled onto RMI/IIOP.
+    </para>
+    <para>
+      In this case the servlet uses the enterprise bean in exactly the same way as any other
+      RMI client following the steps discussed in 
+      <xref linkend="resources.information.technologies.java.j2ee.ejb.client.rmiClients.steps"/>.
+    </para>
+  </section>
+  
+  <section>
+    <title>Servlets using the local interface</title>
+    <para>
+      Another common architecture is to run the servlet and EJB containers in the same
+      virtual machine. In this case a significant performance benefit can be achieved by
+      by integrating the servlet and EJBs via local interfaces, avoiding the overheads of
+      RMI/IIOP marshaling and demarshaling.
+    </para>
+  </section>
+  
+</section>

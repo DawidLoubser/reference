@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+         xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>The effective POM</title>
+    <para>
+        When you run Maven on your project, it executes on the so-called <emphasis>effective POM</emphasis>,
+        a POM which is assembled (via inheritance) from:
+
+        <itemizedlist>
+            <listitem>
+                <para>The Super POM (global Maven defaults)</para>
+            </listitem>
+            <listitem>
+                <para>All parent POMs (each which may override Super POM settings)</para>
+            </listitem>
+            <listitem>
+                <para>The project POM (which may override settings from either of the above)</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        This process is what gives Maven the <emphasis>convention over configuration</emphasis> behaviour.
+        While it is usually safe to not think about this process, one may want to examine the effective
+        POM for a project to understand its behaviour.You can use the
+        <literal>effective-pom</literal>
+        goal of the
+        <emphasis>help</emphasis>
+        plugin to
+        query the effective POM for a specific child/concrete POM by executing
+        <programlisting><![CDATA[
+mvn help:effective-pom            
+]]></programlisting>
+        from within the directory which contains the child POM.
+    </para>
+</section>    

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2009-2-4 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Configuring a repository</title>
+    <para>
+        To configure <literal>svnserve</literal> for a repository you edit the <literal>svnserve.conf</literal>
+        file in the <literal>conf</literal> directory of the repository. A typical configuration file would look something
+        like this
+        <programlisting><![CDATA[
+realm = Test Repository Realm
+
+anon-access = none
+auth-access = write
+
+password-db = /home/fritz/temp/subversion/testRepository/conf/passwd
+                ]]></programlisting>
+    </para>
+    <para>
+        You need to define a security (authentication) realm. If two respositories have the same security
+        realm they should have the same users and passwords for accessing them.
+    </para>
+    <para>
+        Normally you would prevent any anonymous access and provide both read and write access to
+        valid users (write access implies read access).
+    </para>
+    <para>
+        Finally you would have to specify a file containing the usernames and passwords. By default this
+        is the <literal>passwd</literal> file in the <literal>conf</literal> directory of the 
+    </para>
+    <para>
+        In addition the configuration file allows you to specify that you require SASL (Simple Authentication 
+        and Security Layer) support. This provides secure authentication and encrypted communication.
+        You can specify the SASL security level you require.
+    </para>
+</section>

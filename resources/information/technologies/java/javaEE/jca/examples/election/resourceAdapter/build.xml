@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+  
+<project name="ElectionConnector" default="help" basedir=".">
+  
+  <target name="help">
+    <echo message=
+      "Available targets: (typically used in this order)"/>
+    <echo message=
+      "  "/>
+    <echo message=
+      "  clean  - deletes all but the source files."/>
+    <echo message=
+      "  prepare  - creates the directories for compilation and distribution."/>
+    <echo message=
+      "  compile  - compiles the Java source files."/>
+    <echo message=
+      "  jar  - creates an archive for distribution."/>
+    <echo message=
+      "  resourceAdapter.deploy  - deploys the resource adapter."/>
+    <echo message=
+      "  connectorDataSource.deploy  - deploys the datasource definition for the resource adapter."/>
+    <echo message=
+      "  undeploy  - undeploys both, the resource adapter and its datasource defintion."/>
+    <echo message="  "/>
+  </target>
+    
+  <!-- File name for target jar file for 
+    the resource adapter -->
+  <property name="connector.jar" 
+    value="electionConnector.rar"/>
+  
+  <!-- File name of datasource descriptor file 
+    for connector -->
+  <property name="connector.dataSource" 
+    value="electionConnector-ds.xml"/>
+  
+  <!-- Handle to environment -->
+  <property environment="env"/>	
+  
+  <!-- Directories -->
+  <property name="src.dir" value="src"/>	
+  <property name="build.dir" value="build" />
+  <property name="metaInf.dir" value="src/META-INF"/>
+  <property name="shelf.dir" value="shelf" />
+  <property name="dist.dir" value="dist"/>
+  <property name="deploy.dir" 
+    value="${env.JBOSS_HOME}/server/default/deploy"/>
+  
+  <!-- Compiler flags -->
+  <property name="compile.debug" value="true"/>
+  <property name="compile.optimize" value="false"/>
+  <property name="compile.deprecation" value="true"/>
+
+  <!-- Libraries path -->
+  <path id="shelf">
+    <fileset dir="${shelf.dir}">
+      <include name="**/*.jar" />
+      <include name="**/*.rar" />
+    </fileset>
+  </path>  	
+	
+  <!-- path used for build target -->
+  <path id="build.path">
+    <path refid="shelf"/>
+    <pathelement path="${build.dir}"/>
+  </path>
+  
+  <!-- Removes all generated artifacts -->
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target> 	
+  
+  <!-- Prepares the required directories 
+    for the build -->
+  <target name="prepare">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${dist.dir}"/>
+  </target>
+  
+  <!-- Compiles the Java source files -->
+  <target name="compile" depends="prepare">
+    <javac srcdir="${src.dir}" 
+      destdir="${build.dir}"
+      deprecation="${compile.deprecation}"
+      optimize="${compile.optimize}"
+      debug="${compile.debug}">
+      <classpath>
+        <path refid="build.path"/>
+      </classpath>
+    </javac>           
+  </target>
+
+  <!-- Generates the Java archive for 
+    the reource adapter -->
+  <target name="jar" depends="compile">
+    <delete file="${dist.dir}/${connector.jar}"/>  	
+    <jar jarfile="${dist.dir}/${connector.jar}"> 
+      <fileset dir="${build.dir}" 
+        includes="**/*.class"/>
+      <fileset dir="${src.dir}" 
+        includes="META-INF/*.xml"/>
+      <fileset  dir="${src.dir}" 
+        includes="**/*.properties"/>
+      <fileset  dir="${src.dir}" 
+        includes="**/*.policy"/>
+    </jar>
+  </target>
+  
+  <!-- Deploys resource adapter -->
+  <target name="resourceAdapter.deploy">
+    <copy file="${dist.dir}/${connector.jar}" 
+      todir="${deploy.dir}"/>
+  </target>
+  
+  <!-- Deploys connector data source -->
+  <target name="connectorDataSource.deploy">
+    <copy file="${metaInf.dir}/${connector.dataSource}" 
+      todir="${deploy.dir}"/>
+  </target>
+  
+  <!-- Undeploys the datasource as well as 
+    the resource adapter." -->
+  <target name="undeploy">
+    <delete file="${deployDir}/${connector.dataSource}"/>
+    <delete file="${deployDir}/${connector.jar}"/>
+  </target>
+  
+</project>

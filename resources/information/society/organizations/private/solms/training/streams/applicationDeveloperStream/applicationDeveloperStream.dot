@@ -1,0 +1,48 @@
+digraph serviceContract
+{
+	label="Application Developer\n(Training stream, Solms TCD)";
+	rankdir=LR;
+	splines=true;
+	fontname = "Bitstream Vera Sans"
+    fontsize = 9
+	node [fontname = "Bitstream Vera Sans Bold", fontsize = 9, colorscheme=ylgn9, fontcolor=9,shape=folder,style=filled,color=9]
+    edge [fontname = "Bitstream Vera Sans",fontsize = 8, colorscheme=greys9, labelfloat=true, arrowsize=0.5]
+    
+
+	/* Stream Courses */	
+	itj[label="Introduction to Java",fillcolor=1];
+	pij[label="Programming in Java",fillcolor=2];
+	jac[label="Java Application Client\n(Swing, JavaFX, ...)",fillcolor=3];
+	jme[label="Developing for Mobile Devices\n(Java ME)",fillcolor=3];
+    
+    /* Dependencies */
+    itj -> pij -> jac;
+    pij -> jme;
+    
+    /* Skils Enhancements */
+    subgraph clusterEnhancements
+	{
+		label="Skills Enhancement"
+		jm[label="Java Media\n(Video, Speech, 2D/3D, ...)",fillcolor=3];
+		aj[label="Advanced Java",fillcolor=4];
+		jt[label="Java Tools",fillcolor=4];
+		xwsj[label="XML and Web Services with Java",fillcolor=3];
+		ooad[label="Object-Oriented Analysis and Design using UML",fillcolor=1];
+		ei[label="Enterprise Integration",fillcolor=3];
+	}
+    {
+    	edge[style=dotted]
+	    jac -> jm;
+	    jac -> jt;
+	    jac -> aj;
+	    jac -> ooad;
+	    jac -> xwsj;
+	    jac -> ei;
+
+	    jme -> jt;
+	    jme -> aj;
+	    jme -> ooad;
+	    jme -> xwsj;
+	    jme -> ei;
+    }
+}

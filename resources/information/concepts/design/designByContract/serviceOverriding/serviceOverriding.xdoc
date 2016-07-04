@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.concepts.design.designByContract.serviceOverriding.serviceOverriding"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Design by contract and specialization</title>
+    <para>
+      Design by contract provides two simple rules one should keep in mind when
+      subclass replaces the realization of a service in a superclass with its
+      own implementation of that service. Both rules can be seen as a direct
+      consequence of the substitutability of subclassing:
+      <orderedlist>
+        <listitem><formalpara>
+          <title>Pre-conditions may not be increased</title>
+          <para>
+            The realization of the subclass service must be available under no
+            more stringent conditions than what the superclass service is. In 
+            otherwords, the set of pre-conditions for the sub-class implementation
+            of the service must be fully contained in the set of pre-conditions
+            which apply to the implementation of that service in the superclass.
+            Or put yet another way, the subclass service may not raise any exceptions
+            which are not potentially raised by the corresponding superclass
+            service.
+            <note><title>Reason</title>
+              <para>
+                A client may request an instance of the superclass. You may always 
+                give him an instance of one of the sub-classes instead. He/she
+                knows that the object provides a certain service as long as a specific
+                set of pre-conditions is met. If the subclass instance violates this,
+                substitutability is violated.
+              </para>
+            </note>
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Post-conditions may not be decreased</title>
+          <para>
+            The realization of the subclass service must provide at least all 
+            those deliverables which the corresponding service of the superclass 
+            provides. It may, though, provide additional deliverables which are
+            not provided by the corresponding service of the superclass.
+            <note><title>Reason</title>
+              <para>
+                A client may request an instance of the superclass. You may always 
+                give him an instance of one of the sub-classes instead. He/she
+                knows that a service of the instance provides certain deliverables.
+                Substitutability would be violated if the sub-class service does
+                not provide at least the deliverables the superclass service
+                provides.
+              </para>
+            </note>
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Invariance constraints may only be increased during specialization</title>
+          <para>
+            An instance of a subclass is still an instance of the superclass as well and
+            the invariance constraints applying to the superclass still apply to  the subclass too.
+            The subclass may, however, add further invariance constraints to those of the
+            superclass.
+          </para>
+        </formalpara>
+        </listitem>
+      </orderedlist>
+      These rules are graphically illustrated in 
+      <xref linkend="figUmlStaticModelDesignByContract"/>.
+    </para>  
+    
+    <figure id="figUmlStaticModelDesignByContract">
+      <title>
+        When overriding a method the pre-conditions may only be decreased and the
+        post-conditions may only be increased.
+      </title>
+      <graphic fileref="designByContractGuidelines.jpg"/>
+    </figure>
+    
+    <section><title>Example: An account</title>
+      <para>
+        Let us look at the above rules from the perspective of our accounts. 
+        The first rule states that if we say that accounts can be debited
+        as long as there are sufficient funds, then a specialized account 
+        (<abbrev>e.g.</abbrev> a cheque account) may not refuse the service
+        for any other reasons that that of insufficient funds -- it may
+        not, for example, raise an exception because the debit service
+        was requested on a sunday.
+      </para>
+      <para>
+        Furthermore, the debit service of <literal>Account</literal> subtracts
+        the debit amount from the balance of the account. Cheque accounts must 
+        do at least this. They may, however, add the transaction to a transaction 
+        history and may additionally raise a cheque fee. 
+      </para>
+      <para>
+        For the <literal>Account</literal> class we have the invariance constraint that the sum of
+        all credit transactions minus the sum of all debit transactions must always add up to the
+        current balance. This invariance constraint must still apply to subclasses who may add
+        further invariance constraints around, for example, transaction fees. 
+      </para>
+    </section>
+  </section>
+  

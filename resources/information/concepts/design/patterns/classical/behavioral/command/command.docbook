@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- TODO: This pattern does not fully adhere to the standard 'pattern'
+    for documenting patterns, for it is very late, and this is better than nothing
+    for now. -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>The Command pattern</title>
+
+    <para> When invoking a service that needs several pieces of information (arguments or
+        parameters), the Command pattern may be used to simplify the service invocation, as well as
+        introduce a host of possibilities relating to the user interface and flexibility of the
+        application. </para>
+    <para> A <emphasis>Command Object</emphasis> encapsulates an action and its parameters. For
+        example, a printing library might include a <literal>PrintJob</literal> class. A user would
+        typically create a new <literal>PrintJob</literal> object, set its properties (the document
+        to be printed, the number of copies, and so on), and finally call a method to send the job
+        to the printer. </para>
+    <para> In this case, the same functionality could be exposed via a single
+            <literal>SendJobToPrinter()</literal> service with many parameters. Representing the
+        request as a command object, however, has many benefits: <itemizedlist>
+            <listitem>
+                <para>A command object is convenient temporary storage for procedure parameters. It
+                    can be used while assembling the parameters for a function call and allows the
+                    command to be set aside for later use.</para>
+            </listitem>
+            <listitem>
+                <para>A class is a convenient place to collect code and data related to a command. A
+                    command object can hold information about the command, such as its name or which
+                    user launched it; and answer questions about it, such as how long it will likely
+                    take. Multiple user interface / workflow steps could be employed to iteratively
+                    populate a command object.</para>
+            </listitem>
+            <listitem>
+                <para>Treating commands as objects enables data structures containing multiple
+                    commands. A complex process could be treated as a tree or graph of command
+                    objects. A thread pool could maintain a priority queue of command objects
+                    consumed by worker threads.</para>
+            </listitem>
+            <listitem>
+                <para>Treating commands as objects supports undo-able operations, provided that the
+                    command objects are stored (for example in a stack)</para>
+            </listitem>
+            <listitem>
+                <para>The command is a useful abstraction for building generic services, such as a
+                    loan provider service, that can handle command objects of type
+                        <literal>LoanApplication</literal>. If a new type of command object is
+                    created later (say, <literal>VehicleLoanApplication</literal>, it can be
+                    submitted to the generic loan application service without having to introduce a
+                    new variant of the service.</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+
+    <section>
+        <title>Uses for the command pattern</title>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>Multi-level undo </title>
+                        <para> If all user actions in a program are implemented as command objects,
+                            the program can keep a stack of the most recently executed commands.
+                            When the user wants to undo a command, the program simply pops the most
+                            recent command object and executes its undo() method. </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Transactional behavior </title>
+                        <para>Undo is perhaps even more essential when it's called <literal>rollback</literal> 
+                            and happens automatically when an operation fails partway through. Installers need this,
+                            and so do databases.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Progress bars</title>
+                        <para>Suppose a program has a sequence of commands that it executes in order. 
+                            If each command object has a <literal>getEstimatedDuration()</literal> method, 
+                            the program can easily estimate the total duration. It can show a progress bar that 
+                            meaningfully reflects how close the program is to completing all the tasks.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Wizards and other user interfaces</title>
+                        <para>Often a wizard presents several pages of configuration for a single action 
+                            that happens only when the user clicks the <emphasis>Finish</emphasis> button 
+                            on the last page. In these cases, a natural way to separate user interface code 
+                            from application code is to implement the wizard using a command object. The 
+                            command object is created when the wizard is first displayed. Each wizard page 
+                            stores its GUI changes in the command object, so the object is populated as the 
+                            user progresses. "Finish" simply triggers a call to <literal>execute()</literal>. 
+                            This way, the command class contains no user interface code. This is also
+                            the approach employed by the JSF (Java Server Faces) user interface framework.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Macro recording</title>
+                        <para>If all user actions are represented by command objects, a program can record a 
+                            sequence of actions simply by keeping a list of the command objects as they are executed. 
+                            It can then <quote>play back</quote> the same actions by executing the same command objects 
+                            again in sequence. If the program embeds a scripting engine, each command object can 
+                            implement e.g. a <literal>toScript()</literal> method, and user actions can then be 
+                            easily recorded as scripts.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Networking</title>
+                        <para>It is possible to duplicate and send whole command objects across the network to be executed on the 
+                            other machines, for example player actions in computer games.</para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+
+<!-- TODO: Examples, etc -->
+
+</section>

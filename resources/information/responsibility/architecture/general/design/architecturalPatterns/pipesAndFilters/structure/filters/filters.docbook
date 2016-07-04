@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Filters</title>
+    <para>
+        <indexterm><primary>filter</primary></indexterm>
+        <indexterm><primary>processing</primary><secondary>element</secondary></indexterm>
+        A filter is a processing element. It receives some input, performs some processing and generates some output.
+    </para>
+    <para>
+        The filters in a pipes and filters architecture should be decoupled, <abbrev>i.e.</abbrev> one filter should 
+        not have any direct dependencies on any other filter.
+        <indexterm><primary>decoupling</primary></indexterm>
+    </para>
+    <para>
+        Furthermore, filters in a pipes and filters architecture are <emphasis>stateless</emphasis>
+        <indexterm><primary>stateless</primary><secondary>filter within pipes and filters</secondary></indexterm>,
+        <abbrev>i.e.</abbrev> there is no state maintained in the process element across service requests.
+    </para>
+    <para>
+        Filters in a work flow are attached to
+        <itemizedlist>
+            <listitem><para>
+                one input pipe, and <indexterm><primary>pipe</primary><secondary>input</secondary></indexterm>
+            </para></listitem>
+            <listitem><para>
+                one output pipe <indexterm><primary>pipe</primary><secondary>output</secondary></indexterm>
+            </para></listitem>
+        </itemizedlist>
+        The object received through the input pipe is transformed and placed into the output pipe.
+    </para>
+    <para>
+        In addition, a filter may have special purpose pipes including
+        <itemizedlist>
+            <listitem><para>
+                error pipes, used to notify the infrastructure that the processing failed, and
+                <indexterm><primary>pipe</primary><secondary>error</secondary></indexterm>
+                <note><para>
+                    This typically triggers standard fault processing provided by the infrastructure.
+                </para></note>
+            </para></listitem>
+            <listitem><para>
+                logging pipes, which are used to provide the infrastructure information which can be used for auditing
+                a work flow.
+                <indexterm><primary>pipe</primary><secondary>logging</secondary></indexterm>
+                <indexterm><primary>auditability</primary></indexterm>
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>Filter contracts</title>
+        <para>
+            <indexterm><primary>contract</primary><secondary>filter</secondary></indexterm>
+            Each filter performs a well defined operation. The requirements for that operation are usually defined using a services contract
+            which specifies
+            <itemizedlist>
+                <listitem><para>
+                    the required structure for the input and output objects,
+                </para></listitem>
+                <listitem><para>
+                    <indexterm><primary>pre-condition</primary></indexterm>
+                    the pre-condition under which the filter may not render the service, (under these conditions the filter may refuse
+                    the service without breaking the contract),
+                </para></listitem>
+                <listitem><para>
+                    <indexterm><primary>post-condition</primary></indexterm>
+                    the post-conditions which are the conditions which must hold after the operation has been completed, and
+                </para></listitem>
+                <listitem><para>
+                    <indexterm><primary>quality requirement</primary></indexterm>
+                    the quality requirements (<abbrev>e.g.</abbrev> performance requirements) for that operation.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Higher level filters</title>
+        <para>
+            Work flow can be recursively encapsulated as higher level filters which can themselves be used as filter elements
+            in further workflow construction. Filters are thus composable. <indexterm><primary>composability</primary><secondary>filter</secondary></indexterm>
+        </para>
+    </section>
+    
+    <section>
+        <title>Routers</title>
+        <para>
+            <indexterm><primary>router</primary></indexterm>
+            Routers route messages either along one path or another. Routers thus have a single input pipe, but multiple output pipes.
+            The message is routed only to a single output pipe.
+        </para>
+        <section>
+            <title>Content based routers</title>
+            <para>
+                <indexterm><primary>router</primary><secondary>content based</secondary></indexterm>
+                Content based routers inspect the attributes  of the input object in order to decide on which output pipe the message
+                should be routed to.
+            </para>
+        </section>
+        
+        <section>
+            <title>Load balancing routers</title>
+            <para>
+                <indexterm><primary>router</primary><secondary>load balancing</secondary></indexterm>
+                Load balancing routers distribute messages across different output pipes based on the perceived load in each of the pipes.
+            </para>
+        </section>
+    </section>
+    
+    <section>
+        <title>Transformation elements</title>
+        <para>
+            <indexterm><primary>transformation</primary><secondary>element</secondary></indexterm>
+            Transformation elements are special types of filters which only transform the input message  received from an input pipe
+            into a form required by its output pipe.
+        </para>
+    </section>
+</section>
+    

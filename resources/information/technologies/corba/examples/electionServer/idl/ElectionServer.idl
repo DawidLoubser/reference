@@ -1,0 +1,33 @@
+module za
+{
+  module co
+  {
+    module solms
+    {
+      module elections
+      {
+        exception NoSuchParty {};
+        
+        exception DuplicateParty {};
+       
+        interface ElectionServer
+        {
+          void addParty(in string party) raises (DuplicateParty); 	
+        
+          /* Add the given number of votes to the given party's
+             tally of votes. */
+          void addVotes(in string party, in long numVotes) 
+          		raises (NoSuchParty);
+          
+          /* Gets the total number of votes recorded thus far
+             for the given party. */
+          long getVotes(in string party, out long totalVotes) 
+          		raises (NoSuchParty);
+          		
+          /* Resets the election server to its initial state. */		
+          void reset();		
+        };
+      };
+    };
+  };
+};       

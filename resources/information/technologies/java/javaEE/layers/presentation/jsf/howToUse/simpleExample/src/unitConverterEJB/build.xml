@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<project name="unitConverter" default="help">
+    
+	<!-- Refers to all JARs in /resources -->
+	<path id="buildClassPath">
+		<fileset dir="resources">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- Compiles all java classes -->
+	<target name="compile" description="Compiles all Java code">
+	    <mkdir dir="build"/>
+	    <!-- Compile all Java code -->
+		<javac srcdir="source" destdir="build" 
+			debug="on" classpathref="buildClassPath"/>
+	    <!-- Copy any resources (non-java files) -->
+		<copy todir="build">
+		    <fileset dir="source">
+		        <exclude name="**/*.java"/>
+		    </fileset>
+		</copy>
+		<!-- Copy any deployment descriptors to META-INF -->
+		<mkdir dir="build/META-INF"/>
+		<copy todir="build/META-INF">
+			<fileset dir="configuration" includes="**/*"/>
+		</copy>
+	</target>
+		
+	<!-- Creates deployable business layer JAR -->
+	<target name="build" depends="compile" 
+	    description="Builds a deployable JAR">
+	    <mkdir dir="dist"/>
+		<jar destfile="dist/${ant.project.name}.jar" 
+			basedir="build" includes="**/*"/>
+	</target>
+    
+    <!-- Creates a JAR of the contract for the application. To
+    specify the contents of this 'API', add ant file patterns
+    to 'api-contents.txt' -->
+	<target name="export-api" depends="compile" 
+	    description="Builds an 'API' JAR (useful for clients)">
+	    <mkdir dir="dist"/>
+	    <jar destfile="dist/${ant.project.name}-api.jar" 
+	    	basedir="build" 
+	        includesfile="api-contents.txt"/>
+	</target>
+    
+	<!-- Removes all generated files -->
+	<target name="clean">
+		<delete dir="build"/>
+		<delete dir="dist"/>
+	</target>
+    
+    <!-- Default: Ran ant with project help -->
+    <target name="help">
+        <exec executable="ant">
+            <arg line="-p"/>
+            <arg line="-buildfile ${ant.file}"/>
+        </exec>
+    </target>
+	
+</project>

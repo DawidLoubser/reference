@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2se.exceptionHandling.handlingAtDifferentLevelsOfAbstraction"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title role="Catching Exceptions at various levels of Abstraction">Catching Exceptions at various levels of Abstraction</title>
+  <para>
+    A service may throw more than one exception, reflecting the different reasons for the
+    service not being able to complete the requested task. For example, a service reading from
+    a file may not be able to find the file, or may reach the end of the file prematurely. The
+    server method would notify users that it may throw a number of exceptions by listing the
+    exceptions it may throw in the <literal>throws</literal> clause with
+    commas separating the exceptions.
+    <programlisting><![CDATA[
+public class TheServerClass
+{
+   ...
+   public void doSomething () throws FileNotFoundException,
+                                     EOFException, IndexOutOfBoundsException
+   {
+     ...
+   }
+}
+    ]]></programlisting>
+  </para>  
+  <para>
+    If the client requesting the <literal>doSomething()</literal> service is
+    not able to handle any of the exceptions, the calling method must notify its clients
+    that it may throw any of these exceptions. Alternatively the client may handle some or all
+    the exceptions potentially thrown. If the client catches various exceptions thrown by the
+    same service it concatenates catch clauses:
+    <programlisting><![CDATA[
+public class TheClientClass
+{
+  ...
+  public void aClientMethod()
+  {
+    ...
+    try
+    {
+      server.doSomething();
+    }
+    catch (EOFException e) {}
+    catch (IOException e)
+    {
+      ...
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+    ...
+  }
+}
+    ]]></programlisting> 
+    The various exceptions we are willing to catch are specified in a series of catch clauses
+    with no other statements between them.
+  </para>
+  <para>
+    If an <literal>EOFException</literal> is caught, it is ignored
+    (there are no statements within the corresponding catch clause) and control is transferred
+    to the first statement after the catch clauses. This type of construct is commonly used
+    when one wants to read in an entire file. For example
+    <programlisting><![CDATA[
+StringBuffer fileContent = new StringBuffer();
+
+try
+{
+  while (true)
+    fileContent.append(fin.readLine()).append('/n');
+}
+catch (EOFException e) {}
+    ]]></programlisting>    
+  </para>  
+  <para>
+    But let us return to where we are catching multiple exceptions. For the case where an
+    <literal>IOException</literal> is caught, the exception handling code
+    within the first catch clause is executed and, upon completion of the statements within
+    the catch clause, control is transferred to the first statement after the block of catch
+    clauses. Note the different levels of abstraction. We were first specified how a very
+    specific exception is handled, the <literal>EOFException</literal>. Then
+    we specify that all other <literal>IOException</literal>s (an <literal>EOFException</literal> 
+    is an <literal>IOException</literal>) are handled in some other way and finally that
+    all other exceptions (those which are not <literal>IOException</literal>s) are simply handled 
+    by requesting a printout of
+    the stack (calling) trace on the standard error stream -- typically the terminal.
+  </para>
+</section>

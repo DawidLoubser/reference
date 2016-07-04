@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-03-12 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>Mapping UML containment relationships onto Java</title>
+    <para>Commonly we use containment relationships between
+        <itemizedlist>
+            <listitem>
+                <para>packages,</para>
+            </listitem>
+            <listitem>
+                <para>a meta-class and a class,</para>
+            </listitem>
+            <listitem>
+                <para>classes,</para>
+            </listitem>
+            <listitem>
+                <para>interfaces, and</para>
+            </listitem>
+            <listitem>
+                <para>an interface and a class.</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+
+    <section>
+        <title>Containment relationship between packages</title>
+        <para>A containment relationship between two packages specifies that the one package is a
+            sub-package of another package. This maps directly onto Java sub-packages.
+        </para>
+
+        <figure xml:id="technology.java.lang.umlMapping.classDiagram.containment.accountPackage_fig">
+            <title>The accounts package is contained within the finance package</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="accountsPackage.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+
+        <para>For example,
+            <xref
+                    linkend="technology.java.lang.umlMapping.classDiagram.containment.accountPackage_fig"
+                    />
+            specifies that the accounts package is a sub-package of the finance package. This
+            maps onto the following package specification in Java:
+            <programlisting language="Java">
+<xi:include parse="text" href="AccountPackage.java"/>
+            </programlisting>
+        </para>
+    </section>
+    <section>
+        <title>Static nested classes</title>
+        <para>A class contained in a meta class is mapped onto a static nested class in Java
+            <abbrev>i.e.</abbrev>
+            onto a class which is a class which is a class member, not an
+            instance member of the outer class. Static nested classes are used if one wants to nest
+            one class within another class.
+        </para>
+        <para>The Java2D package contains examples of static nested classes. It defines shapes like
+            <literal>Ellipse</literal>
+            and
+            <literal>Rectangles</literal>
+            as abstract classes.
+            For these abstract classes there are single and double precision implementations. These
+            concrete classes are nested within their abstract super classes.
+        </para>
+
+        <figure>
+            <title>Concrete single and double precision implementation classes nested in an abstract
+                superclass
+            </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="./ellipse.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+
+        <para>One benefit of such nestings is that there is reduced namespace pollution. The user
+            may be using an
+            <literal>Ellipse::Float</literal>
+            or an
+            <literal>Ellipse::Double</literal>
+            without the single and double precision
+            implementation classes being new independent entries in the global namespace.
+        </para>
+
+        <para>The classes contained in the metaclass are mapped onto static nested classes in Java:
+            <programlisting language="Java">
+<xi:include parse="text" href="Ellipse.java"/>
+            </programlisting>
+        </para>
+    </section>
+
+    <section>
+        <title>Inner classes</title>
+        <para>A containment relationship between two classes maps onto inner classes in Java. An
+            inner class is a class which is defined as an instance member of another class. The
+            following holds for an inner class:
+            <itemizedlist>
+                <listitem>
+                    <para>Instances of the inner class can only exist within an instance of the
+                        outer class.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>The inner class instance has a handle to its outer class instance.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>The inner class instance has access to the private members of its outer
+                        class instance.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>Normally, one would define the inner class private. Private inner classes can only be
+            referenced within the outer class itself. No external class may have any dependency on a
+            private inner class. This does not mean that external classes cannot obtain a handle to
+            an instance of a private inner class. However, if they do obtain a handle to an instance
+            of a private (from the outer class) then that handle will typically be the type of some
+            public interface.
+        </para>
+
+        <figure>
+            <title>A linked list using inner classes for nodes and its iterator implementation</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="linkedList.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+
+        <para>Below we show an simplified excerpt of the Java mapping:
+            <programlisting language="Java">
+<xi:include parse="text" href="LinkedList.java"/>
+            </programlisting>
+        </para>
+
+        <para>Every instance of a linked list iterator is specific to a specific instance of a
+            linked list,
+            <abbrev>i.e.</abbrev>
+            an instance of a linked list iterator can only exist
+            within an instance of a linked list. Using an inner class, enforces this requirement.
+        </para>
+
+        <para>The linked list iterator is specific to the implementation of a linked list. It is
+            not meant for reuse outside the linked list implementation. As modifications are made to
+            the linked list implementation, it may require making modifications to the iterator.
+            Such modifications will not affect anything else as no external class may have a
+            dependency on the implementation class of a linked list iterator.
+        </para>
+
+        <para>Users of a linked list request iterators and will receive a handle to an object which
+            is of type<literal>LLiterator</literal>. The handle type and hence the dependency is,
+            however, the public
+            <literal>Iterator</literal>
+            interface.
+        </para>
+        <para>Within the linked list iterator implementation we can directly access the private
+            members of its outer class, the<literal>LinkedList</literal>. This allows for narrowly
+            collaborating classes without breaking encapsulation (the private members are still only
+            accessible from within the class).
+            <note>
+                <para>Unlike the friendship relationship which breaks encapsulation, inner classes
+                    provide a mechanism for specifying intimately collaborating classes without
+                    breaking encapsulation.
+                </para>
+            </note>
+        </para>
+
+        <para>The node is a class used by the linked list implementation. It is not meant for
+            re-use. Declaring it a private static nested class prevents any other class having a
+            dependency on the linked list's node class. It does not, however, require a handle to
+            the linked list itself and the linked list may, at times, create working nodes which are
+            not part of the linked list. For these reasons the
+            <literal>Node</literal>
+            class has
+            been declared a static nested class and not an inner class.
+        </para>
+
+        <section>
+            <title>Classes local to a method and anonymous inner classes</title>
+            <para>Java also supports classes which are defined within a method. This is not
+                supported in UML. Furthermore, these classes may be anonymous in Java. An example of
+                of an anonymous inner class is an unnamed subclass of a
+                <literal>Thread</literal>
+                class:
+                <programlisting language="Java">
+<xi:include parse="text" href="Thread.java"/>
+                </programlisting>
+                Here we define an unnamed subclass of
+                <literal>Thread</literal>
+                which overrides the
+                <literal>run()</literal>
+                method, create an instance of the anonymous class
+                (without ourselves maintaing a handle to that instance) and register that instance
+                with the thread scheduler via the call to<literal>start()</literal>.
+            </para>
+        </section>
+    </section>
+
+    <section>
+        <title>Nesting interfaces</title>
+        <para>At times one wants to nest one interface within another. This is commonly used if the
+            one interface represents a base contract while the second interface extends the base
+            contract.
+        </para>
+
+        <figure>
+            <title>Read-only and read-write interface for cheque class</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="chequeReadOnly.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+
+        <para>Consider, for example, interfaces used to provide a read-only view and a read-write
+            view onto an object. The read-only view is an interface which publishes those services
+            which do not change the state of the object. The read-write view is a nested
+            sub-interface which adds setters and other services which change the state of the
+            object. The implementation class implements the sub interface, providing an
+            implementation of all the services defined in the base interface as well as the
+            contained sub-interface.
+        </para>
+
+        <para>The mapping onto Java is straight forward:
+            <programlisting language="Java">
+<xi:include parse="text" href="Cheque.java"/>
+            </programlisting>
+        </para>
+        <para>The implementation class now implements<literal>Cheque.Mutable</literal>.
+            <programlisting language="Java">
+<xi:include parse="text" href="ChequeImpl.java"/>
+            </programlisting>
+            Depending on the user role, we can provide a read-only handle to the user by returning
+            the
+            <literal>ChequeImpl</literal>
+            as a
+            <literal>Cheque</literal>
+            or a read-write view by
+            giving them access via a handle of type<literal>Cheque.Mutable</literal>.
+        </para>
+    </section>
+
+    <section>
+        <title>Nesting a class in an interface</title>
+        <para>This is often done in order to package the classes required for a contract with the
+            contract (the interface) itself.
+        </para>
+        <para>For example, a lunch order sent to a caterer may have a data structure which is
+            different to that of other orders. Similarly, the invoice we require from a caterer may
+            have information specific to catering invoices. In such a case we may want to package
+            the order and invoice classes with the contract using a containment relationship.
+        </para>
+        <figure>
+            <title>Nesting classes within an interface</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata width="400" fileref="classInInterface.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para>Similarly, we can define an
+            <literal>InsufficientFunds</literal>
+            thrown upon there
+            being insufficient funds in an account with the
+            <literal>Account</literal>
+            contract
+            itself.
+        </para>
+        <para>The mapping onto Java is straight forward:
+            <programlisting language="Java">
+<xi:include parse="text" href="Caterer.java"/>
+            </programlisting>
+            This defines a
+            <literal>Caterer.Order</literal>
+            and a
+            <literal>Caterer.Invoice</literal>.
+        </para>
+        <para>In a similar way we may nest the
+            <literal>InsufficientFunds</literal>
+            exception
+            within the
+            <literal>Account</literal>
+            interface:
+            <programlisting language="Java">
+<xi:include parse="text" href="Account.java"/>
+            </programlisting>
+        </para>
+    </section>
+
+
+</section>

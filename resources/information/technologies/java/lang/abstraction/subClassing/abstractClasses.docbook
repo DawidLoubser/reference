@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.lang.abstraction.subClassing.abstractClasses">
+  <title>Abstract Classes</title>
+  <para>
+    In many cases one introduces classes which encapsulate commonalities of subclasses,
+    without the intention of ever instantiating the class. Classes which should not be
+    instantiated are called abstract and can be declared <literal>abstract</literal>.</para>
+  <para>For example, all contracts have, say a contract number. Specialized contracts like a
+    bond or a forward contract on an exchange rate, can be created, but one would never create
+    just simply a contract. Still, one would want to define a <literal>Contract</literal> class 
+    encapsulating all the commonalities among all
+    contracts (the contract number in our case). The contract class would be declared 
+    <literal>abstract</literal>, though, to prevent anybody from instantiating the class:
+    <programlisting language="Java">
+abstract public class Contract
+{
+  public Contract (String contractNumber)
+  {
+    this.contractNumber = contractNumber;
+  }
+
+  public String getContractNumber() 
+  {
+    return contractNumber;
+  }
+
+   private String contractNumber;
+}
+    </programlisting>
+  </para>
+  <para>
+    This class cannot be instantiated by a client - the client would have to locate
+    and instantiate a sub-class.
+    <programlisting>
+public class Bond extends Contract
+{
+...
+}
+    </programlisting>
+  </para>
+  
+  <section>
+      <title>Abstract Methods for Interface Definition</title>
+      <para>
+      One of the main advantages of abstract classes is that they can incorporate
+      interface specifications via abstract methods. Assume, for example, that all contracts
+      can be queried for their value on a specific date. How the value of a contract is
+      calculated depends on the contract. We want to specify, however, that all contracts have
+      a service for querying the value, i.e. that they all must be able to process a 
+      <literal>getValue(Date)</literal> message. For this purpose we add an abstract method
+      <programlisting language="Java">
+abstract Payment getValue(Date date);
+      </programlisting>
+      to the abstract <literal>Contract</literal> class. Of course, we do not know how to value an
+      abstract contract. An abstract method is one which has no method body. A class which has
+      one or more abstract methods must itself be declared abstract. Subclasses must be
+      declared abstract except if they implement (supply method bodies) for all abstract methods.
+    </para>
+      <para>
+      Thus, an abstract class with an abstract method not only specifies that all
+      concrete subclasses must implement the abstract method, but the compiler also enforces
+      this specification.
+    </para>
+      <para>
+      Due to the fact that Java does not support multiple inheritance of classes (Java
+      follows a single-tree class hierarchy where a class can have only a single superclass),
+      abstract classes for interface specifications should in most cases be dropped in favour
+      of interfaces.
+    </para>
+  </section>
+</section>

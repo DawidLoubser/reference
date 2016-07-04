@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author Dawid Loubser -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.newIO.channels.file.benefits">
+    
+    <title>Why file channels ?</title>
+            <para>
+                File channels offer significant performance advantages over streaming File I/O, because it makes use of low-level
+                operating system functionality to move data between devices and memory. Consider the following file copy program,
+                using standard streaming I/O. It contains only the bare minimum of code, and has been optimised for performance
+                by using buffering:
+            </para>
+            <para>
+            <programlisting language="Java">
+<xi:include href="src/Copy.java" parse="text"/>
+            </programlisting>
+                Timing the copy of a 30Mb music file yields the following output
+                    <programlisting><![CDATA[
+$ time java io.Copy song.mp3 songCopy.mp3
+real    0m8.419s
+user    0m4.161s
+sys     0m0.501s
+                    ]]></programlisting>
+            </para>
+        <para>
+            Now consider the same program, using NIO
+            <programlisting language="Java">
+<xi:include href="src/NIOCopy.java" parse="text"/>
+            </programlisting>
+                Timing the copy of the same 30Mb music file yields the following output
+                    <programlisting><![CDATA[
+$ time java io.NIOCopy song.mp3 songCopy.mp3
+real    0m3.164s
+user    0m0.226s
+sys     0m0.309s
+                    ]]></programlisting>
+            Notice the significant (almost by a factor of 3) performance gain. Of further interest is the fact that the first copy executes
+            in <emphasis>user space</emphasis>, whereas the second copy executes in <emphasis>kernel space</emphasis>.
+            This means that the operating system kernel itself is responsible for performing the copy.
+            For interests' sake, a native command-line copy for the same file produces the following output: (note that
+            the <literal>time</literal> program measures the complete duration of execution, and that the unix <literal>cp</literal> 
+            program does not have the overhead of first launching a Java runtime environment as does our program above)
+                    <programlisting><![CDATA[
+$ time cp song.mp3 songCopy.mp3
+real    0m3.120s
+user    0m0.002s
+sys     0m0.295s
+                    ]]></programlisting>
+        </para>
+    <note>
+        <para>
+            Even though the NIO classes function at a lower system level, for many purposes they are simpler to use, 
+            as illustrated by the drastic simplification of our <literal>NIOCopy</literal> class above.
+        </para>
+    </note>
+</section>

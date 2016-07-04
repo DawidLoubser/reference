@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns2503:section xmlns:ns2503="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.networking.udpIpCommunicationATimeServerAndClient">
+    
+    <ns2504:title xmlns:ns2504="http://docbook.org/ns/docbook">UDP/IP Communication: A time server and client</ns2504:title>
+
+<ns2505:para xmlns:ns2505="http://docbook.org/ns/docbook">Consider a <ns2506:emphasis xmlns:ns2506="http://docbook.org/ns/docbook">Datagram</ns2506:emphasis> server which, every time the server
+receives a datagram from a client, it sends back a datagram
+containing the local date and time. We shall thus have to write a
+server application, and  a client application.</ns2505:para>
+
+<ns2507:para xmlns:ns2507="http://docbook.org/ns/docbook">The server application opens a datagram socket on a specific port
+and waits until it receives a datagram packet from a client. It
+then prints on the server window the fact that it received a
+datagram packet from a specific IP address, creates a <ns2508:literal xmlns:ns2508="http://docbook.org/ns/docbook">Date</ns2508:literal>
+object via the default constructor of the Date class which
+initializes the date/time to the  current date/time, and converts
+it to a string in <ns2509:emphasis xmlns:ns2509="http://docbook.org/ns/docbook">local</ns2509:emphasis> format. 
+</ns2507:para>
+    <ns2510:para xmlns:ns2510="http://docbook.org/ns/docbook">It then uses the <ns2511:literal xmlns:ns2511="http://docbook.org/ns/docbook">getBytes()</ns2511:literal> method 
+        of the <ns2512:emphasis xmlns:ns2512="http://docbook.org/ns/docbook" role="bf">String</ns2512:emphasis> class to copy the characters
+of that string into an array of bytes. The server creates a
+datagram packet for the client containing the array of bytes. To do
+this the server queries the packet it received from the client for
+the originating IP address and port. Finally the  datagram packet
+is sent (the packet itself knows the destination IP address and
+port) and the server waits for the next datagram packet (perhaps
+from a different client).</ns2510:para>
+
+    <ns2513:para xmlns:ns2513="http://docbook.org/ns/docbook">
+    <ns2514:programlisting xmlns:ns2514="http://docbook.org/ns/docbook">
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="TimeServer.java"/>
+    </ns2514:programlisting>
+    </ns2513:para>
+    
+<ns2515:para xmlns:ns2515="http://docbook.org/ns/docbook">
+The client simply sends a <ns2516:emphasis xmlns:ns2516="http://docbook.org/ns/docbook" role="bf">DatagramPacket</ns2516:emphasis> to the server, receives
+the packet containing the date and time and prints the time on the
+screen:</ns2515:para>
+
+    <ns2517:para xmlns:ns2517="http://docbook.org/ns/docbook">
+    <ns2518:programlisting xmlns:ns2518="http://docbook.org/ns/docbook">
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="TimeClient.java"/>
+    </ns2518:programlisting>
+    </ns2517:para>
+    
+</ns2503:section>

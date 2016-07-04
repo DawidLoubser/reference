@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.interception.interceptors.defining.interceptionContext.interceptionContext">
+  <title>The invocation context</title>
+  <para>
+    The interceptor invocation runs within the <emphasis>transaction and
+    security context</emphasis> of the business service it intercepts, and
+     it may access those objects just like any session bean (i.e. by
+     having them injected). The interceptor method, however, receives
+     an instance of <literal>javax.interceptor.InvocationContext</literal>,
+     which it may use to:
+    <itemizedlist>
+         <listitem>
+            <para>
+        get a handle to the method it currently intercepts via the
+        <literal>getMethod() : Method</literal> service,
+      </para>
+         </listitem>
+         <listitem>
+            <para>
+        get a handle to the parameters of the service it intercepts via
+        <literal>getParameters() : Object[]</literal>,
+      </para>
+         </listitem>
+         <listitem>
+            <para>
+        change the parameters which are passed on to the actual business
+        service via <literal>setParameters( Object[] params )</literal>,
+      </para>
+         </listitem>
+         <listitem>
+            <para>
+        get a handle to target object, i.e. the object which would
+        have received the service request message had it not been intercepted, via
+        <literal>getTarget() : Object</literal>, 
+      </para>
+         </listitem>
+         <listitem>
+            <para>
+        get a handle to the context data (a map which interceptors may use to
+        place any information to be shared between interceptors, and other components) via
+        <literal>getContextData() : Map&lt;String,Object&gt;</literal>, and
+      </para>
+         </listitem>
+         <listitem>
+            <para>
+        pass control to the next interceptor (if there is one) or
+        alternatively to the business service itself via
+        <literal>proceed() : Object</literal>.
+      </para>
+         </listitem>
+      </itemizedlist>
+  </para>
+</section>

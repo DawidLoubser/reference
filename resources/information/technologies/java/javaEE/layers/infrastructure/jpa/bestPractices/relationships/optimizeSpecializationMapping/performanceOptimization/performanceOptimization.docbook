@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <title>Performance optimization</title>
+    <para>
+        In cases where you have proven that significant performance problems are caused by the 
+        <emphasis>joined subclass</emphasis> mapping of a particular specialization relationship
+        you should consider using the <emphasis>table-per-concrete-class</emphasis>
+        strategy instead. 
+    </para>
+    
+    <section>
+        <title>Consider table-per-concrete-class strategy</title>
+        <para>
+            This mapping strategy can significantly improve performance, particularly for deep inheritance
+            hierachies and in the case of lots of polymorphism. This performance benefit needs to be traded
+            off against
+            <itemizedlist>
+                <listitem><para>
+                    having a very non-normalized persistence mapping with resultant maintenance costs,
+                </para></listitem>
+                <listitem><para>
+                    having no information of the inheritance in the database,
+                </para></listitem>
+                <listitem><para>
+                    not being able to work at different levels of abstraction in the persistence domain, and
+                </para></listitem>
+                <listitem><para>
+                    having to fully code the polymorphism into the logic layer.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Avoid table-per-hierarchy strategy</title>
+        <para>
+            JPA also supports the <literal>SINGLE_TABLE</literal> strategy for inheritance mapping. This should
+            generally be avoided as it
+            <itemizedlist>
+                <listitem><para>
+                    can result in huge, sparcely populated table with all fields specific to other subclasses having to be nulled,
+                </para></listitem>
+                <listitem><para>
+                    is difficult to maintain, and                    
+                </para></listitem>
+                <listitem><para>
+                    is not normalized.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+</section>    

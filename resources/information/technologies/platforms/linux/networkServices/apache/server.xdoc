@@ -1,0 +1,42 @@
+<section id="resources.information.platforms.linux.networkServices.apache.server"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Setting up an apache web Server</title>
+	<para>
+	The apache web server is distributed with most linux distributions, and typically installed from RPM files, as are most apache modules, some of which are also included in the distributions. The web server is controlled by the <emphasis role="strong">/etc/init.d/httpd</emphasis> startup script. Log and configuration files reside in <emphasis role="strong">/etc/httpd/log</emphasis> and <emphasis role="strong">/etc/httpd/conf</emphasis> directories respectively. The configuration file<emphasis role="strong">/etc/httpd/conf/httpd.conf</emphasis> contains some parameters to note. The <emphasis role="strong">ServerName</emphasis> configures the server name of the apache instance. Usually the ServerName parameter is configured by doing a reverse dns lookup on the ip address. Should the lookup fail, a message is displayed during server startup. 
+	</para>
+	<section>
+		<title>Virtual Hosting</title>
+		<para>
+		To configure a single apache web server to host multiple sites, add the following set of parameters to the configuration file.
+		</para>
+		<programlisting>
+		<![CDATA[
+...		
+# Use name-based virtual hosting.
+#
+NameVirtualHost *
+
+#
+# VirtualHost example:
+# Almost any Apache directive may go into a VirtualHost container.
+# The first VirtualHost section is used for requests without a known
+# server name.
+#
+<VirtualHost *>
+    ServerAdmin webmaster@j2anywhere.com
+    DocumentRoot /var/www/j2anywhere.com
+    ServerName j2anywhere.com
+    ErrorLog logs/j2anywhere.com-error_log
+    CustomLog logs/j2anywhere.com-access_log common
+</VirtualHost>
+...
+		]]>	
+		</programlisting>
+		<para>
+		This adds a virtual configuration for <emphasis role="strong">j2anywhere.com</emphasis> to be handled by the server. The root document for this domain resides in <emphasis role="strong">/var/www/j2anywhere.com</emphasis> directory. 
+		</para>
+	</section>	
+</section>	

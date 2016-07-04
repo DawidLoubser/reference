@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This JSP document makes use of the JSTL core and formatting tag libraries -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/1999/xhtml 
+    http://www.w3.org/MarkUp/SCHEMA/xhtml11.xsd">
+    <head>
+        <title>Order Confirmation</title>
+    </head>
+    <body>
+        <h1>Order Confirmation</h1>
+        <p>
+            Thank you for placing an order totalling 
+            <fmt:formatNumber type="currency">${order.total}</fmt:formatNumber> 
+            with us. It should be shipped to your location by 
+            <em>${order.deliveryDateEstimate}</em>.
+        </p>
+        
+        <c:if test="${ ! empty( order.discount ) }">
+            <p>
+                Note: You have received a discount on this order of
+                <fmt:formatNumber type="currency">${order.discount.amount}</fmt:formatNumber>
+                because of the following reason:
+            </p>
+            <p>
+                ${order.discount.reason}
+            </p>
+        </c:if>
+        
+    </body>
+</html>

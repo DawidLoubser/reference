@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>A simple criteria-based query</title>
+    <para>
+        In this section we show a simple criteria-based query in order to introduce some of the core concepts. The simple
+        query will resolve all weather readings for a particular location.
+    </para>
+    <para>
+        <programlisting language="java"><![CDATA[
+public List<WeatherReading> getWeatherReadingsForLocation(Location location) 
+{
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<WeatherReading> criteriaQuery 
+      = criteriaBuilder.createQuery(WeatherReading.class);
+    
+    Root<WeatherReading> weatherReading = criteriaQuery.from(WeatherReading.class);
+    
+    Predicate predicate 
+      = criteriaBuilder.equal(weatherReading.get(WeatherReading_.location), location);
+    criteriaQuery.where(predicate);
+    
+    TypedQuery<WeatherReading> query = entityManager.createQuery(criteriaQuery);
+    return query.getResultList();
+}
+            ]]></programlisting>
+    </para>
+    <para>
+        In the above listing we
+        <itemizedlist>
+            <listitem><para>
+                ask the entity manager for a criteria builder and use it to create a criteria query which yields
+                weather readings,
+            </para></listitem>
+            <listitem><para>
+                specify the root (<literal>FROM</literal> domain) of the query,
+            </para></listitem>
+            <listitem><para>
+                create a predicate which affirms weather readigns which have the required location and
+                add a <literal>WHERE</literal> node to the query using that predicate, and
+            </para></listitem>
+            <listitem><para>
+                create a <emphasis>typed</emphasis> JPQL query from the criteria query and execute it, returning
+                the type-safe result list. 
+            </para></listitem>
+        </itemizedlist>
+        
+    </para>
+</section>   

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Executing default life cycle phases</title>
+    <para>
+        One can now go ahead and execute any of the default life-cycle phases. For example,
+        <programlisting><![CDATA[
+mvn compile            
+]]></programlisting>
+        will execute all life cycle phases up to and including the compile phase. 
+        The compiled classes are stored in
+        <programlisting><![CDATA[
+target/classes            
+            ]]></programlisting>
+        Executing the compile phase will result in executing all phases prior to the compile phase in sequential
+        order. This includes, for example, the
+        <literal>process-resources</literal> phase which attempt to copy any resources from
+        <programlisting><![CDATA[
+src/main/resources            
+]]></programlisting>
+        into the target 
+        <programlisting><![CDATA[
+            target/classes
+            ]]></programlisting>
+        so that they are in the class path and that they will be included in the packaging.
+    </para>
+    <para>
+        Similarly we can use
+        <programlisting><![CDATA[
+mvn test           
+]]></programlisting>
+        to run the stages up to and including that of compiling and executing the test programs. The test
+        results are saved in
+        <programlisting><![CDATA[
+target/surefire-reports            
+            ]]></programlisting>
+To execute the life cycle phases up to and including that of creating the jar one can execute
+        <programlisting><![CDATA[
+mvn package            
+]]></programlisting>
+        The resultant jar package is simply stored in
+        <programlisting><![CDATA[
+target            
+]]></programlisting>
+        If you run
+        <programlisting><![CDATA[
+mvn install
+]]></programlisting>
+        it will execute all the preceding phases including the package phase and will then go ahead and install 
+        the jar into the local repository.
+    </para>
+    
+    <section>
+        <title>Deploying onto a server</title>
+        <para>
+            The last phase of the default build life cycle is the deploy phase. In order to be able to execute the deploy
+            phase one needs to set up the distribution information in the POM and specify the authentication details in
+            a separate <literal>settings.xml</literal> which is not distributed when the project is deployed.
+        </para>
+        
+        <xi:include href="specifyingDistributionInfo/specifyingDistributionInfo.docbook"/>
+
+        <xi:include href="../../../../../platforms/linux/ssh/publicKeyLogin/publicKeyLogin.docbook"/>
+        
+        <xi:include href="specifyingAuthenticationSettings/specifyingAuthenticationSettings.docbook"/>
+    </section>
+</section>    

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN"
+  "http://java.sun.com/j2ee/dtds/ejb-jar_2_0.dtd">
+<ejb-jar>
+  <display-name>Task Manager</display-name>
+  <enterprise-beans>
+
+    <entity>
+      <ejb-name>Task</ejb-name>
+      <home>za.co.solms.pm.TaskHome</home>
+      <remote>za.co.solms.pm.TaskRemote</remote>
+      <local-home>za.co.solms.pm.TaskLocalHome</local-home>
+      <local>za.co.solms.pm.TaskLocal</local>
+      <ejb-class>za.co.solms.pm.TaskBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>java.lang.String</prim-key-class>
+      <reentrant>False</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>TaskBean</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>description</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>dueDate</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>taskType</field-name>
+      </cmp-field>
+      <primkey-field>id</primkey-field>
+      <query>
+        <query-method>
+          <method-name>findAll</method-name>
+          <method-params/>
+        </query-method>
+        <ejb-ql>
+          <![CDATA[
+            SELECT OBJECT(x) FROM TaskBean x
+            ] ]>
+        </ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>findDueBefore</method-name>
+          <method-params>
+            <method-param>long</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>
+          <![CDATA[
+            SELECT OBJECT(x) FROM TaskBean AS x WHERE x.dueDate < ?1
+            ] ]>
+        </ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>ejbSelectTimeStretchesInPeriod</method-name>
+          <method-params>
+            <method-param>java.lang.String</method-param>
+            <method-param>long</method-param>
+            <method-param>long</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>
+          <![CDATA[
+            SELECT OBJECT(ts) FROM TaskBean t, IN(t.timeStretches) ts
+              WHERE ((t.id = ?1) AND (ts.start < ?3) AND (ts.end > ?2))
+            ] ]>
+        </ejb-ql>
+      </query>
+      <ejb-local-ref>
+        <ejb-ref-name>ejb/TimeStretch</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <local-home>za.co.solms.pm.TimeStretchLocalHome</local-home>
+        <local>za.co.solms.pm.TimeStretchLocal</local>
+        <ejb-link>TimeStretch</ejb-link>
+      </ejb-local-ref>
+      <resource-ref>
+        <res-ref-name>jdbc/MySqlDs</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+      </resource-ref>
+   </entity>
+
+   <entity>
+      <ejb-name>TimeStretch</ejb-name>
+      <home>za.co.solms.pm.TimeStretchHome</home>
+      <remote>za.co.solms.pm.TimeStretchRemote</remote>
+      <local-home>za.co.solms.pm.TimeStretchLocalHome</local-home>
+      <local>za.co.solms.pm.TimeStretchLocal</local>
+      <ejb-class>za.co.solms.pm.TimeStretchBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>java.lang.String</prim-key-class>
+      <reentrant>False</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>TimeStretchBean</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>description</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>start</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>end</field-name>
+      </cmp-field>
+      <primkey-field>id</primkey-field>
+      <query>
+        <query-method>
+          <method-name>findAll</method-name>
+          <method-params/>
+        </query-method>
+        <ejb-ql>
+          <![CDATA[
+            SELECT OBJECT(x) FROM TimeStretchBean x
+            ] ]>
+        </ejb-ql>
+      </query>
+      <resource-ref>
+        <res-ref-name>jdbc/MySqlDs</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+      </resource-ref>
+    </entity>
+
+    <session>
+      <ejb-name>TaskManager</ejb-name>
+      <home>za.co.solms.pm.TaskManagerHome</home>
+      <remote>za.co.solms.pm.TaskManagerRemote</remote>
+      <ejb-class>za.co.solms.pm.TaskManagerBean</ejb-class>
+      <session-type>Stateless</session-type>
+      <transaction-type>Container</transaction-type>
+      <ejb-local-ref>
+        <ejb-ref-name>ejb/Task</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <local-home>za.co.solms.pm.TaskLocalHome</local-home>
+        <local>za.co.solms.pm.TaskLocal</local>
+        <ejb-link>Task</ejb-link>
+      </ejb-local-ref>
+    </session>
+  </enterprise-beans>
+
+  <relationships>
+    <ejb-relation>
+      <ejb-relation-name>Task-TimeStretch</ejb-relation-name>
+      <ejb-relationship-role>
+        <ejb-relationship-role-name>
+          task-has-timeStretches
+        </ejb-relationship-role-name>
+        <multiplicity>One</multiplicity>
+        <relationship-role-source>
+          <ejb-name>Task</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>timeStretches</cmr-field-name>
+          <cmr-field-type>java.util.Set</cmr-field-type>
+        </cmr-field>
+      </ejb-relationship-role>
+      <ejb-relationship-role>
+        <ejb-relationship-role-name>
+          timeStretch-for-task
+        </ejb-relationship-role-name>
+        <multiplicity>Many</multiplicity>
+        <relationship-role-source>
+          <ejb-name>TimeStretch</ejb-name>
+        </relationship-role-source>
+<!--        <cmr-field>
+          <cmr-field-name>task</cmr-field-name>
+        </cmr-field>-->
+      </ejb-relationship-role>
+    </ejb-relation>
+  </relationships>
+
+</ejb-jar>

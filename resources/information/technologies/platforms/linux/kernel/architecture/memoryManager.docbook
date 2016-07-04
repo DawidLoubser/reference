@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section SYSTEM "file:/usr/share/sgml/db42xml/docbookx.dtd"--><ns2406:section xmlns:ns2406="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.kernel.architecture.memoryManager">
+
+  <ns2407:title xmlns:ns2407="http://docbook.org/ns/docbook">The memory manager</ns2407:title>
+  <ns2408:para xmlns:ns2408="http://docbook.org/ns/docbook">
+    The memory manager is responsible for allocating memory to processes.
+  </ns2408:para>
+  
+  <ns2409:section xmlns:ns2409="http://docbook.org/ns/docbook">
+    <ns2410:title xmlns:ns2410="http://docbook.org/ns/docbook">Goals of the memory manager</ns2410:title>
+    <ns2411:para xmlns:ns2411="http://docbook.org/ns/docbook">
+      The design goals of the Linux memory management subsystem are
+      <ns2412:orderedlist xmlns:ns2412="http://docbook.org/ns/docbook">
+        <ns2413:listitem xmlns:ns2413="http://docbook.org/ns/docbook"><ns2414:formalpara xmlns:ns2414="http://docbook.org/ns/docbook">
+          <ns2415:title xmlns:ns2415="http://docbook.org/ns/docbook">To provide a large address space</ns2415:title>
+          <ns2416:para xmlns:ns2416="http://docbook.org/ns/docbook">
+            Users can use more memory than what is physically available. The memory manager
+            shifts memory around between physical memory and virtual memory residing in
+            swap space.
+          </ns2416:para>
+        </ns2414:formalpara></ns2413:listitem>
+        <ns2417:listitem xmlns:ns2417="http://docbook.org/ns/docbook"><ns2418:formalpara xmlns:ns2418="http://docbook.org/ns/docbook">
+          <ns2419:title xmlns:ns2419="http://docbook.org/ns/docbook">Memory protection</ns2419:title>
+          <ns2420:para xmlns:ns2420="http://docbook.org/ns/docbook">
+            The memory of a process is private and cannot be accessed directly by another
+            process. Furthermore, the memory containing the code of the process is
+            protected from the procecss itself.
+          </ns2420:para>
+        </ns2418:formalpara></ns2417:listitem>
+        <ns2421:listitem xmlns:ns2421="http://docbook.org/ns/docbook"><ns2422:formalpara xmlns:ns2422="http://docbook.org/ns/docbook">
+          <ns2423:title xmlns:ns2423="http://docbook.org/ns/docbook">Memory mapping</ns2423:title>
+          <ns2424:para xmlns:ns2424="http://docbook.org/ns/docbook">
+            Processes use virtual addresses which are mapped by the memory manager onto
+            physical memory addresses. This allows Linux 
+            <ns2425:itemizedlist xmlns:ns2425="http://docbook.org/ns/docbook">
+              <ns2426:listitem xmlns:ns2426="http://docbook.org/ns/docbook"><ns2427:para xmlns:ns2427="http://docbook.org/ns/docbook">
+                to shift memory allocations around without affecting the process, and  
+              </ns2427:para></ns2426:listitem>
+              <ns2428:listitem xmlns:ns2428="http://docbook.org/ns/docbook"><ns2429:para xmlns:ns2429="http://docbook.org/ns/docbook">
+                have virtual addresses outside the physical address range which are
+                swapped in and out of physical memory.
+              </ns2429:para></ns2428:listitem>
+            </ns2425:itemizedlist>
+          </ns2424:para>
+        </ns2422:formalpara></ns2421:listitem>
+        <ns2430:listitem xmlns:ns2430="http://docbook.org/ns/docbook"><ns2431:formalpara xmlns:ns2431="http://docbook.org/ns/docbook">
+          <ns2432:title xmlns:ns2432="http://docbook.org/ns/docbook">Shared memory</ns2432:title>
+          <ns2433:para xmlns:ns2433="http://docbook.org/ns/docbook">
+            The memory manager allows processes to share a specified amount of memory. For example,
+            executable code may, at times, be shared accross processes.
+          </ns2433:para>
+        </ns2431:formalpara></ns2430:listitem>
+      </ns2412:orderedlist>
+    </ns2411:para>
+  </ns2409:section>
+  
+  <ns2434:section xmlns:ns2434="http://docbook.org/ns/docbook">
+    <ns2435:title xmlns:ns2435="http://docbook.org/ns/docbook">Services offered by the memory management subsystem</ns2435:title>
+    <ns2436:para xmlns:ns2436="http://docbook.org/ns/docbook">
+      The memory manager provides 2 interfaces
+      <ns2437:itemizedlist xmlns:ns2437="http://docbook.org/ns/docbook">
+        <ns2438:listitem xmlns:ns2438="http://docbook.org/ns/docbook"><ns2439:para xmlns:ns2439="http://docbook.org/ns/docbook">
+          a <ns2440:emphasis xmlns:ns2440="http://docbook.org/ns/docbook">system call interface</ns2440:emphasis>  used by use processes, and
+        </ns2439:para></ns2438:listitem>
+        <ns2441:listitem xmlns:ns2441="http://docbook.org/ns/docbook"><ns2442:para xmlns:ns2442="http://docbook.org/ns/docbook">
+          an <ns2443:emphasis xmlns:ns2443="http://docbook.org/ns/docbook">intra-kernel interface</ns2443:emphasis>  used by other kernel sub-systems.
+        </ns2442:para></ns2441:listitem>
+      </ns2437:itemizedlist>
+    </ns2436:para>
+    
+    <ns2444:section xmlns:ns2444="http://docbook.org/ns/docbook">
+      <ns2445:title xmlns:ns2445="http://docbook.org/ns/docbook">The system call interface</ns2445:title>
+      <ns2446:para xmlns:ns2446="http://docbook.org/ns/docbook">
+        This contains a collection of  services which are used by user processes when requesting
+        or releasing memory. They include
+        <ns2447:itemizedlist xmlns:ns2447="http://docbook.org/ns/docbook">
+          <ns2448:listitem xmlns:ns2448="http://docbook.org/ns/docbook"><ns2449:formalpara xmlns:ns2449="http://docbook.org/ns/docbook">
+            <ns2450:title xmlns:ns2450="http://docbook.org/ns/docbook">malloc()</ns2450:title>
+            <ns2451:para xmlns:ns2451="http://docbook.org/ns/docbook">Request memory for a process.</ns2451:para>
+          </ns2449:formalpara></ns2448:listitem>
+          <ns2452:listitem xmlns:ns2452="http://docbook.org/ns/docbook"><ns2453:formalpara xmlns:ns2453="http://docbook.org/ns/docbook">
+            <ns2454:title xmlns:ns2454="http://docbook.org/ns/docbook">free()</ns2454:title>
+            <ns2455:para xmlns:ns2455="http://docbook.org/ns/docbook">Release procecss memory.</ns2455:para>
+          </ns2453:formalpara></ns2452:listitem>
+          <ns2456:listitem xmlns:ns2456="http://docbook.org/ns/docbook"><ns2457:formalpara xmlns:ns2457="http://docbook.org/ns/docbook">
+            <ns2458:title xmlns:ns2458="http://docbook.org/ns/docbook">mmap(), munmap(), msync() and mremap()</ns2458:title>
+            <ns2459:para xmlns:ns2459="http://docbook.org/ns/docbook">
+              Map, unmap, synchronize and remap files into virtual memory.
+            </ns2459:para>
+          </ns2457:formalpara></ns2456:listitem>
+          <ns2460:listitem xmlns:ns2460="http://docbook.org/ns/docbook"><ns2461:formalpara xmlns:ns2461="http://docbook.org/ns/docbook">
+            <ns2462:title xmlns:ns2462="http://docbook.org/ns/docbook">mprotect()</ns2462:title>
+            <ns2463:para xmlns:ns2463="http://docbook.org/ns/docbook">Change the protection on a region of virtual memory.</ns2463:para>
+          </ns2461:formalpara></ns2460:listitem>
+          <ns2464:listitem xmlns:ns2464="http://docbook.org/ns/docbook"><ns2465:formalpara xmlns:ns2465="http://docbook.org/ns/docbook">
+            <ns2466:title xmlns:ns2466="http://docbook.org/ns/docbook">mlock(), munlock(), mlockall(), munlockall()</ns2466:title>
+            <ns2467:para xmlns:ns2467="http://docbook.org/ns/docbook">
+              Services used from processes running under super-user access for preventing
+              and allowing memory swapping for a process or for all processes.
+            </ns2467:para>
+          </ns2465:formalpara></ns2464:listitem>
+          <ns2468:listitem xmlns:ns2468="http://docbook.org/ns/docbook"><ns2469:formalpara xmlns:ns2469="http://docbook.org/ns/docbook">
+            <ns2470:title xmlns:ns2470="http://docbook.org/ns/docbook">swapon(), swapoff()</ns2470:title>
+            <ns2471:para xmlns:ns2471="http://docbook.org/ns/docbook">
+              Super-user routines for adding and removing swap files for the system.
+            </ns2471:para>
+          </ns2469:formalpara></ns2468:listitem>
+        </ns2447:itemizedlist>
+      </ns2446:para>
+    </ns2444:section>
+  </ns2434:section>
+</ns2406:section>

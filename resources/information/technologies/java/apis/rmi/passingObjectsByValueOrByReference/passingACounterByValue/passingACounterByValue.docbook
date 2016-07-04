@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    
+    <title role="Passing a Counter by Value">Passing a Counter by Value</title>
+    
+    <para>In this example we make a counter a non-remote object. It does implement
+        <emphasis>Serializable</emphasis> which means we can pass it physically accross the
+        network.</para>
+    
+    <section>
+        <title>The Counter Interface</title>
+        <para><programlisting>
+<xi:include parse="text" href="../../src/countValue/Counter.java"/>
+</programlisting></para>
+    </section>
+    
+    <section>
+        <title>The Counter Implementation</title>
+        <para><programlisting>
+<xi:include parse="text" href="../../src/countValue/CounterImpl.java"/>
+</programlisting></para>
+    </section>
+    
+    <section>    
+        <title>The Counter Factory Interface</title>
+        <para><programlisting>
+<xi:include parse="text" href="../../src/countValue/CounterFactory.java"/>
+</programlisting></para>
+    </section>
+    
+    
+    
+    <section>
+        <title>The Counter Factory Implementation</title>
+        <para><programlisting>
+<xi:include parse="text" href="../../src/countValue/CounterFactoryImpl.java"/>
+</programlisting></para>
+    </section>
+    
+    <section>
+        <title>The CounterFactoryLauncher</title>
+        <para><programlisting>
+<xi:include parse="text" href="../../src/countValue/CounterFactoryLauncher.java"/>
+</programlisting></para>
+    </section>
+    
+    <section>
+        <title>The Client</title>
+        <para><programlisting>
+<xi:include parse="text" href="../../src/countValue/CounterClient.java"/>
+</programlisting></para>
+        <para>
+            The output of the program is shown below:
+            
+            <programlisting><![CDATA[
+counter value = 0
+counter value = 1
+factory's counter value = 0
+]]></programlisting>
+        </para>
+        <para>Note that the counter factory implemented a singleton pattern, but that
+            the client had a separate instance because the counter was serialized
+            over the network (passed by value).</para>
+    </section>    
+</section>

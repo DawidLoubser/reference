@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.commands.editUnedit"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>The edit and unedit commands</title>
+  <para>
+    Consider you want to edit a file for which <command>cvs watch on</command> 
+    has been assigned and which is currently watched. If you request an update,
+    you will be fed that file in read-only mode. 
+  </para>
+  <para>
+    Of course you can simply change the permissions before starting to edit
+    the file. CVS wants you to run <command>cvs edit</command> on that file
+    instead which will
+    <itemizedlist>
+      <listitem><para>
+        change the file permission to <emphasis>read/write</emphasis>,
+      </para></listitem>
+      <listitem><para>
+        notify watchers that you are starting to edit the files and
+      </para></listitem>
+      <listitem><para>
+        register you as a watcher of that file.
+        <note>
+          <para>
+            If you do not want to be a watcher of the file after issuing
+            the <command>cvs edit</command> command, you can use
+            <synopsis><![CDATA[
+cvs edit -a none            
+            ]]></synopsis>
+          </para>
+        </note>
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>What happens if you commit a watched file?</title>
+    <para>
+      After having completed the modifications, you want to commit.
+      If the file is watched, CVS will
+      <itemizedlist>
+        <listitem><para>commit the changes,</para></listitem>
+        <listitem><para>notify the watchers and</para></listitem>
+        <listitem><para>
+          change the permissions of the file back to 
+          <emphasis>read-only</emphasis>.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Abandoning editing via <command>cvs unedit</command></title>
+    <para>
+      What if you made some changes, but you want to anbandon them. For this
+      CVS provides the <command>cvs unedit</command> command which
+      <itemizedlist>
+        <listitem><para>
+          brings your local copy back into the state of the repository 
+          version,
+        </para></listitem>
+        <listitem><para>
+          sets the permissions back to <emphasis>read-only</emphasis> and
+        </para></listitem>
+        <listitem><para>
+          notifies the watchers that you have abandoned the editing of that
+          file.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      For example,
+      <synopsis><![CDATA[
+cvs unedit LoanCalculator.java
+      ]]></synopsis>
+      abandons editing on that file.
+    </para>
+  </section>
+</section>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <title>Asynchronous processing of requests</title>
+    <para>
+        For a simple asynchronous request the processing is done in the background. The application server assigns a separate, managed
+        thread to the peace of work which needs to be executed asynchronously whilst the original thread returns , allowing the user code to
+        perform other tasks in the mean time.
+    </para>
+    <para>
+        A service is declared an <emphasis>asynchronous service</emphasis> by annotating it with an <literal>@asynchronous</literal>
+        annotation. For example, the <literal>OrderProcessorBean</literal> shown below provides a normal <literal>processOrder</literal>
+        service which is processed synchronously (within the calling thread), but it makes use of an asynchronous <literal>shipOrder</literal>
+        service. The <literal>processOrder</literal> service will typically return with the <literal>processOrderResult</literal> prior to
+        the <literal>shipOrder</literal> service having been completed:
+        <programlisting language="java"><![CDATA[
+@Stateless
+public class OrderProcessorBean
+{
+   @Asynchronous
+   private void shipOrder(OrderShipmentRequest orderShipmentRequest)
+   {
+      ...
+   }
+
+   public ProcessOrderResult processOrder(ProcessOrderRequest processOrderRequest)
+   {
+      ...
+      
+      shipOrder(shipOrderRequest);
+      
+      return processOrderResult;
+   }   
+}
+            ]]></programlisting>
+    </para>    
+</section>    
+    

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1440:article xmlns:ns1440="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.examples.claimSwitch.claimSwitch">
+
+  <ns1441:articleinfo xmlns:ns1441="http://docbook.org/ns/docbook">
+    <ns1442:title xmlns:ns1442="http://docbook.org/ns/docbook">Case Study: Interpharm Claim Switch</ns1442:title>
+    <ns1443:subtitle xmlns:ns1443="http://docbook.org/ns/docbook">Treating architecture orthogonal to design</ns1443:subtitle>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="../../../../../../resources/information/solms/resources/skills/authors/fritzSolmsContact.xml"/>
+  </ns1441:articleinfo>
+  
+  <ns1444:abstract xmlns:ns1444="http://docbook.org/ns/docbook">
+    <ns1445:para xmlns:ns1445="http://docbook.org/ns/docbook">
+      This article discusses a case study of a project where virtually every aspect of the
+      architecture of a system was changed without touching the design of the system. The consequence
+      was that the system behaved no different from a functional perspective, but thatthe new systemit realized the use
+      cases from a user perspective the same way it
+    </ns1445:para>
+  </ns1444:abstract>
+  
+  <ns1446:section xmlns:ns1446="http://docbook.org/ns/docbook">
+    <ns1447:title xmlns:ns1447="http://docbook.org/ns/docbook">Background</ns1447:title>
+    <ns1448:para xmlns:ns1448="http://docbook.org/ns/docbook">
+      Interpharm management approached Solms Training, Consulting and Development (STCD) to assess
+      the current architecture of their medical ais claims switch. The reason for this was that
+      management was concerned about
+      <ns1449:itemizedlist xmlns:ns1449="http://docbook.org/ns/docbook">
+        <ns1450:listitem xmlns:ns1450="http://docbook.org/ns/docbook"><ns1451:para xmlns:ns1451="http://docbook.org/ns/docbook">
+          persistent reliability problems experienced with their current systems,
+        </ns1451:para></ns1450:listitem>
+        <ns1452:listitem xmlns:ns1452="http://docbook.org/ns/docbook"><ns1453:para xmlns:ns1453="http://docbook.org/ns/docbook">
+          the maintenance costs within the current architecture,  
+        </ns1453:para></ns1452:listitem>
+        <ns1454:listitem xmlns:ns1454="http://docbook.org/ns/docbook"><ns1455:para xmlns:ns1455="http://docbook.org/ns/docbook">
+          the, at times, long periods required by the technical team to resolve system problems, and 
+        </ns1455:para></ns1454:listitem>
+        <ns1456:listitem xmlns:ns1456="http://docbook.org/ns/docbook"><ns1457:para xmlns:ns1457="http://docbook.org/ns/docbook">
+          the ability of the system to scale with increasing load.
+        </ns1457:para></ns1456:listitem>
+      </ns1449:itemizedlist>
+      In addition, management would welcome a reduction in the round trip time of a claim submission.
+    </ns1448:para>
+    
+    <ns1458:section xmlns:ns1458="http://docbook.org/ns/docbook">
+      <ns1459:title xmlns:ns1459="http://docbook.org/ns/docbook">Core responsibilities of the system</ns1459:title>
+      <ns1460:para xmlns:ns1460="http://docbook.org/ns/docbook">
+        The system is a real-time swith which switches claims received from pharmacies to the appropriate medical aid
+        administrators and feeds the claim assessment back to the pharmacy.
+      </ns1460:para>
+      <ns1461:para xmlns:ns1461="http://docbook.org/ns/docbook">
+        The system had to
+        <ns1462:itemizedlist xmlns:ns1462="http://docbook.org/ns/docbook">
+          <ns1463:listitem xmlns:ns1463="http://docbook.org/ns/docbook"><ns1464:para xmlns:ns1464="http://docbook.org/ns/docbook">
+            demarshall incoming messages,  
+          </ns1464:para></ns1463:listitem>
+          <ns1465:listitem xmlns:ns1465="http://docbook.org/ns/docbook"><ns1466:para xmlns:ns1466="http://docbook.org/ns/docbook">
+            persist the claim for auditing purposes,
+          </ns1466:para></ns1465:listitem>
+          <ns1467:listitem xmlns:ns1467="http://docbook.org/ns/docbook"><ns1468:para xmlns:ns1468="http://docbook.org/ns/docbook">
+            perform certain validations on claims as specified by medical aid administrators and
+            South African law,
+          </ns1468:para></ns1467:listitem>
+          <ns1469:listitem xmlns:ns1469="http://docbook.org/ns/docbook"><ns1470:para xmlns:ns1470="http://docbook.org/ns/docbook">
+            depending on the medical aid administrator for that claim, the system would have to
+            apply pricing rules,
+          </ns1470:para></ns1469:listitem>
+          <ns1471:listitem xmlns:ns1471="http://docbook.org/ns/docbook"><ns1472:para xmlns:ns1472="http://docbook.org/ns/docbook">
+            persist the pre-processed claim as sent to the medical aid administrator,
+          </ns1472:para></ns1471:listitem>
+          <ns1473:listitem xmlns:ns1473="http://docbook.org/ns/docbook"><ns1474:para xmlns:ns1474="http://docbook.org/ns/docbook">
+            marshall the pre-processed claim onto the communication protocol used
+            by the appropriate administrator and send it through to the administrator system,
+          </ns1474:para></ns1473:listitem>
+          <ns1475:listitem xmlns:ns1475="http://docbook.org/ns/docbook"><ns1476:para xmlns:ns1476="http://docbook.org/ns/docbook">
+            wait for a response containing the assessed claim, 
+          </ns1476:para></ns1475:listitem>
+          <ns1477:listitem xmlns:ns1477="http://docbook.org/ns/docbook"><ns1478:para xmlns:ns1478="http://docbook.org/ns/docbook">
+            persist the administrator assessed claim and feed it back to the pharmacy.
+          </ns1478:para></ns1477:listitem>
+        </ns1462:itemizedlist>
+      </ns1461:para>
+    </ns1458:section>
+    
+    <ns1479:section xmlns:ns1479="http://docbook.org/ns/docbook">
+      <ns1480:title xmlns:ns1480="http://docbook.org/ns/docbook">Quality requirements</ns1480:title>
+      <ns1481:para xmlns:ns1481="http://docbook.org/ns/docbook">
+        Business placed the following core quality requirements on the system
+        <ns1482:note xmlns:ns1482="http://docbook.org/ns/docbook"><ns1483:title xmlns:ns1483="http://docbook.org/ns/docbook">TODO</ns1483:title>
+          <ns1484:para xmlns:ns1484="http://docbook.org/ns/docbook">
+            We need to quantify these quality requirements (<ns1485:abbrev xmlns:ns1485="http://docbook.org/ns/docbook">i.e.</ns1485:abbrev> scaleability in
+            claims per second, turn-around time in seconds, availability, reliability,
+            maintainability, ...).
+          </ns1484:para>
+        </ns1482:note>
+      </ns1481:para>
+      <ns1486:para xmlns:ns1486="http://docbook.org/ns/docbook">
+        <ns1487:itemizedlist xmlns:ns1487="http://docbook.org/ns/docbook">
+        <ns1488:listitem xmlns:ns1488="http://docbook.org/ns/docbook"><ns1489:formalpara xmlns:ns1489="http://docbook.org/ns/docbook">
+          <ns1490:title xmlns:ns1490="http://docbook.org/ns/docbook">Reliability</ns1490:title>
+          <ns1491:para xmlns:ns1491="http://docbook.org/ns/docbook">
+          
+          </ns1491:para>
+        </ns1489:formalpara></ns1488:listitem>  
+          <ns1492:listitem xmlns:ns1492="http://docbook.org/ns/docbook"><ns1493:formalpara xmlns:ns1493="http://docbook.org/ns/docbook">
+            <ns1494:title xmlns:ns1494="http://docbook.org/ns/docbook">Maintainability</ns1494:title>
+            <ns1495:para xmlns:ns1495="http://docbook.org/ns/docbook">
+              
+            </ns1495:para>
+          </ns1493:formalpara></ns1492:listitem>  
+          <ns1496:listitem xmlns:ns1496="http://docbook.org/ns/docbook"><ns1497:formalpara xmlns:ns1497="http://docbook.org/ns/docbook">
+            <ns1498:title xmlns:ns1498="http://docbook.org/ns/docbook"/>
+            <ns1499:para xmlns:ns1499="http://docbook.org/ns/docbook">
+              
+            </ns1499:para>
+          </ns1497:formalpara></ns1496:listitem>  
+          <ns1500:listitem xmlns:ns1500="http://docbook.org/ns/docbook"><ns1501:formalpara xmlns:ns1501="http://docbook.org/ns/docbook">
+            <ns1502:title xmlns:ns1502="http://docbook.org/ns/docbook">Scaleability and performance</ns1502:title>
+            <ns1503:para xmlns:ns1503="http://docbook.org/ns/docbook">
+              The system had to handle a peak load current load of <ns1504:emphasis xmlns:ns1504="http://docbook.org/ns/docbook">XX transactions per
+                time unit</ns1504:emphasis>. Business expected that growth may require the system to sclae
+              up to a load of <ns1505:emphasis xmlns:ns1505="http://docbook.org/ns/docbook">XX transactions per time unit within YY years</ns1505:emphasis>.
+            </ns1503:para>
+          </ns1501:formalpara></ns1500:listitem>
+          <ns1506:listitem xmlns:ns1506="http://docbook.org/ns/docbook"><ns1507:formalpara xmlns:ns1507="http://docbook.org/ns/docbook">
+            <ns1508:title xmlns:ns1508="http://docbook.org/ns/docbook">Performance</ns1508:title>
+            <ns1509:para xmlns:ns1509="http://docbook.org/ns/docbook">
+              The round-trip turn around time per claim had to be below 2 seconds (including the
+              time used to feed the claim to the administrator system and feed the reponse back to
+              the pharmacy). Management expressed that they would prefer a sub-second round 
+              trip performance, if possible.
+              <ns1510:note xmlns:ns1510="http://docbook.org/ns/docbook"><ns1511:title xmlns:ns1511="http://docbook.org/ns/docbook">TODO</ns1511:title>
+                <ns1512:para xmlns:ns1512="http://docbook.org/ns/docbook">
+                  Does this include the time the administrator required to process the claim. If so,
+                  what time was
+                </ns1512:para></ns1510:note>
+            </ns1509:para>
+          </ns1507:formalpara></ns1506:listitem>
+          <ns1513:listitem xmlns:ns1513="http://docbook.org/ns/docbook"><ns1514:formalpara xmlns:ns1514="http://docbook.org/ns/docbook">
+            <ns1515:title xmlns:ns1515="http://docbook.org/ns/docbook">Availability</ns1515:title>
+            <ns1516:para xmlns:ns1516="http://docbook.org/ns/docbook">
+              
+            </ns1516:para>
+          </ns1514:formalpara></ns1513:listitem>  
+        </ns1487:itemizedlist>
+      </ns1486:para>
+    </ns1479:section>
+    
+    <ns1517:section xmlns:ns1517="http://docbook.org/ns/docbook">
+      <ns1518:title xmlns:ns1518="http://docbook.org/ns/docbook">Concerns about the current system</ns1518:title>
+      <ns1519:para xmlns:ns1519="http://docbook.org/ns/docbook">
+        The concerns management had about the existing architecture focused mainly on reliability
+        and maintainability issues, with some concern around scaleability and performance:
+        <ns1520:itemizedlist xmlns:ns1520="http://docbook.org/ns/docbook">
+          <ns1521:listitem xmlns:ns1521="http://docbook.org/ns/docbook"><ns1522:formalpara xmlns:ns1522="http://docbook.org/ns/docbook">
+            <ns1523:title xmlns:ns1523="http://docbook.org/ns/docbook">Reliability</ns1523:title>
+            <ns1524:para xmlns:ns1524="http://docbook.org/ns/docbook">
+              The existing system exhibited the following reliability issues:
+              <ns1525:itemizedlist xmlns:ns1525="http://docbook.org/ns/docbook">
+                <ns1526:listitem xmlns:ns1526="http://docbook.org/ns/docbook"><ns1527:para xmlns:ns1527="http://docbook.org/ns/docbook">
+                  Memory management problems required occasional restarting of the system.
+                </ns1527:para></ns1526:listitem>
+                <ns1528:listitem xmlns:ns1528="http://docbook.org/ns/docbook"><ns1529:para xmlns:ns1529="http://docbook.org/ns/docbook">
+                  Even though the system was a clustered system with fail over safety built in,
+                  there was an exposure to a node failing during the processing of a claim resulting
+                  in a failure due to a lag in the synchronization of local databases.
+                </ns1529:para></ns1528:listitem>
+              </ns1525:itemizedlist>
+            </ns1524:para>
+          </ns1522:formalpara></ns1521:listitem>
+          <ns1530:listitem xmlns:ns1530="http://docbook.org/ns/docbook"><ns1531:formalpara xmlns:ns1531="http://docbook.org/ns/docbook">
+            <ns1532:title xmlns:ns1532="http://docbook.org/ns/docbook">Scaleability and performance</ns1532:title>
+            <ns1533:para xmlns:ns1533="http://docbook.org/ns/docbook">
+              Management was not unhappy about the performance and scaleability of the existing
+              system. Still, they did feel that an improvement in performance would provide improved 
+              usability for the users and improved scaleability would benefit growth opportunities
+              for the company.
+            </ns1533:para>
+           </ns1531:formalpara></ns1530:listitem>
+          <ns1534:listitem xmlns:ns1534="http://docbook.org/ns/docbook"><ns1535:formalpara xmlns:ns1535="http://docbook.org/ns/docbook">
+            <ns1536:title xmlns:ns1536="http://docbook.org/ns/docbook">Availability</ns1536:title>
+            <ns1537:para xmlns:ns1537="http://docbook.org/ns/docbook">
+              Availability was generally good except for the down times during restart periods and
+              occasional unavailability due to resource intensive background system tasks.
+            </ns1537:para>
+          </ns1535:formalpara></ns1534:listitem>
+          <ns1538:listitem xmlns:ns1538="http://docbook.org/ns/docbook"><ns1539:formalpara xmlns:ns1539="http://docbook.org/ns/docbook">
+            <ns1540:title xmlns:ns1540="http://docbook.org/ns/docbook">Maintainability</ns1540:title>
+            <ns1541:para xmlns:ns1541="http://docbook.org/ns/docbook">
+              The existing system was not based on a reference architecture and was quite complex to
+              maintain. The complexity also increased the time required for new developers to become
+              productive.
+            </ns1541:para>
+          </ns1539:formalpara></ns1538:listitem>
+        </ns1520:itemizedlist>
+      </ns1519:para>
+    </ns1517:section>
+    
+    <ns1542:section xmlns:ns1542="http://docbook.org/ns/docbook">
+      <ns1543:title xmlns:ns1543="http://docbook.org/ns/docbook">Current architecture</ns1543:title>
+      <ns1544:para xmlns:ns1544="http://docbook.org/ns/docbook">
+      
+      </ns1544:para>
+    </ns1542:section>
+    
+    
+  </ns1446:section>
+  
+  <ns1545:section xmlns:ns1545="http://docbook.org/ns/docbook">
+    <ns1546:title xmlns:ns1546="http://docbook.org/ns/docbook">General approach for the project</ns1546:title>
+    <ns1547:para xmlns:ns1547="http://docbook.org/ns/docbook">
+    
+    </ns1547:para>
+  </ns1545:section>
+  
+  <ns1548:section xmlns:ns1548="http://docbook.org/ns/docbook">
+    <ns1549:title xmlns:ns1549="http://docbook.org/ns/docbook">The new architecture</ns1549:title>
+    <ns1550:para xmlns:ns1550="http://docbook.org/ns/docbook">
+    
+    </ns1550:para>
+  </ns1548:section>
+  
+  <ns1551:section xmlns:ns1551="http://docbook.org/ns/docbook">
+    <ns1552:title xmlns:ns1552="http://docbook.org/ns/docbook">Problems experienced</ns1552:title>
+    <ns1553:para xmlns:ns1553="http://docbook.org/ns/docbook">
+    
+    </ns1553:para>
+  </ns1551:section>
+  
+  <ns1554:section xmlns:ns1554="http://docbook.org/ns/docbook">
+    <ns1555:title xmlns:ns1555="http://docbook.org/ns/docbook">How the problems were solved</ns1555:title>
+    <ns1556:para xmlns:ns1556="http://docbook.org/ns/docbook">
+    
+    </ns1556:para>
+  </ns1554:section>
+  
+  <ns1557:section xmlns:ns1557="http://docbook.org/ns/docbook">
+    <ns1558:title xmlns:ns1558="http://docbook.org/ns/docbook">Testing the quality requirements</ns1558:title>
+    <ns1559:para xmlns:ns1559="http://docbook.org/ns/docbook">
+    
+    </ns1559:para>
+  </ns1557:section>
+  
+  <ns1560:section xmlns:ns1560="http://docbook.org/ns/docbook">
+    <ns1561:title xmlns:ns1561="http://docbook.org/ns/docbook">Conclusions</ns1561:title>
+    <ns1562:para xmlns:ns1562="http://docbook.org/ns/docbook">
+    
+    </ns1562:para>
+  </ns1560:section>
+  
+  
+  
+  
+</ns1440:article>

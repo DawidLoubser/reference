@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.design.patterns.classical.structural.flyWeight.implementationGuidelines"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Implementation guidelines</title>
+    <para>
+      The flyweight pattern is in some ways one of the more complex patterns to implement.
+    </para>  
+  
+  <section>
+    <title>Memory management</title>
+    <para>
+      If the implementation language does not support garbage collection, the flyweight factory
+      will have to implement a memory management algorithm which is typically based on reference
+      counting. To this end one will need to implement a mechanism through which clients notify
+      the factory that a handle is no longer required.
+    </para>
+  </section>
+  
+  <section>
+    <title>Factory needs to differentiate between sharable and non-sharable flyweights</title>
+    <para>
+      Since the pattern only supports sharing but does not require that all concrete realization
+      of the flyweight are indeed sharable, the factory needs to somehow be informed on whether
+      a particular flyweight is sharable or not. This may be done through a simple query method
+      which would be implemented as a class service.
+      <note>
+        <para>
+          The factory will have to ensure that no two clients will receive a handle to the same
+          physical non-sharable flyweight.
+        </para>  
+      </note>
+    </para>  
+  </section>
+  
+  <section>
+    <title>Using class and instance state instead of the flyweight pattern</title>
+    <para>
+      Most object-oriented programming languages including Java, C++, C# and Delphi support
+      classes and class state separately to instance state, typically in the form of 
+      <emphasis>static</emphasis> data fields for class state and 
+      <emphasis>non-static</emphasis> data fields for instance state (Prototype based
+      languages like self typically do not). In these languages one may map the intrinsic
+      state onto class state. This avoids the overheads of maintaining multiple copies of the
+      common state. The intrinsic state may still be calculated by instance services.
+    </para>
+  </section>
+  
+</section>

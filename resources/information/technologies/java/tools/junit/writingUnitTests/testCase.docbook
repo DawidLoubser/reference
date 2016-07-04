@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+  <title>Test cases</title>
+  
+  <indexterm>
+    <primary>JUnit</primary>
+    <secondary>test case</secondary>
+  </indexterm>
+  
+  <para>
+    A test case is a service within a JUnit test class which tests some 
+    aspect of the test subject's behaviour.
+    <programlisting language="Java"><![CDATA[
+public class AccountTest
+{
+  @org.junit.Test
+  public void testDebitWithPositiveAmount()
+  {
+    // Test activities and assertions
+    // ...
+  }
+  
+  @org.junit.Test
+  public void testDebitWithNegativeAmount()
+  {
+    // Test activities and assertions
+    // ...
+  }
+
+  private Account testSubject;
+}
+    ]]></programlisting>
+  </para>
+  
+  <section>
+    <title>The scope of a test case</title>
+    <para>
+      A typical test case should typically test a single service of the
+      subject (and even then, only for a one possible scenario, or
+      set of input data).
+    </para>
+    <para>
+      Though it is possible to perform a large number of tests within one
+      test case, working at a finer granularity will make it easier to
+      maintain, and might make it easier to identify the cause of failed
+      tests.
+    </para>
+  </section>
+  
+  <section>
+    <title>Raising exceptions</title>
+    <para>
+      Test cases may declare that they can throw check exceptions.
+      However, should such an exception be thrown, it would result
+      in the test case being marked as a failure (which is probably
+      what the developer wants).
+      <programlisting language="Java"><![CDATA[
+public class InventoryTest
+{
+  @org.junit.Test
+  public void testAddProduct() throws InvalidProductException
+  {
+    // Test activities and assertions
+    // (which should not, under normal circumstances, throw
+    // an InvalidProductException unless the system is broken)
+    // ...
+  }
+}
+      ]]></programlisting>
+    </para>
+    
+    <section>
+      <title>Expecting exceptions</title>
+      <para>
+        In many circumstances, we wish to negatively test some aspect of
+        the system - i.e. the purposeful incorrect usage of the test
+        subject in order to assert that it does indeed refuse to provide
+        the service by throwing an exception.
+      </para>
+      <para>
+        Using the <literal>expected</literal> parameter to the 
+        <literal>@org.junit.Test</literal> annotation asserts that
+        a test should be marked as failed <emphasis>unless the expected
+        exception was thrown.</emphasis>
+        <programlisting language="Java"><![CDATA[
+public class TelephoneTest
+{
+  @org.junit.Test( expected=LineBusyException.class )
+  public void testLineBusyExceptionOnDuplicateCall()
+  throws LineBusyException
+  {
+    // Make a call
+    subject.initiateCall( "082-555-5555" );
+    
+    // Try to make a suplicate call (should fail)
+    subject.initiateCall( "082-555-5555" );
+  }
+  
+  private Telephone subject;
+}
+        ]]></programlisting>
+      </para>
+      <note>
+        <para>
+          In many cases, it is not a good idea to enforce (or assert) that
+          a service <emphasis>must</emphasis> throw an exception if a
+          particular precondition is not met. In most cases, a service
+          provider <emphasis>may</emphasis> refuse to provide the service
+          if the precondition is not met. A service provider may still
+          find a way to realise the requested service 
+          (even in the face of a missing precondition) and a unit test
+          should not prevent such innovation.
+        </para>
+      </note>
+    </section>
+    
+  </section>
+  
+  <section>
+    <title>Asserting performance requirements</title>
+    <para>
+      JUnit provides a simple way to assert the performance requirements
+      of a service, by allowing us to specify the maximum amount of time
+      a test case is allowed to consume before being considered
+      a failure. This is specified with the <literal>timeout</literal>
+      parameter (in miliseconds) to <literal>@org.junit.Test</literal>.
+      <programlisting language="Java"><![CDATA[
+public class LibraryTest
+{
+  /* Not allowed to take more than 1s */
+  @org.junit.Test( timeout=1000 )  
+  public void testFindBooksByName()
+  {
+    List<Book> books = subject.findBooksByName("Parry Hotter");
+    
+    // Further assertions
+    // ...
+  }
+  
+  private LibraryBean subject;
+}
+        ]]></programlisting>
+    </para>
+  </section>
+  
+</section>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:http="http://servicemix.apache.org/http/1.0"
+       xmlns:uc="http://example.co.za/unitconverter/"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://servicemix.apache.org/http/1.0 
+       http://servicemix.apache.org/schema/servicemix-http-3.2.2.xsd
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <!--  Declare an external service provider, currently running at 
+        'http://localhost:8080/UnitConverterBeanService/UnitConverter'
+        which offers services as per the contract 'uc:UnitConverter' 
+  -->
+  <http:endpoint interfaceName="uc:UnitConverter"
+                 service="uc:UnitConverterProxy"
+                 endpoint="UnitConverterProxy"
+                 role="provider" 
+                 locationURI="http://localhost:8080/UnitConverterBeanService/UnitConverter"
+                 defaultMep="http://www.w3.org/2004/08/wsdl/in-out"
+                 soap="true" 
+                 soapVersion="1.1"/>             
+
+</beans>

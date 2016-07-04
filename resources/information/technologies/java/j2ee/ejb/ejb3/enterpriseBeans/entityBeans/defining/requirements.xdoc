@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.entityBeans.defining.requirements"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Entity bean requirements</title>
+  <para>
+    Entity beans must satisfy a number of requirements:
+    <itemizedlist>
+      <listitem><formalpara>
+        <title>Constructors</title>
+        <para>
+          Entity beans must have a <literal>public</literal> or
+          <literal>protected</literal> default (no-argument) constructor. They
+          may have other constructors. If the default constructor 
+          is declared <literal>protected</literal>, it is only available for the
+          application server and users are forced to use the publicly available
+          constructors.
+        </para>
+      </formalpara></listitem>
+      <listitem><formalpara>
+        <title>Primary key</title>
+        <para>
+          Every entity bean requires a primary key, which may be a simple primary
+          key represented by a bean field, or a composite key. The primary key is 
+          specified by annotating the relevant field with <literal>javax.persistence.Id</literal>
+          <programlisting><![CDATA[
+import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class Account implements Serializable
+{
+
+	// Services and constructors here
+	//...
+	
+	
+	@Id  
+	private int accountNumber;
+	
+	private double balance;
+}
+
+          ]]></programlisting>
+        </para>
+      </formalpara>
+      </listitem>
+      <listitem><formalpara>
+        <title>Support for serialization</title>
+        <para>
+          Entity beans which are meant to be detachable in order to pass them around
+          as value objects (i.e. sent to a client through a remote interface) must be serializable. 
+          These temporarily detached value objects can be reattached to entity beans at a later stage.
+        </para>
+      </formalpara></listitem>
+      <listitem><formalpara>
+        <title>Final</title>
+        <para>
+          Neither the class, nor any of its methods, may be final. The application
+          server must be able to subclass your class, in order to provide natural
+          interception points and to access protected fields not published via
+          public access methods.
+        </para>
+      </formalpara></listitem>
+      <listitem><formalpara>
+        <title>Entity beans may not be abstract</title>
+        <para>
+          This is a current restriction on entity beans which may be lifted at a
+          later stage. Recall that abstract classes may not be directly instantiated,
+          and from an entity management view this could lead to undefined behaviour, i.e.
+          the application server would have to pick a suitable subclass to use by itself.
+        </para>
+      </formalpara></listitem>
+    </itemizedlist>
+  </para>
+</section>  

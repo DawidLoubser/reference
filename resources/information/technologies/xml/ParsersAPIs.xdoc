@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="resources.information.technologies.xml.ParsersAPIs"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Parsers as APIs for XML Documents</title>
+    
+    <section>
+        <title>Introduction</title>
+        
+        <section>
+            <title>What is a Parser?</title>
+            <para> The structure of XML documents is very simple and processing information directly
+                from an XML document might seem a simple enough task. However, there are a number of
+                factors which make the task more complicated than what it may initially seem. Your
+                application has to handle the processing of an extensible markup language with
+                features like entities which require you to not only process the XML document
+                itself, but also the associated DTD or schema. Furthermore, you might want to
+                introduce validation of the received XML document and perhaps error handling. If you
+                write your application for a specific XML document type, you will have to repeat the
+                process for any other document type you want to process. </para>
+            <figure>
+                <title>Applications process XML documents through parsers which implement
+                            either the DOM or SAX API.</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="Parsers/Parsers.gif"/>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+            <para> Parsers offer you a standard interface into XML documents. They sit between your
+                application and the XML document, i.e.  your application consumes the XML document
+                through a parser. A parser offers you </para>
+            <itemizedlist>
+                <listitem>
+                    <para>A standard API for retrieving information from and manipulating XML
+                        documents which shields you from the intrecasies of the XML syntax. </para>
+                </listitem>
+                <listitem>
+                    <para>XML syntax checking and error handling.</para>
+                </listitem>
+            </itemizedlist>
+            <para> There are two standard APIs implemented by parsers, SAX and DOM. These APIs
+                shield developers from parser specifics and hence applications are portable from one
+                SAX parser to another as well as between DOM parsers. </para>
+        </section>
+
+        <section>
+            <title>DOM versus SAX</title>
+            <para> DOM, the Document Object Model is the official W3C API for XML parsers. It reads
+                the entire XML document and constructs a tree containing all elements and attributes
+                as well as their text values as nodes. The current W3C standard is DOM level 2.</para>
+            <para> SAX, the Simple API for XML, was developed by David Megginson. Although SAX is
+                not an official API which is published by an organization like the W3C, it has a
+                very strong support among developers and even large organizations like Sun or IBM.
+                SAX is an event-based API which generates event as it reads the XML document. An
+                event may, for example, notify an application that a particular start or end tag has
+                been encountered. The current version of SAX is SAX2 which can be obtained from
+                <emphasis>www.megginson.com</emphasis>.</para>
+            <para> DOM is more convenient for developers simply because you have the entire tree
+                representing the XML document in memory and you can easily manipulate the tree. So,
+                which API should you use? If you are processing a huge document the computational
+                and memory overheads of this approach may be significant. In this case you might
+                prefer the SAX interface which only keeps a very small amount of information from
+                the XML document in memory at any time.</para>
+        </section>
+
+        <section>
+            <title>What is JAXP</title>
+            <para> JAXP is the Java API for XML. This may sound like yet a third API for XML parsing
+                but it actually only specifies standards for elements which are not covered by the
+                SAX and DOM standards. These are </para>
+            <itemizedlist>
+                <listitem>
+                    <para>Obtaining a parser. </para>
+                </listitem>
+                <listitem>
+                    <para>Obtaining a source for an XML document. </para>
+                </listitem>
+                <listitem>
+                    <para>Supplying the source to the parser for parsing.</para>
+                </listitem>
+            </itemizedlist>
+            <para> The JAXP thus aims to achieve that XML processing code is fully portable between
+                parser implementations.</para>
+            <para> The JAXP can be downloaded from <emphasis>java.sun.com</emphasis>. The JAXP
+                package comes with a reference implementation contained in the
+                <emphasis>com.sun.xml</emphasis> package. Additionally it contains the sub-packages,
+                <emphasis>parser</emphasis> and <emphasis>tree</emphasis>, which implement the SAX
+                and DOM APIs respectively. This concrete reference implementation makes use of
+                XALAN, a SAX parser available from the open-source Apache project.</para>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Introduction to SAX</title>
+        <para> SAX provides an interface facilitating event-driven processing of XML documents. We
+            restrict ourselves here to the SAX2 specifications which is the latest specification and
+            which is now supported by many SAX parsers.</para>
+        <para> From the point of view of a developer of an XML processing application, there are 3
+            main interfaces through which the application will receive events from a SAX parser
+            org.xml.sax.ContentHandler This is the main interface through which applications are
+            notified of start and end of elements, processing instructions, prefix mappings and the
+            document itself. org.xml.sax.DTDHandler If your application should handle notations and
+            unparsed entities, it should implement the <emphasis>DTDHandler</emphasis> interface.
+            org.xml.sax.ErrorHandler which is the interface through which your application is
+            informed of errors and warnings.</para>
+            
+        <section>
+            <title>Content Handlers</title>
+            <para> SAX parsers read an XML document sequentially and, in the case of SAX2 parser,
+                notifies content handlers of the following events void startDocument() notifying the
+                content handler that the start of the document has been reached. void
+                processingInstruction(String target, String data) notifies the content handler of a
+                receipt of a processing instruction. void startPrefixMapping(String prefix, String
+                uri) notifies content handlers that the start of the scope of a prefix-URI mapping
+                has been reached. void startElement(String nsURI, String lName, String qName,
+                Attributes atts) notifies content handlers that the start of an element with
+                specified attributes has been read in. void characters(char[ content, int start, int
+                end)] notifies content handlers that the specified character data has been read in
+                from a value (leaf) node. void ignorableWhiteSpace(char[ ch, int start, int length)]
+                notifies content handlers of ignoble white space within element contents. void
+                skippedEntity() The most common scenario for skipped entities is when a parser reads
+                an XML document with an entity defined in a DTD or schema and when that DTD or
+                schema is not available. void endElement(String nsURI, String lName, String qName)
+                notifies content handlers that the end of an element has been read in. void
+                endPrefixMapping(String prefix, String uri) notifies content handlers that the end
+                of the scope of a prefix-URI mapping has been reached. void endDocument() notifies
+                content handlers that the end of the XML document has been reached.</para>
+            <para> In the above event handler signatures, <emphasis>nsRUI</emphasis> refers to the
+                namespace URI, or the empty string if the element has no Namespace URI or if
+                Namespace processing is not being performed. <emphasis>lName</emphasis> is the local
+                name (without prefix), or the empty string if Namespace processing is not being
+                performed. Finally, <emphasis>qName</emphasis> refers to the qualified name (with
+                prefix), or the empty string if qualified names are not available.</para>
+            <para> The <emphasis>org.xml.sax.ContentHandler</emphasis> interface requires any object
+                which wants to register with a SAX parser to implement the above event handler
+                methods. The object will receive the document in the form of events. Any information
+                which the application may need at some later stage must be saved when it is
+                received, because the parser does not keep the information of previously read nodes.</para>
+        </section>
+
+        <section>
+            <title>A Simple Example: Counting XML Elements</title>
+            <para> In SAX2 it is recommended that one does not interface directly with the pares,
+                but that one attaches an <emphasis>XMLReader</emphasis> to the parser.</para>
+            <para> The following application requests either a validating or a non-validating parser
+                from a parser factory, attaches a reader to it and registers itself as content and
+                error handler with the reader.</para>
+            <para> It instructs the reader to parse the file (which the reader does using the actual
+                SAX parser) and receives events. On element start events we populate a tree map
+                which maps the tag name onto the number of occurrences of that tag. On receiving the
+                document end event we print out the tree map. Parsing errors are reported through a
+                static nested class, <emphasis>MyErrorHandler</emphasis> which implements the
+                <emphasis>ErrorHanlder</emphasis> interface.</para>
+            <para> Here is the complete listing:</para>
+            <programlisting>
+  import  javax.xml.parsers.SAXParserFactory;  import
+                 javax.xml.parsers.SAXParser;    import  org.xml.sax.XMLReader;  import
+                 org.xml.sax.Attributes;  import  org.xml.sax.InputSource;  import
+                 org.xml.sax.ErrorHandler;  import  org.xml.sax.SAXException;  import
+                 org.xml.sax.SAXParseException;  import  org.xml.sax.helpers.DefaultHandler;  
+                 public  class  SAXElementCounter  extends  DefaultHandler  {      public
+                 SAXElementCounter()  {}        public  void  count(String  fileName)  throws
+                 Exception      {          SAXParserFactory  parserFactory  =
+                 SAXParserFactory.newInstance();          parserFactory.setValidating(true);        
+                 SAXParser  saxParser  =  parserFactory.newSAXParser();          XMLReader
+                 xmlReader  =  saxParser.getXMLReader();          xmlReader.setContentHandler(this);
+                         xmlReader.setErrorHandler(new  MyErrorHandler(System.err));          
+                 InputSource  source            =  new  InputSource(new
+                 java.io.File(fileName).toURL().toString());            try          {          
+                xmlReader.parse(source);          }          catch  (SAXException  e)          {    
+                      System.err.println(e.getMessage());              System.exit(1);          }  
+                   }        public  void  startDocument()  {elementCount.clear();}        public
+                 void  startElement(String  uri,  String  localName,  String  qName,  Attributes
+                 attributes)      {            Counter  counter  =
+                 (Counter)elementCount.get(qName);            if  (counter  ==  null)              
+                 elementCount.put(qName,  new  Counter(1));            else              
+                 counter.increment();      }        public  void  endDocument()      {        
+                 System.out.println              (&quot;Reached  end  of  document.  Occurances  per
+                 element  =  &quot;);          java.util.Iterator  iter  =
+                 elementCount.keySet().iterator();          while  (iter.hasNext())          {      
+                       String  name  =  (String)iter.next();              System.out.println(name  +
+                 &quot;  &quot;  +  elementCount.get(name));          }      }        public  static
+                 void  main(String[]  args)  throws  Exception      {          if  (args.length  !=
+                 1)          {              System.out.println(&quot;ERROR  **  Usage:  java
+                 SAXElementCounter  xmlFileName&quot;);              System.exit(0);          }    
+                       new  SAXElementCounter().count(args[0]);      }        private
+                 java.util.TreeMap  elementCount  =  new  java.util.TreeMap();        private
+                 static  class  MyErrorHandler  implements  ErrorHandler      {          
+                 MyErrorHandler(java.io.PrintStream  out)  {this.out  =  out;}              private
+                 String  getParseExceptionInfo(SAXParseException  e)            {              
+                 String  systemId  =  e.getSystemId();                if  (systemId  ==  null)      
+                             systemId  =  &quot;null&quot;;                  return
+                 &quot;URI=&quot;  +  systemId  +  &quot;  Line=&quot;  +  e.getLineNumber()  +    
+                                             &quot;:  &quot;  +  e.getMessage();            }      
+                       public  void  warning(SAXParseException  e)  throws  SAXException          
+                 {                out.println(&quot;Warning:  &quot;  +  getParseExceptionInfo(e));
+                           }              public  void  error(SAXParseException  e)  throws
+                 SAXException            {                throw  new  SAXException(&quot;Error:
+                 &quot;  +  getParseExceptionInfo(e));            }              public  void
+                 fatalError(SAXParseException  e)  throws  SAXException            {              
+                 throw  new  SAXException(&quot;Fatal  Error:  &quot;  +  getParseExceptionInfo(e));
+                           }              private  java.io.PrintStream  out;      }        class
+                 Counter      {            public  Counter()  {this(0);}              public
+                 Counter(int  initialCount)  {count  =  initialCount;}              public  void
+                 increment()  {++count;}              public  int  getValue()  {return  count;}    
+                         public  String  toString(){return  Integer.toString(count);}            
+                 private  int  count;        }  }</programlisting>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Introduction to the Document Object Model (DOM)</title>
+        <para> DOM, the official W3C API for XML, builds an internal model for the XML document
+            which is a tree. In order to constrcut the tree it has to read the XML document
+            sequentially, extracting element, attribute and name space definitions as well as
+            processing instructions. It is quite natural for DOM parser implementations to make use
+            of a SAX parser. Otherwise they would have to perform a lot of the initial sequential
+            processing themselves.</para>
+        <para> Thus, one can see SAX as a more low-level API with DOM being a an API which shields
+            developers from the underlying SAX handling.</para>
+        <para> Tree structures are often processed recursively. This is also true for most DOM
+            processing where the recursion usually evolves around nodes. <emphasis>Node</emphasis>
+            is the central interface in DOM. Querying and manipulation of the tree representing the
+            XML document is done through nodes. In fact, the XML document itself is represented by a
+            single node, the root node, from which processing of the document usually starts.</para>
+            
+        <section>
+            <title>DOM Element Counter</title>
+            <para> We first construct the document tree via DocumentBuilders. The document builder
+                is the actual parser and the resultant tree of nodes represents the parsed XML
+                document. Each node in the tree can represent either an element, an attribute, a
+                text content, an entity reference, a notation, a processing instruction or a
+                comment. The type of node can be queried via the <emphasis>getNodeType()</emphasis> method.</para>
+            <para> A node can also be queried for its name, its value and its owner document.
+                Furthermore, nodes can be queried for their child nodes, their siblings and their
+                parent node. These services provide the navigation functionality in DOM.</para>
+            <para> In the element counter application, we simply as each node whether it is an
+                element or not. If it is, we updae our tree map containing the element counts.
+                Either way we ask the node for its child nodes and perform the same operation
+                recursively for these child nodes.</para>
+            <programlisting>
+  import  javax.xml.parsers.ParserConfigurationException;  import
+                 javax.xml.parsers.DocumentBuilderFactory;  import
+                 javax.xml.parsers.DocumentBuilder;    import  org.xml.sax.SAXException;    import
+                 org.w3c.dom.Document;  import  org.w3c.dom.NodeList;  import  org.w3c.dom.Node;  
+                 public  class  DOMElementCounter  {      public  DOMElementCounter()  {}      
+                 public  Document  createDocument(java.io.File  file)      throws  SAXException,
+                 java.io.IOException,                    ParserConfigurationException      {        
+                 DocumentBuilderFactory  docBuilderFactory              =
+                 DocumentBuilderFactory.newInstance();        
+                 docBuilderFactory.setValidating(true);            DocumentBuilder  docBuilder  =
+                 docBuilderFactory.newDocumentBuilder();          return  docBuilder.parse(file);  
+                   }        public  void  countElements(Node  node,  java.util.TreeMap
+                 elementCount)      {          if  (node.getNodeType()  ==  Node.ELEMENT_NODE)      
+                   {              String  nodeName  =  node.getNodeName();                Counter
+                 counter  =  (Counter)elementCount.get(nodeName);              if  (counter  ==
+                 null)                  elementCount.put(nodeName,  new  Counter(1));            
+                 else                  counter.increment();          }            NodeList
+                 childNodes  =  node.getChildNodes();          if  (childNodes  ==  null)          
+                   return;            for  (int  i=0;  i&lt;childNodes.getLength();  ++i)          
+                   countElements(childNodes.item(i),  elementCount);      }        public  static
+                 void  main(String[]  args)                                                        
+                           throws  java.io.IOException,                                            
+                                                     SAXException,                                  
+                                                               ParserConfigurationException      {  
+                       DOMElementCounter  elementCounter  =  new  DOMElementCounter();          
+                 Node  root              =  elementCounter.createDocument(new
+                 java.io.File(args[0]));            java.util.TreeMap  elementCount  =  new
+                 java.util.TreeMap();            elementCounter.countElements(root,  elementCount);
+                           System.out.println              (&quot;Reached  end  of  document.
+                 Occurances  per  element  =  &quot;);          java.util.Iterator  iter  =
+                 elementCount.keySet().iterator();          while  (iter.hasNext())          {      
+                       String  name  =  (String)iter.next();              System.out.println(name  +
+                 &quot;  &quot;  +  elementCount.get(name));          }      }        class  Counter
+                     {            public  Counter()  {this(0);}              public  Counter(int
+                 initialCount)  {count  =  initialCount;}              public  void  increment()
+                 {++count;}              public  int  getValue()  {return  count;}            
+                 public  String  toString(){return  Integer.toString(count);}              private
+                 int  count;        }  }</programlisting>
+        </section>
+
+        <section>
+            <title>Displaying an XML Document on a Tree</title>
+            <para> XML syntax requires a pure tree structure for the nodes. It is thus only natural
+                that one can display an XML document on a tree. The tree does not actually contain
+                data - it only displays data contained in the tree constructed by the DOM.</para>
+        </section>
+
+        <section>
+            <title>A simple tree using the default data model</title>
+            <para> Let us first define a simple XML browser which uses a user-defined tree node:</para>
+            
+            <section>
+                <title>XMLNode</title>
+                <para> Below is the listing of an xml node which recursively constructs the entire
+                    XML tree using the XML Document Object Model (DOM):</para>
+                <programlisting>
+  import  java.util.*;    import  javax.swing.tree.TreeNode;  
+                     import  org.w3c.dom.Node;  import  org.w3c.dom.NodeList;  import
+                     org.w3c.dom.NamedNodeMap;    import  java.io.*;    public  class  XMLNode
+                     implements  TreeNode  {      public  XMLNode(Node  docNode,  XMLNode
+                     parentNode)      {          this.docNode  =  docNode;          this.parentNode
+                     =  parentNode;            buildSubTree();      }        private  void
+                     buildSubTree()      {          childNodesMap.clear();            NamedNodeMap
+                     attributesMap  =  docNode.getAttributes();          if  (attributesMap  !=
+                     null)          {              for  (int  i=0;  i&lt;attributesMap.getLength();
+                     ++i)              {                  Node  attributeNode  =
+                     attributesMap.item(i);                  XMLNode  treeNode  =  new
+                     XMLNode(attributeNode,  this);                  childNodesMap.put(treeNode,
+                     attributeNode);              }          }            NodeList  docChildNodes  =
+                     docNode.getChildNodes();          if  (docChildNodes  !=  null)          {    
+                             for  (int  i=0;  i&lt;docChildNodes.getLength();  ++i)              {  
+                                   Node  childNode  =  docChildNodes.item(i);                  int
+                     nodeType  =  childNode.getNodeType();                    String  value  =
+                     childNode.getNodeValue();                  if  (value  !=  null)              
+                           value  =  value.trim();                  if  ((nodeType  !=
+                     Node.TEXT_NODE)  ||  (value.length()  !=  0))                  {              
+                           XMLNode  treeNode  =  new  XMLNode(childNode,  this);                    
+                     childNodesMap.put(treeNode,  childNode);                  }              }    
+                         }      }        public  Enumeration  children()      {          return  new
+                     Vector(childNodesMap.keySet()).elements();      }        public  boolean
+                     getAllowsChildren()      {          return  (docNode.getNodeType()  ==
+                     Node.ELEMENT_NODE);      }        public  TreeNode  getChildAt(int  childIndex)
+                         {          if  (childIndex  >=  childNodesMap.size());            Iterator
+                     iter  =  childNodesMap.keySet().iterator();          for  (int  i=0;
+                     i&lt;childIndex;  ++i)              iter.next();          return
+                     (XMLNode)iter.next();      }        public  int  getChildCount()      {        
+                     return  childNodesMap.size();      }        public  int  getIndex(TreeNode
+                     treeNode)      {          Iterator  iter  =  childNodesMap.keySet().iterator();
+                             int  index  =  0;          while  (iter.hasNext())          {          
+                       XMLNode  node  =  (XMLNode)iter.next();              if  (node  ==  treeNode)
+                                     return  index;              ++index;          }          
+                     throw  new  IllegalArgumentException(&quot;No  such  child  node.&quot;);    
+                     }        public  TreeNode  getParent()      {          return  parentNode;    
+                     }        public  boolean  isLeaf()      {          return  (getChildCount()  ==
+                     0);      }        public  void  setDocNode(Node  docNode)      {        
+                     this.docNode  =  docNode;      }        public  Node  getDocNode()      {      
+                       return  docNode;      }        public  void  printTree(PrintStream  out)    
+                     {          out.println(&quot;Node  name  =  &quot;  +  docNode.getNodeName());
+                             out.println(&quot;Node  type  =  &quot;  +
+                     nodeType(docNode.getNodeType()));          out.println(&quot;Node  value  =
+                     &quot;  +  docNode.getNodeValue());          out.println();          Iterator
+                     iter  =  childNodesMap.keySet().iterator();          while  (iter.hasNext())  
+                               ((XMLNode)iter.next()).printTree(out);      }        public  String
+                     toString()      {          int  nodeType  =  docNode.getNodeType();          
+                     switch  (nodeType)          {              case  Node.ELEMENT_NODE:            
+                                   return  nodeType(nodeType)  +  &quot;:  &quot;  +
+                     docNode.getNodeName();                case  Node.ATTRIBUTE_NODE:              
+                                 return  nodeType(nodeType)  +  &quot;:  &quot;  +
+                     docNode.getNodeName()                                                          
+                                                       +  &quot;  =  &quot;  +
+                     docNode.getNodeValue();                case  Node.TEXT_NODE:                  
+                             return  nodeType(nodeType)  +  &quot;:  &quot;  +
+                     docNode.getNodeValue();                default:                          
+                     return  nodeType(nodeType)  +  &quot;:  &quot;  +  docNode.getNodeName()      
+                                                                                                   
+                           +  &quot;  =  &quot;  +  docNode.getNodeValue();        }      }      
+                     public  static  String  nodeType(int  type)      {          switch  (type)    
+                         {              case  Node.ATTRIBUTE_NODE:  return  &quot;attribute&quot;;  
+                               case  Node.CDATA_SECTION_NODE:  return  &quot;CData  section&quot;;  
+                               case  Node.COMMENT_NODE:  return  &quot;comment&quot;;            
+                     case  Node.DOCUMENT_FRAGMENT_NODE:  return  &quot;document  fragment&quot;;    
+                             case  Node.DOCUMENT_NODE:  return  &quot;document  node&quot;;        
+                         case  Node.DOCUMENT_TYPE_NODE:  return  &quot;document  type&quot;;        
+                         case  Node.ELEMENT_NODE:  return  &quot;element&quot;;              case
+                     Node.ENTITY_NODE:  return  &quot;entity&quot;;              case
+                     Node.ENTITY_REFERENCE_NODE:  return  &quot;entity  reference&quot;;            
+                     case  Node.NOTATION_NODE:  return  &quot;notation&quot;;              case
+                     Node.PROCESSING_INSTRUCTION_NODE:  return  &quot;processing  instruction&quot;;
+                                 case  Node.TEXT_NODE:  return  &quot;text&quot;;            
+                     default:  return  &quot;unknown  type&quot;;          }      }        private
+                     Node  docNode;      private  XMLNode  parentNode;      private  Map
+                     childNodesMap  =  new  HashMap();  }</programlisting>
+            </section>
+
+            <section>
+                <title>XML Editor</title>
+                <para> Below is the application which creates the tree:</para>
+                <programlisting>
+  import  javax.xml.parsers.ParserConfigurationException;  import
+                     javax.xml.parsers.DocumentBuilderFactory;  import
+                     javax.xml.parsers.DocumentBuilder;    import  org.xml.sax.SAXException;  
+                     import  org.w3c.dom.Document;  import  org.w3c.dom.NodeList;  import
+                     org.w3c.dom.Node;    import  java.io.*;    import  javax.swing.*;  import
+                     javax.swing.tree.*;  import  javax.swing.event.*;      public  class  XMLEditor
+                     extends  JPanel  {      public  XMLEditor(Node  docNode)      {        
+                     XMLNode  xmlNode  =  new  XMLNode(docNode,  null);            TreeModel
+                     treeModel  =  new  DefaultTreeModel(xmlNode);          JTree  tree  =  new
+                     JTree(treeModel);            class  SelectionListener  implements
+                     TreeSelectionListener          {              public  SelectionListener(JTree
+                     tree)              {                  this.tree  =  tree;              }      
+                             public  void  valueChanged(TreeSelectionEvent  e)              {      
+                               XMLNode  node  =  (XMLNode)tree.getLastSelectedPathComponent();      
+                                 if  (node  ==  null)  return;                    if
+                     (node.isLeaf())                    
+                     JOptionPane.showMessageDialog(XMLEditor.this,                        &quot;leaf
+                     node&quot;);                  else                    
+                     JOptionPane.showMessageDialog                          (XMLEditor.this,  new
+                     JScrollPane(new  XMLEditor(node.getDocNode())),                          
+                     &quot;Sub-Tree&quot;,  JOptionPane.PLAIN_MESSAGE);              }              
+                     private  JTree  tree;          }            tree.addTreeSelectionListener(new
+                     SelectionListener(tree));            tree.setShowsRootHandles(true);          
+                     add(tree);      }        public  static  void  main(String[]  args)  throws
+                     Exception      {          TestXMLNode  test  =  new  TestXMLNode();          
+                     String  fileName  =  &quot;courses.xml&quot;;          if  (args.length  !=  0)
+                                 fileName  =  args[0];            Node  root  =
+                     test.createDocument(new  File(fileName));            XMLEditor  editor  =  new
+                     XMLEditor(root);            JFrame  frame  =  new  JFrame(&quot;XML
+                     Editor&quot;);          JScrollPane  scrollPane  =  new  JScrollPane(editor,
+                     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,                                        
+                                                                     
+                     JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);        
+                     editor.setBorder(BorderFactory.createTitledBorder(&quot;XML  Document
+                     Tree&quot;));          frame.getContentPane().add(scrollPane);        
+                     frame.pack();          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+                           frame.show();      }        public  static  Document
+                     createDocument(java.io.File  file)                                            
+                                 throws  SAXException,  java.io.IOException,                  
+                     ParserConfigurationException      {          DocumentBuilderFactory
+                     docBuilderFactory              =  DocumentBuilderFactory.newInstance();        
+                     docBuilderFactory.setValidating(false);            DocumentBuilder  docBuilder
+                     =  docBuilderFactory.newDocumentBuilder();          return
+                     docBuilder.parse(file);      }  }</programlisting>
+            </section>
+
+        </section>
+
+        <section>
+            <title>Using Tree Models and Cell Renderers</title>
+            
+            <section>
+                <title>Tree Models</title>
+                <programlisting>
+  import  java.util.*;    import  javax.swing.tree.*;  import
+                     javax.swing.event.*;    import  org.w3c.dom.Node;  import
+                     org.w3c.dom.NodeList;  import  org.w3c.dom.NamedNodeMap;    import  java.io.*;
+                       public  class  XMLTreeModel  implements  TreeModel  {      public
+                     XMLTreeModel(Node  root)      {          this.root  =  root;      }      
+                     public  void  addTreeModelListener(TreeModelListener  listener)      {        
+                     listeners.add(listener);      }        public  Object  getChild(Object  parent,
+                     int  index)      {          Node  node  =  (Node)parent;          
+                     NamedNodeMap  attributes  =  node.getAttributes();          if  (attributes  !=
+                     null)          {              if  (index  &lt;  attributes.getLength())        
+                             return  attributes.item(index);                index  -=
+                     attributes.getLength();          }            return
+                     node.getChildNodes().item(index);      }        public  int
+                     getChildCount(Object  parent)      {          Node  node  =  (Node)parent;    
+                           int  count  =  0;          if  (node.getAttributes()  !=  null)          
+                       count  +=  node.getAttributes().getLength();          if
+                     (node.getChildNodes()  !=  null)              count  +=
+                     node.getChildNodes().getLength();            return  count;      }      
+                     public  int  getIndexOfChild(Object  parent,  Object  child)      {        
+                     Node  node  =  (Node)parent;            NamedNodeMap  attributesMap  =
+                     node.getAttributes();          if  (attributesMap  !=  null)              for
+                     (int  i=0;  i&lt;attributesMap.getLength();  ++i)                  if
+                     (attributesMap.item(i)  ==  child)                      return  i;          
+                     NodeList  children  =  node.getChildNodes();          if  (children  !=  null)
+                                 for  (int  i=0;  i&lt;children.getLength();  ++i)                
+                     if  (children.item(i)  ==  child)                      return
+                     attributesMap.getLength()  +  i;            return  -1;      }        public
+                     Object  getRoot()      {          return  root;      }        public  boolean
+                     isLeaf(Object  value)      {          Node  node  =  (Node)value;        
+                     return  node.hasChildNodes()  ==  false;      }        public  void
+                     removeTreeModelListener(TreeModelListener  listener)      {        
+                     listeners.remove(listener);      }        public  void
+                     valueForPathChanged(TreePath  path,  Object  newValue)    {}        private
+                     Node  root;      private  Set  listeners  =  new  HashSet();  }</programlisting>
+            </section>
+
+            <section>
+                <title>Cell Renderers</title>
+                <programlisting>
+  import  org.w3c.dom.Node;    import  java.awt.*;  import
+                     javax.swing.*;  import  javax.swing.tree.*;  import  javax.swing.event.*;  
+                     public  class  XMLNodeRenderer  implements  TreeCellRenderer  {        public
+                     Component  getTreeCellRendererComponent                (JTree  tree,  Object
+                     value,  boolean  selected,  boolean  expanded,                  boolean  leaf,
+                     int  row,  boolean  hasFocus)        {            Node  node  =  (Node)value;  
+                             String  text  =  &quot;&quot;;            if  (node.getNodeType()  ==
+                     Node.ATTRIBUTE_NODE)                text  +=  &quot;attribute  &quot;;        
+                       if  (node.getNodeName()  !=  null)                text  +=
+                     node.getNodeName().trim()  +  &quot;:  &quot;;            if
+                     (node.getNodeValue()  !=  null)                  text  +=
+                     node.getNodeValue().trim();                ImageIcon  icon  =  new
+                     ImageIcon(&quot;litebulb.gif&quot;);              switch  (node.getNodeType())
+                                 {                  case  Node.ATTRIBUTE_NODE:                    
+                     icon  =  new  ImageIcon(&quot;animbullet1b.gif&quot;);  break;                
+                     case  Node.TEXT_NODE:                      icon  =  new
+                     ImageIcon(&quot;speaker2.gif&quot;);  break;              }              return
+                     new  JLabel(text,  icon,  JLabel.LEFT);        }  }</programlisting>
+            </section>
+
+            <section>
+                <title>XML Editor</title>
+                <para> Below is the application which creates the tree:</para>
+                <programlisting>
+  import  javax.xml.parsers.ParserConfigurationException;  import
+                     javax.xml.parsers.DocumentBuilderFactory;  import
+                     javax.xml.parsers.DocumentBuilder;    import  org.xml.sax.SAXException;  
+                     import  org.w3c.dom.Document;  import  org.w3c.dom.NodeList;  import
+                     org.w3c.dom.Node;    import  java.io.*;    import  java.awt.event.*;    import
+                     javax.swing.*;  import  javax.swing.tree.*;  import  javax.swing.event.*;    
+                     public  class  XMLEditorTreeModel  extends  JPanel  {      public
+                     XMLEditorTreeModel(Node  docNode)      {          TreeModel  treeModel  =  new
+                     XMLTreeModel(docNode);          JTree  tree  =  new  JTree(treeModel);        
+                     tree.setCellRenderer(new  XMLNodeRenderer());            class
+                     SelectionListener  implements  TreeSelectionListener          {            
+                     public  SelectionListener(JTree  tree)              {                
+                     this.tree  =  tree;              }                public  void
+                     valueChanged(TreeSelectionEvent  e)              {                  Node  node
+                     =  (Node)tree.getLastSelectedPathComponent();                    if  (node  ==
+                     null)  return;                    if  (node.hasChildNodes())                  
+                       JOptionPane.showMessageDialog                        
+                     (XMLEditorTreeModel.this,  new  JScrollPane(new  XMLEditorTreeModel(node)),    
+                                           &quot;Sub-Tree&quot;,  JOptionPane.PLAIN_MESSAGE);      
+                               else                      if  (node.getNodeType()  ==
+                     Node.TEXT_NODE)                      {                          String
+                     inputValue                              =
+                     JOptionPane.showInputDialog(XMLEditorTreeModel.this,                          
+                                                                                   &quot;Enter  new
+                     text  value:  &quot;,                                                          
+                                                   node.getNodeValue());                        
+                     node.setNodeValue(inputValue);                      }              }          
+                         private  JTree  tree;          }          
+                     tree.addTreeSelectionListener(new  SelectionListener(tree));          
+                     tree.setShowsRootHandles(true);            add(tree);      }        public
+                     static  void  main(String[]  args)  throws  Exception      {        
+                     TestXMLNode  test  =  new  TestXMLNode();            String  fileName  =
+                     &quot;courses.xml&quot;;          if  (args.length  !=  0)            
+                     fileName  =  args[0];            root  =  test.createDocument(new
+                     File(fileName));            XMLEditorTreeModel  editor  =  new
+                     XMLEditorTreeModel(root);            frame  =  new  JFrame(&quot;XML  Editor
+                     using  TreeModel&quot;);          JScrollPane  scrollPane  =  new
+                     JScrollPane(editor,  JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,                    
+                                                                                         
+                     JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);        
+                     editor.setBorder(BorderFactory.createTitledBorder(&quot;XML  Document
+                     Tree&quot;));          frame.getContentPane().add(scrollPane);        
+                     frame.pack();            frame.addWindowListener(new  WindowAdapter()          
+                       {                  public  void  windowClosing(WindowEvent  event)          
+                           {                      int  option  =
+                     JOptionPane.showConfirmDialog(frame,                                
+                     &quot;save  document&quot;,  &quot;Closing  XML  Editor&quot;,                
+                                     JOptionPane.YES_NO_OPTION,  JOptionPane.INFORMATION_MESSAGE);  
+                                         System.exit(0);                  }              });        
+                       frame.show();      }        public  static  Document
+                     createDocument(java.io.File  file)                                            
+                                 throws  SAXException,  java.io.IOException,                  
+                     ParserConfigurationException      {          DocumentBuilderFactory
+                     docBuilderFactory              =  DocumentBuilderFactory.newInstance();        
+                     docBuilderFactory.setValidating(false);            DocumentBuilder  docBuilder
+                     =  docBuilderFactory.newDocumentBuilder();          return
+                     docBuilder.parse(file);      }        private  static  JFrame  frame;    
+                     private  static  Node  root;  }</programlisting>
+            </section>
+
+        </section>
+
+    </section>
+
+</chapter>

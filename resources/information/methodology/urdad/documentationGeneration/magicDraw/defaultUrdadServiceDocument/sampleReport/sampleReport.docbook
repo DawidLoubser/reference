@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-06-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Use case: processClaim</title>
+    <subtitle>URDAD based Analysis and Design, February 21, 2009</subtitle>
+    
+<section>
+    <title>Introduction</title>
+    <para>
+        This is an URDAD complient document for the requirements analysis and business process design
+        of the processClaim use case. The document shows the requirements and design for this
+        level of granularity. The details of the services used within the business process are shown in
+        the analysis and design of the respective use cases for these lower level services.
+    </para>
+    <para>
+          This use case is offered to policy holders enabling them to request the processing of a claim against a policy.
+          The fully qualified name of the use case is insurer::claims::Claims::processClaim.
+    </para>
+</section>
+
+<section>
+    <title>Analysis</title>
+    <para>
+        The analysis section specifies the stakeholder requirements, the user work flow,
+        the data structures for the exchanged value objects and the service contract with 
+        the pre- and post-conditions
+        and quality requirements. It contains the requirements specification for the current level
+        of granularity.
+    </para>
+    
+        
+<!--  FUNCTIONAL REQUIREMENTS SPECIFICATION -->
+<!-- ********************************************* -->        
+        
+<section>
+    <title>Functional requirements: processClaim</title>
+                <para>
+                The functional requirements diagram shown in
+                <xref linkend="insurer.claims.Claims.processClaim.functionalRequirements"/>
+                shows the processClaim use case, the stake holders who have an interest in that
+                use case and their functional requirements.
+        </para>
+                            
+        <figure xml:id="insurer.claims.Claims.processClaim.functionalRequirements">
+            <title>The stakeholder requirements diagram for the processClaim use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="file:/home/fritz/temp/urdad/processClaim_files/_15_5_6680230_1224165748325_324456_607.jpg"/>
+            </imageobject></mediaobject>
+        </figure>
+    
+        
+<section>
+    <title>The user role</title>
+    <para>
+        The user role is the role played by those objects which make use of the use case. It is represented by an interface/contract
+        which accumulates the contractual obligations of the user itself.
+    </para>
+    <para>
+                <itemizedlist>
+                                                              
+                              <listitem><formalpara>
+                  <title>PolicyHolder</title>
+                  <para>
+                      Objects who play the role of a PolicyHolder make use of the processClaim use case.
+                                                                      The role played by a party which owns an insurance policy.
+                                        </para>
+                </formalpara></listitem>
+                                </itemizedlist>
+          </para>
+</section>
+        <section>
+    <title>Stake holders</title>
+    <para>
+        The following stake holders have an interest in the processClaim use case:
+        <itemizedlist>
+                                    
+                                    <listitem><formalpara>
+                <title>InsuranceRegulator</title>
+                <para>
+                    The role played by a party which regulates the insurance sector.
+                </para>
+            </formalpara></listitem>
+                        
+                                    <listitem><formalpara>
+                <title>PolicyHolder</title>
+                <para>
+                    The role played by a party which owns an insurance policy.
+                </para>
+            </formalpara></listitem>
+                        
+                                    <listitem><formalpara>
+                <title>Shareholder</title>
+                <para>
+                    The role played by an investor in the insurance company.
+                </para>
+            </formalpara></listitem>
+                    </itemizedlist>
+    </para>
+</section>
+    
+                                               <section>
+    <title>Mandatory functional requirements</title>
+    <para>
+        The following functional requirements need to be addressed for any success scenario of the use case, 
+        <abbrev>i.e.</abbrev> for any scenario where the user obtains the value from the use case.
+        <itemizedlist>
+                        <listitem><formalpara>
+                <title>acceptSettlementOffer</title>
+                <para>
+                    Accept the settlement offer in a legally binding way.
+                                                            This is required by
+                    <itemizedlist>
+                                                <listitem><para>Shareholder</para></listitem>
+                                            </itemizedlist>
+                                    </para>
+            </formalpara></listitem>
+                        <listitem><formalpara>
+                <title>provideSettlementOffer</title>
+                <para>
+                    Provide a settlement offer for a claim.
+                                                            This is required by
+                    <itemizedlist>
+                                                <listitem><para>InsuranceRegulator</para></listitem>
+                                                <listitem><para>PolicyHolder</para></listitem>
+                                            </itemizedlist>
+                                    </para>
+            </formalpara></listitem>
+                        <listitem><formalpara>
+                <title>settleClaim</title>
+                <para>
+                    Perform any financial and other transactions required to settle a claim according to a provided settlement offer.
+                                                            This is required by
+                    <itemizedlist>
+                                                <listitem><para>PolicyHolder</para></listitem>
+                                            </itemizedlist>
+                                    </para>
+            </formalpara></listitem>
+                        <listitem><formalpara>
+                <title>providePolicyStatus</title>
+                <para>
+                    Determine and provide the current state of a policy.
+                                                            This is required by
+                    <itemizedlist>
+                                                <listitem><para>Shareholder</para></listitem>
+                                            </itemizedlist>
+                                    </para>
+            </formalpara></listitem>
+                        <listitem><formalpara>
+                <title>update claims history</title>
+                <para>
+                    The claims history must be updated with any settled claim.
+                                                            This is required by
+                    <itemizedlist>
+                                                <listitem><para>Shareholder</para></listitem>
+                                            </itemizedlist>
+                                    </para>
+            </formalpara></listitem>
+                        <listitem><formalpara>
+                <title>recuperateLosses</title>
+                <para>
+                    Perform the legal processes against accountable parties which recuperate the losses or part thereof incured due to an insurance claim.
+                                                            <note>
+                        <title>ERROR: Missing stakeholder specification</title>
+                        <para>
+                            URDAD requires that each functional requirement is linked to the stakeholder(s) who require it via a requires
+                            relationship. The recuperateLosses requirement is not linked to a stakeholder via a requires relationship.
+                        </para>
+                    </note>
+                                    </para>
+            </formalpara></listitem>
+                    </itemizedlist>
+    </para>
+</section>
+                
+                        
+                           <section>
+    <title>Conditional functional requirements</title>
+    <para>
+        The following functional requirements need to be addressed only under certain conditions:
+        <itemizedlist>
+                        <listitem><formalpara>
+                <title>performFraudInvestigation</title>
+                <para>
+                    Perform a routine fraud investigation in order to determine whether there is a reasonable likelyhood of fraud.
+                    This functional requirement needs to be addressed if
+                                                            [settlementAmount > fraudInvestigationThreshold].
+                                                                                                    This is required by
+                    <itemizedlist>
+                                                <listitem><para>Shareholder</para></listitem>
+                                            </itemizedlist>
+                                    </para>
+            </formalpara></listitem>
+                    </itemizedlist>
+    </para>
+</section>
+                        </section>
+   
+<!--  USER WORKFLOW SPECIFICATION -->
+<!-- ********************************* -->        
+        
+    <section>
+        <title>User work flow: processClaim</title>
+        <para>
+            The user work flow diagram shown in 
+            <xref linkend="insurer.claims.Claims.processClaim.userWorkflow.userWorkflow"/>
+            specifies how users interact with the service provider in the context of
+            making use of the processClaim use case. It shows the messages exchanged
+            in the various scenarios.
+        </para>
+                            <para>
+                Policy holders request the processing of a claim by submitting the claim to the insurer. If the policy against which the claim is made is inactive, the policy holder is informed of this and the claims processing is aborted. Otherwise the insurer does some pre-processing of the claim resulting in a settlement offer which the policy holder is requested to accept. If the policy holder accepts the settlement offer, the insurer completes the processing of the claim and provides a claim settlement report to the policy holder. Otherwise the insurer confirms with the policy holder that the settlement offer was rejected. 
+            </para>
+        
+        <figure xml:id="insurer.claims.Claims.processClaim.userWorkflow.userWorkflow">
+            <title>The user work flow for the processClaim use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="file:/home/fritz/temp/urdad/processClaim_files/_15_5_6680230_1224176134411_816955_1173.jpg"/>
+            </imageobject></mediaobject>
+        </figure>
+  
+        <section>
+    <title>Service request specifications</title>
+    <para>
+        This section specifies the services requested in the user work flow including
+        the data structures for the inputs and outputs (<abbrev>i.e.</abbrev>
+        requests and responses) for each service.
+    </para>
+
+        
+        <section>
+    <title>Service: acceptSettlementOffer</title>
+    <para>
+                        Policy holders need to accept settlement offers before claims are settled. This is the service through which a policy holder is requested to accept a settlement offer.
+            </para>
+    
+        
+    <section>
+        <title>Input (request object): SettlementOffer</title>
+        <para>
+            The request object for the acceptSettlementOffer service is a SettlementOffer. It contains the information
+            which must be provided with the service request.
+        </para>
+                        
+                
+                    <note>
+                <title>ERROR: missing data structure specification</title>
+                <para>
+                    The data structure requirements for each exchanged value object needs to be specified. The data structure of 
+                    SettlementOffer has not been specified.
+                </para>
+            </note>
+                
+    </section>
+      
+        <section>
+        <title>Output (response object): SettlementOfferAcceptance</title>
+        <para>
+            
+        </para>
+        
+               
+                    <note>
+                <title>ERROR: missing data structure specification</title>
+                <para>
+                    The data structure requirements for each exchanged value object needs to be specified. The data structure of 
+                    SettlementOfferAcceptance has not been specified.
+                </para>
+            </note>
+             </section>
+     
+</section>      
+        
+        <section>
+    <title>Service: processClaim</title>
+    <para>
+                        This is the service for processing a claim against an insurance policy.
+            </para>
+    
+        
+    <section>
+        <title>Input (request object): Claim</title>
+        <para>
+            The request object for the processClaim service is a Claim. It contains the information
+            which must be provided with the service request.
+        </para>
+                            <para>
+                The claim contains information required for the processing of a claim including information about the claimant, the policy against which the claims is made, the claim items as well as any supporting information.
+            </para>
+                
+                
+                                
+            <figure xml:id="insurer.claims.Claim">
+                <title>Data structure (class) diagram for Claim</title>
+                <mediaobject><imageobject>
+                    <imagedata contentwidth="150mm" scalefit="1" fileref="file:/home/fritz/temp/urdad/processClaim_files/_15_5_6680230_1227274375346_798359_2497.jpg"/>
+                </imageobject></mediaobject>
+            </figure>   
+                
+    </section>
+      
+        <section>
+        <title>Output (response object): ClaimSettlementReport</title>
+        <para>
+            The claim settlement report contains information of how the settlement amounts for each item as well as potentially information pertaining to the calcualtion of the settlement amount and information on how the settlement was made, e.g. information about the financial transaction for the settlement.
+        </para>
+        
+               
+                                  
+            <figure xml:id="insurer.claims.ClaimSettlementReport">
+                <title>Data structure (class) diagram for ClaimSettlementReport</title>
+                <mediaobject><imageobject>
+                    <imagedata contentwidth="150mm" scalefit="1" fileref="file:/home/fritz/temp/urdad/processClaim_files/_15_5_6680230_1224221975155_822629_5125.jpg"/>
+                </imageobject></mediaobject>
+            </figure>     
+             </section>
+     
+</section>      
+          
+</section> 
+    </section>     
+    
+<!-- SERVICE CONTRACT SPECIFICATION -->
+<!-- *********************************** -->    
+    
+
+    <section>
+        <title>Service contract: processClaim</title>
+        <para>
+            The service contract specification diagram shown in 
+            <xref linkend="insurer.claims.Claims.processClaim.servicesContract"/>
+            specifies the contract (interface) name, the service with the request and response objects, the pre- and post-conditions
+            and the quality requirements for the service.
+        </para>
+        <para>
+            The pre-conditions are those conditions under which the service may be refused without being in breach of services contract.
+            The post-conditions are those conditions which must hold true once the service has been rendered.
+            The quality requirements are the non-functional requirements.
+        </para>
+    
+                            <para>
+                The process claim service receives as input a Claim and returns, upon successful completion, a claim settlement report. The claim processing is aborted if either the policy is not active or the policy holder does not accept the settlement offer. Otherwise the claim  processing is completed. On completion of the claims processing, the policy holder will have accepted the settlement offer, the claim will have been settled and the loss recuperation process will have been started.
+            </para>
+            
+        <figure xml:id="insurer.claims.Claims.processClaim.servicesContract">
+            <title>The service contract for the processClaim use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="file:/home/fritz/temp/urdad/processClaim_files/_15_5_6680230_1227620640171_503043_3997.jpg"/>
+            </imageobject></mediaobject>
+        </figure>
+        
+        
+        
+    </section>
+
+</section>
+
+<section>
+    <title>Technology neutral process design</title>
+    <para>
+        This section specifies the technology neutral design realizing the use case requirements. In particular, it specifies which functional requirement
+        is assigned to which services contract, how the business process is assembled from these services and the collaboration context containing
+        the services required from the various service providers together with the inputs and outputs for each service and the message paths to the
+        service providers.
+    </para>
+
+    <!-- RESPONSIBILITY ALLOCATION -->
+<!-- ***************************** -->
+
+
+    <section>
+        <title>Responsibility identification and allocation: processClaim</title>
+        
+        <para>
+            <xref linkend="insurer.claims.Claims.processClaim.responsibilityAllocation"/> shows
+            the grouping of functional requirements into responsibility domains. Each responsibility domain
+            is assigned to a separate services contract.
+        </para>
+                        <para>
+            The responsibility of settling the claim is assigned to Finance. The claims process is managed by  Policies is responsible for providing a settlement offer for the claim and for providing the status of a policy. The policy holder is required to accept the settlement  offer while legal services is responsible for recuperating losses and performing fraud investigations.
+        </para>
+                
+        <figure xml:id="insurer.claims.Claims.processClaim.responsibilityAllocation">
+            <title>The responsibility allocation diagram for the processClaim use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="file:/home/fritz/temp/urdad/processClaim_files/_15_5_6680230_1224187678004_354640_1922.jpg"/>
+            </imageobject></mediaobject>
+        </figure>
+
+        
+<section>
+    <title>Controller</title>
+    <para>
+        The controller takes ownership of the business process and manages the business process for the use case.
+        The controller is responsible for assembling the business process across lower level services sourced from
+        service providers realizing lower level services contracts. All work flow decisions and control logic are
+        executed by the controller. As such the controller also decouples the lower level service providers from
+        one another, <abbrev>i.e.</abbrev> the lower level service providers are have know knowledge of either
+        the business process within which the services are used or any other service providers participating in the
+        business process.
+    </para>   
+    
+            <para>
+            <itemizedlist>
+                                    <listitem><para>
+                            The controller specifying the business process for the processClaim is 
+                            class com.nomagic.uml2.impl.magicdraw.classes.mdkernel.PackageImplgetName().
+                            It realizes the use case via the processClaim service.
+                    </para></listitem>    
+                              </itemizedlist>
+        </para>
+   </section>            
+    
+        
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+
+<section>
+    <title>Services contracts for the required responsibility domains</title>
+    <para>
+                    The functional requirements for the processClaim have been allocated to the following responsibility domains:
+            <itemizedlist>
+                                    <listitem><formalpara>
+                        <title>Finance</title>
+                        <para>
+                                                            Provide financal services.
+                                                        The following functional requirements have been assigned to the Finance services contract:
+                            <itemizedlist>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <listitem><formalpara>
+                                              <title>settleClaim</title>
+                                              <para>
+                                                  Perform any financial and other transactions required to settle a claim according to a provided settlement offer.
+                                              </para>
+                                          </formalpara></listitem>    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         </itemizedlist>
+                        </para>
+                    </formalpara></listitem>
+                                    <listitem><formalpara>
+                        <title>Policies</title>
+                        <para>
+                                                            Manage policies.
+                                                        The following functional requirements have been assigned to the Policies services contract:
+                            <itemizedlist>
+                                                                                                                                                                                    <listitem><formalpara>
+                                              <title>provideSettlementOffer</title>
+                                              <para>
+                                                  Provide a settlement offer for a claim.
+                                              </para>
+                                          </formalpara></listitem>    
+                                                                                                                                                         <listitem><formalpara>
+                                              <title>provideSettlementOffer</title>
+                                              <para>
+                                                  Provide a settlement offer for a claim.
+                                              </para>
+                                          </formalpara></listitem>    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <listitem><formalpara>
+                                              <title>providePolicyStatus</title>
+                                              <para>
+                                                  Determine and provide the current state of a policy.
+                                              </para>
+                                          </formalpara></listitem>    
+                                                                                                                                                                                                                                                                                                                                                                                                                                          <listitem><formalpara>
+                                              <title>update claims history</title>
+                                              <para>
+                                                  The claims history must be updated with any settled claim.
+                                              </para>
+                                          </formalpara></listitem>    
+                                                                                                                                     </itemizedlist>
+                        </para>
+                    </formalpara></listitem>
+                                    <listitem><formalpara>
+                        <title>PolicyHolder</title>
+                        <para>
+                                                            The role played by a party which owns an insurance policy.
+                                                        The following functional requirements have been assigned to the PolicyHolder services contract:
+                            <itemizedlist>
+                                                                                                                                                                                                                                                                                                                                                                                                                                          <listitem><formalpara>
+                                              <title>acceptSettlementOffer</title>
+                                              <para>
+                                                  Accept the settlement offer in a legally binding way.
+                                              </para>
+                                          </formalpara></listitem>    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </itemizedlist>
+                        </para>
+                    </formalpara></listitem>
+                                    <listitem><formalpara>
+                        <title>Legal</title>
+                        <para>
+                                                            Provide legal services.
+                                                        The following functional requirements have been assigned to the Legal services contract:
+                            <itemizedlist>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <listitem><formalpara>
+                                              <title>performFraudInvestigation</title>
+                                              <para>
+                                                  Perform a routine fraud investigation in order to determine whether there is a reasonable likelyhood of fraud.
+                                              </para>
+                                          </formalpara></listitem>    
+                                                                                                                                                                                                                                                                                                                                                                                                                                          <listitem><formalpara>
+                                              <title>recuperateLosses</title>
+                                              <para>
+                                                  Perform the legal processes against accountable parties which recuperate the losses or part thereof incured due to an insurance claim.
+                                              </para>
+                                          </formalpara></listitem>    
+                                                                                                                                                                                                                                                                                                                  </itemizedlist>
+                        </para>
+                    </formalpara></listitem>
+                            </itemizedlist>
+            </para>
+</section>
+
+
+    </section>
+        
+    <!-- BUSINESS PROCESS SPECIFICATION -->
+<!-- ********************************** -->        
+
+
+
+
+
+    <section>
+        <title>Process specification: processClaim</title>
+        <para>
+            <xref linkend="insurer.claims.Claims.processClaim.businessProcess.businessProcess"/> shows
+            how the processClaim service is assembled from services sourced from the service providers to whom the
+            functional requirements have been assigned.
+        </para>            
+                            <para>
+                This is the business process for the processClaim service as offered by Claims. Claims receives a claim and first requests policies to provide the policy status for the policy against which the claim is made. If the policy is inactive, claims terminates the claims processing process by throwing a PolicyInactiveException. If the policy is active claims requests policies to provide a settlement offer for the claim. Having received the settlement offer claims checks whether the settlement amount exceeds the fraud investigation threshold or not. If it does, legal services is requested to launch a routine fraud investigation for the claim. In either case the policy holder is requested to accept the settlement offer. If the policy holder rejects the settlement offer, the business process is aborted, notifying the client via a SettlementOfferRejectedException. Otherwise Legal services is requested to start the process of recuperating the losses for the claim while finance is requested to settle the claim and a ClaimSettlementReport is provided to the policy holder.
+            </para>
+                
+        <figure xml:id="insurer.claims.Claims.processClaim.businessProcess.businessProcess">
+            <title>The business process specification diagram for the processClaim use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="file:/home/fritz/temp/urdad/processClaim_files/_15_5_6680230_1224173869257_498585_794.jpg"/>
+            </imageobject></mediaobject>
+        </figure>
+    </section>
+    
+     
+    
+    
+<!-- COLLABORATION CONTEXT -->
+<!-- *************************** -->        
+
+
+    <section>
+        <title>Collaboration context: processClaim</title>
+        
+        <para>
+            <xref linkend="insurer.claims.Claims.processClaim.collaborationContext"/> shows
+            the services required for the processClaim use case from the different service providers
+            as well as the required message paths through which the services can be requested.
+        </para>            
+                        <para>
+            In order to process a claim, Claims requires from Policies the services to provide a settlement offer for the claim and to provide the policy status. The policy holder needs to accept the settlement offer, Finance needs to provide the claim settlement service and Legal needs to perform fraud investigations and recuperate losses for a claim.
+        </para>
+                
+        <figure xml:id="insurer.claims.Claims.processClaim.collaborationContext">
+            <title>The collaboration context diagram for the processClaim use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="file:/home/fritz/temp/urdad/processClaim_files/_15_5_6680230_1224222598696_329540_5565.jpg"/>
+            </imageobject></mediaobject>
+        </figure>
+    </section>
+
+</section>
+    
+</section>

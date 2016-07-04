@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.platforms.linux.shell.scripting.operators.arithmetic"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Arithmetic operators</title>
+  <para>
+    Shell scripts only support integer arithmetic, <abbrev>i.e.</abbrev> no floating point
+    arithmetic. The erithmetic operators supported are shown in
+    <xref linkend="resources.information.platforms.linux.shell.scripting.operators.arithmeticOperators"/>
+
+    <table id="resources.information.platforms.linux.shell.scripting.operators.arithmeticOperators">
+      <title>Arithmetic operators suported in shell scripts</title>
+      <tgroup cols="2">
+        <thead>
+          <row><entry>Operator</entry><entry>Description</entry></row>
+        </thead>
+        <tbody>
+          <row><entry>+</entry><entry>integer addition</entry></row>
+          <row><entry>-</entry><entry>integer subtraction</entry></row>
+          <row><entry>*</entry><entry>integer multiplication</entry></row>
+          <row><entry>/</entry><entry>integer division</entry></row>
+          <row><entry>**</entry><entry>exponentiation (power)</entry></row>
+          <row><entry>%</entry><entry>modulus (remainder)</entry></row>
+        </tbody>
+      </tgroup>
+    </table>
+  </para>
+
+  <section>
+    <title>Example script</title>
+    <para>
+<xi:include href="source/testArithmetic_sh.xdoc" />
+      <note>
+        <para>
+          We have to put the multiplication operator in full quotes so that it is not
+          interpreted as an escape character by the shell, <abbrev>i.e.</abbrev>
+          preventing the shell from expanding it into matching filenames.
+        </para>
+        <para>
+          Note also that we used the <command>expr</command> command to
+          request the evaluation of an expression. This is done within backward quotes
+          (see <xref linkend="resources.information.platforms.linux.shell.scripting.backwardQuote.backwardQuote"/>)
+          which evaluates the <command>expr</command> command and substitutes
+          its output for the backward quotes.
+        </para>
+      </note>     
+    </para>    
+    <para>
+      When executing the shell script via
+      <cmdsynopsis><command>
+ ./testArithmetic.sh 2 3
+      </command></cmdsynopsis>
+      we obtain the following output:
+      <programlisting><![CDATA[
+2+3 = 5
+2-3 = -1
+2*3 = 6
+2/3 = 0
+2**3 = 8
+2%3 = 2
+      ]]></programlisting>
+    </para>
+  </section>
+
+  <section>
+    <title>Requesting evaluation across multiple substitutions</title>
+    <para>
+      Shell scripts support a syntax which performs substitutions across multiple
+      elements by inserting a <literal><![CDATA[$]]></literal> sign infront of square 
+      brackets which specify the range across which the substitutions should be
+      done. This may simplify the syntax at times. Consider, for example
+<xi:include href="source/testSquareBrackets_sh.xdoc" />      
+      with output
+      <programlisting>
+Enter x:
+2
+Enter y:
+3
+x*y = 6
+x*y = 6     
+      </programlisting>
+    </para>
+  </section>
+  
+  
+</section>

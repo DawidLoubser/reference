@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <title>Decouple processes from data</title>
+    <para>
+        Decouple entities from processes. An order should know nothing about what you are going to do with the order.
+        Processes/services like <literal>processOrder</literal>, <literal>cancelOrder</literal>, ..., should preferably
+        be stateless, i.e. even though a process may change its environment in a durable way, no state information should 
+        be maintained within the service/process across service requests.
+    </para>
+    
+    <section>
+        <title>Services in data objects</title>
+        <para>
+            Services within data objects should be confined to 
+            <itemizedlist>
+                <listitem><para>
+                    data access (setters and getters),
+                </para></listitem>
+                <listitem><para>
+                    services reporting derived data, and
+                </para></listitem>
+                <listitem><para>
+                    services which derive data modifications from user parameters (i.e. if the user properties are
+                    in a different space to the internal data fields - e.g. day, month, year and absDate).
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+</section>    

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns4363:section xmlns:ns4363="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.swing.developingSwingInterfaces.listBoxes.listBoxes">
+    <ns4364:title xmlns:ns4364="http://docbook.org/ns/docbook">List Boxes</ns4364:title>
+    <ns4365:para xmlns:ns4365="http://docbook.org/ns/docbook">Like all swing components, list boxes adhere to the Model-View-Controller framework with
+        the view and the control services supplied by the swing component (verb+JList+ in our
+        example) and the Model being an external data model. List boxes can be an alternative to a
+        collection of check boxes.</ns4365:para>
+    <ns4366:para xmlns:ns4366="http://docbook.org/ns/docbook">The advantage of this aproach is that there is a standard interface between the swing
+        component and the underlying data model it exposes, allowing the model to inform the view in
+        data changes and allowing the view to update the model (the underlying data) when necessary.</ns4366:para>
+    <ns4367:para xmlns:ns4367="http://docbook.org/ns/docbook">The data model interface for a component is specified in a corresponding Java interface.
+        For example, <ns4368:literal xmlns:ns4368="http://docbook.org/ns/docbook">ListModel</ns4368:literal> lays down the specifications for data models which
+        can be applied to combo boxes.</ns4367:para>
+    <ns4369:para xmlns:ns4369="http://docbook.org/ns/docbook">For some swing components Java 2 supplies a default model. This is, for example, the case
+        for <ns4370:literal xmlns:ns4370="http://docbook.org/ns/docbook">JList</ns4370:literal>. The <ns4371:literal xmlns:ns4371="http://docbook.org/ns/docbook">DefaultListModel</ns4371:literal> represents a default
+        data model for list boxes. Since list boxes represent an indexed collection, list models
+        represent and array in functionality (unfortunately conforming to the old
+        <ns4372:literal xmlns:ns4372="http://docbook.org/ns/docbook">Vector</ns4372:literal> interface -- in general the swing components to not yet embrace
+        Java's new collection framework consistently.</ns4369:para>
+    <ns4373:para xmlns:ns4373="http://docbook.org/ns/docbook">We can insert objects into alist and the <ns4374:literal xmlns:ns4374="http://docbook.org/ns/docbook">toString()</ns4374:literal> method will be used
+        to obtain a a text string used for the object's representation within the list box. Thus, if
+        the user slects an item in the list box, he/she selects the actual object and not some
+        string from which the object has to be identified.</ns4373:para>
+    <ns4375:para xmlns:ns4375="http://docbook.org/ns/docbook">Lists use a selection model to specify the selection mode. <ns4376:literal xmlns:ns4376="http://docbook.org/ns/docbook">JList</ns4376:literal>
+        supports three selection models: SINGLE_SELECTION This works like radio buttons. Selecting a
+        new item, deselects any previously selected item. SINGLE_INTERVAL_SELECTION This allows you
+        to select a single contiguous range of items. MULTIPLE_INTERVAL_SELECTION This allows you to
+        select any combination of items from the list.</ns4375:para>
+    <ns4377:para xmlns:ns4377="http://docbook.org/ns/docbook">In our shopping list application we have two lists, a from which the required items are
+        selected and another showing the selected items. The first does not change and hence we
+        simply constructed it from a vector of shopping list items read in from a file without using
+        a model for the data representation. The second list contains those items selected from the
+        first list and its data content (the actual shopping list) will change. For this list we do
+        use a data model namely the<ns4378:literal xmlns:ns4378="http://docbook.org/ns/docbook">DefaultListModel</ns4378:literal>.</ns4377:para>
+    <ns4379:para xmlns:ns4379="http://docbook.org/ns/docbook">Note further that both lists are packed within a scroll pane in order to obtain scrolling
+        support and both scroll panes have a titled border associated to them (efectively the title
+        for the corresponding list boxes).</ns4379:para>
+    <ns4380:para xmlns:ns4380="http://docbook.org/ns/docbook">In order to receive notification of selection changes the split pane registers with the
+        <ns4381:literal xmlns:ns4381="http://docbook.org/ns/docbook">allGroceries</ns4381:literal> list box as <ns4382:literal xmlns:ns4382="http://docbook.org/ns/docbook">ListSelectionListener</ns4382:literal>. It
+        implements the<ns4383:literal xmlns:ns4383="http://docbook.org/ns/docbook">valueChanged()</ns4383:literal> service as required by the
+        <ns4384:literal xmlns:ns4384="http://docbook.org/ns/docbook">ListSelectionListener</ns4384:literal> interface. Upon being notified that the user
+        changed the selection from the<ns4385:literal xmlns:ns4385="http://docbook.org/ns/docbook">alGroceries</ns4385:literal> list, the event handler first
+        clears the data model for the<ns4386:literal xmlns:ns4386="http://docbook.org/ns/docbook">requiredGroceries</ns4386:literal> list, and then populates
+        the data model with the now selected groceries. Note that we did not modify the view, i.e.
+        the actual<ns4387:literal xmlns:ns4387="http://docbook.org/ns/docbook">JList</ns4387:literal>. The view is updated automatically as the underlying data
+        model changes.</ns4380:para>
+    <ns4388:para xmlns:ns4388="http://docbook.org/ns/docbook"/>
+</ns4363:section>

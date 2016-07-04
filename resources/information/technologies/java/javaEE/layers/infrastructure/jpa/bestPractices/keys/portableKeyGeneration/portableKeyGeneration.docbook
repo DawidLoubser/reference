@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <title>Use portable generation of primary keys</title>
+    <para>
+        JPA provides 4 types of key generators:
+        <itemizedlist>
+            <listitem><para>
+                TABLE
+            </para></listitem>
+            <listitem><para>
+                SEQUENCE
+            </para></listitem>
+            <listitem><para>
+                IDENTITY, and
+            </para></listitem>
+            <listitem><para>
+                AUTO.
+            </para></listitem>
+        </itemizedlist>
+      Of these <literal>TABLE</literal> is the most portable, being portable across JPA implementing ORMs and
+        across databases. Preferably you would annotate a long integer as primary key via
+        <programlisting language="Java"><![CDATA[
+@Id
+@GeneratedValue(strategy=TABLE, generator="myKeyGenerator")
+long id;            
+            ]]></programlisting>
+    </para>
+    <note>
+        <para><quote>myKeyGenerator</quote> refers to a previously declared <literal>TableGenerator</literal>
+        or <literal>SequenceGenerator</literal>, as per their respective annotations. For example:
+        <programlisting language="Java">
+@Entity
+@SequenceGenerator(name="myKeyGenerator", allocationSize=25)
+public class MyEntity
+{
+   ...
+}
+
+        </programlisting></para>
+    </note>
+</section>

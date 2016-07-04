@@ -1,0 +1,26 @@
+Compile all the bank-package classes via 
+    javac rmi/iiop/bank/*.java
+
+Generate the client stubs and server skeletons for the CORBA objects (the Bank and
+    the Account) via
+rmic -d bin -iiop rmi.iiop.bank.BankImpl rmi.iiop.bank.AccountImpl
+
+rmic -d bin -iiop rmi.iiop.bank.BankImpl rmi.iiop.bank.BankImpl
+
+
+Compile the client and server applications via the command: 
+
+    javac *.java
+
+Start the naming service via 
+    orbd -ORBInitialPort 1060&
+
+java -classpath generated:bin/common:bin/servant:bin/server -Djava.naming.factory.initial=com.sun.jndi.cosnaming.CNCtxFactory -Djava.naming.provider.url=iiop://localhost:1060 rmi.iiop.bank.server.BankServer
+
+Run the client via the command:
+      java 
+      -classpath . 
+      -Djava.naming.factory.initial=com.sun.jndi.cosnaming.CNCtxFactory
+      -Djava.naming.provider.url=iiop://localhost:1060 
+      rmi.iiop.bank.BankClient
+

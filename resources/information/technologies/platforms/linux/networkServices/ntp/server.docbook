@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns3304:section xmlns:ns3304="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.ntp.server">
+
+	<ns3305:title xmlns:ns3305="http://docbook.org/ns/docbook">Network Time Server</ns3305:title>
+	<ns3306:para xmlns:ns3306="http://docbook.org/ns/docbook">
+	To configure an offline independent time server, which can be used to synchronize other workstations on the same network, but which has no connection to another time server, use the configuration file below. This off course requires that this system's time is configured accurately. Accurate time configuration also ensures that the entries in log files are correctly timed, and thus allow you to build up a timeline of events. 
+	/etc/ntp.conf
+	</ns3306:para>
+	<ns3307:programlisting xmlns:ns3307="http://docbook.org/ns/docbook">
+server 127.127.1.1 
+fudge 127.127.1.1 stratum 1 refid LCL
+restrict 192.168.0.1 mask 255.255.255.0 notrust nomodify notrap
+driftfile /etc/ntp/drift
+	</ns3307:programlisting>
+	<ns3308:note xmlns:ns3308="http://docbook.org/ns/docbook">
+	<ns3309:para xmlns:ns3309="http://docbook.org/ns/docbook">
+	During startup, the server checks for the existence of the frequency file (<ns3310:emphasis xmlns:ns3310="http://docbook.org/ns/docbook" role="strong">ntp.drift</ns3310:emphasis>) which contains the clock's frequency errors. When this file does not exist, the server will try to estimate the nominal frequency error value, which takes approximately 15 mins. Thereafter, it will operate for another hour, until the file is created. During subsequent startups, the file is read and the NTP server is operational immediately. 
+	</ns3309:para>
+	</ns3308:note>
+</ns3304:section>

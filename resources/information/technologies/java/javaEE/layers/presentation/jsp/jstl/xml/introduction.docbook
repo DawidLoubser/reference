@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Introduction</title>
+    <indexterm>
+        <primary>JSP</primary>
+        <secondary>JSTL</secondary>
+        <tertiary>XML</tertiary>
+    </indexterm>
+    
+    <indexterm>
+        <primary>XPath</primary>
+    </indexterm>
+    <indexterm>
+        <primary>XSLT</primary>
+    </indexterm>
+    
+    <para>
+        The XML tag library supports parsing of XML 
+        documents, selection of XML fragments (using XPath), conditional 
+        and iterative processing based on XML content, and 
+        XSLT transformations.
+    </para>
+    <para>
+        A common pattern for using the XML tags is as 
+        follows:
+        <orderedlist>
+            <listitem>
+                <para>
+                    Use <literal>x:parse</literal> to parse XML into a scoped 
+                        variable.  The XML can come from the body 
+                        literally, from the body via <literal>c:import</literal>, or from the 
+                            value attribute which may refer to any XML source.
+                            <programlisting language="XML"><![CDATA[
+<x:parse var="varName" ...>
+                            ]]></programlisting>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Use the scoped variable from <literal>x:parse</literal> to specify 
+                        the XML document to use in XPath expressions.
+                        <programlisting language="XML"><![CDATA[
+<x:out select="$varName/XPathExpression"/>
+                            ]]></programlisting>
+                </para>
+            </listitem>
+        </orderedlist>
+    </para>
+    
+    <section>
+        <title>Using JSTL Data as XPath Variables</title>
+        <para>
+            The XML tag library supports an expanded XPath syntax which allows
+            scoped variables to be used in XPath expressions  
+            (<literal>$implicitObject:variableName</literal>) similar to how they 
+            are used in EL (${<literal>implicitObject.variableName</literal>}).  If 
+            the implicit object is omitted, scopes will be searched in standard order.  
+        </para>
+        <note>
+            <para>
+                The <quote>.</quote> and <quote>[]</quote> notations cannot be used for accessing bean properties.
+                The desired property would first have to be assigned to a variable of its own.
+            </para>
+        </note>
+        <para>
+            The following snippet illustrates using the XML tag library to work with
+            XML fragments in the document:
+            <programlisting language="XML"><![CDATA[
+<!-- Parse some XML (would typically come from external source) --> 
+<x:parse var="doc"> 
+  <users> 
+    <user id="123"> 
+      <first-name>John</first-name> 
+      <last-name>Deere</last-name> 
+    </user> 
+    <user id="456"> 
+      <first-name>Joseph</first-name> 
+      <last-name>Bloggs</last-name> 
+    </user> 
+  </users> 
+</x:parse> 
+
+<!-- Define a variable holding user ID --> 
+<c:set var="userId" value="${user.id}"/>
+
+ 
+<!-- Find the user with  matching ID --> 
+<x:set var="user" select="$doc/users/user[@id=$pageScope:userId]"/>
+
+<!-- Say Hi to the user --> 
+Hello there, <x:out select="$user/first-name"/> ! 
+            ]]></programlisting>
+        </para>
+    </section>
+    
+    
+</section>

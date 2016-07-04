@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.technologies.java.j2ee.ejb.transactions.attributes.transactionAttributes"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Declarative Transaction Demarcation</title>
+  <para>
+    In the case of declarative transaction demarcation, the bean developer is not
+    confronted with any transaction logic whatsoever. Once again, the bean contains only
+    business logic. The application assembler who assembles applications from lower level beans
+    understands the higher level workflows and the transaction support required for them.
+  </para>
+  <para>
+    He then specifies the required transaction support in the EJB deployment descriptors.
+  </para>
+  
+  <section>
+    <title>Transaction Attributes</title>
+    <para>
+      Services offered by enterprise beans must have a transaction attribute which
+      specifies the type of transaction support required by the service (or all services of the
+      enterprise bean). The transactions attributes supported by the EJB specification are:
+      <itemizedlist>
+        <listitem>
+          <para>BeanManaged, </para>
+        </listitem>
+        <listitem>
+          <para>NotSupported, </para>
+        </listitem>
+        <listitem>
+          <para>Required, </para>
+        </listitem>
+        <listitem>
+          <para>Supports, </para>
+        </listitem>
+        <listitem>
+          <para>Mandatory, </para>
+        </listitem>
+        <listitem>
+          <para>RequiresNew and </para>
+        </listitem>
+        <listitem>
+          <para>Never</para>
+        </listitem>
+      </itemizedlist>
+    </para>  
+    <para>
+      The transaction attribute is specified in the  
+      <literal>ejb-jar.xml</literal> deployment descriptor either 
+      <itemizedlist>
+        <listitem>
+          <para>for all methods of an enterprise bean, or </para>
+        </listitem>
+        <listitem>
+          <para>for individual methods of that bean.</para>
+        </listitem>
+      </itemizedlist>
+      <note><para>The latter overrides the former.</para></note>
+<programlisting><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 1.1//EN"
+"http://java.sun.com/j2ee/dtds/ejb-jar_1_1.dtd">
+<ejb-jar>
+<display-name>Account entity bean</display-name>
+<enterprise-beans>
+<entity>
+<description>A entity bean for a simple account.</description>
+<ejb-name>Account</ejb-name>
+<home>STC.Entity1_1.ContainerManaged.AccountHome</home>
+...
+</entity>
+...
+</enterprise-beans>
+<assembly-descriptor>
+<container-transaction>
+<method>
+<ejb-name>Account</ejb-name>
+<method-name>*</method-name>
+</method>
+
+<trans-attribute>Required</trans-attribute>
+</container-transaction>
+
+<container-transaction>
+<method>
+<ejb-name>Account</ejb-name>
+<method-name>getBalance</methodName>
+<method-param></methodParam>
+</method>
+<trans-attribute>Required</trans-attribute>
+</container-transaction>
+</assembly-descriptor>
+</ejb-jar>
+]]></programlisting>
+    </para>
+    
+    <section>
+      <title>BeanManaged</title>
+      <para>
+        From EJB onwards only session beans are allowed to manage their own transactions.
+        In this case the bean developer controls transactions via  
+        <literal>begin()</literal>, <literal>abort()</literal>,
+        <literal>commit()</literal> and  
+        <literal>rollback()</literal> messages sent to the Java Transaction API (JTA).
+      </para>
+    </section>
+    <section>
+      <title>NotSupported</title>
+      <para>
+        A bean defined with the NotSupported transactional attribute is not allowed to
+        partake in any transaction. Invoking a method on a bean with this attribute has the
+        consequence that the EJB container suspends any transaction until the method has 
+        been completed.
+      </para>
+    </section>
+    
+    <section>
+      <title>Required</title>
+      <para>
+        This attribute guarantees that all bean services are performed always within a
+        transaction context. If the calling client or bean is within the scope of a transaction
+        the requested service will be included within that transaction scope. Otherwise a new
+        transaction is created for the service request.
+      </para>
+      <para>
+        In the case where a new transaction is created for a service request the
+        transaction will be committed upon successful completion and will be rolled back if an
+        exception is thrown and not handled within the context of the service.
+      </para>
+    </section>
+    
+    <section>
+      <title>Supports</title>
+      <para>
+        This attribute specifies that the bean will be included in the transaction scope if
+        it is called from a transaction scope, but it will not create a new transaction scope if
+        it is not called from a transaction scope.
+      </para>
+    </section>
+    
+    <section>
+      <title>Manadatory</title>
+      <para>
+        This attributes specifies that the bean services must always be called from within
+        a transaction scope. A
+<programlisting><![CDATA[
+javax.transaction.TransactionRequiredException
+]]></programlisting>
+        will be thrown if it is called from a client who is not operating within the 
+        context of a transaction.
+      </para>
+    </section>
+    
+    <section>
+      <title>RequiresNew</title>
+      <para>
+        This attribute specifies that if a bean service is called from within a transaction
+        scope, that a new transaction is created. The current transaction is suspended until the
+        new transaction has been committed.
+      </para>
+      <para>
+        If a bean service is called outside any transaction scope it simply creates a new
+        transaction scope for that service request.
+      </para>
+    </section>
+    
+    <section>
+      <title>Never</title>
+      <para>
+        This attribute specifies that the bean services may not be called from any client
+        operating within the scope of a transaction. A
+<programlisting><![CDATA[
+java.rmi.RemoteException
+]]></programlisting>
+         is thrown if a bean service is called from a transaction scope.
+      </para>
+    </section>
+    </section>
+    
+  <section>
+    <title>Selecting a Transaction Attribute</title>
+    <para>
+      If your method modifies information is a database you should consider using the
+      <literal>Required</literal> transaction attribute which includes your
+      service in the transaction scope of your client or, if the client does not operate within
+      the scope of a transaction, a new transaction scope is created for that transaction.
+    </para>
+    <para>
+      If your business methods retrieve independent data elements from data stores you
+      could operate within or outside transaction scope, i.e. if your client requires it you
+      support it, but you do not require the creation of a new transaction scope. You would most
+      probably select the <literal>Supports</literal> transaction attribute for
+      your bean.
+    </para>
+    <para>
+      Finally, if you are using resources which do not support transaction management by an
+      external transaction manager, then you have no choice but selected the  
+      <literal>NotSupported</literal> attribute for your bean methods.
+    </para>
+  </section>
+  
+</section>
+

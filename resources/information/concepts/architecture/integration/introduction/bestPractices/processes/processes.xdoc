@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.architecture.bestPractices.processes.processes"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+  <title>Best practices around processes leading to integration solutions</title>
+  <para>
+    The high level integration requirements should come directly out of the business process design
+    process. This should then lead to technical integration requirements and processes realizing
+    these. 
+  </para>
+  
+  <section>
+    <title>Design business processes in technology neutral way (using URDAD)</title>
+    <para>
+      The first guideline is to design business processes in a way which is independent of how they
+      are technically realised. We would recommend using URDAD, the Use case / Responsibility Driven
+      Analysis and Design process. URDAD requires 
+      <itemizedlist>
+        <listitem><para>
+          identifying the high level responsibilities which need to be addressed,
+        </para></listitem>
+        <listitem><para>
+          identifying the business units in whose domain of responsibility the various
+          responsibilities fall,
+        </para></listitem>
+        <listitem><para>
+          specifying the workflow at this high level of granularity, and
+        </para></listitem>
+        <listitem><para>
+          generating the context of the collaboration for the current level of granularity.
+        </para></listitem>
+      </itemizedlist>
+      The collaboration context will directly expose the business-level integration
+      requirements,<abbrev>i.e.</abbrev> the required message paths between the business units, and
+      the services requested along these message paths.
+    </para>  
+    <section>
+      <title>URDAD generating PIM for MDA</title>
+      <para>
+        URDAD generates a Platform Independent Model (PIM). URDAD thus provides a design methodology
+        suitable for MDA, the Model Driven Architecture. This PIM is mapped onto an architecture
+        and realisation
+        technologies (whether systems-based or manual realisation) generating the Platform Specific Model (PSM),
+        which in turn is mapped onto a realisation within the target architecture and technologies
+        resulting in the Enterprise Deployment Model (EDM).
+      </para>
+    </section>
+    
+  </section>
+  
+  <section>
+    <title>Let integration not be a after-thought</title>
+    <para>
+      Project delays due to integration problems experienced late in the development cycle are
+      common. These are, at times, caused by an initial focus on realising individual workflow steps within 
+      different systems followed by a subsequent integration phase across these workflow steps.  
+    </para>
+    <para>
+      A consequence of following a process such as URDAD for business process design is that integration is not a
+      hind-thought which one is exposed to when implementing a technical solution, but that the
+      integration requirements a tackled up-front within a solid business process design
+      methodology. The actual workflow step realisations (the lower level services offered by the
+      different work units partaking in the integration solution) are a subsequent step with the
+      higher level business process decoupled from the actual realisation of these workflow steps
+      via contracts.
+    </para>
+  </section>
+  
+  <section>
+    <title>Define business information objects in technology neutral way</title>
+    <para>
+      Realising use cases / business services across a range of work units (systems or business
+      units) requires that we are able to exchange effectively transfer information across these
+      work units. To this end one should define information objects in a way which is independent of
+      the technologies used within the various systems. One would typically use UML or XML schemas
+      for this. These technology-neutral information objects can then be readily mapped onto various
+      realisation technologies including forms used for information capture, database structures, 
+      programming language objects (<abbrev>e.g.</abbrev> Java or XML objects) and so forth.
+    </para>
+  </section>
+  
+  <section>
+    <title>Deploy integration solution iteratively</title>
+    <para>
+      An integration solution may ultimately be very extensive covering
+      <itemizedlist>
+        <listitem><para>
+          the definition and publication of business processes,
+        </para></listitem>
+        <listitem><para>
+          the automatic realisation of a business process which is assembled from available lower
+          level services with the associated responsibilities of
+          <itemizedlist>
+            <listitem><para>request and response routing,</para></listitem>
+            <listitem><para>data transformation,</para></listitem>
+            <listitem><para>and work unit connectivity.</para></listitem>
+          </itemizedlist>
+        </para></listitem>
+        <listitem><para>
+          support for defining transaction boundaries across work units and external service
+          providers,
+        </para></listitem>
+        <listitem><para>
+          service publication and discovery,
+        </para></listitem>
+        <listitem><para>
+          support for auditing,
+        </para></listitem>
+        <listitem><para>
+          support for authentication and authorization at the higher business process level,
+        </para></listitem>
+        <listitem><para>
+          effective exception and error handling at the business process level,
+        </para></listitem>
+        <listitem><para>
+          strategy implementations for realizing qualities like reliability, scaleability,
+          performance, ...
+        </para></listitem>
+      </itemizedlist>
+      Such solutions are in their nature quite complex. Introducing a complete solution with all its
+      aspects in one big bang is very risky and does not provide role players a natural
+      learning/growth path.
+    </para>
+    <para>
+      On the other hand, introducing such a solution, addressing one area of
+      responsibility after another, results in lower risk and provides role players to mature along
+      a well defined growth path.
+    </para>
+  </section>
+  
+  <section>
+    <title>Keep it simple</title>
+    <para>
+        Integration solutions can become very complex very quickly. Continuously optimising for
+      simplicity is essential for effective complexity management.    
+    </para>
+  </section>
+  
+</section>
+  

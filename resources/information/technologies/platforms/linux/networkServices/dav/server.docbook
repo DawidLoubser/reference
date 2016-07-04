@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns2710:section xmlns:ns2710="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.dav.server">
+
+	<ns2711:title xmlns:ns2711="http://docbook.org/ns/docbook">Configuring Apache with mod_dav</ns2711:title>
+	<ns2712:para xmlns:ns2712="http://docbook.org/ns/docbook">
+	The server installation requires a completed apache installation. Apache V 1.3.x requires the mod_dav modules as a addon. Apache V2.x has it included by default. Withing the apache configuration the mod_dav modules has to be included via the <ns2713:emphasis xmlns:ns2713="http://docbook.org/ns/docbook" role="strong">LoadModule</ns2713:emphasis> and <ns2714:emphasis xmlns:ns2714="http://docbook.org/ns/docbook" role="strong">AddModule</ns2714:emphasis> directives. 
+	</ns2712:para>
+	<ns2715:programlisting xmlns:ns2715="http://docbook.org/ns/docbook">
+	
+LoadModule dav_module   		/usr/lib/apache/libdav.so
+AddModule mod_dav.c
+DAVLockDB /etc/webdav/DAVLock
+DAVMinTimeout 600
+
+&lt;Location "/dav"&gt;
+        DAV On
+        AuthName WebDAV
+        AuthType Basic
+        AuthUserFile /etc/httpd/davpasswd
+        &lt;LimitExcept GET HEAD OPTIONS&gt;#
+                require valid-user
+        &lt;/LimitExcept&gt;
+&lt;/Location&gt;
+	
+	</ns2715:programlisting>
+	<ns2716:para xmlns:ns2716="http://docbook.org/ns/docbook">
+	The <ns2717:emphasis xmlns:ns2717="http://docbook.org/ns/docbook" role="strong">DAVLockDB</ns2717:emphasis> is the server wide database tracking locks on files. Each shared folder is represented by a <ns2718:emphasis xmlns:ns2718="http://docbook.org/ns/docbook" role="strong">Location</ns2718:emphasis> tag. The <ns2719:emphasis xmlns:ns2719="http://docbook.org/ns/docbook" role="strong">DAV On</ns2719:emphasis> directive switching on DAV for this location. Depending on the requirements Basic Authentication using a clear text password might be sufficient. The option to utilise a secure password authentication mechanism using an encrypted password is fully supported. In addition the Location can also be configured to utilise SSL via HTTPS to provide additional encryption.
+	</ns2716:para>	
+	<ns2720:para xmlns:ns2720="http://docbook.org/ns/docbook">
+	The <ns2721:emphasis xmlns:ns2721="http://docbook.org/ns/docbook" role="strong">AuthUserFile</ns2721:emphasis> is created with <ns2722:emphasis xmlns:ns2722="http://docbook.org/ns/docbook" role="strong">htpasswd</ns2722:emphasis> or <ns2723:emphasis xmlns:ns2723="http://docbook.org/ns/docbook" role="strong">htpasswd2</ns2723:emphasis> depending on which version of apache is installed. Both commands offer MD5 and Crypt password encryption algorithms which can be specified via the <ns2724:emphasis xmlns:ns2724="http://docbook.org/ns/docbook" role="strong">-m</ns2724:emphasis> and <ns2725:emphasis xmlns:ns2725="http://docbook.org/ns/docbook" role="strong">-d</ns2725:emphasis> flags. To disable password encryption, which is not recomended the <ns2726:emphasis xmlns:ns2726="http://docbook.org/ns/docbook" role="strong">-p</ns2726:emphasis> flag can be set resulting in a clear text password file. 
+	</ns2720:para>
+	<ns2727:programlisting xmlns:ns2727="http://docbook.org/ns/docbook">
+bumblebee conf # htpasswd2 -m davpasswd davusers
+New password: 
+Re-type new password: 
+Adding password for user davusers
+bumblebee conf # 
+	</ns2727:programlisting>
+</ns2710:section>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2se.javaBeans.implementing.implementing"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Implementing classes as Java Beans</title>
+  <para>
+    We will illustrate this via an example of a class which has association, aggregation,
+    composition and specialization relationships to other classes. The example is shown
+    in the UML diagram of <xref
+      linkend="resources.information.technologies.java.j2se.javaBeans.implementing.accountsExample_fig"/>
+  </para>
+  
+  <figure id="resources.information.technologies.java.j2se.javaBeans.implementing.accountsExample_fig">
+    <title>Accounts hierarchy with association, aggregation and composition relationships</title>
+    <graphic fileref="accountsExample.jpg"/>
+  </figure>
+  
+  <section>
+    <title>Adding a contract for observables</title>
+    <para>
+      Observables must support the addition and removal of
+      <literal>PropertyChangeListeners</literal>. This is specified in an <literal>Observable</literal>
+      interface. The interface has a nested (not inner) class for
+      <literal>NoSuchPropertyException</literal>s:
+      <programlisting>
+        <xi:include parse="text" href="source/za/co/solms/javaBeans/Observable.java"/>
+      </programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>A base class for observables</title>
+    <para>
+      In order to avoid code duplication, we introduce a base class for observables which provides
+      subclasses all required infrastructure for observability except for
+      <itemizedlist>
+        <listitem><para>
+          the property definitions, and
+        </para></listitem>
+        <listitem><para>
+          the actual sending of property change events.
+        </para></listitem>
+      </itemizedlist>
+      <programlisting>
+        <xi:include parse="text" href="source/za/co/solms/javaBeans/ObservableBase.java"/>
+      </programlisting>
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>A JavaBean which supports property change notification</title>
+    <para>
+      Let us have a look at a very simple bean, that of a <literal>Tender</literal> which
+      encapsulated an amount and a currency. Lets us first have a look at the interfaces through
+      which tenders will be accessed. Below we define an interface for observable tenders together
+      with a <literal>Mutable</literal> nested sub interface for mutable tenders --
+      <abbrev>i.e.</abbrev> the default view onto tenders is a read only view through which the
+      tender cannot be modified and then there is an extended interface which also provides write
+      access to the tender properties:
+      <programlisting>
+        <xi:include parse="text" href="source/za/co/solms/javaBeans/Tender.java"/>
+      </programlisting>
+    </para>
+    <para>
+      The default tender implementation realizes the extended mutable interface, but could be
+      exposed via either of the interfaces. Note that the bean issues property change events when
+      any of its properties are modified:
+      <programlisting>
+        <xi:include parse="text" href="source/za/co/solms/javaBeans/TenderImpl.java"/>
+      </programlisting>
+      <note><para>
+        The bean publishes its attributes via an unmodifiable set of strings which is initialized in
+        a static block. The <literal>TreeSet</literal> is populated and then wrapped with an
+        immutability wrapper which prevents anyone from changing the properties of the class.
+      </para></note>
+    </para>
+  </section>
+  
+  <section>
+    <title>A JavaBean with association and composition relationships</title>
+    <para>
+      Let us now look at <literal>Account</literal>s which has the balance as an encapsulated
+      component and a client as an associated object. Consequently, the balance is part of the state of the
+      account (a change in the state of the balance implies a change of state in the account) while
+      a change of state in the client does not imply a state transition in the account.
+    </para>
+    <para>
+      In the case of composition relationships, there are two ways in which we can publish the state
+      change in an owner caused by a state change in a component of the owner:
+      <orderedlist>
+        <listitem><para>
+          The owner could register with the component as <literal>PropertyChangeListener</literal>
+          and issue property change events to its listeners upon receiving a property change event
+          from one of its components. This method is equivalent to how one would typically propagate
+          property change events in aggregation relationships.
+        </para></listitem>
+        <listitem><para>
+          Alternatively,since composition enforces encapsulation (the component can only be directly accessed by
+          the owner), the owner could change the state of the component directly and then issue
+          state change events for itself without listening to state change events from the component
+          itself. 
+        </para></listitem>
+      </orderedlist>
+    </para>
+    <para>
+      The interface through which accounts are accessed is shown below:
+      <programlisting>
+        <xi:include parse="text" href="source/za/co/solms/javaBeans/Account.java"/>
+      </programlisting>
+    </para>
+    <para>
+      The account implementation uses the second approach to publish state changes on its balance,
+      <abbrev>i.e.</abbrev> it does no register as property change listener, but issues property
+      change events directly on updating its balance:
+      <programlisting>
+        <xi:include parse="text" href="source/za/co/solms/javaBeans/AccountImpl.java"/>
+      </programlisting>
+    </para>
+    <note><para>
+      The account does not register as state change listener with its associated object, the client.
+      A state change in the client does not imply a state change in the account.
+    </para></note>
+  </section>
+  
+  <section>
+    <title>A Java Bean with specialization and aggregation relationships</title>
+    <para>
+      As an example we shall use a <literal>PrimePlusSavingsAccount</literal> which earns interest
+      against the prime rate plus some spread. The interface through which such accounts are
+      accessed is an extension of the interface for accounts:
+      <programlisting>
+        <xi:include parse="text" href="source/za/co/solms/javaBeans/PrimePlusSavingsAccount.java"/>
+      </programlisting>
+    </para>
+    <para> 
+      When a JavaBean inherits from another JavaBean one will have to include the properties of the
+      superclass in the properties set of the subclass. Furthermore, if one uses the
+      <literal>ObservableBase</literal>, then one must make certain that the
+      <literal>getThisHandle</literal> method is overridden to return the correct
+      <literal>this</literal> reference to that base class.
+    </para>
+    <para>
+      Our example, the <literal>PrimePlusSavingsAccount</literal>, also has an aggregation
+      relationship with a prime rate. Other objects may also directly access the prime rate, but the
+      state of the savings account does change when the prime rate changes. The
+      <literal>PrimePlusSavingsAccount</literal> thus registers as observer with the prime rate and
+      issues itself state change events upon receiving state change events from the observed prime
+      rate:
+      <programlisting>
+        <xi:include parse="text" href="source/za/co/solms/javaBeans/PrimePlusSavingsAccountImpl.java"/>
+      </programlisting>
+    </para>
+  </section>
+  
+</section>
+  

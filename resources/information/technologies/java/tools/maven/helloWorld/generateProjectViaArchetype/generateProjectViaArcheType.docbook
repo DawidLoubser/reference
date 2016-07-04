@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Creating a project via the Archetype plugin</title>
+    <para>
+      When creating a project via the <literal>generate</literal> goal of the <emphasis>archetype</emphasis> plugin,
+       one needs to minimally specify the <literal>groupId</literal> and <literal>artifactId</literal>:
+        <programlisting><![CDATA[
+mvn archetype:generate -DgroupId=za.co.solms.training.maven -DartifactId=helloWorld            
+]]></programlisting>
+        Maven will ask you which archetype it should generate. You will see that there are templates for 
+        a wide variety of project types like, for example, JavaEE, JSF and Sping projects. 
+        For a basic Java application you can use 
+        <literal>maven-archetype-quickstart</literal> which is the default option.
+    </para>    
+    <para>    
+        This generates a project directory of the same name as the artifact identifierdefines a POM with the 
+        corresponding group and artifact identifiers using the default <literal>jar</literal>
+        packaging and defaulting the version to <literal>1.0-SNAPSHOT</literal>. It defaults the project name to
+        the artifact id and sets the url to <literal>http://www.maven.org</literal>. In addition Maven adds a
+        dependency on JUnit:
+        <programlisting><![CDATA[
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>za.co.solms.training.maven</groupId>
+  <artifactId>helloWorld</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>helloWorld</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
+]]></programlisting>
+    </para>
+    <para>
+        In addition to the POM, the create <literal>generate</literal> of the <emphasis>archetype</emphasis> plugin creates
+        the expected directory structures for the sources
+        <programlisting><![CDATA[
+-src
+    -main
+        -java
+            -za
+                -co
+                    -solms
+                        -training
+                            -maven
+                                *App.java
+        ]]></programlisting>
+        and test sources of the project:                                
+        <programlisting><![CDATA[
+-src
+    -test
+        -java
+            -za
+                -co
+                    -solms
+                        -training
+                            -maven
+                                *AppTest.java
+                                
+        ]]></programlisting>
+        as well as the source files for a minimal (hello-world) application and its corresponding test application. 
+    </para>
+</section>    

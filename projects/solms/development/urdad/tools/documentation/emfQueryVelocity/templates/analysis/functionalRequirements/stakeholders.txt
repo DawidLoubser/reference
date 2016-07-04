@@ -1,0 +1,31 @@
+            #getStakeholdersForUseCase($targetUseCase)
+            #set($stakeholders = $result)
+            #if ($stakeHolders.size() > 0)
+<section>
+    <title>Stake holders</title>
+    <para>
+        The following stake holders have an interest in the $targetUseCase.name use case:
+            <itemizedlist>
+                #foreach($stakeholder in $stakeholders)
+                
+                ## Enforce that stakeholder represented by interface
+                #if ($stakeholder.getClass().getName() != $umlInterfaceClass)
+                <note>
+                    <title>ERROR: Stakeholder not represented by contract/interface</title>
+                    <para>
+                        URDAD requires that each stakeholder be represented by a contract (interface). $stakeholder.name
+                        is not represented by an interface.
+                    </para>
+                </note>
+                #end
+                <listitem><formalpara>
+                    <title>$stakeholder.name</title>
+                    <para>
+                        $report.getComment($stakeholder).body
+                    </para>
+                </formalpara></listitem>
+                #end
+            </itemizedlist>
+    </para>
+</section>
+         #end   

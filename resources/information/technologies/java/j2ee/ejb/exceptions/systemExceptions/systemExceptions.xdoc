@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.technologies.java.j2ee.ejb.exceptions.systemExceptions.systemExceptions"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>System Exceptions</title>
+  <para>
+    A system exception communicates that a problem occured with the services which support
+    an application. It is typically handled by the container. Examples of system exceptions are 
+    <itemizedlist>
+      <listitem>
+        <para>Cannot connect to database. </para>
+      </listitem>
+      <listitem>
+        <para>Lookup method fails because requested object does not exist. </para>
+      </listitem>
+      <listitem>
+        <para>Cannot insert another record because the space allocated to the database has been
+          exhausted. </para>
+      </listitem>
+      <listitem>
+        <para>Cannot connect to CORBA server.</para>
+      </listitem>
+    </itemizedlist>
+    When you want to throw a system exception you should wrap it in a
+    <literal>javax.ejb.EJBException</literal>. The container will wrap the EJBException in a
+    <literal>java.rmi.RemoteException</literal> and the client will receive a handle to that.
+    <note><para>
+      Note also the <literal>EJBException</literal> is a specialization of <literal>
+      java.lang.RuntimeException</literal> and hence one does not have to notify it (i.e. one does
+      not have to declare it in the <literal>throws</literal> clause).
+    </para></note>
+  </para>
+  <para>
+    The container takes over the responsibility of handling system exceptions -- they should
+    not be handled by the client. If a system exception is thrown from within the context of a
+    transaction, the transaction is rolled back. Furthermore, the container may even choose to
+    destroy the enterprise bean which threw the system exception.
+  </para>
+</section>

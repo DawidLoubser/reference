@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.platforms.linux.shell.scripting.conditionals.if"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>The <command>if</command> statement</title>
+  <para>
+    The <command>if</command> command conditionally executes a block of statements
+    depending on whether a criterion is met or not.
+  </para>
+  
+  <section>
+    <title>The standard if statement</title>
+    <para>
+      In a simple <command>if</command> statement, the conditional block of statements
+      is executed if the command behind the <command>if</command> returns zero (the
+      success flag).
+      For example, in
+<xi:include href="source/catrm1_sh.xdoc" />      
+      the temporary file is created via the <command>cat</command> command in the 
+      script and should thus normally exist. The second <command>cat</command> 
+      command prints the temporary file and returns with the success zero and hence
+      the temporary file is deleted.
+    </para>
+  </section>
+  
+  <section>
+    <title>Using test expressions</title>
+    <para>
+      The <command>if</command> command can also conditionally execute a block
+      of statements depending on whether a <emphasis>test</emphasis> is successful
+      (returns true) or not.
+    </para>
+    <para>
+      The test may be specified via the <command>test</command> keyword
+      <programlisting><![CDATA[
+if test $x -eq 5
+then
+      ...
+fi      
+      ]]></programlisting>
+      or by implicitly by inserting the test expression within square brackets
+      <programlisting><![CDATA[
+if [$x -eq 5]
+then
+      ...
+fi      
+      ]]></programlisting>
+      Both versions behave identical. 
+    </para>
+    <para>
+      Shell scripts support comparison operators for numbers, strings and files as well
+      as 3 logical operators which can be used to assemble a compound conditional.
+      These are shown in
+      <xref linkend="resources.information.platforms.linux.shell.scripting.conditionals.if.numericalComparison"/>,
+      <xref linkend="resources.information.platforms.linux.shell.scripting.conditionals.if.stringComparison"/>,
+      <xref linkend="resources.information.platforms.linux.shell.scripting.conditionals.if.fileTests"/>,
+      and <xref linkend="resources.information.platforms.linux.shell.scripting.conditionals.if.logicalOperators"/>.
+      
+      <table id="resources.information.platforms.linux.shell.scripting.conditionals.if.numericalComparison">
+        <title>Numerical comparison operators</title>
+        <tgroup cols="2">
+          <thead>
+            <row><entry>Comparison operator</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row><entry>-eq</entry><entry>is equal to</entry></row>
+            <row><entry>-ne</entry><entry>not equal to</entry></row>
+            <row><entry>-lt</entry><entry>less than</entry></row>
+            <row><entry>-le</entry><entry>less than or equal to</entry></row>
+            <row><entry>-gt</entry><entry>greater than</entry></row>
+            <row><entry>-ge</entry><entry>greater than or equal to</entry></row>
+          </tbody>
+        </tgroup>
+      </table>
+      
+      <table id="resources.information.platforms.linux.shell.scripting.conditionals.if.stringComparison">
+        <title>String comparison operators</title>
+        <tgroup cols="2">
+          <thead>
+            <row><entry>Comparison operator</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row><entry>str1 = str2</entry><entry>Strings have same characters.</entry></row>
+            <row><entry>str1 != str2</entry><entry>Strings are not equal.</entry></row>
+            <row><entry>str1</entry><entry>Returns true if str1 is not null or is not defined</entry></row>
+            <row><entry>-n str1</entry><entry>Returns true if str1 is not null and it exists.</entry></row>
+            <row><entry>-z str1</entry><entry>Returns true if str1 is null and exists.</entry></row>
+          </tbody>
+        </tgroup>
+      </table>
+      
+      <table id="resources.information.platforms.linux.shell.scripting.conditionals.if.fileTests">
+        <title>File test operators</title>
+        <tgroup cols="2">
+          <thead>
+            <row><entry>Test</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row><entry>-s file</entry><entry>Returns true if file is non-empty.</entry></row>
+            <row><entry>-f file</entry><entry>Returns true if file exists and is not a directory.</entry></row>
+            <row><entry>-d directory</entry><entry>Returns true if directory exists.</entry></row>
+            <row><entry>-r file</entry><entry>Returns true if file is readable.</entry></row>
+            <row><entry>-w file</entry><entry>Returns true if file is writable.</entry></row>
+            <row><entry>-x file</entry><entry>Returns true if file is executable.</entry></row>
+          </tbody>
+        </tgroup>
+      </table>
+      
+      <table id="resources.information.platforms.linux.shell.scripting.conditionals.if.logicalOperators">
+        <title>Logical operators</title>
+        <tgroup cols="2">
+          <thead>
+            <row><entry>Operator</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row><entry>! logicalExpression</entry><entry>Logical NOT</entry></row>
+            <row><entry>logExpr1 -a logExpr2</entry><entry>Logical AND</entry></row>
+            <row><entry>logExpr1 -o logExpr2</entry><entry>Logical OR</entry></row>
+          </tbody>
+        </tgroup>
+      </table>
+    </para>
+    <section>
+      <title>A simple example</title>
+      <para>
+        The following little shell script 
+        <itemizedlist>
+          <listitem><para>creates a temporary file,</para></listitem>
+          <listitem><para>asks the user whether it should be deleted after completion,</para></listitem>
+          <listitem><para>lists it and</para></listitem>
+          <listitem><para>deletes it if so requested.</para></listitem>
+        </itemizedlist>
+<xi:include href="source/catrm2_sh.xdoc" />      
+        The output is something like the following
+        <programlisting><![CDATA[
+Delete temporary file when successfully printed (y,n)?
+y
+#!/bin/bash
+
+cat $0 > temp.sh  # stream this shell script into the temporary file.
+
+echo "Delete temporary file when successfully printed (y,n)?"
+read deleteTemp
+
+if cat temp.sh
+then
+  if [ $deleteTemp = "y" ]
+  then
+    rm temp.sh
+                echo "Deleted temporary file"
+  fi
+fi
+Deleted temporary file
+        ]]></programlisting>
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>If-else constructs</title>
+    <para>
+      Shell scripts also support the standard if-else constructs. This is illustrated in the following
+      little script which
+      <itemizedlist>
+        <listitem><para>receives a filename as command-line argument,</para></listitem>
+        <listitem><para>executes the file if it is executable, or</para></listitem>
+        <listitem><para>lists it if it is not.</para></listitem>
+      </itemizedlist>
+      <programlisting>
+<xi:include href="source/processFile1_sh.xdoc" />      
+      </programlisting>
+      The output of the application when providing our previous (executable) shell script as argument
+      is
+      <programlisting><![CDATA[
+catrm2.sh is executable. Shall execute it now.
+Delete temporary file when successfully printed (y,n)?
+y
+#!/bin/bash
+
+cat $0 > temp.sh  # stream this shell script into the temporary file.
+
+echo "Delete temporary file when successfully printed (y,n)?"
+read deleteTemp
+
+if cat temp.sh
+then
+  if [ $deleteTemp = "y" ]
+  then
+    rm temp.sh
+                echo "Deleted temporary file"
+  fi
+fi
+Deleted temporary file
+        
+      ]]></programlisting>
+      If we provide a non-executable file, we obtain something like
+      <programlisting><![CDATA[
+test.txt is not executable. Shall list it for you instead.
+These are the experiences of Donald Duck,
+the champion of mediocrity and life as
+a whole.
+      ]]></programlisting>
+    </para>
+  </section>
+  
+  <section id="resources.information.platforms.linux.shell.scripting.conditionals.if.multilevel">
+    <title>Multi-level if</title>
+    <para>
+      We can nest <command>if-else</command> statements by simply inserting another
+      <command>if</command> in the <emphasis>then</emphasis> or <emphasis>else</emphasis>
+      clause. Alternatively we can use a multi-level if which contains multiple <command>elif</command>s
+      (<emphasis>else if</emphasis>s).
+    </para>
+    <para>
+      Consider, for example, the following little script which is an extension of the previous
+      <command>processFile.sh</command> which also checks if the supplied file is a directory,
+      and if so, lists the content of that directory:
+<xi:include href="source/processFile2_sh.xdoc" />      
+      If one provides a normal file as command=line argument, it behaves like the previous script. If,
+      on the other hand, a directory is provided it lists it:
+      <cmdsynopsis><command><![CDATA[
+testDir/ is a directory. Shall list its contents:
+testFile1  testFile2
+      ]]></command></cmdsynopsis>
+    </para>
+  </section>
+  
+</section>

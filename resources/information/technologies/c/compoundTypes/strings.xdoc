@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.c.compoundTypes.strings"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Strings</title>
+  <para>
+    <emphasis>C</emphasis> does not support strings directly. Instead a string is
+    modelled as a null-terminated character array. <emphasis>C</emphasis> does
+    provide a large number of string handling routines.
+  </para>
+  <para>
+    A character array holding a string must be at least one character longer than 
+    the string for it to be able to accommodate the null-terminating character.
+  </para>
+           
+  <figure>
+    <title>String are represented as null-terminated character arrays.</title>
+    <graphic format="JPG"  fileref="array.jpg"/>
+  </figure>  
+  
+  <section><title>Initializing a string</title>
+    <para>
+      A string (character array) can be initialized just like any other array.
+      For example, below we initialize a 20 element character array with a 5 
+      character string which requires 6 characters storage space:
+      <programlisting>
+char name[20] = {&apos;T&apos;, &apos;A&apos;, &apos;N&apos;, &apos;D&apos;, &apos;I&apos;, &apos;\0&apos;};           
+      </programlisting>
+      However, <emphasis>C</emphasis> also supports a more convenient form of string 
+      initialization:
+      <programlisting>
+char name[20] = "TANDI";
+      </programlisting>
+      <warning>
+        <para>
+          Be careful to use single quotes for characters and double-quotes for strings.
+          Also, if you use the first form, do not forget to append the terminating
+          null character and if you use the latter, keep in mind that you must reserve
+          space for the terminating null character which will be appended automatically,
+          <abbrev>i.e.</abbrev> the minimum size is
+          <programlisting>
+char name[6] = "TANDI";
+          </programlisting>
+        </para>
+      </warning>
+    </para>
+  </section>
+  
+  <section><title>Some commonly used string manipulation routines</title>
+    <para>
+      In the appendix we list the contents of the ANSI-C standard library. 
+      The library, <filename>stdlib.h</filename>, contains a wide range of string
+      manipulations routines. Some of the most commonly used string functions include
+      <itemizedlist>
+        <listitem><para>
+          <function>strlen</function> returns the length of a string.
+        </para></listitem>
+        <listitem><para>
+          <function>strcpy</function> copies one string into another
+          or alternatively a number of characters from one string into
+          another.
+        </para></listitem>
+        <listitem><para>
+          <function>strcmp</function> compares 2 strings and determines
+          which comes first according to alphabetical order.
+        </para></listitem>
+        <listitem><para>
+          <function>strncat</function> appends one string onto another or alternatively
+          a number of characters from one string to another.
+        </para></listitem>
+        <listitem><para>
+          <function>atoi</function>, <function>atol</function>, <function>atof</function> 
+          convert a string to an integer, a long
+          and a double-precision floating point number respectively.
+        </para></listitem>
+      </itemizedlist>
+      <emphasis>C</emphasis> provides many more string manipulation functions not shown
+      here.
+    </para>
+  </section>
+  <section><title>Command-line arguments</title>
+    <para>
+      Recall that <function>main</function> took an integer and a array of strings
+      as arguments. The first is the number of command-line arguments (including
+      the command which launched the application) and the latter is the arguments
+      itself. <xref linkend="toPolar.c"/> lists an application which takes 
+      Cartesian coordinates as command-line arguments and calculates the polar coordinates:
+    </para>
+    <example id="toPolar.c"><title>toPolar.c</title>
+      <programlisting><xi:include href="toPolar.c" parse="text"/></programlisting>
+    </example>
+  </section>
+</section>

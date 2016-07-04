@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns3328:section xmlns:ns3328="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.jdbc.core.core">
+    <ns3329:title xmlns:ns3329="http://docbook.org/ns/docbook">The JDBC Core API</ns3329:title>
+    <ns3330:para xmlns:ns3330="http://docbook.org/ns/docbook">
+        JDBC is a Java API for executing SQL statements. This allows you to interact with
+        virtually any relational data base using pure Java. Virtually all data base systems supply
+        JDBC drivers. For those who do not, you can still use the JDK's JDBC-ODBC bridge, if an ODBC
+        driver is available instead.
+    </ns3330:para>
+    <ns3331:para xmlns:ns3331="http://docbook.org/ns/docbook">
+        Java's robustness, its security features and its platform independence make it a
+        particularly attractive language for database applications. Furthermore, the fact that data
+        base clients can be distributed with your web pages in the form of an applet adds makes the
+        choice of Java even more compelling.
+    </ns3331:para>
+    <ns3332:para xmlns:ns3332="http://docbook.org/ns/docbook">JDBC allows you to<ns3333:itemizedlist xmlns:ns3333="http://docbook.org/ns/docbook">
+            <ns3334:listitem xmlns:ns3334="http://docbook.org/ns/docbook">
+                <ns3335:para xmlns:ns3335="http://docbook.org/ns/docbook"> Establish a connection with a database.</ns3335:para>
+            </ns3334:listitem>
+            <ns3336:listitem xmlns:ns3336="http://docbook.org/ns/docbook">
+                <ns3337:para xmlns:ns3337="http://docbook.org/ns/docbook"> Send SQL statements to the database.</ns3337:para>
+            </ns3336:listitem>
+            <ns3338:listitem xmlns:ns3338="http://docbook.org/ns/docbook">
+                <ns3339:para xmlns:ns3339="http://docbook.org/ns/docbook"> Process the results of such statements.</ns3339:para>
+            </ns3338:listitem>
+        </ns3333:itemizedlist>
+    </ns3332:para>
+    <ns3340:para xmlns:ns3340="http://docbook.org/ns/docbook">The JDBC Core API consists of driver managers, connections, statements and result sets.
+        JDBC drivers are typically supplied by database vendors or third party driver developers.
+        The J2SDK is shipped with a JDBC-ODBC bridge which enables one to use any database which
+        provides an ODBC layer.
+    </ns3340:para>
+    <ns3341:section xmlns:ns3341="http://docbook.org/ns/docbook">
+        <ns3342:title xmlns:ns3342="http://docbook.org/ns/docbook">Loading a Database Driver</ns3342:title>
+        <ns3343:para xmlns:ns3343="http://docbook.org/ns/docbook"> JDBC drivers are usually shipped packaged in <ns3344:literal xmlns:ns3344="http://docbook.org/ns/docbook">jar</ns3344:literal> (Java Archive) files. 
+            The <ns3345:literal xmlns:ns3345="http://docbook.org/ns/docbook">jar</ns3345:literal> file for the driver has to be included in the classpath. 
+            The JDBC driver is then dynamically loaded via the bootstrap class loader of the run-time environment:
+        <ns3346:programlisting xmlns:ns3346="http://docbook.org/ns/docbook">
+try 
+{ 
+    Class.forName("fully-qualified driver name");
+} 
+catch (ClassNotFoundException e)
+{ 
+    // Driver class not found 
+}
+        </ns3346:programlisting>
+        For example, the MySQL database driver can be loaded in the following way:
+        <ns3347:programlisting xmlns:ns3347="http://docbook.org/ns/docbook">
+try 
+{ 
+    Class.forName("org.gjt.mm.mysql.Driver"); 
+} 
+catch (ClassNotFoundException e) 
+{ 
+    // Driver class not found 
+}</ns3347:programlisting>
+        When the class is loaded any static initialization (defined in a <ns3348:literal xmlns:ns3348="http://docbook.org/ns/docbook">static</ns3348:literal> block)
+            is run.
+        </ns3343:para>
+        <ns3349:section xmlns:ns3349="http://docbook.org/ns/docbook">
+            <ns3350:title xmlns:ns3350="http://docbook.org/ns/docbook">Defining a Set of System Drivers</ns3350:title>
+            <ns3351:para xmlns:ns3351="http://docbook.org/ns/docbook"> An alternative approach is to define a set of system drivers using
+            <ns3352:programlisting xmlns:ns3352="http://docbook.org/ns/docbook"> 
+System.setProperty("jdbc.drivers", 
+  "org.gjt.mm.mysql.Driver:COM.cloudscape.core.JDBCDriver");
+            </ns3352:programlisting>
+            where the individual drivers are seperated by colons.</ns3351:para>
+        </ns3349:section>
+    </ns3341:section>
+    <ns3353:section xmlns:ns3353="http://docbook.org/ns/docbook">
+        <ns3354:title xmlns:ns3354="http://docbook.org/ns/docbook">JDBC URLs</ns3354:title>
+        <ns3355:para xmlns:ns3355="http://docbook.org/ns/docbook"> JDBC URL's enable us to uniquely identify one among several JDBC drivers. The syntax
+            for a JDBC URL is
+        <ns3356:programlisting xmlns:ns3356="http://docbook.org/ns/docbook"> 
+jdbc:&lt;subprotocol&gt;:&lt;subname&gt;</ns3356:programlisting>
+         where<ns3357:itemizedlist xmlns:ns3357="http://docbook.org/ns/docbook">
+                <ns3358:listitem xmlns:ns3358="http://docbook.org/ns/docbook">
+                    <ns3359:formalpara xmlns:ns3359="http://docbook.org/ns/docbook">
+                        <ns3360:title xmlns:ns3360="http://docbook.org/ns/docbook">jdbc</ns3360:title>
+                        <ns3361:para xmlns:ns3361="http://docbook.org/ns/docbook">specifies that the jdbc protociol is used -- this is the only protocol
+                            supported by JDBC drivers.</ns3361:para>
+                    </ns3359:formalpara>
+                </ns3358:listitem>
+                <ns3362:listitem xmlns:ns3362="http://docbook.org/ns/docbook">
+                    <ns3363:formalpara xmlns:ns3363="http://docbook.org/ns/docbook">
+                        <ns3364:title xmlns:ns3364="http://docbook.org/ns/docbook">subprotocol</ns3364:title>
+                        <ns3365:para xmlns:ns3365="http://docbook.org/ns/docbook">specifies the database driver and potentially one of a number database
+                            of connectivity mechanisms supported by a driver.</ns3365:para>
+                    </ns3363:formalpara>
+                </ns3362:listitem>
+                <ns3366:listitem xmlns:ns3366="http://docbook.org/ns/docbook">
+                    <ns3367:formalpara xmlns:ns3367="http://docbook.org/ns/docbook">
+                        <ns3368:title xmlns:ns3368="http://docbook.org/ns/docbook">subname</ns3368:title>
+                        <ns3369:para xmlns:ns3369="http://docbook.org/ns/docbook">typivally refers to the database host, port and database name one
+                            wants to connect to. The subname is, however, driver-specific.</ns3369:para>
+                    </ns3367:formalpara>
+                </ns3366:listitem>
+            </ns3357:itemizedlist>
+        </ns3355:para>
+        <ns3370:para xmlns:ns3370="http://docbook.org/ns/docbook">For example, to connect to a database, <ns3371:literal xmlns:ns3371="http://docbook.org/ns/docbook">test</ns3371:literal>, hosted on the local 
+            host on port 3306 by MySQL, we would use the following JDBC URL:
+        <ns3372:programlisting xmlns:ns3372="http://docbook.org/ns/docbook"> 
+jdbc:mysql://localhost/test:3306
+          </ns3372:programlisting>
+          </ns3370:para>
+    </ns3353:section>
+    <ns3373:section xmlns:ns3373="http://docbook.org/ns/docbook">
+        <ns3374:title xmlns:ns3374="http://docbook.org/ns/docbook">Driver Managers and Database Connections</ns3374:title>
+        <ns3375:para xmlns:ns3375="http://docbook.org/ns/docbook"> <ns3376:emphasis xmlns:ns3376="http://docbook.org/ns/docbook">Driver manager</ns3376:emphasis> is a utility class which keeps track of the available drivers and is
+            responsible for establishing connections between databases and drivers. For example, to
+            request a database connection from a driver manager, we can issue the following statements:
+        <ns3377:programlisting xmlns:ns3377="http://docbook.org/ns/docbook"> 
+String driverName = "org.gjt.mm.mysql.Driver"; 
+String dbUrl = "jdbc:mysql://localhost/test:3306"; 
+String user = "Bond"; 
+String password = "007secret"; 
+
+try 
+{ 
+    Class.forName(driverName); 
+} 
+catch (ClassNotFoundException e) 
+{ 
+    System.out.println("ERROR: Could not load database driver class."); 
+    System.exit(0); 
+} 
+
+Connection connection = DriverManager.getConnection(dbUrl, user, password);
+        </ns3377:programlisting>
+        In addition to providing connections, <ns3378:emphasis xmlns:ns3378="http://docbook.org/ns/docbook">DriverManager</ns3378:emphasis> has class
+            services for<ns3379:itemizedlist xmlns:ns3379="http://docbook.org/ns/docbook">
+                <ns3380:listitem xmlns:ns3380="http://docbook.org/ns/docbook">
+                    <ns3381:para xmlns:ns3381="http://docbook.org/ns/docbook">registering and de-registering drivers</ns3381:para>
+                </ns3380:listitem>
+                <ns3382:listitem xmlns:ns3382="http://docbook.org/ns/docbook">
+                    <ns3383:para xmlns:ns3383="http://docbook.org/ns/docbook">resolving an installed driver from a JDBC URL</ns3383:para>
+                </ns3382:listitem>
+                <ns3384:listitem xmlns:ns3384="http://docbook.org/ns/docbook">
+                    <ns3385:para xmlns:ns3385="http://docbook.org/ns/docbook">querying all registered JDBC drivers</ns3385:para>
+                </ns3384:listitem>
+                <ns3386:listitem xmlns:ns3386="http://docbook.org/ns/docbook">
+                    <ns3387:para xmlns:ns3387="http://docbook.org/ns/docbook">setting and querying the login timeout, i.e. the maximum time a driver
+                        should wait while attempting to connect
+                    </ns3387:para>
+                </ns3386:listitem>
+                <ns3388:listitem xmlns:ns3388="http://docbook.org/ns/docbook">
+                    <ns3389:para xmlns:ns3389="http://docbook.org/ns/docbook">Setting and querying the print stream used for logging database service requests.</ns3389:para>
+                </ns3388:listitem>
+            </ns3379:itemizedlist>
+        </ns3375:para>
+    </ns3373:section>
+    <ns3390:section xmlns:ns3390="http://docbook.org/ns/docbook">
+        <ns3391:title xmlns:ns3391="http://docbook.org/ns/docbook">Specifying Connection Properties</ns3391:title>
+        <ns3392:para xmlns:ns3392="http://docbook.org/ns/docbook">A properties map can be used to specify any properties which should apply for a
+            connection. These properties are usually specific for a database driver.
+        <ns3393:programlisting xmlns:ns3393="http://docbook.org/ns/docbook"> 
+String driverName = "org.gjt.mm.mysql.Driver"; 
+String dbUrl = "jdbc:mysql://localhost/test:3306"; 
+java.util.Properties props = new java.util.Properties();
+    props.put("autocommit", "true"); 
+    pros.put("foo", "bar");
+Connection connection = DriverManager.getConnection(dbUrl, props);
+          </ns3393:programlisting>
+          </ns3392:para>
+    </ns3390:section>
+    <ns3394:section xmlns:ns3394="http://docbook.org/ns/docbook">
+        <ns3395:title xmlns:ns3395="http://docbook.org/ns/docbook">Statements</ns3395:title>
+        <ns3396:para xmlns:ns3396="http://docbook.org/ns/docbook"> JDBC statements encapsulate SQL statements. Simple statements created
+            via <ns3397:literal xmlns:ns3397="http://docbook.org/ns/docbook">connection.createStatement()</ns3397:literal> are used for simple SQL statements
+            where efficiency is not critical. 
+        </ns3396:para>
+        <ns3398:para xmlns:ns3398="http://docbook.org/ns/docbook">
+            The <ns3399:literal xmlns:ns3399="http://docbook.org/ns/docbook">Statement</ns3399:literal> interface offers three methods for
+            executing SQL statements:
+            <ns3400:itemizedlist xmlns:ns3400="http://docbook.org/ns/docbook">
+                <ns3401:listitem xmlns:ns3401="http://docbook.org/ns/docbook">
+                    <ns3402:formalpara xmlns:ns3402="http://docbook.org/ns/docbook">
+                        <ns3403:title xmlns:ns3403="http://docbook.org/ns/docbook">executeQuery()</ns3403:title>
+                        <ns3404:para xmlns:ns3404="http://docbook.org/ns/docbook"> is used for queries which produce a single result set.</ns3404:para>
+                    </ns3402:formalpara>
+                </ns3401:listitem>
+                <ns3405:listitem xmlns:ns3405="http://docbook.org/ns/docbook">
+                    <ns3406:formalpara xmlns:ns3406="http://docbook.org/ns/docbook">
+                        <ns3407:title xmlns:ns3407="http://docbook.org/ns/docbook">executeUpdate()</ns3407:title>
+                        <ns3408:para xmlns:ns3408="http://docbook.org/ns/docbook"> is used for <ns3409:literal xmlns:ns3409="http://docbook.org/ns/docbook">INSERT</ns3409:literal>, <ns3410:literal xmlns:ns3410="http://docbook.org/ns/docbook">UPDATE</ns3410:literal>
+                            and <ns3411:literal xmlns:ns3411="http://docbook.org/ns/docbook"> DELETE</ns3411:literal> statements as well as for SQL DDL (Data
+                            Definition Language) statements like <ns3412:literal xmlns:ns3412="http://docbook.org/ns/docbook">CREATE TABLE</ns3412:literal>
+                            and <ns3413:literal xmlns:ns3413="http://docbook.org/ns/docbook">DROP TABLE</ns3413:literal>. The method returns the update count
+                            as an integer. This is the number of rows affected by the statement.</ns3408:para>
+                    </ns3406:formalpara>
+                </ns3405:listitem>
+                <ns3414:listitem xmlns:ns3414="http://docbook.org/ns/docbook">
+                    <ns3415:formalpara xmlns:ns3415="http://docbook.org/ns/docbook">
+                        <ns3416:title xmlns:ns3416="http://docbook.org/ns/docbook">execute()</ns3416:title>
+                        <ns3417:para xmlns:ns3417="http://docbook.org/ns/docbook"> 
+                            is used for statements which return more than one result set, or if
+                            it is known at compile time whether an SQL statement will produce results
+                            or not.
+                        </ns3417:para>
+                    </ns3415:formalpara>
+                </ns3414:listitem>
+            </ns3400:itemizedlist>
+        </ns3398:para>
+    </ns3394:section>
+    <ns3418:section xmlns:ns3418="http://docbook.org/ns/docbook">
+        <ns3419:title xmlns:ns3419="http://docbook.org/ns/docbook">Result Sets</ns3419:title>
+        <ns3420:para xmlns:ns3420="http://docbook.org/ns/docbook"> 
+            Result sets contain the rows which satisfied the query. Each row contains those
+            columns specified by the query (they can come from differnt tables if a <ns3421:emphasis xmlns:ns3421="http://docbook.org/ns/docbook">join</ns3421:emphasis>
+            was executed.) It is a collection of rows and the <ns3422:emphasis xmlns:ns3422="http://docbook.org/ns/docbook">next()</ns3422:emphasis> method moves the cursor one row downwards.
+            Column entries are extracted either via column name or via column number (as they are in
+            the result set).
+        </ns3420:para>
+    </ns3418:section>
+    <ns3423:section xmlns:ns3423="http://docbook.org/ns/docbook" xml:id="secSimpleJDBCExample">
+        <ns3424:title xmlns:ns3424="http://docbook.org/ns/docbook">A Simple Example</ns3424:title>
+      <ns3425:para xmlns:ns3425="http://docbook.org/ns/docbook">
+        <ns3426:programlisting xmlns:ns3426="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/TestMySQL.java" parse="text"/>
+        </ns3426:programlisting>
+        </ns3425:para>
+    </ns3423:section>
+    <ns3427:section xmlns:ns3427="http://docbook.org/ns/docbook">
+        <ns3428:title xmlns:ns3428="http://docbook.org/ns/docbook">Prepared Statements</ns3428:title>
+        <ns3429:para xmlns:ns3429="http://docbook.org/ns/docbook"> 
+            Prepared statements are precompiled statements which can obtain a number of arguments.
+            They provide a massive performance benefit if the same SQL statement is executed a number of
+            times, every time with different arguments.
+        <ns3430:programlisting xmlns:ns3430="http://docbook.org/ns/docbook">
+PreparedStatement preparedStatement = 
+  connection.prepareStatment("UPDATE clients SET company = ? WHERE company = ?");
+         </ns3430:programlisting>
+            The arguments to a prepared statement are supplied via the set statements summarized
+            in table <ns3431:xref xmlns:ns3431="http://docbook.org/ns/docbook" linkend="tabSQLdataTypes"/>. For example we could say
+        <ns3432:programlisting xmlns:ns3432="http://docbook.org/ns/docbook"> 
+preparedStatement.setString(1, "TWENTY20");
+preparedStatement.setString(2, "Standard Chartered");
+        </ns3432:programlisting>
+        Because prepared statements are precompiled, they execute faster than normal
+            statements and should be used when a similar query is repeated frequently.</ns3429:para>
+        <ns3433:table xmlns:ns3433="http://docbook.org/ns/docbook" xml:id="tabSQLdataTypes">
+            <ns3434:title xmlns:ns3434="http://docbook.org/ns/docbook">SQL data types, the corresponding Java datatypes and the set methods used for
+                populating the arguments JDBC prepared statements. </ns3434:title>
+            <ns3435:tgroup xmlns:ns3435="http://docbook.org/ns/docbook" cols="3">
+                <ns3436:thead xmlns:ns3436="http://docbook.org/ns/docbook">
+                    <ns3437:row xmlns:ns3437="http://docbook.org/ns/docbook">
+                        <ns3438:entry xmlns:ns3438="http://docbook.org/ns/docbook"><ns3439:para xmlns:ns3439="http://docbook.org/ns/docbook">SQL type</ns3439:para></ns3438:entry>
+                        <ns3440:entry xmlns:ns3440="http://docbook.org/ns/docbook"><ns3441:para xmlns:ns3441="http://docbook.org/ns/docbook">Java type</ns3441:para></ns3440:entry>
+                        <ns3442:entry xmlns:ns3442="http://docbook.org/ns/docbook"><ns3443:para xmlns:ns3443="http://docbook.org/ns/docbook">Java set method for <ns3444:literal xmlns:ns3444="http://docbook.org/ns/docbook">PreparedStatement</ns3444:literal></ns3443:para></ns3442:entry>
+                    </ns3437:row>
+                </ns3436:thead>
+                <ns3445:tbody xmlns:ns3445="http://docbook.org/ns/docbook">
+                    <ns3446:row xmlns:ns3446="http://docbook.org/ns/docbook">
+                        <ns3447:entry xmlns:ns3447="http://docbook.org/ns/docbook"><ns3448:para xmlns:ns3448="http://docbook.org/ns/docbook">BIT</ns3448:para></ns3447:entry>
+                        <ns3449:entry xmlns:ns3449="http://docbook.org/ns/docbook"><ns3450:para xmlns:ns3450="http://docbook.org/ns/docbook">boolean</ns3450:para></ns3449:entry>
+                        <ns3451:entry xmlns:ns3451="http://docbook.org/ns/docbook">
+                            <ns3452:para xmlns:ns3452="http://docbook.org/ns/docbook"><ns3453:literal xmlns:ns3453="http://docbook.org/ns/docbook">void setBoolean(int index, boolean b)</ns3453:literal></ns3452:para>
+                        </ns3451:entry>
+                    </ns3446:row>
+                    <ns3454:row xmlns:ns3454="http://docbook.org/ns/docbook">
+                        <ns3455:entry xmlns:ns3455="http://docbook.org/ns/docbook"><ns3456:para xmlns:ns3456="http://docbook.org/ns/docbook">TINYINT</ns3456:para></ns3455:entry>
+                        <ns3457:entry xmlns:ns3457="http://docbook.org/ns/docbook"><ns3458:para xmlns:ns3458="http://docbook.org/ns/docbook">byte</ns3458:para></ns3457:entry>
+                        <ns3459:entry xmlns:ns3459="http://docbook.org/ns/docbook">
+                            <ns3460:para xmlns:ns3460="http://docbook.org/ns/docbook"><ns3461:literal xmlns:ns3461="http://docbook.org/ns/docbook">void setByte(int index, byte b)</ns3461:literal></ns3460:para>
+                        </ns3459:entry>
+                    </ns3454:row>
+                    <ns3462:row xmlns:ns3462="http://docbook.org/ns/docbook">
+                        <ns3463:entry xmlns:ns3463="http://docbook.org/ns/docbook"><ns3464:para xmlns:ns3464="http://docbook.org/ns/docbook">SMALLINT</ns3464:para></ns3463:entry>
+                        <ns3465:entry xmlns:ns3465="http://docbook.org/ns/docbook"><ns3466:para xmlns:ns3466="http://docbook.org/ns/docbook">short</ns3466:para></ns3465:entry>
+                        <ns3467:entry xmlns:ns3467="http://docbook.org/ns/docbook">
+                            <ns3468:para xmlns:ns3468="http://docbook.org/ns/docbook"><ns3469:literal xmlns:ns3469="http://docbook.org/ns/docbook">void setShort(int index, short k)</ns3469:literal></ns3468:para>
+                        </ns3467:entry>
+                    </ns3462:row>
+                    <ns3470:row xmlns:ns3470="http://docbook.org/ns/docbook">
+                        <ns3471:entry xmlns:ns3471="http://docbook.org/ns/docbook"><ns3472:para xmlns:ns3472="http://docbook.org/ns/docbook">INTEGER</ns3472:para></ns3471:entry>
+                        <ns3473:entry xmlns:ns3473="http://docbook.org/ns/docbook"><ns3474:para xmlns:ns3474="http://docbook.org/ns/docbook">int</ns3474:para></ns3473:entry>
+                        <ns3475:entry xmlns:ns3475="http://docbook.org/ns/docbook">
+                            <ns3476:para xmlns:ns3476="http://docbook.org/ns/docbook"><ns3477:literal xmlns:ns3477="http://docbook.org/ns/docbook">void setInt(int index, int k)</ns3477:literal></ns3476:para>
+                        </ns3475:entry>
+                    </ns3470:row>
+                    <ns3478:row xmlns:ns3478="http://docbook.org/ns/docbook">
+                        <ns3479:entry xmlns:ns3479="http://docbook.org/ns/docbook"><ns3480:para xmlns:ns3480="http://docbook.org/ns/docbook">BIGINT</ns3480:para></ns3479:entry>
+                        <ns3481:entry xmlns:ns3481="http://docbook.org/ns/docbook"><ns3482:para xmlns:ns3482="http://docbook.org/ns/docbook">long</ns3482:para></ns3481:entry>
+                        <ns3483:entry xmlns:ns3483="http://docbook.org/ns/docbook">
+                            <ns3484:para xmlns:ns3484="http://docbook.org/ns/docbook"><ns3485:literal xmlns:ns3485="http://docbook.org/ns/docbook">void setLong(int index, long k)</ns3485:literal></ns3484:para>
+                        </ns3483:entry>
+                    </ns3478:row>
+                    <ns3486:row xmlns:ns3486="http://docbook.org/ns/docbook">
+                        <ns3487:entry xmlns:ns3487="http://docbook.org/ns/docbook"><ns3488:para xmlns:ns3488="http://docbook.org/ns/docbook">FLOAT</ns3488:para></ns3487:entry>
+                        <ns3489:entry xmlns:ns3489="http://docbook.org/ns/docbook"><ns3490:para xmlns:ns3490="http://docbook.org/ns/docbook">float</ns3490:para></ns3489:entry>
+                        <ns3491:entry xmlns:ns3491="http://docbook.org/ns/docbook">
+                            <ns3492:para xmlns:ns3492="http://docbook.org/ns/docbook"><ns3493:literal xmlns:ns3493="http://docbook.org/ns/docbook">void setFloat(int index, float x)</ns3493:literal></ns3492:para>
+                        </ns3491:entry>
+                    </ns3486:row>
+                    <ns3494:row xmlns:ns3494="http://docbook.org/ns/docbook">
+                        <ns3495:entry xmlns:ns3495="http://docbook.org/ns/docbook"><ns3496:para xmlns:ns3496="http://docbook.org/ns/docbook">DOUBLE</ns3496:para></ns3495:entry>
+                        <ns3497:entry xmlns:ns3497="http://docbook.org/ns/docbook"><ns3498:para xmlns:ns3498="http://docbook.org/ns/docbook">double</ns3498:para></ns3497:entry>
+                        <ns3499:entry xmlns:ns3499="http://docbook.org/ns/docbook">
+                            <ns3500:para xmlns:ns3500="http://docbook.org/ns/docbook"><ns3501:literal xmlns:ns3501="http://docbook.org/ns/docbook">void setDouble(int index, double x)</ns3501:literal></ns3500:para>
+                        </ns3499:entry>
+                    </ns3494:row>
+                    <ns3502:row xmlns:ns3502="http://docbook.org/ns/docbook">
+                        <ns3503:entry xmlns:ns3503="http://docbook.org/ns/docbook"><ns3504:para xmlns:ns3504="http://docbook.org/ns/docbook">NUMERIC</ns3504:para></ns3503:entry>
+                        <ns3505:entry xmlns:ns3505="http://docbook.org/ns/docbook"><ns3506:para xmlns:ns3506="http://docbook.org/ns/docbook">java.lang.BigDecimal</ns3506:para></ns3505:entry>
+                        <ns3507:entry xmlns:ns3507="http://docbook.org/ns/docbook">
+                            <ns3508:para xmlns:ns3508="http://docbook.org/ns/docbook"><ns3509:literal xmlns:ns3509="http://docbook.org/ns/docbook">void setBigDecimal(int index, BigDecimal x)</ns3509:literal></ns3508:para>
+                        </ns3507:entry>
+                    </ns3502:row>
+                    <ns3510:row xmlns:ns3510="http://docbook.org/ns/docbook">
+                        <ns3511:entry xmlns:ns3511="http://docbook.org/ns/docbook"><ns3512:para xmlns:ns3512="http://docbook.org/ns/docbook">VARCHAR(n)</ns3512:para></ns3511:entry>
+                        <ns3513:entry xmlns:ns3513="http://docbook.org/ns/docbook"><ns3514:para xmlns:ns3514="http://docbook.org/ns/docbook">java.lang.String</ns3514:para></ns3513:entry>
+                        <ns3515:entry xmlns:ns3515="http://docbook.org/ns/docbook">
+                            <ns3516:para xmlns:ns3516="http://docbook.org/ns/docbook"><ns3517:literal xmlns:ns3517="http://docbook.org/ns/docbook">void setString(int index, String s)</ns3517:literal></ns3516:para>
+                        </ns3515:entry>
+                    </ns3510:row>
+                    <ns3518:row xmlns:ns3518="http://docbook.org/ns/docbook">
+                        <ns3519:entry xmlns:ns3519="http://docbook.org/ns/docbook"><ns3520:para xmlns:ns3520="http://docbook.org/ns/docbook">LONG VARCHAR</ns3520:para></ns3519:entry>
+                        <ns3521:entry xmlns:ns3521="http://docbook.org/ns/docbook"><ns3522:para xmlns:ns3522="http://docbook.org/ns/docbook">java.io.InputStream</ns3522:para></ns3521:entry>
+                        <ns3523:entry xmlns:ns3523="http://docbook.org/ns/docbook">
+                            <ns3524:para xmlns:ns3524="http://docbook.org/ns/docbook"><ns3525:literal xmlns:ns3525="http://docbook.org/ns/docbook">void setASCIISTREAM(int index, InputStream strm, int length)</ns3525:literal> or</ns3524:para>
+                        </ns3523:entry>
+                    </ns3518:row>
+                    <ns3526:row xmlns:ns3526="http://docbook.org/ns/docbook">
+                        <ns3527:entry xmlns:ns3527="http://docbook.org/ns/docbook"><ns3528:para xmlns:ns3528="http://docbook.org/ns/docbook"/></ns3527:entry>
+                        <ns3529:entry xmlns:ns3529="http://docbook.org/ns/docbook"><ns3530:para xmlns:ns3530="http://docbook.org/ns/docbook"/></ns3529:entry>
+                        <ns3531:entry xmlns:ns3531="http://docbook.org/ns/docbook">
+                            <ns3532:para xmlns:ns3532="http://docbook.org/ns/docbook"><ns3533:literal xmlns:ns3533="http://docbook.org/ns/docbook">void setUnicodeSTREAM(int index, InputStream strm, int length)</ns3533:literal></ns3532:para>
+                        </ns3531:entry>
+                    </ns3526:row>
+                    <ns3534:row xmlns:ns3534="http://docbook.org/ns/docbook">
+                        <ns3535:entry xmlns:ns3535="http://docbook.org/ns/docbook"><ns3536:para xmlns:ns3536="http://docbook.org/ns/docbook">VARBINARY</ns3536:para></ns3535:entry>
+                        <ns3537:entry xmlns:ns3537="http://docbook.org/ns/docbook"><ns3538:para xmlns:ns3538="http://docbook.org/ns/docbook">byte[]</ns3538:para></ns3537:entry>
+                        <ns3539:entry xmlns:ns3539="http://docbook.org/ns/docbook">
+                            <ns3540:para xmlns:ns3540="http://docbook.org/ns/docbook"><ns3541:literal xmlns:ns3541="http://docbook.org/ns/docbook"> void setBytes(int index, byte[] x)</ns3541:literal></ns3540:para>
+                        </ns3539:entry>
+                    </ns3534:row>
+                    <ns3542:row xmlns:ns3542="http://docbook.org/ns/docbook">
+                        <ns3543:entry xmlns:ns3543="http://docbook.org/ns/docbook"><ns3544:para xmlns:ns3544="http://docbook.org/ns/docbook">LONGVARBINARY</ns3544:para></ns3543:entry>
+                        <ns3545:entry xmlns:ns3545="http://docbook.org/ns/docbook"><ns3546:para xmlns:ns3546="http://docbook.org/ns/docbook">java.io.InputStream</ns3546:para></ns3545:entry>
+                        <ns3547:entry xmlns:ns3547="http://docbook.org/ns/docbook">
+                            <ns3548:para xmlns:ns3548="http://docbook.org/ns/docbook"><ns3549:literal xmlns:ns3549="http://docbook.org/ns/docbook">void setBinaryStream(int index, InputStream strm, int length)</ns3549:literal></ns3548:para>
+                        </ns3547:entry>
+                    </ns3542:row>
+                    <ns3550:row xmlns:ns3550="http://docbook.org/ns/docbook">
+                        <ns3551:entry xmlns:ns3551="http://docbook.org/ns/docbook"><ns3552:para xmlns:ns3552="http://docbook.org/ns/docbook">DATE</ns3552:para></ns3551:entry>
+                        <ns3553:entry xmlns:ns3553="http://docbook.org/ns/docbook"><ns3554:para xmlns:ns3554="http://docbook.org/ns/docbook">java.sql.Date</ns3554:para></ns3553:entry>
+                        <ns3555:entry xmlns:ns3555="http://docbook.org/ns/docbook">
+                            <ns3556:para xmlns:ns3556="http://docbook.org/ns/docbook"><ns3557:literal xmlns:ns3557="http://docbook.org/ns/docbook">void setDate(int index, Date date)</ns3557:literal></ns3556:para>
+                        </ns3555:entry>
+                    </ns3550:row>
+                    <ns3558:row xmlns:ns3558="http://docbook.org/ns/docbook">
+                        <ns3559:entry xmlns:ns3559="http://docbook.org/ns/docbook"><ns3560:para xmlns:ns3560="http://docbook.org/ns/docbook">TIME</ns3560:para></ns3559:entry>
+                        <ns3561:entry xmlns:ns3561="http://docbook.org/ns/docbook"><ns3562:para xmlns:ns3562="http://docbook.org/ns/docbook">java.sql.TimeStamp</ns3562:para></ns3561:entry>
+                        <ns3563:entry xmlns:ns3563="http://docbook.org/ns/docbook">
+                            <ns3564:para xmlns:ns3564="http://docbook.org/ns/docbook"><ns3565:literal xmlns:ns3565="http://docbook.org/ns/docbook">void setTimeStamp(int index, TimeStamp time)</ns3565:literal></ns3564:para>
+                        </ns3563:entry>
+                    </ns3558:row>
+                </ns3445:tbody>
+            </ns3435:tgroup>
+        </ns3433:table>
+    </ns3427:section>
+    <ns3566:section xmlns:ns3566="http://docbook.org/ns/docbook">
+        <ns3567:title xmlns:ns3567="http://docbook.org/ns/docbook">Callable Statements</ns3567:title>
+        <ns3568:para xmlns:ns3568="http://docbook.org/ns/docbook"> Calable statements allows one to access functions supplied by the DBMS. For example
+        <ns3569:programlisting xmlns:ns3569="http://docbook.org/ns/docbook"> 
+CallableStatement callableStatement = 
+    connection.prepareCall ("{call doSomething(?, ?)}");
+        </ns3569:programlisting>
+        The parameters can be input, output or input/output parameters. The former are set via
+            the set methods. Output parameters have to be registered and the values are retrieved
+            via get statements:
+        <ns3570:programlisting xmlns:ns3570="http://docbook.org/ns/docbook"> 
+callableStatement.registerOutParameter(1, java.sql.Types.FLOAT);
+callableStatement.executeQuery(); 
+
+float x = callableStatement.getFloat("yValue"); 
+// or via parameter index 
+float x = callableStatement.getFloat(3);
+        </ns3570:programlisting></ns3568:para>
+    </ns3566:section>
+    <ns3571:section xmlns:ns3571="http://docbook.org/ns/docbook">
+        <ns3572:title xmlns:ns3572="http://docbook.org/ns/docbook">Querying Meta-Data</ns3572:title>
+        <ns3573:para xmlns:ns3573="http://docbook.org/ns/docbook"> We can obtain descriptive information about the structure of a result-set by querying
+            it for its meta-data. The meta-data contains the number of columns contained in the
+            result set, the column names and types, whether the columns are read-only or not and
+            lots of other information.
+        </ns3573:para>
+        <ns3574:para xmlns:ns3574="http://docbook.org/ns/docbook"> Below we show a little application which selects all fields of a database, and
+            queries the result set for the number of columns, their names and types:
+        <ns3575:programlisting xmlns:ns3575="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/TestGetMetaData.java" parse="text"/>
+        </ns3575:programlisting>
+          </ns3574:para>
+    </ns3571:section>
+    <ns3576:section xmlns:ns3576="http://docbook.org/ns/docbook">
+        <ns3577:title xmlns:ns3577="http://docbook.org/ns/docbook">Working with Transactions</ns3577:title>
+        <ns3578:para xmlns:ns3578="http://docbook.org/ns/docbook"> Transactions are usually demarcated via Java's <ns3579:emphasis xmlns:ns3579="http://docbook.org/ns/docbook">Transaction Service</ns3579:emphasis>, accessed through
+            the standard API, <ns3580:emphasis xmlns:ns3580="http://docbook.org/ns/docbook">JTA</ns3580:emphasis>. JDBC, however, also enables one to start, commit and roll-back
+            transactions. In order to do that we have to first switch off the (default) auto-commit:
+        <ns3581:programlisting xmlns:ns3581="http://docbook.org/ns/docbook"> 
+connection.setAutoCommit(false); 
+Statement stmt = connection.createStatement(); 
+try 
+{ 
+    // Several Updates 
+    //...
+            
+    connection.commit(); 
+} catch (java.sql.SQLExceoption e) 
+{ 
+    connection.rollback(); 
+} 
+finally 
+{ 
+    connection.close(); 
+}
+          </ns3581:programlisting>
+          </ns3578:para>
+    </ns3576:section>
+    <ns3582:section xmlns:ns3582="http://docbook.org/ns/docbook">
+        <ns3583:title xmlns:ns3583="http://docbook.org/ns/docbook">Batch Updates</ns3583:title>
+        <ns3584:para xmlns:ns3584="http://docbook.org/ns/docbook"> JDBC 2.1 onwards also support batch updates, enabling one to submit multiple SQL
+            INSERT, UPDATE and DELETE statements with a single database service request. This can
+            improve performance significantly: 
+        <ns3585:programlisting xmlns:ns3585="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/TestBatch.java" parse="text"/>
+        </ns3585:programlisting>
+          </ns3584:para>
+    </ns3582:section>
+</ns3328:section>

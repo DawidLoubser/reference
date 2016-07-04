@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.technologies.xml.webServices.soap.structure.header">
+
+  <title>The SOAP Header</title>
+
+  <indexterm>
+    <primary>SOAP</primary>
+    <secondary>structure</secondary>
+    <tertiary>header</tertiary>
+  </indexterm>
+
+  <para> The <literal>Header</literal>, like the <literal>Body</literal>,
+    is merely an area where application- and domain-specific information
+    can be included. The SOAP schema itself does not define any headers,
+    but the SOAP processing model does define the rules with regards to
+    header processing. </para>
+  <para> Like the stamps and adhesives (and possibly even the address)
+    placed on the outside of a traditional mail envelope, SOAP Headers
+    provide information <emphasis>about</emphasis> the transit of the
+    message. This information is available (and possibly modifiable) to
+    all nodes that participate in a SOAP request:
+    <emphasis>sender</emphasis>, <emphasis>ultimate receiver</emphasis>,
+    and any <emphasis>intermediaries</emphasis> (routing, security,
+    logging, etc) in between. The applications along the message path
+    (sender, ultimate receiver, intermediaries) are also known as
+      <emphasis>SOAP Nodes</emphasis>. </para>
+  <para> The rules are straightforward: <itemizedlist>
+      <listitem>
+        <para>intermediaries should not alter the contents of the
+        Body</para>
+      </listitem>
+      <listitem>
+        <para>intermediaries are allowed to add to, or remove from, the
+          Header</para>
+      </listitem>
+    </itemizedlist>
+  </para>
+  <para> Like the Body, the nature of the (required) Header elements for a
+    particular message invocation may be specified in the web service
+    contract (<literal>WSDL</literal>), although any number of unspecified
+    headers may be present as well. Like the body, the structure of
+    headers are specified by a schema. </para>
+  <para> Consider the following example: <programlisting language="XML"><![CDATA[
+]]><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="src/logHeaderSimple.xml" parse="text"/><![CDATA[
+        ]]></programlisting> A client uses a (hypothetical) well-known
+    distributed logging system, and to that end, inserts a header
+    requesting that each node that processes the message, send a log
+    message (containing the unique message identifier) to the indicated
+    logging server. This way, the client can track the progress of his
+    message. Nodes that do not understand the ehader, may simply ignore
+    it. Furthermore, a node at a company network boundary may remove the
+    header from the incoming message if it so wishes, in order to prevent
+    internal nodes from trying to respond. </para>
+  <para> You can see that Header nodes do not contain critical information
+    relating to the Body, but they are ideal for (and are actively being
+    applied in some of these areas): <itemizedlist>
+      <listitem>
+        <formalpara>
+          <title>security</title>
+          <para>The header can include authentication information, or even
+            a digital certificate</para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>metadata</title>
+          <para>For example, a header to indicate a claim that the message
+            conforms the the WS-I basic profile</para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>logging/tracking</title>
+          <para>A header may request that each node add information about
+            itself to the header, and the header may then be sent back to
+            the client which now has a full trace of nodes along the
+            message path</para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>unique identification</title>
+          <para>By assigning each message a unique message ID</para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>business process steps, e.g. authorisation</title>
+          <para>Assuming a business process (workflow) is composed of a
+            message traveling through many nodes (processing steps), it
+            could, for example, request nodes to gaim human authorisation
+            before passing a message on</para>
+        </formalpara>
+      </listitem>
+    </itemizedlist>
+  </para>
+
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    href="headerProcessingRules.docbook"/>
+
+</section>

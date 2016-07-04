@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Shared library naming</title>
+    <para>
+        In Linux every shared library has a <emphasis>"soname"</emphasis> and a <emphasis>"real name"</emphasis>.
+        The <emphasis>"soname"</emphasis> has
+        <itemizedlist>
+            <listitem><para>
+                a <literal>lib</literal> prefix followed by                    
+            </para></listitem>
+            <listitem><para>
+                the name of the library, which is followed by
+            </para></listitem>
+            <listitem><para>
+                a <literal>.so</literal> extension, which is followed by
+            </para></listitem>
+            <listitem><para>
+                a <literal><![CDATA[.<interfaceVersionNo>]]></literal> with the <literal>interfaceVersionNo</literal>
+                being incremented every time there is a change to the library interface.    
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        The <emphasis>"real name"</emphasis> of a shared library is the <emphasis>"soname"</emphasis> followed by a minor
+        version number. The <emphasis>"real name"</emphasis> may optionally include a further release number. The
+        minor and/or release number  change every time there is a change to the library implementation which does not
+        change the interface.
+    </para>
+    <para>
+        Thus the <emphasis>"soname"</emphasis> of version 2 of a library <literal>xxx</literal> would be
+        <programlisting><![CDATA[
+libxxx.so.2               
+]]></programlisting>
+        and the <emphasis>"real name"</emphasis> could be either
+        <programlisting><![CDATA[
+libxxx.so.2.0                
+]]></programlisting>
+        or
+        <programlisting><![CDATA[
+libxxx.so.2.0.r1                
+]]></programlisting>
+        with the latter including a release number in addition to the minor version number, <literal>0</literal>.
+    </para>
+</section>

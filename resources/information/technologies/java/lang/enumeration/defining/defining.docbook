@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Defining enumerations</title>
+  <indexterm>
+    <primary>Enumerations</primary>
+    <secondary>defining</secondary>
+  </indexterm>
+  <para>
+    An enumeration is defined similar to a <emphasis>class</emphasis>
+    or <emphasis>interface</emphasis> (i.e. in a <literal>.java</literal>
+    source file, or embedded within another type) using the <literal>enum</literal>
+    keyword.
+    <programlisting language="Java"><![CDATA[
+public enum CompassDirection
+{
+
+}
+      ]]></programlisting>
+  </para>
+  <para>
+    The list of constant values are defined within a single statement in 
+    the body of the enumeration (separated by commas):
+    <programlisting language="Java"><![CDATA[
+public enum CompassDirection
+{
+  North, South, East, West;
+}
+      ]]></programlisting>
+  </para>
+  
+  <section>
+    <title>Attributes</title>
+    <para>
+      One of the benefits of enumerations are their similarity to classes:
+      An enumerated type may define attributes, and the list of instances
+      may be initialised with these attributes set to fixed values. For
+      example, we may wish to specify an enumeration called
+      <literal>Feeling</literal> which describes the perceived feeling
+      of temperature. For each value, we want to publish the temperature
+      range covered by that feeling.
+    </para>
+    <para>To do so, we need to write the enumeration in a similar manner
+      to a typical JavaBean class. We
+      <orderedlist>
+        <listitem>
+          <para>Specify one or more private attributes,</para>
+        </listitem>
+        <listitem>
+          <para>Specify public services to allow access to the values,</para>
+        </listitem>
+        <listitem>
+          <para>Specify a constructor (which need not be public) to
+          initialise the values, and</para>
+        </listitem>
+        <listitem>
+          <para>Initialise the list of constant values by providing values
+          to the constructor.</para>
+        </listitem>
+      </orderedlist>
+      <programlisting language="Java">
+<xi:include href="../src/Feeling.java" parse="text"/>
+      </programlisting>
+    </para>
+    <para>
+      We may use the services of the enumerated types just as we would
+      of any other class:
+      <programlisting language="Java"><![CDATA[
+double temp = 27.9;
+
+if (temp >= Feeling.Hot.getMin() && temp < Feeling.Hot.getMax())
+{
+  System.out.println("It's hot!");
+}
+        ]]></programlisting>
+      To simplify, we could rather add the range-test method to the enumerated type 
+      itself:
+      <programlisting language="Java"><![CDATA[
+/** Tests whether the given temperature produces this feeling */
+public boolean matches( double temp )
+{
+  return min <= temp && max >= temp;
+}
+        ]]></programlisting>
+      The matter of testing whether a temperature falls within a particular
+      feeling's range is now much less cluttered:
+      <programlisting language="Java"><![CDATA[
+double temp = 27.9;
+
+if (Feeling.Hot.matches( temp ))
+{
+  System.out.println("It's hot!");
+}
+        ]]></programlisting>
+    </para>
+  </section>
+  
+</section>

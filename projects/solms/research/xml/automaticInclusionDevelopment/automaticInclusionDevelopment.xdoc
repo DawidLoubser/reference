@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TODO This is still a "stub"
+    @author D.Loubser
+    @date 2006-01-25
+-->
+<article xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      id="projects.solms.research.xml.automaticInclusionDevelopment.automaticInclusionDevelopment">
+    
+    <articleinfo>
+        <title>XML AID (Automatic Inclusion Development)</title>
+        <subtitle>A Building Block for Assembling multi-vocabulary information</subtitle>
+        <xi:include href="../../../../../resources/knowledge/solms/resources/skills/DawidLoubser/authorInfo.xdoc"/>
+    </articleinfo>
+    
+    <abstract>
+        <para>
+            This paper describes an XML vocabulary, and a mechanism, to facilitate the assembly of
+            documents from components that are in a vocabulary other than that of the destination document, 
+            without the need for manual transformation of the components (using XSLT).
+        </para>
+        <para>
+            <literal>WORK IN PROGRESS</literal>
+        </para>
+    </abstract>
+    
+    
+    <section>
+        <title>The Problem</title>
+        <para>
+            Component-oriented documentation vocabularies (such as <literal>SolmsDoc</literal>) allow for the
+            breakdown of complex information sets (course notes, books, research papers) into smaller components.
+            (Using a standard vocabulary like <literal>XInclude</literal>, which many parsers support).
+            These components are easy to maintain, and re-usable. The assumption is made, however, that the
+            information contained within the components are expressed in the <emphasis>same</emphasis> vocabulary as the higher-level
+            component that depends on it.
+        </para>
+        <para>
+            For example, a <emphasis>SolmsDoc</emphasis> book may include the author's contact information from
+            a separate XML document, which may also be included in several other documents the author wrote,
+            as well as company documentation, staff list(s), and the website.
+        </para>
+        <para>
+            Though <emphasis>SolmsDoc</emphasis> is well-suited to expressing document structures, it does, however,
+            not contain semantics to express contact information (and nor should it). We are, however, forced to
+            express the contact details using this particular (and arbitrary) "middle-ground" vocabulary. We can
+            transform this to several other formats (HTML, PDF, Plain text), but we typically lose information with each
+            step. Furthermore, the example contact details is already compromised by not specifying it in a vocabulary
+            to which it is suited in the first place - <emphasis>we could not import these details into an
+            address book or name server, </emphasis> for example.
+        </para>
+        <para>
+            The alternative is to specify the information in a vocabulary to which it <emphasis>is</emphasis> well suited -
+            say the fictitious <literal>AddressML</literal>. We could then write an <literal>XSLT</literal> style sheet
+            to transform this (manually, or through an automated process) to <emphasis>SolmsDOC</emphasis>. We would,
+            furthermore, have to do this (manually or programatically) for every target format in which we want to make
+            use of the information.
+        </para>
+        <para>
+            ...
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Solution (Vision)</title>
+        <para>
+            A parsing (rendering?) framework is needed which understands an inclusion vocabulary (like <literal>XInclude</literal>
+            or <literal>XLink</literal>). Based upon the <emphasis>role</emphasis> the included element plays, it needs to be
+            <emphasis>automatically</emphasis> translated (<quote>developed</quote>) to the vocabulary in which it is being included. 
+            This transformation needs to be extensible (customisable), and, of course, pluggable (easy to add support for new scenarios).
+        </para>
+        <para>
+            For example, personal contact details, or financial (e.g. payroll) information could be expressed in a suitable vocabulary. 
+            The following inclusion scenarios are relevant:
+            <itemizedlist>
+                <listitem>
+                    <para>If included as the author contact details (role) in a book, the rendering framework
+                        should automatically develop it to the vocabulary of the book, based on available transformation
+                        instructions (e.g. XSLT).
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        If included in an XHTML web page as the details for the director of the company (role), it should accordingly
+                        developed to the XHTML vocabulary.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        If the above-mentioned XHTML page is included as normal documentation (role) in a SolmsDoc
+                        book, the way the information is expressed in XHTML (paragraphs, lists, etc) should be developed
+                        to a state in which the same information is expressed in SolmsDoc.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        If the contact details are included as a code example (role) in the course notes for an XML class,
+                        it should be shown verbatim (possibly adding line numbers / colouring).
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Information, by its nature, is completely abstract. No matter how well-suited an XML vocabulary is to capturing
+            information pertaining to a particular domain, it is still a <emphasis>compromised</emphasis>,
+            <emphasis>limited</emphasis> serialisation of said information. Furthermore, there are a nearly limitless
+            number of manifestations (ways to represent the same information with the same accuracy).
+        </para>
+        <para>
+            XML AID is a method to automatically apply transformations to information, expressing it as accurately as possible <emphasis>within
+            the confines of</emphasis> the domain in which it is required. It does not magically infer and transform information, but is rather
+            a simple framework to automatically (based on introspection and discovery where possible) find and apply transformation style 
+            sheets as a document is assembled or rendered.
+        </para>
+        <figure>
+            <title>XML Automatic Inclusion Development</title>
+            <graphic fileref="highLevelVision.jpg"/>
+        </figure>
+    </section>
+    
+    <section>
+        <title>Parser Requirements</title>
+        <para>
+            In order to include a document fragment, the following information is relevant:
+            <itemizedlist>
+                <listitem>
+                    <para>Both the source (fragment) and destination (including document) vocabularies,
+                    based on Namespaces / XML Schemas.</para>
+                </listitem>
+                <listitem>
+                    <para>The abstract role in which the fragment is being included, i.e. code example, author, etc</para>
+                </listitem>
+                <listitem>
+                    <para>The context into which the fragment is being included, i.e. where in the resulting document
+                        it will appear. This is important to ensure the validity of the resulting document, and may
+                        possibly be a factor in selecting the type of transformation required. The XML Schemas of
+                        the vocabularies may be of assistance.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Vocabulary Requirements</title>
+        <para>
+            The <literal>XPath</literal> standard provides all the necessary constructs to describe the inclusion relationship.
+            It must be investigated how it can be used (or extended) to act as the XML AID vocabulary. In all likelihood, we only
+            need to introduce a new element (in a new namespace) which depends on the standard XPath attributes.
+        </para>
+    </section>
+    
+</article>

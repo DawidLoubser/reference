@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.c.fundamentals.iterating"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Iterating over blocks of code</title>
+  <para>
+     <emphasis>C</emphasis> supports 3 types of explicit looping constructs,
+     <command>for</command> statements, <command>while</command> loops and
+     <command>do while</command> loops.
+  </para>  
+  
+  <section><title>The <command>for</command> loop</title>
+    <para>
+      The <command>for</command> loop has the following syntax
+      <programlisting>
+        for (initializationExpression(s); testExpression; lastStatement(s))
+          statement or blockOfStatements;
+      </programlisting>
+      The elements are
+      <itemizedlist>
+        <listitem><formalpara><title>An initialization expression.</title>
+          <para>
+            The initialization expression is evaluated once prior to the
+            first iteration through the loop. One can initialize multiple
+            comma separated variables in the initialization expression. In
+            <xref linkend="forLoop.c"/> we initializes the variables <token>i</token>, 
+            <token>j</token> and <token>k</token> in the initialization
+            expression.
+          </para>  
+        </formalpara></listitem>
+        <listitem><formalpara><title>A test expression.</title>
+          <para>
+            The test expression is evaluated once at the beginning of each
+            iteration. If it evaluates to <token>true</token> (non-zero)
+            the bock of code in the for loop is executed once again. If it
+            evaluates to false, execution procedes with the first statement
+            after the for loop. 
+          </para>  
+        </formalpara></listitem>
+        <listitem><formalpara><title>Statement(s) to be inserted at the end 
+          of the loop</title>
+          <para>
+            This can be one or more comma-separated statements which will be the last
+            statements in the iteration.
+          </para>
+        </formalpara></listitem>  
+      </itemizedlist>  
+
+      <example id="forLoop.c"><title>forLoop.c</title>
+         <programlisting><xi:include href="source/forLoop.c" parse="text" /></programlisting>
+         <para>
+           The output of this application is
+         </para>  
+         <programlisting>
+0,0,3
+0
+1,1,3
+1
+2,1,2
+1
+         </programlisting>  
+      </example>  
+    </para>  
+  </section>
+  
+  <section><title>The <command>while</command> loop</title>
+    <para>
+      A <command>while</command> loop is similar to a <command>for</command>
+      loop in that the test is done before each iteration (a <command>for</command>
+      loop can be seen as a special form of a <command>while</command> loop. 
+      The syntax is simply
+      <programlisting>
+while (testExpression;)
+statement or blockOfStatements;
+      </programlisting>
+    </para>
+    <para>
+      If you want to perform initializations, the initialization statement(s) have 
+      to be inserted before the loop. The while-loop equivalent of 
+      <xref linkend="forLoop.c"/> is shown in <xref linkend="whileLoop.c"/>.
+
+      <example id="whileLoop.c"><title>whileLoop.c</title>
+         <programlisting><xi:include href="source/whileLoop.c" parse="text" /></programlisting>
+         <para>
+           The output of this application is the same as for <xref linkend="forLoop.c"/>.
+         </para>  
+      </example>          
+    </para>  
+  </section>    
+  
+  <section><title>The <command>do-while</command> loop</title>
+    <para>
+      A <command>do-while</command> loop is the same as a <command>while</command>
+      except that the test is done at the end of each iteration and not at
+      the start of the iteration. The consequence of this is that the block
+      of statements in the <command>do-while</command> loop is executed at
+      least once, even if the test criterion is never met. <xref linkend="doWhileLoop.c"/>
+      illustrates the difference between the <command>while</command> and
+      <command>do-while</command> statements.
+      <example id="doWhileLoop.c"><title>doWhileLoop.c</title>
+         <programlisting><xi:include href="source/doWhileLoop.c" parse="text" /></programlisting>
+         <para>
+           The application has a <command>while</command> and <command>do-while</command>
+           loop over the same loop variables. Running the application with 
+           <constant>2</constant> and <constant>5</constant> as initial and final loop 
+           indeces yields the same results for both constructs:
+         </para>  
+         <programlisting>
+Enter initial loop index: 2
+Enter final loop index: 5
+while loop:
+2345
+do-while loop:
+2345
+         </programlisting>  
+         <para>
+           On the other hand, switching the loop variables around such that the
+           test is never satisfied results in the following output which illustrates
+           that the <command>do-while</command> loop is executed at least once:
+         </para>
+         <programlisting>
+Enter initial loop index: 5
+Enter final loop index: 2
+while loop:
+
+do-while loop:
+5
+         </programlisting>  
+      </example>  
+     </para>
+  </section>
+  
+  <section><title><command>break</command> and <command>continue</command></title>
+    <para>
+      <emphasis>C</emphasis> provides 
+      <itemizedlist>
+        <listitem><para>
+          a statement for breaking out of the current loop,
+          the <command>break</command> statement, and
+        </para></listitem>
+        <listitem><para>
+          a statement for abandoning the remainder of the loop and jumping
+          back to the start of the first statement in the loop, the
+          <command>continue</command> statement.
+        </para></listitem>  
+      </itemizedlist>  
+    </para>  
+  </section>
+</section>  

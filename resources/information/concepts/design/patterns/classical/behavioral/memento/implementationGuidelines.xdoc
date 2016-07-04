@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.design.patterns.classical.behavioral.memento.implementationGuidelines"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Implementation guidelines</title>
+    <para>
+      The core complexity faced when implementing the memento pattern is that of 
+      <itemizedlist>
+        <listitem><para>
+          hiding the state information held by the memento from all classes except the originator class and
+        </para></listitem>
+        <listitem><para>
+          choosing a persistence  technology for the mementos.
+        </para></listitem>
+      </itemizedlist>
+    </para>  
+      
+    <section>
+      <title>Implementing selective encapsulation</title>
+      <para>
+        We have to ensure that caretakers can manage mementos without being able to access
+        the information they store, while instances of the originator class do have access to
+        services through which the originator can set and query state information.        
+        In Java this can be neatly achieved by using
+        <itemizedlist>
+          <listitem><para>
+            a memento interface which does not publish any services to the objects which get hold
+            of the memento via that interface (<abbrev>e.g.</abbrev> the caretaker), and
+          </para></listitem>
+          <listitem><para>
+            declaring  concrete memento class a <emphasis>private static nested</emphasis> class
+            which implements the memento interface.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    
+    <section>
+      <title>Memento persistence</title>
+      <para>
+        A memento can be stored in memory, but often it needs to be persisted to a more permanent
+        storage technology. 
+      </para>
+      
+      <section>
+        <title>Persisting to a flat file</title>
+        <para>
+          If there are only few mementos and if the information they contain is not critical, one
+          can persist the memento to a flat file, either by mapping the state information 
+          onto some file structure or by using  <emphasis>object serialization</emphasis>.
+        </para>
+        <para>
+          Object serialization is handy because it can easily persist and reconstruct even very complex 
+          state information. However, object serialization does not port well across different
+          versions of a class.
+        </para>
+      </section>
+      
+      <section>
+        <title>Persisting to an object database</title>
+        <para>
+          Object databases often provide services which are comparable with those of their
+          relational counterparts. They are, however, able to store very complex object-graph
+          based information more naturally than relational databases.
+        </para>
+      </section>
+      
+      <section>
+        <title>Persistence to relational databases</title>
+        <para>
+          When persistence is provided by a relational database, one will have to map the object's
+          state onto linked database tables. Often one would want to use a object-relational mapper
+          for this chore.
+        </para>
+      </section>
+      
+    </section>
+    
+    <section>
+      <title>An example implementation</title>
+      <para>
+        below we show an example implementation of a memento for a pseudo-random number 
+        generator which is able to reconstruct the state of a pseudo-random number generator
+        to the state it had at some prior point in time. The random number generator will then
+        regenerate the identical pseudo random number sequence.
+      </para>
+      
+      <section>
+        <title>The memento interface</title>
+        <para>
+          <programlisting>
+            <xi:include parse="text" href="source/Memento.java" />
+          </programlisting>
+        </para>
+      </section>
+      
+      <section>
+        <title>The random number generator with the concrete memento class</title>
+        <para>
+          <programlisting>
+            <xi:include parse="text" href="source/RandomNumberGenerator.java" />
+          </programlisting>
+        </para>
+      </section>
+      
+      <section>
+        <title>A test class acting as caretaker</title>
+        <para>
+          <programlisting>
+            <xi:include parse="text" href="source/RandomNumberGeneratorTest.java" />
+          </programlisting>
+        </para>
+      </section>
+      
+    </section>
+    
+   
+</section>

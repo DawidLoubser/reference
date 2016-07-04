@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2009-2-4 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>Updating the working copy via
+        <literal>svn update</literal>
+    </title>
+    <para>
+        The
+        <literal>update</literal>
+        command is used to update the state of a working copy to that of the repository.
+        You can update the working copy to the latest (current) revision of the repository or to the state of some other
+        specified
+        revision.
+    </para>
+
+    <section>
+        <title>Updating to the latest revision</title>
+        <para>
+            To update a working copy to the latest respoitory revision you simply use
+            <programlisting><![CDATA[
+svn update           
+]]></programlisting>
+            You can specify optionally a path to the resource (file or directory) which you would like to have updated.
+        </para>
+    </section>
+    <section>
+        <title>Updating to a specific revision</title>
+        <para>
+            In order to update to a particular revision you use the
+            <literal>-r</literal>
+            command line parameter. For example,
+            to update a working copy to revision 3 you use
+            <programlisting><![CDATA[
+svn update - r 3           
+]]></programlisting>
+        </para>
+    </section>
+
+    <section>
+        <title>What happens with an update?</title>
+        <para>
+            With an update one of the following will happen:
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        New files in the repository are copied to the working copy.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Files which have been deleted in the repository are removed from the working copy irespective of
+                        wheather
+                        it has been locally modified or not.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Files which have been modified on the server side but not in the working copy are copied to the
+                        working copy.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        If a files has been modified in both, the repository and the working copy, subversion will
+                        attempt to merge
+                        the changes. If changes are made to the same areas within both files a conflict is identified.
+                        Subversion
+                        will mark the conflict and notify you of the conflict. You will have to resolve any conflicts
+                        before you can
+                        commit your changes.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    <section>
+        <title>Update flags</title>
+        <para>
+            The
+            <literal>update</literal>
+            command will list all modifications to the working copy by flagging each
+            item with one of the following flags
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <literal>U</literal>
+                        : this resouce has been updated.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <literal>G</literal>
+                        : respository changes have been merged with changes made to the local copy.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <literal>A</literal>
+                        : this resouce has been added to the working copy.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <literal>D</literal>
+                        : this resource has been removed from the working copy.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <literal>C</literal>
+                        : the update resulted in a conflict which must be resolved before committing that resouce.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+
+</section>  

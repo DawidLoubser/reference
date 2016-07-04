@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+         xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>Single-Valued versus Multi-Valued Paths</title>
+    <para>
+        A single valued path is a path without any branching below the highest layer (i.e.
+        the layer connected to the result objects). SELECT clauses and most WHERE clauses require
+        a single-valued path.
+    </para>
+    <para>
+        For example, all the queries discussed in the previous section use single valued
+        paths in the SELECT statement and are hence valid JPQL statements. On the other hand,
+        querying all the bond accounts of all the clients via
+        <programlisting><![CDATA[
+SELECT client.bonds.account FROM Client client      -&gt; INVALID
+            ]]></programlisting>
+        resembles a multi-valued path because c refers to a collection of clients each
+        of which has a collection of bonds which each has an account.
+    </para>
+    <para>
+        As a second example, consider the UML diagram for a course schedule shown in
+        <xref linkend="jpql.multiValuedPath.courseSchedule.jpg"/>.
+        In a relational database this object graph could be represented as 4 tables, one
+        for each entity.
+    </para>
+    <figure xml:id="jpql.multiValuedPath.courseSchedule.jpg">
+        <title>UML class diagram for presentations of courses for a course schedule</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="courseSchedule.jpg"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+    <para>
+        If we wanted to extract all course names which are currently scheduled
+        <abbrev>i.e.</abbrev>
+        for which there exists a presentation), we could do this via the following SQL query:
+        <programlisting><![CDATA[
+        SELECT Course.name from Course, Presentation 
+        WHERE Presentation.course = Course.id
+            ]]></programlisting>
+    </para>
+    <para>
+        To achieve the same in JPQL we can specify the following query:
+        <programlisting><![CDATA[
+SELECT p.course.name FROM Presentation p            
+            ]]></programlisting>
+        This is a single-valued path and hence the query is valid. On the other hand, the query
+        <programlisting><![CDATA[
+SELECT p.presenters.course.name FROM Presentation p   -&gt; INVALID            
+]]></programlisting>
+        is incorrect because we have, once again, a multi-valued path.
+    </para>
+</section>

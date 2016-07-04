@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6581:section xmlns:ns6581="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.lang.immutableClasses.immutableClasses">
+  <ns6582:title xmlns:ns6582="http://docbook.org/ns/docbook">Immutable classes</ns6582:title>
+  <ns6583:para xmlns:ns6583="http://docbook.org/ns/docbook">
+    In Java, instances of certain classes cannot be modified by users (clients) of that
+    instance. A prime example is the <ns6584:literal xmlns:ns6584="http://docbook.org/ns/docbook">String</ns6584:literal> class. Once a
+    <ns6585:literal xmlns:ns6585="http://docbook.org/ns/docbook">String</ns6585:literal> has been created, it cannot be modified. Methods like string
+    concatenation, case modification, and so on do not change the string itself, but return a new string
+    object instead.
+  </ns6583:para>
+  
+  <ns6586:section xmlns:ns6586="http://docbook.org/ns/docbook">
+    <ns6587:title xmlns:ns6587="http://docbook.org/ns/docbook">What are immutable classes</ns6587:title>
+    <ns6588:para xmlns:ns6588="http://docbook.org/ns/docbook">
+      Immutable classes are classes for objects whose state cannot be changed externally. It simply has no
+      public methods which can change the state of the object.
+    </ns6588:para>
+  </ns6586:section>
+  
+  <ns6589:section xmlns:ns6589="http://docbook.org/ns/docbook">
+    <ns6590:title xmlns:ns6590="http://docbook.org/ns/docbook">Why immutable classes?</ns6590:title>
+    <ns6591:para xmlns:ns6591="http://docbook.org/ns/docbook">
+      <ns6592:itemizedlist xmlns:ns6592="http://docbook.org/ns/docbook">
+        <ns6593:listitem xmlns:ns6593="http://docbook.org/ns/docbook"><ns6594:formalpara xmlns:ns6594="http://docbook.org/ns/docbook">
+          <ns6595:title xmlns:ns6595="http://docbook.org/ns/docbook">Reduced risk in implementing the composition relationship incorrectly</ns6595:title>
+          <ns6596:para xmlns:ns6596="http://docbook.org/ns/docbook">
+            When one does not implement composition relationships correctly (if one does not enforce
+            encapsulation), some other code may unknowingly alter the owned state of an object
+            without being aware of this.
+            For example, consider a <ns6597:literal xmlns:ns6597="http://docbook.org/ns/docbook">Person</ns6597:literal> class. It may have
+            been implemented naively via
+            <ns6598:programlisting xmlns:ns6598="http://docbook.org/ns/docbook">
+public class Person
+{
+  public Person(String name)
+  {
+     this.name = name;
+  }
+  ...
+}          
+          </ns6598:programlisting>
+            In this example at least the method which called the constructor has a handle to the string
+            which represents the name of the person. It could pass that string on to another object
+            which may not even be aware that that string is used by an instance of a person for its
+            name as is illustrated in the following example
+            <ns6599:programlisting xmlns:ns6599="http://docbook.org/ns/docbook">
+String s = "Peter";
+
+Person p = new Person(s);
+              
+f(s);
+              
+public void f(String str)
+{
+  str.append("XXX");             
+}
+              </ns6599:programlisting>
+            But, since the <ns6600:literal xmlns:ns6600="http://docbook.org/ns/docbook">String</ns6600:literal> class is immtable, the state of the
+            <ns6601:literal xmlns:ns6601="http://docbook.org/ns/docbook">Person</ns6601:literal> class is safe, irrespective of whether the implementation
+            correctly encapsulates the name or not.
+          </ns6596:para>
+        </ns6594:formalpara></ns6593:listitem>
+        
+        <ns6602:listitem xmlns:ns6602="http://docbook.org/ns/docbook"><ns6603:formalpara xmlns:ns6603="http://docbook.org/ns/docbook">
+          <ns6604:title xmlns:ns6604="http://docbook.org/ns/docbook">Inherently thread safe</ns6604:title>
+          <ns6605:para xmlns:ns6605="http://docbook.org/ns/docbook">
+            Since the state of instances of immutable classes cannot change, they are intrinsically
+            thread safe. This means that their internal state cannot be corrupted by the simultaneous
+            requesting of services from multiple threads, a problem which is usually not
+            trivial to solve.
+          </ns6605:para>
+        </ns6603:formalpara></ns6602:listitem>
+        
+        <ns6606:listitem xmlns:ns6606="http://docbook.org/ns/docbook"><ns6607:formalpara xmlns:ns6607="http://docbook.org/ns/docbook">
+          <ns6608:title xmlns:ns6608="http://docbook.org/ns/docbook">Caching opportunities</ns6608:title>
+          <ns6609:para xmlns:ns6609="http://docbook.org/ns/docbook">
+            The attributes of objects which are instances of immutable classes can be safely cached
+            as their value will never change. 
+          </ns6609:para>
+        </ns6607:formalpara></ns6606:listitem>
+        
+        <ns6610:listitem xmlns:ns6610="http://docbook.org/ns/docbook"><ns6611:formalpara xmlns:ns6611="http://docbook.org/ns/docbook">
+          <ns6612:title xmlns:ns6612="http://docbook.org/ns/docbook">Safe from logical errors</ns6612:title>
+          <ns6613:para xmlns:ns6613="http://docbook.org/ns/docbook">
+            We have already seen that the object integrity of classes which use instances of
+            immutable classes for their components is easier to guarantee. But mutable classes face
+            a further risk in that operations performed within methods of the class itself or by
+            external methods which alter the state of such instances may violate the object
+            integrity.
+          </ns6613:para>
+        </ns6611:formalpara></ns6610:listitem>
+        
+        <ns6614:listitem xmlns:ns6614="http://docbook.org/ns/docbook"><ns6615:formalpara xmlns:ns6615="http://docbook.org/ns/docbook">
+          <ns6616:title xmlns:ns6616="http://docbook.org/ns/docbook">Immutable objects make good keys</ns6616:title>
+          <ns6617:para xmlns:ns6617="http://docbook.org/ns/docbook">
+            Only objects which do not change their hash code value over their life span make safe
+            keys for hash sets and hash maps. Similarly, only objects whose fields evaluated in the
+            <ns6618:literal xmlns:ns6618="http://docbook.org/ns/docbook">compareTo(...)</ns6618:literal> or <ns6619:literal xmlns:ns6619="http://docbook.org/ns/docbook">compare(...)</ns6619:literal> methods remain constant over
+            time, are truly safe for sorted collections and/or the keys for sorted maps.
+          </ns6617:para>
+        </ns6615:formalpara></ns6614:listitem>
+      </ns6592:itemizedlist>
+    </ns6591:para>
+  </ns6589:section>
+  
+  <ns6620:section xmlns:ns6620="http://docbook.org/ns/docbook">
+    <ns6621:title xmlns:ns6621="http://docbook.org/ns/docbook">Natural candidates for immutable classes</ns6621:title>
+    <ns6622:para xmlns:ns6622="http://docbook.org/ns/docbook">
+      Some objects are naturally immutable and these should generally be implemented via immutable
+      classes. For example, a <ns6623:emphasis xmlns:ns6623="http://docbook.org/ns/docbook">colour</ns6623:emphasis> remains that colour - yellow does not change over time.
+    </ns6622:para>
+    <ns6624:para xmlns:ns6624="http://docbook.org/ns/docbook">
+      Similarly, <ns6625:emphasis xmlns:ns6625="http://docbook.org/ns/docbook">numbers</ns6625:emphasis> are objects which do not change (a 2 remains a 2). Hence all realisations
+      of numbers (<ns6626:abbrev xmlns:ns6626="http://docbook.org/ns/docbook">e.g.</ns6626:abbrev> Integer, Double, BigDecimal, ...) are immutable classes.
+      <ns6627:note xmlns:ns6627="http://docbook.org/ns/docbook"><ns6628:para xmlns:ns6628="http://docbook.org/ns/docbook">
+        Do not confuse the concept of a floating point number with that of a floating point
+        variable.
+      </ns6628:para></ns6627:note>
+    </ns6624:para>
+    <ns6629:para xmlns:ns6629="http://docbook.org/ns/docbook">
+      Other object which are in their nature immutable include events. An event is an event. One
+      should not change an event at a later stage. It would not represent that event anymore.
+    </ns6629:para>
+  </ns6620:section>
+  
+   <ns6630:section xmlns:ns6630="http://docbook.org/ns/docbook">
+     <ns6631:title xmlns:ns6631="http://docbook.org/ns/docbook">How would one write an immutable class?</ns6631:title>
+     <ns6632:para xmlns:ns6632="http://docbook.org/ns/docbook">
+       Immutable classes should
+       <ns6633:itemizedlist xmlns:ns6633="http://docbook.org/ns/docbook">
+         <ns6634:listitem xmlns:ns6634="http://docbook.org/ns/docbook"><ns6635:para xmlns:ns6635="http://docbook.org/ns/docbook">
+              provide only query methods - no set methods and no methods which change the state of
+           the instance.
+         </ns6635:para></ns6634:listitem>
+         <ns6636:listitem xmlns:ns6636="http://docbook.org/ns/docbook"><ns6637:para xmlns:ns6637="http://docbook.org/ns/docbook">
+           All its mutable components should be encapsulated, in that no code outside of the class
+           obtains a handle to any of its fields.
+         </ns6637:para></ns6636:listitem>
+         <ns6638:listitem xmlns:ns6638="http://docbook.org/ns/docbook"><ns6639:para xmlns:ns6639="http://docbook.org/ns/docbook">
+           No external code should ever get hold of the <ns6640:literal xmlns:ns6640="http://docbook.org/ns/docbook">this</ns6640:literal> reference of an
+           immutable class.
+         </ns6639:para></ns6638:listitem>
+         <ns6641:listitem xmlns:ns6641="http://docbook.org/ns/docbook"><ns6642:para xmlns:ns6642="http://docbook.org/ns/docbook">
+           All fields of an immutable class should be declared <ns6643:literal xmlns:ns6643="http://docbook.org/ns/docbook">final</ns6643:literal>.
+         </ns6642:para></ns6641:listitem>
+         <ns6644:listitem xmlns:ns6644="http://docbook.org/ns/docbook"><ns6645:para xmlns:ns6645="http://docbook.org/ns/docbook">
+           The class should be declared <ns6646:literal xmlns:ns6646="http://docbook.org/ns/docbook">final</ns6646:literal>, preventing anybody from defining a
+           subclass which could violate the immutability (possibly without the client expecting this, as it
+           will likely have a more abstract handle to such a subclass).
+         </ns6645:para></ns6644:listitem>
+       </ns6633:itemizedlist>
+     </ns6632:para>
+   </ns6630:section>
+   
+  <ns6647:section xmlns:ns6647="http://docbook.org/ns/docbook">
+    <ns6648:title xmlns:ns6648="http://docbook.org/ns/docbook">Disadvantages of immutable classes</ns6648:title>
+    <ns6649:para xmlns:ns6649="http://docbook.org/ns/docbook">
+      We would advise against using immutable classes for objects which are not naturally immutable.
+      The reasons for this are that
+      <ns6650:itemizedlist xmlns:ns6650="http://docbook.org/ns/docbook">
+        <ns6651:listitem xmlns:ns6651="http://docbook.org/ns/docbook"><ns6652:para xmlns:ns6652="http://docbook.org/ns/docbook">
+          Using immutable classes for objects which do change over time results in a performance
+          overhead as a new object needs to be created every time the state of an instance of an
+          immutable class changes.
+        </ns6652:para></ns6651:listitem>
+        <ns6653:listitem xmlns:ns6653="http://docbook.org/ns/docbook"><ns6654:para xmlns:ns6654="http://docbook.org/ns/docbook">
+          If a new object is created on state transition, all objects which have a reference to that
+          immutable object need to be updated (good luck!!!).
+        </ns6654:para></ns6653:listitem>
+        <ns6655:listitem xmlns:ns6655="http://docbook.org/ns/docbook"><ns6656:para xmlns:ns6656="http://docbook.org/ns/docbook">
+          Using immutable classes may provide the illusion that one does not have to be careful in
+          implementing the composition relationship correctly - we feel that it would be better if
+          one either
+          <ns6657:itemizedlist xmlns:ns6657="http://docbook.org/ns/docbook">
+            <ns6658:listitem xmlns:ns6658="http://docbook.org/ns/docbook"><ns6659:para xmlns:ns6659="http://docbook.org/ns/docbook">
+              trains developers or code generation tools to implement composition correctly, or
+            </ns6659:para></ns6658:listitem>
+            <ns6660:listitem xmlns:ns6660="http://docbook.org/ns/docbook"><ns6661:para xmlns:ns6661="http://docbook.org/ns/docbook">
+              uses a framework where one annotates the relationship in code and have a
+              pre-compiler or class loader add the code required for the implementation of the
+              various relationships.
+            </ns6661:para></ns6660:listitem>
+          </ns6657:itemizedlist>
+        </ns6656:para></ns6655:listitem>
+      </ns6650:itemizedlist>
+    </ns6649:para>
+  </ns6647:section>
+  
+  <ns6662:section xmlns:ns6662="http://docbook.org/ns/docbook">
+    <ns6663:title xmlns:ns6663="http://docbook.org/ns/docbook">Alternatives to immutable classes</ns6663:title>
+    <ns6664:para xmlns:ns6664="http://docbook.org/ns/docbook">
+      Besides the correct implementation of the object oriented relationships and the thread safety,
+      one may also provide to certain objects handles through interfaces which do not expose any of
+      the methods which change the state of the object.
+    </ns6664:para>
+  </ns6662:section>
+  
+  <ns6665:section xmlns:ns6665="http://docbook.org/ns/docbook">
+    <ns6666:title xmlns:ns6666="http://docbook.org/ns/docbook">Immutability wrappers</ns6666:title>
+    <ns6667:para xmlns:ns6667="http://docbook.org/ns/docbook">
+      At times immutablity wrappers are used. For example, the Java collection framework provides
+      immutability wrappers. We do not believe that this is a good design decision as it directly
+      violates the most basic principle of specialisation (that of substitutability). Instances of the
+      Immutability wrappers throw exceptions if any of the methods changing the collection contents
+      are called. They are thus not substitutable for standard collections, even though they
+      implement the interface. A better approach is to cater for mutable/immutable <ns6668:quote xmlns:ns6668="http://docbook.org/ns/docbook">views</ns6668:quote>
+      on an object upfront, by putting different interfaces in place.
+    </ns6667:para>
+  </ns6665:section>
+  
+</ns6581:section>

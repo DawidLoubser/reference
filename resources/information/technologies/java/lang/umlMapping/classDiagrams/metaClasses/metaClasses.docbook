@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-03-10 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Mapping UML meta-classes onto Java</title>
+    <para> UML meta-classes map onto <literal>static</literal> members in Java. Thus if we have a
+        metaclass for the <literal>Account</literal> class which specifies the
+        <literal>numInstances</literal>, <literal>getNumInstances</literal> and a
+        <literal>create</literal> method as meta-class members, then each of these would map onto a
+        static member.
+        <programlisting language="Java">
+<xi:include parse="text" href="Account.java"/>            
+        </programlisting>
+    </para>
+    <para> Factory services like <literal>create</literal> are normally mapped onto constructors. A
+        constructor in Java is a combination of a class service creating the instance and an
+        intialization section which intializes the instance. While the service as a whole is a class
+        service (and should, in principle, have been declared <literal>static</literal>), the body
+        of the constructor is for an instance service. </para>
+    <para> Class services should preferably be requested by sending the service request message to
+        the class itself:
+        <programlisting language="Java">
+<xi:include parse="text" href="getNumInstances.java"/>        
+        </programlisting>
+    </para>
+</section>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Logical equality test via equals()</title>
+  
+  <para>
+    One of the basic boolean operators in Java is the equality comparison:
+    <literal>==</literal>. This may of course be used to compare
+    operands that refer either to primitive types
+  <programlisting language="Java"><![CDATA[
+    int a = 123;
+    int b = 321;
+    
+    if (a == b)
+    {
+      ...
+    }
+    ]]></programlisting>
+    or object references:
+  <programlisting language="Java"><![CDATA[
+    Vehicle m = new Vehicle( /* ... */ );
+    Vehicle n = insuranceClaim.getDamagedVehicle();
+    
+    if (m == n)
+    {
+      ...
+    }
+    ]]></programlisting>
+  </para>
+  <para> 
+    In either case the operator will perform a simple <emphasis>value comparison</emphasis>
+    between the two operands. In the case of object references, the
+    outcome will be <literal>true</literal> only if the two references
+    refer to the same physical object (an impossibility in the example
+    above, as we are only creating one of the objects immediately before the
+    comparison is performed).
+  </para>
+  <para>
+    What we often require, is a mechanism to compare two objects
+    <emphasis>logically</emphasis> - or, put in another way, based on
+    their state. We want to ask, is this:
+
+    <blockquote>
+      <para>
+        Will services requested through object reference <literal>m</literal> and 
+        object reference <literal>n</literal> behave the same from a client point 
+        of view? (regardless of whether they refer to the same physical
+        object, or not)
+      </para>
+    </blockquote>
+    
+    This question is answered by asking one of the objects to compare
+    itself (its class/type, its state, and anything else that may be
+    important) to an other object, and the <literal>equals</literal>
+    service performs this task:
+    <programlisting language="Java"><![CDATA[
+public class Object
+{
+  public boolean equals( Object obj )
+  {
+    ...
+  }
+}
+    ]]></programlisting>
+  </para>
+  <para>
+    The default implementation (inherited by all classes until they
+    override it) is equivalent to using the <literal>==</literal>
+    operator, along the lines of:
+    <programlisting language="Java"><![CDATA[
+public class Object
+{
+  public boolean equals( Object obj )
+  {
+    return obj == this;
+  }
+}
+    ]]></programlisting>
+  </para>
+  
+  <section>
+    <title>Overriding the equals service</title>
+    <para>
+      Consider the following simplistic class that represents
+      a type of fruit. We may wish to compare them by performing
+      a logical comparison (i.e. <literal>equals()</literal>)
+      based on their name.
+      <programlisting language="Java"><![CDATA[
+public class Fruit
+{
+  ...
+  
+  public boolean equals( Object o )
+  {
+    if (o instanceof Fruit)
+    {
+      Fruit other = (Fruit)o;
+      return this.name.equals( other.name );
+    }
+    else
+    {
+      return false;
+    }
+  } 
+  
+  private String name;
+}
+        ]]></programlisting>
+      <note>
+        <para>
+          Since we must be able to compare any object to any other object
+          (regardless of type), we have to <emphasis>cast</emphasis>
+          the given object reference to our own type (in order to access
+          its attributes). This can be done safely only after we've tested the type of the
+          other object, or in a <literal>try { ... } catch</literal>
+          block that caters for <literal>ClassCastException</literal>. 
+        </para>
+      </note>
+      
+      We may want to improve this test, to cater for the fact that
+      two instances of fruit with <emphasis>no name</emphasis> (<literal>null</literal>)
+      should also be considered equal, as well as to exclude the possibility
+      that a <emphasis>subclass</emphasis> of fruit with the same name be considered equal to
+      an instance of a normal fruit:
+      <programlisting language="Java"><![CDATA[
+public class Fruit
+{
+  ...
+  
+  public boolean equals( Object o )
+  {
+    if ( this.getClass().equals( o.getClass() ))
+    {
+      Fruit other = (Fruit)o;
+      return
+        this.name == other.name || this.name.equals( other.name );
+    }
+    else
+    {
+      return false;
+    }
+  } 
+  
+  private String name;
+}
+        ]]></programlisting>
+    </para>
+    <para>
+      There are a wide varieties of opinions as to the exact meaning of
+      <literal>equals()</literal>, as well as the standard or best way to
+      write it. This, indeed, may be why the designers of Java left this
+      implementation to the class author. A good pattern to follow might
+      be the following:
+      <programlisting language="Java"><![CDATA[
+public class Foo
+{
+  public boolean equals( Object o )
+  {
+    // Test type
+    if (this.getClass().equals( o.getClass() ))
+    {
+      // Cast reference to our own type
+      Foo other = (Foo)o;
+      
+      // Compare each relevant attribute (combine with &&)
+      return
+        // Object: compare by value, and logically
+        ( a == other.a || a.equals( other.a ) ) &&
+        // Primitive: compare by value only
+        ( b == other.b ); 
+    }
+    else
+    {
+      return false;
+    }
+  }
+  
+  private String a;
+  private int b;
+  private double c;       // Not used in equality comparison
+}
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Why is equals() important?</title>
+    <para>
+      Apart from the obvious benefit of being able to compare two
+      objects logically at any time, several other frameworks depend
+      on its logic. For example, if we make use of a generic container or
+      collection that maintains a group of <emphasis>unique</emphasis>
+      objects, it may depend on each object being able to provide
+      the <literal>equals</literal> service correctly, otherwise it may
+      not function.
+    </para>
+    <para>
+      Similarly, a caching framework may provide the ability to share
+      an object between several role players, if they require an object
+      which is logically equivalent, and it has been deemed that it is safe
+      to do so. It, again, may depend on <literal>equals</literal>.
+      Indeed, more recent version of the Java runtime environment will
+      share equivalent instances of <literal>java.lang.String</literal>
+      between components, even though they each requested the creation of
+      their <quote>own</quote> copy. This may preserve large amount of
+      (otherwise wasted) memory.
+    </para>
+  </section>
+  
+  <section>
+    <title>Why has equals() not been automated?</title>
+    <para>
+      There is, of course, no technical reason why this could not have
+      been automated: The Java VM could simply, upon comparing two
+      objects, inspect their state (their attributes) and perform a
+      full comparison. However, in many cases, this may not be what you
+      want. One needs to keep the semantics and meaning of the attributes
+      of an object in mind when performing such a comparison: Some
+      attributes may need to be compared logically, others simply through
+      == (i.e. where it is important that both refer to the same physical
+      object). Some attributes may not have to be evaluated at all.
+    </para>
+    <para>
+      If we write or generate our code based on a UML model (which
+      contains richer relationships than Java's simple object
+      references), we may furthermore want to apply different comparison
+      semantics for the different attributes based on the nature of their
+      relationship with the containing object.
+    </para>
+  </section>
+  
+</section>

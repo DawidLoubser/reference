@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+xml:id="resources.information.technologies.xml.schemas.specialization.specialization" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Type Specialisation</title>
+    <para> 
+      Specialization/abstraction are
+      fundamental to any object-oriented software development as well as to any
+      object-oriented modeling in general (including business modeling). One of the basic
+      requirements for specialization is that of substitutability. If someone specifies
+      that they need an instance of some XML data type you should be able to give them an
+      instance of either that particular data type or of any of the specializations of
+      that data type. Data type specialization in XML may be extensive or restrictive or
+      have elements of both. We shall discuss these cases separately.
+    </para>
+    
+    <section>
+        <title>Extensive Specialization</title>
+        <para> 
+          In the case of extensive specialization the specialized (derived) type
+          inherits the content model of the super (base) type and adds further elements or
+          attributes to the content model it inherits.
+        </para>
+        <para> 
+          For example, the following schema file defines a generic
+          <literal>person</literal> type and then a specialization of that type
+          <literal>employee</literal> which includes as extensions the
+          <literal>employer</literal> and <literal>salary</literal> elements as well
+          as an attribute specifying whether the employee is employed permanently or not:
+          <programlisting language="XML">
+<xi:include parse="text" href="src/persons.xsd"/>
+          </programlisting>
+          <note><para> 
+            Note that we have specified that the W3C schema namespace is the default
+            namespace (we have not given it a prefix) and we assigned the contents of our
+            schema to the <literal>pass</literal> prefix. Our <literal>employee</literal> 
+            type thus has <literal>pass:Person</literal> as super (base) type.
+          </para></note>
+        </para>
+        
+        <para>
+          An example XML document which would be parsed against the above schema is
+          shown below:
+          <programlisting language="XML">
+<xi:include parse="text" href="src/persons.xml"/>
+          </programlisting>
+        </para>  
+  
+      <section>
+          <title>Complex Specializations of Simple Types</title>
+          <para> 
+            Recall that we cannot specify attributes to simple types (they are atomic). 
+            If we do want to add attributes to a type which is essentially a simple type, 
+            we can derive a complex type from a simple type and add attribute an attribute to it.
+            This new type, though being a complex type, has a <emphasis>simple content model</emphasis>.
+          </para>
+          <para> 
+            To indicate that the content model of the subtype is atomic (simple),
+            we use the <literal>simpleContent</literal> element:
+          <programlisting language="XML"> 
+<xi:include parse="text" href="src/currencySimpleSpec.xsd"/>
+          </programlisting>
+            with a valid instance document being:
+            <programlisting language="XML"> 
+<xi:include parse="text" href="src/payments.xml"/>
+            </programlisting>
+        </para>  
+      </section>
+    </section>
+  
+  <section>
+      <title>Restrictive Specialization</title>
+      <para> 
+        We have restrictive specialization if the subclass does not add any features to those
+        inherited from the superclass, but, instead, only applies certain constraints to the
+        inherited features. This is typically used where simple types restrict other
+        simple types (such as applying a regula expression pattern.)
+      </para>
+      <!-- TODO: Expand!! -->
+    </section>
+      
+    <section>
+        <title>Substitution</title>
+        <para> 
+          One of the fundamental concepts of specialization in object-oriented modeling is that
+            of substitutetability, <abbrev>i.e.</abbrev> if we define a class, say 
+            <literal>Account</literal>, and
+            a subclass,<literal>CreditCard</literal> then one can always substitute an instance of
+            the specialized class (<literal>CreditCard</literal>) for an instance of the more
+            generic class, <literal>Account</literal>. 
+            Substitutability forms the crux test for specialization.
+        </para>
+        <para> 
+          Consider the following schema where we define a credit card data type as a
+          specialization of a more generic account data type:
+          <programlisting language="XML">
+<xi:include parse="text" href="src/substitute.xsd"/>
+          </programlisting>  
+        </para>
+        
+        <para> Even though credit cards are accounts one cannot assign credit cards in the standard
+            way to clients, only vanilla accounts. However, the developer of XML instant documents
+            may request that a credit card which extends an account be substituted for the latter.
+            This is done by still inserting elements of the base type
+            (<literal>Account</literal>), but substituting a <literal>Creditcard</literal>
+            realization for the<literal>Account</literal>:
+            <programlisting language="XML">
+<xi:include parse="text" href="src/substitute.xml"/>
+            </programlisting>  
+          </para>  
+    </section>
+
+    <section>
+        <title>Abstract Types</title>
+        <para> 
+          In object-oriented modeling an abstract class is a class which cannot be instantiated
+          itself - only its concrete subclasses can. Similarly abstract types are there to specify
+          commonalities across all the specializations of that type - no instances of abstract
+          types can be created in XML instance documents.
+        </para>
+        <para> 
+          For example, in the following schema specification we specify that a client has one
+          or more accounts, but we enforcing substitution in the XML instance document by one of
+          the concrete subtypes, <literal>CreditCard</literal> or<literal>ChequeAccount</literal>:
+          <programlisting language="XML">
+<xi:include parse="text" href="src/abstractType.xsd"/>
+          </programlisting>  
+        </para>
+        <para>
+          Clients can no longer have instances of <literal>Account</literal>, but only instances
+          of concrete sub-classes of <literal>Account</literal>:
+          <programlisting language="XML">
+<xi:include parse="text" href="src/abstractType.xml"/>
+          </programlisting>  
+        </para>
+    </section>
+    
+</section>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2009-2-4 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>Checking out from a repository via
+        <literal>svn checkout</literal>
+    </title>
+    <para>
+        The process of checking out from the repository creates a local (working) copy
+        on the client machine. The copy will represent a particular revision, often the current
+        revision for a particular branch.
+        You can checkout an entire project or any sub-tree of that project.
+    </para>
+    <para>
+        To checkout the current state of an entire project you go to the directory which should host your working copy
+        and issue the command
+        <programlisting><![CDATA[
+svn checkout svn://[repositoryHost]/[repositoryName]            
+]]></programlisting>
+        For example
+        <programlisting><![CDATA[
+svn checkout svn://localhost/testProject
+A    testProject/test3.txt
+A    testProject/dummy
+A    testProject/dummy/dummy.txt
+A    testProject/test.txt
+Checked out revision 6.            
+            ]]></programlisting>
+        The
+        <literal>svn</literal>
+        client will list the resources checked out and the revision number referring to a particular state of the
+        repository.
+    </para>
+    <para>
+        You can also checkout only a sub-tree of an entire project via
+        <programlisting><![CDATA[
+svn checkout svn://[repositoryHost]/[repositoryName]/[pathToTreeRoot]            
+]]></programlisting>
+    </para>
+    <para>
+        To checkout a revision other than the latest revision, you specify the revision number using the
+        <literal>-r</literal>
+        command line parameter:
+        <programlisting><![CDATA[
+svn checkout -r [revisionNumber] svn://[repositoryHost]/[repositoryName]            
+]]></programlisting>
+        For example,
+        <programlisting><![CDATA[
+svn checkout svn://localhost/testProject
+D    testProject/test3.txt
+U    testProject/test.txt
+Checked out revision 2.
+            ]]></programlisting>
+        informs us that it has deleted ont of the files and updated another to take us from the revision we were busy
+        with to revision 2.
+        <note>
+            <para>
+                Subversion will warn us if there are any uncommitted modifications in the working directory.
+            </para>
+        </note>
+    </para>
+</section>    

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+         xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>Example: A simple environment monitor</title>
+
+    <para>
+        This example illustrates unit-testing a simple environment monitor
+        (such as for a kitchen, or a server room) that makes use of the services
+        of
+        <itemizedlist>
+            <listitem>
+                <para>a Thresholds service, to indicate the maximum allowed temperature</para>
+            </listitem>
+            <listitem>
+                <para>a TermperatureSensor (thermometer), to indicate the current temperature, and</para>
+            </listitem>
+            <listitem>
+                <para>an Alarm, to raise if there is a problem.</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <note>
+        <para>
+            This environment monitor is not itself responsible for deciding when to check the environment.
+            Such timing services are usually provided by the hosting environment or a higher-level component,
+            ensuring that our service is simple, and usable both on-demand, as well as automated on a timely
+            basis.
+        </para>
+    </note>
+
+    <figure>
+        <title>Service contract / Collaboration context for a simple environment monitor</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="environmentMonitorCollaboration.png"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+
+    <section>
+        <title>Mapping the contracts to Java</title>
+        <para>
+            We start by mapping the various services contracts to Java:
+        </para>
+
+        <programlisting language="Java">
+<xi:include href="src/main/java/guru/jini/example/EnvironmentMonitor.java" parse="text"/>
+        </programlisting>
+
+
+        <programlisting language="Java">
+<xi:include href="src/main/java/guru/jini/example/Thresholds.java" parse="text"/>
+        </programlisting>
+
+        <programlisting language="Java">
+<xi:include href="src/main/java/guru/jini/example/TemperatureSensor.java" parse="text"/>
+        </programlisting>
+        <programlisting language="Java">
+<xi:include href="src/main/java/guru/jini/example/Alarm.java" parse="text"/>
+        </programlisting>
+    </section>
+
+    <section>
+        <title>Specifying the expected interaction with mock objects</title>
+
+        <para>
+            After introducing an empty skeleton for our implementation (class <literal>BasicEnvironmentMonitor</literal>)
+            we are immediately in a position to introduce a JUnit test that, using JMock, specifies the full dynamics
+            of what we expect from our service. This is possible, because we are able to specify the <literal>Expectations</literal>
+            for each test scenario, in terms of interaction with the generated mock objects:
+        </para>
+
+        <figure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="environmentMonitorTest.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+
+        <programlisting language="Java">
+<xi:include href="src/test/java/guru/jini/example/impl/BasicEnvironmentMonitorTest.java" parse="text"/>
+        </programlisting>
+
+    </section>
+
+    <section>
+        <title>Implementing the service</title>
+        <para>
+            We may now implement our (very simple) service, with our unit test proving that its behaviour is correct.
+            At no point in the process do we interact with real instances of the TemperatureSensor, Thresholds, or Alarm -
+            in fact, at this stage, no implementations even exist.
+        </para>
+        <para>
+            Following this approach, we can prove the correct behaviour of a component, without having any
+            dependency on the separate projects that may define the implementations of the contracts that we
+            interact with.
+        </para>
+        <programlisting language="Java">
+<xi:include href="src/main/java/guru/jini/example/impl/BasicEnvironmentMonitor.java" parse="text"/>
+        </programlisting>
+    </section>
+
+</section>

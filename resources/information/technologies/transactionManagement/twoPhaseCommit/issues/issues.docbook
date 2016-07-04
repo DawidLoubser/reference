@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Issues around two-phase commit</title>
+    
+    <para>
+        2-phase commit has proven itself over decades as a very reliable and effective transaction management mechanism.
+        However, even though it currently is the most widely used locking and serialization mechanism, it may result in
+        deadlocks as well as sub-optimal and at times unacceptable performance.
+    </para>
+    
+    <section>
+        <title>Deadlocks caused by system failure</title>
+        <para>
+            If a service provider (<abbrev>e.g.</abbrev> system) executing some business logic acquires a
+            lock and then fails, the lock is being held until the system has come up again and has either
+            completed or aborted the transaction. If this does not happen the lock may be permanently held and
+            the transactions requiring the lock for that resource would wait indefinitely.
+        </para>
+        <para>
+            Alternatively, if a resource manager has received a message to prepare for committing and the
+            transaction coordinator goes down before confirming the commit message, then the resource manager
+            will once again hold the lock for that resource.
+        </para>
+    </section>
+    
+    <section>
+        <title>Deadlocks caused by lock acquisition sequences</title>
+        <para>
+            Due to locks being acquired as they are needed we may encounter a situation where one thread acquires
+            the lock of one resource, A, before attempting to acquire the lock of a second resource, B. The lock
+            for resource B may, however, be held by another transaction which may, at some later stage require the
+            lock for resource A to complete the transaction. 
+        </para>
+        <para>
+            In such a case neither of the transactions is able to continue and in the two-phase commit protocol
+            both transactions will adamantly refuse to release the locks they have thus far acquired before the
+            transaction is completed. This is a dead-lock.
+        </para>
+    </section>
+    
+    <section>
+        <title>Inconsistency due to resource manager failure</title>
+        <para>
+            If the resource manager has sent a commit preparation message to all resource managers it will
+            block until it has received the ready-to-commit confirmations from all resource managers. If
+            one of the resource managers does not respond (potentially due to system failure), then
+            the coordinator who is on control of the transaction will not wait indefinitely. After some
+            time-out period all resource managers enlisted in the transaction will be requested to abort
+            the transaction.
+        </para>
+        <para>	 
+            Should the resource manager may, however, have been set into a state where it auto-commits
+            the transactions which were successfully prepared to commit prior to failure. In such a case
+            the consistency of the transaction is violated.
+        </para>
+    </section>
+    
+    <section>
+        <title>Excessive locking overheads</title>
+        <para>
+            In some environments resources are only rarely shared across transactions. For such environments the 
+            overheads of the two-phase commit protocol may be excessive.
+        </para>
+    </section>
+    
+    <section>
+        <title>Lock granularities</title>
+        <para>
+            Certain resource managers may not support fine grained locking. For example, some data bases may not support
+            locking individual records (objects), but only pages of records or even only an entire table. Two phase commit
+            which holds locks from when they are acquired until the transaction has been completed (committed or rolled-back)
+            may not be suitable for systems with resource managers which support only course grained locking.
+        </para>
+    </section>
+    
+</section>    

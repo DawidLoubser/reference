@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    targetNamespace="http://www.solms.co.za/products"
+    xmlns:pr="http://www.solms.co.za/products"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xs:complexType name="Product">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+    </xs:complexType>
+    
+    <xs:complexType name="Products">
+        <xs:sequence>
+            <xs:element name="product" type="pr:Product" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="product" type="pr:Product"/>
+    
+    <xs:element name="products" type="pr:Products">
+        
+        <xs:key name="productKey">
+            <xs:selector xpath="pr:product"/>
+            <xs:field xpath="@code"/>
+        </xs:key>
+        
+    </xs:element>
+</xs:schema>

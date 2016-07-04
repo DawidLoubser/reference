@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateless.client.rmi.rmiClient"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="Client applications">Developing client applications</title>
+  
+  <xi:include href="../introParagraph.xdoc" />
+  <xi:include href="../../../../../client/clientTypes.xdoc" />
+  <xi:include href="../../../../../client/rmiClients.xdoc" />
+  <xi:include href="../../examples/loanCalculator/client.xdoc" />
+
+  <section>
+    <title>Types of Clients</title>
+    <para>
+      EJB supports three basic types of enterprise bean clients: RMI clients are typically
+      remote clients (though local clients and even local enterprise beans may also use RMI) which
+      obtain a reference (typically via JNDI) and access the bean via RMI/IIOP. CORBA clients which
+      look up the bean's home interface from a CORBA naming service (COS Naming) and request the
+      bean's services via the remote interface using CORBA's Internet Inter-ORB protocol (IIOP).
+      They may use CORBA's Object Transaction Service (OTS) to control transactions. Web and SOAP
+      clients which use enterprise beans through servlets. Local Clients access the bean through the
+      local home and local interfaces using standard local calls.
+    </para>
+    <para/>
+  </section>
+  <section>
+    <title>Writing a RMI Client</title>
+    <para>We write a client application which may be run either as a stand-alone application or as
+      an applet. This is achieved by developing it as an applet, and adding a
+      <literal>main()</literal> function which will be called only when run as a stand-alone
+      application. In <literal>main()</literal> we create a frame window and insert the applet into
+      it. Note that we call the applet's <literal>destroy()</literal> method when the application is
+      shut down.</para>
+    <para>The client application makes use of Java's naming and directory service,
+      <literal>InitialContext</literal> supplied by your application server vendor in the
+      <literal>javax.naming</literal> package. <literal>InitialContext</literal> is used to look up
+      the home interface of our stateless session bean.</para>
+    <para>Under the hood any implementation of the JNDI may be used. This may be a Java RMI
+      registry, a CORBA naming service or LDAP. We then narrow the reference down to a reference to
+      <literal>LoanCalculatorHome</literal> and create a <literal>LoanCalculator</literal> via the
+      home interface's <literal>create()</literal> method.</para>
+    <para>Once the reference to the stateless session bean has been established, the rest of the
+      client application is no different to one which would use a local loan calculator object
+      except that the client must handle potential <literal>java.rmi.RemoteException</literal>.</para>
+    <para>When the session bean is no longer required by theclient, it should be removed. This is
+      done in the Applet's <literal>destroy()</literal> method.</para>
+    <para/>
+    <section>
+      <title>Obtaining the JNDI Initial Context</title>
+      <para>The JNDI initial context is obtained as usual via</para>
+      <para/><![CDATA[
+Context context = new InitialContext();
+]]><para>with the JNDI naming context
+        properties are obtained from a <literal>jndi.properties</literal> file found in the class-path:</para>
+
+      <para/><![CDATA[
+java.naming.factory.initial=org.jnp.interfaces.NamingContextFactory
+java.naming.provider.url=jnp://localhost:1099
+java.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces
+jnp.socketFactory=org.jnp.interfaces.TimedSocketFactory
+#Connection timeout (0 == blocking)
+jnp.timeout=0
+#Read timeout (0 == blocking)
+jnp.sotimeout=0
+
+
+]]><para>
+        or by setting the JNDI properties within the application:</para>
+      <para/><![CDATA[
+Hastable properties = new Hashtable();
+properties.put(Context.INITIAL-CONTEXT-FACTORY,
+              "org.jnp.interfaces.NamingContextFactory");
+properties.put(Context.PROVIDER-URL, "localhost:1099");
+properties.put("java.naming.rmi.security.manager", "yes");
+properties.put(Context.URL-PKG-PREFIXES, "org.jboss.naming");
+
+Context context = new InitialContext(properties);
+]]><para/>
+    </section>
+    <section>
+      <title>Code Listing: LoanCalculatorClient</title>
+      <para>We encapsulate the client in a panel which can be inserted into either a frame window or
+        an applet. The panel class is shown below:</para>
+
+      <para/><![CDATA[
+package za.co.SolmsTraining.finance.calculators;
+
+import javax.naming.InitialContext;
+import javax.rmi.PortableRemoteObject;
+
+import java.awt.*;
+import java.text.*;
+import java.util.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+public class LoanCalculatorPanel extends JPanel
+{
+ public LoanCalculatorPanel() {init();}
+
+ public void init()
+ {
+   try
+   {
+     connect();
+
+     JPanel fieldsPanel = new JPanel();
+     fieldsPanel.setLayout
+       (new GridLayout(4,3));
+
+     fieldsPanel.add(new JLabel("Loan amount: "));
+     fieldsPanel.add(loanAmountField);
+     fieldsPanel.add(calcLoanAmountButton);
+     fieldsPanel.add(new JLabel("Monthly installment: "));
+     fieldsPanel.add(installmentField);
+     fieldsPanel.add(calcInstallmentButton);
+     fieldsPanel.add(new JLabel("Loan period in months: "));
+     fieldsPanel.add(loanPeriodField);
+     fieldsPanel.add(calcLoanPeriodButton);
+     fieldsPanel.add(new JLabel("Interest Rate (%): "));
+     fieldsPanel.add(interestRateField);
+
+     JPanel mainPanel = new JPanel();
+     mainPanel.add(fieldsPanel);
+
+     add(mainPanel);
+
+     calcLoanAmountButton.addActionListener
+           (new ActionListener()
+       {
+         public void actionPerformed(ActionEvent event)
+
+         {
+           double installment  = getDouble(installmentField);
+           int loanPeriod   = getInt(loanPeriodField);
+           double interestRate = getDouble(interestRateField)/100;
+
+           try
+           {
+             double loanAmount = loanCalculator.calcLoanAmount
+               (installment, interestRate, loanPeriod);
+
+             loanAmountField.setText
+               (amountFormatter.format(loanAmount));
+           }
+           catch (Exception e)
+           {
+             JOptionPane.showMessageDialog
+               (LoanCalculatorPanel.this,
+                e.toString(), e.getMessage(),
+                JOptionPane.ERROR-MESSAGE);
+           }
+         }
+       });
+
+       calcInstallmentButton.addActionListener
+           (new ActionListener()
+       {
+         public void actionPerformed(ActionEvent event)
+         {
+           double loanAmount   = getDouble(loanAmountField);
+           int    loanPeriod   = getInt(loanPeriodField);
+           double interestRate = getDouble(interestRateField)/100;
+
+           try
+           {
+             double installment = loanCalculator.calcMonthlyInstallment
+               (loanAmount, interestRate, loanPeriod);
+
+             installmentField.setText
+               (amountFormatter.format(installment));
+           }
+           catch (Exception e)
+           {
+             JOptionPane.showMessageDialog
+               (LoanCalculatorPanel.this,
+                e.toString(), e.getMessage(),
+                JOptionPane.ERROR-MESSAGE);
+           }
+         }
+       });
+
+
+     calcLoanPeriodButton.addActionListener
+           (new ActionListener()
+       {
+         public void actionPerformed(ActionEvent event)
+         {
+           double loanAmount   = getDouble(loanAmountField);
+           double installment  = getDouble(installmentField);
+           double interestRate = getDouble(interestRateField)/100;
+
+           try
+           {
+             int loanPeriod = loanCalculator.calcLoanPeriodInMonths
+               (loanAmount, installment, interestRate);
+
+             loanPeriodField.setText(Integer.toString(loanPeriod));
+           }
+           catch (Exception e)
+           {
+             JOptionPane.showMessageDialog
+               (LoanCalculatorPanel.this,
+                e.toString(), e.getMessage(),
+                JOptionPane.ERROR-MESSAGE);
+           }
+         }
+       });
+   }
+   catch (Exception e)
+   {
+     JOptionPane.showMessageDialog(LoanCalculatorPanel.this,
+                   e.getMessage(),
+                   "Could not connect to session bean.",
+                   JOptionPane.ERROR-MESSAGE);
+     e.printStackTrace();
+     System.exit(0);
+   }
+ }
+
+ public double getDouble(JTextField textField)
+ {
+   try
+   {
+     return amountFormatter.parse
+       (textField.getText(),
+        new ParsePosition(0)).doubleValue();
+   }
+   catch (NumberFormatException e)
+   {
+     JOptionPane.showMessageDialog
+
+       (this, e.getMessage(), "Invalid input.",
+        JOptionPane.ERROR-MESSAGE);
+     return 0;
+   }
+ }
+
+ public int getInt(JTextField textField)
+ {
+   try
+   {
+     return Integer.parseInt(textField.getText());
+   }
+   catch (NumberFormatException e)
+   {
+     JOptionPane.showMessageDialog
+       (this, e.getMessage(), "Invalid input.",
+        JOptionPane.ERROR-MESSAGE);
+     return 0;
+   }
+ }
+
+ public void connect()
+ {
+   try
+   {
+     InitialContext jndiContext = new InitialContext();
+
+     System.out.println("Now looking up session bean " + jndiName + " ...");
+
+     Object beanHomeRef
+       = jndiContext.lookup(jndiName);
+
+     System.out.println("got it");
+
+     LoanCalculatorHome home =
+       (LoanCalculatorHome)PortableRemoteObject.narrow
+         (beanHomeRef, LoanCalculatorHome.class);
+
+     loanCalculator = home.create();
+   }
+   catch (Exception e)
+   {
+     JOptionPane.showMessageDialog(LoanCalculatorPanel.this,
+                   e.getMessage(),
+                   "Could not connect to session bean.",
+                   JOptionPane.ERROR-MESSAGE);
+     e.printStackTrace();
+     System.exit(0);
+   }
+
+ }
+
+ public void destroy()
+ {
+   try
+   {
+     loanCalculator.remove();
+     System.out.println("Removed session bean.");
+   }
+   catch (javax.ejb.RemoveException e)
+   {
+     System.out.println("Could not remove session bean.");
+   }
+   catch (java.rmi.RemoteException e)
+   {
+     System.out.println("Could not remove session bean.");
+   }
+ }
+
+ private LoanCalculator loanCalculator;
+
+ private JTextField loanAmountField = new JTextField(10);
+ private JTextField installmentField = new JTextField(10);
+ private JTextField interestRateField = new JTextField(10);
+ private JTextField loanPeriodField = new JTextField(3);
+
+ private JButton calcLoanAmountButton
+   = new JButton("calculate");
+ private JButton calcInstallmentButton
+   = new JButton("calculate");
+ private JButton calcLoanPeriodButton
+   = new JButton("calculate");
+
+ private DecimalFormat amountFormatter
+   = new DecimalFormat("###,###,###,##0.00");
+
+ private static final String jndiName = "ejb/LoanCalculator";
+}
+
+]]><para>
+        The client application supplied a <literal>main</literal> which craetes a frame window for
+        the panel and pops it up onto the desktop:</para>
+      <para/><![CDATA[
+package za.co.SolmsTraining.finance.calculators;
+
+import javax.naming.InitialContext;
+import javax.rmi.PortableRemoteObject;
+
+import java.awt.*;
+import java.text.*;
+import java.util.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+public class LoanCalculatorClient extends JFrame
+{
+ public LoanCalculatorClient()
+ {
+   setTitle("Solms Training Loan Calculator");
+
+   calculatorPanel = new LoanCalculatorPanel();
+
+   getContentPane().add(calculatorPanel);
+
+   addWindowListener(new WindowAdapter()
+     {
+       public void windowClosing(WindowEvent event)
+       {
+         calculatorPanel.destroy();
+         System.exit(0);
+       }
+     });
+
+   pack();
+ }
+
+ public static void main(String[] args)
+ {
+   new LoanCalculatorClient().show();
+ }
+
+ private LoanCalculatorPanel calculatorPanel;
+}
+
+]]><para/>
+    </section>
+    <section>
+      <title>Code Listing: Applet Client</title>
+      <para>The HTML file hosting the applet contains an applet tag:</para>
+
+      <para/><![CDATA[
+<html>
+ <head>
+   <title>Hello World Applet</title>
+ </head>
+
+ <body>
+ <center><h2>Hello World Applet</h2></center>
+
+ <hr>
+
+ <applet codebase="." code=ClickCounter.class width=170 height=80>
+      alt="Your browser understands the &amp;lt;APPLET&amp;gt; tag but isn't running the applet, for some reason."
+       Your browser is completely ignoring the &amp;lt;APPLET&amp;gt; tag!
+ </applet>
+
+ <hr>
+ </body>
+</html>
+]]><para>The
+        applet instantiates the loan calculator panel and inserts it into its content pane:</para>
+      <para/><![CDATA[
+package za.co.SolmsTraining.finance.calculators;
+
+import javax.swing.*;
+
+public class LoanCalculatorClientApplet extends JApplet
+{
+ public void init()
+ {
+   calculatorPanel = new LoanCalculatorPanel();
+   getContentPane().add(calculatorPanel);
+ }
+
+ public void destroy()
+ {
+   calculatorPanel.destroy();
+ }
+
+ private LoanCalculatorPanel calculatorPanel;
+}
+
+]]><para/>
+    </section>
+  </section>
+</section>

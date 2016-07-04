@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config
+  version="1.2" 
+  xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+  http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd" >
+    
+  <!-- For each user session, create an instance of the
+    command class (a managed bean) -->
+  <managed-bean>
+    <managed-bean-name>conversion</managed-bean-name>
+    <managed-bean-class>example.jsf.UnitConversionCommand</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+  
+  <!-- 'new conversion' use case -->
+  <navigation-rule>
+    <from-view-id>*</from-view-id>
+    <navigation-case>
+      <from-outcome>new conversion</from-outcome>
+      <to-view-id>/unitconv-input.jspx</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- Outcome of 'conversion performed' -->
+  <navigation-rule>
+    <from-view-id>/unitconv-input.jspx</from-view-id>
+    <navigation-case>
+      <from-outcome>conversion performed</from-outcome>
+      <to-view-id>/unitconv-display.jspx</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>unsupported unit</from-outcome>
+      <to-view-id>/unitconv-invalid-unit.jspx</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+</faces-config>

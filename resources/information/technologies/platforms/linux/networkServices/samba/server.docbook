@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns3337:section xmlns:ns3337="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.samba.server">
+
+	<ns3338:title xmlns:ns3338="http://docbook.org/ns/docbook">Samba filesharing</ns3338:title>
+	<ns3339:para xmlns:ns3339="http://docbook.org/ns/docbook">
+	The Samba server's configuration resides in <ns3340:emphasis xmlns:ns3340="http://docbook.org/ns/docbook" role="strong">/etc/samba/smb.conf</ns3340:emphasis>. This file typically contains a <ns3341:emphasis xmlns:ns3341="http://docbook.org/ns/docbook" role="strong">[global]</ns3341:emphasis> section defining parameters specific to the entire server covering all shares and printers. The <ns3342:emphasis xmlns:ns3342="http://docbook.org/ns/docbook" role="strong">[home]</ns3342:emphasis> sections enables users access to their home (<ns3343:emphasis xmlns:ns3343="http://docbook.org/ns/docbook" role="strong">/home/userid</ns3343:emphasis>) directory and lastly the <ns3344:emphasis xmlns:ns3344="http://docbook.org/ns/docbook" role="strong">[printers]</ns3344:emphasis>	section enables the sharing of all configured printers.
+	</ns3339:para>
+	<ns3345:programlisting xmlns:ns3345="http://docbook.org/ns/docbook">
+	
+[global]
+   workgroup = earth 
+   server string = Teddy 
+   
+	 printcap name = /etc/printcap
+   load printers = yes
+   printing = lprng
+   
+	 log file = /var/log/samba/%m.log
+   max log size = 0
+	 
+   security = user
+   encrypt passwords = yes
+   smb passwd file = /etc/samba/smbpasswd
+   
+	 unix password sync = Yes
+   passwd program = /usr/bin/passwd %u
+   passwd chat = *New*password* %n\n *Retype*new*password* %n\n *passwd:*all*authentication*tokens*updated*successfully*
+   pam password change = yes
+   obey pam restrictions = yes
+   
+	 socket options = TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192
+   
+	 dns proxy = no 
+		
+[homes]
+   comment = Home Directories
+   browseable = no
+   writable = yes
+   valid users = %S
+   create mode = 0664
+   directory mode = 0775
+
+[myshare]	 
+	 comment = My Public share for all to see
+	 path	 = /opt/publicshare
+	 public = yes
+	 writable = yes
+	 printable = no
+
+[printers]
+   comment = All Printers
+   path = /var/spool/samba
+   browseable = no
+   guest ok = no
+   writable = no
+   printable = yes
+		
+	</ns3345:programlisting>
+	<ns3346:para xmlns:ns3346="http://docbook.org/ns/docbook">
+		Older versions of Windows 95 / 98 and NT were using plain text passwords rather then encrypted passwords. It is possible to modify a registry key to get these versions to use password encryption or alternatively configure the samba server to use unencrypted passwords. By default samba uses plain text passwords, however the parameter <ns3347:emphasis xmlns:ns3347="http://docbook.org/ns/docbook" role="strong">encrypted password = yes</ns3347:emphasis> used in the example and most default samba installations enforces encryption. To enable clear text passwords omit this parameter. 
+	</ns3346:para>
+	<ns3348:para xmlns:ns3348="http://docbook.org/ns/docbook">
+	The security parameter specifies at which level the access priviledges are configures. Available options are <ns3349:emphasis xmlns:ns3349="http://docbook.org/ns/docbook" role="strong">share</ns3349:emphasis>, <ns3350:emphasis xmlns:ns3350="http://docbook.org/ns/docbook" role="strong">user</ns3350:emphasis> or <ns3351:emphasis xmlns:ns3351="http://docbook.org/ns/docbook" role="strong">server</ns3351:emphasis>. Setting security to user specifies that once the user is authenticated access is given shares. Specifing share security indicates that the client is authenticates on each attempt to access a share, but then only by password rathern than by user id and password. The server security mode can be used to utilise another server, which use security=user, to authenticate the user. 
+	</ns3348:para>
+	<ns3352:para xmlns:ns3352="http://docbook.org/ns/docbook">
+	The guest account is enabled by providing the <ns3353:emphasis xmlns:ns3353="http://docbook.org/ns/docbook" role="strong">guest account = unixlogin</ns3353:emphasis> directive in the global section of the configuration file. The unixloging must be created, otherwise the nobody account is used. To enable guest access to a share add the <ns3354:emphasis xmlns:ns3354="http://docbook.org/ns/docbook" role="strong">guest ok = yes</ns3354:emphasis>, or <ns3355:emphasis xmlns:ns3355="http://docbook.org/ns/docbook" role="strong">only guest = yes</ns3355:emphasis> directives.
+	</ns3352:para>
+</ns3337:section>

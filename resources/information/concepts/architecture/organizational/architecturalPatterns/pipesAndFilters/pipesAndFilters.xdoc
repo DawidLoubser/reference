@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.concepts.architecture.organizational.architecturalPatterns.pipesAndFilters.pipesAndFilters"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Flexible work flows via the pipes and filters architectural pattern and services oriented architectures</title>
+  <para>
+    Organizations which see modifiable work flows as one of their core capabilities often make extensive use of 
+    the pipes and filters pattern. Here business units take over the responsibility of individual work flow steps.
+    Business processes are defined as work flows across these business (processing) units.
+    The idea is that one can very easily assemble and modify business processes within this architecture. 
+  </para>
+  
+  <figure id="resources.information.concepts.architecture.organizational.architecturalPatterns.pipesAndFilters.example_fig">
+    <title>Realizing business processes in a pipes and filters based architecture</title>
+    <graphic fileref="example.jpg"/>
+  </figure>
+  
+  <para>
+    For example, the dispatching work flow of an online retailer could be altered to include gift wrapping under certain
+    circumstances or even to include a work flow step which insures the goods in transit. In a pipes
+    and filters based architecture, such additional work flow steps can be easily inserted, others
+    may be removed and yet others may be optional.
+  </para>
+
+  <section>
+    <title>Responsibility localization</title>
+    <para>
+      When setting up a pipes and filters architecture one needs to start with a clean responsibility allocation
+      across business units. Each business unit is given a domain of responsibility and executes the
+      work flow steps which fall in that domain of responsibility.
+    </para>
+  </section>
+  
+  <section>
+    <title>Management structure for a pipes and filters based organization</title>
+    <para>
+      Managing large pipes and filters based organizations is non-trivial. Traditionally one would 
+      tend to put a hierarchy on top of the pipes and filters structure which is based on domains 
+      of responsibility, <abbrev>i.e.</abbrev> based on a groupings of the processing units.
+    </para>
+    <para>
+      However, work flows are typically constructed across these domains of responsibility. 
+      Such an approach would thus result in a situation where the responsibility for the entire
+      business process or client service would not be localized and hence a situation where there is
+      no clear ownership of business processes or client services. Furthermore, making changes to an
+      existing business process or introducing a new business process would require buy-in across
+      the hierarchical elements responsible for the different domains of responsibility. This would
+      have a negative impact on the core capability this pattern aims to realize, flexibility. 
+    </para>
+    <para>
+      Instead, one usually uses a relatively flat hierarchy where responsibility assignment is done
+      on groupings of client services or business processes instead of on groupings of domains of
+      responsibility. The result is that there is direct ownership and accountability of client
+      services and business processes as a whole. Furthermore, changing a business process would not
+      impact on different hierarchical elements. The business unit responsible for that particular
+      work flow would simply execute the changes across the processing units which act as lower level
+      services providers.
+    </para>
+  </section>
+  
+  <section>
+    <title>SLAs for the lower level service providers</title>
+    <para>
+      The lower level service providers may be internal business units or external service
+      providers. In either case these service providers would provide services to different higher
+      level business units. This is because different services offered by different higher level
+      business units may require the same work flow steps or at least services from the same lower
+      level service provider. In such a situation one would always want to put service level
+      agreements (SLAs) in place, irrespective of whether the lower level service provider is an
+      internal business unit or an external service provider.
+    </para>  
+  </section>
+  
+  <section>
+    <title>Communication infrastructure in a pipes and filters architecture</title>
+    <para>
+      One potential problem in a pipes and filters based architecture is the communication
+      infrastructure. In the worst case every business unit would need to maintain a communication
+      channel to every other business unit.     
+    </para>
+    <para>
+      In practice one would centralize the communication responsibility within a separate business
+      unit (like the internal postage service). In modern systems this responsibility is usually
+      assigned to an enterprise services bus.
+    </para>
+  </section>
+  
+  <section>
+    <title>Pipes and filters as a basis for a services oriented architecture</title>
+    <para>
+      An architecture which contains as core elements
+      <itemizedlist>
+        <listitem><para>
+          lower level services providers which realize work flow steps according to some SLA,   
+        </para></listitem>
+        <listitem><para>
+          a communication infrastructure which takes over the communication responsibilities between
+          the business units,
+        </para></listitem>
+        <listitem><para>
+          and higher level business units responsible for the work flow management of the business
+          processes assembled from the lower level work flow steps (<abbrev>i.e.</abbrev> responsible
+          for the high level services assembled from the lower level services),
+        </para></listitem>
+      </itemizedlist>
+      then one has effectively assembled a services oriented architecture. At systems level such
+      services oriented architectures may be realized within an <emphasis>enterprise services
+        bus</emphasis>.      
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Recursive pipes and filters based architectures</title>
+    <para>
+      In a pipes and filters architecture each business unit is a processing unit responsible for a
+      particular work flow step (at some level of granularity). 
+      Depending on the core capabilities required from the business unit
+      responsible for a particular work flow step, it may use internally a hierarchical pattern for
+      reduced communication complexity and improved accountability, an expert pool for ingenuitivity
+      and quality optimization, or, once again, a pipes and filters pattern for flexible lower level
+      work flows.
+      <note><para>
+        In a services oriented architecture it is assumed that services may themselves be composed
+        of lower level services.
+      </para></note>
+    </para>
+  </section>
+  
+  <section>
+    <title>Human resourcing from a pipes and filters perspective</title>
+    <para>
+      Due to the strong responsibility localization and the work flow centric approach of pipes and
+      filters based organizational architectures they generally tend to use role-based human resourcing.
+    </para>
+    <para>
+      If the skills requirements for the various roles are constrained to relatively standard skills
+      requirements, then this typically benefits both, reliability and scalability,
+      <abbrev>i.e.</abbrev> a person can be readily replaced and more persons fulfilling that role
+      can easily be hired.
+    </para>
+  </section>
+  
+  <section>
+    <title>Strengths of the pipes and filters pattern</title>
+    <para>
+      Workflow-centric organizations often make heavy use of the pipes and filters architectural pattern.
+      Core benefits include
+      <itemizedlist>
+        <listitem><para>
+          One can easily and rapidly assemble new work flows.
+        </para></listitem>
+        <listitem><para>
+          One can easily modify existing work flows.
+        </para></listitem>
+        <listitem><para>
+          The pipes and filters pattern typically results in good responsibility localization across the organization.
+        </para></listitem>
+        <listitem><para>
+          Scaleability and reliability is easily achieved through replication of processing units
+          and using external service providers for the processing units.
+        </para></listitem>
+        <listitem><para>
+          Reduced complexity by localizing the communication and work flow management
+          responsibilities.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Weaknesses of the pipes and filters pattern</title>
+    <para>
+      The strong focus on roles within the organization tends to discourage individual initiatives
+      and ingenuity. The ingenuity capability is further challenged by the definite responsibility
+      demarcations and the minimal communication paths between people working in different domains
+      of responsibility.   
+    </para>
+  </section>
+ 
+</section>

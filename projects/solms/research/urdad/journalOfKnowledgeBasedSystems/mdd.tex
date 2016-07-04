@@ -1,0 +1,73 @@
+\section{Model-Driven Development (MDD)}
+
+
+{\em Model Driven Development} (MDD) or its more generic form, Model Driven
+Engineering (MDE),
+\cite{selic:pragmaticsOfModelDrivenDevelopment,schmidt:modelDrivenEngineering, france:mddUsingUml2}
+is increasingly gaining the attention of both research communities and the software development industry.
+
+In MDD one aims to capture and maintain the business processes within abstract models,
+which are then mapped onto (typically software-based) implementations. The
+aim is to simplify the development and maintenance of the business processes,
+as well as to facilitate automation via techniques such as model execution, model transformation 
+or code generation.
+
+The {\em Object Management Group} (OMG) promotes the Model Driven Architecture
+(MDA) \cite{pastor:mdaInPractice,siegel:developingInMDA,frankel:enterpriseMDA,
+stahl:mdsd}
+as a standard framework for MDD. It proposes the development of a
+technology neutral model, the {\em Platform Independent Model} (PIM) which is
+then mapped onto one's choice of implementation architecture and technologies
+via standard model transformations defined for such technologies. One of the
+core benefits envisaged by MDA is that the PIM will be able to survive
+technology and architecture changes \cite{siegel:developingInMDA}.
+
+\subsection{Quality of service}
+
+Business processes need to be deployed within an environment ensuring certain qualities.
+It is the responsibility of architecture to ensure that the infrastructure into which
+the business processes are to be deployed will provide the required qualities
+\cite{bass:softwareArchitecture}.
+
+URDAD thus assumes the orthogonality of the technology neutral business process design and
+the implementation architecture with the former addressing the functional requirements and
+the latter addressing the non-functional or quality requirements.
+
+\subsection{Model transformations}
+
+In a model driven approach, the platform independent model is taken through one or
+more model transformations which map the technology neutral business process specification
+contained in the PIM onto a series of intermediate Platform Specific Models (PSMs)
+and ultimately onto a concrete, deployable implementation, the Enterprise Deployment Model (EDM).
+The OMG has defined for this the QVT (Queries/Views/Transformations) \cite{omg:qvt}
+which is an extension of the Object Constraint Language (OCL) and contains three domain
+specific transformation languages. Other languages used to specify model transformations include
+the Model Transformation Language (MTL), the ATLAS Transformation Language (ATL) as well as domain-neutral
+languages like the XSLT and Java.
+
+The inputs for the implementation mappings are
+\begin{enumerate}
+  \item the technology neutral analysis and business process design in the form of a PIM including
+			the quality requirements for the deployed services, and
+  \item the Platform Description Model (PDM) specifying the implementation architecture
+			and technologies including the presentation layer infrastructure (e.g.\ Struts),
+			the integration infrastructure, the component/services hosts, the persistence
+			infrastructure, ...
+\end{enumerate}
+In order to perform a model transformations one requires the understanding of the meta models of both,
+the source language as well as the target language.
+
+URDAD defines a meta model for the
+structure of the PIM. The semantics required for the meta-model is defined in a UML profile for URDAD.
+Part of the PIM are the service provider contracts with the quality of service requirements. These are
+specified using OMG's {\em UML Profile for Modeling Quality of Service and Fault Tolerance Characteristics
+and Mechanisms} \cite{omg:umlProfileQos}. Having a well-defined meta-model for the PIM significantly
+simplifies the definition of model transformations required to generate the PSMs and EDM.
+
+The weak aspect of the source domain is usually the specification for the PDM.
+Due to a lack of standards around the specification of the PDM, MDA tools often support only
+mappings onto certain specific reference architectures/platforms like Java EE and Microsoft.Net
+with only limited control over the parameters of the defined architecture. Alternatively
+or additionally they enable one to specify the PDM indirectly through a set of transformation
+elements.
+

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-03-12 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Mapping UML composition relationships onto XML</title>
+    <para> Composition maps onto XML sub-elements. Thus, if an Account has a balance which is an
+        instance of Money by composition, then the XML schema would be something like this:
+        <programlisting><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    
+    <xs:complexType name="Account">
+        <xs:sequence>
+            <xs:element name="balance" type="Money"/>
+        </xs:sequence>
+        <xs:attribute name="accountNo" type="xs:string" use="required"/>
+    </xs:complexType>
+    
+    <xs:complexType name="Money">
+        <xs:sequence>
+            <xs:element name="amount" type="xs:decimal"/>
+            <xs:element name="currency" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="account" type="Account"/>
+
+</xs:schema>			
+			]]></programlisting>
+    </para>
+    <para> An XML instance document complying to this schema would look something like this:
+        <programlisting><![CDATA[
+<account accountNo="A123">
+  <balance>
+    <amount>100</amount>
+    <currency>EURO</currency>
+  </balance>
+ </account>   			
+			]]></programlisting>
+    </para>
+</section>

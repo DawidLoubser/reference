@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns160:section xmlns:ns160="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.awk.patternMatching">
+
+  <ns161:title xmlns:ns161="http://docbook.org/ns/docbook">Pattern matching in <ns162:command xmlns:ns162="http://docbook.org/ns/docbook">awk</ns162:command></ns161:title>
+  <ns163:para xmlns:ns163="http://docbook.org/ns/docbook">
+    <ns164:command xmlns:ns164="http://docbook.org/ns/docbook">Awk</ns164:command> supports 
+    <ns165:itemizedlist xmlns:ns165="http://docbook.org/ns/docbook">
+      <ns166:listitem xmlns:ns166="http://docbook.org/ns/docbook"><ns167:para xmlns:ns167="http://docbook.org/ns/docbook">regular expressions and</ns167:para></ns166:listitem>
+      <ns168:listitem xmlns:ns168="http://docbook.org/ns/docbook"><ns169:para xmlns:ns169="http://docbook.org/ns/docbook">relational expressions,</ns169:para></ns168:listitem>
+      <ns170:listitem xmlns:ns170="http://docbook.org/ns/docbook"><ns171:para xmlns:ns171="http://docbook.org/ns/docbook">matching on the beginning or end of a stream,</ns171:para></ns170:listitem>
+      <ns172:listitem xmlns:ns172="http://docbook.org/ns/docbook"><ns173:para xmlns:ns173="http://docbook.org/ns/docbook">matching on all records,</ns173:para></ns172:listitem>
+      <ns174:listitem xmlns:ns174="http://docbook.org/ns/docbook"><ns175:para xmlns:ns175="http://docbook.org/ns/docbook">and combining patterns.</ns175:para></ns174:listitem>
+    </ns165:itemizedlist>
+  </ns163:para>
+  
+  <ns176:section xmlns:ns176="http://docbook.org/ns/docbook">
+    <ns177:title xmlns:ns177="http://docbook.org/ns/docbook">Matching on regular expressions</ns177:title>
+    <ns178:para xmlns:ns178="http://docbook.org/ns/docbook">
+      Regular expressions are discussed in 
+      <ns179:xref xmlns:ns179="http://docbook.org/ns/docbook" linkend="resources.information.technologies.general.regularExpressions.regularExpressions"/>.
+      In <ns180:command xmlns:ns180="http://docbook.org/ns/docbook">awk</ns180:command>, regular expressions are delimited by forward slashes.
+      For example, 
+      <ns181:programlisting xmlns:ns181="http://docbook.org/ns/docbook">
+awk '/^ *[tT]andi /  { print $3*$4 }' orders.txt
+      </ns181:programlisting>
+      matches on all records which start with either <ns182:quote xmlns:ns182="http://docbook.org/ns/docbook">Tandi</ns182:quote> or <ns183:quote xmlns:ns183="http://docbook.org/ns/docbook">tandi</ns183:quote>
+      preceded by an arbitrary number of spaces and, if a match is found, prints the product of
+      fields 3 and 4.
+    </ns178:para>
+    <ns184:para xmlns:ns184="http://docbook.org/ns/docbook">
+      If we apply the above <ns185:command xmlns:ns185="http://docbook.org/ns/docbook">awk</ns185:command> transformation to the following data
+      file, <ns186:filename xmlns:ns186="http://docbook.org/ns/docbook">orders.txt</ns186:filename>
+      <ns187:programlisting xmlns:ns187="http://docbook.org/ns/docbook">
+  Jim jam 20 11.30
+     Tandi tomatoes 3 28.78
+  Alfred apples 7 7.89
+   tandi mangoes 15.6 1
+  Tandi pears 7 6.50 
+ Ellen oranges 22 10.00  # bought for Tandi
+      </ns187:programlisting>
+    we obtain the following output
+    <ns188:programlisting xmlns:ns188="http://docbook.org/ns/docbook">
+86.34
+15.6
+45.5  
+    </ns188:programlisting>
+    </ns184:para>
+  </ns176:section>
+
+  <ns189:section xmlns:ns189="http://docbook.org/ns/docbook">
+    <ns190:title xmlns:ns190="http://docbook.org/ns/docbook">Matching on relational expressions</ns190:title>
+    <ns191:para xmlns:ns191="http://docbook.org/ns/docbook">
+      <ns192:command xmlns:ns192="http://docbook.org/ns/docbook">Awk</ns192:command> also supports matching on relational expressions. For
+      example, if we want to extract the client name and total value of the order for all
+      orders of more than 100, we can use
+      <ns193:programlisting xmlns:ns193="http://docbook.org/ns/docbook">
+awk '$3*$4&gt;=100 { print $3*$4,$1 }' orders.txt
+      </ns193:programlisting>
+      Applying this again to our <ns194:filename xmlns:ns194="http://docbook.org/ns/docbook">orders.txt</ns194:filename> file, we obtain
+      <ns195:programlisting xmlns:ns195="http://docbook.org/ns/docbook">
+226 Jim
+220 Ellen
+      </ns195:programlisting>
+    </ns191:para>
+  </ns189:section>
+  
+  <ns196:section xmlns:ns196="http://docbook.org/ns/docbook">
+    <ns197:title xmlns:ns197="http://docbook.org/ns/docbook">Matching on a combination of patterns</ns197:title>
+    <ns198:para xmlns:ns198="http://docbook.org/ns/docbook">
+      In <ns199:command xmlns:ns199="http://docbook.org/ns/docbook">awk</ns199:command>, we can use the logical
+      AND (<ns200:literal xmlns:ns200="http://docbook.org/ns/docbook">&amp;&amp;</ns200:literal>) and OR (<ns201:literal xmlns:ns201="http://docbook.org/ns/docbook">||</ns201:literal>)
+      operators to combine matching patterns. Furthermore, we can also apply
+      logical NOT (<ns202:literal xmlns:ns202="http://docbook.org/ns/docbook">!</ns202:literal>) operators to matching patterns.
+    </ns198:para>
+    <ns203:para xmlns:ns203="http://docbook.org/ns/docbook">
+      For example, 
+      <ns204:programlisting xmlns:ns204="http://docbook.org/ns/docbook">
+ awk '/ [a-zA-z]* [a-z]*oes/ &amp;&amp; $3*$4&lt;20' orders.txt
+      </ns204:programlisting>
+      matches on all records where the product field ends with <ns205:quote xmlns:ns205="http://docbook.org/ns/docbook">oes</ns205:quote>
+      and where the total amount is less than 20. Applying this again to our
+      <ns206:filename xmlns:ns206="http://docbook.org/ns/docbook">orders.txt</ns206:filename> data file we obtain
+      <ns207:programlisting xmlns:ns207="http://docbook.org/ns/docbook">
+   tandi mangoes 15.6 1
+      </ns207:programlisting>
+    </ns203:para>
+  </ns196:section>
+
+  <ns208:section xmlns:ns208="http://docbook.org/ns/docbook">
+    <ns209:title xmlns:ns209="http://docbook.org/ns/docbook">Matching on the beginning and end of a stream and on all records</ns209:title>
+    <ns210:para xmlns:ns210="http://docbook.org/ns/docbook">
+      The keywords <ns211:varname xmlns:ns211="http://docbook.org/ns/docbook">BEGIN</ns211:varname> and <ns212:varname xmlns:ns212="http://docbook.org/ns/docbook">END</ns212:varname>
+      are used to match on the start and end of a stream respectively. To match on all
+      records we simply ommit the match. If we specify an action which is not preceded
+      by a match, that action is performed for all records.
+    </ns210:para>
+    <ns213:para xmlns:ns213="http://docbook.org/ns/docbook">
+      For example,
+      <ns214:programlisting xmlns:ns214="http://docbook.org/ns/docbook">
+awk '/^ *[tT]andi / { sum += $3*$4 } END { print "total = " sum " (incl VAT)"}' orders.txt
+      </ns214:programlisting>
+      matches on all records starting with <ns215:quote xmlns:ns215="http://docbook.org/ns/docbook">Tandi</ns215:quote> or <ns216:quote xmlns:ns216="http://docbook.org/ns/docbook">tandi</ns216:quote>
+      and sums up the product of fields 3 and 4. When matching on the end of the file it
+      prints out the accumulated sum. Applying this to our <ns217:filename xmlns:ns217="http://docbook.org/ns/docbook">order.txt</ns217:filename>
+      we obtain the result
+      <ns218:programlisting xmlns:ns218="http://docbook.org/ns/docbook">
+total = 147.44 (incl VAT)
+      </ns218:programlisting>
+    </ns213:para>
+    <ns219:para xmlns:ns219="http://docbook.org/ns/docbook">
+        Let us now look at an example of specifying actions
+        <ns220:itemizedlist xmlns:ns220="http://docbook.org/ns/docbook">
+          <ns221:listitem xmlns:ns221="http://docbook.org/ns/docbook"><ns222:para xmlns:ns222="http://docbook.org/ns/docbook">
+             which should be performed when matching on the beginning of a file,
+          </ns222:para></ns221:listitem>
+          <ns223:listitem xmlns:ns223="http://docbook.org/ns/docbook"><ns224:para xmlns:ns224="http://docbook.org/ns/docbook">
+            actions which are to be performed for all records.
+          </ns224:para></ns223:listitem>
+          <ns225:listitem xmlns:ns225="http://docbook.org/ns/docbook"><ns226:para xmlns:ns226="http://docbook.org/ns/docbook">
+            and an action which should be performed when matching on the end of the file.  
+          </ns226:para></ns225:listitem>
+        </ns220:itemizedlist>
+      <ns227:programlisting xmlns:ns227="http://docbook.org/ns/docbook">
+awk ' BEGIN { print "Client Total" } 
+         BEGIN { print "============" } 
+         { print $1,$3*$4 } 
+         { sum += $3*$4 } 
+         END { print "total = " sum " (incl VAT)"}' orders.txt
+      </ns227:programlisting>
+      Applying this script once again to <ns228:filename xmlns:ns228="http://docbook.org/ns/docbook">orders.txt</ns228:filename>, we now obtain
+      <ns229:programlisting xmlns:ns229="http://docbook.org/ns/docbook">
+Client Total
+============
+Jim 226
+Tandi 86.34
+Alfred 55.23
+tandi 15.6
+Tandi 45.5
+Ellen 220
+total = 648.67 (incl VAT)
+       </ns229:programlisting>
+    </ns219:para>
+  </ns208:section>
+</ns160:section>

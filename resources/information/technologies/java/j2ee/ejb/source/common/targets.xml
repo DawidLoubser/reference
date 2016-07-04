@@ -1,0 +1,181 @@
+<path id="servlet.jar">
+  <pathelement path="${servlet-jar}"/>
+</path>
+
+<path id="jboss.jars">
+  <fileset dir="${jboss-home}/client">
+    <include name="*.jar"/>
+  </fileset>
+</path>
+
+<target name="clean"
+        description="Removes the build directories">
+  <delete dir="${buildDir}" />
+</target>
+
+<target name="prepareDirectories" depends="clean">
+  <echo message="Creating build and distribution directories ..." />
+  <mkdir dir="${buildDirBusinessLogic}" />
+  <mkdir dir="${buildDirCommon}" />
+  <mkdir dir="${buildDirServlet}/WEB-INF/classes" />
+  <mkdir dir="${buildDirClientCommon}" />
+  <mkdir dir="${buildDirApplet}" />
+  <mkdir dir="${buildDirClientApp}" />
+  <mkdir dir="${distDir}" />
+</target>
+
+<target name="compileCommon" depends="prepareDirectories">
+  <echo message="Compiling classes common to server and client layers ..."/>
+  <javac srcdir="${srcDirCommon}"
+         destdir="${buildDirCommon}"
+         deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}"
+         debug="${compile.debug}"
+         includes="**/*.java"
+         >
+    <classpath path="${classpath}">
+      <path refid="jboss.jars"/>
+      <path location="${buildDirCommon}"/>
+    </classpath>
+  </javac>
+</target>
+
+<target name="compileBusinessLogic" depends="compileCommon">
+  <echo message="Compiling classes business logic layer ..."/>
+  <javac srcdir="${srcDirBusinessLogic}"
+         destdir="${buildDirBusinessLogic}"
+         deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}"
+         debug="${compile.debug}"
+         includes="**/*.java">
+         <classpath path="${classpath}">
+           <path refid="jboss.jars"/>
+           <path location="${buildDirCommon}"/>
+         </classpath>
+  </javac>
+</target>
+
+<target name="compileClientCommon" depends="compileCommon">
+  <echo message="Compiling common classes client-side classes ..."/>
+  <javac srcdir="${srcDirClientCommon}"
+         destdir="${buildDirClientCommon}"
+         deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}"
+         debug="${compile.debug}"
+         includes="**/*.java">
+         <classpath path="${classpath}">
+           <path refid="jboss.jars"/>
+           <path location="${buildDirCommon}"/>
+         </classpath>
+  </javac>
+</target>
+
+<target name="compileClientApp" depends="compileClientCommon">
+  <echo message="Compiling classes for client application ..."/>
+  <javac srcdir="${srcDirClientApp}"
+         destdir="${buildDirClientApp}"
+         deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}"
+         debug="${compile.debug}"
+         includes="**/*.java">
+         <classpath path="${classpath}">
+           <path refid="jboss.jars"/>
+           <path location="${buildDirCommon}"/>
+           <path location="${buildDirClientCommon}"/>
+         </classpath>
+  </javac>
+</target>
+
+<target name="ejbJar" depends="compileBusinessLogic">
+  <echo message="Creating ejb-jar ..."/>
+  <delete file="${distDir}/${ejb-jar}"/>
+  <jar jarfile="${distDir}/${ejb-jar}"> 
+    <fileset dir="${buildDirCommon}" includes="**/*.class"/>
+    <fileset dir="${buildDirBusinessLogic}" includes="**/*.class"/>
+    <fileset dir="${basedir}"
+                   includes="META-INF/*.xml"
+                   excludes="META-INF/application.xml"/>
+  </jar>
+</target>
+
+<target name="deployEjbJar" depends="ejbJar">
+  <echo message="Deploying ejb-jar to ${deployDir} ..."/>
+  <copy file="${distDir}/${ejb-jar}" todir="${deployDir}"/>
+  <chmod file="${deployDir}/${ejb-jar}" perm="ugo+rx" includes="*"/>
+</target>
+
+<target name="undeploy">
+  <delete file="${deployDir}/${ejb-jar}"/>
+  <delete file="${deployDir}/${ear}"/>
+</target>  
+
+<target name="jarClientApp" depends="compileClientApp">
+  <echo message="Building JAR file for the client application ..."/>
+  <delete file="${distDir}/${clientApp-jar}" />
+  <jar jarfile="${distDir}/${clientApp-jar}"> 
+    <fileset dir="${buildDirCommon}" includes="**/*.class"/>
+    <fileset dir="${buildDirClientCommon}" includes="**/*.class"/>
+    <fileset dir="${buildDirClientApp}" includes="**/*.class"/>
+    <fileset dir="${basedir}">
+      <include name="jndi.properties"/>
+    </fileset>  
+  </jar>
+</target>
+
+<target name="runClientApp">
+  <echo message="Running the ${clientAppName} application:" />
+  <echo message="  java -classpath ${distDir}/${clientApp-jar} ${clientAppName}"/>
+  <java fork="on" classname="${clientAppName}" >
+     <classpath path="${classpath}">
+       <path refid="jboss.jars"/>
+       <pathelement location="${distDir}/${clientApp-jar}"/>
+     </classpath>
+  </java>
+</target>
+
+<target name="compileServlet" depends="compileCommon">
+  <echo message="Compiling servlet classes ... ${srcDirServlet}"/>
+  <javac srcdir="${srcDirServlet}"
+         destdir="${buildDirServlet}/WEB-INF/classes"
+         deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}"
+         debug="${compile.debug}"
+         includes="**/*.java">
+         <classpath path="${classpath}">
+           <path refid="jboss.jars"/>
+           <path refid="servlet.jar"/>
+           <path location="${buildDirCommon}"/>
+           <path location="${buildDirServlet}"/>
+         </classpath>
+  </javac>
+</target>
+
+<target name="createWar" depends="compileServlet">
+  <echo message="Creating web archive ..."/>
+  <delete file="${distDir}/${web-jar}"/>
+  <jar jarfile="${distDir}/${web-jar}"> 
+    <fileset dir="${buildDirServlet}" includes="**/*.class"/>
+    <fileset dir="${basedir}" includes="WEB-INF/**"/>
+    <fileset dir="${srcDirServletWeb}" includes="**"/>
+  </jar>
+</target>
+
+<target name="createEar" depends="ejbJar,createWar">
+  <echo message="Creating ear ..."/>
+  <delete file="${distDir}/${ear}"/>
+  <jar jarfile="${distDir}/${ear}">
+    <fileset dir="${basedir}">
+      <include name="META-INF/application.xml"/>
+    </fileset>  
+    <fileset dir="${distDir}">
+      <include name="${ejb-jar}"/>
+      <include name="${web-jar}"/>
+    </fileset>  
+  </jar>
+</target>
+
+<target name="deployEar" depends="createEar">
+  <echo message="Deploying enterprise archive to ${deployDir} ..."/>
+  <copy file="${distDir}/${ear}" todir="${deployDir}"/>
+  <chmod file="${deployDir}/${ear}" perm="ugo+rx" includes="*"/>
+</target>

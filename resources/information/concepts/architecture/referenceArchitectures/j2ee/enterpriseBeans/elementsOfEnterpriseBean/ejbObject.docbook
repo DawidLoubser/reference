@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.concepts.architecture.referenceArchitectures.j2ee.enterpriseBeans.elementsOfEnterpriseBean.ejbObject">
+
+  <title>The EJBObject</title>
+  <para>
+    The bean class itself must not be responsible for receiving (networked) service requests,
+    as this would impose far too great a burden on the bean developer, as well as bypassing the
+    interception layer which allows the application server to apply enterprise services to
+    incoming service requests. 
+  </para>
+   <para>
+      Instead, when an EJB is deployed, the application server <emphasis>generates</emphasis>
+      a separate object (extending <literal>javax.ejb.EJBObject</literal>) which receives the
+      service requests. The application server takes various pieces of information into account
+      when generating this object, such as information in the XML deployment descriptor, and annotations
+      applied to the bean class as well as the remote interface.
+   </para>
+  <para>
+    The EJB object thus intercepts the call to the enterprise bean, enabling the
+    container to provide standard support to your beans, such as
+    <itemizedlist>
+         <listitem>
+            <para>concurrency,</para>
+         </listitem>
+         <listitem>
+            <para>transactions,</para>
+         </listitem>
+         <listitem>
+            <para>security, and</para>
+         </listitem>
+         <listitem>
+            <para>persistence.</para>
+         </listitem>
+      </itemizedlist>
+  </para>
+  
+  <para>
+    The way in which a service request is intercepted and ultimately processed is shown in the following diagram. The EJBObject
+    marshals and de-marshals all incoming service requests.
+    <note>
+         <para>
+      Since EJB uses RMI/IIOP/TCP/IP as protocol, enterprise beans can be accessed from CORBA through
+      the standard CORBA protocol, IIOP. This means that they are immediately accessible to C++, Delphi, COBOL, etc.
+    </para>
+      </note>  
+  </para>
+
+  <figure xml:id="resources.information.concepts.architecture.referenceArchitectures.j2ee.enterpriseBeans.elementsOfEnterpriseBean.beanServiceRequestProcessing_fig">
+      <title>Bean Service Request Processing</title>
+      <mediaobject>
+         <imageobject>
+            <imagedata fileref="beanServiceRequestProcessing.jpg"/>
+         </imageobject>
+      </mediaobject>
+  </figure>
+</section>

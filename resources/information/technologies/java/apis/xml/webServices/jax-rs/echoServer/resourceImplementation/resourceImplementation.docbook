@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: fritz@solms.co.za -->
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+    <title>The resource implementation</title>
+    <para>
+        The resource is implemented as a POJO (Plain Old Java) class. It is annotated with
+        <itemizedlist>
+            <listitem><para>
+                the resource class is annotated with the relative URI for the resource, 
+            </para></listitem>
+            <listitem><para>
+                the first <literal>echoMessage</literal> service has been annotated to 
+                <itemizedlist>
+                    <listitem><para>
+                        process <literal>GET</literal> requests
+                    </para></listitem>
+                    <listitem><para>
+                        return a result of <literal>text/plain</literal> MIME type,
+                    </para></listitem>
+                </itemizedlist>
+            </para></listitem>
+            <listitem><para>
+                the second <literal>echoMessage</literal> service has been annotated to 
+                <itemizedlist>
+                    <listitem><para>
+                        process <literal>GET</literal> requests for the same resource, but to
+                    </para></listitem>
+                    <listitem><para>
+                        return a result of <literal>application/xml</literal> MIME type,
+                    </para></listitem>
+                </itemizedlist>
+            </para></listitem>
+            <listitem><para>
+                the parameter list of the <literal>echoService</literal> has been
+                annotated to have a single query parameter named <literal>msg</literal>
+                which is assigned a default value of "Mollo".
+                <note><para>
+                    The resultant GET query will thus be something like
+                    <programlisting><![CDATA[
+http://localhost:8080/jax-rs/echo?msg=Hello                        
+                        ]]></programlisting>
+                </para></note>
+            </para></listitem>
+        </itemizedlist>
+        <programlisting language="java">
+<xi:include parse="text" href="../../examples/echoResource/src/main/java/za/co/solms/training/jaxrs/echo/EchoResource.java"/>
+        </programlisting>
+    </para>
+    <para>
+        In order to be able to easily return the message as an XML object we annotated a 
+        <literal>ReponseMessage</literal> data class as a <literal>XmlRootElement</literal>.
+        JAXB is automatically used to convert the Java object to an XML object
+        when returning an instance of this class for a service which has to produce XML.
+        <programlisting language="java">
+<xi:include parse="text" href="../../examples/echoResource/src/main/java/za/co/solms/training/jaxrs/echo/ResponseMessage.java"/>
+        </programlisting>
+    </para>    
+</section>    

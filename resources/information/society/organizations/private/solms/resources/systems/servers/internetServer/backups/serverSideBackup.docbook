@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbook.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+ <title>Server Side Backup Script</title>
+    
+    <para>
+        On the server side we create the database backups for the various databases which will then
+        be synchronized (together with regular files from the file system) to a backup machine
+        running the client side backup script. 
+    </para>
+    <para>
+        The database backup script resides in the <literal><![CDATA[/opt/solms/scripts]]></literal>
+        directory and is executed nightly via a cron job:
+        <programlisting><![CDATA[
+#!/bin/bash
+
+out=/backup/databases
+
+rm -Rf $out
+mkdir $out
+
+# Backup the jboss database used for solms admin into an sql commands file
+pg_dump jboss > $out/jboss.sql
+
+# Backup the SQL-Ledger database
+pg_dump solms-ledger > $out/solms-ledger.sql
+
+# Backup wiki databases
+mysqldump -ac --add-drop-table solmswiki > $out/solmswiki.mysql
+mysqldump -ac --add-drop-table solmswiki > $out/solmswiki.mysql
+mysqldump -ac --add-drop-table xmlvendwiki > $out/xmlvendwiki.mysql
+mysqldump -ac --add-drop-table espwiki > $out/espwiki.mysql
+mysqldump -ac --add-drop-table todos > $out/todos
+
+#backup project management database
+mysqldump -ac --add-drop-table dotproject > $out/dotproject.mysql
+          ]]></programlisting>
+    </para>
+
+    <section>
+        <title>Facilitating automatic login for ssh client (e.g. rsync)</title>
+        <para>
+            <orderedlist>
+                <listitem><para>
+                    Generated a public key identifier (pki) for root on the remote client via
+                    <programlisting><![CDATA[
+              ssh-keygen -b 1024 -t rsa
+              ]]></programlisting>,
+                    use an empty passphrase (since you want to avoid entring a password), 
+                    and have it stored in <literal><![CDATA[/root/.ssh/id_rsa]]></literal>. This 
+                    creates a private/public key pair (<literal><![CDATA[id_rsa]]></literal> and 
+                    <literal><![CDATA[id_rsa.pub]]></literal>).
+                </para></listitem>
+                <listitem><para>
+                    Append the public key file <literal><![CDATA[/root/.ssh/id_rsa.pub]]></literal>  
+                    to <literal><![CDATA[~/.ssh/authorized_keys]]></literal> on the server you 
+                    want to login (e.g. the backup machine).    
+                </para></listitem>
+                <listitem><para>
+                    Prevent read access to all files on client and server
+                    <programlisting><![CDATA[
+chmod go-r id_rsa.pub              
+              ]]></programlisting>
+                </para></listitem>
+                <listitem><para>
+                    Do the above for any user who needs to login without authentication (e.g. root for
+                    any cron jobs executed from root).
+                </para></listitem>
+            </orderedlist>
+        </para>
+    </section>
+</article>

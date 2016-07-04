@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns34:section xmlns:ns34="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.transactions.introduction.introduction">
+
+  <ns35:title xmlns:ns35="http://docbook.org/ns/docbook">Introduction</ns35:title>
+  <ns36:para xmlns:ns36="http://docbook.org/ns/docbook">
+    So far it seems that EJBs have put us into a position where we can write server side
+    business logic very efficiently with bean developers focusing exclusively on the definition
+    of business logic and business information. The container supplies us with 
+    <ns37:itemizedlist xmlns:ns37="http://docbook.org/ns/docbook">
+      <ns38:listitem xmlns:ns38="http://docbook.org/ns/docbook">
+        <ns39:para xmlns:ns39="http://docbook.org/ns/docbook">
+          The ability to offer location transparent remote services to clients without having
+          to explicitly code for RMI or CORBA. 
+        </ns39:para>
+      </ns38:listitem>
+      <ns40:listitem xmlns:ns40="http://docbook.org/ns/docbook">
+        <ns41:para xmlns:ns41="http://docbook.org/ns/docbook">Automatic processing of concurrent clients. </ns41:para>
+      </ns40:listitem>
+      <ns42:listitem xmlns:ns42="http://docbook.org/ns/docbook">
+        <ns43:para xmlns:ns43="http://docbook.org/ns/docbook">Resource pooling. </ns43:para>
+      </ns42:listitem>
+      <ns44:listitem xmlns:ns44="http://docbook.org/ns/docbook">
+        <ns45:para xmlns:ns45="http://docbook.org/ns/docbook">Declarative security. </ns45:para>
+      </ns44:listitem>
+      <ns46:listitem xmlns:ns46="http://docbook.org/ns/docbook">
+        <ns47:para xmlns:ns47="http://docbook.org/ns/docbook">Either 
+        <ns48:itemizedlist xmlns:ns48="http://docbook.org/ns/docbook">
+          <ns49:listitem xmlns:ns49="http://docbook.org/ns/docbook">
+            <ns50:para xmlns:ns50="http://docbook.org/ns/docbook">Declarative persistence entirely controlled by the container or </ns50:para>
+          </ns49:listitem>
+          <ns51:listitem xmlns:ns51="http://docbook.org/ns/docbook"><ns52:para xmlns:ns52="http://docbook.org/ns/docbook">
+              Programmatic persistence with the container ensuring the synchronization of
+              information over different client views.
+            </ns52:para>
+          </ns51:listitem>
+        </ns48:itemizedlist>
+          </ns47:para>
+      </ns46:listitem>
+    </ns37:itemizedlist>
+  </ns36:para>
+  <ns53:para xmlns:ns53="http://docbook.org/ns/docbook">
+    However, for robust enterprise applications we still need support for transactions.
+    Generally this requires that developers use some transaction service 
+    (<ns54:abbrev xmlns:ns54="http://docbook.org/ns/docbook">e.g.</ns54:abbrev> the CORBA
+    transaction service). They would manually demarcate and commit or roll-back transactions via
+    calls to a transaction API.
+  </ns53:para>
+  <ns55:para xmlns:ns55="http://docbook.org/ns/docbook">
+    EJBs support complete declarative transactions, removing the responsibility of
+    programming for transactions from the bean developer.
+  </ns55:para>
+
+  <ns56:section xmlns:ns56="http://docbook.org/ns/docbook">
+    <ns57:title xmlns:ns57="http://docbook.org/ns/docbook">Why Transactions?</ns57:title>
+    <ns58:para xmlns:ns58="http://docbook.org/ns/docbook">
+      Let's have a look at some problems which are addressed by transactions. In
+      particular, consider the need for 
+    <ns59:itemizedlist xmlns:ns59="http://docbook.org/ns/docbook">
+      <ns60:listitem xmlns:ns60="http://docbook.org/ns/docbook">
+        <ns61:para xmlns:ns61="http://docbook.org/ns/docbook">Either completing a set of operations as a whole or unwinding the set of
+          operations. </ns61:para>
+      </ns60:listitem>
+      <ns62:listitem xmlns:ns62="http://docbook.org/ns/docbook">
+        <ns63:para xmlns:ns63="http://docbook.org/ns/docbook">Safe concurrent access to shared information. </ns63:para>
+      </ns62:listitem>
+      <ns64:listitem xmlns:ns64="http://docbook.org/ns/docbook">
+        <ns65:para xmlns:ns65="http://docbook.org/ns/docbook">Graceful recovery from a server crash or network problem.</ns65:para>
+      </ns64:listitem>
+    </ns59:itemizedlist>
+    </ns58:para>
+    
+    <ns66:section xmlns:ns66="http://docbook.org/ns/docbook">
+      <ns67:title xmlns:ns67="http://docbook.org/ns/docbook">Atomic Operations</ns67:title>
+      <ns68:para xmlns:ns68="http://docbook.org/ns/docbook">
+        Sometimes a set of operations have to be completed as a whole or they have to be
+        undone such that the state of the effected objects is the same as what it was before the
+        set of operations was started -- <ns69:abbrev xmlns:ns69="http://docbook.org/ns/docbook">i.e.</ns69:abbrev>. the set of operations has to be rolled back.
+      </ns68:para>
+      <ns70:para xmlns:ns70="http://docbook.org/ns/docbook">
+        For example, in the case of a transfer one account is debited and another is
+        credited. The transfer must be an atomic operation. If the debit fails the credit cannot
+        be performed.
+      </ns70:para>
+      <ns71:para xmlns:ns71="http://docbook.org/ns/docbook">
+        Conversely, if the debit was successful but the credit failed (because, say, the
+        account has been closed) the debit has to be reversed.
+      </ns71:para>
+    </ns66:section>
+    
+    <ns72:section xmlns:ns72="http://docbook.org/ns/docbook">
+      <ns73:title xmlns:ns73="http://docbook.org/ns/docbook">Safe Concurrent Access to Shared Information</ns73:title>
+      <ns74:para xmlns:ns74="http://docbook.org/ns/docbook">
+        If multiple clients access information simultaneously one has to ensure that 
+      <ns75:itemizedlist xmlns:ns75="http://docbook.org/ns/docbook">
+        <ns76:listitem xmlns:ns76="http://docbook.org/ns/docbook">
+          <ns77:para xmlns:ns77="http://docbook.org/ns/docbook">Any information received represents a valid, sensible view of the business
+            information and is not corrupted by the fact that clients are looking at information
+            which is only partially updated. </ns77:para>
+        </ns76:listitem>
+        <ns78:listitem xmlns:ns78="http://docbook.org/ns/docbook">
+          <ns79:para xmlns:ns79="http://docbook.org/ns/docbook">The information is safe with respect to updating by multiple clients.
+            Simultaneous updating can lead to a situation where the resulting set of information
+            is not a valid set because it contains elements of different interleaving updates
+            from different information providers.</ns79:para>
+        </ns78:listitem>
+      </ns75:itemizedlist>
+      <ns80:note xmlns:ns80="http://docbook.org/ns/docbook"><ns81:para xmlns:ns81="http://docbook.org/ns/docbook">
+        Note furthermore that the information may be distributed across multiple databases
+        within the organization (or even across organizations) and that the integrity of this
+        distributed information must be protected.
+      </ns81:para></ns80:note>
+     </ns74:para>
+    </ns72:section>
+    
+    <ns82:section xmlns:ns82="http://docbook.org/ns/docbook">
+      <ns83:title xmlns:ns83="http://docbook.org/ns/docbook">Graceful Failure Recovery</ns83:title>
+      <ns84:para xmlns:ns84="http://docbook.org/ns/docbook">
+        Consider the situation where a client withdraws funds from a auto teller. In the
+        process of the withdrawal the network fails. The bank server may not be in a position to
+        know whether the funds have been issued to the client or not.
+      </ns84:para>
+      <ns85:para xmlns:ns85="http://docbook.org/ns/docbook">
+        After recovering from the network failure the information of whether the money has
+        been issued to the client or not must be communicated to the server. If not, the debit
+        of the account must be rolled back.
+      </ns85:para>
+    </ns82:section>
+  </ns56:section>
+</ns34:section>

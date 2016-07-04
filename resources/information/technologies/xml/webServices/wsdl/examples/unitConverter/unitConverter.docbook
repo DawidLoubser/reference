@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.xml.webServices.wsdl.examples.unitConverter" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>A simple example of a WSDL contract</title>
+    
+    <indexterm>
+        <primary>WSDL</primary>
+        <secondary>example</secondary>
+    </indexterm>
+    
+    <para>
+        As a simple example of a WSDL 1.1 contract, consider the following contract for
+        a generic unit converter:
+    </para>
+    <figure>
+        <title>A Contract for a generic unit converter</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="serviceContract.png"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+    <para>
+        A <literal>UnitValue</literal> abstractly represents a measurement in some unit.
+        It offers two services, one to query the units which are supported for each type of
+        <emphasis>unit value</emphasis> (indicating which units it could be converted to)
+        and another to perform the actual conversion.
+    </para>
+    <para>
+        Different types of unit value ar supported via specialisations of the abstract <literal>UnitValue</literal>
+        class, with only two (distance and temperature) currently supported.
+    </para>
+    <note>
+        <para>
+            Though the contract refers (via association) to units (such as kilometer, celcius) the information around
+            units are beyond the scope of what we wish to build: Our types will only refer to types of units, and in
+            our implementation mapping we need to decide on a mechanism to do so. In this case, we introduce a new simple type
+            called <literal>UnitReference</literal>, which is a specialisation of string. URIs ar usually a good candidate
+            for references to external concepts, in the spirit of RDF.
+        </para>
+    </note>
+    <para>
+        A WDL containing the abstract model of the service definition could look as follows:
+        <programlisting language="XML">
+<xi:include href="src/unitconverter.wsdl" parse="text"/>
+        </programlisting>
+    </para>
+    <para>
+        The included schema which specifies the structure of the exchanged value objects:
+        <programlisting language="XML">
+<xi:include href="src/unitconverter.xsd" parse="text"/>
+        </programlisting>
+    </para>
+    <note>
+        <para>
+            Any synchronous service is forced into the single-request/single-response paradigm. Even for
+            a service such as <literal>getSupportedUnits</literal>, which does not accept any input arguments,
+            one must introduce a request message in the WSDL/Schema.
+        </para>
+    </note>
+    <para>
+        Finally, a concrete WSDL, which specifies a SOAP/HTTP binding
+        <programlisting language="XML">
+<xi:include href="src/unitconverter-soap.wsdl" parse="text"/>
+        </programlisting>
+    </para>
+    
+</section>

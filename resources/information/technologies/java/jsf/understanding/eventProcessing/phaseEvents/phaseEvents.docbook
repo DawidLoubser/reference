@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Phase events</title>
+    <para>
+       JSF also supports the specification of phase event listeners which are  called prior and
+       after each request processing phase.
+    </para>
+    <para>
+        Unlike value change and action listeners which are commonly used to specify more
+        complex presentation layer logic, phase listeners are generally used either
+        <itemizedlist>
+            <listitem><para>
+                for debugging purposes or to
+            </para></listitem>
+            <listitem><para>
+                extend the functionality of the JSF framework itself.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        Phase listeners are plain Java classes (POJOs) which implement the 
+        <literal>PhaseListener</literal> interface which requires a phase listener
+        to implement the <literal>beforePhase(PhaseEvent e)</literal> and
+        <literal>afterPhase(PhaseEvent e)</literal> event handlers as well as the
+        <literal>getPhaseId()</literal> query service which, via flags, returns
+        the set of phases which the phase listener is to intercept. 
+        <literal>PhaseId</literal> is effectively an enumeration class which can be
+        any of the life cycle phase of <literal>ANY_PHASE</literal>.
+    </para>
+    <para>
+        Phase listeners are independent of individual UI components and are 
+        registered in the <literal>facesConfig.xml</literal>
+        file within a <literal>lifecycle</literal> tag.
+    </para>
+    <xi:include href="examples/examples.docbook"/>
+</section>    

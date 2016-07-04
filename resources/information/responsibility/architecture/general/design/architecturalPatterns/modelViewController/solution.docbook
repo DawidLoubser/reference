@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns5646:section xmlns:ns5646="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.patterns.modelViewController.solution">
+
+  <ns5647:title xmlns:ns5647="http://docbook.org/ns/docbook">Solution</ns5647:title>
+  <ns5648:para xmlns:ns5648="http://docbook.org/ns/docbook">
+    The solution suggested by the model-view-controller pattern is to localize the responsibilities
+    of
+    <ns5649:orderedlist xmlns:ns5649="http://docbook.org/ns/docbook">
+      <ns5650:listitem xmlns:ns5650="http://docbook.org/ns/docbook"><ns5651:para xmlns:ns5651="http://docbook.org/ns/docbook">hosting business logic and data,</ns5651:para></ns5650:listitem>
+      <ns5652:listitem xmlns:ns5652="http://docbook.org/ns/docbook"><ns5653:para xmlns:ns5653="http://docbook.org/ns/docbook">presenting information to users and</ns5653:para></ns5652:listitem>
+      <ns5654:listitem xmlns:ns5654="http://docbook.org/ns/docbook"><ns5655:para xmlns:ns5655="http://docbook.org/ns/docbook">reacting to user events</ns5655:para></ns5654:listitem>
+    </ns5649:orderedlist>
+    on separate, loosely coupled, components called the <ns5656:emphasis xmlns:ns5656="http://docbook.org/ns/docbook">model</ns5656:emphasis>,
+    the <ns5657:emphasis xmlns:ns5657="http://docbook.org/ns/docbook">view</ns5657:emphasis> and the <ns5658:emphasis xmlns:ns5658="http://docbook.org/ns/docbook">controller</ns5658:emphasis>.
+  </ns5648:para>
+  
+  <ns5659:section xmlns:ns5659="http://docbook.org/ns/docbook">
+    <ns5660:title xmlns:ns5660="http://docbook.org/ns/docbook">Responsibility allocation</ns5660:title>
+    <ns5661:para xmlns:ns5661="http://docbook.org/ns/docbook">
+      The responsibility localization is shown in
+      <ns5662:xref xmlns:ns5662="http://docbook.org/ns/docbook" linkend="resources.information.concepts.architecture.patterns.modelViewController.responsibilityAllocation_fig"/>.
+    </ns5661:para>
+    
+    <ns5663:figure xmlns:ns5663="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.patterns.modelViewController.responsibilityAllocation_fig">
+      <ns5664:title xmlns:ns5664="http://docbook.org/ns/docbook">Responsibility allocation in the model-view-controller pattern</ns5664:title>
+      <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="responsibilityAllocation.jpg"/></imageobject></mediaobject>
+    </ns5663:figure>
+  </ns5659:section>
+  
+  <ns5665:section xmlns:ns5665="http://docbook.org/ns/docbook">
+    <ns5666:title xmlns:ns5666="http://docbook.org/ns/docbook">Structure</ns5666:title>
+    <ns5667:para xmlns:ns5667="http://docbook.org/ns/docbook">
+      The model is independent of both, the view and the controller. It simply
+      supports observers, notifying them of state change events.
+      The view and the controller are, however, directly coupled to the model:
+      <ns5668:itemizedlist xmlns:ns5668="http://docbook.org/ns/docbook">
+        <ns5669:listitem xmlns:ns5669="http://docbook.org/ns/docbook"><ns5670:para xmlns:ns5670="http://docbook.org/ns/docbook">
+          The view obtains business information from the model.  
+        </ns5670:para></ns5669:listitem>
+        <ns5671:listitem xmlns:ns5671="http://docbook.org/ns/docbook"><ns5672:para xmlns:ns5672="http://docbook.org/ns/docbook">
+          The controller requests business services from the model.  
+        </ns5672:para></ns5671:listitem>
+      </ns5668:itemizedlist>
+      
+      <ns5673:note xmlns:ns5673="http://docbook.org/ns/docbook"><ns5674:para xmlns:ns5674="http://docbook.org/ns/docbook">
+        The direct dependency between the view and controller on the model can
+        be removed by introducing an adapter which maps the view requirements
+        onto the actual model. This approach is followed in the Swing GUI library
+        provided by Java.
+      </ns5674:para></ns5673:note>
+    </ns5667:para>
+    
+    <ns5675:figure xmlns:ns5675="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.patterns.modelViewController.structure_fig">
+      <ns5676:title xmlns:ns5676="http://docbook.org/ns/docbook">Structure of the model-view-controller pattern</ns5676:title>
+      <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="structure.jpg"/></imageobject></mediaobject>
+    </ns5675:figure>
+    
+  </ns5665:section>
+  
+  <ns5677:section xmlns:ns5677="http://docbook.org/ns/docbook">
+    <ns5678:title xmlns:ns5678="http://docbook.org/ns/docbook">Dynamics</ns5678:title>
+    <ns5679:para xmlns:ns5679="http://docbook.org/ns/docbook">
+      We shall look here at 3 scenarios:
+      <ns5680:orderedlist xmlns:ns5680="http://docbook.org/ns/docbook">
+        <ns5681:listitem xmlns:ns5681="http://docbook.org/ns/docbook"><ns5682:para xmlns:ns5682="http://docbook.org/ns/docbook">The initialization process.</ns5682:para></ns5681:listitem>
+        <ns5683:listitem xmlns:ns5683="http://docbook.org/ns/docbook"><ns5684:para xmlns:ns5684="http://docbook.org/ns/docbook">The dynamics upon user events.</ns5684:para></ns5683:listitem>
+        <ns5685:listitem xmlns:ns5685="http://docbook.org/ns/docbook"><ns5686:para xmlns:ns5686="http://docbook.org/ns/docbook">The dynamics upon system events.</ns5686:para></ns5685:listitem>
+      </ns5680:orderedlist>
+    </ns5679:para>
+    <ns5687:para xmlns:ns5687="http://docbook.org/ns/docbook">
+      During initialization we have to ensure that both, the view and the controller
+      <ns5688:itemizedlist xmlns:ns5688="http://docbook.org/ns/docbook">
+        <ns5689:listitem xmlns:ns5689="http://docbook.org/ns/docbook"><ns5690:para xmlns:ns5690="http://docbook.org/ns/docbook">
+           have a message path to the model, and
+        </ns5690:para></ns5689:listitem>
+        <ns5691:listitem xmlns:ns5691="http://docbook.org/ns/docbook"><ns5692:para xmlns:ns5692="http://docbook.org/ns/docbook">
+          are registered with the model as observers.  
+        </ns5692:para></ns5691:listitem>
+      </ns5688:itemizedlist>
+    </ns5687:para>
+    
+    <ns5693:figure xmlns:ns5693="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.patterns.modelViewController.initialization_fig">
+      <ns5694:title xmlns:ns5694="http://docbook.org/ns/docbook">Initialization of the model-view-controller pattern</ns5694:title>
+      <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="initialization.jpg"/></imageobject></mediaobject>
+    </ns5693:figure>
+
+    <ns5695:para xmlns:ns5695="http://docbook.org/ns/docbook">
+      Upon user event
+      <ns5696:itemizedlist xmlns:ns5696="http://docbook.org/ns/docbook">
+        <ns5697:listitem xmlns:ns5697="http://docbook.org/ns/docbook"><ns5698:para xmlns:ns5698="http://docbook.org/ns/docbook">
+          the controller interprets the event and requests the appropriate system service,
+        </ns5698:para></ns5697:listitem>
+        <ns5699:listitem xmlns:ns5699="http://docbook.org/ns/docbook"><ns5700:para xmlns:ns5700="http://docbook.org/ns/docbook">
+          the model 
+          <ns5701:itemizedlist xmlns:ns5701="http://docbook.org/ns/docbook">
+            <ns5702:listitem xmlns:ns5702="http://docbook.org/ns/docbook"><ns5703:para xmlns:ns5703="http://docbook.org/ns/docbook">
+              realizes the service which may change the information contained in the model,    
+            </ns5703:para></ns5702:listitem>
+            <ns5704:listitem xmlns:ns5704="http://docbook.org/ns/docbook"><ns5705:para xmlns:ns5705="http://docbook.org/ns/docbook">
+              informs all observers (views and controllers) that the system information has changed,  
+            </ns5705:para></ns5704:listitem>
+          </ns5701:itemizedlist>
+        </ns5700:para></ns5699:listitem>  
+        <ns5706:listitem xmlns:ns5706="http://docbook.org/ns/docbook"><ns5707:para xmlns:ns5707="http://docbook.org/ns/docbook">
+          upon which the observers
+          <ns5708:itemizedlist xmlns:ns5708="http://docbook.org/ns/docbook">
+            <ns5709:listitem xmlns:ns5709="http://docbook.org/ns/docbook"><ns5710:para xmlns:ns5710="http://docbook.org/ns/docbook">
+              retrieve the information they are interested in, and  
+            </ns5710:para></ns5709:listitem>
+            <ns5711:listitem xmlns:ns5711="http://docbook.org/ns/docbook"><ns5712:para xmlns:ns5712="http://docbook.org/ns/docbook">
+              update their representation or behavior accordingly.  
+            </ns5712:para></ns5711:listitem>
+          </ns5708:itemizedlist>
+        </ns5707:para></ns5706:listitem>
+      </ns5696:itemizedlist>
+    </ns5695:para>
+    
+    <ns5713:figure xmlns:ns5713="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.patterns.modelViewController.userUpdate_fig">
+      <ns5714:title xmlns:ns5714="http://docbook.org/ns/docbook">Dynamics of model-view-controller pattern: user event</ns5714:title>
+      <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="userUpdate.jpg"/></imageobject></mediaobject>
+    </ns5713:figure>
+   
+    <ns5715:para xmlns:ns5715="http://docbook.org/ns/docbook">
+      Similarly, on system events certain business logic may be performed which may change
+      business data. The observers (<ns5716:abbrev xmlns:ns5716="http://docbook.org/ns/docbook">e.g.</ns5716:abbrev> the view and controller) are
+      notified and request the information they are interested in to see whether they need
+      to update their representation or behavior.
+    </ns5715:para>
+    
+    <ns5717:figure xmlns:ns5717="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.patterns.modelViewController.systemUpdate_fig">
+      <ns5718:title xmlns:ns5718="http://docbook.org/ns/docbook">Dynamics of model-view-controller pattern: system event</ns5718:title>
+      <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="/systemUpdate.jpg"/></imageobject></mediaobject>
+    </ns5717:figure>
+  </ns5677:section>
+  
+</ns5646:section>

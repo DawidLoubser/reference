@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns106:section xmlns:ns106="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.lang.ooMappings.polymorphism.limitations">
+    <ns107:title xmlns:ns107="http://docbook.org/ns/docbook">Java's limitations on polymorphism</ns107:title>
+    <ns108:para xmlns:ns108="http://docbook.org/ns/docbook">
+      Java supports a limited form of polymorphism which enables callers to
+      abstract from any particular realization of a service provider (using either subclassing or
+      preferably interfaces). This is achieved via run-time binding which links the method for that
+      particular service provider from which the service is requested at run time.
+    </ns108:para>
+    
+    <ns109:section xmlns:ns109="http://docbook.org/ns/docbook">
+      <ns110:title xmlns:ns110="http://docbook.org/ns/docbook">Lack of polymorphism on message arguments</ns110:title>
+      <ns111:para xmlns:ns111="http://docbook.org/ns/docbook">
+        Java, like most C++ derived languages, does not support polymorphism on message arguments,
+        <ns112:abbrev xmlns:ns112="http://docbook.org/ns/docbook">i.e.</ns112:abbrev> there is no dynamic binding (run-time linking) for different method
+        argument types.
+      </ns111:para>
+      <ns113:para xmlns:ns113="http://docbook.org/ns/docbook">
+        More pure object oriented technologies like UML, Smalltalk, ... do assume polymorphism on
+        message arguments, though. This is, in our opinion, one of the more severe drawbacks of the
+        current Java language and results in messy implementations (look, for example, at any Java
+        implementation of the classical Visitor pattern).
+      </ns113:para>
+      
+      <ns114:section xmlns:ns114="http://docbook.org/ns/docbook">
+        <ns115:title xmlns:ns115="http://docbook.org/ns/docbook">Processing events at various levels of abstraction</ns115:title>
+        <ns116:para xmlns:ns116="http://docbook.org/ns/docbook">
+          One of the consequences of lack of polymorphism on message arguments is that it becomes
+          messy to process events at various levels of abstraction. Thus, if we want to register to
+          receive from some event source a particular type of event which may have various
+          specializations, then we would have one event handler service which processes such events.
+        </ns116:para>
+        <ns117:para xmlns:ns117="http://docbook.org/ns/docbook">
+          Within the event handler we would have to inspect the type of event before deciding how we
+          would process it. If we had polymorphism on message arguments we could have an event handler
+          object which would have different event handler services for the various event
+          specializations:
+          <ns118:programlisting xmlns:ns118="http://docbook.org/ns/docbook">
+class EventHandler
+{
+   public void processWindowEvent(WindowEvent event) {...}
+            
+   public void processWindowEvent(WindowClosingEvent event) {...}           
+            
+   public void processWindowEvent(WindowSizingEvent event) {...}           
+            
+   public void processWindowEvent(WindowHideEvent event) {...}           
+}            
+            </ns118:programlisting>
+          In this example <ns119:literal xmlns:ns119="http://docbook.org/ns/docbook">WindowClosingEvent</ns119:literal>s,
+          <ns120:literal xmlns:ns120="http://docbook.org/ns/docbook">WindowSizingEvent</ns120:literal>s and <ns121:literal xmlns:ns121="http://docbook.org/ns/docbook">WindowHideEvent</ns121:literal>s would be
+          processed in their specific way, while all other window events (<ns122:abbrev xmlns:ns122="http://docbook.org/ns/docbook">i.e.</ns122:abbrev>
+          instances of <ns123:literal xmlns:ns123="http://docbook.org/ns/docbook">WindowEvent</ns123:literal> and any further subclass of
+          <ns124:literal xmlns:ns124="http://docbook.org/ns/docbook">WindowEvent</ns124:literal> which does not have its own event handler service) would be
+          handled by the generic event handler method
+          <ns125:programlisting xmlns:ns125="http://docbook.org/ns/docbook">
+   public void processWindowEvent(WindowEvent event) {...}
+            </ns125:programlisting>
+        </ns117:para>
+      </ns114:section>
+    </ns109:section>
+  
+  <ns126:section xmlns:ns126="http://docbook.org/ns/docbook">
+    <ns127:title xmlns:ns127="http://docbook.org/ns/docbook">Using the command pattern</ns127:title>
+    <ns128:para xmlns:ns128="http://docbook.org/ns/docbook">
+      There are several drawbacks with the normal method syntax for requesting services including:
+      <ns129:itemizedlist xmlns:ns129="http://docbook.org/ns/docbook">
+        <ns130:listitem xmlns:ns130="http://docbook.org/ns/docbook"><ns131:para xmlns:ns131="http://docbook.org/ns/docbook">
+          The interface becomes brittle as it has to be changed every time a new service is added to
+          a class.
+        </ns131:para></ns130:listitem>
+        <ns132:listitem xmlns:ns132="http://docbook.org/ns/docbook"><ns133:para xmlns:ns133="http://docbook.org/ns/docbook">
+          It is difficult to process requests at different levels of abstraction.
+        </ns133:para></ns132:listitem>
+      </ns129:itemizedlist>
+    </ns128:para>
+    <ns134:para xmlns:ns134="http://docbook.org/ns/docbook">
+      In order to address the above shortcomings, one often makes use of the command pattern. In
+      this scenario the service provider provides a generic service processing commands with
+      different commands processed in different ways:
+      <ns135:programlisting xmlns:ns135="http://docbook.org/ns/docbook">
+class ServiceProvider
+{
+   public processRequest(Request request)
+   {
+        ...
+   }     
+}        
+        </ns135:programlisting>
+      There would be different subclasses of <ns136:literal xmlns:ns136="http://docbook.org/ns/docbook">Request</ns136:literal> and these special types of
+      requests would be processed in different ways.
+    </ns134:para>
+    
+    <ns137:section xmlns:ns137="http://docbook.org/ns/docbook">
+      <ns138:title xmlns:ns138="http://docbook.org/ns/docbook">Processing requests at different levels of abstraction</ns138:title>
+      <ns139:para xmlns:ns139="http://docbook.org/ns/docbook">
+        Considern the following example:
+        A bank could provide a service to process <ns140:literal xmlns:ns140="http://docbook.org/ns/docbook">LoanApplication</ns140:literal>s. There
+        could be several different specializations of loan applications including, say, 
+        <ns141:literal xmlns:ns141="http://docbook.org/ns/docbook">HomeLoanApplication</ns141:literal>, 
+        <ns142:literal xmlns:ns142="http://docbook.org/ns/docbook">PersonalLoanApplication</ns142:literal>, <ns143:literal xmlns:ns143="http://docbook.org/ns/docbook">VehicleLoanApplication</ns143:literal> and
+        <ns144:literal xmlns:ns144="http://docbook.org/ns/docbook">OverdraftAppication</ns144:literal>.
+      </ns139:para>
+      <ns145:para xmlns:ns145="http://docbook.org/ns/docbook">
+        We could have special ways business processes for processing, say, home and vehicle loan
+        applications, while all other loan applications, no matter which, are processed in some
+        default way. If we had polymorphism on message arguments we could do the following:
+        <ns146:programlisting xmlns:ns146="http://docbook.org/ns/docbook">
+class LoanApplicationProcessor
+{
+ 
+  public LoanApplicationResult process(LoanApplication application)
+  {
+     ...
+  }
+ 
+  public LoanApplicationResult process(HomeLoanApplication application)
+  {
+     ...
+  }
+          
+ 
+  public LoanApplicationResult process(VehicleLoanApplication application)
+  {
+     ...
+  }
+          
+}          
+          </ns146:programlisting>
+      </ns145:para>  
+    </ns137:section>
+  </ns126:section>
+</ns106:section>

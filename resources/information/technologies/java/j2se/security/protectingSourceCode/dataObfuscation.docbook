@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns3291:section xmlns:ns3291="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.security.protectingSourceCode.dataObfuscation">
+    
+    <ns3292:title xmlns:ns3292="http://docbook.org/ns/docbook">Data Obfuscation</ns3292:title>
+
+<ns3293:para xmlns:ns3293="http://docbook.org/ns/docbook">Data obfuscation makes transformations on data values such that the original 
+logic is much less obvious but that the resultant application logic remains 
+unchanged. This may involve changing the logic like transforming the following 
+code snippet</ns3293:para>
+<ns3294:para xmlns:ns3294="http://docbook.org/ns/docbook"><ns3295:programlisting xmlns:ns3295="http://docbook.org/ns/docbook">
+\noindent{\small
+int k=1;
+double sum = 0;
+do
+{
+  sum += vec[k] + 2*k;
+  ++k;
+}
+while (k&lt;100);  
+</ns3295:programlisting></ns3294:para>
+
+<ns3296:para xmlns:ns3296="http://docbook.org/ns/docbook">to code which makes the underlying logic a lot less transparent:
+<ns3297:programlisting xmlns:ns3297="http://docbook.org/ns/docbook">
+int d=17;
+int m=Math.floor(d+Math.sqrt(2*Math.PI));
+double x = m*m;
+do 
+{
+  x += vec[m-14/5] + (2*m - 28)/10;
+  m += 5;
+}
+while (k&lt;100);
+
+x -= 361;
+</ns3297:programlisting></ns3296:para>
+
+<ns3298:para xmlns:ns3298="http://docbook.org/ns/docbook">The final value of <ns3299:emphasis xmlns:ns3299="http://docbook.org/ns/docbook">sum</ns3299:emphasis> in the first listing will be equal to the final
+value of <ns3300:emphasis xmlns:ns3300="http://docbook.org/ns/docbook">x</ns3300:emphasis> in the second listing but the actual logic behind the code
+is difficult to extract.</ns3298:para>
+<ns3301:para xmlns:ns3301="http://docbook.org/ns/docbook">
+Data obfuscation may also alter the actual data structures. Techniques commonly
+used include
+<ns3302:itemizedlist xmlns:ns3302="http://docbook.org/ns/docbook">
+  <ns3303:listitem xmlns:ns3303="http://docbook.org/ns/docbook"><ns3304:formalpara xmlns:ns3304="http://docbook.org/ns/docbook"><ns3305:title xmlns:ns3305="http://docbook.org/ns/docbook">Merging of data structures.</ns3305:title><ns3306:para xmlns:ns3306="http://docbook.org/ns/docbook"> Several unrelated data structures (arrays,
+       collections or records) can be combined into a large single data structure
+       containing unrelated elements. The meaning of the data structures becomes
+       difficult to understand and the logic is difficult to unravel.</ns3306:para></ns3304:formalpara></ns3303:listitem>
+  <ns3307:listitem xmlns:ns3307="http://docbook.org/ns/docbook"><ns3308:formalpara xmlns:ns3308="http://docbook.org/ns/docbook"><ns3309:title xmlns:ns3309="http://docbook.org/ns/docbook">Splitting of data structures.</ns3309:title><ns3310:para xmlns:ns3310="http://docbook.org/ns/docbook"> Single data structures containing information
+       from a particular domain may be split into several data structures at 
+       localized within different levels of scope and given unrelated names.</ns3310:para></ns3308:formalpara></ns3307:listitem>
+  <ns3311:listitem xmlns:ns3311="http://docbook.org/ns/docbook"><ns3312:formalpara xmlns:ns3312="http://docbook.org/ns/docbook"><ns3313:title xmlns:ns3313="http://docbook.org/ns/docbook">Rearranging positioning within data structures.</ns3313:title><ns3314:para xmlns:ns3314="http://docbook.org/ns/docbook"> For example, array elements
+       may be exchanged such that index $i$ is mapped onto $f(i)$.</ns3314:para></ns3312:formalpara></ns3311:listitem>
+  <ns3315:listitem xmlns:ns3315="http://docbook.org/ns/docbook"><ns3316:formalpara xmlns:ns3316="http://docbook.org/ns/docbook"><ns3317:title xmlns:ns3317="http://docbook.org/ns/docbook">The scoping of data structures may be changed.</ns3317:title><ns3318:para xmlns:ns3318="http://docbook.org/ns/docbook"> Data structures which are
+       applicable at one level of scope (for example as instance members of a 
+       particular class may be transferred to another scope and made accessible
+       from there.</ns3318:para></ns3316:formalpara></ns3315:listitem>
+</ns3302:itemizedlist>
+and other techniques.
+</ns3301:para>
+    
+<ns3319:para xmlns:ns3319="http://docbook.org/ns/docbook">Note that even though the techniques used are commonly known, it is still very difficult
+to identify where in the obfuscated code the technique has been applied (except
+perhaps if the original logic is known which means that there is nothing to
+protect in the first place).</ns3319:para>
+
+<ns3320:para xmlns:ns3320="http://docbook.org/ns/docbook">Data obfuscation typically does carry a computational overhead.</ns3320:para>
+
+    
+</ns3291:section>

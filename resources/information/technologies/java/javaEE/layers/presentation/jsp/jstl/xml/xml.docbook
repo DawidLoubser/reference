@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The XML tag library</title>
+    <indexterm>
+        <primary>JSP</primary>
+        <secondary>JSTL</secondary>
+        <tertiary>xml</tertiary>
+    </indexterm>
+    
+    <xi:include href="introduction.docbook"/>
+
+
+    <section>
+        <title><![CDATA[<x:parse>]]></title>
+        <para>
+            Parses XML content, provided by the 
+            <literal>doc</literal> attribute or the tags body, 
+            into a scoped variable (typically as a DOM document). 
+            This variable can then be used for subsequent 
+            processing by other XML tags.
+        </para>
+        <programlisting language="XML"><![CDATA[
+<!-- Retrieve remote XML data -->
+<c:import var="prices" url="http://site.com/foo/price-list.xml"/>
+<!-- Parse an an XML document -->
+<x:parse var="priceList" doc="${prices}"/>
+]]></programlisting>
+        <para>
+            This tag supports optional attributes:
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>var</title>
+                        <para> 
+                            Name of the variable to store the 
+                            results – may be an 
+                            implementation-specific object. 
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>filter</title>
+                        <para>
+                            XML filter to apply.  Value should 
+                            be of type <literal>org.xml.sax.XMLFilter</literal>.
+                        </para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title><![CDATA[<x:out>]]></title>
+        <para>
+            Prints the result of the XPath expression
+            in the <literal>select</literal> attribute 
+            as a string:
+        </para>
+        <programlisting language="XML"><![CDATA[ 
+<x:out select="$priceList//product[price lt 10500]"/>
+]]></programlisting>
+        <para>
+            The <literal>escapeXml</literal> attribute, when set to <literal>true</literal> (the default),
+            will escape special characters (such as converting <![CDATA[<]]> to <![CDATA[$lt;]]>).
+        </para>
+    </section>
+    
+    <section>
+        <title><![CDATA[<x:if>]]></title>
+        <para>
+            Processes the body if select XPath evaluates 
+            to true (following the rules of the <literal>boolean()</literal> XPath 
+            function).
+        </para>
+        <programlisting language="XML"><![CDATA[ 
+<x:if select="$news//item[contains(description,'Linux')]"> 
+  Linux is in the news today!
+</x:if>
+        ]]></programlisting>
+    </section>
+    
+    <section>
+        <title><![CDATA[<x:choose>]]></title>
+        <para>
+            Processes the body of the first 
+            enclosed <literal>x:when</literal> tag where the <literal>select</literal> XPath 
+            expression evaluates to true.  If none match then 
+            the body of the <literal>x:otherwise</literal> tag (if present) 
+            is processed.
+        </para>
+        <programlisting language="XML"><![CDATA[ 
+<x:choose> 
+  <x:when select="$news//item"> 
+     We've got news :) 
+  </x:when> 
+  <x:otherwise> 
+    No news today :( 
+  </x:otherwise> 
+</x:choose>
+        ]]></programlisting>
+    </section>
+    
+    <section>
+        <title><![CDATA[<x:forEach>]]></title>
+        <indexterm>
+            <primary>XPath</primary>
+            <secondary>context node</secondary>
+        </indexterm>
+        <para>
+            Repeats the nested body content 
+            over a node set determined by an XPath 
+            expression, <emphasis>setting the context node to each 
+            element in the iteration.</emphasis>
+        </para>
+        <programlisting language="XML"><![CDATA[ 
+<x:forEach select="$priceList/product">
+  <!-- Display each product's name and description -->
+  <h2><x:out select="name"/></h2>
+  <p><x:out select="description"/></p> 
+</x:forEach> 
+]]></programlisting>
+        <para>
+            By specifying the <literal>var</literal> attribute, one could specify the name of the
+            variable which should store the current item for each iteration. By default, the current
+            item becomes the context node for any nested XPath expression inside the <literal>forEach</literal>
+            tag.
+        </para>
+    </section>
+    
+    <section>
+        <title><![CDATA[<x:transform>]]></title>
+        <para>
+            Conducts an XSLT transformation 
+            on source XML.  The source XML is provided by the 
+            <literal>doc</literal> attribute, or the body of the tag.  The XSL 
+            stylesheet is specified by the <emphasis>xslt</emphasis> attribute.
+            In most cases, the XSLT document will be retrieved (by using the
+            <literal>c:import</literal> tag to retrieve from external URL, or the
+            <literal>jsp:include</literal> tag to import from a local file):
+        </para>
+        <programlisting language="XML"><![CDATA[
+<!-- Get contents of XSLT -->
+<c:set var="xsl"> 
+  <c:import url="http://www.site.com/some.xslt"/> 
+</c:set>
+
+<!-- Perform transformation, printing results inline -->
+<x:transform doc="${news}" xslt="${xsl}"/>
+]]></programlisting>
+        <para>
+            By specifying the <literal>var</literal> attribute, the output can be stored
+            in a variable and used later (such as displaying, or querying with XPath).
+        </para>
+        <para>
+            XSLT documents can accept parameters, and these may be passed by nesting any
+            number of <literal>x:param</literal> tags within the <literal>x:transform</literal>
+            tag:
+            <programlisting language="XML"><![CDATA[
+<x:transform doc="${news}" xslt="${xsl}">
+    <x:param name="maxNoOfItems" value="15"/>
+</x:transform>
+]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title><![CDATA[]]></title>
+        <para>
+            
+        </para>
+        <programlisting language="XML"><![CDATA[ 
+ 
+        ]]></programlisting>
+    </section>
+    
+   <!--
+    
+    <section>
+        <title><![CDATA[]]></title>
+        <para>
+            
+        </para>
+        <programlisting language="XML"><![CDATA[ 
+ 
+        ]]></programlisting>
+    </section>
+    
+    -->
+
+    
+</section>

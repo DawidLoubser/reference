@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns1871:section xmlns:ns1871="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.fileSystem.genericStructure">
+
+  <ns1872:title xmlns:ns1872="http://docbook.org/ns/docbook">Generic Linux file system structure</ns1872:title>
+  <ns1873:para xmlns:ns1873="http://docbook.org/ns/docbook">
+    The general structure of most file system types used in Linux is the same. It is called
+    the <ns1874:emphasis xmlns:ns1874="http://docbook.org/ns/docbook">Virtual File System</ns1874:emphasis> (VFS) which does not, itself,
+    know of the file system specifics -- it is generic and abstracted from the concrete file
+    system used. 
+  </ns1873:para>
+  <ns1875:para xmlns:ns1875="http://docbook.org/ns/docbook">
+    The VFS communicates with the concrete file systems which in turn communicate through
+    buffers with th device drivers of the corresponding devices. This is illustrated in
+    <ns1876:xref xmlns:ns1876="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.fileSystem.vfsToDrivers_gif"/>.
+    
+    <ns1877:figure xmlns:ns1877="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.fileSystem.vfsToDrivers_gif">
+      <ns1878:title xmlns:ns1878="http://docbook.org/ns/docbook">
+        The virtual file system abstracts applications from the concrete file system and the device.
+      </ns1878:title>
+      <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="vfsToDrivers.gif"/></imageobject></mediaobject>      
+    </ns1877:figure>
+  </ns1875:para>
+  <ns1879:para xmlns:ns1879="http://docbook.org/ns/docbook">
+    The core components of the VFS are
+    <ns1880:itemizedlist xmlns:ns1880="http://docbook.org/ns/docbook">
+      <ns1881:listitem xmlns:ns1881="http://docbook.org/ns/docbook"><ns1882:para xmlns:ns1882="http://docbook.org/ns/docbook">the superblock,</ns1882:para></ns1881:listitem>
+      <ns1883:listitem xmlns:ns1883="http://docbook.org/ns/docbook"><ns1884:para xmlns:ns1884="http://docbook.org/ns/docbook">the inodes</ns1884:para></ns1883:listitem>
+      <ns1885:listitem xmlns:ns1885="http://docbook.org/ns/docbook"><ns1886:para xmlns:ns1886="http://docbook.org/ns/docbook">the directory blocks and</ns1886:para></ns1885:listitem>
+      <ns1887:listitem xmlns:ns1887="http://docbook.org/ns/docbook"><ns1888:para xmlns:ns1888="http://docbook.org/ns/docbook">data blocks.</ns1888:para></ns1887:listitem>
+    </ns1880:itemizedlist>
+  </ns1879:para>    
+
+<ns1889:section xmlns:ns1889="http://docbook.org/ns/docbook">
+  <ns1890:title xmlns:ns1890="http://docbook.org/ns/docbook">The superblock</ns1890:title>
+  <ns1891:para xmlns:ns1891="http://docbook.org/ns/docbook">
+    The <ns1892:emphasis xmlns:ns1892="http://docbook.org/ns/docbook">superblock</ns1892:emphasis> contains information about a mounted
+    file system, like the total size of the file system and the size of the inode table. It may also
+    contain information on when last the file system was checked and what the most recently
+    released data blocks are. The latter allows for rapid location of free data blocks when
+    allocating new ones. The exact details vary from file system to file system.
+    The kernel keeps a static array of superblocks, one superblock for each mounted file
+    system.       
+  </ns1891:para>
+  <ns1893:para xmlns:ns1893="http://docbook.org/ns/docbook">
+    Superblocks are objects which provide services for reading, writing and
+    deleting inodes (which are the file systems representation of a file),
+    as well as obtaining file system statistics and remounting and
+    unmounting the file system.
+  </ns1893:para>
+</ns1889:section>  
+
+ <ns1894:section xmlns:ns1894="http://docbook.org/ns/docbook">
+   <ns1895:title xmlns:ns1895="http://docbook.org/ns/docbook">The inode table</ns1895:title>
+   <ns1896:para xmlns:ns1896="http://docbook.org/ns/docbook">
+     For each file there is an <ns1897:emphasis xmlns:ns1897="http://docbook.org/ns/docbook">inode</ns1897:emphasis> which contains all the information
+     about a file except its name. It contains
+     <ns1898:itemizedlist xmlns:ns1898="http://docbook.org/ns/docbook">
+       <ns1899:listitem xmlns:ns1899="http://docbook.org/ns/docbook"><ns1900:para xmlns:ns1900="http://docbook.org/ns/docbook">the file type,</ns1900:para></ns1899:listitem>
+       <ns1901:listitem xmlns:ns1901="http://docbook.org/ns/docbook"><ns1902:para xmlns:ns1902="http://docbook.org/ns/docbook">the access rights to the file,</ns1902:para></ns1901:listitem>
+       <ns1903:listitem xmlns:ns1903="http://docbook.org/ns/docbook"><ns1904:para xmlns:ns1904="http://docbook.org/ns/docbook">the owner user and owner group,</ns1904:para></ns1903:listitem>
+       <ns1905:listitem xmlns:ns1905="http://docbook.org/ns/docbook"><ns1906:para xmlns:ns1906="http://docbook.org/ns/docbook">the file size,</ns1906:para></ns1905:listitem>
+       <ns1907:listitem xmlns:ns1907="http://docbook.org/ns/docbook"><ns1908:para xmlns:ns1908="http://docbook.org/ns/docbook">the date/time stamp for the last modification, and</ns1908:para></ns1907:listitem>
+       <ns1909:listitem xmlns:ns1909="http://docbook.org/ns/docbook"><ns1910:para xmlns:ns1910="http://docbook.org/ns/docbook">the pointers to the data blocks.</ns1910:para></ns1909:listitem>
+     </ns1898:itemizedlist>
+   </ns1896:para>
+   <ns1911:para xmlns:ns1911="http://docbook.org/ns/docbook">
+     Each <ns1912:emphasis xmlns:ns1912="http://docbook.org/ns/docbook">inode</ns1912:emphasis> can refer directly to only a limited number
+     of data blocks. This is because the inodes themselves are of fixed size.
+     The block size itself is dependent on the type of the file system. 
+     If the file is larger than what can be accommodated through direct links, the
+     inode refers to another table which itself refers to further blocks. This can go
+     to further levels (<ns1913:abbrev xmlns:ns1913="http://docbook.org/ns/docbook">e.g.</ns1913:abbrev> double indirect blocks).
+     
+     <ns1914:figure xmlns:ns1914="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.fileSystem.inode_gif">
+       <ns1915:title xmlns:ns1915="http://docbook.org/ns/docbook">Inodes refer to data blocks directly and indirectly.</ns1915:title>
+       <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="inode.gif"/></imageobject></mediaobject>
+     </ns1914:figure>
+     
+   </ns1911:para>
+   <ns1916:para xmlns:ns1916="http://docbook.org/ns/docbook">
+     The <ns1917:emphasis xmlns:ns1917="http://docbook.org/ns/docbook">inode</ns1917:emphasis> is an object representing a file and provides the
+     operations which may be performed on a file:
+     <ns1918:programlisting xmlns:ns1918="http://docbook.org/ns/docbook">
+struct inode_operations {
+  struct file_operations * default_file_ops;
+  int (*create) (struct inode *,const char *,int,int,struct inode **);
+  int (*lookup) (struct inode *,const char *,int,struct inode **);
+  int (*link) (struct inode *,struct inode *,const char *,int);
+  int (*unlink) (struct inode *,const char *,int);
+  int (*symlink) (struct inode *,const char *,int,const char *);
+  int (*mkdir) (struct inode *,const char *,int,int);
+  int (*rmdir) (struct inode *,const char *,int);
+  int (*mknod) (struct inode *,const char *,int,int,int);
+  int (*rename) (struct inode *,const char *,int, struct inode *,
+             const char *,int, int); /* this from 2.0.1 onwards */
+  int (*readlink) (struct inode *,char *,int);
+  int (*follow_link) (struct inode *,struct inode *,int,int,struct inode **);
+  int (*readpage) (struct inode *, struct page *);
+  int (*writepage) (struct inode *, struct page *);
+  int (*bmap) (struct inode *,int);
+  void (*truncate) (struct inode *);
+  int (*permission) (struct inode *, int);
+  int (*smap) (struct inode *,int);
+};
+      </ns1918:programlisting>
+   </ns1916:para>   
+ </ns1894:section>
+ 
+ <ns1919:section xmlns:ns1919="http://docbook.org/ns/docbook">
+   <ns1920:title xmlns:ns1920="http://docbook.org/ns/docbook">Directories</ns1920:title>
+   <ns1921:para xmlns:ns1921="http://docbook.org/ns/docbook">
+     A directory is a file which associates file names to inodes (recall that a inode contained
+     all information of a file <ns1922:emphasis xmlns:ns1922="http://docbook.org/ns/docbook">except</ns1922:emphasis> the file name).
+     <ns1923:note xmlns:ns1923="http://docbook.org/ns/docbook"><ns1924:title xmlns:ns1924="http://docbook.org/ns/docbook">Hard links</ns1924:title>
+       <ns1925:para xmlns:ns1925="http://docbook.org/ns/docbook">
+         The file name is thus detached from the file. This facilitates hard links, <ns1926:abbrev xmlns:ns1926="http://docbook.org/ns/docbook">i.e.</ns1926:abbrev>
+         that multiple file names can be associated with the same physical file.
+       </ns1925:para>  
+     </ns1923:note>
+   </ns1921:para>
+ </ns1919:section>
+ 
+ <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="virtualFileSystemDesign.docbook"/>
+
+  <ns1927:section xmlns:ns1927="http://docbook.org/ns/docbook">
+    <ns1928:title xmlns:ns1928="http://docbook.org/ns/docbook">Data blocks</ns1928:title>
+    <ns1929:para xmlns:ns1929="http://docbook.org/ns/docbook">
+      The <ns1930:emphasis xmlns:ns1930="http://docbook.org/ns/docbook">data blocks</ns1930:emphasis> contain the actual data. The size of a
+      data block is specific to the file system.
+    </ns1929:para>
+  </ns1927:section>
+  
+</ns1871:section>

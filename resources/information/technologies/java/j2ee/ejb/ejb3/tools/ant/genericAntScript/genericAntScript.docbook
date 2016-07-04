@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.tools.ant.genericAntScript.genericAntScript">
+  <title>A generic Ant build script for EJB projects</title>
+  <para> One can use a generic ant script which
+    enforces a standard structure on EJB projects. This follows the <emphasis>integrated</emphasis> approach, where there is
+    direct code-sharing at a software project level, and for example both the business layer and the
+    presentation layer are packaged in one Enterprise Archive for deployment. </para>
+  <section>
+      <title>Source packaging</title>
+      <para> Our generic ant script enforces a packaging
+      structure on the source repository which facilitates easy building and deployment of the
+      various components of an EJB based system including <itemizedlist>
+            <listitem>
+               <para>the business logic layer,</para>
+            </listitem>
+            <listitem>
+               <para>the server side presentation layer,
+            and</para>
+            </listitem>
+            <listitem>
+               <para>client applications.</para>
+            </listitem>
+         </itemizedlist>
+      </para>
+      <para> To this end the ant script separates the
+      client and server side source bases and enforces that artifacts which are common to both,
+      client and server side are contained in a <literal>common</literal> directory. On the server
+      side it differentiates between business logic layer and presentation layer components and
+      defines <literal>server/common</literal>
+      directory for those server side artifacts which are required by both, business logic layer and
+      presentation layer. The directory structure specified in the ant script is illustrated in
+        <xref linkend="resources.information.technologies.java.j2ee.ejb.ejb3.tools.ant.genericAntScript.sourcePackaging_fig"/>. </para>
+      <figure xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.tools.ant.genericAntScript.sourcePackaging_fig">
+         <title>Directory structure for source
+        artifacts of our EJB projects</title>
+         <mediaobject>
+            <imageobject>
+               <imagedata fileref="sourcePackaging.jpg"/>
+            </imageobject>
+         </mediaobject>
+      </figure>
+  </section>
+  <section>
+      <title>Common targets</title>
+      <para> Common targets across EJB projects
+      include <itemizedlist>
+            <listitem>
+               <para> compilation of any of the source
+            units, </para>
+            </listitem>
+            <listitem>
+               <para> archiving of the business logic
+            layer, presentation layer and client application, </para>
+            </listitem>
+            <listitem>
+               <para> generation of an enterprise archive
+            which packages the server side business logic and presentation layers within a single
+            enterprise archive, </para>
+            </listitem>
+            <listitem>
+               <para> deployment of the presentation
+            layer, business logic layer or the enterprise application as a whole, and </para>
+            </listitem>
+            <listitem>
+               <para> running the client application.
+          </para>
+            </listitem>
+         </itemizedlist>
+      </para>
+  </section>
+  <section>
+      <title>The common ant build targets</title>
+
+      <para>
+         <programlisting language="XML">
+            <xi:include parse="text" href="../../../examples/common/buildCommon.xml"/>
+         </programlisting>
+      </para>
+      <para> This file may be included (e.g. using the
+      XML Entities mechanism) into any other ant build script. </para>
+  </section>
+  <section>
+      <title>Location of projects, common ant script
+      and common libraries</title>
+      <para> All project directories must be at the
+      same level in the directory hierarchy. A common directory containing the <literal>buildCommon</literal> script as well as a
+        <literal>shelf</literal> directory with
+      all libraries common across projects is placed at the same level as the project directories.
+    </para>
+  </section>
+
+</section>

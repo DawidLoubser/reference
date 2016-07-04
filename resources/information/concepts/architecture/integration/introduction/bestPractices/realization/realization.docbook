@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: fritz@solms.co.za -->
+<section 
+  xmlns="http://docbook.org/ns/docbook" 
+  xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+  
+  <title>Best practises around realising integration solutions</title>
+  <para>
+    When realising an integration solution (i.e. implementing it) there are several
+    bast practises that should be kept in mind.
+  </para>
+  
+  <section>
+    <title>Stick to public standards</title>
+    <para>
+      Whenever possible, it pays to stick to public standards. This is particularly true for
+      integration solutions which need to provide integrability across a number of work units
+      using their own technologies and standards. Public standards are usually 
+      <itemizedlist>
+        <listitem><para>more widely supported, and</para></listitem>
+        <listitem><para>longer lived.</para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Go asynchronous where possible</title>
+    <para>
+      Prefer asynchronous integration above synchronous integration. This results in ,  
+      <itemizedlist>
+        <listitem><para>a higher level of decoupling</para></listitem>
+        <listitem><para>improved fail over safety, and</para></listitem>
+        <listitem><para>easier realisation of scaleability.</para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Use the command pattern</title>
+    <para>
+      Interface driven integration becomes very maintenance-intensive and is, in many ways,
+      non-intuitive from a business perspective. A more natural paradigm is provided by the
+      <emphasis>command</emphasis> pattern where, at each level of granularity, the business request 
+      is represented by a well-defined and self-contained <quote>request</quote> object. The 
+      various work units are able to process a defined number of requests. 
+    </para>
+    <para>
+      In that context work units only publish one service in their interface, that of processing requests:
+      <programlisting><![CDATA[
+        process(:Request):Response
+        ]]></programlisting>
+    </para>
+    <note><para>
+      This command pattern directly facilitates the processing of requests at different levels of
+      abstraction, <abbrev>i.e.</abbrev> home loan requests are processed one way, but all other
+      loan requests are processed another way.
+    </para></note>
+  </section>
+  
+  
+  <section>
+    <title>Use object orientation for message specification</title>
+    <para>
+      The messages in an integration solution will include 
+      <itemizedlist>
+        <listitem><para>
+          service request messages,  
+        </para></listitem>
+        <listitem><para>
+          response messages, and
+        </para></listitem>
+        <listitem><para>
+          event notification messages
+        </para></listitem>
+      </itemizedlist>
+      with the latter including exception and error messages.
+    </para>
+    <para>
+      These messages typically become quite complex and should be defined in a clean 
+      object-oriented manner. The benefits of this include
+      <itemizedlist>
+        <listitem><para>
+          improved abstraction and support for pluggability,
+        </para></listitem>
+        <listitem><para>
+          object orientation manages complexity better, and
+        </para></listitem>
+        <listitem><para>
+          improved flexibility.
+        </para></listitem>
+      </itemizedlist>
+      
+      <note><para>
+        In common practise, this often means that they were defined using
+        UML, and realised using XML with XML Schemas.
+      </para></note>
+    </para>
+  </section>
+  
+  <section>
+    <title>Prefer events over polling</title>
+    <para>
+      Polling does not optimise for performance (time of at least up to a poll cycle is wasted)
+      and consumes additional resources. Events are more light-weight and do not automatically
+      result in unnecessary performance overheads. On the other hand, events does require a
+      more sophisticated integration infrastructure and also requires that the observers are
+      able to receive and potentially processes events at any time.
+    </para>
+  </section>
+  
+  <section>
+    <title>Course grained services, fine grained objects</title>
+    <para>
+      It is more natural to work use case-oriented (service-oriented) at the higher level, and 
+      object oriented at the realisation level (i.e. the service is best realised using object-oriented
+      technology).
+    </para>
+  </section>
+  
+  <section>
+    <title>Adaptor reuse</title>
+    <para>
+      An integration solution should facilitate the re-use of work unit adapters.
+    </para>
+  </section>
+</section>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns994:section xmlns:ns994="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.accessors.accessors">
+
+  <ns995:title xmlns:ns995="http://docbook.org/ns/docbook">Abstract accessors</ns995:title>
+  <ns996:para xmlns:ns996="http://docbook.org/ns/docbook">
+    The first major change between EJB 1.1 and EJB 2.0 peristence is that in EJB 1.1 the
+    bean developer provided a concrete entity bean class which published the attributes and
+    dependent objects as public data fields
+<ns997:programlisting xmlns:ns997="http://docbook.org/ns/docbook">
+public class Order extends javax.ejb.EntityBean
+{
+  public String orderNo;
+  public Customer customer;
+  public Collection lineItems;
+
+...
+}
+</ns997:programlisting>
+      while in EJB 2.0 the bean developer provides an abstract class with abstract 
+      accessor methods for the attributes 
+<ns998:programlisting xmlns:ns998="http://docbook.org/ns/docbook">
+public abstract class Order extends javax.ejb.EntityBean
+{
+  public abstract String getOrderNo();
+  public abstract Customer getCustomer();
+  public abstract Collection getLineItems();
+
+  public abstract void setOrderNo(String newOrderNo);
+  public abstract void setCustomer(Customer newCustomer);
+  public abstract void setLineItems(Collection newLineItems);
+  ...
+}
+</ns998:programlisting>
+      <ns999:note xmlns:ns999="http://docbook.org/ns/docbook"><ns1000:para xmlns:ns1000="http://docbook.org/ns/docbook">
+      Note that the naming of the abstract accessor methods comply to the standard rules
+      for<ns1001:literal xmlns:ns1001="http://docbook.org/ns/docbook">getXXX</ns1001:literal> and <ns1002:literal xmlns:ns1002="http://docbook.org/ns/docbook">setXXX</ns1002:literal> JavaBeans property access methods.
+      </ns1000:para></ns999:note>
+    </ns996:para>  
+    <ns1003:para xmlns:ns1003="http://docbook.org/ns/docbook">
+      This looks simple enough, but what are the legal types for arguments and return values
+      of the accessor methods?
+    </ns1003:para>
+
+    <ns1004:section xmlns:ns1004="http://docbook.org/ns/docbook">
+      <ns1005:title xmlns:ns1005="http://docbook.org/ns/docbook">Legal Types for Accessors</ns1005:title>
+      <ns1006:para xmlns:ns1006="http://docbook.org/ns/docbook">
+        The accessor fields must be published in the deployment descriptor as
+        <ns1007:literal xmlns:ns1007="http://docbook.org/ns/docbook">&lt;cmp-field&gt;</ns1007:literal>s, i.e. as container-managed persistence fields.
+      </ns1006:para>
+      <ns1008:para xmlns:ns1008="http://docbook.org/ns/docbook">
+        Furthermore, the objects returned by the query methods and those received by the set
+        methods must be one of the following types: 
+        <ns1009:itemizedlist xmlns:ns1009="http://docbook.org/ns/docbook">
+          <ns1010:listitem xmlns:ns1010="http://docbook.org/ns/docbook"><ns1011:formalpara xmlns:ns1011="http://docbook.org/ns/docbook">
+            <ns1012:title xmlns:ns1012="http://docbook.org/ns/docbook">Java primitives</ns1012:title>
+            <ns1013:para xmlns:ns1013="http://docbook.org/ns/docbook">
+               which are typically stored in seperate, generally accessible columns as specified 
+               by the mapping for individual databases.
+            </ns1013:para>
+          </ns1011:formalpara></ns1010:listitem>
+          <ns1014:listitem xmlns:ns1014="http://docbook.org/ns/docbook"><ns1015:formalpara xmlns:ns1015="http://docbook.org/ns/docbook">
+            <ns1016:title xmlns:ns1016="http://docbook.org/ns/docbook">Serializable objects</ns1016:title>
+            <ns1017:para xmlns:ns1017="http://docbook.org/ns/docbook">
+              implementing the <ns1018:literal xmlns:ns1018="http://docbook.org/ns/docbook">java.io.Serializable</ns1018:literal>
+              interface which are typically generally stored either as 
+              <ns1019:itemizedlist xmlns:ns1019="http://docbook.org/ns/docbook">
+                <ns1020:listitem xmlns:ns1020="http://docbook.org/ns/docbook">
+                  <ns1021:para xmlns:ns1021="http://docbook.org/ns/docbook">blobs or </ns1021:para>
+                </ns1020:listitem>
+                <ns1022:listitem xmlns:ns1022="http://docbook.org/ns/docbook">
+                  <ns1023:para xmlns:ns1023="http://docbook.org/ns/docbook">
+                    by an object-relational mapper in a more conventional form which is useful for
+                    general database (e.g. SQL-based) access.
+                  </ns1023:para>
+                </ns1022:listitem>
+              </ns1019:itemizedlist>   
+            </ns1017:para>
+          </ns1015:formalpara></ns1014:listitem>
+          <ns1024:listitem xmlns:ns1024="http://docbook.org/ns/docbook"><ns1025:formalpara xmlns:ns1025="http://docbook.org/ns/docbook">
+            <ns1026:title xmlns:ns1026="http://docbook.org/ns/docbook">Remote entity beans</ns1026:title>
+            <ns1027:para xmlns:ns1027="http://docbook.org/ns/docbook">
+               published as remote objects via the home and remote interfaces.
+            </ns1027:para>
+          </ns1025:formalpara></ns1024:listitem>
+          <ns1028:listitem xmlns:ns1028="http://docbook.org/ns/docbook"><ns1029:formalpara xmlns:ns1029="http://docbook.org/ns/docbook">
+            <ns1030:title xmlns:ns1030="http://docbook.org/ns/docbook">Local entity beans</ns1030:title>
+            <ns1031:para xmlns:ns1031="http://docbook.org/ns/docbook">
+               which provide local and local-home interfaces.
+            </ns1031:para>
+          </ns1029:formalpara></ns1028:listitem>
+          <ns1032:listitem xmlns:ns1032="http://docbook.org/ns/docbook"><ns1033:formalpara xmlns:ns1033="http://docbook.org/ns/docbook">
+            <ns1034:title xmlns:ns1034="http://docbook.org/ns/docbook">Collections of any of the above</ns1034:title>
+            <ns1035:para xmlns:ns1035="http://docbook.org/ns/docbook">
+              returned as in one-to-many relationships. The collection used must currently
+              implement either the <ns1036:literal xmlns:ns1036="http://docbook.org/ns/docbook">java.util.Collection</ns1036:literal> or the
+              <ns1037:literal xmlns:ns1037="http://docbook.org/ns/docbook">java.util.Set</ns1037:literal> interface.
+            </ns1035:para>
+          </ns1033:formalpara></ns1032:listitem>
+        </ns1009:itemizedlist>  
+      </ns1008:para>
+    </ns1004:section>
+    <ns1038:section xmlns:ns1038="http://docbook.org/ns/docbook">
+      <ns1039:title xmlns:ns1039="http://docbook.org/ns/docbook">So, Where Are the Concrete Implementation?</ns1039:title>
+      <ns1040:para xmlns:ns1040="http://docbook.org/ns/docbook">
+        Note that the EJB 2.0 entity bean class supplied by the bean developer is an abstract
+        class:
+        <ns1041:itemizedlist xmlns:ns1041="http://docbook.org/ns/docbook">
+          <ns1042:listitem xmlns:ns1042="http://docbook.org/ns/docbook"><ns1043:para xmlns:ns1043="http://docbook.org/ns/docbook">
+            All accessor methods are abstract methods. 
+          </ns1043:para></ns1042:listitem>
+          <ns1044:listitem xmlns:ns1044="http://docbook.org/ns/docbook"><ns1045:para xmlns:ns1045="http://docbook.org/ns/docbook">
+            The bean developer does not specify any datafields for the persistent entity bean properties.
+          </ns1045:para></ns1044:listitem>
+        </ns1041:itemizedlist>
+      </ns1040:para>  
+      <ns1046:para xmlns:ns1046="http://docbook.org/ns/docbook">
+        The concrete implementation class is provided by the EJB container. The EJB container
+        thus provides 
+      <ns1047:itemizedlist xmlns:ns1047="http://docbook.org/ns/docbook">
+        <ns1048:listitem xmlns:ns1048="http://docbook.org/ns/docbook"><ns1049:para xmlns:ns1049="http://docbook.org/ns/docbook">
+          concrete implementations for the accessor methods and 
+        </ns1049:para></ns1048:listitem>
+        <ns1050:listitem xmlns:ns1050="http://docbook.org/ns/docbook"><ns1051:para xmlns:ns1051="http://docbook.org/ns/docbook">
+          if required, may define its own data fields (instance variables) for the persistent
+          bean properties.
+        </ns1051:para></ns1050:listitem>
+      </ns1047:itemizedlist>
+      </ns1046:para>
+    </ns1038:section>
+    
+    <ns1052:section xmlns:ns1052="http://docbook.org/ns/docbook">
+      <ns1053:title xmlns:ns1053="http://docbook.org/ns/docbook">What about further state variables?</ns1053:title>
+      <ns1054:para xmlns:ns1054="http://docbook.org/ns/docbook">
+        The bean developer may define further state variables (bean attributes), potentially
+        as<ns1055:literal xmlns:ns1055="http://docbook.org/ns/docbook">private</ns1055:literal> variables and corresponding accessor methods. But these 
+        may not form part of the persistent state of the entity bean and would thus not be 
+        published as<ns1056:literal xmlns:ns1056="http://docbook.org/ns/docbook">&lt;cmp-field&gt;</ns1056:literal>s.
+      </ns1054:para>
+    </ns1052:section>
+    
+  </ns994:section>

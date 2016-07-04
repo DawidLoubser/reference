@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"--><ns3167:section xmlns:ns3167="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.nfs.mounting">
+
+  <ns3168:title xmlns:ns3168="http://docbook.org/ns/docbook">NFS clients</ns3168:title>
+  <ns3169:para xmlns:ns3169="http://docbook.org/ns/docbook">
+    NFS clients will mount a NFS directory exported by a NFS server.
+  </ns3169:para>
+  
+  <ns3170:section xmlns:ns3170="http://docbook.org/ns/docbook">
+    <ns3171:title xmlns:ns3171="http://docbook.org/ns/docbook">Prerequisites for NFS clients</ns3171:title>
+    <ns3172:para xmlns:ns3172="http://docbook.org/ns/docbook">
+      A NFS client will need to
+      <ns3173:itemizedlist xmlns:ns3173="http://docbook.org/ns/docbook">
+        <ns3174:listitem xmlns:ns3174="http://docbook.org/ns/docbook"><ns3175:formalpara xmlns:ns3175="http://docbook.org/ns/docbook">
+          <ns3176:title xmlns:ns3176="http://docbook.org/ns/docbook">The <ns3177:command xmlns:ns3177="http://docbook.org/ns/docbook">mount</ns3177:command> program</ns3176:title>
+          <ns3178:para xmlns:ns3178="http://docbook.org/ns/docbook">
+            Check that your kernel is compiled to support NFS (most Linux distributions
+            come with NFS). This can be done by viewing <ns3179:filename xmlns:ns3179="http://docbook.org/ns/docbook">/proc/filesystems</ns3179:filename>.
+            This file contains all the file systems supported by the kernel, and looks typically
+            something like the following:
+            <ns3180:programlisting xmlns:ns3180="http://docbook.org/ns/docbook">
+nodev   rootfs
+nodev   bdev
+nodev   proc
+nodev   sockfs
+nodev   futexfs
+nodev   tmpfs
+nodev   shm
+nodev   pipefs
+        ext2
+nodev   ramfs
+        minix
+        iso9660
+<ns3181:emphasis xmlns:ns3181="http://docbook.org/ns/docbook">nodev   nfs</ns3181:emphasis>
+nodev   devpts
+        reiserfs
+        ntfs
+nodev   usbdevfs
+nodev   usbfs
+        vfat
+            </ns3180:programlisting>
+            If it does not contain a <ns3182:command xmlns:ns3182="http://docbook.org/ns/docbook">nfs</ns3182:command> entry, you can add the 
+            <ns3183:command xmlns:ns3183="http://docbook.org/ns/docbook">nfs</ns3183:command> module on the fly, via
+            <ns3184:cmdsynopsis xmlns:ns3184="http://docbook.org/ns/docbook">
+<ns3185:command xmlns:ns3185="http://docbook.org/ns/docbook">insmod nfs</ns3185:command>            
+            </ns3184:cmdsynopsis>
+            If this still does not work, you will need to rebuild the kernel with NFS support.
+            For NFS 3 you will need <ns3186:command xmlns:ns3186="http://docbook.org/ns/docbook">mount</ns3186:command> version 2.1 or later.
+          </ns3178:para>
+        </ns3175:formalpara></ns3174:listitem>
+        <ns3187:listitem xmlns:ns3187="http://docbook.org/ns/docbook"><ns3188:formalpara xmlns:ns3188="http://docbook.org/ns/docbook">
+          <ns3189:title xmlns:ns3189="http://docbook.org/ns/docbook">The portmapper daemon must be running on the client</ns3189:title>
+          <ns3190:para xmlns:ns3190="http://docbook.org/ns/docbook">
+            It is responsible for RPC requests for service names mapped onto ports. To check
+            that it is running, you can use the command
+            <ns3191:cmdsynopsis xmlns:ns3191="http://docbook.org/ns/docbook">
+<ns3192:command xmlns:ns3192="http://docbook.org/ns/docbook">rpcinfo -p host</ns3192:command>
+            </ns3191:cmdsynopsis>
+            which will show the programs listening on the various ports
+            <ns3193:programlisting xmlns:ns3193="http://docbook.org/ns/docbook">
+program vers proto   port
+  100000    2   tcp    111  portmapper
+  100000    2   udp    111  portmapper
+  100024    1   udp  32768  status
+  100024    1   tcp  32768  status
+  100003    2   udp   2049  nfs
+  100003    3   udp   2049  nfs
+  100021    1   udp  32770  nlockmgr
+  100021    3   udp  32770  nlockmgr
+  100021    4   udp  32770  nlockmgr
+  100005    1   udp  32771  mountd
+  100005    1   tcp  32769  mountd
+  100005    2   udp  32771  mountd
+  100005    2   tcp  32769  mountd
+  100005    3   udp  32771  mountd
+  100005    3   tcp  32769  mountd
+            </ns3193:programlisting>  
+            Most recent distributions have <ns3194:command xmlns:ns3194="http://docbook.org/ns/docbook">portmap</ns3194:command> started in their
+            boot scripts. You may want to add it, if not. The command is typically found in
+            <ns3195:filename xmlns:ns3195="http://docbook.org/ns/docbook">/usr/bin</ns3195:filename> or <ns3196:filename xmlns:ns3196="http://docbook.org/ns/docbook">/usr/sbin</ns3196:filename>.
+          </ns3190:para>
+        </ns3188:formalpara></ns3187:listitem>
+        <ns3197:listitem xmlns:ns3197="http://docbook.org/ns/docbook"><ns3198:formalpara xmlns:ns3198="http://docbook.org/ns/docbook">
+          <ns3199:title xmlns:ns3199="http://docbook.org/ns/docbook"><ns3200:command xmlns:ns3200="http://docbook.org/ns/docbook">rpc.statd</ns3200:command> and <ns3201:command xmlns:ns3201="http://docbook.org/ns/docbook">rpc.lockd</ns3201:command></ns3199:title>
+          <ns3202:para xmlns:ns3202="http://docbook.org/ns/docbook">
+            To be able to use NFS file locking, you will also need <ns3203:command xmlns:ns3203="http://docbook.org/ns/docbook">rpc.statd</ns3203:command> 
+            and <ns3204:command xmlns:ns3204="http://docbook.org/ns/docbook">rpc.lockd</ns3204:command> running on both the client and the server. 
+            Most recent distributions start those services by default at boot time. 
+            The <ns3205:command xmlns:ns3205="http://docbook.org/ns/docbook">lockd</ns3205:command> daemon is called by <ns3206:command xmlns:ns3206="http://docbook.org/ns/docbook">nfsd</ns3206:command> 
+            upon demand and you don't have to start it. The <ns3207:command xmlns:ns3207="http://docbook.org/ns/docbook">statd</ns3207:command> daemon
+            will, however, need to be started separately. It is typically found in
+            <ns3208:filename xmlns:ns3208="http://docbook.org/ns/docbook">/usr/bin</ns3208:filename> or <ns3209:filename xmlns:ns3209="http://docbook.org/ns/docbook">/usr/sbin</ns3209:filename>.
+          </ns3202:para>
+        </ns3198:formalpara></ns3197:listitem>
+      </ns3173:itemizedlist>
+    </ns3172:para>
+  </ns3170:section>
+  
+  <ns3210:section xmlns:ns3210="http://docbook.org/ns/docbook">
+    <ns3211:title xmlns:ns3211="http://docbook.org/ns/docbook">Mounting a NFS volume</ns3211:title>
+    <ns3212:para xmlns:ns3212="http://docbook.org/ns/docbook">
+      To mount a NFS volume you use the syntax
+      <ns3213:cmdsynopsis xmlns:ns3213="http://docbook.org/ns/docbook">
+<ns3214:command xmlns:ns3214="http://docbook.org/ns/docbook">mount &lt;host&gt;:&lt;pathToNfsVolumemount </ns3214:command>        
+      </ns3213:cmdsynopsis>
+      For example, 
+      <ns3215:cmdsynopsis xmlns:ns3215="http://docbook.org/ns/docbook">
+<ns3216:command xmlns:ns3216="http://docbook.org/ns/docbook">mount nsfServer.solmstraining.co.za:/home/solms/resources /mnt/resources</ns3216:command>      
+      </ns3215:cmdsynopsis>
+      mounts the <ns3217:filename xmlns:ns3217="http://docbook.org/ns/docbook">/home/solms/resources</ns3217:filename> directory as published
+      by the NFS server with domain name <ns3218:filename xmlns:ns3218="http://docbook.org/ns/docbook">nfsServer.solmstraining.co.za</ns3218:filename>
+      as the <ns3219:filename xmlns:ns3219="http://docbook.org/ns/docbook">/mnt/resources</ns3219:filename> directory.
+    </ns3212:para>
+    <ns3220:para xmlns:ns3220="http://docbook.org/ns/docbook">
+      This assumes, of course, that <ns3221:filename xmlns:ns3221="http://docbook.org/ns/docbook">/mnt/resources</ns3221:filename> exists. If not, 
+      you will have to create it as usual via
+      <ns3222:cmdsynopsis xmlns:ns3222="http://docbook.org/ns/docbook">
+<ns3223:command xmlns:ns3223="http://docbook.org/ns/docbook">mkdir /mnt/resources</ns3223:command>      
+      </ns3222:cmdsynopsis>
+    </ns3220:para>
+  </ns3210:section>
+
+  <ns3224:section xmlns:ns3224="http://docbook.org/ns/docbook">
+    <ns3225:title xmlns:ns3225="http://docbook.org/ns/docbook">Unmounting a NFS directory</ns3225:title>
+    <ns3226:para xmlns:ns3226="http://docbook.org/ns/docbook">
+      To unmount a the NFS directory, you simply use <ns3227:command xmlns:ns3227="http://docbook.org/ns/docbook">umount</ns3227:command>
+      as usual:
+      <ns3228:cmdsynopsis xmlns:ns3228="http://docbook.org/ns/docbook">
+<ns3229:command xmlns:ns3229="http://docbook.org/ns/docbook">umount </ns3229:command>      
+      </ns3228:cmdsynopsis>
+    </ns3226:para>
+  </ns3224:section>
+  
+  <ns3230:section xmlns:ns3230="http://docbook.org/ns/docbook">
+    <ns3231:title xmlns:ns3231="http://docbook.org/ns/docbook">Automatically mounting NFS file systems</ns3231:title>
+    <ns3232:para xmlns:ns3232="http://docbook.org/ns/docbook">
+      Often you want to automatically mount shared file systems at boot time. To do this
+      you add entries to <ns3233:filename xmlns:ns3233="http://docbook.org/ns/docbook">/etc/fstab</ns3233:filename>, the <ns3234:emphasis xmlns:ns3234="http://docbook.org/ns/docbook">static file
+      system table</ns3234:emphasis>. The structure of the <ns3235:filename xmlns:ns3235="http://docbook.org/ns/docbook">/etc/fstab</ns3235:filename>
+      file is discussed in <ns3236:xref xmlns:ns3236="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.fileSystem.fstab"/>.
+      To mount a NFS volume at boot time, you can add a line like the following:
+      <ns3237:cmdsynopsis xmlns:ns3237="http://docbook.org/ns/docbook"><ns3238:command xmlns:ns3238="http://docbook.org/ns/docbook">
+chameleon:/home/solms/Documents /mnt/solms      nfs     rw 0 0
+      </ns3238:command></ns3237:cmdsynopsis>
+      with the first entry being the file system to be mounted, the second entry being
+      the mount point, the third specifying the file system type as NFS, the options
+      being read/write and we need neither dumping nor file system checking.
+    </ns3232:para>
+  </ns3230:section>
+  
+  <ns3239:section xmlns:ns3239="http://docbook.org/ns/docbook">
+    <ns3240:title xmlns:ns3240="http://docbook.org/ns/docbook">Soft vs hard mounting</ns3240:title>
+    <ns3241:para xmlns:ns3241="http://docbook.org/ns/docbook">
+      There are two distinct ways in which NFS clients can handle failures on NFS requests. 
+      The error handling mode is determined by whether the NFS file system is mounted on
+      <ns3242:emphasis xmlns:ns3242="http://docbook.org/ns/docbook">soft</ns3242:emphasis> or <ns3243:emphasis xmlns:ns3243="http://docbook.org/ns/docbook">hard</ns3243:emphasis> mode.
+    </ns3241:para>
+    
+    <ns3244:section xmlns:ns3244="http://docbook.org/ns/docbook">
+      <ns3245:title xmlns:ns3245="http://docbook.org/ns/docbook">Soft NFS mounts</ns3245:title>
+      <ns3246:para xmlns:ns3246="http://docbook.org/ns/docbook">
+        In this mode the NFS client will return an exception to the application requesting the
+        NFS file access. Some applications can process the error gracefully, but many others
+        may themselves crash or come into an unstable or invalid state.
+      </ns3246:para>
+      <ns3247:para xmlns:ns3247="http://docbook.org/ns/docbook">
+        A soft mounts is requested by adding <ns3248:emphasis xmlns:ns3248="http://docbook.org/ns/docbook">soft</ns3248:emphasis> to the mount
+        options:
+        <ns3249:cmdsynopsis xmlns:ns3249="http://docbook.org/ns/docbook"><ns3250:command xmlns:ns3250="http://docbook.org/ns/docbook">
+chameleon:/home/solms/Documents /mnt/solms      nfs     rw,soft 0 0
+        </ns3250:command></ns3249:cmdsynopsis>
+      </ns3247:para>
+    </ns3244:section>
+    
+    <ns3251:section xmlns:ns3251="http://docbook.org/ns/docbook">
+      <ns3252:title xmlns:ns3252="http://docbook.org/ns/docbook">Hard NFS mounts</ns3252:title>
+      <ns3253:para xmlns:ns3253="http://docbook.org/ns/docbook">
+        In this mode the NFS client will hang until it can re-establish the communication.
+        Applications which made the request may hang during this period too and can
+        continue normally once the comms are up again.
+      </ns3253:para>
+      <ns3254:para xmlns:ns3254="http://docbook.org/ns/docbook">
+        A hard mounts is requested by adding <ns3255:emphasis xmlns:ns3255="http://docbook.org/ns/docbook">hard</ns3255:emphasis> to the mount
+        options:
+        <ns3256:cmdsynopsis xmlns:ns3256="http://docbook.org/ns/docbook"><ns3257:command xmlns:ns3257="http://docbook.org/ns/docbook">
+chameleon:/home/solms/Documents /mnt/solms      nfs     rw,hard 0 0
+        </ns3257:command></ns3256:cmdsynopsis>
+      </ns3254:para>
+    </ns3251:section>
+    
+    <ns3258:section xmlns:ns3258="http://docbook.org/ns/docbook">
+      <ns3259:title xmlns:ns3259="http://docbook.org/ns/docbook">Requesting hard, interruptible mounts</ns3259:title>
+      <ns3260:para xmlns:ns3260="http://docbook.org/ns/docbook">
+        A process which makes a file access request to a NFS client using a <ns3261:emphasis xmlns:ns3261="http://docbook.org/ns/docbook">hard</ns3261:emphasis>
+        mount cannot be interrupted except through an unconditional kill (via the <ns3262:literal xmlns:ns3262="http://docbook.org/ns/docbook">SIGKILL</ns3262:literal>
+        signal, 9 -- see <ns3263:xref xmlns:ns3263="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.processControl.sigkill"/>), except if
+        the <ns3264:emphasis xmlns:ns3264="http://docbook.org/ns/docbook">hard</ns3264:emphasis> mount option is combined with <ns3265:emphasis xmlns:ns3265="http://docbook.org/ns/docbook">intr</ns3265:emphasis>
+        requesting interruptibility:
+        <ns3266:cmdsynopsis xmlns:ns3266="http://docbook.org/ns/docbook"><ns3267:command xmlns:ns3267="http://docbook.org/ns/docbook">
+chameleon:/home/solms/Documents /mnt/solms      nfs     rw,hard,intr 0 0
+        </ns3267:command></ns3266:cmdsynopsis>
+      </ns3260:para>
+      <ns3268:para xmlns:ns3268="http://docbook.org/ns/docbook">
+        It is generally recommended that you mount your NFS volumes in 
+        <ns3269:filename xmlns:ns3269="http://docbook.org/ns/docbook">/etc/fstab</ns3269:filename> as a hard, interruptible mount.
+      </ns3268:para>  
+    </ns3258:section>
+    
+    
+  </ns3239:section>
+  
+  
+</ns3167:section>

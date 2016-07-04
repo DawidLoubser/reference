@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="Distributed Garbage Collection">Distributed Garbage Collection</title>
+    
+    <para>When passing remote references to objects you have to somehow
+        ensure that the object becomes garbage collected if nobody
+        is using it anymore.</para>
+    
+    <para>RMI uses a distributed reference counting algorithm where servers
+        keep track of the references they distributed to remotely
+        accessible objects. In addition RMI uses a reference leasing
+        mechanism where remote references expire if they have not been
+        used over an extended period of time. By default this period is
+        10 minutes but it can be set by specifying the lease period in
+        milliseconds for the <emphasis>java.rmi.dgc.leaseValue</emphasis> system
+        property.</para>
+    <para>
+        If a client tries to use a reference which is no longer valid
+        they will receive a <emphasis>java.rmi.ConnectionException</emphasis> and client
+        applications should be developed to handle this type of exception.</para>
+    
+    <para>In addition to this server objects are given the opportunity to
+        peform other checking algorithms when the distributed garbage
+        collector marks a remotely accessible object as unreferenced. To
+        this end servers can implement the <emphasis>java.rmi.server.Unreferenced</emphasis>
+        interface forcing them to provide an implementation for an
+        <emphasis>unreferenced()</emphasis> method.</para>
+    
+    <para>Below we show a counter which simply writes the fact that it has
+        been spotted as unreferenced to the standard output stream.</para>
+    
+    <section>
+        <title>The Counter Implementation</title>
+        <para><programlisting>
+<xi:include parse="text" href="../../src/countDistGC/CounterImpl.java"/>
+</programlisting>
+        </para>
+    </section>
+    
+</section>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Forwarding information to managed beans</title>
+    <para>
+        At times one needs to forward information from one managed bean to another.
+        For example, assume you have a <literal>showPersons</literal> service
+        which shows a list of persons in, say, a table, and the user wants to
+        select a person and edit it.
+    </para>
+    <para>
+        In this case the <literal>showPersonsBinding</literal> needs to forward the
+        selected person (i.e. the person to edit) to <literal>editPersonBinding</literal>
+        which is the presentation layer controller for the <literal>editPerson</literal>
+        service. This can be done via the request map which is accessible via the faces
+        context:
+        <programlisting language="java"><![CDATA[
+public class ShowPersonsBinding
+{
+    public String editPerson()
+    {
+        ...
+        FacesContext.getCurrentInstance().getExternalContext().getRequestMap().put
+            ("personToEdit", person);
+    
+        logger.info("***** Have put personToEdit in request map: " + person);
+
+        return "editPerson";
+    }
+    
+    ...
+}
+            ]]></programlisting>
+    </para>
+    <para>
+        We can annotate some initialization service in the <literal>EditPersonBinding</literal>
+        class with <literal>@PostConstruct</literal> within which the person to edit is
+        extracted from the request map:
+        <programlisting language="java"><![CDATA[
+@ManagedBean
+@ViewScoped
+public class EditPersonBinding implements Serializable
+{
+    public EditPersonBinding() {}
+    
+    /**
+    * Upon having created this managed bean, extract the personToEdit from the
+    * request map and insert it into the personDetailsBinding. Note that this
+    * binding object will only be loaded if aspects are required by its View.
+    * In this case the view retrieves the edited person from this binding 
+    * component which, in turn, requests it from the embedded personDetailsBinding
+    * which, in turn, was initialized by this binding objects postConstruct
+    * initializer (i.e. this method).
+    * 
+    */
+    @PostConstruct
+    public void initialize()
+    {	
+        personToEdit = (Person)
+            FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get("personToEdit");
+        ...
+    }
+    ...
+}    
+            ]]></programlisting>        
+    </para>
+</section>    
+    
+    
+    

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section
+  id="resources.information.concepts.design.aspectOrientedDevelopment.introduction.introduction"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Aspect-Oriented Development</title>
+  
+  <para>
+    Aspect oriented development is being used more widely as the benefits of this paradigm become
+    more appreciated. 
+  </para>
+  
+  <section>
+    <title>Apect-oriented development and non-functional requirements</title>
+    <para>
+      Aspect oriented development provides a suitable framework for addressing those aspects of the
+      non-functional requirements which are not addressed by infrastructure (<abbrev>i.e.</abbrev>
+      architecture). The logic addressing these non-functional requirements typically needs to
+      applied across use cases. 
+    </para>
+    <para>
+      For example, the logic applying logging, security or profiling may be the same across use cases. One may
+      wish to log all entries and exits from all services and one may wish to validate authorization
+      on entry nto any service. Such aspects are commonly addressed through aspect-oriented
+      development.
+    </para>
+  </section>
+  
+  <section>
+    <title>Core concepts of aspect oriented development</title>
+    <para>
+      Aspect oriented development introduces a number of new concepts. One needs to understand these
+      as well as the associated terminology in order to to understand aspect oriented development.
+    </para>
+    
+    <section>
+      <title>Cross cutting concern</title>
+      <para>
+        A cross cutting concern is an aspect of the requirements which  is relevant across use
+        cases/services. Examples include logging requirements, authorization, authentication, ....
+      </para>
+    </section>
+    
+    <section>
+      <title>Advice</title>
+      <para>
+        An advice is a workflow step which is applied to an existing model. This could be the logic
+        for the logging or authorization code.
+      </para>
+    </section>
+    
+    <section>
+      <title>Point cut</title>
+      <para>
+        The point or more often collection of points) where the cross cuttng concern is to be
+        applied. This could be things like 
+        <itemizedlist>
+          <listitem><para>
+            all methods for all classes,
+          </para></listitem>
+          <listitem><para>
+            all <literal>doGet</literal> methods for all classes whose name ends with
+            <literal>Servlet</literal>. 
+          </para></listitem>
+          <listitem><para>
+          
+          </para></listitem>
+        </itemizedlist>
+        
+      </para>
+    </section>
+    
+    <section>
+      <title>Aspect</title>
+      <para>
+        The combination of a point cut and an advice.
+      </para>
+    </section>
+    
+    <section>
+      <title>Weaving</title>
+      <para>
+        Weaving is used to refer to the process of inserting the aspect logic into the core
+        application logic.
+      </para>
+    </section>
+    
+  </section>
+  
+  <section>
+    <title>Aspect versus Object oriented development</title>
+    <para>
+      Aspect oriented development is not an alternative to object-oriented modeling and development. Instead it
+      complements object oriented development by being able to effectively address cross-cutting
+      concerns. 
+    </para>
+    <para>
+      The conceptual solution as well as the implementation realizing the use case (functional) requirements would typically be
+      designed using object-oriented concepts.  However, those non-functional requirements which are
+      not addressed by architecture (infrastructure), could typically be addressed by designing
+      aspects into the solution and weaving the resultant code into the object-oriented system.
+    </para>
+  </section>
+  
+  <section>
+    <title>Frameworks for aspect-oriented programming</title>
+    <para>
+      There are a number of frameworks which support aspect oriented programming. The most well kown
+      is the first AOP framework, <emphasis>AspectJ</emphasis> for Java. A range of further AOP
+      frameworks are available for the Java based technologies including
+      <emphasis>AspectWertkz</emphasis>, <emphasis>JBoss AOP</emphasis> and 
+      <emphasis>Spring AOP</emphasis>. The Microsoft.Net world provides support for aspect-oriented
+      software development via frameworks like Aspect.Net and AOP.Net.
+    </para>
+    
+    <section>
+      <title>Aspects via annotations</title>
+      <para>
+        It should be noted that some frameworks like the original AspectJ apply additions to
+        the actual programming language. Such frameworks require special compilers. Most other
+        frameworks address aspects using the natual extension mechanism,annotations, provided 
+        by many modern programming languages including C# and Java. 
+        extension mechanism, annotations. These frameworks do not require changes to the underlying 
+        programming language.
+        <note><para>
+          AspectJ and AspectWerkz are collaboraborating on a new common implementation for a
+          Java-based AOP framework. 
+        </para></note>
+      </para>
+    </section>
+    
+    <section>
+      <title>Real-time weaving</title>
+      <para>
+         Some frameworks like ApectWerkz support real-time weaving. In this case aspects are woven
+         into compiled classes as they are loaded by custom class loaders. Alternatively aspects can
+         be applied 
+        <itemizedlist>
+          <listitem><para>
+            at source code level by a pre-compilation step,
+          </para></listitem>
+          <listitem><para>
+            at binary level by a second compilation step.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>A simple example</title>
+    <para>
+    
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Benefits of aspect-oriented development</title>
+    <para>
+      Using aspect oriented development introduces a number of benefits for the project as a whole.
+    </para>
+    
+    <section>
+      <title>Improved responsibility location</title>
+      <para>
+        Instead of having non-functional logic defined across the system, the logic is localized
+        within an aspect which is woven into the core functional logic.
+      </para>
+    </section>
+    
+    <section>
+      <title>Core functional logic not polluted by non-functional logic</title>
+      <para>
+        The core code which addresses the functional (use-case) requirements is not polluted by the
+        logic realizing aspects of the non-functional requirements. hese are usually not directly
+        related to the functional requirements.
+      </para>
+    </section>
+    
+    <section>
+      <title>Clean responsibility distribution across architecture, functional design and aspects</title>
+      <para>
+         The introduction of aspects complements architecture and object-oriented design by
+        adressing the one aspect which is not well covered by the other two. The result is that
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>Architecture</title>
+            <para>
+              addresses the non-functional requirements which can be addressed through
+              infrastructure, 
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Functional (Object-Oriented) design</title>
+            <para>
+              realizes the use case requirements, and
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>Aspects</title>
+            <para>
+              address the non-functional requirements which require logic.
+            </para>
+          </formalpara>
+          </listitem>
+        </itemizedlist>
+      </para>
+    </section>
+  </section>
+  
+</section>  

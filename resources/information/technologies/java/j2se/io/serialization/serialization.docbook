@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.serialization.serialization">
+    
+    <title >Object Serialization</title>
+    <para>
+        Java supports the powerful feature of <emphasis>object serialization</emphasis>, which
+        allows you to serialize (convert to bytes) objects of any class
+        which implements the <literal>java.io.Serializable</literal>
+        interface (without any further effort on the programmer's behalf.)
+      </para>
+      <para> 
+        Furthermore, if your class subclasses 
+        other classes, all inherited data fields are serialized automatically. An object might have several
+        links (references) to other objects. For example, a bank <literal>Client</literal> might be derived 
+        from a <literal>Person</literal> and a <literal>Client</literal> might have a collection of references 
+        to <literal>Accounts</literal>. When a <literal>Client</literal> is serialized, all the inherited 
+        data fields as well as all the accounts have to be serialized too. This is all done automatically 
+        for you as long as all the relevant classes implement the <literal>Serializable</literal> interface.
+    </para>
+    <para>
+        The following set of classes illustrate basic serialization behaviour through a simple test program:
+        <programlisting language="Java"><![CDATA[     
+public class Person implements Serializable
+{
+    public Person() {}
+    
+    public Person(String name, String idNo)
+    { 
+        this.name = name; this.idNo = idNo; 
+    }
+ 
+    public void show() 
+    { 
+        System.out.println(name + " : " + idNo); 
+    }
+ 
+    private String name;
+    private String idNo;
+}
+]]></programlisting>
+      <programlisting language="Java"><![CDATA[
+public class Account implements Serializable
+{
+    public Account() {}
+    
+    public Account(String accountNo, double balance)
+    {
+        this.accountNo = accountNo; 
+        this.balance = balance; 
+    }
+ 
+    public void show() 
+    {
+        System.out.println(accountNo + " : " + balance); 
+    }
+ 
+    private String accountNo;
+    private double balance = 0;
+}
+]]></programlisting>
+<programlisting language="Java"><![CDATA[
+class Client extends Person
+{
+    public Client() {}
+    public Client(String name, String idNo, String clientNo)
+    {
+        super(name,idNo); 
+        this.clientNo = clientNo; 
+    }
+ 
+    public void addAccount(Account account)
+    {
+        accounts.addElement(account); 
+    }
+ 
+    public void show() 
+    {
+        System.out.print(clientNo + " -> ");
+        super.show();
+        for (Iterator i = accounts.iterator(); 
+            i.hasNext();
+            ((Account)i.next()).show());
+    }
+ 
+    private String clientNo;
+    private List accounts = new ArrayList();
+}
+]]></programlisting>
+<programlisting language="Java"><![CDATA[
+public class TestSerializable
+{
+    public static void main(String[] args) throws IOException, 
+    ClassNotFoundException
+    {
+        Person p1 = new Person("Peter Smith",  "6201114334102");
+        Person p2 = new Client("Susan Cairns", "6702021234103","0001");
+        Client c  = (Client)p2;
+        Account acc = new Account("123",500.00);   
+            c.addAccount(acc);
+            acc = new Account("124",2500.00);  
+            c.addAccount(acc);
+            acc = new Account("125",-300.00);  
+            c.addAccount(acc);
+ 
+        System.out.println("\nObjects to be stored on stream:");
+        p1.show(); 
+        p2.show();
+ 
+        FileOutputStream   outFile = new FileOutputStream("tmp");
+        ObjectOutputStream oStream = new ObjectOutputStream(outFile);
+        oStream.writeObject(p1);  
+        oStream.writeObject(p2);
+        oStream.close();
+ 
+        FileInputStream inFile = new FileInputStream("tmp");
+        ObjectInputStream  iStream = new ObjectInputStream(inFile);
+        Person p3 = (Person)iStream.readObject();
+        Person p4 = (Person)iStream.readObject();
+ 
+        System.out.println("\nObjects extracted from stream:");
+        p3.show(); 
+        p4.show();
+        iStream.close();
+    }
+} 
+        ]]></programlisting>
+    </para>
+    <figure>
+        <title>Serialization test program output</title>
+        <programlisting><![CDATA[
+ Objects to be stored on stream:
+ Peter Smith : 6201114334102
+ 0001 -> Susan Cairns : 6702021234103
+ 123 : 500.0
+ 124 : 2500.0
+ 125 : -300.0
+ 
+ Objects extracted from stream:
+ Peter Smith : 6201114334102
+ 0001 -> Susan Cairns : 6702021234103
+ 123 : 500.0
+ 124 : 2500.0
+ 125 : -300.0
+        ]]></programlisting>
+    </figure>
+  
+  <section>
+    <title>Non-serializable attributes</title>
+    <para>
+      By default, if a class is <emphasis>serializable</emphasis>, all
+      its attributes must be serializable. If it does not make sense to
+      serialize certain attributes (i.e. they can be regenerated or
+      recalculated after an object has been de-serialized) they may
+      be marked with the <literal>transient</literal> keyword.
+    </para>
+  </section>
+    
+</section>

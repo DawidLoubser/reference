@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1096:section xmlns:ns1096="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.multiValuedPaths.collapsing">
+
+  <ns1097:title xmlns:ns1097="http://docbook.org/ns/docbook">Collapsing Multi-Valued Paths into Single-Valued Paths via Collection Variables</ns1097:title>
+  <ns1098:para xmlns:ns1098="http://docbook.org/ns/docbook">
+    SELECT clauses are restricted to single-valued paths. The same is largely true for WHERE 
+    clauses. So, how do we handle queries along multi-valued paths?
+  </ns1098:para>
+  <ns1099:para xmlns:ns1099="http://docbook.org/ns/docbook">
+    In EJB-QL this is done by defining collection variables via an  
+    <ns1100:literal xmlns:ns1100="http://docbook.org/ns/docbook">IN</ns1100:literal> clause. Consider, for example the invalid query
+<ns1101:programlisting xmlns:ns1101="http://docbook.org/ns/docbook">
+SELECT client.bonds.account FROM Client client      -&gt; INVALID
+</ns1101:programlisting>
+  </ns1099:para>
+  <ns1102:para xmlns:ns1102="http://docbook.org/ns/docbook">
+    The correct form of this query in EJB-QL is
+<ns1103:programlisting xmlns:ns1103="http://docbook.org/ns/docbook">
+SELECT bonds.account FROM Client c, IN(c.bonds) bonds      -&gt; VALID
+</ns1103:programlisting>
+  </ns1102:para>
+  <ns1104:para xmlns:ns1104="http://docbook.org/ns/docbook">
+     Here the <ns1105:literal xmlns:ns1105="http://docbook.org/ns/docbook">IN</ns1105:literal>-clause defines a collection variable,
+     <ns1106:literal xmlns:ns1106="http://docbook.org/ns/docbook">bonds</ns1106:literal> which, for each client, resembles the client's bonds.
+  </ns1104:para>
+  <ns1107:para xmlns:ns1107="http://docbook.org/ns/docbook">
+    In a similar way we can fix the following invalid EJB-QL statement
+<ns1108:programlisting xmlns:ns1108="http://docbook.org/ns/docbook">
+SELECT p.presenters.course.name FROM Presentation p   -&gt; INVALID
+</ns1108:programlisting>
+    by defining a collection variable,<ns1109:literal xmlns:ns1109="http://docbook.org/ns/docbook">ps</ns1109:literal> , via an  
+    <ns1110:literal xmlns:ns1110="http://docbook.org/ns/docbook">IN</ns1110:literal> clause</ns1107:para>
+<ns1111:programlisting xmlns:ns1111="http://docbook.org/ns/docbook">
+SELECT ps.course.name FROM Presentation p, IN(p.presenters) ps   -&gt; VALID
+</ns1111:programlisting>
+</ns1096:section>

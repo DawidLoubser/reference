@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6669:section xmlns:ns6669="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.lang.innerClasses.definingInnerClasses">
+  <ns6670:title xmlns:ns6670="http://docbook.org/ns/docbook">Defining and using inner classes</ns6670:title>
+  <ns6671:para xmlns:ns6671="http://docbook.org/ns/docbook">
+    To define an inner class, you simply put the class declaration within the body of another class.
+    <ns6672:programlisting xmlns:ns6672="http://docbook.org/ns/docbook">
+class A
+{
+      
+ 
+  class B
+  {
+      
+   }   
+}      
+      </ns6672:programlisting>
+  </ns6671:para>
+  <ns6673:section xmlns:ns6673="http://docbook.org/ns/docbook">
+    <ns6674:title xmlns:ns6674="http://docbook.org/ns/docbook">Life span of inner classes</ns6674:title>
+    <ns6675:para xmlns:ns6675="http://docbook.org/ns/docbook">
+      Note that B is not declared a static (class) member of the outer class, but as an instance
+      member instead. Consequently, every instance of B <ns6676:emphasis xmlns:ns6676="http://docbook.org/ns/docbook">can only be created and can only exist
+        within an instance of A</ns6676:emphasis>. Once the enclosing instance of A is deleted, the
+      instances of B created within that instance of A will also be deleted
+      <ns6677:note xmlns:ns6677="http://docbook.org/ns/docbook"><ns6678:para xmlns:ns6678="http://docbook.org/ns/docbook">
+        While some code maintains an external reference to an instance of B, neither that instance of
+        B nor the enclosing instance of A will be deleted, as the inner class instance member
+        maintains a reference to the outer class instance.
+      </ns6678:para></ns6677:note>
+    </ns6675:para>
+  </ns6673:section>
+  
+  <ns6679:section xmlns:ns6679="http://docbook.org/ns/docbook">
+    <ns6680:title xmlns:ns6680="http://docbook.org/ns/docbook">Inner class instance has access to private members of its outer class instance</ns6680:title>
+    <ns6681:para xmlns:ns6681="http://docbook.org/ns/docbook">
+      An inner class instance can directly access the private members of the outer class instance within
+      which it exists. For example
+      <ns6682:programlisting xmlns:ns6682="http://docbook.org/ns/docbook">
+class MonteCarloIntegrator
+{
+       
+   public double integrate(...)
+   {
+      for (int i=0; i&lt;numThreads; ++i)
+        new MonteCarloThread().run();
+   }
+        
+   private class MonteCarloThread extends Thread
+   {
+      public void run()
+      {
+        // Here we can directly access the private parameters
+        // and the private services of
+        // the MonteCarloIntegrator class.
+        ...
+      }  
+   }     
+     
+   private void somePrivateService() {...}     
+        
+   private double parameter1, parameter2;
+        
+   private static final int numThreads = 10;
+ }
+        </ns6682:programlisting>
+    </ns6681:para>
+  </ns6679:section>
+  
+  <ns6683:section xmlns:ns6683="http://docbook.org/ns/docbook">
+    <ns6684:title xmlns:ns6684="http://docbook.org/ns/docbook">Accessibility of inner classes</ns6684:title>
+    <ns6685:para xmlns:ns6685="http://docbook.org/ns/docbook">
+      Inner classes can be declared with any access level, <ns6686:abbrev xmlns:ns6686="http://docbook.org/ns/docbook">i.e.</ns6686:abbrev> they can be
+      declared <ns6687:literal xmlns:ns6687="http://docbook.org/ns/docbook">public</ns6687:literal>, <ns6688:literal xmlns:ns6688="http://docbook.org/ns/docbook">protected</ns6688:literal>, friendly or package scope,
+      and <ns6689:literal xmlns:ns6689="http://docbook.org/ns/docbook">private</ns6689:literal>.
+    </ns6685:para>
+    <ns6690:para xmlns:ns6690="http://docbook.org/ns/docbook">
+      Core drivers for using inner classes are scoping and encapsulation. For this reason one should
+      generally declare inner classes with private scope.
+    </ns6690:para>
+  </ns6683:section>
+  
+  
+  <ns6691:section xmlns:ns6691="http://docbook.org/ns/docbook">
+    <ns6692:title xmlns:ns6692="http://docbook.org/ns/docbook">Local classes</ns6692:title>
+    <ns6693:para xmlns:ns6693="http://docbook.org/ns/docbook">
+      A local class is a class which is defined within a block of code (for example within the body
+      of a method). This construct further reduces the scope of the class (the area where the class
+      can be directly accessed to not only within another class, but to within a particular block of
+      code.
+    </ns6693:para>
+    <ns6694:para xmlns:ns6694="http://docbook.org/ns/docbook">
+      For example, 
+      <ns6695:programlisting xmlns:ns6695="http://docbook.org/ns/docbook">
+class A
+{
+  public void f()
+  {
+     new Thread()
+     {
+        public void run()
+        {
+          // here the processing steps 
+          // to be performed in that thread.
+          ...
+        }
+     }.start();   
+  }
+}        
+        </ns6695:programlisting>
+    </ns6694:para>
+  </ns6691:section>
+  
+  
+  <ns6696:section xmlns:ns6696="http://docbook.org/ns/docbook">
+    <ns6697:title xmlns:ns6697="http://docbook.org/ns/docbook">Anonymous inner classes</ns6697:title>
+    <ns6698:para xmlns:ns6698="http://docbook.org/ns/docbook">
+      Anonymous classes are unnamed inner classes. The only point where the class itself is
+      referenced is upon instance creation. Usually all further interaction with that instance is
+      via some interface. Effectively this reduces the scope and accessibility of the inner class
+      even further.
+    </ns6698:para>
+    
+    <ns6699:para xmlns:ns6699="http://docbook.org/ns/docbook">
+      They are, however, quite commonly used for event adapters. For example
+      <ns6700:programlisting xmlns:ns6700="http://docbook.org/ns/docbook">
+import java.awt.*;
+import java.awt.event.*;
+
+public class MyFrame extends Frame
+{
+  public MyFrame()
+  {
+    addWindowListener (new WindowAdapter()
+                       {
+                         public void windowClosing (WindowEvent event)
+                           {System.exit(0);}
+                       });
+  }
+}
+</ns6700:programlisting>
+    </ns6699:para>
+    <ns6701:para xmlns:ns6701="http://docbook.org/ns/docbook">
+      The above defines an anonymous subclass of <ns6702:emphasis xmlns:ns6702="http://docbook.org/ns/docbook" role="verb">WindowAdapter</ns6702:emphasis> which overrides the
+      <ns6703:emphasis xmlns:ns6703="http://docbook.org/ns/docbook" role="verb">windowClosing()</ns6703:emphasis> event handler method. The above code is essentially
+      equivalent to the following, more conventional code:
+      <ns6704:programlisting xmlns:ns6704="http://docbook.org/ns/docbook">
+import java.awt.*;
+import java.awt.event.*;
+
+public class MyFrame extends Frame
+{
+  public MyFrame()
+  {
+    class MyWindowAdapter extends WindowAdapter
+    {
+      public void windowClosing (WindowEvent event)
+      {System.exit(0);}
+    }
+
+    addWindowListener (new MyWindowAdapter());
+  }
+}
+</ns6704:programlisting>
+    </ns6701:para>    
+  </ns6696:section>
+  
+  <ns6705:section xmlns:ns6705="http://docbook.org/ns/docbook">
+    <ns6706:title xmlns:ns6706="http://docbook.org/ns/docbook">Accessing the outer class instance</ns6706:title>
+    <ns6707:para xmlns:ns6707="http://docbook.org/ns/docbook">
+       At times the inner class instance will need to request services from its outer class
+       instance. In order to achieve this you could provide the inner class instance a handle to the
+      outer class instance as a constructor argument. This will, however, not work for anonymous
+      inner classes (as these can only be constructed via a default constructor) and is
+      unnecessarily messy too.
+    </ns6707:para>
+    <ns6708:para xmlns:ns6708="http://docbook.org/ns/docbook">
+      In Java the inner class instance can access its outer clas instance directly by using
+      <ns6709:literal xmlns:ns6709="http://docbook.org/ns/docbook">OuterClass.this</ns6709:literal>. For example
+      <ns6710:programlisting xmlns:ns6710="http://docbook.org/ns/docbook">
+class A
+{
+    public void f()
+    {
+        new Thread()
+        {
+            public void run()
+            {
+                x.doSomething(A.this);
+            }
+        }
+    }
+}        
+        </ns6710:programlisting>
+      In the above code the anonymous inner thread class calls the <ns6711:literal xmlns:ns6711="http://docbook.org/ns/docbook">doSomething</ns6711:literal>
+      method passing a handle to its outer class instance.
+    </ns6708:para>
+  </ns6705:section>
+  
+  
+</ns6669:section>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns635:section xmlns:ns635="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.clustering.configuration.setUpCluster">
+
+  <ns636:title xmlns:ns636="http://docbook.org/ns/docbook">Setting up JBoss for clustering</ns636:title>
+   <ns637:para xmlns:ns637="http://docbook.org/ns/docbook">
+      <ns638:emphasis xmlns:ns638="http://docbook.org/ns/docbook">JBoss</ns638:emphasis> ships with 3 standard configurations, 
+      <ns639:emphasis xmlns:ns639="http://docbook.org/ns/docbook">minimal</ns639:emphasis>, <ns640:emphasis xmlns:ns640="http://docbook.org/ns/docbook">default</ns640:emphasis> and
+      <ns641:emphasis xmlns:ns641="http://docbook.org/ns/docbook">all</ns641:emphasis>. Only the <ns642:emphasis xmlns:ns642="http://docbook.org/ns/docbook">all</ns642:emphasis> 
+      configuration is configured for clustering.
+   </ns637:para>
+   <ns643:para xmlns:ns643="http://docbook.org/ns/docbook">
+      Clustering support is deployed via a managed bean, <ns644:abbrev xmlns:ns644="http://docbook.org/ns/docbook">i.e.</ns644:abbrev> 
+      one simply copies
+      a configuration file into the <ns645:emphasis xmlns:ns645="http://docbook.org/ns/docbook">deploy</ns645:emphasis> directory. 
+      Alternatively, the clustering parameters can be modified dynamically 
+      (while <ns646:emphasis xmlns:ns646="http://docbook.org/ns/docbook">JBoss</ns646:emphasis> is
+      running) by simply modifying the configuration file.
+   </ns643:para>
+   <ns647:para xmlns:ns647="http://docbook.org/ns/docbook">
+      In this way clusters can be added and removed on the fly and their deployment
+      specifics can be modified dynamically.
+   </ns647:para>
+   
+   <ns648:section xmlns:ns648="http://docbook.org/ns/docbook">
+     <ns649:title xmlns:ns649="http://docbook.org/ns/docbook">Setting up a partition</ns649:title>
+     <ns650:para xmlns:ns650="http://docbook.org/ns/docbook">
+        To set up a partition, one needs to add a managed bean (<ns651:literal xmlns:ns651="http://docbook.org/ns/docbook">ClusterPartition</ns651:literal>)
+        to the <ns652:emphasis xmlns:ns652="http://docbook.org/ns/docbook">"all"</ns652:emphasis> configuration. This configuration comes with a configuration 
+        file, <ns653:literal xmlns:ns653="http://docbook.org/ns/docbook">cluster-service.xml</ns653:literal> which sets up the default partition as follows:
+<ns654:programlisting xmlns:ns654="http://docbook.org/ns/docbook">
+&lt;mbean code="org.jboss.ha.framework.server.ClusterPartition"
+       name="jboss:service=DefaultPartition"&gt;
+  &lt;attribute name="PartitionName"&gt;DefaultPartition&lt;/attribute&gt;
+  &lt;attribute name="DeadlockDetection"&gt;False&lt;/attribute&gt;
+
+  &lt;!-- The JavaGroups protocol configuration --&gt;
+  &lt;attribute name="PartitionConfig"&gt;
+    &lt;Config&gt;
+      &lt;!-- UDP: if you have a multihomed machine, 
+           set the bind_addr attribute to the appropriate NIC IP address --&gt;
+      &lt;!-- UDP: On Windows machines, because of the media sense feature
+           being broken with multicast (even after disabling media sense)
+           set the loopback attribute to true --&gt;
+      &lt;UDP mcast_addr="228.1.2.3" mcast_port="45566" bind_addr="192.168.1.5"
+           ip_ttl="64" ip_mcast="true"
+           mcast_send_buf_size="150000" mcast_recv_buf_size="80000" 
+           ucast_send_buf_size="150000" ucast_recv_buf_size="80000" 
+           loopback="false" /&gt;
+      &lt;PING timeout="2000" num_initial_members="3" 
+            up_thread="true" down_thread="true" /&gt;
+      &lt;MERGE2 min_interval="5000" max_interval="10000" /&gt;
+      &lt;FD up_thread="true" down_thread="true" /&gt;
+      &lt;VERIFY_SUSPECT timeout="1500"
+                      up_thread="true" down_thread="true" /&gt;
+      &lt;pbcast.STABLE desired_avg_gossip="20000"
+                     up_thread="true" down_thread="true" /&gt;
+      &lt;pbcast.NAKACK gc_lag="50" retransmit_timeout="300,600,1200,2400,4800"
+      &lt;pbcast.NAKACK gc_lag="50" retransmit_timeout="300,600,1200,2400,4800"
+                     up_thread="true" down_thread="true" /&gt;
+      &lt;UNICAST timeout="5000" window_size="100" min_threshold="10"
+               down_thread="true" /&gt;
+      &lt;FRAG frag_size="8192"
+            down_thread="true" up_thread="true" /&gt;
+      &lt;pbcast.GMS join_timeout="5000" join_retry_timeout="2000"
+                  shun="false" print_local_addr="true" /&gt;
+      &lt;pbcast.STATE_TRANSFER up_thread="true" down_thread="true" /&gt;
+    &lt;/Config&gt;
+  &lt;/attribute&gt;
+&lt;/mbean&gt;
+</ns654:programlisting>        
+     </ns650:para>
+   </ns648:section>
+</ns635:section>

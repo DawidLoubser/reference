@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The Java Statitics Daemon, jstatd</title>
+    <para>
+        The <literal>jstatd</literal> daemon is an RMI server that allows you to access local 
+        JVM processes via the monitoring tools like <literal>jps</literal>, <literal>jmap</literal>
+        <literal>jstack</literal> and <literal>jstat</literal> from remote machines.
+        <note><para>
+            This tool is only relevant if you want to monitor and analyze Java processes running
+            on remote machines. All the Java monitoring tools can be run against local processes
+            without requiring the esistence of the <literal>jstatd</literal> daemon.
+        </para></note>        
+    </para>
+    
+    <section>
+        <title>Providing networking access via a policies file</title>
+        <para>
+            The <literal>jstatd</literal> daemon needs to open a server socket on the
+            machine. We need to create a policy file, <literal>tools.policy</literal>,
+            which grants permissions to the monitoring tools (jstatd in particular)
+            to access local resources like network sockets.
+            
+        </para>
+        <para>
+            The following security policies file grants all permissions to the monitoring tools 
+            in the tools.jar:
+        </para>        
+        <programlisting><![CDATA[
+grant codebase "file:${java.home}/../lib/tools.jar" 
+{
+   permission java.security.AllPermission;
+};            
+            ]]></programlisting>
+    </section>
+
+    <section>
+        <title>Running the jstatd daemon</title>
+        <para>
+            To run the <literal>jstatd</literal> daemon against the policies file use
+            <programlisting><![CDATA[
+jstatd -p 2222 -J-Djava.security.policy=tools.policy
+]]></programlisting>
+            where <literal>2222</literal> is the port through which the RMI server accepts
+            connections.
+        </para>
+   </section>     
+</section>    

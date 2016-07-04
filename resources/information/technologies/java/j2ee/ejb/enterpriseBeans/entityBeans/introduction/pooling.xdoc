@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.introduction.pooling"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Entity bean instances can be pooled</title>
+  <para>
+    In principle entity beans could be created as clients require access to information
+    encapsulated by these beans and destroyed as the client no longer requires the information
+    or when the client disconnects. In practice this may lead to a huge number of object
+    creations and destructions with the corresponding computational overheads.
+  </para>
+  
+  <para>
+    In order to ensure a better scalability, application servers typically pool entity
+    objects, not only for use of a particular instance but also accross instances of the same
+    class. For example, a student entity object may be reused for different students.
+  </para>
+  
+  <para>
+    Beans in the pool should be able to release and acquire resources upon releasing the
+    bean back to the pool and reactivating the bean. To this end the container makes two
+    call-backs to the bean: ejbActivate() in which bean resources like sockets are acquired.
+    The bean is associated with a particular primary key and the bean state is populated after
+    activation via a call to <literal>ejbLoad()</literal>. ejbPassivate() in
+    which bean resources are released after the state of the bean has been saved into
+    persistent storage (The container calls <literal>ejbStore()</literal>
+    before calling <literal>ejbActivate()</literal>. The link between the EJB
+    object and the primary key is broken during passivation. 
+  </para>
+  
+  <figure id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.introduction.passivation_jpg">
+    <title>Beans are loaded after activation and stored before passivation.</title>
+    <graphic fileref="passivation.jpg"/>   
+  </figure>
+</section>

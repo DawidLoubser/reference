@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-03-12 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Mapping UML composition relationships onto Java</title>
+    <para> Note that Java does not natively support the concept of a composition relationship. For
+        example, looking at the code below
+        <programlisting language="Java">
+<xi:include parse="text" href="Order.java"/>						
+	</programlisting>
+        we would not know whether the order has association, aggregation or composition
+        relationships to the Client and Address classes. We need to look at the method bodies to see
+        what type of behaviour has been implemented for these elements. Understanding the domain, we
+        might expect that <itemizedlist>
+            <listitem>
+                <para> each order is associated with a client, </para>
+            </listitem>
+            <listitem>
+                <para> that an order has a delivery address via aggregation, and </para>
+            </listitem>
+            <listitem>
+                <para> that the order has line items via composition. </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para> When mapping composition onto a Java implementation, one should be guided by the
+        requirements for a composition relationship, <abbrev>i.e.</abbrev> by that <itemizedlist>
+            <listitem>
+                <para> the component is only accessible via the owner, </para>
+            </listitem>
+            <listitem>
+                <para> the component does not survive the owner, and </para>
+            </listitem>
+            <listitem>
+                <para> the component state is part of the owner state. </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para> One way to satisfy the first two requirements is to ensure that only the owner object
+        ever has a reference to the component. If only the owner has a reference to the component,
+        the component will become unreferenced an garbage collected upon the owner being garbage
+        collected. </para>
+    <para> The third requirement states that composition is a special form of an aggregation
+        relationship. If we observe state observability we need to also implement state change
+        notification. In aggregation the aggregate object had to register as state change listener
+        with its components and, upon receiving a state change event, the aggregate object had to
+        assess which aspects of its state is affected by the state change of the component and
+        publish the relevant state change notification event to its state listeners. In the case of
+        composition the component is only accessible via the owner and hence its state can only be
+        modified by the owner (or one of the components of the owner). The owner need thus not
+        necessarily register as state change listener with the component -- it might directly issue
+        a state change event upon having changed the state of its component. </para>
+    <figure>
+        <title>An account has a balance via composition</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="400" fileref="account.jpg"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+    <para> As an example, consider an account which has an instance of <literal>Money</literal>
+        (amount in a currency) for the balance. The relationship must be composition as the balance
+        should only be accessible by the account itself. If you want to change the balance you will
+        need to credit or debit the account. Furthermore, if the account is deleted, the balance
+        should be deleted too. </para>
+    <para> One way to implement this is to ensure that the account never returns a handle to the
+        balance.
+        <programlisting language="Java">
+<xi:include parse="text" href="Account.java"/>
+	</programlisting>
+        with the <literal>Money</literal> class simply defined as:
+        <programlisting language="Java">
+<xi:include parse="text" href="Money.java"/>
+	</programlisting>
+    </para>
+
+</section>

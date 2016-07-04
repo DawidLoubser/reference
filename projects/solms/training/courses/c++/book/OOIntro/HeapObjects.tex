@@ -1,0 +1,32 @@
+\section{Creating Objects on the Heap}
+
+So far we created objects on the stack. The objects were
+scoped to within a block, often a function body (e.g.\ \verb+main+) and
+are stored within the stack frame of that object. Objects
+which have been declared on the stack are automatically 
+deleted when they go out of scope.
+
+However, the stack is a limited resource. Furthermore, one often requires
+objects to survive the scope in which they have been created. More often
+than not, one would want to create objects on the heap. This requires,
+however, that the developer has to control the memory management of the
+object and that introduces considerable risks in terms of potential
+memory losses as well as dangling pointers. The latter happens if an
+object is deleted while another part of the application still has a
+pointer to it. At a later stage this pointer could be used resulting
+in system corruption or system crash.
+
+This problem is non-trivial -- so much so that many commercial C++ applications
+end up with memory leaks. In fact, there is a market for C++ memory leak 
+detector tools. From a more purist perspective the memory management is best
+tackled through a solid design (perhaps using UML) whereeach object has 
+ultimately one owner who takes over the memory and pointer management for
+that object.
+
+Objects are created on the heap via the new operator. They are deleted via
+the delete operator which ultimately calls the destructor. Below is an
+application which creates a collection of accounts on the heap, sends them 
+through to a function and finally deletes them:
+
+\noindent {\small \input{OOIntro/Programs/Account6.cpp}}
+

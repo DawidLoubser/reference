@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author D. Loubser -->
+<section id="resources.information.technologies.general.networking.tcp.sockets.sockets"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>TCP Sockets</title>
+  
+  <!-- TODO: Picture ? -->
+  
+  <para>
+    <emphasis>Sockets</emphasis> are the fundamental construct for working with a <abbrev>TCP</abbrev>
+    connection. A sockets represents one side of a TCP <emphasis>connection</emphasis>: when connected
+    to another socket, bi-directional communication is possible.
+  </para>
+  <para>
+    Sockets are implemented in many different programming languages and for most operating systems, which means
+    that they present a uniform approach to connected networking.
+  </para>
+  
+  <section>
+    <title>Using Sockets</title>
+    <para>
+      A <emphasis>client</emphasis> that makes use of sockets to communicate with a <emphasis>server</emphasis> 
+      typically involves the following steps:
+      <orderedlist>
+        <listitem>
+          <formalpara>
+            <title>Create the local socket</title>
+            <para>
+              Though every socket is bound to an IP address and a port, on the client one typically does
+              not care what these are (i.e. allow the network layer pick a convenient address). The
+              client initiates the connection, and whatever address/port combination it uses, the server can simply
+              send information back to the originator of the connection.
+            </para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>Find the server</title>
+            <para>
+              More often than not, the server is known only by name (e.g. <literal>www.google.com</literal>, or a
+              local server, such as <literal>gummybear</literal>). Using <abbrev>DNS</abbrev> (the 
+              <emphasis>Domain Naming Service</emphasis>) the <abbrev>IP</abbrev> address of the server needs to
+              be looked up. Virtually every programming language or operating environment provide simple, standard
+              means to do this.
+            </para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>Establish a connection to the server</title>
+            <para>
+              Also called <quote>opening the socket</quote>, this step allows the underlying transport layer (e.g. the <abbrev>TCP</abbrev>
+              protocol) to perform everything it needs to in order to establish a reliable connection. It is very important to
+              know upfront the <emphasis>port</emphasis> (service) to which the connection should be opened.
+            </para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>Communicate according to the protocol</title>
+            <para>
+              Low-level infrastructure and protocols (such as <abbrev>TCP</abbrev>) provide a service analogous
+              to a paved road - it <emphasis>does not provide the rules that govern the behaviour of the
+              things it transports</emphasis>. Every networked application abides by a <emphasis>protocol</emphasis>,
+              which is a set of rules that describe how communication should occur. Typically, a standard and well-defined
+              protocol (such as <abbrev>HTTP</abbrev>) is used, though new applications often define their own protocols.
+              The protocol specifies the expected pattern (send/receive) and format of data to be exchanged.
+            </para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>Disconnect</title>
+            <para>
+              Either the client or server may close the connection through their socket. The corresponding
+              socket on the other end of the connection will typically be closed automatically (as a feature
+              of the transport protocol).
+            </para>
+          </formalpara>
+        </listitem>
+      </orderedlist>
+    </para>
+    <para>
+      In addition to the usage pattern, TCP sockets allow for the specification of several behaviour constraints,
+      such as <emphasis>timeout</emphasis> which can cause the connection (or connection attempt) to terminate
+      automatically after a specified period of inactivity, etc.
+    </para>
+  </section>
+  
+  <section>
+    <title>The history of Sockets</title>
+    <para>
+      The <emphasis>BSD</emphasis> operating system introduced network sockets in 1983 with the <emphasis>Berkeley sockets API</emphasis>.
+      Because all BSD components have historically been developed under an open-source license, this implementation has been
+      ported, virtually unchanged, to almost all other operating systems that support sockets.
+    </para>
+  </section>
+  
+  
+</section>

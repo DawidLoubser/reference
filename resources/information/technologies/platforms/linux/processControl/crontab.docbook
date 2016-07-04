@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns3742:section xmlns:ns3742="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.processControl.crontab">
+
+  <ns3743:title xmlns:ns3743="http://docbook.org/ns/docbook">Scheduling jobs for periodic processing via <ns3744:command xmlns:ns3744="http://docbook.org/ns/docbook">crontab</ns3744:command></ns3743:title>
+  <ns3745:para xmlns:ns3745="http://docbook.org/ns/docbook">
+    At times you may want to schedule recurring jobs. For example, every Friday you may
+    want to run a system backup or every morning at 7h00 you may want to download the 
+    price list for the day. In such cases you can use the cron facility.
+  </ns3745:para>
+
+  <ns3746:section xmlns:ns3746="http://docbook.org/ns/docbook"><ns3747:title xmlns:ns3747="http://docbook.org/ns/docbook">Restricting access to <ns3748:command xmlns:ns3748="http://docbook.org/ns/docbook">cron</ns3748:command></ns3747:title>
+    <ns3749:para xmlns:ns3749="http://docbook.org/ns/docbook">
+      Firstly, any user who wishes to submit jobs to the cron daemon must be a member of the cron
+      group. You can add a user to the cron group via
+      <ns3750:programlisting xmlns:ns3750="http://docbook.org/ns/docbook">
+gpasswd -a hamlet cron        
+        </ns3750:programlisting>
+    </ns3749:para>
+    <ns3751:para xmlns:ns3751="http://docbook.org/ns/docbook">
+      Access to the <ns3752:command xmlns:ns3752="http://docbook.org/ns/docbook">cron</ns3752:command> command is controlled through two files,
+      <ns3753:filename xmlns:ns3753="http://docbook.org/ns/docbook">/etc/cron.allow</ns3753:filename> and <ns3754:filename xmlns:ns3754="http://docbook.org/ns/docbook">/etc/cron.deny</ns3754:filename>.
+      If neither of the files exist then only the superuser can schedule commands via
+      <ns3755:command xmlns:ns3755="http://docbook.org/ns/docbook">cron</ns3755:command>.
+      Usually one only uses one of the two files:
+      <ns3756:itemizedlist xmlns:ns3756="http://docbook.org/ns/docbook">
+        <ns3757:listitem xmlns:ns3757="http://docbook.org/ns/docbook"><ns3758:para xmlns:ns3758="http://docbook.org/ns/docbook">
+          If one wants to deny access by default and only grant access to specified users,
+          one only has a <ns3759:filename xmlns:ns3759="http://docbook.org/ns/docbook">/etc/cron.allow</ns3759:filename>. The users listed in that 
+          file will be able to schedule jobs via <ns3760:command xmlns:ns3760="http://docbook.org/ns/docbook">crontab</ns3760:command>. If the file
+          is empty then only the superuser is able to use <ns3761:command xmlns:ns3761="http://docbook.org/ns/docbook">crontab</ns3761:command>.
+        </ns3758:para></ns3757:listitem>
+        <ns3762:listitem xmlns:ns3762="http://docbook.org/ns/docbook"><ns3763:para xmlns:ns3763="http://docbook.org/ns/docbook">
+          If one wants to allow all users by default to be able to use <ns3764:command xmlns:ns3764="http://docbook.org/ns/docbook">cron</ns3764:command>,
+          then one uses the <ns3765:filename xmlns:ns3765="http://docbook.org/ns/docbook">/etc/cron.deny</ns3765:filename> file to list those users which
+          are explicitly prevented from using it. If the file is empty, all users can schedule
+          jobs via <ns3766:command xmlns:ns3766="http://docbook.org/ns/docbook">crontab</ns3766:command>.
+        </ns3763:para></ns3762:listitem>
+      </ns3756:itemizedlist>
+    </ns3751:para>
+  </ns3746:section>
+  
+  <ns3767:section xmlns:ns3767="http://docbook.org/ns/docbook">
+    <ns3768:title xmlns:ns3768="http://docbook.org/ns/docbook">Submitting a job to <ns3769:command xmlns:ns3769="http://docbook.org/ns/docbook">cron</ns3769:command></ns3768:title>
+    <ns3770:para xmlns:ns3770="http://docbook.org/ns/docbook">
+      Users will submit their routinely recurring jobs within a file which is located
+      in the <ns3771:filename xmlns:ns3771="http://docbook.org/ns/docbook">/var/spool/cron/tabs</ns3771:filename> directory and which has
+      the user name as filename. The crontab files should NOT be edited directly.
+      Instead they should be edited via the 
+      <ns3772:cmdsynopsis xmlns:ns3772="http://docbook.org/ns/docbook"><ns3773:command xmlns:ns3773="http://docbook.org/ns/docbook">
+crontab -e        
+      </ns3773:command></ns3772:cmdsynopsis>
+      which launches your default editor (as specified with the <ns3774:varname xmlns:ns3774="http://docbook.org/ns/docbook">EDITOR</ns3774:varname>
+      environment variable -- <ns3775:command xmlns:ns3775="http://docbook.org/ns/docbook">vi</ns3775:command> being the default) to edit
+      your crontab file.
+      The file contains one line for each job which has the entries shown in
+      <ns3776:xref xmlns:ns3776="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.processControl.cronFileStructure"/>.
+      An asterisk for any of the fields specifies that field can have any value.
+      
+      <ns3777:table xmlns:ns3777="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.processControl.cronFileStructure">
+        <ns3778:title xmlns:ns3778="http://docbook.org/ns/docbook">The structure of the user's <ns3779:command xmlns:ns3779="http://docbook.org/ns/docbook">cron</ns3779:command> files</ns3778:title>
+        <ns3780:tgroup xmlns:ns3780="http://docbook.org/ns/docbook" cols="6">
+          <ns3781:tbody xmlns:ns3781="http://docbook.org/ns/docbook">
+            <ns3782:row xmlns:ns3782="http://docbook.org/ns/docbook">
+              <ns3783:entry xmlns:ns3783="http://docbook.org/ns/docbook">minute</ns3783:entry>
+              <ns3784:entry xmlns:ns3784="http://docbook.org/ns/docbook">hour</ns3784:entry>
+              <ns3785:entry xmlns:ns3785="http://docbook.org/ns/docbook">dayOfMonth</ns3785:entry>
+              <ns3786:entry xmlns:ns3786="http://docbook.org/ns/docbook">monthOfYear</ns3786:entry>
+              <ns3787:entry xmlns:ns3787="http://docbook.org/ns/docbook">dayOfWeek</ns3787:entry>
+              <ns3788:entry xmlns:ns3788="http://docbook.org/ns/docbook">command</ns3788:entry>
+            </ns3782:row>
+             <ns3789:row xmlns:ns3789="http://docbook.org/ns/docbook">
+              <ns3790:entry xmlns:ns3790="http://docbook.org/ns/docbook">00 - 59</ns3790:entry>
+              <ns3791:entry xmlns:ns3791="http://docbook.org/ns/docbook">00 - 23</ns3791:entry>
+              <ns3792:entry xmlns:ns3792="http://docbook.org/ns/docbook">00 - 31</ns3792:entry>
+              <ns3793:entry xmlns:ns3793="http://docbook.org/ns/docbook">01 - 12</ns3793:entry>
+              <ns3794:entry xmlns:ns3794="http://docbook.org/ns/docbook">01 - 07</ns3794:entry>
+              <ns3795:entry xmlns:ns3795="http://docbook.org/ns/docbook"> command to be scheduled</ns3795:entry>
+            </ns3789:row>
+          </ns3781:tbody>
+        </ns3780:tgroup>
+      </ns3777:table>
+    </ns3770:para>
+    <ns3796:para xmlns:ns3796="http://docbook.org/ns/docbook">
+      For example, assume that every Friday at 21h30 you would want to find all the 
+      <ns3797:quote xmlns:ns3797="http://docbook.org/ns/docbook"><ns3798:emphasis xmlns:ns3798="http://docbook.org/ns/docbook">transaction failed</ns3798:emphasis></ns3797:quote> lines in a log file
+      and mail them through to user <ns3799:emphasis xmlns:ns3799="http://docbook.org/ns/docbook">jack</ns3799:emphasis>. You could enter
+      the following line into the user's tab file:
+      <ns3800:programlisting xmlns:ns3800="http://docbook.org/ns/docbook">
+30 21 * * 05 grep 'transaction failed' /var/log/transactionLog | mail -s"failed transactions" jack    
+      </ns3800:programlisting>
+    </ns3796:para>
+    
+    <ns3801:section xmlns:ns3801="http://docbook.org/ns/docbook">
+      <ns3802:title xmlns:ns3802="http://docbook.org/ns/docbook">Viewing and removing all crontab entries</ns3802:title>
+      <ns3803:para xmlns:ns3803="http://docbook.org/ns/docbook">
+        You can use the command
+        <ns3804:cmdsynopsis xmlns:ns3804="http://docbook.org/ns/docbook"><ns3805:command xmlns:ns3805="http://docbook.org/ns/docbook">
+crontab -l          
+        </ns3805:command></ns3804:cmdsynopsis>
+        to list the crontab entries. 
+      </ns3803:para>
+      <ns3806:para xmlns:ns3806="http://docbook.org/ns/docbook">
+        You can use 
+        <ns3807:cmdsynopsis xmlns:ns3807="http://docbook.org/ns/docbook"><ns3808:command xmlns:ns3808="http://docbook.org/ns/docbook">
+crontab -e          
+        </ns3808:command></ns3807:cmdsynopsis>
+        to edit the crontab file for your user and delete the entries you want to remove.
+        Alternatively you can use
+        <ns3809:cmdsynopsis xmlns:ns3809="http://docbook.org/ns/docbook"><ns3810:command xmlns:ns3810="http://docbook.org/ns/docbook">
+crontab -r          
+        </ns3810:command></ns3809:cmdsynopsis>
+        to remove all the entries from your crontab file.
+      </ns3806:para>
+    </ns3801:section>
+  </ns3767:section>
+
+  
+  <ns3811:section xmlns:ns3811="http://docbook.org/ns/docbook">
+    <ns3812:title xmlns:ns3812="http://docbook.org/ns/docbook">Specifying standard hourly, daily, weekly and monthly jobs</ns3812:title>
+    <ns3813:para xmlns:ns3813="http://docbook.org/ns/docbook">
+      In addition to the user's crontab file, Linux supports a separate system-wide 
+      hourly, daily and monthly scheduling mechanism. For this purpose there are
+      the directories
+      <ns3814:filename xmlns:ns3814="http://docbook.org/ns/docbook">/etc/cron.hourly</ns3814:filename>, <ns3815:filename xmlns:ns3815="http://docbook.org/ns/docbook">/etc/cron.daily</ns3815:filename>,
+      <ns3816:filename xmlns:ns3816="http://docbook.org/ns/docbook">/etc/cron.weekly</ns3816:filename> and <ns3817:filename xmlns:ns3817="http://docbook.org/ns/docbook">/etc/cron.monthly</ns3817:filename>.
+      Shell scripts placed in these directories will be run from the <ns3818:varname xmlns:ns3818="http://docbook.org/ns/docbook">root</ns3818:varname>
+      user in the corresponding frequency.
+    </ns3813:para>
+    <ns3819:para xmlns:ns3819="http://docbook.org/ns/docbook">
+      For example, on most Linux distributions, the <ns3820:filename xmlns:ns3820="http://docbook.org/ns/docbook">/etc/cron.daily</ns3820:filename>
+      includes <ns3821:command xmlns:ns3821="http://docbook.org/ns/docbook">logrotate</ns3821:command> which rotates and compresses system
+      log files.
+    </ns3819:para>
+    
+    <ns3822:section xmlns:ns3822="http://docbook.org/ns/docbook">
+      <ns3823:title xmlns:ns3823="http://docbook.org/ns/docbook">Configuration via <ns3824:filename xmlns:ns3824="http://docbook.org/ns/docbook">/etc/crontab</ns3824:filename></ns3823:title>
+      <ns3825:para xmlns:ns3825="http://docbook.org/ns/docbook">
+        The <ns3826:filename xmlns:ns3826="http://docbook.org/ns/docbook">/etc/crontab</ns3826:filename> file contains the configuration information
+        for the standard hourly, daily, weekly and monthly schedules. It specifies
+        <ns3827:itemizedlist xmlns:ns3827="http://docbook.org/ns/docbook">
+          <ns3828:listitem xmlns:ns3828="http://docbook.org/ns/docbook"><ns3829:para xmlns:ns3829="http://docbook.org/ns/docbook">
+            the shell from which the scheduled jobs should be run,  
+          </ns3829:para></ns3828:listitem>
+          <ns3830:listitem xmlns:ns3830="http://docbook.org/ns/docbook"><ns3831:para xmlns:ns3831="http://docbook.org/ns/docbook">
+            the <ns3832:varname xmlns:ns3832="http://docbook.org/ns/docbook">PATH</ns3832:varname> environment variable to be used,
+          </ns3831:para></ns3830:listitem>
+          <ns3833:listitem xmlns:ns3833="http://docbook.org/ns/docbook"><ns3834:para xmlns:ns3834="http://docbook.org/ns/docbook">
+            the user (typically <ns3835:varname xmlns:ns3835="http://docbook.org/ns/docbook">root</ns3835:varname>) to be mailed with the
+            job outputs,
+          </ns3834:para></ns3833:listitem>
+          <ns3836:listitem xmlns:ns3836="http://docbook.org/ns/docbook"><ns3837:para xmlns:ns3837="http://docbook.org/ns/docbook">
+            and for each interval when the jobs are to be run and under which user
+            they should be run.
+          </ns3837:para></ns3836:listitem>
+        </ns3827:itemizedlist>
+        Below is an example <ns3838:filename xmlns:ns3838="http://docbook.org/ns/docbook">/etc/crontab</ns3838:filename> file  :
+        <ns3839:programlisting xmlns:ns3839="http://docbook.org/ns/docbook">
+SHELL=/bin/sh
+PATH=/usr/bin:/usr/sbin:/sbin:/bin:/usr/lib/news/bin
+MAILTO=root
+#
+# check scripts in cron.hourly, cron.daily, cron.weekly, and cron.monthly
+#
+-*/15 * * * *   root  test -x /usr/lib/cron/run-crons &amp;&amp; /usr/lib/cron/run-crons &gt;/dev/null 2&gt;&amp;1
+59 *  * * *     root  rm -f /var/spool/cron/lastrun/cron.hourly
+14 0  * * *     root  rm -f /var/spool/cron/lastrun/cron.daily
+29 0  * * 6     root  rm -f /var/spool/cron/lastrun/cron.weekly
+44 0  1 * *     root  rm -f /var/spool/cron/lastrun/cron.monthly
+        </ns3839:programlisting>
+      </ns3825:para>
+    </ns3822:section>
+  </ns3811:section>
+</ns3742:section>

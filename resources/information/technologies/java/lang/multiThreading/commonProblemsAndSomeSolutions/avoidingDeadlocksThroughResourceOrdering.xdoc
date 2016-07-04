@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+    id="resources.information.tecnologies.java.lang.multiThreading.commonProblemsAndSomeSolutions.avoidingDeadlocksThroughResourceOrdering."
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title role="Avoiding Deadlocks through Resource Ordering">Avoiding Deadlocks through Resource
+        Ordering</title>
+    <para>In some cases it might be necessary for a thread to hold multiple monitors simultaneously.
+        If the threads acquire the monitors actively via the<emphasis role="verb">synchronized(o)</emphasis> 
+        construct, then it is possible to write a simple algorithm which is guaranteed to be deadlock-free.</para>
+    <!--<figure>-->
+        <!--<title>Resource ordering</title>-->
+        <!--<graphic fileref="ResourceOrdering.gif" />-->
+    <!--</figure>-->
+    <para>Introducing a global ordering algorithm for resources guarantees and enforcing that all
+        threads asquire multiple monitors according to this global ordering guarantees a
+        deadlock-free algorithm.</para>
+    <para>If one introduces a global ordering rule and one enforces that all threads which have to
+        hold multiple monitors simultaneously acquire these monitors accoring to the global
+        ordering, then a deadlock cannot arise.</para>
+    <para>For example, if thread <emphasis role="verb">o</emphasis> in figure: ResourceOrdering
+        starts and acquires the first monitor it requires, then thread <emphasis role="verb"
+        >x</emphasis> cannot acquire more than one monitor until thread <emphasis role="verb"
+        >o</emphasis> releases all the monitors it is holding. Thread <emphasis role="verb"
+        >o</emphasis> will always be able to continue. Similarly, if thread <emphasis role="verb"
+        >x</emphasis> managed to acquire 2 or more of the monitors it needs, thread <emphasis
+            role="verb">o</emphasis> cannot grab more than one monitor before thread <emphasis
+            role="verb">x</emphasis> has completed its task and released all the monitors it is
+        holding (except possibly the first one).</para>
+    <para>The following listing implements the global ordering strategy and hence resolves the
+        deadlock situation of the previous example:</para>
+    <para>
+        <programlisting>
+<xi:include parse="text" href="source/DeadLockResolved.java" />
+</programlisting>
+    </para>
+    <para>The same situation arises when one calls a synchronized method of one object from a
+        synchronized method of another object. Again, even though the re-design is not necessarily
+        always trivial, one should generally avoid making blocking calls from synchronized
+    methods.</para>
+</section>

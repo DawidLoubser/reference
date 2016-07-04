@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://www.solms.co.za/entities/contactDetails"
+    xmlns="http://www.solms.co.za/entities/contactDetails"
+    elementFormDefault="qualified" attributeFormDefault="unqualified"> 
+
+    <xs:simpleType name="TelNo">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="0[1-9]{2,4} [1-9][0-9]{2} [0-9]{1,4}"/>
+        </xs:restriction>    
+    </xs:simpleType>
+    
+    <xs:simpleType name="EmailAddress">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9a-zA-Z]+@([0-9a-zA-Z][-\w]*[0-9a-zA-Z].)+[a-zA-Z]{2,9}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="Address">
+        <xs:sequence>
+            <xs:element name="addressLine" type="xs:string" minOccurs="2" maxOccurs="4"/>
+            <xs:element name="postalCode">
+                <xs:simpleType>
+                    <xs:restriction base="xs:positiveInteger">
+                        <xs:maxInclusive value="9999"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="ContactDetails">
+        <xs:sequence>
+            <xs:element name="telNo" type="TelNo"/>
+            <xs:element name="emailAddress" type="EmailAddress"/>
+            <xs:element name="postalAddress" type="Address"/>
+            <xs:element name="physicalAddress" type="Address" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="contactdetails" type="ContactDetails"/>
+ 
+</xs:schema>

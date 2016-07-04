@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section SYSTEM "file:/usr/share/sgml/db42xml/docbookx.dtd"--><ns2029:section xmlns:ns2029="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.fileSystem.prepareFloppy">
+
+  <ns2030:title xmlns:ns2030="http://docbook.org/ns/docbook">Preparing a floppy disk</ns2030:title>
+  <ns2031:para xmlns:ns2031="http://docbook.org/ns/docbook">
+    To prepare a floppy disk from scratch you have to
+    <ns2032:orderedlist xmlns:ns2032="http://docbook.org/ns/docbook">
+      <ns2033:listitem xmlns:ns2033="http://docbook.org/ns/docbook"><ns2034:para xmlns:ns2034="http://docbook.org/ns/docbook">
+         Format the floppy.
+      </ns2034:para></ns2033:listitem>
+      <ns2035:listitem xmlns:ns2035="http://docbook.org/ns/docbook"><ns2036:para xmlns:ns2036="http://docbook.org/ns/docbook">
+        Make the file system to be used by the floppy.
+      </ns2036:para></ns2035:listitem>
+    </ns2032:orderedlist>
+  </ns2031:para>
+  
+  <ns2037:section xmlns:ns2037="http://docbook.org/ns/docbook">
+    <ns2038:title xmlns:ns2038="http://docbook.org/ns/docbook">Setting the parameters for the floppy disk device</ns2038:title>
+    <ns2039:para xmlns:ns2039="http://docbook.org/ns/docbook">
+      The floppy disk parameters supported by the kernel are contained in
+      the file <ns2040:filename xmlns:ns2040="http://docbook.org/ns/docbook">/etc/fdprm</ns2040:filename>. Its contents is something
+      like this:
+      <ns2041:programlisting xmlns:ns2041="http://docbook.org/ns/docbook">
+#               size sec/t hds trk stre gap  rate spec1 fmt_gap
+360/360          720     9   2  40    0 0x2A 0x02 0xDF     0x50
+1200/1200       2400    15   2  80    0 0x1B 0x00 0xDF     0x54
+360/720          720     9   2  40    1 0x2A 0x02 0xDF     0x50
+720/720         1440     9   2  80    0 0x2A 0x02 0xDF     0x50
+720/1440        1440     9   2  80    0 0x2A 0x02 0xDF     0x50
+360/1200         720     9   2  40    1 0x23 0x01 0xDF     0x50
+720/1200        1440     9   2  80    0 0x23 0x01 0xDF     0x50
+1440/1440       2880    18   2  80    0 0x1B 0x00 0xCF     0x6C
+
+# Non-standard disk formats:
+
+# BEWARE: They're incomplete and possibly incorrect. The only reason why
+#         they are in this file is to show how such formats are added.
+
+1440/1200       2880    18   2  80    0 ???? ???? ????     ???? # ?????
+1680/1440       3360    21   2  80    0 0x0C 0x00 0xCF     0x6C # ?????
+
+# Add user-specific formats here
+cbm1581         1600    10   2  80    2 0x2A 0x02 0xDF     0x2E
+800/720         1600    10   2  80    0 0x2A 0x02 0xDF     0x2E
+        </ns2041:programlisting>
+        Setting the parameter of the floppy disk device through <ns2042:command xmlns:ns2042="http://docbook.org/ns/docbook">fdprm</ns2042:command>
+        ensures that the <ns2043:command xmlns:ns2043="http://docbook.org/ns/docbook">fdformat</ns2043:command> formats disks inserted into that
+        device to that size. For example,
+        <ns2044:programlisting xmlns:ns2044="http://docbook.org/ns/docbook">
+fdfprm /dev/fd0 1440/1440        
+        </ns2044:programlisting>
+        sets the parameters of <ns2045:filename xmlns:ns2045="http://docbook.org/ns/docbook">/dev/fd0</ns2045:filename>to the standard 1.44kB floppy size
+        and floppies inserted into that device will be formatted to that size.
+    </ns2039:para>
+  </ns2037:section>
+  
+  <ns2046:section xmlns:ns2046="http://docbook.org/ns/docbook">
+    <ns2047:title xmlns:ns2047="http://docbook.org/ns/docbook">Formatting a floppy disk</ns2047:title>
+    <ns2048:para xmlns:ns2048="http://docbook.org/ns/docbook">
+      Once the parameters of the floppy have been set, <ns2049:command xmlns:ns2049="http://docbook.org/ns/docbook">fdformat</ns2049:command>,
+      will format the floppy according to those parameters. Typically one simply enters
+      <ns2050:programlisting xmlns:ns2050="http://docbook.org/ns/docbook">
+fdformat /dev/fd0      
+      </ns2050:programlisting>
+      <ns2051:note xmlns:ns2051="http://docbook.org/ns/docbook">
+        <ns2052:para xmlns:ns2052="http://docbook.org/ns/docbook">
+          The floppy disk is formatted, but it does not yet contain a file system.
+        </ns2052:para>
+      </ns2051:note>
+    </ns2048:para>
+  </ns2046:section>
+  
+  <ns2053:section xmlns:ns2053="http://docbook.org/ns/docbook">
+    <ns2054:title xmlns:ns2054="http://docbook.org/ns/docbook">Putting a Linux file system on the floppy</ns2054:title>
+    <ns2055:para xmlns:ns2055="http://docbook.org/ns/docbook">
+       To put a standard a Linux <ns2056:emphasis xmlns:ns2056="http://docbook.org/ns/docbook">ext2fs</ns2056:emphasis> onto a floppy we
+       use 
+       <ns2057:programlisting xmlns:ns2057="http://docbook.org/ns/docbook">
+mke2fs /dev/fd0       
+       </ns2057:programlisting>
+       <ns2058:note xmlns:ns2058="http://docbook.org/ns/docbook">
+         <ns2059:para xmlns:ns2059="http://docbook.org/ns/docbook">
+           A floppy disk is too small for a journaling file system like <ns2060:emphasis xmlns:ns2060="http://docbook.org/ns/docbook">ext3fs</ns2060:emphasis>
+           (for example, <ns2061:emphasis xmlns:ns2061="http://docbook.org/ns/docbook">reiserfs</ns2061:emphasis>).
+         </ns2059:para>
+       </ns2058:note>
+       To check the file system, use
+       <ns2062:programlisting xmlns:ns2062="http://docbook.org/ns/docbook">
+e2fsck /dev/fd0       
+       </ns2062:programlisting>
+       It will report something like
+       <ns2063:programlisting xmlns:ns2063="http://docbook.org/ns/docbook">
+e2fsck 1.28 (31-Aug-2002)
+/dev/fd0: clean, 11/184 files, 41/1440 blocks
+       </ns2063:programlisting>
+       if everything is clean and the errors otherwise.
+    </ns2055:para>
+  </ns2053:section>
+  
+  <ns2064:section xmlns:ns2064="http://docbook.org/ns/docbook">
+    <ns2065:title xmlns:ns2065="http://docbook.org/ns/docbook">Putting a MSDOS file system on the floppy</ns2065:title>
+    <ns2066:para xmlns:ns2066="http://docbook.org/ns/docbook">
+       A Linux file system is nice as long as you expect to use the floppy only on Linux
+       machines. If the floppy is also to be used on Windows machines, we need to put
+       a MSDOS file system on it. This is done via
+       <ns2067:programlisting xmlns:ns2067="http://docbook.org/ns/docbook">
+mkdosfs /dev/fd0       
+       </ns2067:programlisting>
+       To check the DOS file system use
+       <ns2068:programlisting xmlns:ns2068="http://docbook.org/ns/docbook">
+dosfsck /dev/fd0       
+       </ns2068:programlisting>
+       It will report something like
+       <ns2069:programlisting xmlns:ns2069="http://docbook.org/ns/docbook">
+dosfsck 2.8, 28 Feb 2001, FAT32, LFN
+/dev/fd0: 1 files, 1/2847 clusters
+       </ns2069:programlisting>
+       as well as the errors if there are any.
+    </ns2066:para>
+  </ns2064:section>
+  
+  <ns2070:section xmlns:ns2070="http://docbook.org/ns/docbook">
+    <ns2071:title xmlns:ns2071="http://docbook.org/ns/docbook">Mounting/unmounting the floppy</ns2071:title>
+    <ns2072:para xmlns:ns2072="http://docbook.org/ns/docbook">
+      We mount and unmount floppies just like any other device. For example
+      <ns2073:programlisting xmlns:ns2073="http://docbook.org/ns/docbook">
+mount /dev/fd0 /mnt/floppy      
+      </ns2073:programlisting>
+      mounts a floppy disk and
+      <ns2074:programlisting xmlns:ns2074="http://docbook.org/ns/docbook">
+umount /dev/fd0      
+      </ns2074:programlisting>
+      or 
+      <ns2075:programlisting xmlns:ns2075="http://docbook.org/ns/docbook">
+umount /mnt/floppy      
+      </ns2075:programlisting>
+      will un-mount it again.
+    </ns2072:para>
+  </ns2070:section>
+</ns2029:section>

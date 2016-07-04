@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>
+        Accessing overridden properties
+    </title>
+    <indexterm><primary>oclAsType</primary></indexterm>
+    <para>
+        In exceptional cases, one may need to specify constraints on a property of the superclass which is overridden in the subclass.
+        In order to access such an overridden property of the superclass, one uses the <literal>oclAsType</literal> operator.
+    </para>
+    <para>
+        For example, assume we have a <literal>Mercedes_C200</literal> class which has as specialization an 
+        <literal>Alpine_Merc_200</literal>
+        class which is a modification of the latter. Mercedes may be the manufacturer of the vanilla Mercedes C200 class, but the
+        Alpine Mercedes C200 is manufactured by Alpine. We may want to constrain that the manufacturer of  the
+        the superclass, <literal>Mercedes_C200</literal>, is Mercedes:
+        <programlisting><![CDATA[
+context Alpine_Merc_C200  
+    inv: self.oclAsType(Mercedes_C200).manufacturer = 'Mercedes'
+            ]]></programlisting>
+    </para>
+</section>    

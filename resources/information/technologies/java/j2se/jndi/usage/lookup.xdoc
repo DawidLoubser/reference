@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2se.jndi.usage.lookup"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="Lookup">Looking up resources</title>
+  <para>
+    One uses the <literal>lookup</literal> service to lookup a resource.
+    The service returns a handle to the resource which is typically cast
+    to the resource type. For example, we can lookup an enterprise bean's
+    home interface as follows:
+<programlisting><![CDATA[
+     Object beanHomeRef
+       = jndiContext.lookup(jndiName);
+
+     SomeHomeInterface home =
+       (SomeHomeInterface)PortableRemoteObject.narrow
+         (beanHomeRef, SomeHomeInterface.class);
+]]></programlisting>         
+    <note><para>
+      Since the JNDI request is an RMI request and since RMI is on top
+      of CORBA's IIOP, we have to use a CORBA dynamic cast. This
+      still does not change the reference type. The latter is done via
+      a standard Java cast.
+    </para></note>
+  </para>
+</section>  

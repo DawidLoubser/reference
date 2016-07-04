@@ -1,0 +1,94 @@
+\section{URDAD and Modeling Languages}
+
+Even though URDAD has been largely used in conjunction with the Unified Modeling Language (UML),
+it is not locked into using any particular modeling language. In order for a modeling language
+to be usable with the URDAD design methodology, it must have sufficient semantics to be able to
+document the PIM. In particular, it requires support for
+\begin{itemize}
+  \item technology neutral business process modeling,
+  \item services contracts,
+  \item technology neutral data structure modeling,
+  \item decomposition of services across levels of granularity, and
+  \item declarative specification of how one data object is constructed from other data objects.
+\end{itemize}
+
+In addition the language should generate a semantically sound model which enforces consistency
+across the statements made within the modeling language. Finally, it is desirable that any
+modeling language used for URDAD is extensible in order to accommodate any additional semantics
+required for MDD.
+
+%----------------------------------------------
+\subsection{URDAD and UML}
+
+The Unified Modeling Language, UML, provides most modeling elements required by
+URDAD. In particular, it supports
+\begin{itemize}
+  \item technology neutral business process design using sequence and
+	activity diagrams,
+  \item the specification of services contracts using UML interfaces together
+	with the Object Constraint Language (OCL),
+  \item technology neutral data structure specification using UML class diagrams, and
+  \item the declarative specification of data object construction is done using OCL.
+\end{itemize}
+
+In addition, UML supports an underlying object model which ensures consistency
+and semantic coherence across diagrams. It also has an extension mechanism,
+stereotyping, which supports the introduction of refined concepts based on the
+base concepts provided by UML.
+
+One of the issues we have experienced with UML is that it does not have a convenient
+notation for the concept of a service and for specifying dependencies between services.
+The closest there is in UML, is the use case diagram where a use case is often interpreted
+as {\em a service of value} and dependency between services is documented using
+{\em include} and {\em extend} relationships. However, these use cases would still have to
+be formally tied up to the services used in sequence and activity diagrams.
+In URDAD services are formally linked to use cases via a realization relationship.
+
+\subsubsection{UML adoption for technology neutral business process design}
+
+Business analysts have been slow in adopting UML for technology
+neutral business process design. This can be largely attributed to
+the complexity of the UML, the perception that UML is largely useful for
+modeling software systems, and the lack of simple design methodology which
+provides business analysts guidance in using UML for technology neutral
+business process design.
+
+\subsection{Choice of UML diagrams}
+
+URDAD aims to make it more feasible for business analysts to use UML by requiring
+that only 4 of the 13 UML diagrams are used together with OCL constraints specification.
+For the analysis phase, URDAD requires one use case diagram for the functional requirements, a sequences diagram for the user work flow, and a class diagram for the services contract.
+For the design phase URDAD requires a further use case diagram for the responsibility
+identification and allocation, a sequence diagram for the success scenario, an
+activity diagram for the full business process specification and a class diagrams for the
+collabaration context. URDAD thus mandates the use of only four of the thirteen UML diagrams.
+
+This is a minimal, yet sufficient set of diagrams. Implementation mappings are ultimately done from the services contracts (with OCL
+base pre- and post-conditions), the sequence and activity diagrams and the collaboration
+context.
+
+Communication diagrams provide an alternative view to the information contained in sequence diagrams, but are much less accessible to business analysts.
+URDAD envisages the use of composite structure diagrams and component and deployment diagrams are really only for platform specific models. State charts are not used since URDAD effectively churns out a design with stateless service providers, i.e.\ a design which is largely in the spirit of services oriented approaches. Since timing diagrams are essentially a merger between
+sequence diagrams and state charts, they are not used either. Interaction overview diagrams are not used as they typically traverse levels of granularity. Package and object diagrams are only
+used implicitly.
+
+%----------------------------------------------
+
+\subsection{URDAD and BPMN}
+
+Even though BPMN has reasonable support for business process specification
+across levels of granularity (via compound activities), it does not currently
+contain sufficient semantics for technology neutral business process design in
+the spirit of model driven development. In particular, BPMN does not currently
+have support for
+
+\begin{itemize}
+  \item solid services contracts specification, or for
+
+  \item data structure specification (BPMN only supports artifacts whose
+	structure is to be specified in some other language).
+\end{itemize}
+
+Though not required by the BPMN specification, BPMN can be modeled as a UML profile
+(see, for example, the MagicDraw implementation of BPMN).
+This has the benefit of being able to mix BPMN with other UML model elements.

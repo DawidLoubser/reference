@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.interception.interceptors.applying.exclusions.exclusions"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Specifying exclusions for class and default interceptors</title>
+  <para>
+    At times one would like to specify that certain business services should not be intercepted by
+    interceptors which have been applied across the class or the domain (<abbrev>i.e.</abbrev>
+    class-level or default interceptors).
+  </para>
+  
+  <section>
+    <title>Specifying exclusions via annotations</title>
+    <para>
+      If the class or default interceptors have been applied via annotations, it is likely that you
+      will want to specify the exclusions also via annotation:
+    </para>
+    <para>
+      <programlisting><![CDATA[
+@ExcludeClassInterceptors
+@ExcludeDefaultInterceptors
+public void someSpecialBusinessService()
+{
+  ...
+}
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Specifying exclusions in a deployment descriptor</title>
+    <para>
+      If the class or default interceptors have been applied outside the implementation code in a
+      separate deployment descriptor, it is likely that you
+      will want to specify the exclusions also in that deployment descriptor. This is done as
+      follows:
+    </para>
+    <para>
+      <programlisting><![CDATA[
+<assembly-descriptor>
+  ...
+  <interceptor-binding>
+     <ejb-name>za.co.solms.SomeSpecialSessionOrMessageDrivenBean</ejb-name>
+     <exclude-class-interceptors/>
+     <exclude-default-interceptors/>
+     <method-name>someSpecialBusinessService</method-name>
+  </interceptor-binding>
+  ...
+</assembly-descriptor>
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  
+</section>
+  
+  

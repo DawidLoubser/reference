@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6247:section xmlns:ns6247="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.lang.encapsulation.encapsulation">
+  <ns6248:title xmlns:ns6248="http://docbook.org/ns/docbook">Encapsulation </ns6248:title>
+  <ns6249:para xmlns:ns6249="http://docbook.org/ns/docbook">
+    We have mentioned that data fields should generally be declared private in
+    object-oriented programming and that the reason for this is that they represent an
+    implementation detail which has nothing to do with users of the class. Furthermore, it
+    enables the class developer to change the implementation of the attributes without
+    necessarily affecting the clients of the class.
+  </ns6249:para>
+  <ns6250:para xmlns:ns6250="http://docbook.org/ns/docbook">
+    Why is this such a big issue. Imagine you defined a <ns6251:literal xmlns:ns6251="http://docbook.org/ns/docbook">Date</ns6251:literal> class. You are not likely
+    to do this because Java's <ns6252:literal xmlns:ns6252="http://docbook.org/ns/docbook">Date</ns6252:literal> class is far superior to what we are going to do here.
+    Still the example illustrates the advantages of encapsulation very clearly. Have a look at
+    the first implementation of our <ns6253:literal xmlns:ns6253="http://docbook.org/ns/docbook">Date</ns6253:literal> class:
+    <ns6254:programlisting xmlns:ns6254="http://docbook.org/ns/docbook"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="src/Date1.java"/></ns6254:programlisting>
+  </ns6250:para>
+
+  <ns6255:para xmlns:ns6255="http://docbook.org/ns/docbook">
+      Note that the class offers general class services for querying whether a particular year is
+      a leap year or not and for querying the number of days in a month. the year must be supplied
+      too in order to be able to report the number of days in February correctly for leap years.
+      Those services are used internally for the corresponding instance methods, but they are
+      publically available.
+  </ns6255:para>
+  <ns6256:para xmlns:ns6256="http://docbook.org/ns/docbook">
+    The following listing illustrates how the class can be used. 
+    <ns6257:programlisting xmlns:ns6257="http://docbook.org/ns/docbook"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="src/Date1Test.java"/></ns6257:programlisting>
+    We first create some date,
+    print it, query it for whether it is a leap year or not and query the number of days in the
+    date's month.
+  </ns6256:para>
+  <ns6258:para xmlns:ns6258="http://docbook.org/ns/docbook">
+    We then add 700 days and do the same. After this we subtract the 700 days again to
+    comfort ourselves with the fact that we regain the original date.
+  </ns6258:para>
+  <ns6259:para xmlns:ns6259="http://docbook.org/ns/docbook">
+    Finally, we try and create a date for the 29'th February 2001. Since 2001 is not a leap
+    year, we expect an exception to be thrown during validation.
+  </ns6259:para>
+  <ns6260:para xmlns:ns6260="http://docbook.org/ns/docbook">
+      The output is (as it should be)
+      <ns6261:programlisting xmlns:ns6261="http://docbook.org/ns/docbook">
+10-10-2000
+is leap year: true
+number of days in month = 31
+ 
+10-9-2002
+is leap year: false
+number of days in month = 30
+ 
+10-10-2000
+java.lang.IllegalArgumentException: invalid day of month.
+at Date1.validate(Date1.java:72)
+at Date1.&lt;init&gt;(Date1.java:6)
+at Date1Test.main(Date1Test.java:19)
+     </ns6261:programlisting>
+  </ns6260:para>  
+  <ns6262:para xmlns:ns6262="http://docbook.org/ns/docbook">
+        We store the date by three integers for the day, month and year. The process of adding a
+        number of days to or subtrating a number of days from the date is a complex one. The one
+        shown in the listing is perhaps the simplest implementation, but it is not the most effcient
+        one. However, no matter what the implementation, it is going to be complex and ineffcient.
+  </ns6262:para>
+  <ns6263:para xmlns:ns6263="http://docbook.org/ns/docbook">
+    So, perhaps it is a better idea to represent a date as a single integer which is zero
+    for some reference date (choose your favourite date). Not only is it more efficient memory
+    wise, but adding or subtracting days from a date is now trivial. An incomplete listing is
+    shown below.
+    <ns6264:programlisting xmlns:ns6264="http://docbook.org/ns/docbook"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="src/Date2.java"/></ns6264:programlisting>
+  </ns6263:para>
+  <ns6265:para xmlns:ns6265="http://docbook.org/ns/docbook">
+    We have conveniently omitted to show the (non-trivial) implementation of the conversion
+    methods which transform between the internal representation and the day/month/year
+    representation, but the concept shold be clear. We, as developer were able to change the
+    internal data representation of our class without changing the external interface (the
+    signatures of the public methods). The consequence of this is that we can make the change to
+      the<ns6266:literal xmlns:ns6266="http://docbook.org/ns/docbook">Date</ns6266:literal> class without it having any affect on any of
+    the classes using our class.
+  </ns6265:para>
+  <ns6267:para xmlns:ns6267="http://docbook.org/ns/docbook">
+    Anybody who has lived through the extravagently expensive "millenium bug" knows that
+    this is worth something. However, this liberty was only achieved through encapsulation. Had
+    we not declared our <ns6268:literal xmlns:ns6268="http://docbook.org/ns/docbook">day</ns6268:literal>, <ns6269:literal xmlns:ns6269="http://docbook.org/ns/docbook">month</ns6269:literal> and <ns6270:literal xmlns:ns6270="http://docbook.org/ns/docbook">year</ns6270:literal> data fields
+    private to start off with we would have not known whether anybody uses them directly or not.
+    We would have to search through all the client code. This requires first a way to find all
+    the code which potentially uses our class.
+  </ns6267:para>
+</ns6247:section>

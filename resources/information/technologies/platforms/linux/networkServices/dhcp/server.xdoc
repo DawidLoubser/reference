@@ -1,0 +1,37 @@
+<section id="resources.information.platforms.linux.networkServices.dhcp.server"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Dynamic network configuration using dhcp</title>
+	<para>
+	The DHCP server configuration is centralised in a single configuration file <emphasis role="strong">/etc/dhcpd.conf</emphasis>. Once the configuration is set and the DHCP server packages are installed, the dhcpd service can be started via <emphasis role="strong">/etc/init.d/dhcpd start</emphasis>. 
+	</para>
+	<programlisting>
+option domain-name "earth";
+option domain-name-servers 192.168.0.1;
+option routers 192.168.0.1;
+default-lease-time 900;
+max-lease-time 900;
+
+subnet 192.168.0.0 netmask 255.255.255.0 {
+  range 192.168.0.4 192.168.0.16;
+ }
+
+group {
+  host butterfly.earth{
+    hardware ethernet 00:03:93:49:4b:bc;
+    fixed-address 192.168.0.2;
+  }
+}
+group {
+  host snail.earth{
+    hardware ethernet 00:06:5b:bc:88:e2;
+    fixed-address 192.168.0.3;
+  }
+}
+	</programlisting>
+	<para>
+	The <emphasis role="strong">domain-name</emphasis> option sets the domain of the clients, and the <emphasis role="strong">domain-name-servers</emphasis> sets the clients list of name servers. The clients gateway is configured via the <emphasis role="strong">routers</emphasis> options. The period after which the configuration is refreshed is set by the <emphasis role="strong">default-lease-time</emphasis> parameter. The subnet section which follows, allocates a range (192.1680.4 up to 192.168.0.16) to be allocated from a pool. The two subsequent group sections map a fixed address to a specified mac address.
+	</para>
+</section>	

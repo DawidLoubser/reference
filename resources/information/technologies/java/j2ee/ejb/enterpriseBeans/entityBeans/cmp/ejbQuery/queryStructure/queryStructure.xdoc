@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.queryStructure.queryStructure"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>The structure of a EJB Query</title>
+  <para>
+    The structure of an EJB QL query is in many ways similar to a traditional SQL query. It
+    is generally of the form
+<programlisting><![CDATA[
+SELECT <selection> FROM <source> WHERE <condition>
+]]></programlisting>
+    where 
+    <itemizedlist>
+      <listitem><formalpara>
+        <title>SELECT</title>
+        <para>
+           specifies the type of objects or values to be selected which may be 
+          <itemizedlist>
+            <listitem>
+              <para>an entity bean, </para>
+            </listitem>
+            <listitem>
+              <para>a value object or </para>
+            </listitem>
+            <listitem>
+              <para>a primitive data type</para>
+            </listitem>
+          </itemizedlist>        
+        </para>
+      </formalpara></listitem>
+      <listitem><formalpara>
+        <title> FROM</title>
+        <para>
+           specifies the domain to which the query applies and
+        </para>
+      </formalpara></listitem>
+      <listitem><formalpara>
+        <title>WHERE</title>
+        <para>
+          specifies constraints which restrict the result collection.
+        </para>
+      </formalpara></listitem>
+    </itemizedlist>  
+    <literal></literal> 
+   </para> 
+   <para>
+     For example, if we have an  
+    <literal>Account</literal> entity bean with a balance field, we can issue the
+    following query:
+<programlisting><![CDATA[
+SELECT OBJECT(a) FROM Account AS a WHERE a.balance > 0
+]]></programlisting>    
+    </para> 
+    <para>
+      This is equivalent to the following SQL statement
+<programlisting><![CDATA[
+SELECT * FROM Account WHERE balance > 0
+]]></programlisting>    
+   </para> 
+   <para>
+      As a short-hand notation, the <literal>AS</literal> clause can be dropped, but the 
+      variable name for the result must still be included. Thus
+<programlisting><![CDATA[
+SELECT * FROM Account WHERE balance > 0
+]]></programlisting>    
+      is short for 
+<programlisting><![CDATA[
+SELECT OBJECT(a) FROM Account a WHERE a.balance > 0
+]]></programlisting>    
+   </para>
+  <section>
+    <title>Result Collections in EJB QL</title>
+    <para>
+      A core difference between EJB QL and SQL is that the result collection in EJB QL will
+      be a collection of references to one of 
+      <itemizedlist>
+        <listitem>
+          <para>entity beans through either the local or the remote interface, </para>
+        </listitem>
+        <listitem>
+          <para>other Java objects, </para>
+        </listitem>
+        <listitem>
+          <para>Java primitives</para>
+        </listitem>
+      </itemizedlist>
+      while in SQL the result is a new conceptual table with column entries sourced
+      potentially from different tables, i.e. it can contain elements from different tables and
+      hence elements extracted from different entity beans.
+    </para>
+    <para>
+      Ultimately the result collection will be either a standard  
+      <literal>java.util.Collection</literal> or a<literal>java.util.Set</literal>.
+    </para>
+  </section>
+  
+  <section>
+    <title>Selecting Entity Bean Attributes</title>
+    <para>We can use the element access operator to select specific attributes of an entity
+      bean. For example
+<programlisting><![CDATA[
+SELECT a.balance FROM Account a
+]]></programlisting>    
+      returns a collection of all
+      account balances. In this case the <literal>Object(..)</literal> phrase
+      is dropped. EJB QL specification requires that you wrap your result with an  
+      <literal>Object()</literal> phrase only in that case where a stand-alone variable
+      is returned without navigating along a path.
+    </para>
+  </section>
+  
+</section>

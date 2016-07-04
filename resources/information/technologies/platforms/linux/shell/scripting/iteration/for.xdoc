@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.platforms.linux.shell.scripting.iteration.for"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>For loops</title>
+  <para>
+    We have seen an example of looping over the supplied command-line arguments in
+    <xref linkend="resources.information.platforms.linux.shell.scripting.variables.commandLineArguments"/>.
+    The for loop uses a loop variable which is set to the various elements of a set.
+  </para>
+  <para>
+    Consider the following simple shell script for another example of a <command>for</command>
+    loop:
+<xi:include href="source/testFor_sh.xdoc" />
+    The output of the script is 
+    <programlisting><![CDATA[
+1 -> January
+2 -> February
+3 -> March
+4 -> April
+5 -> May
+6 -> June
+7 -> July
+8 -> August
+9 -> September
+10 -> October
+11 -> November
+12 -> December
+    ]]></programlisting>
+  </para>
+  
+  <section>
+    <title>Example: Iterating across files</title>
+    <para>
+      Let us now look at an example which is a little bit more interesting. Let us write a
+      shell script which searches for all files matching a specified file filter, or for all files
+      in the current directory if no filter is specified. The script looks as follows:
+<xi:include href="source/fileSizes_sh.xdoc" />
+    </para>
+    <para>
+      Executing the script via
+      <cmdsynopsis><command><![CDATA[
+./fileSizes.sh '*.sh'
+      ]]></command></cmdsynopsis>
+      yields an output similar to
+      <programlisting><![CDATA[
+Using filter: *.sh
+fileSizes.sh -> 300
+testFor.sh -> 200
+Total disk space required by all shell scripts = 500
+      ]]></programlisting>
+    </para>
+    <note>
+      <para>
+        The script can be further simplified by directly iterating over the files in the current 
+        directory via
+        <programlisting><![CDATA[
+for file in *
+do
+  ...
+done  
+        ]]></programlisting>
+      </para>
+      <para>
+        We can also add conditionals. For example, if we want to search for all files which
+        start with either <quote>t</quote> or <quote>T</quote> we can use
+        <programlisting><![CDATA[
+for file in [tT]*
+do
+  ...
+done  
+        ]]></programlisting>
+      </para>
+    </note>
+  </section>
+  
+  <section>
+    <title>C-style for loops</title>
+    <para>
+      Bash shell scripts also support <emphasis>C</emphasis> style <command>for</command>
+      loops. To indicate to the interpreter that you are using a <emphasis>C</emphasis>-style
+      <command>for</command>- loop, you use double round parentheses:
+<xi:include href="source/testCFor_sh.xdoc" />      
+      The output of the script is simply
+      <programlisting><![CDATA[
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+      ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Breaking out of a loop</title>
+    <para>
+       The <command>break</command> command is used to break out of a loop, skipping
+       all the remaining lines in the iterative block and starting with the first statement after the
+       loop. The command is illustrated with the following example:
+       <programlisting>
+<xi:include href="source/runningSum_sh.xdoc" />      
+       </programlisting>
+       An example output is shown below:
+       <programlisting><![CDATA[
+Reports running sum. Enter 0 to terminate
+Enter a number:
+2
+Running sum = 2
+Enter a number:
+4
+Running sum = 6
+Enter a number:
+3
+Running sum = 9
+Enter a number:
+0
+       ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Continuing at the start of a loop</title>
+    <para>
+      The <command>continue</command> command is used to 
+      <itemizedlist>
+        <listitem><para>terminate the current iteration,</para></listitem>
+        <listitem><para>go back to the test and</para></listitem>
+        <listitem><para>if the test criterion holds, start with another iteration.</para></listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      The following is a modification of our <filename>runningSum</filename> script,
+      which skips the remainder of the iteration every time a negative number is
+      entered, reporting thus only the running sum of all positive numbers.
+      Here is the script:
+<xi:include href="source/runningPositiveSum_sh.xdoc" />      
+      Here is an example output:
+      <programlisting><![CDATA[
+Reports running sum of positive numbers -- negative numbers are ignored.
+Enter 0 to terminate
+Enter a number:
+1
+Running sum = 1
+Enter a number:
+2
+Running sum = 3
+Enter a number:
+-1
+Enter a number:
+1
+Running sum = 4
+Enter a number:
+0
+      ]]></programlisting>
+    </para>
+  </section>
+  
+</section>

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.technologies.xml.xsl-transform.languageFeatures.languageFeatures">
+
+
+
+  <title>XSL Language Features</title>
+
+  <para> The XSL language contains several constructs to help assemble
+    useful, productive transformation style sheets. While not a true
+      <emphasis>programming</emphasis> language, these constructs
+    typically enable quite advanced inference of information, usually
+    replacing the need to write additional programs to transform
+    information. </para>
+
+  <para> Consider the following input (simple weather forecast data): <programlisting language="XML"><![CDATA[
+]]><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherInput.xml" parse="text"/><![CDATA[
+        ]]></programlisting>
+  </para>
+
+
+  <section>
+    <title>Variables</title>
+    <para> Variables in XSLT are reusable values, that can be defined
+      once, and used several times (typically in XPath expressions). The
+      term "variable" may be somewhat misleading, as the actual value of a
+      variable can never change as long as it's scope is active. </para>
+    <para> For example, a variable defined globally (in the root of the
+      stylesheet) cannot change for the duration of the transformation
+      using that stylesheet. Similarly, a variable declared within a
+      particular template retains it's initial value for the duration of
+      the execution of that template. The next time the template is
+      invoked, however, the value may have changed. This means that, for
+      example, executing a loop (using <literal>for-each</literal>) cannot
+      make use of variables to accumulate values, such as totals. </para>
+    <para> Despite these limitations, variables are useful constructs to
+      simplify your templates. A variable (called <literal>x</literal>) is
+      declared using the following syntax: <programlisting><![CDATA[
+<xsl:variable name="x"/>
+                ]]></programlisting> The variable gets it's value either
+      from the body of the variable tag itself, or by using the
+        <literal>select</literal> attribute, to assign the outcome of an
+      XPath expression to it. For example: <programlisting><![CDATA[
+<xsl:variable name="x" select="../*/@title"/>
+                ]]></programlisting> assigns the content of the attribute
+      called <literal>title</literal> (of the context's parent element) to
+      the variable called <literal>x</literal>. </para>
+    <para> Similarly, the statement <programlisting><![CDATA[
+<xsl:variable name="company">My Big Company</xsl:variable>
+                ]]></programlisting> assigns the constant value <quote>My
+        Big Company</quote> to a variable called
+      <literal>company</literal>, and <programlisting><![CDATA[
+<xsl:variable name="feeling">
+    <xsl:choose>
+        <xsl:when test="temp > 26">
+            Hot
+        </xsl:when>
+        <xsl:when test="temp > 20">
+            Mild
+        </xsl:when>
+        <xsl:otherwise>
+            Cool
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:variable>
+        ]]></programlisting> would conditionally assign a word summing up
+      the current temperature to the variable <literal>feeling</literal>. </para>
+    <para> The variable can be used anywhere in an XPath expression, by
+      prefixing the name with a dollar sign (<literal>$</literal>). For
+      example, <programlisting><![CDATA[
+<xsl:value-of select="$myVariable"/>
+            ]]></programlisting>
+    </para>
+  </section>
+
+
+  <section>
+    <title>Expressions in Attributes</title>
+    <para> Let us say we wanted to produce a list of place names affected
+      by the weather forecast, such as the following: <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/placeNames.xml" parse="text"/><![CDATA[                
+            ]]></programlisting> Note that we transfer the value of the
+      place name, from an <literal>element</literal> in the input, to an
+        <literal>attribute</literal> in the output. This could be done as
+      follows: <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/attributesManual.xsl" parse="text"/><![CDATA[                
+            ]]></programlisting>
+    </para>
+    <para> Instead of having to us a
+        <literal>&lt;xsl:attribute&gt;</literal> tag in
+      conjunction with a <literal>&lt;xsl:value-of&gt;</literal>
+      tag, we could directly embed an XPath expression in the resulting
+      attribute, by surrounding it with curly braces <literal>{...}</literal>
+      <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/attributesExpressions.xsl" parse="text"/><![CDATA[                
+            ]]></programlisting> This syntax can be used in any output
+      attribute. The value of a variable (previously declared using the
+        <literal>variable</literal> tag) may also be used, for example: <programlisting><![CDATA[
+<xsl:template match="a">
+    <b c="{$myVariable}"/>
+</xsl:template>
+            ]]></programlisting>
+    </para>
+  </section>
+
+  <section>
+    <title>Choices</title>
+    <para> Though the automatic template selection mechanism of XSLT is
+      often sufficient to get sophisticated conditional behaviour (for
+      example:) <programlisting><![CDATA[
+<xsl:template match="foo/bar[conditionA]">
+  <!-- Output for condition A -->
+</xsl:template>
+                
+<xsl:template match="foo/bar[conditionB]">
+  <!-- Output for condition B -->
+</xsl:template>
+                ]]></programlisting> one often wants direct control of
+      conditions within a single template. For this, the XSLT choice
+      mechanisms, <literal>&lt;xsl:if&gt;</literal> and
+        <literal>&lt;xsl:choose&gt;</literal> are used. </para>
+    <section>
+      <title>XSL if (single choice)</title>
+      <para> The body of an <literal>if</literal> tag is conditionally
+        processed based on the (boolean) XPath expression in the
+          <literal>test</literal> attribute. There is no
+        <emphasis>else</emphasis> construct. For example: <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherIf.xsl" parse="text"/><![CDATA[                
+                ]]></programlisting> produces <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherIfOutput.xml" parse="text"/><![CDATA[
+                ]]></programlisting>
+      </para>
+    </section>
+
+    <section>
+      <title>XSL choose (multiple selection)</title>
+      <para> The <literal>choose</literal> tag allows evaluation of
+        several conditions (specified with several <literal>when</literal>
+        tags), with an <emphasis>optional</emphasis> default case
+        (specified using the <literal>otherwise</literal> tag). For
+        example: <programlisting><![CDATA[
+<xsl:choose>
+    <xsl:when test="conditionA">
+        outputForA
+    </xsl:when>
+    <xsl:when test="conditionB">
+        outputForBA
+    </xsl:when>
+    <xsl:otherwise>
+        defaultOutput
+    </xsl:otherwise>
+</xsl:choose>
+                ]]></programlisting>
+      </para>
+    </section>
+  </section>
+
+
+  <section>
+    <title>Sorting</title>
+    <para> The need to reorganise the order in which transformed elements
+      are produced (i.e., to sort them) is a common requirement in many
+      transformation tasks, and XSLT has a simple and effective sorting
+      mechanism. This makes it trivial to produce, for example, an index
+      at the end of a book. </para>
+    <para> Sorting can be specified in two of the XSLT constructs: <itemizedlist>
+        <listitem>
+          <formalpara>
+            <title>apply-templates</title>
+            <para> This enforces that templates are invoked on input
+              elements, not in <emphasis>document</emphasis> order as per
+              default, but in a specified order (which is easily
+              controllable). </para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>for-each</title>
+            <para> This enforces that, while iterating over a set of
+              elements, the iteration occurs in a particular order.
+            </para>
+          </formalpara>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para> Consider the following XSL document, applied to weather
+      forecast data: <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherNoSort.xsl" parse="text"/><![CDATA[                
+            ]]></programlisting> which produces the following output: <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherNoSortOutput.xml" parse="text"/><![CDATA[                
+            ]]></programlisting>
+    </para>
+
+    <para> Applying the <literal>sort</literal> tag to the
+        <literal>apply-templates</literal> instruction, will now apply
+      default sorting (sorts the <emphasis>text value</emphasis> of the
+      elements in ascending alphabetical order). The input, however, is
+      already sorted in this regard, so the output remains the same. <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherSortDefault.xsl" parse="text"/><![CDATA[                
+            ]]></programlisting>
+    </para>
+
+    <para> When we change the sorting order to
+      <literal>descending</literal>, however, the output is reversed: <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherSortDefaultDesc.xsl" parse="text"/><![CDATA[                
+            ]]></programlisting> Which produces <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherSortDefaultDescOutput.xml" parse="text"/><![CDATA[                
+            ]]></programlisting>
+    </para>
+
+    <section>
+      <title>Ordering options</title>
+      <para> By default, sorting occurs on an alphabetical basis.
+        Furthermore, the default sorting honours any
+        <literal>xml:lang</literal> attributes, which may have in impact
+        on how letters are sorted, according to different languages. </para>
+
+      <section>
+        <title>Numerical Ordering</title>
+        <para> If the values to be sorted are to be interpreted
+          numerically, one has to supply the <literal>data-type</literal>
+          attribute, for example: <programlisting><![CDATA[
+<xsl:sort data-type="number"/>
+                    ]]></programlisting>
+        </para>
+      </section>
+
+      <section>
+        <title>Letter-case ordering</title>
+        <para> Capital letters can be placed above lower-case letters
+          using the <literal>case-order</literal> attribute. This can take
+          two values, <literal>"lower-first"</literal> (the default) or
+            <literal>"upper-first"</literal>. For example: <programlisting><![CDATA[
+<xsl:sort case-order="upper-first"/>
+                        ]]></programlisting>
+        </para>
+      </section>
+    </section>
+
+    <section>
+      <title>Selective Sorting</title>
+      <para> Default sorting assumes that the entire textual content (as
+        produced by <literal>&lt;xsl:value-of
+        select="."/&gt;</literal> is to be evaluated for sorting. The
+        sort element also takes an XPath select expression, and the
+        default is thus: <programlisting><![CDATA[
+<xsl:sort select="."/>
+                ]]></programlisting>
+      </para>
+      <para> Any XPath expression, however, can be supplied, and the
+        outcome of this expression is evaluated to determine sort order.
+        For example, let's say we wanted to sort weather forecast data
+        based on minimum temperature. The XSLT document could be as
+        follows: <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherSortSelective.xsl" parse="text"/><![CDATA[                
+                ]]></programlisting> Which produces <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherSortSelectiveOutput.xml" parse="text"/><![CDATA[                
+                ]]></programlisting>
+      </para>
+    </section>
+
+
+
+  </section>
+
+  <section>
+    <title>Numbering</title>
+    <para> Similar to sorting, numbering is achieved using a simple
+      declarative mechanism. The <literal>number</literal> tag is
+      responsible for outputting the number of a particular element (based
+      on it's position in the input document). </para>
+    <para> Wherever the <quote>number</quote> of the input element (which
+      matched against the current template) is desired, one simply uses
+      the <literal>number</literal> tag. For example, here we assign the
+      number to a variable, which is used in constructing the attribute
+      which contains the place name: <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherNumbering.xsl" parse="text"/><![CDATA[                
+            ]]></programlisting> Which produces <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherNumberingOutput.xml" parse="text"/><![CDATA[                
+            ]]></programlisting>
+    </para>
+
+    <section>
+      <title>Controlling number format</title>
+      <para> The <literal>number</literal> element takes an optional
+          <literal>format</literal> attribute: a general pattern that
+        indicates the type (format) of numbering. The values can be: <itemizedlist>
+          <listitem>
+            <para>
+              <literal>1</literal> (the default) for decimal numbering.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <literal>a</literal> for lowercase alphabetical numbering.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <literal>A</literal> for uppercase alphabetical numbering.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <literal>i</literal> for lowercase roman numbering. </para>
+          </listitem>
+          <listitem>
+            <para>
+              <literal>I</literal> for uppercase roman numbering. </para>
+          </listitem>
+        </itemizedlist> The format may also contain any punctuation that
+        you want to accompany the numbering. For example: <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherNumberingFormatted.xsl" parse="text"/><![CDATA[                
+                ]]></programlisting> Which produces <programlisting><![CDATA[
+]]><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" href="src/weatherNumberingFormattedOutput.xml" parse="text"/><![CDATA[                
+                ]]></programlisting>
+      </para>
+      <note>
+        <para> XSLT also contains extended numbering features, such as
+          maintaining different counters, advanced number formatting,
+          compount/multipart numbering, etc. </para>
+
+      </note>
+    </section>
+
+  </section>
+
+</section>

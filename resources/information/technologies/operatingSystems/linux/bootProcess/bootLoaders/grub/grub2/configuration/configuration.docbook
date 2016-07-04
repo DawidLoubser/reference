@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>GRUB-2 configuration</title>
+    <para>
+        GRUB-2 provides a very convenient configuration builder utility which creates a GRUB configuration
+        containing all your kernels in your <literal><![CDATA[/boot]]></literal> folder:
+        <programlisting><![CDATA[
+grub-mkconfig -o /boot/grub/grub.cfg
+            ]]></programlisting>
+    </para>
+    <para>
+        You need to install GRUB-2 into the MBR of a boot disk. This is done via
+        <programlisting><![CDATA[
+grub-install /dev/sda            
+]]></programlisting>
+        
+    </para>
+    
+    <section>
+        <title>Launching GRUB-2 from GRUB-legacy</title>
+        <para>
+            You might want to test out GRUB-2 first before installing GRUB-2 into the MBR of your boot drive.
+            <programlisting><![CDATA[
+grub-install --grub-setup=/bin/true /dev/sda            
+            ]]></programlisting>
+        which creates a boot loader image in <literal><![CDATA[/boot/grub/core.img]]></literal>
+        and then adding a link an entry in <literal><![CDATA[/boot/grub/menu.lst]]></literal>
+        which is a symbolic link to the GRUB-legacy <literal>grub.conf</literal> file:            
+            <programlisting><![CDATA[
+title=GRUB2
+root (hd0,0)
+kernel /boot/grub/core.img
+]]></programlisting>
+        </para>    
+    </section>    
+</section>    

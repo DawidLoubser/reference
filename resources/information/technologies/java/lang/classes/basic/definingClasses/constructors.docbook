@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.lang.classes.basic.definingClasses.constructors">
+  <title>Constructors</title>
+  <indexterm>
+    <primary>constructor</primary>
+  </indexterm>
+  <para>
+    Unlike some languages like <literal>C++</literal>, the Java developer is not responsible for
+    physically allocating memory to, and creating, an instance of an object (recall that a class
+    is somewhat like a blueprint, and - like in real life - we need to construct an object from
+    this blue print in order to be able to use it).
+  </para>
+  <para>
+    Though the Java runtime will physically construct our objects for us (when we use the <emphasis>new</emphasis>
+    keyword) we still need to be able to request certain information from the client (such as, <quote>what colour
+    would you like your new car to be, sir?</quote>) as well as specify what is done with this information. The
+    <emphasis>constructor</emphasis> is the place where both of these activities occur.
+  </para>
+  
+  <section>
+    <title>Defining constructor(s)</title>
+    <indexterm>
+      <primary>constructor</primary>
+      <secondary>defining</secondary>
+    </indexterm>
+    
+    <para>
+      A constructor is written as a special service, which
+      <itemizedlist>
+        <listitem>
+          <para>has the exact same name as the class, and</para>
+        </listitem>
+        <listitem>
+          <para>defines no return type, not even <literal>void</literal>.</para>
+        </listitem>
+      </itemizedlist>
+    </para>
+    
+    <para>
+      A constructor can take any number of arguments, and these arguments <emphasis>must be</emphasis>
+      supplied by the client if he wishes to call the constructor.
+    </para>
+    
+    <para>
+      Furthermore, a class may offer any number of constructors, thus providing clients with different
+      options when they wish to create an instance of the class. The decision of which constructors to provide
+      should be driven purely by client needs, as calling any <emphasis>one</emphasis> of them will create an
+      instance of the class.
+    </para>
+    
+    <para>
+      For example, our <literal>Account</literal> class has two constructors, one
+      receiving the account number as argument and the second receiving the account number and
+      initial balance as arguments. The former assumes the initial balance of the account to be zero.
+    </para>
+    
+  </section>
+  
+  
+  <section>
+      <title>Automatic Default Constructor</title>
+      <para>
+      If you do not write a constructor at all, Java will go ahead and write a default
+      constructor for. A default constructor is a constructor which takes no arguments.
+      Consider the following class:
+<programlisting language="Java">
+<xi:include parse="text" href="../../src/Greeter.java"/>
+         </programlisting>    
+      </para>
+
+      <para>
+      We have not defined any constructor whatsoever. Hence, the obliging Java compiler will
+      write a default constructor with an empty body for you. It looks like this:
+      <programlisting language="Java">
+public Greeter() {}
+      </programlisting>
+      </para>
+      <para>
+      To convince ourselves that this is
+      indeed the case, let us write some client code which uses this default constructor:
+<programlisting language="Java">
+<xi:include parse="text" href="../../src/GreeterTest.java"/>
+         </programlisting>    
+      </para>
+
+      <para>
+      Compiling and running the application yields the following output:
+      <programlisting>
+Hi there, mate.
+Hi there, mate.
+Hi there, mate.
+      </programlisting>
+      </para>
+      <para>
+      However,
+      note that the rules for the automatic generation of the default constructor are as
+      follows: Java will generate one for you if and only if there is no other constructor
+      defined for the class. Thus, if some years later somebody adds another constructor to
+      the class, as is shown below:
+<programlisting language="Java">
+<xi:include parse="text" href="../../src/Greeter2.java"/>
+</programlisting>
+      </para>
+      <para>
+        The client (program) would need to be modified to provide the greeter with a
+        String name when the constructor is called:
+<programlisting language="Java">
+<xi:include parse="text" href="../../src/Greeter2Test.java"/>
+</programlisting>    
+      </para>
+    <para>
+      Compiling and running the updated application yields the following output:
+      <programlisting>
+Hi there, mate. My name is Jack
+Hi there, mate. My name is Jack
+Hi there, mate. My name is Jack
+      </programlisting>
+    </para>
+    
+    <para>
+    To avoid this situation (of retrospectively adding a constructor) we suggest that you should always write a default
+    constructor if you want one.
+  </para>
+  </section>
+</section>

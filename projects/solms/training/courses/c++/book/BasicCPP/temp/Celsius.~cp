@@ -1,0 +1,103 @@
+// {\footnotesize \begin{verbatim}
+//                         CELSIUS.CPP
+//-------------------------------------------------------------------
+//  This program converts degrees celsius to degrees Fahrenheit
+//  and vise versa. It can also print a table of comparison
+//  for a certain temperature range.
+
+#include <ctype.h>         // for toupper (convert to upper case)
+#include <iostream.h>      // for cin and cout
+
+#include <fstream.h>
+
+const float a1 = 1.8;             // Constants required for conversions
+const float a0 = 32;              // between 'C and 'F.
+
+float Fahrenheit(const float celsius)    // Function converting 'C to 'F.
+{
+  return a1*celsius+a0;
+}
+
+float Celsius(const float fahrenheit)    // Function converting 'F to 'C.
+{
+  return (fahrenheit-a0)/a1;
+}
+
+void main()                       // Main program
+{
+  char choice;
+  enum boolean {false, true} happy;
+  do
+  {
+    cout << "C  ->  convert degrees celsius to degrees fahrenheit"
+         << endl;
+    cout << "F  ->  convert degrees fahrenheit to degrees celsius"
+         << endl;
+    cout << endl << "Enter choice (C/F) : ";
+    cin  >> choice;
+
+    choice = toupper(choice);  // convert to upper case
+    happy  = (boolean)((choice == 'C') || (choice == 'F'));
+
+    if (!happy)
+      cout << "*** ERROR *** : Illegal choice: ReEnter." << endl;
+
+  } while (!happy);
+
+  char table;
+  cout << "Do you want a table of degrees celsius "
+       << "versus degrees fahrenheit (y/n)? ";
+  cin  >> table;
+
+  if ((table == 'n') || (table == 'N'))
+    {
+      switch (choice)
+      {
+        case 'C': float celsius;
+                  cout << "Enter degrees celsius : ";
+                  cin  >> celsius;
+                  cout << celsius << " degrees celsius = "
+                       << Fahrenheit(celsius)
+                       << " degrees fahrenheit." << endl;
+                  break;
+
+        case 'F': float fahrenheit;
+                  cout << "Enter degrees fahrenheit : ";
+                  cin  >> fahrenheit;
+                  cout << fahrenheit << " degrees fahrenheit = "
+                       << Celsius(fahrenheit) << " degrees celsius."
+                       << endl;
+                  break;
+      }
+    }
+  else
+    {
+      float lower, upper, step;
+      cout << "Enter lower limit of range : ";
+      cin  >> lower;
+      cout << "Enter upper limit of range : ";
+      cin  >> upper;
+      cout << "Enter increment : ";
+      cin  >> step;
+
+      float temp = lower;
+
+      while (temp <= upper)
+      {
+        switch (choice)
+        {
+          case 'C': cout << temp << " <-> " << Fahrenheit(temp)
+                         << endl;
+                    break;
+
+          case 'F': cout << temp << " <-> " << Celsius(temp)
+                         << endl;
+                    break;
+        }
+        temp += step;
+      }
+    }
+}
+
+// \end{verbatim}}
+

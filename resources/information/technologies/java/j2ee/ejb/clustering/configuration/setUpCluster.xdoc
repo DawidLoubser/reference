@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.technologies.java.j2ee.ejb.clustering.configuration.setUpCluster"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Setting up JBoss for clustering</title>
+   <para>
+      <emphasis>JBoss</emphasis> ships with 3 standard configurations, 
+      <emphasis>minimal</emphasis>, <emphasis>default</emphasis> and
+      <emphasis>all</emphasis>. Only the <emphasis>all</emphasis> 
+      configuration is configured for clustering.
+   </para>
+   <para>
+      Clustering support is deployed via a managed bean, <abbrev>i.e.</abbrev> 
+      one simply copies
+      a configuration file into the <emphasis>deploy</emphasis> directory. 
+      Alternatively, the clustering parameters can be modified dynamically 
+      (while <emphasis>JBoss</emphasis> is
+      running) by simply modifying the configuration file.
+   </para>
+   <para>
+      In this way clusters can be added and removed on the fly and their deployment
+      specifics can be modified dynamically.
+   </para>
+   
+   <section>
+     <title>Setting up a partition</title>
+     <para>
+        To set up a partition, one needs to add a managed bean (<literal>ClusterPartition</literal>)
+        to the <emphasis>"all"</emphasis> configuration. This configuration comes with a configuration 
+        file, <literal>cluster-service.xml</literal> which sets up the default partition as follows:
+<programlisting><![CDATA[
+<mbean code="org.jboss.ha.framework.server.ClusterPartition"
+       name="jboss:service=DefaultPartition">
+  <attribute name="PartitionName">DefaultPartition</attribute>
+  <attribute name="DeadlockDetection">False</attribute>
+
+  <!-- The JavaGroups protocol configuration -->
+  <attribute name="PartitionConfig">
+    <Config>
+      <!-- UDP: if you have a multihomed machine, 
+           set the bind_addr attribute to the appropriate NIC IP address -->
+      <!-- UDP: On Windows machines, because of the media sense feature
+           being broken with multicast (even after disabling media sense)
+           set the loopback attribute to true -->
+      <UDP mcast_addr="228.1.2.3" mcast_port="45566" bind_addr="192.168.1.5"
+           ip_ttl="64" ip_mcast="true"
+           mcast_send_buf_size="150000" mcast_recv_buf_size="80000" 
+           ucast_send_buf_size="150000" ucast_recv_buf_size="80000" 
+           loopback="false" />
+      <PING timeout="2000" num_initial_members="3" 
+            up_thread="true" down_thread="true" />
+      <MERGE2 min_interval="5000" max_interval="10000" />
+      <FD up_thread="true" down_thread="true" />
+      <VERIFY_SUSPECT timeout="1500"
+                      up_thread="true" down_thread="true" />
+      <pbcast.STABLE desired_avg_gossip="20000"
+                     up_thread="true" down_thread="true" />
+      <pbcast.NAKACK gc_lag="50" retransmit_timeout="300,600,1200,2400,4800"
+      <pbcast.NAKACK gc_lag="50" retransmit_timeout="300,600,1200,2400,4800"
+                     up_thread="true" down_thread="true" />
+      <UNICAST timeout="5000" window_size="100" min_threshold="10"
+               down_thread="true" />
+      <FRAG frag_size="8192"
+            down_thread="true" up_thread="true" />
+      <pbcast.GMS join_timeout="5000" join_retry_timeout="2000"
+                  shun="false" print_local_addr="true" />
+      <pbcast.STATE_TRANSFER up_thread="true" down_thread="true" />
+    </Config>
+  </attribute>
+</mbean>
+]]></programlisting>        
+     </para>
+   </section>
+</section>

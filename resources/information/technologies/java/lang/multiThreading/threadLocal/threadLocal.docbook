@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns7035:section xmlns:ns7035="http://docbook.org/ns/docbook" xml:id="resources.information.tecnologies.java.lang.multiThreading.threadLocal.threadLocal">
+  <ns7036:title xmlns:ns7036="http://docbook.org/ns/docbook">ThreadLocal variables</ns7036:title>
+      <ns7037:para xmlns:ns7037="http://docbook.org/ns/docbook">
+        Thread-local variables provide effectively a mechanism for threads to cache local variables.
+      </ns7037:para>
+       <ns7038:para xmlns:ns7038="http://docbook.org/ns/docbook">
+        A thread-local variable provides a separate copy of its value for each thread that uses it. 
+        Each thread can see only the value associated with that thread, and is unaware that other threads 
+        may be using or modifying their own copies. 
+       </ns7038:para>
+  
+      <ns7039:section xmlns:ns7039="http://docbook.org/ns/docbook">
+        <ns7040:title xmlns:ns7040="http://docbook.org/ns/docbook">The thread-local class</ns7040:title>
+        <ns7041:para xmlns:ns7041="http://docbook.org/ns/docbook">
+          In the <ns7042:literal xmlns:ns7042="http://docbook.org/ns/docbook">java.lang package</ns7042:literal> you will find a class,
+          <ns7043:literal xmlns:ns7043="http://docbook.org/ns/docbook">ThreadLocal</ns7043:literal>, with the following mathods:
+          <ns7044:programlisting xmlns:ns7044="http://docbook.org/ns/docbook">
+public class ThreadLocal 
+{ 
+  /**
+    * Returns the value in the current thread's copy of 
+    * this thread-local variable.
+    */        
+  public Object get();
+            
+  /**
+    * Returns the current thread's initial value for 
+    * this thread-local variable.
+    */        
+  public void set(Object newValue);
+            
+  /**
+    * Sets the current thread's copy of this 
+    * thread-local variable to the specified value.        
+    */        
+  public Object initialValue();
+}            
+            </ns7044:programlisting>
+        </ns7041:para>
+        <ns7045:para xmlns:ns7045="http://docbook.org/ns/docbook">
+          Usually this class is used as a wrapper of another class for which you would like to
+          maintain a single instance per thread. 
+        </ns7045:para>
+      </ns7039:section>
+      
+  <ns7046:section xmlns:ns7046="http://docbook.org/ns/docbook" role="example">
+    <ns7047:title xmlns:ns7047="http://docbook.org/ns/docbook">Example: Maintaing one database connection per thread</ns7047:title>
+    <ns7048:para xmlns:ns7048="http://docbook.org/ns/docbook">
+      The following is a typical application of ThreadLocal. We use it to ensure that we
+      maintain a single database connection per thread:
+    <ns7049:programlisting xmlns:ns7049="http://docbook.org/ns/docbook">
+public class DBConnectionPerThreadSource
+{ 
+  public static Connection getConnection() 
+  {
+    return connectionSource.get();
+  }
+      
+  private static class ConnectionPerThread extends ThreadLocal&lt;Connection&gt; 
+  {
+    public Connection initialValue() 
+    {
+      return DriverManager.getConnection(dbURL);
+    }
+  }
+
+  private static ThreadLocalConnection connectionSource = 
+      new ThreadLocalConnection();
+}      
+      </ns7049:programlisting>
+    </ns7048:para>
+  </ns7046:section>
+  
+  <ns7050:section xmlns:ns7050="http://docbook.org/ns/docbook">
+    <ns7051:title xmlns:ns7051="http://docbook.org/ns/docbook">Benefits of using thread-local variables</ns7051:title>
+    <ns7052:para xmlns:ns7052="http://docbook.org/ns/docbook">
+      <ns7053:itemizedlist xmlns:ns7053="http://docbook.org/ns/docbook">
+        <ns7054:listitem xmlns:ns7054="http://docbook.org/ns/docbook"><ns7055:para xmlns:ns7055="http://docbook.org/ns/docbook">
+          It is easy to make a stateful class thread-safe. One simply bypasses the complexity of
+          having to determine which methods should be declared synchronized by ensuring that each
+          thread has its own instance at the cost of not being able to exchange information between
+          threads via that object.
+          <ns7056:note xmlns:ns7056="http://docbook.org/ns/docbook"><ns7057:para xmlns:ns7057="http://docbook.org/ns/docbook">
+            Typically one would encapsulate a class you want to make thread safe within a
+            thread-local class.
+          </ns7057:para></ns7056:note>
+        </ns7055:para></ns7054:listitem>
+        <ns7058:listitem xmlns:ns7058="http://docbook.org/ns/docbook"><ns7059:para xmlns:ns7059="http://docbook.org/ns/docbook">
+          Avoiding the need for synchronization may make your system more scalable.
+        </ns7059:para></ns7058:listitem>
+      </ns7053:itemizedlist>
+    </ns7052:para>
+  </ns7050:section>
+  
+  <ns7060:section xmlns:ns7060="http://docbook.org/ns/docbook">
+    <ns7061:title xmlns:ns7061="http://docbook.org/ns/docbook">Dangers of using thread-local variables</ns7061:title>
+    <ns7062:para xmlns:ns7062="http://docbook.org/ns/docbook">
+      Stateful thread-local variables are not not save to be used in the context of thread pooling.
+    </ns7062:para>
+  </ns7060:section>
+  
+  
+</ns7035:section>

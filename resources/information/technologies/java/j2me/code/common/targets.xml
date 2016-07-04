@@ -1,0 +1,100 @@
+<![CDATA[
+<taskdef name="updatejad" 
+  classname="za.co.solmstraining.ant.j2me.UpdateJadWithJarSizeTask"/>
+
+<path id="midp.jar">
+  <pathelement path="${midpJar}"/>
+</path>
+
+<target name="clean"
+        description="Removes the build directories">
+  <delete dir="${distDir}" />
+  <delete dir="${classesDir}" />
+  <delete dir="${unverifiedClassesDir}" />
+</target>
+
+<target name="prepareDirectories" depends="clean">
+  <echo message="Creating build and distribution directories ..." />
+  <mkdir dir="${classesDir}" />
+  <mkdir dir="${unverifiedClassesDir}" />
+  <mkdir dir="${distDir}" />
+</target>
+
+<target name="compile" depends="prepareDirectories">
+  <echo message="Compiling ..."/>
+  <javac srcdir="${srcDir}"
+         destdir="${unverifiedClassesDir}"
+         deprecation="${compile.deprecation}"
+         debug="none"
+         bootclasspath="${midpJar}"
+         includes="**/*.java"
+         >
+    <classpath path="${classpath}">
+      <path location="${unverifiedClassesDir}"/>
+    </classpath>
+  </javac>
+</target>
+  
+<target name="preverify" depends="compile">
+    <echo message="preverifying ..."/>
+    <exec executable="${preverify}">
+      <arg line="-d"/>
+      <arg line="${classesDir}"/>
+      <arg line="-classpath"/>
+      <arg line="${midpJar}"/>
+      <arg line="${unverifiedClassesDir}"/>
+    </exec>
+ </target>
+ 
+ <target name="checkManifestAvailable">
+    <available file="${distDir}/MANIFEST.MF" property="manifestExists"/>
+ </target>
+
+<target name="writeManifest" unless="manifestExists" 
+                                             depends="prepareDirectories,checkManifestAvailable">
+     <echo message="Writing manifest file ..."/>
+     <echo file="${distDir}/MANIFEST.MF">MIDlet-1: ${midletName}, ${iconFile}, ${midletPackage}.${midletName}
+MIDlet-Name: ${midletName}Suite
+MIDlet-Vendor: ${sourceOrganization}
+MIDlet-Version: ${midletVersion}
+MicroEdition-Configuration: ${j2meConfiguration}
+MicroEdition-Profile: ${j2meProfile}
+    </echo>
+</target>    
+          
+<target name="jar" depends="compile, preverify, writeManifest">
+  <echo message="Creating jar: ${distDir}/${jarFile} ..."/>
+  <delete file="${distDir}/${jarFile}"/>
+  <jar jarfile="${distDir}/${jarFile}" manifest="${distDir}/MANIFEST.MF"> 
+    <fileset dir="${classesDir}" includes="**/*.class"/>
+    <fileset dir="${resourcesDir}" includes="**/*"/>
+  </jar>
+</target>
+
+<target name="writeJad">
+     <echo message="Writing jad file ..."/>
+<echo file="${distDir}/${jadFile}">MIDlet-1: ${midletName}, ${iconFile}, ${midletPackage}.${midletName}
+MIDlet-Jar-URL: ${jarFile}
+MIDlet-Name: ${midletName}Suite
+MIDlet-Vendor: ${sourceOrganization}
+MIDlet-Version: ${midletVersion}
+Manifest-Version: ${manifestVersion}
+
+</echo>
+</target>  
+<!-- NBNB the empty line is essential!!! -->
+
+<target name="updateJarSizeInJad" depends="writeJad">
+  <updatejad jadfile="${distDir}/${jadFile}"/>
+</target>  
+
+<target name="run" depends="jar, updateJarSizeInJad"> 
+    <echo message="runing ${midletName}..."/>
+    <exec executable="${emulator}">
+      <arg line="-classpath"/>
+      <arg line="${distDir}/${jarFile}"/>
+      <arg line="-Xdescriptor}"/>
+      <arg line="${distDir}/${jadFile}"/>
+    </exec>
+ </target>
+]]>

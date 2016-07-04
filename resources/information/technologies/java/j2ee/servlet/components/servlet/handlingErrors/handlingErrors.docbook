@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Handling errors</title>
+    <para>
+        If an error occurs during the processing of a Servlet (or any other web component, for that matter), the web container will generate a 
+        default (and often "ugly") error page to inform the client that a problem had occurred. It is customary to customise 
+        that page in order to <emphasis>provide the client with a sensible
+        navigation path</emphasis> to continue. In addition, one often wants to present different error pages based on the
+        error condition. These are configured in the <literal>/WEB-INF/web.xml</literal> deployment descriptor.
+    </para>
+    <note>
+        <para>
+            These errors usually signify some I/O or networking problem, or an application error condition (e.g. "invalid product code" or "database unavailable").
+            "Soft" errors such as input validation failure are usually not handled in this manner.
+        </para>
+    </note>
+    
+    <section>
+        <title>Configuring error handlers</title>
+        <section>
+            <title>Handling errors by HTTP error code</title>
+            <para>
+                To present pages for specific HTTP codes, such as 404 (Not found) or 401 (Unauthorised), one or more 
+                <literal>&lt;error-page&gt;</literal> tags are added to the deployment descriptor:
+                <programlisting><![CDATA[
+    <error-page>
+        <error-code>404</error-code>
+        <location>/errorpages/notFound.jspx</location>
+    </error-page>
+            ]]></programlisting>
+            </para>
+        </section>
+        
+        <section>
+            <title>Handling errors by Exception type</title>
+            <para>
+                More commonly, one wants to handle errors based on the Java Exception that was thrown from one of your components. This
+                is done as follows:
+                <programlisting><![CDATA[
+    <error-page>
+        <exception-type>javax.servlet.ServletException</exception-type>
+        <location>/errorpages/generalError.jspx</location>
+    </error-page>
+            ]]></programlisting>
+            </para>
+            <para>
+                Web applications allow for <emphasis>the handling of errors at various levels of abstraction</emphasis> similar to normal
+                <literal>try...catch</literal> blocks in Java code. Simply list various <literal>&lt;error-page&gt;</literal> blocks
+                indicating the different exception types:
+                <programlisting><![CDATA[
+    <error-page>
+        <exception-type>com.myapp.ProductException</exception-type>
+        <location>/errors/product.jspx</location>
+    </error-page>
+    <error-page>
+        <exception-type>com.myapp.ProductUnavailable</exception-type>
+        <location>/errors/product-unavailable.jspx</location>
+    </error-page>
+            ]]></programlisting>
+            </para>
+            <para>
+                The error page which most specifically (concretely) matches the thrown exception will be invoked. In the case of a JSP error page,
+                it can then access the thrown Exception (as a standard implicit object) in order for it to further inspect or display it.
+            </para>
+        </section>
+    </section>
+    
+    <section>
+        <title>Wrapping exceptions during business service requests</title>
+        <para>
+            All of the standard service requests in a Servlet are defined to
+            throw only I/O or Servlet exceptions:
+            <programlisting><![CDATA[
+public void doPost( HttpServletRequest request, HttpServletResponse response)
+throws IOException, ServletException
+{
+    //...
+}
+]]></programlisting>
+            <literal>ServletException</literal> is a general exception that supports <emphasis>exception chaining</emphasis>,
+            i.e. it can be instantiated with a <emphasis>cause</emphasis> (another exception). If a business service
+            throws a particular exception, it must be caught, wrapped in a ServletException, and re-thrown, if it is
+            to make use of the declarative error-handling mechanism (the servlet container will automatically unwrap it).
+            <programlisting><![CDATA[
+public void doPost( HttpServletRequest request, HttpServletResponse response)
+throws IOException, ServletException
+{
+    try
+    {
+        //...
+        bankService.debitAccount( acc, amount );
+        //...
+    }
+    catch (InsufficientFundsException e)
+    {
+        // Wrap and re-throw business exception
+        throw new ServletException( e );
+    }
+}
+]]></programlisting>
+        </para>
+    </section>
+    
+    
+</section>

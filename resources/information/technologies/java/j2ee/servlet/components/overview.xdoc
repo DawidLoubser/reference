@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Overview of the various Servlet components</title>
+
+    <para>
+        The Servlets API contains a set of component types, with well-defined roles. Though the implementor is not forced to
+        use these components in particular roles, disregarding these guidelines can lead to unmaintainable code.
+        <itemizedlist>
+            <listitem>
+                <formalpara>
+                    <title>Servlets</title>
+                    <para>
+                        The key component of the API. Servlets model the basic life cycle of an HTTP request, and are typically
+                        used as <emphasis>controller</emphasis> components, or as the basis for more complex functionality. Requests are generally directed from the container to Servlets, 
+                        from where they control the various stages of execution for that request (i.e. Obtaining data, and rendering a view).
+                        It is typical to have one Servlet per use cases. Servlets are typically written by extending the 
+                        <literal>javax.servlet.http.HttpServlet</literal> class.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>JSP</title>
+                    <para>
+                        Java Server Pages are the <emphasis>views</emphasis> of the system. They function as generic renderers, typically
+                        receiving one or more Java Objects which they use to render a text-based (typically XML) document such as XHTML. Several productivity
+                        features, such as standard and custom tags, as well as a simple expression language, means that one does not have
+                        to write any Java code in order to produce useful displays.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Filters</title>
+                    <para>
+                        Filters allow for the application of the "Pipes and Filters" architecture pattern to request processing in a Servlet container.
+                        These components are configured to, based on certain conditions, act as <emphasis>filters</emphasis> to the request and/or response
+                        flows, before or after they've been processed. Their uses are nearly limitless, from custom security enforcement, statistics/monitoring,
+                        on-the-fly compression for faster uploads/download, XML transformation, to enforcing site rules (i.e. "our images may only be viewed in the context 
+                        of <emphasis>our</emphasis> web pages") or simply filtering for bad language. Filters are typically written by implementing the interface
+                        <literal>javax.servlet.Filter</literal>.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Listeners</title>
+                    <para>
+                        The various types of listener allow for the registration of <emphasis>event listeners</emphasis> based on various web application events. 
+                        For example, the creation and destruction of the context, the creation and destruction of user sessions,
+                        the placement of data in a user's session, the placement of data in a request, etc. These are implemented by implementing the various 
+                        <literal>***Listener</literal> interfaces defined in the <literal>javax.servlet</literal> and <literal>javax.servlet.http</literal>
+                        packages.
+                    </para>
+                </formalpara>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <note>
+        <para>
+            All the different components used in a web module, as well as their interaction, in configured in the <literal>web.xml</literal> deployment descriptor.
+        </para>
+    </note>
+</section>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+xml:id="resources.information.technologies.general.regularExpressions.matchingOnCharacters"
+     
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Matching on characters by defining a character class</title>
+  <para>
+    Regular expressions use the concept of a character class to specify a set of characters
+    against which another character is matched. To be able to check whether a character 
+    falls within a particular class of characters, one defines the class of characters within 
+    square brackets. 
+    <programlisting><![CDATA[
+[ABC]    
+    ]]></programlisting>
+    matches on either <quote>A</quote>, <quote>B</quote> or <quote>C</quote>.
+  </para>
+  <para>
+    These character classes can now be used within a more general regular expression.
+    For example
+    <programlisting><![CDATA[
+[vs]ector    
+    ]]></programlisting>
+    matches on either <quote>vector</quote> or on <quote>sector</quote>.
+  </para>  
+  <para>
+    Similarly, 
+    <programlisting><![CDATA[
+[sg][oa]ng    
+    ]]></programlisting>
+    matches on <quote>song</quote>, <quote>sang</quote>, <quote>gong</quote>
+    and <quote>gang</quote>.
+  </para>
+  
+  <section>
+    <title>Matching on a range of characters</title>
+    <para>
+      To match on a range of characters, we use a <literal><![CDATA[-]]></literal> between
+      the two characters which delimit the range.  For example
+      <programlisting><![CDATA[
+[A-Z]      
+      ]]></programlisting>
+      matches on any capital letter of the western alphabet and
+      <programlisting><![CDATA[
+[Ee]xercises [1-9]      
+      ]]></programlisting>
+      matches one exercises 1 to 9 irrespective of whether <quote>exercise</quote> starts with
+      a lower or upper case letter.
+    </para>
+    <para>
+      To match on any letter or numeral we could use
+      <programlisting><![CDATA[
+[0-9a-zA-Z]      
+      ]]></programlisting>
+      <note>
+        <para>
+          When matching on a hyphen, <literal><![CDATA[-]]></literal>, place the hyphen as
+          first character in a character set so that it is not interpreted as range. Thus
+          <programlisting><![CDATA[
+[-+*/^!&|]          
+          ]]></programlisting>
+          matches on any one of these characters while
+          <programlisting><![CDATA[
+[+-*/^!&|]          
+          ]]></programlisting>
+          matches on any character between <quote>+</quote> and <quote>*</quote> or
+          on <quote>/</quote>, <quote>^</quote>, <quote>!</quote> <quote>&amp;</quote>
+          or <quote>|</quote>.
+        </para>  
+      </note>
+    </para>
+  </section>
+  
+  <section>
+    <title>Excluding certain characters</title>
+    <para>
+      At times it is simpler to specify which characters should <emphasis>not</emphasis>
+      be included than to specify which should. To this end regular expressions provides
+      a <emphasis>circumflex</emphasis> character, <literal>^</literal>. 
+      Inserting a <literal>^</literal> as first character within the class specifier declares
+      a class whose characters are all the characters not specified. Thus
+      <programlisting><![CDATA[
+[^0-9]      
+      ]]></programlisting>
+      specifies a class of all characters except numerals.
+    </para>
+  </section>
+  
+  <section>
+    <title>Matching on any character</title>
+    <para>
+        At times we want to match on any character. Regular expressions use
+        a <literal><![CDATA[.]]></literal> to specify that a particular position in a
+        potential match may be filled by any character.
+    </para>
+    <para>
+      For example,
+      <programlisting><![CDATA[
+codeA.      
+      ]]></programlisting>
+      would match, for example, on <quote>codeA1</quote>, <quote>codeAX</quote>,
+      <quote>codeA#</quote> or even on <quote>codeA </quote>.
+    </para>
+  </section>
+  
+  <section>
+    <title>Escaped characters</title>
+    <para>
+      Because certain characters have a special meaning within regular expressions,
+      we need to have some way to request these characters literally. This is done
+      via escaped characters which are specified by a backslash, <literal>\</literal>,
+      followed by the character which should be taken literally. Below we list a few
+      examples:
+      <programlisting><![CDATA[
+\.  \{  \}  \[  \]  \(  \)
+      ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Pre-defined character classes</title>
+    <para>
+      Most regular expressions implementations support a common set of pre-defined
+      character classes. These include:
+    </para>
+    <table>
+      <title>Regular expressions pre-defined character classes</title>
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry>
+              <para>Character class</para>
+            </entry>
+            <entry>
+              <para>Matches</para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>
+              <para>\d</para>
+            </entry>
+            <entry>
+              <para>A digit: <literal>[0-9]</literal></para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>\D</para>
+            </entry>
+            <entry>
+              <para> 	A non-digit: <literal>[^0-9]</literal></para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>\s</para>
+            </entry>
+            <entry>
+              <para>A whitespace character: <literal>[ \t\n\x0B\f\r]</literal></para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>\S</para>
+            </entry>
+            <entry>
+              <para>A non-whitespace character: <literal>[^\s]</literal></para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>\w</para>
+            </entry>
+            <entry>
+              <para>A <emphasis>word</emphasis> character: <literal>[a-zA-Z_0-9]</literal></para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>\W</para>
+            </entry>
+            <entry>
+              <para>A non-word character: <literal>[^\w]</literal></para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    </section>
+  
+  <!-- TODO: This should be clarified, i.e. Java's is different, etc
+    section>
+    <title>POSIX character classes</title>
+    <para>
+      The POSIX (UNIX Environment) standard defines a further number of character classes. These classes are requested
+      by putting the class name surrounded by colons within the square brackets defining a class.
+      The standard POSIX character classes are shown in the following table:
+    </para>  
+      <table xml:id="resources.information.technologies.general.regularExpressions.matchingOnCharacters.posixCharacterClasses">
+        <title></title>
+        <tgroup cols="2">
+          <thead>
+            <row><entry><para>Character class</para></entry><entry><para>Description</para></entry></row>
+          </thead>
+          <tbody>
+            <row><entry><para>[:alnum:]</para></entry><entry><para>Printable characters including
+              white spaces.</para></entry></row>
+            <row><entry><para>[:alpha:]</para></entry><entry><para>Alphabethic characters.</para></entry></row>
+            <row><entry><para>[:blank:]</para></entry><entry><para>Space and tab characters.</para></entry></row>
+            <row><entry><para>[:cntrl:]</para></entry><entry><para>Control characters.</para></entry></row>
+            <row><entry><para>[:digit:]</para></entry><entry><para>Numerical characters.</para></entry></row>
+            <row><entry><para>[:graph:]</para></entry><entry><para>Printable (visible) characters.</para></entry></row>
+            <row><entry><para>[:lower:]</para></entry><entry><para>Lower case characters.</para></entry></row>
+            <row><entry><para>[:print:]</para></entry><entry><para>Alphanumeric characters.</para></entry></row>
+            <row><entry><para>[:punct:]</para></entry><entry><para>Punctuation characters.</para></entry></row>
+            <row><entry><para>[:space:]</para></entry><entry><para>Whitespace characters.</para></entry></row>
+            <row><entry><para>[:upper]</para></entry><entry><para>Uppercase characters.</para></entry></row>
+            <row><entry><para>[:xdigit:]</para></entry><entry><para>Hexadecimal digits.</para></entry></row>
+          </tbody>
+        </tgroup>
+      </table>
+    <para>
+      For example, to search on <emphasis>Linux</emphasis> with <literal>grep</literal>
+      for all lines in any of the files in the current directory which contain control characters, we can
+      use
+      <programlisting><![CDATA[
+grep [[:cntrl:]] *      
+      ]]></programlisting>
+    </para>
+  </section -->
+</section>

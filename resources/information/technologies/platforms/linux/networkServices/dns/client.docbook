@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns2772:section xmlns:ns2772="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.dns.client">
+
+	<ns2773:title xmlns:ns2773="http://docbook.org/ns/docbook">DNS clients</ns2773:title>
+	<ns2774:para xmlns:ns2774="http://docbook.org/ns/docbook">
+	The configured DNS server is accessed on every request made to a domain name by the operating system or an application.
+	</ns2774:para>
+	<ns2775:section xmlns:ns2775="http://docbook.org/ns/docbook">
+		<ns2776:title xmlns:ns2776="http://docbook.org/ns/docbook">nslookup</ns2776:title>
+		<ns2777:para xmlns:ns2777="http://docbook.org/ns/docbook">
+	 	Sends a request to a DNS server	
+		</ns2777:para>
+		<ns2778:screen xmlns:ns2778="http://docbook.org/ns/docbook">
+			<ns2779:userinput xmlns:ns2779="http://docbook.org/ns/docbook">
+				<ns2780:command xmlns:ns2780="http://docbook.org/ns/docbook">nslookup</ns2780:command> <ns2781:replaceable xmlns:ns2781="http://docbook.org/ns/docbook">flags</ns2781:replaceable> <ns2782:replaceable xmlns:ns2782="http://docbook.org/ns/docbook">target</ns2782:replaceable> <ns2783:replaceable xmlns:ns2783="http://docbook.org/ns/docbook">-DNS Server</ns2783:replaceable>
+			</ns2779:userinput>
+		</ns2778:screen>
+		<ns2784:programlisting xmlns:ns2784="http://docbook.org/ns/docbook">
+[root@teddy root]# nslookup teddy.earth
+Note:  nslookup is deprecated and may be removed from future releases.
+Consider using the `dig' or `host' programs instead.  Run nslookup with
+the `-sil[ent]' option to prevent this message from appearing.
+Server:         192.168.0.1
+Address:        192.168.0.1#53
+
+Name:   teddy.earth
+Address: 192.168.0.1
+
+[root@teddy root]# 
+		</ns2784:programlisting>
+	</ns2775:section>	
+	
+	<ns2785:section xmlns:ns2785="http://docbook.org/ns/docbook">
+		<ns2786:title xmlns:ns2786="http://docbook.org/ns/docbook">dig</ns2786:title>
+		<ns2787:para xmlns:ns2787="http://docbook.org/ns/docbook">
+		Dig is are replacement for nslookup, and has been included in most distributions.
+		</ns2787:para>
+		<ns2788:screen xmlns:ns2788="http://docbook.org/ns/docbook">
+			<ns2789:userinput xmlns:ns2789="http://docbook.org/ns/docbook">
+				<ns2790:command xmlns:ns2790="http://docbook.org/ns/docbook">dig</ns2790:command> <ns2791:replaceable xmlns:ns2791="http://docbook.org/ns/docbook">flags</ns2791:replaceable> <ns2792:replaceable xmlns:ns2792="http://docbook.org/ns/docbook">target</ns2792:replaceable>
+			</ns2789:userinput>
+		</ns2788:screen>
+		<ns2793:table xmlns:ns2793="http://docbook.org/ns/docbook" frame="all">
+			<ns2794:title xmlns:ns2794="http://docbook.org/ns/docbook">dig Flags</ns2794:title>
+			<ns2795:tgroup xmlns:ns2795="http://docbook.org/ns/docbook" cols="2">
+				<ns2796:thead xmlns:ns2796="http://docbook.org/ns/docbook">
+					<ns2797:row xmlns:ns2797="http://docbook.org/ns/docbook"><ns2798:entry xmlns:ns2798="http://docbook.org/ns/docbook">Flag</ns2798:entry><ns2799:entry xmlns:ns2799="http://docbook.org/ns/docbook">Description</ns2799:entry></ns2797:row>
+				</ns2796:thead>	
+				<ns2800:tbody xmlns:ns2800="http://docbook.org/ns/docbook">
+					<ns2801:row xmlns:ns2801="http://docbook.org/ns/docbook"><ns2802:entry xmlns:ns2802="http://docbook.org/ns/docbook">-t</ns2802:entry><ns2803:entry xmlns:ns2803="http://docbook.org/ns/docbook">The type of the query. MX=mail exchange, ANY=all</ns2803:entry></ns2801:row>
+					<ns2804:row xmlns:ns2804="http://docbook.org/ns/docbook"><ns2805:entry xmlns:ns2805="http://docbook.org/ns/docbook">-x</ns2805:entry><ns2806:entry xmlns:ns2806="http://docbook.org/ns/docbook">Performs a reverse lookup</ns2806:entry></ns2804:row>
+					<ns2807:row xmlns:ns2807="http://docbook.org/ns/docbook"><ns2808:entry xmlns:ns2808="http://docbook.org/ns/docbook">@server</ns2808:entry><ns2809:entry xmlns:ns2809="http://docbook.org/ns/docbook">The DNS server queried</ns2809:entry></ns2807:row>
+				</ns2800:tbody>
+			</ns2795:tgroup>
+		</ns2793:table>	
+		<ns2810:programlisting xmlns:ns2810="http://docbook.org/ns/docbook">
+		
+[root@teddy root]# dig teddy.earth
+
+; &lt;&lt;&gt;&gt; DiG 9.2.0 &lt;&lt;&gt;&gt; teddy.earth
+;; global options:  printcmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 50128
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;teddy.earth.                   IN      A
+
+;; ANSWER SECTION:
+teddy.earth.            259200  IN      A       192.168.0.1
+
+;; AUTHORITY SECTION:
+earth.                  259200  IN      NS      teddy.earth.
+
+;; Query time: 7 msec
+;; SERVER: 192.168.0.1#53(192.168.0.1)
+;; WHEN: Wed Sep  3 21:06:25 2003
+;; MSG SIZE  rcvd: 59
+
+[root@teddy root]# 
+		
+		</ns2810:programlisting>
+	</ns2785:section>	
+</ns2772:section>

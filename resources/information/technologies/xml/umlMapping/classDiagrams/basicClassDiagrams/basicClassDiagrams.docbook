@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-01-16 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Mapping basic class and object diagrams onto XML</title>
+    <para> In W3C XML Schema, a UML class is mapped to a <emphasis>complax type</emphasis>:
+        <programlisting>
+&lt;complexType name="Account"&gt;
+
+&lt;/complexType&gt;
+	  	</programlisting>
+    </para>
+    <para> In XML the object name would map either onto <itemizedlist>
+            <listitem>
+                <para> a unique identifier, which would typically be a relative or absolute URI,
+                    <programlisting>
+&lt;element name="myAccount" type="Account"/&gt;					
+					</programlisting>
+                </para>
+            </listitem>
+            <listitem>
+                <para> A unique identifier within an object specified within an XML schema via an
+                        <emphasis>ID</emphasis> or preferably a <emphasis>key</emphasis>
+                    declaration. </para>
+            </listitem>
+            <listitem>
+                <para> or, at a more abstract level, a role name identifying an object which plays a
+                    particular role with respect to another object. For example, below we give the
+                    client's account the role name <literal>clientAccount</literal>:
+                    <programlisting>
+&lt;complexType name="Client"&gt;
+	&lt;sequence&gt;
+	  ...
+	  &lt;element name="clientAccount" type="Account"/&gt;
+	  ...
+	&lt;/sequence&gt;
+&lt;/complexType&gt;
+			  	</programlisting>
+                </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+
+    <para> The object or instances of classes would be the XML objects in some or other XML data
+        stream. For example, an XML object complying to the data type specification given in the
+        above XML schema would look something like this:
+        <programlisting>
+&lt;account&gt;
+  ...
+&lt;/account&gt;						
+			</programlisting>
+        Its object identity would typically be relative to the resource within which it is defined.
+        Alternatively one could use a key definition in an XML schema to, for example, specify that
+        the account number is a unique identifier for an account.
+        <programlisting>
+&lt;account accNo="a111"&gt;
+  ...
+&lt;/account&gt;						
+			</programlisting>
+    </para>
+
+</section>

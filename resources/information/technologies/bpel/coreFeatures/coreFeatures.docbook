@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Core features of BPEL</title>
+    <para>
+      Since the concept of a Business Process is not a construct normally provided by a typical
+      object-oriented language (as it is usually an implicit flow of control across objects), BPEL
+      introduces this concept in a manageable way for anybody who wishes to implement services
+      in a process-oriented manner.
+    </para>
+    <para>
+      In BPEL, a business process is composed of elements ("activities") that define activity behaviours. 
+      These include the interactions, workflow control, and managing workflow state and information.  
+    </para>
+    
+    <section>
+      <title>BPEL interactions</title>
+      <para>
+        The BPEL interactions include
+        <itemizedlist>
+          <listitem><para>
+            invoking another service via <literal><![CDATA[<invoke>]]></literal>,
+          </para></listitem>
+          <listitem><para>
+            generating a response for a synchronous service via <literal><![CDATA[<reply>]]></literal>,
+          </para></listitem>
+          <listitem><para>
+            notifying a client that a requested service is not going to be provided due to either 
+            <itemizedlist>
+              <listitem><para>a precondition for the service not having been met (an exception)</para></listitem>
+              <listitem><para>or due to a system problem preventing the service provider to fulfil
+                its contractual obligations (an error)</para></listitem>
+            </itemizedlist>
+            using <literal><![CDATA[<throw>]]></literal>            
+          </para></listitem>
+          <listitem><para>
+            waiting for a client to invoke a service or send a message using
+            <literal><![CDATA[receive]]></literal>,
+          </para></listitem>
+          <listitem><para>
+            the ability to use message correlation to match <emphasis>asynchronous</emphasis> request
+            and response objects with one another.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>BPEL flow control</title>
+      <para>
+        The control statements include
+        <itemizedlist>
+          <listitem><para>
+            specifying that certain tasks should be executed sequentially via
+            <literal><![CDATA[<sequence>]]></literal>,
+          </para></listitem>
+          <listitem><para>
+            the certain tasks should be executed concurrently via
+            <literal><![CDATA[<flow>]]></literal>,
+          </para></listitem>
+          <listitem><para>
+            that certain paths are followed conditionally via
+            <literal><![CDATA[<switch>]]></literal> or <literal><![CDATA[<pick>]]></literal>,
+          </para></listitem>
+          <listitem><para>
+            that certain tasks should be executed repetitatively via <literal><![CDATA[<while>]]></literal>
+          </para></listitem>
+          <listitem><para>
+            that certain transactions should be effectively reversed via inverse or compensating transactions 
+            <note><para>
+               BPEL supports long running business transactions and activities.
+            </para></note>
+          </para></listitem>
+          <listitem><para>
+            the ability to <literal><![CDATA[wait]]></literal> for a certain time within a workflow,
+          </para></listitem>
+          <listitem><para>
+            the ability to handle exceptions and errors via appropriate handler services, and
+          </para></listitem>
+          <listitem><para>
+            the ability to terminate a business process,
+          </para></listitem>
+        </itemizedlist>
+    </para>
+    </section>
+    
+    <section>
+      <title>Managing workflow data</title>
+      <para>
+        In order to manage ad maintain work flow state information, BPEL supports variables (together with copy and assignment operations)
+        as well as message transformation. For each running business process, the BPEL engine should maintain the process state reliably.
+      </para>
+    </section>
+    
+    <section>
+      <title>Abstract and Executable business processes</title>
+      <para>
+        The BPEL standard specifies two types of BPEL business processes, each with their own XML schema to
+        assist the developer and lay down the specification of the structure:
+        <itemizedlist>
+          <listitem>
+            <formalpara>
+              <title>Abstract processes,</title>
+              <para>showing only the externally visible interactions of a business process (i.e. the message passing,
+              ordering and timing constraints on interactions between client, process, and/or partner service providers).
+              This unique concept uses abstraction to indicate the general nature of a business process (perhaps to one's client), 
+              without divulging the internal implementation details.</para>
+            </formalpara>
+          </listitem>
+          <listitem>
+            <formalpara>
+              <title>Executable processes,</title>
+              <para>The full process (which may <emphasis>implement</emphasis> an abstract process) which
+              is deployed to, and executed by, the BPEL engine.</para>
+            </formalpara>
+          </listitem>
+        </itemizedlist>
+      </para>
+      <para>
+        For example, if complex interaction mst occur between a client and the service provider during the business process
+        (imagine, say, a complex legal process) it may be difficult to statically express the full nature of the interaction
+        simply via contracts with pre- ad postconditions.
+      </para>
+      <para>
+        Instead, the service provider provides the client with the abstract version of the process, showing only the interactions
+        and acting as a <quote>template</quote> within which the real process must fall. This abstract process may even include
+        so-called opaque extension points, within which the client may perform it's own activities (opaque to the service provider)
+        in the executable business process, but which may not violate the overall process rules. The same, of course, may apply in the
+        inverse scenario where a client expresses, as part of his needs for a service provider, an abstract BPEL process.
+      </para>
+      <para>
+        This, together with the services contract, moves towards specifying a richer overall contract which may also help greatly in
+        automatically matching clients and servers (determining whether a service provider is suitable to a client's needs).
+      </para>
+    </section>
+  
+  <section>
+    <title>Long-running business processes</title>
+    <para>
+      If one thinks of a long business process in the real world, as soon as a client interacts with the service provider,
+      the client needs to produce some information in order to allow the service provider to associate the client with
+      a particular business process. This usually occurs implicitly (i.e. some or other piece of information in the message sent from
+      the client to the provider will provide the necessary link), and is not usually a separate service request.
+    </para>
+    <para>
+      In this spirit, BPEL supports correlation via <emphasis>correlation sets</emphasis>, a declarative mechanism to indicate
+      which information in the exchanged messages (one or more <emphasis>message properties</emphasis>) is used to identify
+      an existing instance of a business process, instead of creating a new instance which receives the request.
+    </para>
+  </section>
+    
+</section>    

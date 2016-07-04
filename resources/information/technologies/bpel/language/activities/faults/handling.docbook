@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Fault handling</title>
+    <para>
+        Fault handlers defined within a scope handle faults which are received from within that scope.
+        A fault could arise due to
+        <itemizedlist>
+            <listitem><para>
+                the service requesting a service from an external service provider who returns a 
+                fault message, or
+            </para></listitem>
+            <listitem><para>
+                the service making use of a lower level service which signals a fault.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>What is a fault occurs within a process, but is not handled within the process</title>
+        <para>
+            If a fault is raised at some level of granularity, but is not handled, even at the outer process
+            level, then the termination handler for the process is called. The default fault handler
+            <itemizedlist>
+                <listitem><para>
+                    first executes all compensation handlers for the current scope, and then
+                </para></listitem>
+                <listitem><para>
+                    rethrows the fault to the outer (calling) scope.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Defining fault handlers</title>
+        <para>
+            Fault handlers are defined within the scope to which they apply. The scope could be
+            <itemizedlist>
+                <listitem><para>
+                    a particular invocation,
+                </para></listitem>
+                <listitem><para>
+                    some scope of the business process as defined within an encasing <literal><![CDATA[<scope>]]></literal>
+                    tag, or
+                </para></listitem>
+                <listitem><para>
+                    the enclosing process itself.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            The general syntax is as follows:
+            <programlisting><![CDATA[
+<scope>
+    ...
+    <faultHandlers>
+       <catch faultName="someNameSpacePrefix:SomeFaultName" 
+           faultElement="someNameSpacePrefix:SomeElementName">
+        <!-- 
+            any activities to be executed for the fault handling
+        -->
+        </catch>
+        <catch faultName="someNameSpacePrefix:SomeFaultName"> 
+         <!-- 
+                any activities to be executed for the fault handling
+          -->
+        </catch>
+        <catchAll>
+            <!-- 
+                any activities to be executed for the fault handling
+            -->
+        </catchAll>
+    </faultHandlers>
+</scope>            
+                    ]]></programlisting>
+        </para>
+    </section>
+    
+  <section>
+      <title>Ignoring faults</title>
+      <para>
+          At times one catches a fault which does not manifest itself in a fault for the current business
+          process. In such cases one can use an <literal><![CDATA[<empty>]]></literal> activity to
+          ignore the fault.
+      </para>
+  </section>
+    
+    
+    <section>
+        <title>Inline fault handling</title>
+        <para>
+            Fault hadnling can be specific for a particular invocation. If this is the case, one can use inline
+            fault handling. This is done via an embedded <literal>catch</literal> clause within the
+            <literal>invoke</literal> element.
+        </para>
+    </section>
+    
+    <section>
+        <title>Compensation handlers</title>
+        <para>
+            Since an enterprise services bus often executes Long Running Transactions (LRTs),
+            the default undo operations cannot use transaction rollback as this would require locking
+            the resources which participate in the LRT for the duration of the LRT. The primary
+            roll back mechanism for ESB hosted business processes is thus usually that of using
+            compensating transactions which effectively undo a transaction through a series of
+            inverse activities.
+        </para>
+        <para>
+            Compensation handlers are meant to execute a compensating transaction which effectively
+            neutralizes the effects of a transaction witout rolling back the transaction. This is defined
+            in compensation handlers which perform the inverse activities to undo the activities which have
+            been done within the scope in which the compensation handler is defined. 
+        </para>
+        <para>
+            The compensation handler is thus defined as a sequence of activities:
+            <programlisting><![CDATA[
+<scope>
+  <compensationHandler>
+    <!-- activities -->
+  </compensationHandler>
+</scope>                
+                ]]></programlisting>
+        </para>
+    </section>        
+    
+    <section>
+        <title>Propagating faults via rethrow</title>
+        <para>
+            At times one defines a fault handler for a particular scope in order to perform certain
+            clean up activities, without actually handling the fault. In such cases one would like to 
+            <literal><![CDATA[<rethrow>]]></literal> the fault for further fault handling at higher
+            levels of the services hierarchy.
+        </para>
+    </section>
+    
+    
+</section>    

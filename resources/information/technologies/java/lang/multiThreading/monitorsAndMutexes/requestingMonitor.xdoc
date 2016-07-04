@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.lang.multiThreading.monitorsAndMutexes.requestingMonitor"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+ xmlns:xi="http://www.w3.org/2001/XInclude">
+ 
+    <title role="A Thread Requesting an Object's Monitor for a Block of Code">A Thread Requesting an Object's Monitor for a Block of Code</title>
+
+<para>A thread can also request ownership of an object's (or class's) monitor
+before it enters a critical block of code. For example, instead of declaring 
+the <emphasis role="verb">credit()</emphasis> and <emphasis role="verb">debit()</emphasis> services as synchronized, the
+<emphasis role="verb">AccountUser</emphasis> threads could have actively requested ownership of 
+the account's monitor for the <emphasis role="verb">credit()</emphasis> service. The following
+code snippet illustrates this:
+</para>
+<para><programlisting>
+synchronized(account) {account.credit(100);}
+Thread.yield();
+synchronized(account) {account.debit (100);}
+</programlisting></para>
+
+<para>Here the <emphasis role="verb">synchronized(account) {...}</emphasis> requests a lock from the account's
+monitor for the block of code within the curly brackets. The account user's 
+thread then yields control to give other threads a chance before requesting
+the monitor once again for the <emphasis role="verb">debit()</emphasis> service.</para>
+    
+</section>

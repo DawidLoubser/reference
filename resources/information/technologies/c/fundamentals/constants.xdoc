@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.c.fundamentals.constants"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Constants</title>
+  <para>
+    A constant is a named value - it is like a variable whose value may not change.
+    Constants can be declared in macros (we shall discuss macros in section 
+    <xref linkend="secMacros"/>. To declare a constant you simply insert the
+    <command>const</command> keyword infront of a variable declaration:
+  </para>
+  <para>
+    <command>const double pi = 3.1415926, radius=2.5;</command>
+  </para>
+  <para>
+    <command>const double area = pi*radius*radius;</command>
+  </para>
+  <para>
+    Note that the <command>const</command> keyword specifies that
+    all variables on that line are to be declared constants.
+  </para>
+  <section><title>Specifying the data type of literal constants</title>
+    <para>
+      When specifying a number like <command>2.232323</command> we do 
+      not specify a resolution and different resolutions (e.g.
+      <command>float</command> and <command>double</command>.
+      The different data types may provide different binary approximations
+      to a specified decimal number. 
+    </para>
+    <para>
+      <emphasis>C</emphasis> uses <command>int</command> as default integral
+      data type and <command>double</command> as the default floating point
+      data type. But <emphasis>C</emphasis> also enables you to specify the
+      data type which should be used for the literal constants:
+      <informaltable frame="none" pgwide="0">
+        <tgroup cols="2">
+          <tbody>
+            <row><entry>13L</entry><entry>long integer 234</entry></row>    
+            <row><entry>O13</entry><entry>the octal integer 13 (decimal 11)</entry></row>
+            <row><entry>0x13</entry><entry>the hexadecimal (base 16) number 13 which
+                                           corresponds to decimal 19</entry></row>
+            <row><entry>2.13e-3</entry><entry>The double-precision floating-point
+                                           number 0.00213</entry></row>                               
+            <row><entry>2.13e-3F</entry><entry>The single-precision floating-point
+                                           number 0.00213</entry></row>                               
+            <row><entry>2.13e-3L</entry><entry>The long double floating-point
+                                           number 0.00213</entry></row>                               
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </para>
+  </section>
+  
+  <section><title>Enumeration types</title>
+    <para>
+      Enumeration types are really collections of named integer constants.
+      Their main benefit is that they can, at times, make code more readable.
+      Below we define an enumeration type months:
+      <programlisting>
+enum months {January=1, February, March, April, May, June, July,
+         August, September, October, November, December};
+      </programlisting>
+      Here each of <token>January</token>, ..., <token>December</token> is an integer
+      constant. The first we set to one. If we do not specify an integer value for
+      a particular named integer constant in an enumeration list, then that constant
+      has as value one more than the previous member in the list. Hence, 
+      <token>February</token>, ..., <token>December</token> have values 
+      <constant>2</constant>, ... <constant>12</constant>. If we do not specify a
+      value for the first named constant in the enumeration list, its value is assumed
+      to be zero.
+    </para>
+    <para>
+      We can now define variables of the enumeration type as follows:
+      <programlisting>
+enum months month1, month2;
+      </programlisting>
+      with the intention that the values of these two variables will be between
+      <varname>January</varname>, ..., <varname>December</varname> or more accurately
+      between <constant>1</constant>, ... <constant>12</constant>. This is, however
+      not enforced. Both, <varname>month1</varname> and <varname>month2</varname> are really
+      of type <token>int</token> and setting their value equal to, say, 
+      <token>June</token> is completely equivalent to setting the value equal to
+      <constant>6</constant>.
+      <warning>
+        <para>
+          Making use of enumeration types like <varname>month1</varname> and
+          <varname>month2</varname> is no safer than using integers. Nothing
+          prevents anybody from setting their value to <constant>13</constant> 
+          or even <constant>-1</constant>. Enumeration types can thus give a 
+          false sense of security and should be used with caution.
+        </para>
+      </warning>  
+    </para>
+    <para>
+      We can also declare an enumeration type and instance variables in a single
+      statement as is done below:
+      <programlisting>
+enum months {January=1, February, March, April, May, June, July,
+         August, September, October, November, December} month1, month2;
+       </programlisting>
+       The core benefit of using enumerations is that the resultant code may be
+       a little more readable. We can, for example, say
+      <programlisting>
+enum months month;
+for (month=January; month&lt;=December; ++month)
+...
+       </programlisting>
+       or
+      <programlisting>
+if (month == July)
+...
+       </programlisting>
+     </para>  
+     <para>
+       The values of the variables in the enumeration list do not have to be
+       consecutive integers. For example, we can define an enumeration of
+       control characters (characters are bytes and can hence be represented
+       by integers) as is done below
+      <programlisting>
+enum controlChars {bell='\a', backspace='\b', newline='\n', return='\r', tab='\t', vtab='\v'};            
+       </programlisting>
+     </para>  
+  </section>   
+  
+</section>

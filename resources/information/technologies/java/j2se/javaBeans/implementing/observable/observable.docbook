@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Implementing observable JavaBeans</title>
+  <indexterm>
+    <primary>JavaBeans</primary>
+    <secondary>observable</secondary>
+  </indexterm>
+  <para>
+    A common requirement among interactive and graphical applications, is
+    the support for <emphasis>observable</emphasis> JavaBeans. This
+    adherence to the classical <emphasis>Observer</emphasis> design
+    pattern enable interested objects to <quote>subscribe</quote> to
+    a JavaBean, after which they are notified when properties they are
+    interested in change. This is also one of the fundamental building
+    blocks of the <emphasis>model-view-controller</emphasis> design
+    pattern which is very common in graphical applications.
+  </para>
+  
+  <!-- Observer design pattern -->
+  <xi:include
+    href="../../../../../../concepts/design/patterns/classical/behavioral/observer/observer.docbook"></xi:include>
+  
+  <section>
+    <title>The JavaBeans observer framework</title>
+    <para>
+      A very minimalist (and, often considered incomplete) set of
+      constructs in the <literal>java.beans</literal> package) provide
+      a basic framework for the observability of JavaBeans properties. 
+      The following is provided:
+      <itemizedlist>
+        <listitem>
+          <para>
+            A contract for observers,
+            <literal>PropertyChangeListener</literal>, which specifies a
+            service to receive a property change notification.
+          </para>
+        </listitem>
+        <listitem>
+          <para><literal>PropertyChangeEvent</literal>, and event object
+            that contains information about the property that has changed,
+            the source (JavaBean) whose property has changed, and
+            optionally, old and new values. A subclass,
+            <literal>IndexedPropertyChangeEvent</literal>, adds positional
+            information for <emphasis>indexed property changes</emphasis>,
+            i.e. changes to an object positioned in an array or a list.
+            </para>
+        </listitem>
+        <listitem>
+          <para>
+            A helper object, <literal>PropertyChangeSupport</literal>,
+            which takes over the responsibility of maintaining a list of
+            observers, and sending events to them. Each observable
+            JavaBean will, internally, maintain an instance of this
+            helper. The helper has a reference to the <quote>source</quote>
+            JavaBean, and can automatically construct event objects for
+            us.
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+    <note>
+      <para>
+        A crucial omission is that of a contract for the <emphasis>Observable</emphasis>
+        objects themselves, which means that every bean may provide its
+        own services to attach and detach observers. By convention, these
+        are named identically to those in
+        <literal>PropertyChangeSupport</literal>, but it is usually a good
+        idea to introduce such a contract in your own projects, for
+        consistency's sake.
+      </para>
+    </note>
+    <figure>
+      <title>The JavaBeans observability framework</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="observableBeansImplementation.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </section>
+  
+  <section>
+    <title>How to create observable JavaBeans</title>
+    <para>
+      Observable beans should maintain an instance of <literal>PropertyChangeSupport</literal>
+      as helper object. Your bean should offer services to attach/detach
+      <literal>PropertyChangeListener</literal> instances (observers).
+    </para>
+    <para>
+      When a bean property is changed though one of the setter services,
+      ask your helper object to broadcast the state change.
+    </para>
+    <note>
+      <para>
+        By default, the act of broadcasting the property change, as well as
+        all activity taken by observers, will be performed in the same
+        (calling) thread. Observers may thus interfere with each other's ability
+        to timeously process the event, and it is the observer's responsibility
+        to execute long-running or computationally expensive tasks asynchronously
+        (in separate threads).
+      </para>
+    </note>
+  </section>
+  
+  <section>
+    <title>Example of an observable JavaBean</title>
+    <para>
+      As a simple example of JavaBeans observability, consider a simplified airconditioning
+      system. A user interface makes changesto an instance of <literal>AirconditionSettings</literal>,
+      an observable class that contains the requested temperature.
+    </para>
+    <para>
+      An observer, <literal>AirconObserver</literal>, will observe this object, and
+      effect the necessary changes when the user adjusts the temperature. The objects
+      in this scenario are more naturally de-coupled, and hence simpler and easier to
+      maintain, than if the user were to directly make the changes in a complex
+      object.
+    </para>
+    <para>
+      The observable object:
+      <programlisting language="Java">
+        <xi:include href="../source/aircon/AirconditionSettings.java" parse="text"/>
+      </programlisting>
+      <programlisting language="Java">
+        <xi:include href="../source/aircon/TemperatureOutOfBoundsException.java" parse="text"/>
+      </programlisting>
+    </para>
+    <para>
+      An observer which could react to temperature changes:
+      <programlisting language="Java">
+        <xi:include href="../source/aircon/test/AirconObserver.java" parse="text"/>
+      </programlisting>
+    </para>
+    <para>
+      A simplistic Swing-based graphical user interface allows the user to change
+      the temperature of a provided settings object by pressing one of two
+      buttons:
+      <programlisting language="Java">
+        <xi:include href="../source/aircon/test/AirconTempController.java" parse="text"/>
+      </programlisting>
+    </para>
+    <para>
+      And finally, a small test program to couple the observable object with
+      an observer, and to instantiate the user interface:
+      <programlisting language="Java">
+        <xi:include href="../source/aircon/test/AirconTest.java" parse="text"/>
+      </programlisting>
+    </para>
+    <figure>
+      <title>Example of observable Java Bean</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="airconObserverScreenshot.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </section>
+  
+  <section>
+    <title>Shortcomings in the JavaBeans framework</title>
+    <indexterm>
+      <primary>JavaBeans</primary>
+      <secondary>shortcomings</secondary>
+    </indexterm>
+    <para>
+      The framework is very minimalist, quite old, and has never received
+      any substantial updates. Notable shortcomings (which can easily be
+      rectified in your own projects by introducing the relevant classes
+      and interfaces) are:
+      <itemizedlist>
+        <listitem>
+          <para>There is no contract that specifies the services of an
+            Observable object. It is thus non-trivial to determine
+            (programmatically) whether a particular Bean is observable, or
+            not.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            The behaviour of property changes in deeply nested object
+            graphs are unspecified: No form of event <quote>chaining</quote> is provided.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Some observers (such as user interfaces) may want to
+            differentiate between a property being updated/changed, versus
+            being replaced (in order to take the appropriate user
+            interface actions). The current event object carries no such
+            information.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            The use of Strings to refer to properties are not ideal - they
+            could be misspelled, and often require the need to declare
+            constants in the beans themselves to publish them to users.
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <!-- TODO: How to overcome the shortcomings -->
+  
+  
+  <section>
+    <title>Exercises</title>
+    <orderedlist>
+      <listitem>
+        <para>
+          Consider a typical <literal>Account</literal> object, which
+          has a <literal>accountNumber</literal> and
+          <literal>balance</literal> properties, and offers
+          <literal>credit(:amount)</literal> and <literal>debit(:amount)</literal>
+          services. An account has no limit as to its minimum balance.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Implement the account as an observable JavaBean. Implement an
+          observer that notifies the user every time the account's balance
+          crosses the zero threshold (i.e. every time the account's balance
+          goes negative, or recovers back into positive territory).
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Produce a small application that makes changes to the account
+          (either autonomously or through user interaction), illustrating 
+          the observable behaviour.
+        </para>
+      </listitem>
+    </orderedlist>
+  </section>
+  
+  <!-- TODO: Vetoable listeners -->
+  <!-- TODO: Indexed property changes -->
+  
+</section>

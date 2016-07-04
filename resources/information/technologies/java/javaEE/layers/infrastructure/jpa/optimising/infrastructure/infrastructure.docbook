@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+
+    <title>Optimising Infrastructure</title>
+
+    <indexterm>
+        <primary>JPA</primary>
+        <secondary>optimisation</secondary>
+        <tertiary>infrastructure</tertiary>
+    </indexterm>
+    
+    <section>
+        <title>Hosting services in an application server</title>
+        <para>
+            JPA can be used stand-alone, but a Java EE application server's resource management is
+            much more efficient, and writing and deploying components are usually simpler.
+        </para>
+    </section>
+    
+    <section>
+        <title>Selecting an appropriate ORM implementation</title>
+        <para>
+            In addition to the commonly-used open-source ORM implementations,
+            several commercial ones are available that have been developed for
+            extreme performance.
+        </para>
+        <para>
+            Different implementations also have slightly different characteristics, e.g.
+            Hibernate has been known to have better insert, but lower querying performance
+            compared to Toplink.
+        </para>
+    </section>
+    
+    <section>
+        <title>Choosing the right inheritance strategy</title>
+        <para>
+            Different implementation strategies can be chosen (as per the <literal>@Inheritance(strategy=)</literal> annotation)
+            to choose how specialisation hierarchies are stored in the database.
+            For example, using <literal>SINGLE_TABLE</literal> would result in bad data normalisation (which doesn't really matter
+            if we no longer use SQL to access the data) and potentially wasted disk space, but results in no joins when doing
+            queries for concrete classes (thus execute faster).
+        </para>
+    </section>
+    
+    <section>
+        <title>Connection pool configuration</title>
+        <para>
+            The type of underlying JDBC driver being used, as well as the characteristics of the connection
+            pools (sizes, growing/shrinking strategy, etc) will affect the performance of the JPA layer.
+            All of these attributes are configured as pert of the Application Server configuration, and one's
+            chosen JPA implementation may offer guidelines as to the optimal settings.
+        </para>
+    </section>
+</section>

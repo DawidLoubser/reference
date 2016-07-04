@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Nested transactions</title>
+    
+    <para> 
+        Nested transactions are a natural consequence of composing higher level services from lower level services as
+        is commonly done in most systems and in particular in Services Oriented Architectures (SOAs).
+    </para>
+    <para>
+        If a transaction demarcation was provided for the lower level and the higher level service, then the transaction of
+        the lower level service, the <emphasis>nested transaction</emphasis> would automatically be nested within the transaction of the higher level service, the
+        <emphasis>enclosing transaction</emphasis>. 
+    </para>
+    
+    <section>
+        <title>Consequences of nested transactions</title>
+        <para>
+            <itemizedlist>
+                <listitem><para>
+                    The nested transaction is only committed once the enclosing transactions is committed.
+                </para></listitem>
+                <listitem><para>
+                    If the enclosing transaction is rolled back, the nested transaction is too, irrespective of whether
+                    it failed or not.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Nested transaction operating concurrently</title>
+        <para>
+            The nested transactions within an enclosing transaction may operate concurrently of each other. Each,
+            however, falls within the higher level transactional control of the enclosing transaction.
+        </para>
+    </section>
+    
+    <section>
+        <title>Benefits of nested transactions</title>
+        <para>
+            Even though nested transactions are still used relatively infrequently, they provide a number of benefits
+            which is likely to see their use increase significantly over time, particularly in the wake of Services
+            Oriented Architectures becoming more widely used.
+        </para>
+        <para>
+            The benefits of nested transactions include
+            <itemizedlist>
+                <listitem><para>
+                    Nested transactions enable an application to isolate errors in certain operations and handle them without
+                    having to redo all the processing of the enclosing transaction.
+                </para></listitem>
+                <listitem><para>
+                    Improved modularity and the ability to compose higher level services from lower level services.
+                </para></listitem>
+                <listitem><para>
+                    Nested transactions may operate concurrently.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+</section>    

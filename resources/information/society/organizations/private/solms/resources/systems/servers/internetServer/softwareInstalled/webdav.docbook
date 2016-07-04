@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbook.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+
+<title> WEB-DAV and calendars</title>
+
+    <section>
+        <title>WEB-DAV and calendars</title>
+        <para>
+            This is used for shared calendars. The Apache web-dav module is enabled and the configuration
+            file is 
+            <programlisting><![CDATA[
+ <IfDefine DAV>
+  <IfModule !mod_dav.c>
+    LoadModule dav_module    modules/mod_dav.so
+  </IfModule>
+</IfDefine>
+
+<IfDefine DAV_FS>
+  <IfModule !mod_dav_fs.c>
+    LoadModule dav_fs_module   modules/mod_dav_fs.so
+  </IfModule>
+</IfDefine>
+
+<IfModule mod_dav.c>
+
+    DavMinTimeout 600
+        <Location /calendars>
+                Options None
+                Dav On
+                <Limit GET PUT POST DELETE PROPFIND PROPPATCH MKCOL COPY MOVE LOCK UNLOCK>
+                        AuthType Basic
+                        AuthName "WebDAV Restricted"
+                        AuthUserFile /var/www/DAV/.calpasswd
+                        Require valid-user
+                </Limit>
+        </Location>
+
+</IfModule>
+
+<IfModule mod_dav_fs.c>
+
+    # Location of the WebDAV lock database.
+    DavLockDB /var/lib/dav/lockdb
+
+</IfModule>       
+        ]]></programlisting>
+        </para>
+        <para>
+            Users are managed via httppassword:
+            <programlisting><![CDATA[
+          htpasswd -c /var/www/solms/dav/.DAVlogin fritz  
+        ]]></programlisting>
+            Added to the <literal>/etc/apache2/httpd.conf</literal> file
+            <programlisting><![CDATA[
+<Directory /var/www/solms/dav>
+DAV on
+AuthType Basic
+AuthName "Restricted Files"
+AuthUserFile /usr/local/apache/passwd/passwords
+Require user fritz ellen dawidl mandy
+        <Limit GET POST PUT OPTIONS PROPFIND>
+            Order allow,deny
+            Allow from all
+       </Limit>
+</Directory>
+        ]]></programlisting>
+        </para>
+        <para>
+            The DAV root directory is set up in the apache vhosts configuration file to
+            <programlisting><![CDATA[
+/var/www/solms/dav        
+        ]]></programlisting>
+            The calendar files are hosted in
+            <programlisting><![CDATA[
+/var/www/solms/dav/calendars        
+        ]]></programlisting>
+        </para>
+    </section>
+</article>

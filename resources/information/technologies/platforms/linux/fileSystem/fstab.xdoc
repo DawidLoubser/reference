@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"-->
+<section id="resources.information.platforms.linux.fileSystem.fstab"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>The file system table, <filename>/etc/fstab</filename></title>
+    <para>  
+      The file typically looks something like the following:
+      <programlisting><![CDATA[
+/dev/hda3       /       reiserfs        defaults 1 1
+/dev/hda2       /data1  auto    noauto,user 0 0
+/dev/hda1       /windows/C      ntfs    ro,users,gid=users,umask=0002,nls=iso8859-1 0 0
+/dev/hda5       swap    swap    pri=42 0 0
+devpts  /dev/pts        devpts  mode=0620,gid=5 0 0
+proc    /proc   proc    defaults 0 0
+usbdevfs        /proc/bus/usb   usbdevfs        noauto 0 0
+/dev/cdrom      /media/cdrom    auto    ro,noauto,user,exec 0 0
+/dev/cdrecorder /media/cdrecorder       auto    ro,noauto,user,exec 0 0
+/dev/fd0        /media/floppy   auto    noauto,user,sync 0 0
+/dev/dvd        /media/dvd      auto    ro,noauto,user,exec 0 0
+      ]]></programlisting>
+      It contains a complete list of all the file systems which are available after booting the system.
+    </para>
+    <para>
+      This file is only read by applications. It is the system administrator's responsibility to
+      maintain it. The file contains for each mounted file system a row with the following entries
+      separated by either spaces or tabs:
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>Device</title>
+          <para>The device to be mounted.</para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>MountPoint</title>
+          <para>
+            The directory onto which the device is mounted.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>fs-type</title>
+          <para>
+            The type of the file system to be mounted.
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>Options</title>
+          <para>Any options which should be used when mounting the file system.</para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>dump</title>
+          <para>
+            A zero entry specifies that the file system does not need to be dumped
+          </para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>fschkorder</title>
+          <para>
+            This field is used to specify the order in which the file systems are to be
+            checked at boot time. The root file system should have a <varname>fs_passno</varname>
+            of 1 and other file systems which need checking should have a 
+            <varname>fs_passno</varname> of 2. File systems which do not need checking are given 
+            a <varname>fs_passno</varname> of 0 (or this field can be left blank).
+          </para>
+        </formalpara>
+        </listitem>
+      </itemizedlist>
+  </para>
+</section>

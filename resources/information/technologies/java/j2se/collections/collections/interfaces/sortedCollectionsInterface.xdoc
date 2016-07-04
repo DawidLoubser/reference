@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>    
+<section id="resources.information.technologies.java.j2se.collections.collections.collections.interfaces.sortedCollectionsInterface"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">      
+        <title role="Interfaces for Sorted Collections">Interfaces for Sorted Collections</title>
+        <para>Java 2 defines two interfaces for sorted collections, <literal>SortedSet</literal> and<literal>SortedMap</literal>.</para>
+        <para/>
+        <section>
+          <title role="The SortedSet Interface">The SortedSet Interface</title>
+          <para>A <literal>SortedSet</literal> is a <literal>Set</literal> which maintains its elements in ascending order. The
+            criterion for sorting is either the natural ordering of the objects (in this case the
+            corresponding class must implement the <literal>Comparable</literal>
+            interface) or the ordering can be determined by a separate <literal>Comparator</literal>.</para>
+          <para>The <literal>SortedSet</literal> interface extends the <literal>Set</literal> interface. Additional to the set services, the <literal>SortedSet</literal> interface specifies services for range-views,
+            head- and tail-element access. Furthermore, the <literal>Iterator</literal> returned by the <literal>iterator()</literal> method specified in the mother of all
+            collections, <literal>Collection</literal> traverses the sorted set in
+            sorting order.</para>
+
+          <para/>
+          <para>
+              <programlisting>              
+ public interface SortedSet extends Set
+ {
+   // Range-view access
+   SortedSet subSet  (Object fromElement, Object toElement);
+   SortedSet headSet (Object toElement);
+   SortedSet tailSet (Object fromElement);
+ 
+   // Endpoint access
+   Object first ();
+   Object last  ();
+ 
+   Comparator comparator();
+ }
+              </programlisting>
+          </para>  
+<para>
+            We shall explain the range-view services by considering a typical sorted set, a
+            dictionary. Assume you want to have a look at all the words between "sat" and "set". You
+            could do this via</para>
+          <para/>
+          <para>
+              <programlisting>              
+ SortedSet subSet = dictionary.subSet("sat", "set");
+              </programlisting>
+          </para>  
+            
+<para>You can of
+            course combine the sorted-set services with the standard set and collection services.
+            For example, if you would like to know how many words are between "sat" and "set" you
+            could do this via</para>
+          <para/>
+          <para>
+              <programlisting>              
+ int numberOfWords = dictionary.subSet("sat", "set").size();
+              </programlisting>
+          </para>  
+<para>If
+            you want to erase all words starting with an "s", you could do so via</para>
+          <para/>
+          <para>
+              <programlisting>                          
+ dictionary.subSet("s", "t").clear();
+              </programlisting>
+          </para>  
+<para>In a similar manner we
+            can obtain the view to the head or the tail of a sorted set.</para>
+          <para/>
+        </section>
+        <section>
+          <title role="The SortedMap Interface">The SortedMap Interface</title>
+          <para>A sorted map is a map that maintains its keys in sorted order. This may be the
+            natural order of the key object or another ordering defined by a <literal>Comparator</literal>. The interface specifies the same functionality
+            that the <literal>SortedSet</literal> interface specifies, namely
+            range-view and end-point access as well as a query method for the comparator used for
+            the ordering.</para>
+          <para/>
+        <para>
+            <programlisting>
+ public interface SortedMap extends Map
+ {
+   // Range-view access
+   SortedMap subMap  (Object fromKey, Object toKey);
+   SortedMap headMap (Object toKey);
+   SortedMap tailMap (Object fromKey);
+ 
+   // Endpoint access
+   Object first();
+   Object last();
+ 
+   Comparator comparator();
+ }            
+            </programlisting>
+        </para>
+<para/>
+        </section>
+      </section>

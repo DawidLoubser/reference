@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Maven build entries generating the Metamodel classes</title>
+    
+    <para>
+        We need to generate the metamodel classes. This should be done in the <emphasis>generate-sources</emphasis>
+        life cycle phase so that the generated classes are available in the <emphasis>compile</emphasis> phase.
+    </para>
+    <para>
+        In the maven build we need to include
+        <itemizedlist>
+            <listitem><para>
+                A dependency on JPA implementation classes (the JavaEE6 API) does, of course, not provide them,
+            </para></listitem>
+            <listitem><para>
+                A dependency on the object-relational mapper used (e.g. <emphasis>EclipseLink</emphasis>),
+            </para></listitem>
+            <listitem><para>
+                Configuring the Maven compiler plugin to compile for Java 6 (supporting annotations processing),
+            </para></listitem>
+            <listitem><para>
+                Configuring the Annotations processor plugin to execute the annotations processor used to generate
+                the canonical model generation, e.g. <emphasis>Eclipse</emphasis>'s 
+                <literal>CanonicalModelProcessor</literal>.
+            </para></listitem>
+            <listitem><para>
+                The required Maven repositories and plugin repositories.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <para>
+        <programlisting language="java"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+   ...
+   
+       <repositories>
+            <repository>
+                <id>maven-repo</id>
+                <name>Maven repository</name>
+                <url>http://repo1.maven.org/maven2/</url>
+            </repository>
+    	
+            <repository>
+                <id>java.net</id>
+                <url>http://download.java.net/maven</url>
+            </repository>        
+            
+            <repository>
+                <id>EclipseLink Repo</id>
+                <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
+                    <snapshots>
+                    <enabled>true</enabled>
+                    </snapshots> 
+            </repository>    
+        </repositories>
+                
+        <pluginRepositories> 
+            <pluginRepository> 
+                <id>maven-annotation-plugin</id> 
+                <url>http://maven-annotation-plugin.googlecode.com/svn/trunk/mavenrepo</url> 
+            </pluginRepository> 
+            <pluginRepository>
+                <id>maven2-repository.dev.java.net</id>
+                <name>Java.net Repository for Maven</name>
+                <url>http://download.java.net/maven/2/</url>
+                <layout>default</layout>
+            </pluginRepository>
+        </pluginRepositories> 
+                
+   <dependencies>
+        <!-- We require the implementation files for the JPA metamodel generation,
+            hence add this to JavaEE6 API -->
+        <dependency> 
+            <groupId>org.eclipse.persistence</groupId> 
+            <artifactId>javax.persistence</artifactId> 
+            <version>2.0.0</version> 
+        </dependency> 
+        
+        <dependency>
+            <!-- For Criteria meta-model generation -->
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>${eclipselink.version}</version> 
+        </dependency>
+                
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        ...        
+    </dependencies>
+           
+
+    <build>
+      <plugins>         
+            <!--  Tell Maven to build for EJB3.1 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ejb-plugin</artifactId>
+                 <version>2.3</version>
+                 <configuration>
+                    <ejbVersion>3.1</ejbVersion>
+                </configuration>
+            </plugin>
+            
+            <!-- Run annotation processors on src/main/java sources -->
+            <plugin> 
+              <groupId>org.bsc.maven</groupId> 
+              <artifactId>maven-processor-plugin</artifactId> 
+              <executions> 
+                  <execution> 
+                      <id>process</id> 
+                      <goals> 
+                          <goal>process</goal> 
+                      </goals> 
+                      <phase>generate-sources</phase> 
+                      <configuration> 
+                          <outputDirectory>${project.build.directory}/generated-sources/apt</outputDirectory> 
+                          <compilerArguments>-Aeclipselink.persistencexml=src/main/resources/META-INF/persistence.xml</compilerArguments> 
+                          <processors> 
+                              <processor>org.eclipse.persistence.internal.jpa.modelgen.CanonicalModelProcessor</processor> 
+                          </processors> 
+                      </configuration> 
+                  </execution> 
+              </executions> 
+            </plugin> 
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            
+        </plugins>
+    </build>
+
+</project>
+        ]]></programlisting>
+    </para>
+</section>
+    

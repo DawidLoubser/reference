@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Managing Contracts in a Services-Oriented Architecture</title>
+        <author>
+            <personname>
+                <firstname>Dawid</firstname>
+                <surname>Loubser</surname>
+            </personname>
+            <affiliation>
+                <orgname>Solms Training, Consulting and Development</orgname>
+            </affiliation>
+            <address>
+                <city>Johannesburg</city>
+                <country>South Afrca</country>
+            </address>
+            <email>dawidl@solms.co.za</email>
+        </author>
+        <date>2009-04-29</date>
+    </info>
+    
+    <!-- TODO:
+        
+        This is just a scratch pad of ideas, it needs a lot of work,
+        and proper use of bibliography to refer to existing work (not
+        inline URLs).
+        
+        DISCUSS: Building extension elements into contracts - should always
+        be done via subclassing, and in the spirit of extensions (additional,
+        unforeseen but relevant information) and not for sort-of compatibility.
+    -->
+    
+    <indexterm>
+        <primary>SOA</primary>
+    </indexterm>
+    <indexterm>
+        <primary>Contracts</primary>
+    </indexterm>
+    
+    
+    <section>
+        <title>Introduction</title>
+        <para>
+            With the increasing prevalence of system implementations based on <acronym>SOA</acronym> (which implies a strong
+            contract-driven approach), and the relative immaturity of tools which allow the construction
+            of service assemblies that adhere to public standards (and which may thus be deployed into
+            several realisations of the <acronym>SOA</acronym> reference architecture - for example, <acronym>JBI</acronym>),
+            a consistent approach is needed to manage contracts.
+        </para>
+        <para>
+            SOA contracts are typically expressed as <acronym>WSDL</acronym> documents, and though specifications exist
+            for
+            <itemizedlist>
+                <listitem>
+                    <para>expressing and querying contract metadata</para>
+                </listitem>
+                <listitem>
+                    <para>publishing and discovering contracts in registries</para>
+                </listitem>
+            </itemizedlist>
+            there are few guidelines (or tools) available to the implementors of SOA-based services and assemblies regarding
+            <itemizedlist>
+                <listitem>
+                    <para>the management and distribution of contracts, such as the location and duplication of WSDL documents</para>
+                </listitem>
+                <listitem>
+                    <para>the separation of abstract (functional) and concrete (infrastructure) parts of the contract</para>
+                </listitem>
+                <listitem>
+                    <para>the practical usage of a services registry to publish contracts</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            In keeping with the non-technical roots of the SOA approach, we believe that SOA contracts should be managed in the
+            same spirit as traditional business contracts (employment, service provider agreements, etc). The SOA infrastructure,
+            however, provides a technical foundation to realise processes around contracts with a greater level of efficiency than 
+            <quote>real world</quote> processes.
+        </para>
+        <note>
+            <para>
+                As automated model-driven development becomes more widespread (technology-neutral business process design
+                stored in, for example, an URDAD UML model - used to generate all code artifacts) we believe most of the
+                concerns in this article will no longer be relevant to the developer.
+            </para>
+            <para>
+                This article aims to address some practical issues currently experienced by a typical SOA developer,
+                implementing service assemblies using basic tool sets such as Apache Maven, and deploying to a 
+                JBI-based ESB such as Apache Servicemix.
+            </para>
+        </note>
+    </section>
+    
+    <section>
+        <title>Existing work on this topic</title>
+        <para>
+            A lot of work focus on both the re-usability of contracts, as well as the controlled evolution of contracts via
+            purposeful extensibility elements (either via divine inspiration or <emphasis>everywhere</emphasis>). 
+            For example (http://www.infoq.com/articles/contract-versioning-comp2).
+        </para>
+        <para>
+            The REST community replies to this by avoiding the whole issue of contracts in the first place,
+            touting the <quote>uniform interface constraint</quote> (http://steve.vinoski.net/blog/2008/01/05/serendipitous-reuse/).
+        </para>
+        <para>
+            Perhaps, instead, we should treat contracts like their real-world counterparts, one tenet of which is that
+            a contract cannot <quote>evolve</quote> - any changes imply a new contract, a new agreement
+            between service provider and client. Little work has been done on the infrastructure around
+            the management of contracts seen in this light.
+        </para>
+    </section>
+    
+    <section>
+        <title>Managing contract documents</title>
+        <para>
+            Everybody should have local copies of contracts (or at least strong hashes of contracts).
+            This mirrors real life, where both parties need agreement and assurance of the contract, i.e.
+            neither party can change the contract without the explicit adoption of the new contract,
+            and all implied changes to their processes. Making even the slightest change to the original
+            contract should require the other party's consent.
+        </para>
+        <para>
+            We need tools to manage changing contracts practically (there can potentially be many
+            copies of the contract in existence). Though contracts that are in use in <quote>production</quote>
+            are usually quite stable, contracts in the early stages of the development process (i.e. as the first
+            use-cases are added to the system) are usually quite volatile.
+        </para>
+        <para>
+            A basic tool set could synchronise local copies of contracts with some <quote>official</quote> version
+            of the contract published by the originator, i.e. either a service provider offering services
+            to the environment, or (more typically) a client which needs certain services. Each local copy of
+            a contract could contain metadata indicating its source, as well perhaps policies around changes
+            to the contract (i.e. for which parts of the contract we are willing/unwilling to accept changes for, etc.)
+        </para>
+    </section>
+    
+    <section>
+        <title>Abstract and Concrete contracts</title>
+        <para>
+            Abstract (functional) contracts should be separated from concrete (infrastructure, e.g. SOAP) contracts.
+            We need tools to generate concrete contracts from abstract contracts (e.g. some JBI service engines can do this, others do not).        
+        </para>
+    </section>
+    
+    <section>
+        <title>The practical role of service registries</title>
+        <para>
+            How are/should service registries (containing contracts) be practically used?
+            Should they be the definitive source of a contract (centralised model), or also just a copy (de-centralised model)?
+        </para>
+    </section>
+    
+</article>

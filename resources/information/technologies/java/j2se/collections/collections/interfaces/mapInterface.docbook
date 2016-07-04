@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1034:section xmlns:ns1034="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.collections.collections.collections.interfaces.mapInterface">    
+        <ns1035:title xmlns:ns1035="http://docbook.org/ns/docbook">Map Interfaces</ns1035:title>
+        <ns1036:para xmlns:ns1036="http://docbook.org/ns/docbook">The <ns1037:literal xmlns:ns1037="http://docbook.org/ns/docbook">Map</ns1037:literal> interface does not implement the <ns1038:literal xmlns:ns1038="http://docbook.org/ns/docbook">Collection</ns1038:literal> interface. A <ns1039:literal xmlns:ns1039="http://docbook.org/ns/docbook">Map</ns1039:literal> maps a collection of keys onto a collection of values. In
+          a sense a <ns1040:literal xmlns:ns1040="http://docbook.org/ns/docbook">List</ns1040:literal> is a special case of a map which maps
+          integer keys (the indeces) onto values (the elements of the list) and perhaps it is a pity
+          that Java has not gone that route.</ns1036:para>
+        <ns1041:para xmlns:ns1041="http://docbook.org/ns/docbook">But for a map the key data type need not be an integer. In fact it can be any Object.
+          A very simple example is that of a word counter. The result should be a mapping of words
+          onto integers. The integer would represent the number of occurance of that word (the word
+          in the key field) in the test stream (e.g. a file).</ns1041:para>
+        <ns1042:para xmlns:ns1042="http://docbook.org/ns/docbook">The central services of a map are that of inserting a key-value pair into the map and
+          that of obtaining a value from a key. The complete <ns1043:literal xmlns:ns1043="http://docbook.org/ns/docbook">Map</ns1043:literal>
+          interface is listed below:</ns1042:para>
+
+        <ns1044:para xmlns:ns1044="http://docbook.org/ns/docbook"/>
+        <ns1045:para xmlns:ns1045="http://docbook.org/ns/docbook">
+            <ns1046:programlisting xmlns:ns1046="http://docbook.org/ns/docbook">
+ public interface Map
+ {
+   // Basic Operations
+   Object  put           (Object key, Object value);
+   Object  get           (Object key);
+   Object  remove        (Object key);
+   boolean containsKey   (Object key);
+   boolean containsValue (Object value);
+   boolean isEmpty       ();
+   int     size          ();
+ 
+   // Bulk Operations
+   void putAll (Map t);
+   void clear  ();
+ 
+   // Collection Views
+   public Set        keySet   ();
+   public Collection values   ();
+   public Set        entrySet ();
+ 
+   // Interface for entrySet elements
+   public interface Entry
+   {
+     Object getKey   ();
+     Object getValue ();
+     Object setValue (Object value);
+   }
+ }            
+            </ns1046:programlisting>
+        </ns1045:para>
+<ns1047:para xmlns:ns1047="http://docbook.org/ns/docbook">
+          Note that the keys of the map form a <ns1048:literal xmlns:ns1048="http://docbook.org/ns/docbook">Set</ns1048:literal>. This is
+          because a <ns1049:literal xmlns:ns1049="http://docbook.org/ns/docbook">Map</ns1049:literal> does not allow duplicate keys -- recall
+          that a <ns1050:literal xmlns:ns1050="http://docbook.org/ns/docbook">Set</ns1050:literal> did not allow duplicate entries. The values
+          of a map, on the other hand, form a collection. Hence a value can be associated with
+          mmultiple keys, but a key can only be associated with one value. A map thus represents a
+          one-to-many mapping.</ns1047:para>
+        <ns1051:para xmlns:ns1051="http://docbook.org/ns/docbook">As an example, assume you want to be able to access persons from their identity
+          number. A suitable collection for this would be a map with identity numbers as the keys
+          and persons as the values. Note that identity number are unique (not taking into account
+          all the forged ones) and hence the id no is a suitable choice for the key field of a map.
+          To insert a person in a map we would say:</ns1051:para>
+        <ns1052:para xmlns:ns1052="http://docbook.org/ns/docbook"/>
+        <ns1053:para xmlns:ns1053="http://docbook.org/ns/docbook">
+            <ns1054:programlisting xmlns:ns1054="http://docbook.org/ns/docbook">
+ map.put(person.getIdentityNumber(), Person);
+            </ns1054:programlisting>
+        </ns1053:para>
+<ns1055:para xmlns:ns1055="http://docbook.org/ns/docbook">To identify a
+          person from a given id number we say</ns1055:para>
+        <ns1056:para xmlns:ns1056="http://docbook.org/ns/docbook"/>
+        <ns1057:para xmlns:ns1057="http://docbook.org/ns/docbook">
+            <ns1058:programlisting xmlns:ns1058="http://docbook.org/ns/docbook">
+ Person person = (Person)map.get(idNo);
+            </ns1058:programlisting>
+        </ns1057:para>
+<ns1059:para xmlns:ns1059="http://docbook.org/ns/docbook"/>
+        <ns1060:section xmlns:ns1060="http://docbook.org/ns/docbook">
+          <ns1061:title xmlns:ns1061="http://docbook.org/ns/docbook">Viewing a Map as a Collection</ns1061:title>
+          <ns1062:para xmlns:ns1062="http://docbook.org/ns/docbook">Recall that a <ns1063:literal xmlns:ns1063="http://docbook.org/ns/docbook">Map</ns1063:literal> is not a collection (the
+              <ns1064:literal xmlns:ns1064="http://docbook.org/ns/docbook">Map</ns1064:literal> interface does not extend<ns1065:literal xmlns:ns1065="http://docbook.org/ns/docbook">Collection</ns1065:literal>). The map does, however, offer a service for
+            supplying a collection-view of the map via the <ns1066:literal xmlns:ns1066="http://docbook.org/ns/docbook">entrySet()</ns1066:literal> method. This method returns a<ns1067:literal xmlns:ns1067="http://docbook.org/ns/docbook">Set</ns1067:literal> of elements of the type <ns1068:literal xmlns:ns1068="http://docbook.org/ns/docbook">Map.Entry</ns1068:literal>.</ns1062:para>
+          <ns1069:para xmlns:ns1069="http://docbook.org/ns/docbook">Note that <ns1070:literal xmlns:ns1070="http://docbook.org/ns/docbook">Map.Entry</ns1070:literal> is a nested interface
+              (<ns1071:literal xmlns:ns1071="http://docbook.org/ns/docbook">Entry</ns1071:literal> is defined within the<ns1072:literal xmlns:ns1072="http://docbook.org/ns/docbook">Map</ns1072:literal> interface). Once we have a view onto the collection of
+            entries in the map, we can ask the collection for an iterator and step through this collection.</ns1069:para>
+          <ns1073:para xmlns:ns1073="http://docbook.org/ns/docbook">This collection view supports all the element removal services of collections, but
+            it does not support element addition. Elements can thus only be added to a map via the
+              <ns1074:literal xmlns:ns1074="http://docbook.org/ns/docbook">put()</ns1074:literal> and <ns1075:literal xmlns:ns1075="http://docbook.org/ns/docbook">putAll()</ns1075:literal> services of maps.</ns1073:para>
+          <ns1076:para xmlns:ns1076="http://docbook.org/ns/docbook"/>
+        </ns1060:section>
+        <ns1077:section xmlns:ns1077="http://docbook.org/ns/docbook">
+          <ns1078:title xmlns:ns1078="http://docbook.org/ns/docbook">Multimaps</ns1078:title>
+          <ns1079:para xmlns:ns1079="http://docbook.org/ns/docbook">Multimaps are maps which map a single key onto multiple values. This is not
+            directly supported within Java's Collection Framework, but one can always map keys onto
+            other collections (e.g. onto linked lists or arrays).</ns1079:para>
+          <ns1080:para xmlns:ns1080="http://docbook.org/ns/docbook"/>
+        </ns1077:section>
+      </ns1034:section>

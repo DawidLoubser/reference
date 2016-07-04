@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns2188:section xmlns:ns2188="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.jndi.usage.lookup">
+
+  <ns2189:title xmlns:ns2189="http://docbook.org/ns/docbook">Looking up resources</ns2189:title>
+  <ns2190:para xmlns:ns2190="http://docbook.org/ns/docbook">
+    One uses the <ns2191:literal xmlns:ns2191="http://docbook.org/ns/docbook">lookup</ns2191:literal> service to lookup a resource.
+    The service returns a handle to the resource which is typically cast
+    to the resource type. For example, we can lookup an enterprise bean's
+    home interface as follows:
+<ns2192:programlisting xmlns:ns2192="http://docbook.org/ns/docbook">
+     Object beanHomeRef
+       = jndiContext.lookup(jndiName);
+
+     SomeHomeInterface home =
+       (SomeHomeInterface)PortableRemoteObject.narrow
+         (beanHomeRef, SomeHomeInterface.class);
+</ns2192:programlisting>         
+    <ns2193:note xmlns:ns2193="http://docbook.org/ns/docbook"><ns2194:para xmlns:ns2194="http://docbook.org/ns/docbook">
+      Since the JNDI request is an RMI request and since RMI is on top
+      of CORBA's IIOP, we have to use a CORBA dynamic cast. This
+      still does not change the reference type. The latter is done via
+      a standard Java cast.
+    </ns2194:para></ns2193:note>
+  </ns2190:para>
+</ns2188:section>

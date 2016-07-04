@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.client.rmiClients.lookupHome"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="Lookup home object">Looking up the home object</title>
+  <para>
+    We first connect to the default naming context, then lookup the
+    home interface and finally we cast it via a CORBA dynamic cast
+    followed by a Java cast to the home interface:
+<programlisting><![CDATA[
+InitialContext jndiContext = new InitialContext();
+
+Object beanHomeRef
+  = jndiContext.lookup(jndiName);
+
+SomeBeanHome home =
+  (SomeBeanHome)PortableRemoteObject.narrow
+    (beanHomeRef, SomeBeanHome.class);
+]]></programlisting>
+    </para>
+</section>  

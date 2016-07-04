@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->  
+<section id="resources.information.technologies.c.pointers.pointerArithmetic"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Pointer arithmetic</title>
+  <para>
+    <emphasis>C</emphasis> supports a number of arithmetic operations including
+    <itemizedlist>
+      <listitem><para>
+        incrementing and decrementing pointers in order to point to the next
+        or previous element of the pointer data type and
+      </para></listitem>
+      <listitem><para>
+        subtracting one pointer from another returning the number of elements
+        of the pointer type between the two pointers.
+      </para></listitem>
+    </itemizedlist>
+  </para>    
+  
+  <section><title>Incrementing and decrementing pointers</title>
+    <para>
+      When incrementing a pointer the number of bytes by which the pointer
+      is shifted is equal to the size of the data type of the pointer. Thus
+      incrementing or decrementing a <type>double*</type> shifts the address 
+      by 8 bytes.
+    </para>
+  </section>
+  
+  <section><title>Subtracting one pointer from another</title>
+    <para>
+      You can only subtract pointers of the same data type from one another.
+      Subtracting one pointer from another returns the number of elements of 
+      that data type between the two pointers, <abbrev>i.e.</abbrev> it returns the number of bytes
+      between the two pointers divided by the size of the data type.
+    </para>
+    <example id="pointerMaths.c"><title>pointerMaths.c</title>
+      <para>
+        The following application illustrates pointer arithmetic operations:
+      </para>
+      <programlisting><xi:include href="pointerMaths.c" parse="text"/></programlisting>
+      <para>
+        The output of the application is shown below:
+      </para>
+      <programlisting>
+vec:
+0.000000 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000 7.000000 8.000000 
+9.000000 10.000000 11.000000 12.000000 13.000000 14.000000 15.000000 16.000000 
+17.000000 18.000000 19.000000
+
+vec = 134518304
+
+iter = 134518464
+vec - iter = -20
+      </programlisting>
+    </example>
+  </section>
+
+<section><title>Pointers to structures</title>
+  <para>
+    A pointer can point to an instance of a structure, for example
+    <programlisting>
+struct Point
+{
+double x, y;
+};
+    
+struct Point *p_point = malloc(sizeof(struct Point));
+    </programlisting>
+    <emphasis>C</emphasis>
+    provides in this case two ways in which the structure elements can be retrieved
+    <orderedlist>
+      <listitem><para>
+        We can dereference the pointer and use the standard element access operator
+        as in <command>(*p_point).x</command>,
+      </para></listitem>
+      <listitem><para>
+        or we can use a pointer-specific element access operator as in
+        <command>p_point->x</command>. This second notation is often more
+        readable.
+      </para></listitem>
+    </orderedlist>
+  </para>
+  <section><title>A linked list example</title>
+    <para>
+      Below we show an implementation of a double-linked circular list which makes
+      heavy use of pointers, structures and dynamic memory allocation:
+    </para>    
+    <programlisting><xi:include href="linkedlist.c" parse="text"/></programlisting>
+  </section>
+</section>
+</section>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6455:section xmlns:ns6455="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.exceptionHandling.handlingAtDifferentLevelsOfAbstraction">
+  <ns6456:title xmlns:ns6456="http://docbook.org/ns/docbook">Catching Exceptions at various levels of Abstraction</ns6456:title>
+  <ns6457:para xmlns:ns6457="http://docbook.org/ns/docbook">
+    A service may throw more than one exception, reflecting the different reasons for the
+    service not being able to complete the requested task. For example, a service reading from
+    a file may not be able to find the file, or may reach the end of the file prematurely. The
+    server method would notify users that it may throw a number of exceptions by listing the
+    exceptions it may throw in the <ns6458:literal xmlns:ns6458="http://docbook.org/ns/docbook">throws</ns6458:literal> clause with
+    commas separating the exceptions.
+    <ns6459:programlisting xmlns:ns6459="http://docbook.org/ns/docbook">
+public class TheServerClass
+{
+   ...
+   public void doSomething () throws FileNotFoundException,
+                                     EOFException, IndexOutOfBoundsException
+   {
+     ...
+   }
+}
+    </ns6459:programlisting>
+  </ns6457:para>  
+  <ns6460:para xmlns:ns6460="http://docbook.org/ns/docbook">
+    If the client requesting the <ns6461:literal xmlns:ns6461="http://docbook.org/ns/docbook">doSomething()</ns6461:literal> service is
+    not able to handle any of the exceptions, the calling method must notify its clients
+    that it may throw any of these exceptions. Alternatively the client may handle some or all
+    the exceptions potentially thrown. If the client catches various exceptions thrown by the
+    same service it concatenates catch clauses:
+    <ns6462:programlisting xmlns:ns6462="http://docbook.org/ns/docbook">
+public class TheClientClass
+{
+  ...
+  public void aClientMethod()
+  {
+    ...
+    try
+    {
+      server.doSomething();
+    }
+    catch (EOFException e) {}
+    catch (IOException e)
+    {
+      ...
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+    ...
+  }
+}
+    </ns6462:programlisting> 
+    The various exceptions we are willing to catch are specified in a series of catch clauses
+    with no other statements between them.
+  </ns6460:para>
+  <ns6463:para xmlns:ns6463="http://docbook.org/ns/docbook">
+    If an <ns6464:literal xmlns:ns6464="http://docbook.org/ns/docbook">EOFException</ns6464:literal> is caught, it is ignored
+    (there are no statements within the corresponding catch clause) and control is transferred
+    to the first statement after the catch clauses. This type of construct is commonly used
+    when one wants to read in an entire file. For example
+    <ns6465:programlisting xmlns:ns6465="http://docbook.org/ns/docbook">
+StringBuffer fileContent = new StringBuffer();
+
+try
+{
+  while (true)
+    fileContent.append(fin.readLine()).append('/n');
+}
+catch (EOFException e) {}
+    </ns6465:programlisting>    
+  </ns6463:para>  
+  <ns6466:para xmlns:ns6466="http://docbook.org/ns/docbook">
+    But let us return to where we are catching multiple exceptions. For the case where an
+    <ns6467:literal xmlns:ns6467="http://docbook.org/ns/docbook">IOException</ns6467:literal> is caught, the exception handling code
+    within the first catch clause is executed and, upon completion of the statements within
+    the catch clause, control is transferred to the first statement after the block of catch
+    clauses. Note the different levels of abstraction. We were first specified how a very
+    specific exception is handled, the <ns6468:literal xmlns:ns6468="http://docbook.org/ns/docbook">EOFException</ns6468:literal>. Then
+    we specify that all other <ns6469:literal xmlns:ns6469="http://docbook.org/ns/docbook">IOException</ns6469:literal>s (an <ns6470:literal xmlns:ns6470="http://docbook.org/ns/docbook">EOFException</ns6470:literal> 
+    is an <ns6471:literal xmlns:ns6471="http://docbook.org/ns/docbook">IOException</ns6471:literal>) are handled in some other way and finally that
+    all other exceptions (those which are not <ns6472:literal xmlns:ns6472="http://docbook.org/ns/docbook">IOException</ns6472:literal>s) are simply handled 
+    by requesting a printout of
+    the stack (calling) trace on the standard error stream -- typically the terminal.
+  </ns6466:para>
+</ns6455:section>

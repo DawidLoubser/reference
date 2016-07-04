@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.networking.eMail.sendingMultiPartMessages"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/Docs/re_schema/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="Sending Multi-Part Messages">Sending Multi-Part Messages</title>
+
+<para>Multi-part messageas are constructed one \verb+MimeBodyPart+ at a time. Each part has
+a content of a specified type:
+</para>
+<para><programlisting>
+MimeBodyPart part1 = new MimeBodyPart();
+part1.setContent(text1, "text/plain");
+
+MimeBodyPart part2 = new MimeBodyPart();
+FileDataSource source = new FileDataSource("index.html");
+part2.setDataHandler(new DataHandler(source));
+part2.setFileName("test.html");
+
+MultiPart multiPart = new MimeMultiPart();
+multiPart.addBodyPart(part1);
+multiPart.addBodyPart(part2);
+
+msg.setContent(multiPart);
+</programlisting></para>    
+</section>

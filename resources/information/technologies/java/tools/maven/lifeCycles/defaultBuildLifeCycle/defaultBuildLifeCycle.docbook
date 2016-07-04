@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+         xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>Maven's default build life cycle</title>
+    <para>
+        Maven defines a default build life cycle. This is a generic life cycle which is abstract enough to work for
+        the vast majority of builds. Instead of modifying the life cycle itself, different plugins and project may bind
+        different goals/operations to the phases of the default life cycle.
+    </para>
+    <para>
+        Maven's default build life cycle contains the following phases:
+        <orderedlist>
+            <listitem>
+                <formalpara>
+                    <title>validate</title>
+                    <para>
+                        The
+                        <emphasis>validate</emphasis>
+                        phase is meant to be used to validate that the project
+                        has all information required to build the project.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>generate-sources</title>
+                    <para>
+                        The
+                        <emphasis>generate-sources</emphasis>
+                        phase is used if sources need to be generated from
+                        other artifacts. This can include goals like generation of Java classes from XML schemas and the
+                        generation
+                        of code from a deisgn model.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>process-sources</title>
+                    <para>
+                        The
+                        <emphasis>process-sources</emphasis>
+                        phase is used to pre-process the sources before compilation.
+                        This could be used, for example, for filtering and obfuscation.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>generate-resources</title>
+                    <para>
+                        The
+                        <emphasis>generate-resources</emphasis>
+                        phase is meant to be used if one needs to generate any resources
+                        which should be included in the final assembly.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>process-resources</title>
+                    <para>
+                        The
+                        <emphasis>process-resources</emphasis>
+                        phase for any processing of the generated resources including
+                        copying, renaming, setting permissions and so forth.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>compile</title>
+                    <para>
+                        During the
+                        <emphasis>compile</emphasis>
+                        phase the source code is meant to be compiled.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>process-classes</title>
+                    <para>
+                        The
+                        <emphasis>process-classes</emphasis>
+                        phase is meant for any post-compile processing
+                        like byte-code enhancements, annotation processing, adn so forth.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>generate-test-sources</title>
+                    <para>
+                        The
+                        <emphasis>generate-test-sources</emphasis>
+                        phase is meant to be used if one generates
+                        test sources from other artifacts. Typically this would be done from some form of contract
+                        specifications (e.g.\ the UML-based services contracts coming from an URDAD analysis and design
+                        process).
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>generate-test-resources</title>
+                    <para>
+                        The
+                        <emphasis>generate-test-resources</emphasis>
+                        phase can be used to generate resources
+                        for the testing. This could include generating test data.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>process-test-resources</title>
+                    <para>
+                        The
+                        <emphasis>process-test-resources</emphasis>
+                        phase is used to do any post-creation processing.
+                        This typically may involve filtering the resources or copying them into appropriate locations
+                        for packaging.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>test-compile</title>
+                    <para>
+                        The
+                        <emphasis>test-compile</emphasis>
+                        phase is meant for operations which compile the test sources.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>test</title>
+                    <para>
+                        The
+                        <emphasis>test</emphasis>
+                        phase is the phase where the actual testing of the compiled sources is
+                        to be done.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>prepare-package</title>
+                    <para>
+                        The
+                        <emphasis>prepare-package</emphasis>
+                        phase is a pre-processing phase which is meant to
+                        perform operations preparing the organization of resources for packaging before the actual
+                        packaging
+                        is done. This may include unpackaging certain packaged resources.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>package</title>
+                    <para>
+                        The
+                        <emphasis>package</emphasis>
+                        phase is meant to create the distributable package, e.g.\ the
+                        jar or war.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>pre-integration-test</title>
+                    <para>
+                        The
+                        <emphasis>pre-integration-test</emphasis>
+                        phase is a preparation phase for the
+                        <emphasis>integration-test</emphasis>
+                        phase. This phase is commonly used to set up
+                        the environment for the integration test.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>integration-test</title>
+                    <para>
+                        The
+                        <emphasis>integration-test</emphasis>
+                        phase is meant to perform the testing in
+                        an environment which mirrors the environment within which the artifact is to be deployed.
+                        It may include deploying the package into the integration testing environment.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>post-integration-test</title>
+                    <para>
+                        The
+                        <emphasis>post-integration-test</emphasis>
+                        phase is meant to be a clean-up
+                        phase which restores the environment within which the integration test was done.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>verify</title>
+                    <para>
+                        Whilst the
+                        <emphasis>test</emphasis>
+                        and
+                        <emphasis>integration-test</emphasis>
+                        phases verify the functionality of the package components and that they do not
+                        break the functionality offered by the environment, the
+                        <emphasis>verify</emphasis>
+                        phase provides the opportunity to verify whether the package meets certain quality criteria.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>install</title>
+                    <para>
+                        The
+                        <emphasis>install</emphasis>
+                        phase is meant to install the package in a local repository
+                        so that other projects which have a dependency on it can use it.
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>deploy</title>
+                    <para>
+                        The
+                        <emphasis>deploy</emphasis>
+                        phase is used to copy the final package to a remote
+                        repository for sharing with other groups and projects. Usually only production-ready packages
+                        are deployed.
+                    </para>
+                </formalpara>
+            </listitem>
+        </orderedlist>
+    </para>
+</section>    

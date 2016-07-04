@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.sessionBeans.stateful.examples.shoppingCart.shoppingCart"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Example: ShoppingCart</title>
+  <para>
+    A shopping cart carries state, i.e. the state of the shopping cart must be maintained
+    for the session.
+  </para>
+  
+  <section>
+    <title>Code Listing: ShoppingCartServices</title>
+    <para>
+      The business services are specified in a separate interface from which the remote
+      interface is derived and the bean implementation will implement this interface:
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/src/common/ShoppingCartServices.java" />
+</programlisting>  
+    </para>
+  </section>  
+  
+  <section>
+    <title>The remote interface</title>
+    <para>
+      Favouring compile-time errors over deploy-time errors, we 
+      introduce a services interface which is extended by the remote interface and implemented
+      by the bean implementation.
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/src/common/ShoppingCart.java" />
+</programlisting>  
+    </para>
+  </section>
+  
+  <section>
+    <title>The home interface</title>
+    <para>
+      Recall the stateless session beans were always created via a default  
+      <literal>ejbCreate()</literal> service -- one without arguments. In the case of
+      stateful session beans one may have to supply some state information when creating the
+      bean. The required state information is supplied as arguments to the  
+      <literal>ejbCreate</literal> method(s).
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/src/common/ShoppingCartHome.java" />
+</programlisting>  
+    </para>
+  </section>  
+  
+  <section>
+    <title>The enterprise bean implementation</title>
+    <para>
+      Just like stateless session beans, stateful session beans also implement 
+      <literal>javax.ejb.SessionBean</literal>. The fact that you are defining a session
+      bean will be communicated to the container in the deployment descriptor.
+    </para>
+    <para>
+      Below we list the different classes which make up the implementation of our stateful
+      session bean. They are defined in two packages,  
+      <literal>shopping</literal> and <literal>finance</literal>.
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/src/businessLogic/ShoppingCartBean.java" />
+</programlisting>  
+      </para>
+  </section>
+  
+  <section>
+    <title>Code Listing: Item</title>
+    <para>
+      An item has a name and a price. It is serializable so that we can pass items to
+      remote clients:
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/src/common/Item.java" />
+</programlisting>  
+     </para>
+  </section>
+    
+  <section>
+    <title>Code Listing: CreditCard</title>
+    <para>
+      We encapsulate credit card information in a serializable class <literal>CreditCard</literal>:
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/src/common/CreditCard.java" />
+</programlisting>  
+    </para>
+  </section>
+    
+  <section>
+    <title>Code Listing: Invoice</title>
+    <para>
+      An invoice is not only text, but an object which preserves all relevant
+      information, but can supply a text version of itself:
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/src/common/Invoice.java" />
+</programlisting>  
+    </para>
+  </section>
+    
+  <section>
+    <title>Code Listing: PaymentFailed</title>
+    <para>
+      EJB exceptions are defines just like any other exception. Note that exceptions are serializable.
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/src/common/PaymentFailed.java" />
+</programlisting>  
+    </para>
+  </section>
+    
+  <section>
+    <title>Code Listing: Formatters</title>
+    <para>
+      This is a simple utility factory which returns standard formatters. In our case we
+      only supply a <literal>priceFormat</literal> object which is used in
+      several classes:
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/src/common/Formatters.java" />
+</programlisting>  
+    </para>
+  </section>
+    
+  <section>
+    <title>The ejb-jar deployment descriptor</title>
+    <para>
+      It is in the deployment descriptor that we declare the shopping cart bean a stateful
+      session bean. Otherwise the deployment descriptor looks pretty much like the one for our
+      stateless word counter bean.
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/META-INF/ejb-jar.xml" />
+</programlisting>  
+    </para>
+  </section>  
+  
+  <section>
+    <title>The jboss deployment descriptor</title>
+    <para>
+      The JBoss-specific deployment info file,  
+      <literal>ejb-inprise.xml</literal>, looks similar to the one we used for our
+      stateless session bean:
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/META-INF/jboss.xml" />
+</programlisting>  
+    </para>
+    <para>
+      As in the case of stateless session beans, we specify the name used to identify the bean
+      in the naming service. Here <literal>bean-home-name</literal>,  
+      <literal>ShoppingCart</literal>, is set as the name to be used by clients to
+      look up the <literal>ShoppingCart</literal> bean.
+    </para>
+  </section>
+  
+  <section>
+    <title>Developing a Client Application</title>
+    <para>
+      Our client application builds up a GUI and connects to the statefull session bean:
+    </para>
+    
+    <section>
+      <title>Listing: ShoppingCartPanel.java</title>
+      <para>
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/src/client/common/ShoppingCartPanel.java" />
+</programlisting>  
+      </para>  
+    </section>
+    
+    <section>
+      <title>Listing: ShoppingCartClient.java</title>
+      <para>
+<programlisting>
+<xi:include parse="text" href="../../../../../source/ShoppingCart/src/client/application/ShoppingCartClient.java" />
+</programlisting>  
+      </para>  
+    </section>
+    
+    <section>
+      <title>Removing Stateful Session Beans</title>
+      <para>
+        If the client process is terminated the session bean should be removed. This is the
+        clients responsibility (though the server shall remove the bean if there is no active
+        connection over a period of time).
+      </para>
+      <para>
+        In our case we remove the bean in the client's finalize method which is called upon
+        closing the frame window.
+      </para>
+    </section>
+  </section>
+
+<section>
+  <title>Building, Deploying and Running the ShoppingCart</title>
+  <para>
+    We use the generic targets as in the previous chapter: 
+  <orderedlist>
+    <listitem>
+      <para>ant ejbJar </para>
+    </listitem>
+    <listitem>
+      <para>ant deployEjbJar </para>
+    </listitem>
+    <listitem>
+      <para>ant jarClientApp </para>
+    </listitem>
+    <listitem>
+      <para>ant runCientApp</para>
+    </listitem>
+  </orderedlist>
+  </para>
+  </section>
+</section>

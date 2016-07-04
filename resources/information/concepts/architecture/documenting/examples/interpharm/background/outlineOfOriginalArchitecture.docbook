@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns39:section xmlns:ns39="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.architecture.documenting.examples.interpharm.background.outlineOfOriginalArchitecture">
+  <ns40:title xmlns:ns40="http://docbook.org/ns/docbook">Outline of the original architecture</ns40:title>
+  <ns41:para xmlns:ns41="http://docbook.org/ns/docbook">
+    The original architecture had the following core features:
+    <ns42:itemizedlist xmlns:ns42="http://docbook.org/ns/docbook">
+      <ns43:listitem xmlns:ns43="http://docbook.org/ns/docbook"><ns44:para xmlns:ns44="http://docbook.org/ns/docbook">
+        The system core was realized via a <ns45:emphasis xmlns:ns45="http://docbook.org/ns/docbook">multi-layered clustered environment with
+          different software layers deployed on different hardware layers</ns45:emphasis>.
+        There were 4 layers with
+        <ns46:itemizedlist xmlns:ns46="http://docbook.org/ns/docbook">
+          <ns47:listitem xmlns:ns47="http://docbook.org/ns/docbook"><ns48:para xmlns:ns48="http://docbook.org/ns/docbook">
+            two machines load balancing incoming requests across 
+          </ns48:para></ns47:listitem>
+          <ns49:listitem xmlns:ns49="http://docbook.org/ns/docbook"><ns50:para xmlns:ns50="http://docbook.org/ns/docbook">
+            a cluster of 5 front-end machines demarshaling the request and persisting the
+            incoming claims which load balance the calls onto        
+          </ns50:para></ns49:listitem>
+          <ns51:listitem xmlns:ns51="http://docbook.org/ns/docbook"><ns52:para xmlns:ns52="http://docbook.org/ns/docbook">
+            a rules processing cluster which, in turn, load balances the preprocessed
+            requests
+          </ns52:para></ns51:listitem>
+          <ns53:listitem xmlns:ns53="http://docbook.org/ns/docbook"><ns54:para xmlns:ns54="http://docbook.org/ns/docbook">
+            across a third cluster of machines which marshaled the preprocessed medical aid
+            claims onto messages for the individual medical aid administrators.
+          </ns54:para></ns53:listitem>
+        </ns46:itemizedlist>
+      </ns44:para></ns43:listitem>
+      <ns55:listitem xmlns:ns55="http://docbook.org/ns/docbook"><ns56:para xmlns:ns56="http://docbook.org/ns/docbook">
+        <ns57:emphasis xmlns:ns57="http://docbook.org/ns/docbook">Intra-layer communication</ns57:emphasis> was done via asynchronous XML messages.
+        The original synchronous request was thus internally mapped onto asynchronous messages
+        between the software layers, forwarded synchronously to the medical aid administrator,
+        and returned through the layers asynchronously. For the return the asynchronous message
+        was matched with the original synchronous request in order top provide a synchronous
+        response.
+      </ns56:para></ns55:listitem>
+      <ns58:listitem xmlns:ns58="http://docbook.org/ns/docbook"><ns59:para xmlns:ns59="http://docbook.org/ns/docbook">
+        Persistence was realized through a XML-Castor based database mapping onto local
+        databases which were synchronized across all local databases within the 4 layers of
+        clusters as well as a master database.
+      </ns59:para></ns58:listitem>
+      <ns60:listitem xmlns:ns60="http://docbook.org/ns/docbook"><ns61:para xmlns:ns61="http://docbook.org/ns/docbook">
+        Connectivity to the medical aid administrators was done by having proprietary connector
+        components open separate sessions for the the individual requests.
+      </ns61:para></ns60:listitem>
+      <ns62:listitem xmlns:ns62="http://docbook.org/ns/docbook"><ns63:para xmlns:ns63="http://docbook.org/ns/docbook">
+        Load balancing was done through home-grown load balancers requesting threads from
+        home-grown thread pools. Object pools where otherwise not used.
+      </ns63:para></ns62:listitem>
+    </ns42:itemizedlist>
+  </ns41:para>
+</ns39:section>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="http://solms.co.za/example/simple"
+    xmlns:my="http://solms.co.za/example/simple"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+    <wsdl:documentation>
+        An abstract service contract for a musical expert, which offers 
+        services around the classification and identification of songs.
+    </wsdl:documentation>
+    
+    <wsdl:types>
+        <xs:schema targetNamespace="http://solms.co.za/example/simple" 
+            elementFormDefault="qualified" 
+            attributeFormDefault="unqualified">
+            
+            <xs:complexType name="ClassifySongRequest">
+                <xs:annotation>
+                    <xs:documentation>
+                        A request to a music classification service to classify 
+                        the song indicated by the enclosed artist and song names.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:sequence>
+                    <xs:element name="artistName" type="xs:string"/>
+                    <xs:element name="songName" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="classifySongRequest" type="my:ClassifySongRequest"/>
+            
+            <xs:complexType name="ClassifySongResponse">
+                <xs:annotation>
+                    <xs:documentation>
+                        A best-effort attempt to indicate the musical styles of
+                        the requested song, if any. Styles are indicated in order
+                        of significance.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:sequence>
+                    <xs:element name="style" type="my:MusicalStyle" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="classifySongResponse" type="my:ClassifySongResponse"/>
+            
+            <xs:simpleType name="MusicalStyle">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Alternative"/>
+                    <xs:enumeration value="Ambient"/>
+                    <xs:enumeration value="Blues"/>
+                    <xs:enumeration value="Breakbeats"/>
+                    <xs:enumeration value="Classical"/>
+                    <xs:enumeration value="Jungle"/>
+                    <xs:enumeration value="Rock"/>
+                    <xs:enumeration value="Rythm"/>
+                    <xs:enumeration value="Trance"/>
+                    <xs:enumeration value="Trip-Hop"/>
+                    <!-- etc -->
+                </xs:restriction>
+            </xs:simpleType>
+            
+            <xs:complexType name="UnknownArtistOrSong">
+                <xs:annotation>
+                    <xs:documentation>
+                        An indication that a provided artist or song is
+                        not known, and hence cannot be classified.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:complexType>
+            <xs:element name="unknownArtistOrSong" type="my:UnknownArtistOrSong"/>
+            
+        </xs:schema>
+    </wsdl:types>
+    
+    
+    <wsdl:message name="classifySongRequest">
+        <wsdl:part name="classifySongRequest" element="my:classifySongRequest"/>
+    </wsdl:message>
+    <wsdl:message name="classifySongResponse">
+        <wsdl:part name="classifySongResponse" element="my:classifySongResponse"/>
+    </wsdl:message>
+    <wsdl:message name="unknownArtistOrSong">
+        <wsdl:part name="unknownArtistOrSong" element="my:unknownArtistOrSong"/>
+    </wsdl:message>
+    
+    
+    <wsdl:portType name="MusicExpert">
+        <wsdl:documentation>
+            An expert that can classify music
+        </wsdl:documentation>
+        <wsdl:operation name="classifySong">
+            <wsdl:input message="my:classifySongRequest"/>
+            <wsdl:output message="my:classifySongResponse"/>
+            <wsdl:fault name="unknownArtistOrSong" message="my:unknownArtistOrSong"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+</wsdl:definitions>

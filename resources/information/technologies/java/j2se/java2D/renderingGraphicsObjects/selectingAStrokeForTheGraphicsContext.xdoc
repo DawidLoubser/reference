@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+    id="resources.information.tecnologies.java.j2se.java2D.renderingGraphicsObjects.selectingAStrokeForTheGraphicsContext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/Docs/re_schema/solmsDoc.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Selecting a Stroke for the Graphics Context</title>
+    <para>Figure <!--\ref{figMiterJoin}--> shows the user interface of an application which has essentially
+        a very simple function (to demonstrate the different strokes that can be used with Java 2D
+        line graphics) but which demonstrates a number of interesting features. These include<itemizedlist>
+            <listitem>
+                <formalpara>
+                    <title> Line definition including</title>
+                    <para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>Color selection via color choosers..</para>
+                            </listitem>
+                            <listitem>
+                                <para>Width.</para>
+                            </listitem>
+                            <listitem>
+                                <para>Dash Pattern.</para>
+                            </listitem>
+                            <listitem>
+                                <para>Line caps.</para>
+                            </listitem>
+                            <listitem>
+                                <para>Line Joins.</para>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Tabbed Panes with Scroll Bars.</title>
+                    <para></para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>User entry validation and user notification of invalid input.</title>
+                    <para></para>
+                </formalpara>
+            </listitem>
+            <listitem>
+                <formalpara>
+                    <title>Relatively deep nesting of containers.</title>
+                    <para></para>
+                </formalpara>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>The complete listing of the application is given below:<programlisting>
+<xi:include parse ="text" href="StrokeTest.java"/>
+</programlisting>
+    </para>
+    <para> In order to create a stroke, one instantiates Java's <emphasis>BasicStroke</emphasis>
+        class The default is a solid line which is one pixel wide. In general one can specify the
+        line width, line ends (caps) line joins and dash pattern via the constructor<programlisting><![CDATA[
+Stroke stroke = new BasicStroke(width, cap, join, miterLimit, dashPattern,
+                                dashPhase);
+        ]]></programlisting>
+    </para>
+    <para>The width is by default in device units (pixels). However,
+        using<emphasis>AffineTransform</emphasis>s (see section 
+        <xref linkend="resources.information.tecnologies.java.j2se.java2D.deviceAndUserCoordinates.deviceAndUserCoordinates"/>), one can
+        specify the stroke width in user coordinates. The cap parameter specifies the line endings.
+        <emphasis>BasicStroke</emphasis> supports
+        <emphasis>BUTT</emphasis>,<emphasis>ROUND</emphasis> and <emphasis>SQUARE</emphasis> caps
+        via the corresponding class constants (see figure 
+        <xref linkend="resources.information.tecnologies.java.j2se.java2D.renderingGraphicsObjects.selectingAStrokeForTheGraphicsContext.roundCapScrolledTabPane_gif"/> for a round cap).</para>
+
+    <figure id="resources.information.tecnologies.java.j2se.java2D.renderingGraphicsObjects.selectingAStrokeForTheGraphicsContext.roundCapScrolledTabPane_gif">
+            <title>RoundCapScrolledTabPane</title>
+            <graphic fileref="RoundCapScrolledTabPane.gif"/>
+        </figure>
+
+    <para> Putting the contents of a tabbed pane in a scroll pane has the benefit of scroll bars
+        popping up automatically when the tabbed pane gets too small to contain all its components
+        on screen. The user still has access to all components within the tabbed pane. Note also the
+        rounded cap on the line ending.<xref linkend="resources.information.tecnologies.java.j2se.java2D.renderingGraphicsObjects.selectingAStrokeForTheGraphicsContext.roundCapScrolledTabPane_gif"/></para>
+    <para>The joins between lines can be set to
+        <emphasis>BasicStroke.MITER</emphasis>,<emphasis>BasicStroke.ROUND</emphasis> or
+        <emphasis>BasicStroke.BEVEL</emphasis> (see figure \ref{figColorChoose} for a bevel join). </para>
+    <figure id="resources.information.tecnologies.java.j2se.java2D.renderingGraphicsObjects.selectingAStrokeForTheGraphicsContext.dashPattern_gif">
+             <title>DashPattern</title>
+            <graphic fileref="DashPattern.gif"/>
+        </figure>
+
+    <para>DashPatterns are defined by a vector of floating point numbers with the even numbers
+        specifying the dash lengths and the odd numbers specifying the space lengths.
+        <xref linkend="resources.information.tecnologies.java.j2se.java2D.renderingGraphicsObjects.selectingAStrokeForTheGraphicsContext.dashPattern_gif"/>
+    </para>
+    <para>Dash Patterns are specified by an array of floating point numbers. The even array elements
+        specify the dash lengths and the off array entries specify the lengths of the spaces between
+        the dashes.</para>
+    <para>One also specifies a dash phase which specifies a point used as a anchor point for the
+        dash pattern, <abbrev>i.e.</abbrev> a reference point at which the pattern starts.</para>
+</section>

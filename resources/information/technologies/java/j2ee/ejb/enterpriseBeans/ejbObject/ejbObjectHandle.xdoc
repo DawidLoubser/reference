@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.ejbObject.ejbObjectHandle"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Working with EJB Object Handles</title>
+  <para>
+    At times clients want preserve state across client sessions. For example, a client
+    might want to add to his/her shopping cart, disconnect, and then, at some later stage,
+    reconnect to the same stateful session bean instance which should be in the same state as
+    what it was left in when the client disconnected.
+  </para>
+  <para>
+    In such cases the client would not remove the stateful session bean, but would instead
+    save a persistent handle to the stateful session bean. When the client wants to continue
+    with the same session bean, he/she would read in the handle from some or other persistent
+    storage, e.g. a file, and reconnect via that handle to stateful session bean instance.
+  </para>
+  <para>
+    EJB handles are serializable persistent references to enterprise beans. These handles
+    are similar to CORBA's stringified object references which are persistent references to a
+    CORBA server objects.
+  </para>
+  <para>
+    Of course the handle is only a reference. Thus, if another process has removed the
+    enterprise bean, the handle cannot be used to reconstruct that bean.
+  </para>
+  
+  <section>
+    <title>Limitations of Persistent EJB Handles</title>
+    <para>
+      Note, however, that there are limitations for using EJB handles: 
+    <orderedlist>
+      <listitem>
+        <para>
+          The EJB handle can only be re-used from the same client environment. You can thus
+          not save the EJB handle on one machine and re-use it on another. 
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          EJB handles are not portable across EJB containers (and hence across different EJB
+          server machines).
+        </para>
+      </listitem>
+    </orderedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Obtaining the Handle of an Enterprise Bean</title>
+    <para>
+      You can obtain the handle of an enterprise bean from its remote interface interface via
+<programlisting><![CDATA[
+remoteInterface.getHandle();
+]]></programlisting>    
+      which returns an instance of <literal>javax.ejb.Handle</literal>.
+    </para>
+  </section>
+  
+  <section>
+    <title>Serializing the Handle</title>
+    <para>
+      To serialize the handle you simply open an object output stream and serialize the
+      handle object onto it. For example, below we serialize the handle to a file:
+<programlisting><![CDATA[
+javax.ejb.Handle handle = cart.getHandle();
+
+ObjectOutputStream out = new ObjectOutputStream
+(new FileOutputStream("handle.dat"));
+
+out.writeObject(handle);
+]]></programlisting>
+   </para>
+  </section>
+  
+  <section>
+    <title>Reconnecting to the Enterprise Bean</title>
+    <para>
+      The exact way you reconnect depends on whether your EJB container is based on
+      RMI/IIOP or on straight RMI. In future the containers will be required to be based on RMI/IIOP.
+    </para>
+    
+    <section>
+      <title>RMI Based EJB Containers</title>
+      <para>
+        In the case of RMI-based EJB containers, we simply read in the handle and ask the
+        handle for the associated EJB object. This reference can be cast to your remote interface:
+<programlisting><![CDATA[
+ObjectInputStream in = new ObjectInputStream
+(new FileInputStream("handle.dat"));
+
+javax.ejb.Handle handle = in.readObject();
+
+ShoppingCart cart = (ShoppingCart)handle.getEJBObject();
+]]></programlisting>
+       </para>
+    </section>
+    
+    <section>
+      <title>RMI/IIOP Based EJB Containers</title>
+      <para>
+        In the case of RMI/IIOP-based EJB containers, we read in the handle, ask the handle
+        for the associated EJB object and use the <literal>narrow</literal>
+        method of <literal>PortableRemoteObject</literal> to narrow the
+        reference down to a reference to the remote interface:
+<programlisting><![CDATA[
+ObjectInputStream in = new ObjectInputStream
+(new FileInputStream("handle.dat"));
+
+javax.ejb.Handle handle = in.readObject();
+
+ShoppingCart cart
+= (ShoppingCart)javax.rmi.PortableRemoteObject.narrow
+   (handle.getEJBObject(), ShoppingCart.class);
+]]></programlisting>
+       </para>
+    </section>
+  </section>
+</section>    

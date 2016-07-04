@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2se.collections.collections.collections.interfaces.mapInterface"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">    
+        <title role="Map Interfaces">Map Interfaces</title>
+        <para>The <literal>Map</literal> interface does not implement the <literal>Collection</literal> interface. A <literal>Map</literal> maps a collection of keys onto a collection of values. In
+          a sense a <literal>List</literal> is a special case of a map which maps
+          integer keys (the indeces) onto values (the elements of the list) and perhaps it is a pity
+          that Java has not gone that route.</para>
+        <para>But for a map the key data type need not be an integer. In fact it can be any Object.
+          A very simple example is that of a word counter. The result should be a mapping of words
+          onto integers. The integer would represent the number of occurance of that word (the word
+          in the key field) in the test stream (e.g. a file).</para>
+        <para>The central services of a map are that of inserting a key-value pair into the map and
+          that of obtaining a value from a key. The complete <literal>Map</literal>
+          interface is listed below:</para>
+
+        <para/>
+        <para>
+            <programlisting>
+ public interface Map
+ {
+   // Basic Operations
+   Object  put           (Object key, Object value);
+   Object  get           (Object key);
+   Object  remove        (Object key);
+   boolean containsKey   (Object key);
+   boolean containsValue (Object value);
+   boolean isEmpty       ();
+   int     size          ();
+ 
+   // Bulk Operations
+   void putAll (Map t);
+   void clear  ();
+ 
+   // Collection Views
+   public Set        keySet   ();
+   public Collection values   ();
+   public Set        entrySet ();
+ 
+   // Interface for entrySet elements
+   public interface Entry
+   {
+     Object getKey   ();
+     Object getValue ();
+     Object setValue (Object value);
+   }
+ }            
+            </programlisting>
+        </para>
+<para>
+          Note that the keys of the map form a <literal>Set</literal>. This is
+          because a <literal>Map</literal> does not allow duplicate keys -- recall
+          that a <literal>Set</literal> did not allow duplicate entries. The values
+          of a map, on the other hand, form a collection. Hence a value can be associated with
+          mmultiple keys, but a key can only be associated with one value. A map thus represents a
+          one-to-many mapping.</para>
+        <para>As an example, assume you want to be able to access persons from their identity
+          number. A suitable collection for this would be a map with identity numbers as the keys
+          and persons as the values. Note that identity number are unique (not taking into account
+          all the forged ones) and hence the id no is a suitable choice for the key field of a map.
+          To insert a person in a map we would say:</para>
+        <para/>
+        <para>
+            <programlisting>
+ map.put(person.getIdentityNumber(), Person);
+            </programlisting>
+        </para>
+<para>To identify a
+          person from a given id number we say</para>
+        <para/>
+        <para>
+            <programlisting>
+ Person person = (Person)map.get(idNo);
+            </programlisting>
+        </para>
+<para/>
+        <section>
+          <title role="Viewing a Map as a Collection">Viewing a Map as a Collection</title>
+          <para>Recall that a <literal>Map</literal> is not a collection (the
+              <literal>Map</literal> interface does not extend<literal>Collection</literal>). The map does, however, offer a service for
+            supplying a collection-view of the map via the <literal>entrySet()</literal> method. This method returns a<literal>Set</literal> of elements of the type <literal>Map.Entry</literal>.</para>
+          <para>Note that <literal>Map.Entry</literal> is a nested interface
+              (<literal>Entry</literal> is defined within the<literal>Map</literal> interface). Once we have a view onto the collection of
+            entries in the map, we can ask the collection for an iterator and step through this collection.</para>
+          <para>This collection view supports all the element removal services of collections, but
+            it does not support element addition. Elements can thus only be added to a map via the
+              <literal>put()</literal> and <literal>putAll()</literal> services of maps.</para>
+          <para/>
+        </section>
+        <section>
+          <title role="Multimaps">Multimaps</title>
+          <para>Multimaps are maps which map a single key onto multiple values. This is not
+            directly supported within Java's Collection Framework, but one can always map keys onto
+            other collections (e.g. onto linked lists or arrays).</para>
+          <para/>
+        </section>
+      </section>

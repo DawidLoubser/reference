@@ -1,0 +1,46 @@
+<section id="resources.information.platforms.linux.kernel.compiling.compiling"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Compiling the kernel</title>
+	<para>
+		Recompiling the kernel might seem a daunting task and most distributions provide a fairly well configured kernel. To recompile the kernel, the kernel source has to be installed which is available as a RPM or as a TAR file. Once this is installed you will find it in the <emphasis role="strong">/usr/src</emphasis> directory. Each kernel version resides in a separate directory although you might find a symbolic link to the <emphasis role="strong">linux</emphasis> directory. Once at the base of the source (/usr/src/linux) issue the <literal>make menuconfig</literal> command. This starts a graphical interface which allows you to include certain features in the kernel or as a module, and to remove unwanted features.
+	</para>
+	
+	<figure>
+		<title>Compiling the kernel with make menuconfig</title>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="../../images/compileKernel.jpg" format="JPG" align="center"/>
+			</imageobject>
+			<textobject>
+				<phrase>make menuconfig</phrase>
+			</textobject>
+		</mediaobject>	
+	</figure>
+	
+	<para>
+	Once the configuration is completed and saved (default .config) you can continue building the kernel. make dep &amp;&amp; make clean bzImage modules modules_install. The dep build target configures all dependencies correctly. bzImage creates a new kernel image in arch/i386/boot directory and module / module_install created the modules as specified in the configureation and install them. 
+	</para>
+	<para>
+	The bzImage file needs to be included in your boot loader. To do this configure grub as follows. Also copy the image file from /usr/src/arch/i386/boot to /boot. It is important to configure a new section as well as a new image file. If the current kernel image is overwritten or only the new kernel images is configured in grub.conf, and the new kernel does not boot, your are in trouble.
+	</para>
+	<programlisting>
+	<![CDATA[
+default 0
+timeout 5
+splashimage=(hd0,0)/boot/grub/splash.xpm.gz
+
+title=Gentoo_CUSTOM
+root (hd0,0)
+kernel (hd0,0)/boot/bzImage root=/dev/hda3
+initrd (hd0,0)/boot/initrd-2.4.20-gentoo-r5
+
+title=Gentoo_GENKERNEL
+root (hd0,0)
+kernel (hd0,0)/boot/kernel-2.4.20-gentoo-r5 root=/dev/hda3
+initrd (hd0,0)/boot/initrd-2.4.20-gentoo-r5
+	]]>	
+	</programlisting>
+</section>	

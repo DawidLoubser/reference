@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.lang.classes.basic.usingClasses.objectsReferences">
+  <title>Objects and References</title>
+  <para>
+    It is important to understand that whenever you work with objects in Java you are working with references.
+  </para>
+  
+  <para>
+    Consider the statement
+    <programlisting language="Java">
+Account acc1 = new Account("A111");
+    </programlisting>
+    This statement has really 3 components: 
+  <itemizedlist>
+         <listitem>
+            <para>The declaration of a reference variable, <literal>acc1</literal>. </para>
+         </listitem>
+         <listitem>
+            <para>The creation of an instance (object) of the <literal>Account</literal> class. </para>
+         </listitem>
+         <listitem>
+            <para>The assignment of the reference variable to the instance of the <literal>Account</literal> class created.</para>
+         </listitem>
+      </itemizedlist>
+  </para>
+    
+  <section>
+      <title>Creating objects</title>
+    <indexterm>
+      <primary>object</primary>
+      <secondary>creating</secondary>
+    </indexterm>
+      <para>
+      Objects are always created via the <literal>new</literal> keyword. 
+    </para>
+      <para>
+      The syntax for object creation is
+      <programlisting language="Java">
+new SomeClass();
+        </programlisting>
+      or, if the object must be created with arguments (parameters):
+      <programlisting language="Java">
+new Person("John", HairColour.Brown);
+        </programlisting>
+      </para>
+     <para>
+      In our example program we
+      create two accounts, one using the constructor which takes only the account number as
+      argument and one taking the account number and initial balance as arguments.</para>
+      <para>The return value of the <literal>new</literal> operator is a
+      <emphasis>reference</emphasis> to the object it created.</para>
+  </section>
+  <section>
+      <title>Declaring a reference variable</title>
+    <indexterm>
+      <primary>reference</primary>
+      <secondary>declaring</secondary>
+    </indexterm>
+      <para>
+      A reference variable refers to an object, it is a handle or pointer to an object
+      and enables users to send messages to the object. Only through a reference can we communicate with
+      an object. A reference variable is declared similar to a variable holding a primitive type: 
+      <programlisting language="Java">
+Account acc1;
+      </programlisting>
+      Here we define a reference to an account, which we call <literal>acc1</literal>.
+      The <emphasis>type</emphasis> of object this reference variable can refer to, 
+      is our own type (<literal>Account</literal>). <literal>acc1</literal>
+      can thus refer to any object which is an instance of <literal>Account</literal>.
+      In its lifetime, this reference could at different times refer to different instances
+      of accounts.
+    </para>
+  </section>
+  
+  <section>
+      <title>Non-initialized references</title>
+    <indexterm>
+      <primary>reference</primary>
+      <secondary>non-initialized</secondary>
+    </indexterm>
+      <para>
+      If <literal>acc1</literal> has not been initialized to refer to any
+      <literal>Account</literal>, it cannot yet be used. This is conceptually
+      similar to having a telephone, but no number has been dialed (we have no
+      communication path).
+    </para>
+  </section>
+  
+  <section>
+      <title>NULL references</title>
+    <indexterm>
+      <primary>reference</primary>
+      <secondary>null</secondary>
+    </indexterm>
+      <para>
+      The <literal>null</literal> keyword in java refers to an object reference
+      which is initialised, but does not refer to any object (i.e. a connected telephone
+      line, but with no person at the other end to talk back to you).
+      A <literal>null</literal> reference thus refers (points) to nothing, and
+      if you use this reference by, for example, requesting
+      <programlisting language="Java">
+acc1.credit(300);
+      </programlisting>
+      before <literal>acc1</literal> refers to an actual <literal>Account</literal>,
+      a <literal>NullPointerException</literal> will be thrown.
+    </para>
+  </section>
+  
+  <section>
+      <title>Assigning references</title>
+    <indexterm>
+      <primary>reference</primary>
+      <secondary>assigning</secondary>
+    </indexterm>
+      <para>
+      The third component of the statement
+      <programlisting language="Java">
+Account acc1 = new Account("A111");
+      </programlisting>
+      is simply the assignment
+      of the reference <literal>acc1</literal> to the reference returned by
+      the new operator.
+    </para>
+      <para>
+      In general one can assign reference to another reference as long as they are
+      compatible, i.e. as long as the assignment guarantees that after the assignment the
+      <literal>Account</literal> reference refers to an Account (or is a
+      <literal>null</literal> reference.) Thus we could declare that 
+      <programlisting>
+        acc1 = acc2;
+      </programlisting>
+      After  this assignment both references, <literal>acc1</literal> and <literal>acc2</literal> 
+      will refer to the same account (or alternatively to
+      <literal>null</literal>).
+    </para>
+  </section>
+  
+  <section>
+      <title>The exception to the rule: Strings</title>
+      <para>
+      The only exception to the standard method of object creation, are Strings. Strings
+      represent a string of characters, and are instances of the class <literal>String</literal>
+      (in the standard java language package, <literal>java.lang</literal>). The standard object 
+      creation syntax may be used to create strings, i.e.
+        <programlisting language="Java">
+String myEmptyString = new String();
+        </programlisting>
+      but because Strings are so widely used in Java code, the Java Compiler allows us to essentially
+      treat it like any other primitive type, i.e.
+        <programlisting language="Java">
+String printerName = "Epson R300";
+        </programlisting>
+      (which is functionally equivalent to:)
+        <programlisting language="Java">
+String printerName = new String("Epson R300");
+      </programlisting>
+      </para>
+      <para>
+      Unlike a primitive type (such as an <literal>int</literal>), however, Strings provide
+      services, such as reporting their length, providing case-transformed versions of themselves,
+      etc. This is because they are objects.
+        <programlisting language="Java">
+String name = "Koos Kombuis";
+
+int l = name.length();
+String u = name.toUpperCase();
+        </programlisting>
+      </para>
+  </section>
+  
+  
+</section>

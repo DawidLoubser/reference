@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.integrating.localInterface.usage.usage"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Using local interfaces</title>
+  <para> 
+    Using local interfaces is simpler than local interfaces since one does not need to cater
+    for managing potential <literal>java.rmi.RemoteException</literal>s. 
+  </para>
+  
+  <section>
+    <title>Specifying a Local Interface</title>
+    <para>
+      A local interface is very similar to a remote interface. The differences are essentially
+      that 
+      <itemizedlist>
+        <listitem>
+          <para>Local interfaces extend <literal>javax.ejb.EJBLocalObject</literal> instead of
+            <literal>javax.ejb.EJBObject</literal>. The former is not an extension of
+            <literal>java.rmi.Remote</literal> and calls will thus be resolved as local calls. </para>
+        </listitem>
+        <listitem>
+          <para>The services published in local interfaces do not throw <literal>java.rmi.RemoteException</literal>.</para>
+        </listitem>
+      </itemizedlist>
+    </para>  
+    <para>
+      Below we show a local interface for our <literal>LoanCalculator</literal> bean:
+<programlisting>
+<xi:include parse="text" href="../../../../source/HomeLoanApplicationLocal/src/businessLogic/LoanCalculatorLocal.java" />
+</programlisting>      
+    </para>
+  </section>
+  
+  <section>
+    <title>Specifying a Local Home Interface</title>
+    <para>
+      A local home interface differs in the same way from the home interface: 
+      <itemizedlist>
+        <listitem>
+          <para>Local Home interfaces extend <literal>javax.ejb.EJBLocalHome</literal> instead of
+            <literal>javax.ejb.EJBHome</literal>. </para>
+        </listitem>
+        <listitem>
+          <para>The services published in the local home interface do not throw <literal>java.rmi.RemoteException</literal>.</para>
+        </listitem>
+      </itemizedlist>
+     </para> 
+    <para>
+      Below we show a local home interface for our <literal>LoanCalculator</literal> bean:
+<programlisting>
+  <xi:include parse="text" href="../../../../source/HomeLoanApplicationLocal/src/businessLogic/LoanCalculatorLocalHome.java" />
+</programlisting>      
+    </para>
+  </section>
+  
+  <section>
+    <title>Deployment Descriptors for Local Enterprise Beans</title>
+    <para>
+      Below we show the deployment descriptor for a loan calculator session bean which can be
+      accessed either remotely or locally. We also define a <literal>HomeLoanApplication</literal>
+      session bean which uses the a local loan calculator. Note the definition of the local and
+      local-home interfaces as well as the referencing of the local bean.
+<programlisting>
+<xi:include parse="text" href="../../../../source/HomeLoanApplicationLocal/META-INF/ejb-jar.xml" />
+</programlisting>      
+    </para>
+  </section>
+  
+  <section>
+    <title>Obtaining a Reference to a Local Enterprise Bean</title>
+    <para>
+      Local enterprise beans are typically resolved by other enterprise beans hosted within the
+      same application server. The bean reference is still obtained through a lookup to an
+      implementation of the JNDI. The lookup must be on the logical name of the bean and not on the
+      JNDI name. Furthermore, we can cast the resolved local home interface directly without having
+      to go through <literal>PortableRemoteObject.narrow(...)</literal>:
+<programlisting><![CDATA[
+ InitialContext jndiContext = new InitialContext();
+ 
+ LoanCalculatorLocalHome calculatorHome = (LoanCalculatorLocalHome)
+       jndiContext.lookup("java:comp/env/ejb/finance/LoanCalculator");
+ 
+ LoanCalculatorLocal calculator = calculatorHome.create();
+ 
+ ...
+]]></programlisting></para>
+  </section>
+  
+</section>

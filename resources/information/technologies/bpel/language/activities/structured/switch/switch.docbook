@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Flow control using switch</title>
+  <para>
+    To support optional flow within a busines process, BPEl supports the concept of a switch
+    construct. 
+  </para>
+  <para>
+    The general syntax for a switch is
+    <programlisting><![CDATA[
+<switch>
+    <case condition="(boolean expression)">
+        <!-- some activity -->
+    </case>
+    ...  
+    <case condition="(boolean expression)">
+        <!-- some activity -->
+    </case>
+</switch>      
+      ]]></programlisting>
+  </para>
+  <para>
+    In order to support typical functionality required for condition specification, BPEL extends the
+    XPath vocabulary to support a <literal>getVariableData</literal> function. The syntaxt for the
+    <literal>getVariableData</literal> function is 
+    <programlisting><![CDATA[
+bpws:getVariableData('variable-name',
+            'part-name',
+            'location-path')      
+      ]]></programlisting>
+    with the latter to parameters being optional and the location-path query being specified in the
+    query language selected for this business process specification.
+  </para>
+  <para>
+    For example, we could switch on the total value of an assessment via
+    <programlisting><![CDATA[
+<switch>
+      <case condition="bpws:getVariableData(
+                         'assessment', 'valuation','/valuation/ass:totalValue') @gt; 1e6">
+        <-- activity to be performed for assesments above a million Rand -->
+      </case>
+      <case condition="bpws:getVariableData(
+                         'assessment', 'valuation','/valuation/ass:totalValue') @gt; 100000">
+        <-- activity to be performed for assesments above a 100000 Rand -->
+      </case>
+      <otherwise>
+        <-- activity to be performed for assesments below R100000 -->
+      </otherwise>
+      ]]></programlisting>
+  </para>
+</section>  

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.technologies.cpp.fundamentals.simpleProgram.simpleProgram"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="Simple program">Structure of a simple program</title>
+  <para> 
+    Similar to C, any C++ program has at least one function, the function
+    <literal>main</literal>. This function is generally referred to as the main program. The body of
+    any function is enclosed within curly brackets (<literal><![CDATA[ { ... } ]]></literal>).
+  </para>
+  <para>
+    A function ontains statements. Each statement is terminated by a semicolon. 
+    The curly brackets perform the
+    function of the <literal>begin</literal> ...<literal>end</literal> block in some other languages.
+    Lets have a look at the C++ version of the traditional "Hello World" program:
+  </para>
+
+  <example id="resources.information.technologies.cpp.fundamentals.simpleProgram.simpleProgram.helloWorld_cpp">
+     <title role="helloWorld.cpp">helloWorld.cpp</title>
+     <programlisting>
+       <xi:include href="source/helloWorld_cpp.xdoc" />
+     </programlisting>
+  </example>  
+
+  <para>
+    The first line includes the header file input/output stream class library. Later we shall see that
+    this is a hierarchy of classes for accessing input and output devices. Header files are used to
+    inform the user of the constants, variables, functions and classes defined in the accompanying
+    CPP (implementation) file. You can include standard libraries supplied with your compiler, third
+    party libraries acquired from some vendor (e.g. a database library) or libraries you wrote yourself.
+  </para>
+  <para> 
+    The latest ANSI C+ standard packagess the standard library elements in the standard
+    namespace. Name spaces will be discussed in detail in 
+    <xref linkend="resources.information.technologies.cpp.nameSpaces.nameSpaces"/>. 
+    For now it is suffcient to state that name spaces are C++'s support for packaging.
+  </para>
+  <para> 
+    Next we define the <literal>main</literal> function of the program. Every C++ program must
+    have at least one function (and hence one non-object oriented element). Its name must be
+    <literal>main</literal>. The <literal>void</literal> specifies that the function
+    <literal>main</literal> has no return value. Functions which do not return a value are often
+    called procedures. The empty bracket after <literal>main</literal> specify that
+    <literal>main</literal> takes no arguments. Later we shall show how we can give arguments to
+    <literal>main</literal> in order to handle command line parameters.
+  </para>
+  <para> 
+    Each function has a body. The body is enclosed within curly brackets. Our function has only
+    one statement. Statements in C++ are terminated by a semicolon. In this statement we simply send
+    the string <literal>"Hello World"</literal> to the standard output device
+    <literal>cout</literal> which usually is the terminal. Data for output are passed to
+    <literal>cout</literal> with the output operator <literal><![CDATA[<<]]></literal>. To be able
+    to fully understand stream input/output one has to understand classes and operator overloading.
+    This will be covered in detail in the following chapters. At this stage we shall simply use
+    output streams as illustrated in the "Hello World" application.
+  </para>
+  <para> 
+    The <literal>endl</literal> stream manipulator starts a new line and flushes the stream. It
+    is very common for C++ programmers to use the end-of-line character '/n' instead, but this does
+    not flush the stream and if the program aborts, some of the stream output might be lost.
+  </para>
+
+  <section id="resources.information.technologies.cpp.fundamentals.simpleProgram.simpleProgram.compileRun">
+    <title role="Compiling and running"> Compiling and running the program</title>
+    <para> 
+      The process for compiling and running the program depends on both, the compiler used and
+      the target platform. We shall use the GNU C++ compiler. In that case we can compile thhe
+      application via 
+      <literallayout><![CDATA[
+ g++ -Wall -ansi HelloWorld.cpp -o HelloWorld
+      ]]></literallayout>
+       This will generate an executable file which is called <literal>HelloWorld</literal> on Unix-type
+      operating systems (e.g. Linux) and <literal>HelloWorld.exe</literal> on Windows.
+     </para>
+    <para> 
+      On Unix/Linux we run the application from the directory in which the executable is
+      stored via 
+      <literallayout><![CDATA[
+ ./HelloWorld<ENTER>
+      ]]></literallayout>    
+      On Windows you would use
+      <literallayout><![CDATA[
+ HelloWorld<ENTER>
+      ]]></literallayout>
+      instead.
+    </para>
+  </section>
+  
+  <section id="resources.information.technologies.cpp.fundamentals.simpleProgram.simpleProgram.comments">
+    <title role="Comments">Adding comments to your code</title>
+    <para>
+      Informative, unambiguous commenting and consistent indentation can make the task of
+      understanding code (even your own code when you come back to it after a while) much more
+      understandable. You must, however, take care to maintain your comments together with your
+      code. Otherwise you can easily end up with comments which are ambiguous or even simply wrong.
+      Such comments are worse than no comments at all.
+    </para>
+    <para> 
+      There are two ways in which you can add comments to your C++ code. Both are illustrated
+      in the commented version of the "Hello World" application given below:
+
+    <example id="resources.information.technologies.cpp.fundamentals.simpleProgram.simpleProgram.helloWorldCommented_cpp">
+       <title role="helloWorldCommented.cpp">helloWorldCommented.cpp</title>
+       <programlisting>
+         <xi:include href="source/helloWorldCommented_cpp.xdoc" />
+       </programlisting>
+    </example>  
+      You can use the <literal>/* ... */</literal> comment to insert a comment which possibly spans over
+      several lines. For example, at the top of the file we give the name of the file in which the
+      program is stored and then a description of what the program does.
+    </para>
+    <para> 
+      Alternativerly you use a double-slash (<literal>//</literal>) to specify that the
+      remainder of that line should be treated by as a comment. For example, after
+      <literal><![CDATA[#include<iostream.h>]]></literal> precompiler directive we explain why we
+      need the library.
+    </para>
+    <para> 
+      Do not comment statements which are obvious from the code anyway. For example adding a
+      comment after the <literal>include</literal> statement that we are including the
+      <literal>iostream</literal> library gives us no further information and just increases the
+      amount of text the reader has to read and the amount of work involved when changing the code
+      (since we have to update the comments too).
+    </para>
+  </section>
+</section>

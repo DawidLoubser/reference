@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<!DOCTYPE chapter SYSTEM "file:/opt/share/xml/Oxygen/samples/docbook/xml/docbookx.dtd" [<!ENTITY lowlevelguitest SYSTEM 'file:/home/ernst/courses/J2ME/book/code/LowLevelGUI/src/LowLevelGUITest.java'>
+<!ENTITY lowlevelguicanvas SYSTEM 'file:/home/ernst/courses/J2ME/book/code/LowLevelGUI/src/LowLevelCanvas.java'>
+]>-->
+<chapter id="resources.information.technologies.java.j2me.lowLevelGui.lowLevelGui"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Low-Level GUI Development</title>
+    <section>
+        <title>MIDP GUI.</title>
+        <para>Take into consideration that small devices don't generally work with a keyboard and
+            mouse like personal computers. Best current possible case scenario; the device will have
+            a stylus, pen like pointing tool.</para>
+        <para>MIDLets use displayables, like virtual displayable objects, one at a time on the
+            screen. Easily understandable as a deck of cards. Generally the screens are too small to
+            accomodate window like screens. So one displayable owns the screen at a time.</para>
+        <para>The MIDP spec defines High level and low level GUI APIs. The High level caters for
+            general business GUI components. These are portable accros devices and looks different
+            since it's up to the device manufacturer to decide how they implement these components
+            and their interaction.</para>
+        <para>The Low level API is used for game like features. The screen and user interaction is
+            controlled directly. The consequence is that applications are generally written for a
+            spesific device and screen size. They end up less portable. </para>
+        <para>It is reasonable to expect using both High level and low level classes in the same
+            application. The only restriction is that you cannot use both on the same displayble.</para>
+        <section>
+            <title>MIDP low level</title>
+            <para>The low level API basically consists of three classes: <orderedlist>
+                    <title>Low level classes</title>
+                    <listitem>
+                        <para>Canvas</para>
+                        <para>A top level window where you can draw</para>
+                    </listitem>
+                    <listitem>
+                        <para>Font</para>
+                        <para>Font information</para>
+                    </listitem>
+                    <listitem>
+                        <para>Graphics</para>
+                        <para>Drawing methods</para>
+                    </listitem>
+                </orderedlist>
+            </para>
+            <section>
+                <title>Canvas</title>
+                <para>Resident in <classname>javax.microedition.lcdui.*;</classname> The only
+                    displayable in the low level API</para>
+                <para>You have complete controll of the screen and screen events. Every detail of
+                    what get drawn on screen is your responsibillity.</para>
+                <para>The Canvas class has thefollowing methods you can use or overide: <itemizedlist>
+                        <title>Canvas Methods:</title>
+                        <listitem>
+                            <para>
+                                <emphasis>public int getGameAction( int keyCode)</emphasis>
+                            </para>
+                            <para>Use this code for the arrow keys available on some devices.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>public int getKeyCode( int keyCode )</emphasis>
+                            </para>
+                            <para>returns the corresponding keycode for the specified game action</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>public int getHeight()</emphasis>
+                            </para>
+                            <para>returns the height of the canvas</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>public int getWidth()</emphasis>
+                            </para>
+                            <para>returns the canvas's width</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>public boolean hasPointerEvents()</emphasis>
+                            </para>
+                            <para>returns true if the device will accept pointer events, ie: a mouse
+                                or stylus like pointing sensitive device</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>public boolean hasPointerMotionEvents()</emphasis>
+                            </para>
+                            <para>Simmilar to above, but more apropriately if it will register the
+                                pointer dragging accross the screen.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>public boolean hasRepeatEvents()</emphasis>
+                            </para>
+                            <para>this method will return true if the platform causes repeated
+                                events when a button is held down.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>public boolean isDoubleBuffered()</emphasis>
+                            </para>
+                            <para>returns true if the platform inherintly does double bufferring. If
+                                this mthod returns false you will have to implement it for that platform.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>protected void keyPressed(int keyCode)</emphasis>
+                            </para>
+                            <para>Overide this method to respond to key events. Use the keyCode to
+                                decern which key was pressed.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>protected void keyReleased(int keyCode)</emphasis>
+                            </para>
+                            <para>Simmilar to above. But this event is fired when the key is released.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>protected void keyRepeated(int keyCode)</emphasis>
+                            </para>
+                            <para>this method is invoked when a key is held down.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>protected abstract void paint(Graphics graphics)</emphasis>
+                            </para>
+                            <para>This method has to be overidden in the derived class. It is used
+                                to draw on the canvas. It will be invoked the first time the canvas
+                                becomes vissible. The application manager can also invoke this
+                                method for various reasons. It is a good idea to keep track of what
+                                the screen looks like since repaint can be invoked, which will call
+                                your paint. </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>protected void pointerPressed(int x, int y)</emphasis>
+                            </para>
+                            <para>Pointer capable devices like palmtops with touch sensitive screens
+                                will invoke this method when the pointer is pressed against the
+                                screen. Overide this method to include your desired behaviour. The x
+                                and y integers are the coordinates of where the screen was touched.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>protected void pointerReleased(int x, int y)</emphasis>
+                            </para>
+                            <para>Simmilar to above method but invoked when the pointer lifts from
+                                the screen.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>protected void pointerDragged</emphasis>
+                            </para>
+                            <para>Simmilar to above. use the x and y coordinates to track the
+                                pointer drag.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>public final void repaint()</emphasis>
+                            </para>
+                            <para>repaints the whole canvas, like calling: <emphasis> repaint(0, 0,
+                                    getWidth(), getHeight());</emphasis>
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>public final void repaint(int x, int y, int width, int height)</emphasis>
+                            </para>
+                            <para>Use this method if only part of the screen needs to be repainted.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>public final void serviceRepaints()</emphasis>
+                            </para>
+                            <para>Since repaints are scheduled to the program mannager you can
+                                enforce a repaint by using this method.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>protected void showNotify()</emphasis>
+                            </para>
+                            <para>This will be invoked just before the canvas is made vissible on
+                                the screen.Overide this method to set up annimations and other
+                                things the class will need.</para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>protected void hideNotify()</emphasis>
+                            </para>
+                            <para>This method is called just after a canvas is removed from being
+                                the current displayable</para>
+                        </listitem>
+                    </itemizedlist>
+                </para>
+                <para>Thene there are some public static final int fields available for the
+                    different keys.</para>
+            </section>
+            <section>
+                <title>Graphics</title>
+                <para>The first time Canvas's paint() method is called it receives a Graphics object
+                    as an argument. You can also get a Graphics object from an Image object by
+                    calling it's getGraphics() method. The Graphics object can then be used to draw
+                    various shapes and even images to the screen. </para>
+                <itemizedlist>
+                    <title>Graphics methods</title>
+                    <listitem>
+                        <para>
+                            <emphasis>public void clipRect( int x, int y, int width, int height)</emphasis>
+                        </para>
+                        <para>This method will intersect the current clip with a rectangle of the
+                            given dimensions. In other words to shrink the current clip</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void setClip( int x, int y, int width, int height)</emphasis>
+                        </para>
+                        <para>Use this method to set the size and even enlarge the current
+                            rectangular clip</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getClipHeight()</emphasis>
+                        </para>
+                        <para>returns the current clip's height</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getClipWidth()</emphasis>
+                        </para>
+                        <para>returns the current clip's width</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getClipX()</emphasis>
+                        </para>
+                        <para>returns the current clip's relative top left corner's X coordinate</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getClipY()</emphasis>
+                        </para>
+                        <para>returns the current clip's relative top left corner's Y offset. </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void drawArc(int x, int y, int width, int height, int
+                                startAngle, int arcAngle)</emphasis>
+                        </para>
+                        <para>Draws the specified elipse in the specified rectangle.</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void drawChar(char charracter, int x, int y, int anchor)</emphasis>
+                        </para>
+                        <para>Draw a character in the current font with the current color in a box
+                            bound at x and y coordinates. finally the anchor specifies a n anchoring
+                            position of the text in this box based on horizontal constants: LEFT,
+                            HCENTER and RIGHT and the vertical constants TOP, BASELINE and BOTTOM. </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void drawChars(char[] charracters, int offset, int
+                                length, int x, int y, int anchor)</emphasis>
+                        </para>
+                        <para>Draws from the offset to the length character of the array in the
+                            current font and color. Same criteria applies to the positioning as drawChar().</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void drawImage(Image image, int x, int y, int anchor)</emphasis>
+                        </para>
+                        <para>Draws an Image object to the screen. Starting from x and y, anchored
+                            to the anchor costant.</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void drawLine(int x1, int y1, int x2, int y2)</emphasis>
+                        </para>
+                        <para>Draw a line from x1, y1 to x2 ,y2</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void drawRect(int x, int y, int width, int height)</emphasis>
+                        </para>
+                        <para>Draws a rectangle from the xy point width wide and height
+                            high(actually down from the refrence point)</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void drawRoundRect(int x, int y, int width, int height,
+                                int archWidth, int archHeight)</emphasis>
+                        </para>
+                        <para>Draw a rectangle with round corners.</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void drawString( String str, int x, int y, int anchor)</emphasis>
+                        </para>
+                        <para>I am sure this pretty much straight forward.</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void drawSubString( String str, int offset, int length,
+                                int x, int y, int anchor)</emphasis>
+                        </para>
+                        <para>Simmilar to drawChar(char[] characters). Only draw part of the string</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void fillArc(int x, int y, int width, int height, int
+                                startAngle, int arcAngle)</emphasis>
+                        </para>
+                        <para>Draw an elipse filled with the current Graphic color.</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void fillRect(int x, int y, int width, int height)</emphasis>
+                        </para>
+                        <para>Draw a rectangle filled with the current color</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void fillRoundRect(int x, int y, int width, int height,
+                                int arcWidth, int arcHeight)</emphasis>
+                        </para>
+                        <para>Draw a rectangle with round corners filled with the current Graphic color.</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getBlueComponent()</emphasis>
+                        </para>
+                        <para>Returns the int value(0 -255) of the blue component in the current RGB color</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getGreenComponent()</emphasis>
+                        </para>
+                        <para>Simmilar to above but for the green component</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getRedComponent()</emphasis>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getGrayScale()</emphasis>
+                        </para>
+                        <para>Unless you set a greyscale color, it will return the closest possible
+                            aproximation of the current color's brightness; an int value(0 - 255)</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int setGrayScale(int value)</emphasis>
+                        </para>
+                        <para>Sets the current color to a grayscale value.(0 - 255)</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getColor()</emphasis>
+                        </para>
+                        <para>returns the current color as an int in this form: 0x00RRGGBB</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void setColor(int color)</emphasis>
+                        </para>
+                        <para>Sets the current color with an int in this form: 0x00RRGGBB</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void setColor(int red, int green, int blue)</emphasis>
+                        </para>
+                        <para>Sets the current color with the given Red, Green and Blue interger values</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public Font getFont()</emphasis>
+                        </para>
+                        <para>returns a refence to the current font</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public Font setFont(Font font)</emphasis>
+                        </para>
+                        <para>Sets the current font</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getStrokeStyle()</emphasis>
+                        </para>
+                        <para>returns an int representing all the lines including shape lines'
+                            stroke style.</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void setStrokeStyle(int style)</emphasis>
+                        </para>
+                        <para>Sets the current line drawing stroke style.</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getTranslateX()</emphasis>
+                        </para>
+                        <para>Returns the current graphics translated origin's x coordinate</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getTranslateY()</emphasis>
+                        </para>
+                        <para>Returns the current graphics translated origin's x coordinate</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public void translate(int x, int y)</emphasis>
+                        </para>
+                        <para>Translates the XY origin of the current context to x and y. The next
+                            graphics will be drawn relative to these coordinates.</para>
+                    </listitem>
+										<listitem>
+											<para>
+												<emphasis>public void drawRGB(int[]rgbData, int offset,  int scanlength,  int x,  int y,  int width, int height,  boolean processAlpha)</emphasis>
+											</para>
+											<para>
+												Draws an image made up of an array of integers. Each integer represents the color composistion of a single pixel. Each byte (8bits) represent opacity, red, green and blue.
+											</para>
+										</listitem>
+                </itemizedlist>
+                <para>There is no method to clear the canvas. Just draw a filled rectangle over it
+                    wit whatever color you want as the background. <programlisting>
+                        graphics.setColor(255, 255, 255); graphics.drawRect(0, 0, getWidth(),
+                        getHeight()); </programlisting>
+                </para>
+            </section>
+            <section>
+                <title>Font</title>
+                <para>You can set the current font and it's pproperties to have the apropriate font
+                    drawn as you wish.</para>
+                <itemizedlist>
+                    <title>Methods</title>
+                    <listitem>
+                        <para>
+                            <emphasis>public int charWidth(char character)</emphasis>
+                        </para>
+                        <para>returns the advance width of the specified character</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int charsWidth(char[] chars, int offset, int length)</emphasis>
+                        </para>
+                        <para>Returns the total advance width of all the characters in the specified range.</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getBaselinePosition()</emphasis>
+                        </para>
+                        <para>returns the distance between the top of the text to it's base.</para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public static Font getDefaultFont()</emphasis>
+                        </para>
+                        <para>returns a refrence to the system's default font. </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>public int getFace()</emphasis>
+                        </para>
+                        <para>returns an int constant representing the face: FACE_SYSTEM,
+                            FACE_PROPORTIONAL or FACE_MONOSPACE</para>
+                    </listitem>
+                    <listitem>
+                        <para>public static Font getFont(int face, int style, int size)</para>
+                        <para>returns an object of the specified font.</para>
+                    </listitem>
+                    <listitem><para><emphasis>public int getHeight()</emphasis></para><para>returns the height of this font on average across a line of text.</para></listitem>
+                    <listitem><para><emphasis>public int getSize()</emphasis></para><para>returns a corresponding int constant representing the font size</para></listitem>
+                    <listitem><para><emphasis>public int getStyle()</emphasis></para><para>returns an int constant representing this font's style</para></listitem>
+                    <listitem><para><emphasis>public boolean isBold()</emphasis></para><para>returns true if font is bold</para></listitem>
+                    <listitem><para><emphasis>public boolean isItalic()</emphasis></para><para>returns true if font is italic</para></listitem>
+                    <listitem><para><emphasis>public boolean isPlain()</emphasis></para><para>returns true if font is plain</para></listitem>
+                    <listitem><para><emphasis>public boolean isUnderlined()</emphasis></para><para>returns true if font is underlined</para></listitem>
+                    <listitem><para><emphasis>public int stringWidth(String str)</emphasis></para><para>returns the total advance width of the specified string in this font</para></listitem>
+                    <listitem><para><emphasis>public int substringWidth(String str, int offset, int length)</emphasis></para><para>returns the total advance width of the specified sub string in this font</para></listitem>
+                </itemizedlist>
+            </section>
+            <section>
+                <title>Example</title>
+                <para>Note that the event model is not nearly the same as J2SE. Overiding the
+                    methods the in Canvas class and using commands which the high and low level
+                    components have in common is the way to go about using events in your code.</para>
+                <example>
+                    <title>A simple Example to illustrate the low level gui.</title>
+                    <programlisting>&lowlevelguitest;&lowlevelguicanvas;</programlisting>
+                    <!-- Insert Canavas example here -->
+                </example>
+            </section>
+        </section>
+    </section>
+</chapter>

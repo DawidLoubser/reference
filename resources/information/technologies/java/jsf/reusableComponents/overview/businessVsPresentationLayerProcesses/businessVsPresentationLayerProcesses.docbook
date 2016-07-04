@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+    <title>Business versus presentation layer processes</title>
+    <para>
+        Business processes should not be encoded in the presentation layer, but should be
+        defined within reusable services published by a services layer. This could be, for
+        example, in the form of web services or stateless Java EE request processors
+        (stateless session beans or message driven beans - both are stateless).
+    </para>
+    <para>
+        These services should be accessible through a variety of adapters including both,
+        system and human adapters. System adapters could be web services adapters,
+        RMI access channels or message queues. Human adapters would be human user interfaces
+        which could be application or web clients.
+    </para>
+    <para>
+        Having the business process encoded in the services layer enables us to reuse the
+        process logic across different user access channels.
+    </para>
+    <para>
+        For example, there would be a business process to process an order or an insurance claim.
+        These processes should be encoded in the services/business process layer and not in the
+        presentation layer. The business process would be triggered by receiving an appropriate
+        request object (e.g. a
+        <emphasis>processClaimRequest</emphasis>
+        or a
+        <literal>processOrderRequest</literal>
+        which would contain the claim and the order respectively
+        in addition to potentially some further meta-data for the request).
+    </para>
+    <para>
+        However, there may still be presentation layer processes which would, for example,
+        assemble an order or a claim across different screens, potentially requesting in-between
+        information from the services layer (e.g. the available products or product prices).
+        The purpose of these processes is to assemble the appropriate request object. This is
+        indeed a responsibility of the adapter (e.g. the presentation layer). In JSF these processes
+        would typically be encoded within managed or backing beans whose responsibility it is to
+        manage the presentation layer process.
+    </para>
+    <para>
+        Thus, in addition to having backing beans for views, we also have backing beans for
+        presentation layer processes, i.e. the controllers for those processes.
+    </para>
+</section>    

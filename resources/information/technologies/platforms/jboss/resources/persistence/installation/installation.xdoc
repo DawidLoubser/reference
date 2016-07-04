@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.platforms.jboss.resources.persistence.installation.installation"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Installing a JBoss data source</title>
+  <para>
+    An application server must make use of a data source to persist entity beans. At times
+    information is even directly obtained from data sources through session beans.
+  </para>
+  <para>
+    JBoss supports any database for which there is a JDBC driver available. Class 4 JDBC drivers
+    are from a performance perspective superior to others, particularly compared to class 1 drivers
+    which us the JDBC-ODBC bridge. They also have portability and security benefits.
+  </para>
+  <para>
+    To install a datasource into JBoss we have to perform the following steps: 
+    <orderedlist>
+      <listitem>
+        <para>Make the JDBC driver available to JBoss. </para>
+      </listitem>
+      <listitem>
+        <para>Create and deploy service descriptor file. </para>
+      </listitem>
+    </orderedlist>
+  </para>
+  
+  <section>
+    <title>Making a JDBC driver available to JBoss</title>
+    <para>
+      This is trhe easiest step. You simply copy the jar file for the JDBC driver into
+      the<literal>server/configuration/lib</literal> directory (i.e. if you are using the default
+      configuration it will be the <literal>server/default/lib</literal> directory (replace forward
+      slashes with back-slashes on Windows).
+    </para>
+  </section>
+  
+  <section>
+    <title>Creating and deploying a service descriptor for the data source</title>
+    <para>
+      Data sources are deployed in JBoss as managed beans. Each managed bean is deployed in the
+      deploy directory with a service descriptor. The service descriptor for a data source typically
+      contains 
+      <itemizedlist>
+        <listitem>
+          <para>The URL and port number for obtaining database connections. </para>
+        </listitem>
+        <listitem>
+          <para>The class name for the database driver. </para>
+        </listitem>
+        <listitem>
+          <para>
+            Connection pool settings like the minimum and maximum number of connections 
+            in the pool.
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>  
+    <para>
+      Here is the file, <literal>mysqldb-ds.xml</literal> which you should copy into the
+      deploy directory:
+<programlisting>
+  <xi:include parse="text" href="../../../../../technologies/java/j2ee/ejb/source/Account/mySqlFiles/mysqldb-ds.xml" />
+</programlisting>      
+   </para>
+  </section>
+</section>

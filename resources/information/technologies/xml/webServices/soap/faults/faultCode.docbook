@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.xml.webServices.soap.faults.faultCode">
+
+  <title>The 'faultcode' element</title>
+
+  <para> The <literal>faultcode</literal> element may use one of four
+    standard SOAP fault codes to identify the nature of an error: <itemizedlist>
+      <listitem>
+        <formalpara>
+          <title>soap:Client</title>
+          <para> Signifies that the node that sent the SOAP message caused
+            the error. Basically, if the receiver cannot process the SOAP
+            message because there is something wrong with the message or
+            its data, it's considered the fault of the client, the sender.
+            The receiving node generates a Client fault if the message is
+            not well formed, or contains invalid data, or lacks
+            information that was expected, like a specific header. </para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>soap:Server</title>
+          <para> Signifies that the node that received the SOAP message
+            malfunctioned or was otherwise unable to process the SOAP
+            message. This fault is a reflection of an error by the
+            receiving node (either an intermediary or the ultimate
+            receiver) and doesn't point to any problems with the SOAP
+            message itself. In this case the sender can assume the SOAP
+            message to be correct, and can redeliver it after pausing some
+            period of time to give the receiver time to recover. </para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>soap:VersionMismatch</title>
+          <para> A receiving node generates a VersionMismatch fault when
+            it doesn't recognize the namespace of a SOAP message's
+            Envelope element. For example, a <literal>SOAP 1.1</literal>
+            node will generate a fault with a
+            <literal>VersionMismatch</literal> code if it receives a
+              <literal>SOAP 1.2</literal> message, because it finds an
+            unexpected namespace in the Envelope. </para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>soap:MustUnderstand</title>
+          <para> When a node receives a SOAP message, it must examine the
+            Header element to determine which header blocks, if any, are
+            targeted at that node. If a header block is targeted at the
+            current node (via the <literal>actor</literal> attribute) and
+            sets the <literal>mustUnderstand</literal> attribute equal to
+              "<literal>1</literal>", then the node is required to know
+            how to process the header block. If the node doesn't recognize
+            the header block, it must generate a fault with the
+              <literal>MustUnderstand</literal> code. </para>
+        </formalpara>
+      </listitem>
+    </itemizedlist>
+  </para>
+  <note>
+    <para> It is also possible (thought not recommended) to use
+      non-standard fault codes that are prescribed by other organizations
+      and belong to a separate namespace (fault codes must be prefixed
+      with a namespace bound in the document). </para>
+  </note>
+</section>

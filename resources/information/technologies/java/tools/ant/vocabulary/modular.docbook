@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+<!-- FIXME: This is rubbish, we need to include info on the ant 'import' tag! (entities break XML) --> 
+  
+  <title role="Modular Ant files">Modular Ant files</title>
+  <para> 
+    One can use the standard XML entity definitions and references to import elements into an
+    XML build file. This enables one to have a component-based approach to constructing Ant build
+    files. 
+  </para>
+  <para> 
+    An entity is like a macro. It is expanded by an entity engine in-line before the XML stream
+    is forwarded to the parser. 
+  </para>
+  <para> 
+    Below we define an external entity and then use an entity reference to expand the entity:
+<programlisting language="XML"><![CDATA[
+<!DOCTYPE project [
+<!ENTITY targets SYSTEM "../common/targets.xml">
+]>
+
+  <project name="MyProject" default="run" basedir=".">
+
+    &targets;
+
+  </project>
+]]></programlisting>
+    The second line defines an entity with name <literal>targets</literal> which refers to an
+    external resource located by the system. The second-last line is the entity reference which
+    starts with an &amp;, followed by the name of the entity being references and terminated
+    with a semi-colon. 
+  </para>
+</section>

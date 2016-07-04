@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"--><ns2539:section xmlns:ns2539="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.introduction.relevanceOfJ2eeApis">
+
+  <ns2540:title xmlns:ns2540="http://docbook.org/ns/docbook">Relevance of J2EE APIs to Enterprise Java Beans</ns2540:title>
+  <ns2541:para xmlns:ns2541="http://docbook.org/ns/docbook">
+    Many of the J2EE APIs have a direct relevance when developing or using
+    Enterprise Java Beans.
+  </ns2541:para>
+  
+  <ns2542:section xmlns:ns2542="http://docbook.org/ns/docbook">
+    <ns2543:title xmlns:ns2543="http://docbook.org/ns/docbook">Web Containers and EJB Application Servers</ns2543:title>
+    <ns2544:para xmlns:ns2544="http://docbook.org/ns/docbook">
+      Many EJB application servers come standardly packaged with both, an EJB container
+      for the business logic components and a web container for web-based presentation layer
+      components. JBoss itself can be downloaded within a package which hosts both, the JBoss
+      application server and a servlet container (typically TomCat or Jerry). In some
+      of these (<ns2545:abbrev xmlns:ns2545="http://docbook.org/ns/docbook">e.g.</ns2545:abbrev> JBoss with Jerry), the web and EJB containers run within 
+      the same Java   virtual machine.
+    </ns2544:para>
+  </ns2542:section>
+
+  <ns2546:section xmlns:ns2546="http://docbook.org/ns/docbook">
+    <ns2547:title xmlns:ns2547="http://docbook.org/ns/docbook">Web Services Supplied by Enterprise Java Beans</ns2547:title>
+    <ns2548:para xmlns:ns2548="http://docbook.org/ns/docbook">
+      EJB application servers are typically expected to process Web-Services based
+      service requests. Many application servers offer frameworks which automate the
+      publishing of EJB-based services as web services. JBoss provides to this end JBoss.Net
+      which automates the web-service generation across the Apache Axis Web Services
+      framework. However, axis can be easily replaced by JAX-RPC.
+    </ns2548:para>
+    <ns2549:para xmlns:ns2549="http://docbook.org/ns/docbook">
+      Furthermore, enterprise beans may advertise the services they offer in technologies
+      provided by the web services standards (UDDI in particular).
+    </ns2549:para>
+  </ns2546:section>
+  
+  <ns2550:section xmlns:ns2550="http://docbook.org/ns/docbook">
+    <ns2551:title xmlns:ns2551="http://docbook.org/ns/docbook">JDBC and Enterprise Java Beans</ns2551:title>
+    <ns2552:para xmlns:ns2552="http://docbook.org/ns/docbook">
+      Enterprise beans often have to make use of information available in persistent
+      storage. This is usually done via JDBC. Furthermore, the EJB specification provides for
+      entity beans which represent persistent objects with persistent state. EJB containers
+      provide services for automatic persistence to a range of persistence technologies. If
+      the underlying persistence technology is a SQL-supporting data storage (e.g. a
+      relational database), then the applications server will usually make use of JDBC to
+      access the storage.
+    </ns2552:para>
+    <ns2553:para xmlns:ns2553="http://docbook.org/ns/docbook">
+      JBoss provides JBossCMP, JBoss Container Managed Persistence as a persistence
+      engine for entity beans.
+    </ns2553:para>
+  </ns2550:section>
+
+  <ns2554:section xmlns:ns2554="http://docbook.org/ns/docbook">
+    <ns2555:title xmlns:ns2555="http://docbook.org/ns/docbook">JTA and EJB Application Servers</ns2555:title>
+    <ns2556:para xmlns:ns2556="http://docbook.org/ns/docbook">
+      The EJB specification provides support for specifying transaction boundaries as
+      well as transaction isolation levels declaratively (in XML deployment descriptors). They
+      make use of a Java transaction service through the JTA.
+    </ns2556:para>
+    <ns2557:para xmlns:ns2557="http://docbook.org/ns/docbook">
+      It is interesting to note that the decoupling of the transaction logic from the
+      business logic -- the former is specified declaratively when enterprise beans are
+      deployed while the latter is contained in the code of the enterprise beans opens the
+      doors for business logic component vendors. These vendors can develop business logic
+      units outside the context of the transactional requirements which are often specific to
+      the higher level business processes in which these components are to be deployed.
+    </ns2557:para>
+    <ns2558:para xmlns:ns2558="http://docbook.org/ns/docbook">
+      JBoss provides JBossTX, the JBoss Transaction eXtension as an implementation of a
+      Java transaction service.
+    </ns2558:para>
+  </ns2554:section>
+
+  <ns2559:section xmlns:ns2559="http://docbook.org/ns/docbook">
+    <ns2560:title xmlns:ns2560="http://docbook.org/ns/docbook">JAAS and Enterprise Java Beans</ns2560:title>
+    <ns2561:para xmlns:ns2561="http://docbook.org/ns/docbook">
+      Authentication is not within the responsibility domain of Enterprise Java Beans
+      (the business logic layer). Here authorization is the core responsibility and the EJB
+      specification provides a mechanism for specifying security roles and service access
+      control for these roles.
+    </ns2561:para>
+    <ns2562:para xmlns:ns2562="http://docbook.org/ns/docbook">
+      Clients are usually authenticated in the presentation layer and these authenticated
+      principals are mapped onto security roles.
+    </ns2562:para>
+    <ns2563:para xmlns:ns2563="http://docbook.org/ns/docbook">
+      JBoss provides JBossSX, the JBoss Security eXtension as a framework for role-based
+      authorization. In addition to this, JBossSX also provides mechanism for generating login modules.
+    </ns2563:para>
+  </ns2559:section>
+
+  <ns2564:section xmlns:ns2564="http://docbook.org/ns/docbook">
+    <ns2565:title xmlns:ns2565="http://docbook.org/ns/docbook">Relevance of JNDI for EJBs</ns2565:title>
+    <ns2566:para xmlns:ns2566="http://docbook.org/ns/docbook">
+      Java clients typically obtain references to enterprise beans via JNDI. Furthermore,
+      resource handles (<ns2567:abbrev xmlns:ns2567="http://docbook.org/ns/docbook">e.g.</ns2567:abbrev> for database servers) are also obtained through JNDI. Finally one
+      enterprise bean gets a handle to another enterprise bean via JNDI.
+    </ns2566:para>
+    <ns2568:para xmlns:ns2568="http://docbook.org/ns/docbook">
+      JBoss provides JBossNS, the JBoss Naming Service as a JNDI implementation.
+    </ns2568:para>
+  </ns2564:section>
+
+  <ns2569:section xmlns:ns2569="http://docbook.org/ns/docbook">
+    <ns2570:title xmlns:ns2570="http://docbook.org/ns/docbook">Relevance of JMS to EJB Application Servers</ns2570:title>
+    <ns2571:para xmlns:ns2571="http://docbook.org/ns/docbook">
+      The EJB specification now includes message-driven beans. The purpose of
+      message-driven beans is to process asynchronous service requests, 
+      <ns2572:abbrev xmlns:ns2572="http://docbook.org/ns/docbook">i.e.</ns2572:abbrev> they receive the
+      service request from a messaging service. EJB application service are hence required to
+      provide integration with JMS implementations.
+    </ns2571:para>
+    <ns2573:para xmlns:ns2573="http://docbook.org/ns/docbook">
+      JBoss provides JBossMQ as a powerful implementation of a JMS.
+    </ns2573:para>
+  </ns2569:section>
+
+  <ns2574:section xmlns:ns2574="http://docbook.org/ns/docbook">
+    <ns2575:title xmlns:ns2575="http://docbook.org/ns/docbook">JCA and EJB Application Servers</ns2575:title>
+    <ns2576:para xmlns:ns2576="http://docbook.org/ns/docbook">
+      EJB application servers are required to provide connection pooling. JBoss provides
+      JBossCX, the JBoss Connectivity eXtension, as an implementation of a JCA.
+    </ns2576:para>
+  </ns2574:section>
+
+  <ns2577:section xmlns:ns2577="http://docbook.org/ns/docbook">
+    <ns2578:title xmlns:ns2578="http://docbook.org/ns/docbook">JBoss and JMX</ns2578:title>
+    <ns2579:para xmlns:ns2579="http://docbook.org/ns/docbook">
+      The entire JBoss Application Server has been designed around JMX. This makes JBoss
+      particularly flexible enabling one. Any service is typically installed as a managed bean
+      which can then be managed at a higher, more abstract, level.
+    </ns2579:para>
+  </ns2577:section>
+
+</ns2539:section>

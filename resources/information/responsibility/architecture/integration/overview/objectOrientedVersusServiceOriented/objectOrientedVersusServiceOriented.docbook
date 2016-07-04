@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+  
+  <title>Object-oriented versus service oriented integration</title>
+  <para>
+    On first sight, sacrificing powerful object oriented technologies for something which is
+    essentially a procedural approach within a contracts framework, may seem like a big loss. 
+    But in a services oriented framework one still publishes interfaces to service providers and the 
+    exchanged information (the value objects) may still be specified in an object oriented way.
+  </para>
+  
+  <section>
+    <title>Ability to work at different levels of abstraction</title>
+    <para>
+      The core benefit of object orientation lies in the ability to smoothly work at various levels of
+      abstraction. This can provide a lot of power, particularly in the contruction of detailed
+      solutions where one abstracts from the service provider, with different service providers
+      realizing the service in different ways (polymorphism).
+    </para>
+    <para>
+      However, many object oriented technologies (including most programming languages in use today)
+      <emphasis>do not support polymorphism on message arguments</emphasis>. This poses significant
+      restrictions on the ability to conveniently work at different levels of abstraction and also
+      prevents a natural implementation of the command pattern. 
+    </para>
+    <para>
+      Most services oriented frameworks do not at all provide a framework for working at different
+      levels of abstraction and currently one has to buld this in. Similar to procedural frameworks,
+      one will have to provide the object identifier as part of the message when wanting to
+      polymorphically request a service from service providers.
+    </para>
+  </section>
+  
+  <section>
+    <title>Contracts</title>
+    <para>
+      In an object oriented framework, a clean and powerful contracts framework is provided by the
+      design by contract approach. This approach is based on the premise that a complete functional
+      requirements specification can be provided by the specifying
+      <itemizedlist>
+        <listitem><para>
+          the interface specification, together with
+        </para></listitem>
+        <listitem><para>
+          pre- and post-conditions on services, and
+        </para></listitem>
+        <listitem><para>
+          invariance constraints for objects.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      In addition one would have to specify the required quality of service (<abbrev>e.g.</abbrev>
+      reliability, scaleability, performance, auditability, security, ...).
+    </para>
+    <para>
+      The pre and post conditions are still equally relevant in a services oriented approach. So are
+      the quality requirements for the service. Entity objects would typically not be exposed within
+      a services framework -- they would be hidden behind a services/use case facade. 
+    </para>
+    <para>
+       One can thus follow contracts based software development irrespective of whether one works
+      within an object oriented or a services oriented framework. In fact a services oriented
+      framework is usually a use case based framework which puts the focus directly on the user
+      contracts.
+    </para>
+  </section>
+  
+  <section>
+    <title>URDAD and services oriented software development</title>
+    <para>
+      URDAD directly churns out for each level of granularity the contracts for the various role
+      players including the services they need to provide. At high levels of granularity, these
+      objects are typically stateless objects - the state of the workflow is typically maintained as
+      part of the value objects around the workflow. Only at lower levels of granularity do we
+      typically end up with objects which have a natural state.
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Granularity</title>
+    <para>
+      It is a common practice to put a services facade around a object oriented system. One would
+      typically not want to expose the objects to the users, but only offer services. 
+    </para>
+    <para>
+      In a <emphasis>layered architecture</emphasis> one would typically have the following layers
+      <itemizedlist>
+        <listitem><para>
+          presentation layer,  
+        </para></listitem>
+        <listitem><para>
+          use cases, application logic or business processes layer,
+        </para></listitem>
+        <listitem><para>
+          domain objects layer,
+        </para></listitem>
+        <listitem><para>
+          infrastructure layer, and
+        </para></listitem>
+        <listitem><para>
+          backend layer.
+        </para></listitem>
+      </itemizedlist>
+      The use cases layer represents a course grained services facade around a finer grained object
+      oriented domain objects layer.
+      <note><para>
+            Within a layered architecture the integration support is usually provided within the
+            infrastructure layer. This layer may provide a <emphasis>message bus</emphasis>
+            supporting a standard infrastructure for organization-wide integration. Additionally it
+        also would provide the persistence mappers (<abbrev>e.g.</abbrev> object relational mappers)
+        integrating to various persistence technologies.
+      </para></note>
+    </para>
+    <para>
+      In EJB and similar business logic component frameworks this services facade is usually called a session facade. Often this
+      session facade is also directly published as web services.
+    </para>
+    <para>
+      In general one would follow the guielines <emphasis>Work services oriented at the high, course
+      grained level and object oriented at the lower, finer grained levels.</emphasis>
+    </para>
+  </section>
+  
+</section>
+    

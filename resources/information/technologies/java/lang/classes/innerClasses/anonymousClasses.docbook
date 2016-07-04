@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6137:section xmlns:ns6137="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.lang.ooLanguage.innerClasses.anonymousClasses">
+    
+    <ns6138:title xmlns:ns6138="http://docbook.org/ns/docbook">Anonymous Classes</ns6138:title>
+
+<ns6139:para xmlns:ns6139="http://docbook.org/ns/docbook">Anonymous classes are unnamed inner classes. Generally using anonymous
+classes makes your code more difficult to read and, except for tiny
+inner classes, one should rather not make them anonymous.</ns6139:para>
+
+<ns6140:para xmlns:ns6140="http://docbook.org/ns/docbook">They are, however, quite commonly used for event adapters. For example
+
+<ns6141:programlisting xmlns:ns6141="http://docbook.org/ns/docbook">
+import java.awt.*;
+import java.awt.event.*;
+
+public class MyFrame extends Frame
+{
+  public MyFrame()
+  {
+    addWindowListener (new WindowAdapter()
+                       {
+                         public void windowClosing (WindowEvent event)
+                           {System.exit(0);}
+                       });
+  }
+}
+</ns6141:programlisting>
+</ns6140:para>
+<ns6142:para xmlns:ns6142="http://docbook.org/ns/docbook">The above defines an anonymous subclass of <ns6143:emphasis xmlns:ns6143="http://docbook.org/ns/docbook" role="verb">WindowAdapter</ns6143:emphasis> which overrides the
+<ns6144:emphasis xmlns:ns6144="http://docbook.org/ns/docbook" role="verb">windowClosing()</ns6144:emphasis> event handler method. The above code is essentially
+equivalent to the following, more conventional code:
+
+<ns6145:programlisting xmlns:ns6145="http://docbook.org/ns/docbook">
+import java.awt.*;
+import java.awt.event.*;
+
+public class MyFrame extends Frame
+{
+  public MyFrame()
+  {
+    class MyWindowAdapter extends WindowAdapter
+    {
+      public void windowClosing (WindowEvent event)
+      {System.exit(0);}
+    }
+
+    addWindowListener (new MyWindowAdapter());
+  }
+}
+</ns6145:programlisting>
+</ns6142:para>    
+</ns6137:section>

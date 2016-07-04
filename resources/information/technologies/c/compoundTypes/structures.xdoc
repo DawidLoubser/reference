@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.c.compoundTypes.structures"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Structures</title>
+  <para>
+    Structures are <emphasis>C</emphasis>'s version of records. They assemble
+    a range of data fields into a single data structure which can be parsed
+    along as a unity. In many ways a structure can be seen as a class without
+    methods.
+  </para>
+  
+  <section><title>Declaring structures</title>
+    <para>
+      The syntax for declaring a structure is
+      <programlisting>
+struct StructureName
+{
+field1Type field1;
+...
+fieldNType fieldN;
+};  
+      </programlisting>
+      For example, we can declare a point as
+      <programlisting>
+struct Point
+{
+double x, y;
+};  
+      </programlisting>
+    </para>
+  </section>
+  
+  <section><title>Using structures</title>
+    <para>
+      We can declare a variable of the structure type via
+      <programlisting>
+struct Point p1;
+      </programlisting>
+      and we can use the member access operator, <command>.</command>, to get both,
+      read and write access to the structure fields, e.g.
+      <programlisting>
+p1.x = 2*p1.y;        
+      </programlisting>        
+      <example id="parabolaStruct.c"><title>parabolaStruct.c</title>
+        <para>
+          Below we define two structures, a structure encapsulating the data fields
+          for a two-dimensional point and a structure encapsulating the parabola
+          coefficients. The <function>calcTurningPoint</function> gets a 
+          <varname>Parabola</varname> structure as argument, calculates the
+          turning point and returns it as a <varname>Point</varname>.
+          <programlisting><xi:include href="parabolaStruct.c" parse="text"/></programlisting>
+        </para>  
+      </example>
+    </para>
+  </section>
+  
+  <section><title>Using typedefs with structures</title>
+    <para>
+      The listing in <xref linkend="parabolaStruct.c"/> is in many ways a little
+      cumbersome because we had to drag the keyword <command>struct</command>
+      along with the structure name. 
+    </para>
+    <para>
+      <emphasis>C</emphasis> does, however, support
+      a <command>typedef</command> statement which enables one to declare the
+      structure a new data type and use the data type directly without dragging the
+      <command>struct</command> keyword along. The syntax is
+      <programlisting>
+struct structureName 
+{
+field1Type field1;
+...
+fieldNType fieldN;
+} typeName;  
+      </programlisting>
+      We use this notation in <xref linkend="parabola.c"/> making the code
+      significantly more readable than <xref linkend="parabolaStruct.c"/>.
+      <example id="parabola.c"><title>parabolaStruct.c</title>
+      <programlisting><xi:include href="parabola.c" parse="text"/></programlisting>
+      </example>
+    </para>
+  </section>
+  
+  <section><title>Initializing structures</title>
+    <para>
+      Structures can be initialized when they are declared. The syntax is similar 
+      to that of array initialization:
+      <programlisting>
+Point p1 = {0,0};        
+      </programlisting>
+      We use this notation in <xref linkend="parabola.c"/> to initialize 
+      <varname>parabola</varname> in the first line of <function>main</function>.
+    </para>
+  </section>
+  
+  <section><title>Structures containing structures</title>
+    <para>
+      Since structures assemble a new data type from any existing data types, one
+      can assemble structures from structures. For example, we could define an 
+      <varname>Address</varname> structure as
+      <programlisting>
+typedef struct AddressStruct
+{
+char[5] streetNumber;
+char[30] streetName, suburbName;
+unsigned int postalCode;
+} Address;  
+      </programlisting>
+      and then a <varname>Contact</varname> structure containing elements of
+      <varname>Address</varname> as fields:
+      <programlisting>
+typedef struct ContactStruct
+{
+char[30] surname;
+char[50] firstNames;
+char[12] workTelNo, homeTelNo;
+Address workAddress, homeAddress;
+};  
+      </programlisting>        
+      To extract the postal code of the work address we simply state
+      <programlisting>
+Contact someContact;
+...
+someContact.workAddress.postalCode;
+      </programlisting>
+    </para>
+  </section>
+  
+  <section><title>Arrays and structures</title>
+    <para>
+      It is common to have arrays of structures. For example, 
+      <programlisting>
+typedef struct PointStruct
+{
+double x, y;
+} Point;  
+
+typedef Point experimentResults[100];
+      </programlisting>
+      defines <varname>experimentResults</varname> as an array of 100 points.
+    </para>
+    <para>
+      Similarly, we can define structures which contain arrays:
+      <programlisting>
+typedef struct PointStruct
+{
+double x, y;
+} Point;  
+
+typedef struct DateTimeStruct
+{
+int year, month, day, hour, minute, second;
+} DateTime;  
+
+typedef ExperimentStruct
+{
+DateTime dateTime;
+Point readings[100];
+Contact supervisor;
+} Experiment;  
+
+Experiment anExperiment;
+      </programlisting>
+      and we can access elements like
+      <programlisting>
+anExperiment.dateTime.year,
+
+anExperiment.readings[23],
+
+anExperiment.supervisor.address.postalCode.
+      </programlisting>
+    </para>
+  </section>
+  
+  <section><title>Unions</title>
+    <para>
+      A union is like a polymorphic structure which may hold different elements
+      of different types at different times. In <xref linkend="scalar.c"/>we specify a 
+      polymorphic type, <type>Scalar</type> which may be a <type>short, 
+      </type>an <type>int</type>, a <type>long</type>, a <type>float</type>,
+      a <type>double</type>, or even a <type>Complex</type> or a <type>Rational</type>
+      number. 
+      <example id="scalar.c"><title>scalar.c</title>
+        <para>
+          The listing below shows an example of a polymorphic <type>Scalar</type> data 
+          type which may hold either a <type>short, </type>an <type>int</type>, 
+          a <type>long</type>, a <type>float</type>, a <type>double</type>, a 
+          <type>Complex</type> structure or a <type>Rational</type> structure:
+        </para>
+        <programlisting><xi:include href="scalar.c" parse="text"/></programlisting>
+        <para>
+          The output shows that the size of the union is the size of its largest
+          member. Changing the value of the scalar in one representation, changes it
+          in others too.
+          <warning>
+            <para>
+              The output also clearly demonstrates that unions are intrinsically
+              unsafe. One has to continuously keep track of what representation
+              was used large. Using the incorrect representation (e.g. using rational
+              or int instead of complex) leads to incorrect interpretation of the
+              data.
+            </para>
+          </warning>
+        </para>
+        <programlisting>
+sizeof(scalar) = 16 bytes
+initial values:
+scalar.intNumber = 1075047544
+scalar.rationalNumber = 1075047544/1075043472
+scalar.complexNumber = 4.965394 + i0.000000
+After initializing with rational number (fraction) 2/3:
+scalar.intNumber = 2
+scalar.rationalNumber = 2/3
+scalar.complexNumber = 0.000000 + i0.000000
+After initializing with complex number (fraction) 1.5 - i2.3:
+scalar.intNumber = 0
+scalar.rationalNumber = 0/1073217536
+scalar.complexNumber = 1.500000 + i2.300000
+        </programlisting>                    
+      </example>
+      <note><para>A <type>union</type> is an <emphasis>OR</emphasis> construct. It
+      holds one of a number of possible of data fields.</para></note>
+    </para>
+    <para>
+      The compiler reserves enough memory to hold the largest of the optional
+      data types. In the <type>Scalar</type> union of <xref linkend="scalar.c"/>
+      this is the <type>Complex</type> structure which holds 2 <type>double</type>s
+      and hence 8 bytes. The output listing of <xref linkend="scalar.c"/> shows
+      that the size of the <type>Scalar</type> union is indeed 16 bytes.
+    </para>
+  </section>
+</section>

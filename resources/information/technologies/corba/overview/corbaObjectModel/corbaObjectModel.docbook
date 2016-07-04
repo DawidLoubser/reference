@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="CORBA object model">The CORBA object model</title>
+    <para>
+        Assume the current realization of a particular CORBA server object is in the form
+        of a COBOL mainframe implementation running on MVS. Assume the associated
+        maintenance costs prompt the company to re-implement these services in, say
+        C++ running on a Linux platform.
+        <indexterm><primary>Linux</primary></indexterm>
+        <indexterm><primary>MVS</primary></indexterm>
+        <indexterm><primary>mainframe</primary></indexterm>
+    </para>
+    <para>
+        One dark night the COBOL/MVS implementation
+        is brought down and the C++/Linux implementation is brought up.
+        The CORBA implementation may be such that users continue using the same
+        CORBA objects with the same object references (object identities) as though
+        nothing has changed, even though we have a completely different realization
+        of a service provider running on a different platform, at a different location
+        and potentially using different network protocols.
+    </para>
+    
+    <section>
+        <title>The CORBA object is thus an object from the user's perspective</title>
+        <para>
+            CORBA implements complete implementation hiding publishing only 
+            
+            <itemizedlist>
+                <listitem><para>an abstract/virtual object handle and</para></listitem>
+                <listitem><para>
+                    the interface containing the service request messages supported. For each
+                    service offered the interface contains
+                    <itemizedlist>
+                        <listitem><para>
+                            the service name,
+                        </para></listitem>
+                        <listitem><para>
+                            the information which the client needs to provide to the service provider
+                            upon service request (the <emphasis>input parameters</emphasis>),
+                        </para></listitem>
+                        <listitem><para>
+                            the <emphasis>preconditions</emphasis> under which the service provider
+                            offers the service,
+                            <note><para>
+                                These are the <emphasis>exceptions</emphasis> which are potentially raised. 
+                                The service provider will check the preconditions prior to providing the service 
+                                and throw an exception if the service cannot be provided. Should the service 
+                                provider not be able to check the preconditions up-front, the service provider
+                                will have to start a <emphasis>transaction</emphasis> which can be rolled back.
+                            </para></note>
+                        </para></listitem>
+                        <listitem><para>
+                            and the <emphasis>deliverables</emphasis> of the service, <abbrev>i.e.</abbrev>
+                            the <emphasis>output parameters</emphasis>.
+                            <note><para>
+                                These deliverables are an essential part of the <emphasis>post-conditions</emphasis>. 
+                                There may be further postconditions around the state of the server side system after
+                                the service request. These should be added in order to have a complete requirements
+                                specification for a service.
+                            </para></note>
+                        </para></listitem>
+                    </itemizedlist>
+                </para></listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            But CORBA goes beyond implementation hiding, providing a
+            <indexterm><primary>implementation hiding</primary></indexterm>
+            <emphasis>virtual object representation</emphasis>  whose realization may change at any stage.
+            Nevertheless, from the client's perspective it is still the same object, 
+            <abbrev>e.g.</abbrev> the same account and the client continues to use
+            the same object reference (message path).
+            <indexterm><primary>object</primary><secondary>reference</secondary></indexterm>
+        </para>
+    </section>
+</section>  

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Abstracting text generated in the binding bean (e.g. messages)</title>
+    <para>
+        At times one needs to generate text messages in a binding bean. In those
+        cases one needs to
+        <itemizedlist>
+            <listitem><para>
+                get hold of the appropriate resource bundle, specifying the
+                base/default resource bundle name (the framework will provide
+                the appropriate respource bundle for the locale used by the
+                user), and
+            </para></listitem>
+            <listitem><para>
+                retrieve the localized text for a text key from the resource bundle:
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        <programlisting language="java"><![CDATA[
+	
+	public String registerPerson()
+	{
+		Person person = personDetailsBinding.getPerson();
+		
+		RegisterPersonRequest registrationRequest
+			= new RegisterPersonRequest(person);
+	
+		if (!validRegisterPersonInfo())
+			return "";
+		
+		try
+		{
+			personServices.registerPerson(registrationRequest);
+		}
+		catch (UserExistsException e)
+		{
+	      ResourceBundle resourceBundle = ResourceBundle.getBundle
+				("za.co.solms.training.jsf.messages",
+          FacesContext.getCurrentInstance().getViewRoot().getLocale());
+
+		  String shortMsg = resourceBundle.getString("userExists");
+		  String longMsg = resourceBundle.getString("thereIsAlreadyAUserWithThatUsername");
+
+		  FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, shortMsg, longMsg);
+	      FacesContext.getCurrentInstance().addMessage(null, msg	);
+			return "";
+		}     
+      return "registerPersonConfirmation";
+	}
+            ]]></programlisting>
+    </para>
+</section>    

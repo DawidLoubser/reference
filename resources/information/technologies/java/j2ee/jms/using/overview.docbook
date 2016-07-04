@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.jms.using.overview">
+
+  <title>General Algorithm for Connecting to a Queue or Topic</title>
+  <para>
+    When connecting to a message queue or topic, the following steps need to be performed:
+    
+    
+    <orderedlist>
+       <listitem>
+          <para>Look up, via JNDI, a <literal>javax.jms.ConnectionFactory</literal>. Specifically, either a <literal>QueueConnectionFactory</literal>
+          or <literal>TopicConnectionFactory</literal> will be looked up based on the type of messaging scenario (point-to-point or publish-subscribe).</para>
+       </listitem>
+       <listitem>
+          <para>Create a message sending/receiving connection via <literal>ConnectionFactory.createConnection()</literal></para>
+       </listitem>
+       <listitem>
+          <para>
+             Look up, via JNDI, the <literal>javax.jms.Queue</literal> or <literal>javax.jms.Topic</literal> which will be used to send/receive messages to/from.
+          </para>
+       </listitem>
+       <listitem>
+          <para>
+             Open a <literal>javax.jms.Session</literal> to the connection, via <literal>Connection.createSession(...)</literal>
+          </para>
+       </listitem>
+       <listitem>
+          <para>
+             Via the session, create a message producer (to send messages) or a message consumer (to receive messages).
+          </para>
+       </listitem>
+    </orderedlist>
+  </para>
+   <para>
+      For example:
+      <programlisting language="Java"><![CDATA[
+// Look up a connection factory to send messages on a queue
+QueueConnectionFactory factory = 
+	(QueueConnectionFactory) new InitialContext().lookup("MyQueueConnectionFactory");
+
+// Look up our message queue
+Queue queue = (Queue) new InitialContext().lookup("MyQueue");
+
+// To send messages, open a message sending session (in this case, with authentication)
+QueueConnection connection = factory.createQueueConnection("username", "password");
+QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+
+// Create a sender which will send messages on our queue
+QueueSender sender = session.createSender( queue );
+
+// Send a message
+TextMessage msg = session.createTextMessage("Hello!");
+sender.send( msg );
+      ]]></programlisting>
+   </para>
+</section>

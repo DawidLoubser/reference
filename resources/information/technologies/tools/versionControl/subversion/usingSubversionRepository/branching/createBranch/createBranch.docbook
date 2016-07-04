@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2009-2-4 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Creating a branch</title>
+    <para>
+        A branch is simply a copy of the project which evolves separately. You will create thus a branch by copying a particular revision
+        of the project into a branch.
+    </para>
+    <para>
+        Assume you have created the standard subversion project structure which has three directories in the root, <literal>trunk</literal>,
+        <literal>branches</literal> and <literal>tags</literal>. To create from the trunk a new branch you use the <literal>copy</literal>
+        command:
+        <programlisting><![CDATA[
+svn copy trunk branches/myBranch
+A         branches/myBranch
+                ]]></programlisting>
+        followed by the standard
+        <programlisting><![CDATA[
+svn commit -m 'added branch myBranch of revision 19 to do X'                    
+]]></programlisting>
+        This approach creates the copy in the working directory and commits it.
+    </para>
+    
+    <note><para>
+        Subversion does not really copy all the files. Instead it creates links in the file system. Creating a new branch has thus
+        very little disk space overheads.
+    </para></note>
+    
+    <section>
+        <title>Short-hand command to create branch</title>
+        <para>
+            The two steps to create the branch can also be done within a single <literal>copy</literal> which takes two
+            URLs as parameters:
+            <programlisting><![CDATA[
+svn copy svn://localhost/myProject/trunk \
+         svn://localhost/myProject/branches/mySecondBranch \
+         -m 'creating second branch of revision 19 to attempt to to X via approach Y'
+
+Committed revision 21.
+]]></programlisting>
+            This command thus creates the branch on the server side without copying anything in the working directory.
+        </para>
+        <para>
+            This approach is particularly useful when you have only checked out the trunk and not the entire project with the various
+            branches. In this case, after having issued the <literal>copy</literal> command, you can use the <literal>switch</literal>
+            command to switch your working copy to refer to the newly created branch and no longer the trunk.
+        </para>
+        <para>
+            Thus, after having checked out the projects trunk and created our branch we can switch our working copy to this branch:
+            <programlisting><![CDATA[
+svn checkout svn://localhost/myProject/trunk
+...
+svn copy svn://localhost/myProject/trunk \
+         svn://localhost/myProject/branches/mySecondBranch \
+         -m 'creating second branch of revision 19 to attempt to to X via approach Y'
+
+svn switch svn://localhost/myProject/branches/myBranch .
+                ]]></programlisting>
+        </para>
+    </section>
+</section>    

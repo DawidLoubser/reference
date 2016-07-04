@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Overview of kernel architecture</title>
+    <para>
+        The kernel is essentially the core systems resource manager, managing processing, memory, file and
+        other resources and sharing access to these resources across the various processes which make use of        
+        those resources.
+    </para>
+    
+    <section>
+        <title>Microkernel versus monolithic</title>
+        <para>
+            A common architectural pattern used for operating systems is the <emphasis>microkernel</emphasis>
+            architectural pattern. Microkernel based operating systems have a very small kernel which only takes
+            care of low-level 
+            <itemizedlist>
+                <listitem><para>
+                    address space management,        
+                </para></listitem>
+                <listitem><para>
+                    thread management, and       
+                </para></listitem>
+                <listitem><para>
+                    inter-process communication.
+                </para></listitem>
+            </itemizedlist>
+            In a microkernel based operating system it is only those basic services which run in kernel space.
+            Any higher level operating system services, including file system access, protocol stacks, and device
+            drivers execute in user space.        
+        </para>
+        <para>
+            Linux is a more heavy-weight kernel which provides file system access, protocol stacks and
+            signed-off device drivers from within kernel space.
+        </para>
+        
+        <section>
+            <title>Kernel mode and proprietary and open source drivers</title>
+            <para>
+                Proprietary drivers are more suited to a micro-kernel architecture. This is because they are usually
+                closed code and cannot be maintained or extensively tested. This requires the existence of a
+                relatively stable device driver interface into the kernel. 
+            </para>
+            <para>
+                With the drivers running in user space the kernel is protected. However, changes to the kernel and
+                in particular to the device driver interface into the kernel can result in breaking existing device drivers.
+                Furthermore, the extra level of indirection results in some performance overheads.                
+            </para>
+            <para>
+                In a more heavy-weight kernel the signed-off device drivers are compiled into the kernel. They need
+                to undergo more stringent testing and need to be open source. The kernel team typically takes over
+                the responsibility to update accepted device drivers on kernel changes. The device drivers must
+                adhere to a more stringent set of driver development guidelines (e.g. that they may not lock resources
+                for any significant amount of time).
+            </para>
+         </section>   
+    </section>    
+    
+    <section>
+        <title>Linux as a layered architecture</title>
+        <para>    
+            Linux is not developed around the microkernel architectural pattern, 
+            but is based on the layered pattern instead.
+            There are three distinct layers:
+            <itemizedlist>
+                <listitem><formalpara>
+                    <title>Access layer</title>
+                    <para>
+                        It is through the access layer that any user space processes access the kernel.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>Services layer</title>
+                    <para>
+                        This layer host the core kernel services in a hardware architecture neutral way. This includes
+                        process, memory and file management and networking. 
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>Hardware dependent layer</title>
+                    <para>
+                        This layer encapsulates all the hardware dependent code. It has two components:
+                        <orderedlist>
+                            <listitem><para>
+                                the <emphasis>system architecture adapter</emphasis> which interfaces with the
+                                core hardware system including processor, memory, interrupts and so on.
+                            </para></listitem>
+                            <listitem><para>
+                                the <emphasis>kernel drivers</emphasis> representing the device drivers 
+                                which run in kernel space and which are either compiled into the kernel 
+                                or compiled as modules which are loaded by the kernel on demand.
+                            </para></listitem>
+                        </orderedlist>
+                    </para>
+                </formalpara></listitem>
+            </itemizedlist>
+        </para>
+        
+        <figure>
+            <title>Core kernel components</title>
+            <mediaobject><imageobject>
+                <imagedata fileref="kernelArchitecture.png"/>
+            </imageobject></mediaobject>
+        </figure>
+    </section>    
+</section>    

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.platforms.linux.networking.rootOverNfs"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Root Over Nfs Setup</title>
+    <para>The basic setup here is that the clients share the entire root-fs with the server.Remember
+        that the clients have on only read access. </para>
+    <section>
+        <title>Process that occurs when booting up a client</title>
+        <para>
+            <orderedlist>. <listitem>Client switched on</listitem>
+                <listitem>Starts up the network card(NIC)</listitem>
+                <listitem>NIC finds DHCP/TFTP/PXE </listitem>
+                <listitem>Download the kernel from PXE/TFTP server ( looks in /etc/dhcp/dhcpd.conf)</listitem>
+                <listitem>PXE kernel</listitem>
+                <listitem>Boot kernel</listitem>
+                <listitem>Load the Pxe config (ROOT -&gt; NFS)</listitem>
+                <listitem>Mount root</listitem>
+            </orderedlist>
+        </para>
+    </section>
+    <section>
+        <title>The Diskless Environment</title>
+        <para>The setup below shows the required linux directories and where they reside. It is very
+            important that some directories reside in the clients environment as depicted below. </para>
+        <figure>
+            <title>Diskless Environment</title>
+            <graphic fileref="dragonfly_diskless_environment.jpeg"/>
+        </figure>
+        <section>
+            <title>Reasons for the directories in their respective locations</title>
+            <para>The /opt, /home, /user directories are in common because they typically are the
+                same and can be shared.So these directories are mounted from the /etc/fstab for each
+                client in the respective client directory.Note that we could install applications that were
+                not emerged in the directory /opt.</para>
+            <para>The /lib folder has to be in the client environment or the clients will not
+                bootup.(throws an init error).</para>
+            <para>The reason that /hostname, /fstab, /X11 are in the client environment is because
+                it has to be customised specifically for each client. The /hostname is obviously
+                unique for each client. The /etc/fstab is unique because it specifies the respective
+                mount points, ie. /diskless/client# as the root for each client#, and we must also mount the
+                common directories ie. /user, /home, /opt. The /X11 is needed to set the xdm for
+                each client </para>
+        </section>
+        <section>
+            <title>Emerging new packages</title>
+            <para>Note that all emerges are done in the construction environment. After this is done
+                we must run a script called constructEnvironment.sh in /diskless. This will recreate
+                clients 1 to 15's new environments. To create the user and password for the
+                students, run the script called newUser.sh.The password will be the same as the
+                user.Note that if for some reason you stop constructEnvironment.sh script after
+                starting it you would have already removed some clients and they would not be able
+                to bootup in future. So let the script run to completion.</para>
+        </section>
+        <section>
+            <title>Backup of this environment</title>
+            <para>A backup of this environment will be stored on Bach.The dragonfly backup folder on
+                Bach will contain a diskless.tgz file which will have to be untarred in the
+                /diskless folder on dragonfly. It also contains other config files that need to be
+                put in place on dragonfly and some on the client.</para>
+        </section>
+    </section>
+    <section>
+        <title>BIOS changes for each client</title>
+        <para>
+            <itemizedlist>
+                <listitem>Delete as bootup</listitem>
+                <listitem>Goto Advanced-&gt;PCI Configuration-&gt;Onboard PCI devices
+                    control, Onboard Lan enabled, Onboard LAN Boot Rom enabled</listitem>
+                <listitem>Goto Boot, move "Other Boot Devices INT18 Device .." to the top using the
+                    +btn, disable options 2,3,4 </listitem>
+                <listitem>Exit and Save</listitem>
+            </itemizedlist>
+        </para>
+    </section>
+</section>

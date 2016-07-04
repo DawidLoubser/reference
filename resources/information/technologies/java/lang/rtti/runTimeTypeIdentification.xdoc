@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.rtti.runTimeTypeIdentification"
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+    <title role="Run-Time Type Identification">Run-Time Type Identification</title>
+
+<para>Java's support for run-time type identification is simple, yet very powerful.
+It is used by other language features of Java, most notably perhaps that
+    of object serialization (see section <!--xref linkend="resources.information.technologies.java.j2se.io.serialization.serialization"/-->).</para>
+
+<para>In most cases one should not use run-time type identification explicitely
+in ones own classes. Extensive use of RTTI is most likely a sign of a
+non object-oriented approach to software design and development.</para>
+
+<para>The support of RTTI is solidly entrenched within the mother of all classes,
+<emphasis role="verb">Object</emphasis>. All objects inherit a <emphasis role="verb">getClass()</emphasis> method which returns
+the class or interface of the object as an instance of the class <emphasis role="verb">Class</emphasis>.
+<emphasis role="verb">Class</emphasis> is a class descriptor class whose instances contain information
+about a particular class or interface. For example, the second line in the
+following code snippet
+
+<programlisting><![CDATA[
+Object object = new Employee("Susan Ramphele",8900.0);
+
+Class classDescriptor = object.getClass();
+]]></programlisting>
+</para>
+
+<para>returns the class descriptor for the <emphasis role="verb">Employee</emphasis> class. The class
+<emphasis role="verb">Class</emphasis> supplies a huge number of services. We can ask the class
+descriptor for the class name, the package it resides in, whether it
+is a class or an interface, for its superclass, for all the interfaces
+it implements, for reflection (see: Reflection) and
+security-related information.</para>
+
+<para>Furthermore it has as class (static) service,
+<emphasis role="verb">forName(String)</emphasis> which allows the user to create a class descriptor
+object from a literal string and an instance method <emphasis role="verb">newInstance()</emphasis>
+allowing the user to create a new instance of the class. These methods
+could be used to save and load polymorphic collections of objects. Pre
+Java 1.1, (when there was no serialization support in Java) one could
+have written each objects name and then ask that object to save itself.
+Assume we have the follwoing simple polymorphic collection of objects:
+
+<programlisting><![CDATA[
+Person[] persons = new Person[2];
+persons[0] = new Employee("Sasha Primakov", "791111 1012 126", 8000.0);
+persons[1] = new Person("Peter Smith", "650923 5645 089");
+]]></programlisting>
+</para>
+<para>
+and assume both, the Person and the Employee class, have methods
+
+<programlisting><![CDATA[
+public void save(PrintWriter out) {...}
+
+public void load(BufferedReader in) {...}
+]]></programlisting>
+</para>
+
+<para>PrintWriter, BufferedReader and streams in general will be discussed in
+detail in chapter: IO. We could then save this collection with
+the following code:
+
+<programlisting><![CDATA[
+PrintWriter fout = new PrintWriter(new FileOutputStream("save.out"));
+
+for (int i=0; i<objects.length; ++i)
+{
+  fout.println(persons[i].getClass().getName());
+  persons[i].save(fout);
+}
+]]></programlisting>
+</para>    
+<para> and then, when we want to extract the polymorphic collection from
+the text stream via
+
+<programlisting><![CDATA[
+BufferedReader fin = new BufferedReader(new FileInputStream("save.out"));
+
+for (int i=0; i<objects.length; ++i)
+{
+  String className = fin.readLine();
+  Class class = Class.forName(className);
+  persons[i] = (Person)class.newInstance();
+  persons[i].load(fin);
+}
+}
+]]></programlisting>
+Another method of the class <literal>Class</literal> which is commonly used (and even
+more often abused) for run-time type identification is
+
+
+  <programlisting><![CDATA[
+public boolean isInstance(Object object) {...}
+}
+]]></programlisting>
+
+The method returns <literal>true</literal> if the supplied object is an instance of the
+class described by the class descriptor. Typical constructs look like this:
+
+  <programlisting><![CDATA[
+if (myClass.isInstance(object))
+  {
+    MyClass myObject = (MyObject)object;
+    myObject.doMySpecialThing();
+  }
+else
+  ...
+]]></programlisting>
+</para>
+<para>In most good Object-Oriented designs, such constructs are hardly ever required and if you
+have a few of such constructs you should seriously revisit your design.</para>
+    
+</section>

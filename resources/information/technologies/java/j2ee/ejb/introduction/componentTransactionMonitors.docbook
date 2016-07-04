@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns2488:section xmlns:ns2488="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.introduction.componentTransactionMonitors">
+
+  <ns2489:title xmlns:ns2489="http://docbook.org/ns/docbook">TMs, ORBs, CTMs and EJB</ns2489:title>
+  <ns2490:para xmlns:ns2490="http://docbook.org/ns/docbook">
+    Enterprise Java Beans actually defines a portable standard for Component Transaction
+    Monitors (CTMs). So, what are CTMs. CTMs are the result of the merger between Transaction
+    Processing Monitors (TP Monitors) and Object Request Brokers.</ns2490:para>
+  <ns2491:para xmlns:ns2491="http://docbook.org/ns/docbook"/>
+  
+  <ns2492:section xmlns:ns2492="http://docbook.org/ns/docbook">
+    <ns2493:title xmlns:ns2493="http://docbook.org/ns/docbook">Transaction Processing Monitors (TP Monitors)</ns2493:title>
+    <ns2494:para xmlns:ns2494="http://docbook.org/ns/docbook">
+      TP Monitors have been around since the late 1960's (IBM introduced CICS in 1968).
+      They provided a fault tolerant environment for distributed procedural systems which were
+      typically written in COBOL. In addition to providing fault tolerance, they also provided
+      resource management and full support for transactions and support for synchronous and
+      asynchronous messages.
+    </ns2494:para>
+    <ns2495:para xmlns:ns2495="http://docbook.org/ns/docbook">
+      However, transaction monitors do not support the concept of objects with state
+      information and polymorphic service requests. They support procedural transaction
+      processing. Furthermore, the code was typically not portable between vendors (e.g. CICS
+      applications could not be directly ported onto TUXEDO).
+    </ns2495:para>
+  </ns2492:section>
+  
+  <ns2496:section xmlns:ns2496="http://docbook.org/ns/docbook">
+    <ns2497:title xmlns:ns2497="http://docbook.org/ns/docbook">Object Request Brokers</ns2497:title>
+    <ns2498:para xmlns:ns2498="http://docbook.org/ns/docbook">
+      Object request brokers are used to broker service requests to remote objects. They
+      thus provide a communication backbone between remote objects, but they do not supply
+      automatical support for concurreny, transactions, resource management, security and fault
+      tolerance. Even though the primitives for these may be available, it is still the
+      developer's responsibility to incorporate the required support into the business objects.
+      This is often a non-trivial, expensive and error-prone task.
+    </ns2498:para>
+    <ns2499:para xmlns:ns2499="http://docbook.org/ns/docbook">
+      The most well known Object Request Brokers are CORBA, DCOM and Java's RMI.
+    </ns2499:para>
+    
+    <ns2500:section xmlns:ns2500="http://docbook.org/ns/docbook">
+      <ns2501:title xmlns:ns2501="http://docbook.org/ns/docbook">CORBA</ns2501:title>
+      <ns2502:para xmlns:ns2502="http://docbook.org/ns/docbook">
+        CORBA stands for Common Object Request Broker Architecture. It is a common (public)
+        standard maintained by the Object Management Group which is a non-profit organization
+        supported by virtually the entire IT industry.
+      </ns2502:para>
+      <ns2503:para xmlns:ns2503="http://docbook.org/ns/docbook">
+        The former is the industry standard which supplies a way for one object to request
+        services from another object without knowing 
+        <ns2504:itemizedlist xmlns:ns2504="http://docbook.org/ns/docbook">
+          <ns2505:listitem xmlns:ns2505="http://docbook.org/ns/docbook">
+            <ns2506:para xmlns:ns2506="http://docbook.org/ns/docbook">the implementation language of the object supplying the service, </ns2506:para>
+          </ns2505:listitem>
+          <ns2507:listitem xmlns:ns2507="http://docbook.org/ns/docbook">
+            <ns2508:para xmlns:ns2508="http://docbook.org/ns/docbook">details of the platform hosting the object (e.g. machine or operating system), </ns2508:para>
+          </ns2507:listitem>
+          <ns2509:listitem xmlns:ns2509="http://docbook.org/ns/docbook">
+            <ns2510:para xmlns:ns2510="http://docbook.org/ns/docbook">the location of the object, </ns2510:para>
+          </ns2509:listitem>
+          <ns2511:listitem xmlns:ns2511="http://docbook.org/ns/docbook">
+            <ns2512:para xmlns:ns2512="http://docbook.org/ns/docbook">the communication protocol used to communicate with the object.</ns2512:para>
+          </ns2511:listitem>
+        </ns2504:itemizedlist>
+      </ns2503:para>  
+      <ns2513:para xmlns:ns2513="http://docbook.org/ns/docbook">
+        CORBA implements a complete object model including polymorphism, multiple
+        inheritence, exceptions, event notification, automatic object activation and other
+        features. In addition to this, CORBA specifies a range standard interfaces for common
+        services and industry specific facilities. CORBA's Internet Inter-ORB Protocol (IIOP)
+        ensures that Object Request Brokers from different vendors can communicate directly,
+        i.e. that I can request a service of a remote object residing within one vendor's ORB
+        from another object using another vendor's ORB.
+      </ns2513:para>
+      <ns2514:para xmlns:ns2514="http://docbook.org/ns/docbook">
+        Many companies including Sun, Inprise, IBM, HP, BEA, Orbix, ...have their own
+        COERBA implementation. Many operating systems and many software development products
+        ship with CORBA. Even the Java Development Kit ships with a simple Object Request Broker.
+      </ns2514:para>
+    </ns2500:section>
+    
+    <ns2515:section xmlns:ns2515="http://docbook.org/ns/docbook">
+      <ns2516:title xmlns:ns2516="http://docbook.org/ns/docbook">DCOM</ns2516:title>
+      <ns2517:para xmlns:ns2517="http://docbook.org/ns/docbook">
+        DCOM is Microsoft's proprietry response to CORBA. It shares many features with
+        CORBA and most of Microsoft's applications support DCOM. However, DCOM is not truly
+        object-oriented because it does not fully support object identity. Furthermore, it is a
+        proprietry standard which largely binds you to the Microsoft platform which does not
+        define industry wide service interfaces.
+      </ns2517:para>
+    </ns2515:section>
+    
+    <ns2518:section xmlns:ns2518="http://docbook.org/ns/docbook">
+      <ns2519:title xmlns:ns2519="http://docbook.org/ns/docbook">Java RMI</ns2519:title>
+      <ns2520:para xmlns:ns2520="http://docbook.org/ns/docbook">
+        Java's Remote Method Invocation framework offers a Java specific ORB. Except for the
+        language transparency and industry-wide standards for service interfaces, it shares
+        virtually all features with CORBA. In addition it supports run-time relocation of
+        objects as well as classes.
+      </ns2520:para>
+      <ns2521:para xmlns:ns2521="http://docbook.org/ns/docbook">
+        The later versions of the RMI protocol are built on top CORBA's IIOP so that Java
+        objects can call (non-Java) CORBA objects directly through RMI.
+      </ns2521:para>
+    </ns2518:section>
+  </ns2496:section>
+  
+  <ns2522:section xmlns:ns2522="http://docbook.org/ns/docbook">
+    <ns2523:title xmlns:ns2523="http://docbook.org/ns/docbook">Component Transaction Monitors (CTMs)</ns2523:title>
+    <ns2524:para xmlns:ns2524="http://docbook.org/ns/docbook">
+      Component Transaction Monitors aim to provide developers with features from both,
+      transaction monitors and object request brokers. They aim to provide a communication
+      backbone between objects (components) with automatic support for transactions, resource
+      management (e.g. component activation and resource pooling), security and persistence.
+    </ns2524:para>
+    <ns2525:para xmlns:ns2525="http://docbook.org/ns/docbook">
+      Although the big TP vendors like IBM and BEA started working on CTMs soon after the
+      first release of CORBA, the first CTM on the market was the Microsoft Transaction Server
+      (MTS). It is built on top of Microsoft's component model (DCOM).
+    </ns2525:para>
+    <ns2526:para xmlns:ns2526="http://docbook.org/ns/docbook">
+      However, MTS has a number of drawbacks, most of them arising from the fact that MTS
+      is built on top of DCOM and not on top of CORBA. Because DCOM is not truly object-oriented
+      by not supporting object identity, MTS itself only supports stateless components. Other,
+      CORBA-based CTMs typically support stateful and persistent components. Also, the fact that
+      MTS is DCOM-based makes integration with components on non-Microsoft platforms diffcult.
+    </ns2526:para>
+    <ns2527:para xmlns:ns2527="http://docbook.org/ns/docbook">
+      All other CTMs use CORBA for their communication backbone. However, the remaining
+      problem was the code portability between CTM vendors. Clients were naturally reluctant to
+      lock into a specific vendor.
+    </ns2527:para>
+  </ns2522:section>
+  
+  <ns2528:section xmlns:ns2528="http://docbook.org/ns/docbook">
+    <ns2529:title xmlns:ns2529="http://docbook.org/ns/docbook">EJB as a open standard for CTMs</ns2529:title>
+    <ns2530:para xmlns:ns2530="http://docbook.org/ns/docbook">
+      Enterprise Java Beans aims to specify an industry-wide standard for Component
+      Transaction Monitors.
+    </ns2530:para>
+    <ns2531:para xmlns:ns2531="http://docbook.org/ns/docbook">
+      The CTM vendor community has embraced the EJB standard enthusistically and already at
+      this stage most CTMs implement one of the EJB standards. The server side component model
+      is directly portable between products from different CTM vendors implementing the EJB standard.
+    </ns2531:para>
+  </ns2528:section>
+</ns2488:section>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Consequences</title>
+    <para>
+        
+        <itemizedlist>
+            
+            <listitem><formalpara>
+                <title>Provides encapsulated snapshot</title>
+                <para>
+                    The memento stores a snapshot of the originator's state information,
+                    providing access only to instances of the originator class.
+                </para>
+            </formalpara></listitem>
+            
+            <listitem><formalpara>
+                <title>Originator need not maintain snapshots</title>
+                <para>
+                    In many other designs which capture the state of an object at some instant in time
+                    without breaking encapsulation,
+                    the onus of maintaining the captured state information is with the originator itself.
+                    The memento enables one to externalize an object's state and delegate the maintenance
+                    of the state snapshots to a caretaker without breaking encapsulation. This may simplify
+                    the originator class considerably.
+                </para>
+            </formalpara></listitem>
+            
+            <listitem><formalpara>
+                <title>Support for multiple snapshots</title>
+                <para>
+                    The memento pattern enables different clients to request multiple snapshots
+                    from the same object and to restore the state of the originator to any of the
+                    snapshots. This flexibility is difficult to achieve if the originator has to maintain
+                    the state snapshots.
+                </para>
+            </formalpara></listitem>
+            
+            <listitem><formalpara>
+                <title>The memento may become large</title>
+                <para>
+                    If the originator's state comprises a lot of information the memento may become large.
+                </para>
+            </formalpara></listitem>
+            
+            <listitem><formalpara>
+                <title>Duplication of information across mementos</title>
+                <para>
+                    if snapshots are taken frequently and then typically only a certain subset of the originator's
+                    state changes across the snapshots. A memento, however,typically stores a representation
+                    of the entire state information of the originator. This may consume considerably more
+                    information then one would if one only stores the delta's (differences) between the object's
+                    state.
+                    <note><para>
+                        Versioning systems like CVS typically use a delta approach, storing the originator's state
+                        at some time and all incremental changes done along that branch.
+                    </para></note>
+                </para>
+            </formalpara></listitem>
+            
+            <listitem><formalpara>
+                <title>Implementing memento with encapsulation may be difficult in some languages</title>
+                <para>
+                    In Java one can use private static nested or private inner classes to ensure that only the
+                    originator is able to access the memento's information. In C++ one can use the
+                    <emphasis>friend</emphasis> construct to give the originator access to the private
+                    members of the originator. In some languages neither construct may be available and
+                    implementing the encapsulation may prove a challenge.
+                    <note><para>
+                        Private static nested or private inner classes provide a cleaner solution than friendship
+                        because the originator is still forced to access the information stored in the memento
+                        through public services which can apply normal sanity checking. These public
+                        services are, however, only available to the originator.
+                    </para></note>
+                </para>
+            </formalpara></listitem>
+            
+        </itemizedlist>
+        
+    </para>
+    
+</section>

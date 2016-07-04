@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>    
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Disk Partitioning</title>
+
+    <para>
+        Partitioning is a means to divide a single hard drive into many logical drives. A
+        partition is a contiguous set of blocks on a drive that are treated as an independent disk.  
+    </para>
+    
+    <section>
+        <title>Why use separate partitions?</title>
+        <para>
+            There are several reasons to introduce partitioning including
+            <itemizedlist>
+                <listitem><formalpara>
+                    <title>Security</title>
+                    <para>
+                        The benefit of using separate partitions is that the different partitions are largely protected
+                        from one another. For example, the operating system kernel is usually hosted on its own little
+                        partitions which is mounted as read only and hence cannot be altered during normal operation.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>Risk reduction</title>
+                    <para>
+                        Furthermore, if the file system on the main work partition gets corrupted, the data of any of the
+                        other partitions remains unaffected and fully accessible. Smaller file systems are also easier
+                        to backup and recovery.
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>Performance</title>
+                    <para>
+                        Smaller file systems are more efficient than very large file systems. Firthermore, different partitions
+                        might use different file systems optimized for things like
+                        <itemizedlist>
+                            <listitem><para>
+                                Fast access to read-only data.
+                            </para></listitem>
+                            <listitem><para>
+                                Access to a large number of continuously changing small files, using a file system with small
+                                block sizes.
+                            </para></listitem>
+                            <listitem><para>
+                                Access to huge files like videos and databases using a file system with large block sizes.
+                            </para></listitem>
+                        </itemizedlist>
+                    </para>
+                </formalpara></listitem>
+                <listitem><formalpara>
+                    <title>Hosting different environments for testing</title>
+                    <para>
+                        One may want to host different operating systems in order to test applications across
+                        platforms. These different operating systems would typically be hosted on different
+                        partitions.
+                    </para>
+                </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>The partition table</title>
+        <para>
+            The Master Boot Record (MBR) of a drive hosted in the first 512 bytes of a drive contains, amongst other
+            things, the partition table.
+        </para>
+        <para>
+            The partition table holds the information of
+            <itemizedlist>
+                <listitem><para>
+                    Whether the partition is bootable or not.
+                </para></listitem>
+                <listitem><para>
+                    The start of each partition.
+                </para></listitem>
+                <listitem><para>
+                    The length of each partition.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+
+    <section>
+        <title>Primary, extended and logical partitions</title>
+        <para>
+            The Intel based systems provide for only for partitions. These are called the primary partitions. In order to
+            make provision for more than 4 partitions, the concept of an extended partition which can itself host
+            multiple logical partitions was introduced.
+        </para>
+    </section>
+    
+    <section>
+        <title>Swap partitions</title>
+        <para>
+            In order to increase the memory available to the operating system to beyond the physical memory, the concept
+            of virtual memory was introduced. Virtaul memory is a logical address space which may be larger than the
+            physical memory. As more memory is required, some of the not so intensively used memory areas are swapped
+            by the operating system out onto persistent storage, e.g. the hard disk. 
+        </para>
+        <para>
+            A swap partition is space on the hard disk which has been reserved for the operating system to be used as swap/
+            paging space.
+        </para>
+    </section>
+
+    <section>
+        <title>Choosing a partitioning scheme</title>
+        <para>
+            When partitioning a Linux system you will typically create one partiton for the kernel, one for swap space and
+            at least one for the root partition. You might want to create a further partition for user data (i.e. the home directory)
+            where data will continually change.
+        </para>
+    </section>
+</section>

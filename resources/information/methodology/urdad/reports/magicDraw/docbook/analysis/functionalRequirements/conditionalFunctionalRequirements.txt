@@ -1,0 +1,40 @@
+<section>
+    <title>Conditional functional requirements</title>
+    <para>
+        The following functional requirements need to be addressed only under certain conditions:
+        <itemizedlist>
+            #foreach($functionalRequirement in $conditionalFunctionalRequirements)
+            <listitem><formalpara>
+                <title>$functionalRequirement.name</title>
+                <para>
+                    $report.getComment($functionalRequirement).body
+                    This functional requirement needs to be addressed if
+                    #foreach ($extendRelationship in $functionalRequirement.extend)
+                    #if($report.getSupplierElement($extendRelationship) == $targetUseCase)
+                    $extendRelationship.condition.specification.body.
+                    #end
+                    #end                            
+                    #getStakeHolders($functionalRequirement)
+                    #set($stakeHolders = $result)
+                    #if ($stakeHolders.size() > 0)
+                    This is required by
+                    <itemizedlist>
+                        #foreach ($sh in $stakeHolders)
+                        <listitem><para>$sh.name</para></listitem>
+                        #end
+                    </itemizedlist>
+                    #else
+                    <note>
+                        <title>ERROR: Missing stakeholder specification</title>
+                        <para>
+                            URDAD requires that each functional requirement is linked to the stakeholder(s) who require it via a requires
+                            relationship. The $functionalRequirement.name requirement is not linked to a stakeholder via a requires relationship.
+                        </para>
+                    </note>
+                    #end
+                </para>
+            </formalpara></listitem>
+            #end
+        </itemizedlist>
+    </para>
+</section>

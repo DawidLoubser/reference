@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns2085:section xmlns:ns2085="http://docbook.org/ns/docbook" xml:id="resources.information.tecnologies.java.networking.eMail.sendingAMessage">
+    
+    <ns2086:title xmlns:ns2086="http://docbook.org/ns/docbook">Sending a Message</ns2086:title>
+
+<ns2087:para xmlns:ns2087="http://docbook.org/ns/docbook">The first step is to open a session to the SMTP host through which the mail will be sent. 
+That is done via</ns2087:para>
+
+<ns2088:para xmlns:ns2088="http://docbook.org/ns/docbook"><ns2089:programlisting xmlns:ns2089="http://docbook.org/ns/docbook">
+Properties props = new Properties();
+props.put("mail.smtp.host", hostName);
+
+Session session = Session.getDefaultInstance(props, null);
+</ns2089:programlisting></ns2088:para>
+
+<ns2090:para xmlns:ns2090="http://docbook.org/ns/docbook">Next we simply create an instance of a message using the appropriate messaging standard, for
+example</ns2090:para>
+
+<ns2091:para xmlns:ns2091="http://docbook.org/ns/docbook"><ns2092:programlisting xmlns:ns2092="http://docbook.org/ns/docbook">
+Message msg = new MimeMessage(session);
+</ns2092:programlisting></ns2091:para>
+
+<ns2093:para xmlns:ns2093="http://docbook.org/ns/docbook">The sender and recipients addresses are specified via</ns2093:para>
+
+<ns2094:para xmlns:ns2094="http://docbook.org/ns/docbook"><ns2095:programlisting xmlns:ns2095="http://docbook.org/ns/docbook">
+msg.setFrom(new InternetAddress(senderAddress));
+
+msg.setRecipients(Message.RecipientType.TO, recipientAddresses);
+</ns2095:programlisting></ns2094:para>
+
+<ns2096:para xmlns:ns2096="http://docbook.org/ns/docbook">where <ns2097:emphasis xmlns:ns2097="http://docbook.org/ns/docbook" role="verb">recipientsAddresses</ns2097:emphasis> is of type <ns2098:emphasis xmlns:ns2098="http://docbook.org/ns/docbook" role="verb">InternetAddress[]</ns2098:emphasis>. We can also set 
+recipients individually and the recipient types may be <ns2099:emphasis xmlns:ns2099="http://docbook.org/ns/docbook" role="verb">TO</ns2099:emphasis>, <ns2100:emphasis xmlns:ns2100="http://docbook.org/ns/docbook" role="verb">CC</ns2100:emphasis> or <ns2101:emphasis xmlns:ns2101="http://docbook.org/ns/docbook" role="verb">BCC</ns2101:emphasis>.</ns2096:para>
+
+<ns2102:para xmlns:ns2102="http://docbook.org/ns/docbook">The subject and sent-date can be set via appriate set methods and the content of 
+the message may be of any type supported by MIME. Below we set the content to be
+a plain text message:</ns2102:para>
+
+<ns2103:para xmlns:ns2103="http://docbook.org/ns/docbook"><ns2104:programlisting xmlns:ns2104="http://docbook.org/ns/docbook">
+String msgText = "Hi there";
+
+msg.setContent(msgText, "text/plain"); 
+</ns2104:programlisting></ns2103:para>    
+</ns2085:section>

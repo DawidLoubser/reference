@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2009-2-4 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Merging a branch back into the trunk</title>
+    <para>
+        To merge a branch back into a trunck you would typically enforce the following steps:
+        <orderedlist>
+            <listitem><para>
+                Update the branch to the current repository revision (the revision of the head you want to merge into).
+            </para></listitem>
+            <listitem><para>
+                Check the differences applied between the last merged revision and the current revision of the trunk.
+            </para></listitem>
+            <listitem><para>
+                If happy, merge the changes from the last merged to the current trunk revision (the head) into the branch. 
+            </para></listitem>
+            <listitem><para>
+                Resolve any conflicts.
+            </para></listitem>
+            <listitem><para>
+                Run tests and fix bugs.
+            </para></listitem>
+            <listitem><para>
+                Commit the branch.
+            </para></listitem>
+            <listitem><para>
+                Delete trunk.
+            </para></listitem>
+            <listitem><para>
+                Move your branch into the trunk.
+            </para></listitem>
+            <listitem><para>
+                Switch your working directory to use the trunk.
+            </para></listitem>
+        </orderedlist>
+    </para>
+    <para>
+        Thus, assuming that the last revision merged into the branch was revision 28 and that the head is currently revision 20.
+        Then we check the differences applied to the tunck since then using
+        <programlisting><![CDATA[
+svn diff -r 28:30 svn://localhost/myProject/trunk
+]]></programlisting>
+        If happy, we merge those differences into our branch via 
+        <programlisting><![CDATA[
+svn merge -r 28:30 ../../trunk
+]]></programlisting>
+        After resolving any conflicts, running the tests and fixing any bugs, we commit the branch.
+    </para>
+    <para>
+        Now we are ready to fold the branch back into the trunk. This is done by deleting the trunk and moving our branch into the trunk:
+        <programlisting><![CDATA[
+svn del ../../trunk -m 'Deleting trunk before folding merged branch back into trunk'
+
+svn mv myBranch ../trunk -m 'Folding merged branch back into trunk'
+            ]]></programlisting>
+    </para>
+    <para>
+        Finally we can switch our working copy to refer to the new trunk via
+        <programlisting><![CDATA[
+svn switch svn://localhost/myProject/trunk            
+        ]]></programlisting>
+    </para>
+</section>    

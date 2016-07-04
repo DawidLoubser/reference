@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xml:id="resources.information.tecnologies.java.lang.multiThreading.creatingAndStartingThreads.introducingJavaThreads">
+
+  <title role="Introducing Java Threads">Introducing Java Threads</title>
+
+  <para>Java threads must be specializations of Java's
+      <literal>java.lang.Thread</literal> class. The series of
+    instructions which comprise the thread task are specified in the
+    thread's <emphasis>run()</emphasis> method. The thread may use
+    services offered by other objects or classes and these from part of
+    the thread. One always has at least one thread, the
+    <emphasis>main</emphasis> thread started by the Java VM. This thread
+    may spawn new threads which then can perform tasks concurrently with
+    the main thread. </para>
+
+  <para>To create an execution thread one derives ones own thread class
+    from Java's <emphasis>Thread</emphasis> class and overrides the
+      <emphasis>run()</emphasis> method with the code to be executed
+    within that execution thread. An alternative is to create a class which
+    implements the <literal>java.lang.Runnable</literal> interface, and
+    handing an instance to your newly created thread, thereby facilitating
+    that your class may already have other super classes.
+  </para>
+
+  <para>You will have to instantiate your thread class and call its
+      <emphasis>start()</emphasis> method which your thread class inherits
+    from <emphasis>Thread</emphasis>. The <emphasis>start()</emphasis>
+    method spawns the new thread, and returns. Java VM's thread scheduler
+    calls the new threads <emphasis>run()</emphasis> method. After the
+    call to <emphasis>start()</emphasis> there are at least two threads,
+    the one returning from <emphasis>start()</emphasis> and continuing and
+    the second one starting with the new threads
+    <emphasis>run()</emphasis> method. Below we show perhaps the simplest
+    multi-threaded application you can write:</para>
+
+    <programlisting language="Java"><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" href="source/MyRunnable.java"/>
+    </programlisting>
+    <programlisting language="Java"><xi:include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" href="source/MyThreads.java"/>
+    </programlisting>
+
+  <para>The main thread spawns several instances of
+    <emphasis>MyThread</emphasis> and continues executing until it
+    completed all its tasks. It then terminates. The thread scheduler
+    calls each thread's <emphasis>run()</emphasis> method which simply
+    prints out its thread number for a specified number of times, prints a
+    termination message and terminates. The application terminates when
+    the last thread terminates. Below we show a sample output:</para>
+
+  <para>
+    <programlisting><![CDATA[
+111111111111111111111111111111111111111111111111111111111111111111111
+111111111111111111111111111111111111111111111111111111111112121231231
+All threads started. Main thread terminates.
+231231231231231231231231231231231231231231231231231231231231231231231
+231231231231231231231231231231231231231231231231231231231231231231231
+231231231231231231231231231231231231231231231231231231231231231231231
+231231231231231231231231231231231231231231231231231231231231231231231
+231231231231231231231231231231231231231231231231231231231231231231231
+231232132132132132132132132132132132132132132132132132132132132132132
+132132132132132132132132132132132132132132132132132132132132132132132
+132132132132132132132132132132132132132132132132132132132132132132132
+132132132132132132132132132132131231231231231231231231231231231231231
+231231231231231231231231231231231231231231231231231231231231231231231
+231231231231231231231231
+Thread1 terminates.
+232323232323232323232323232323232323232323232323232323232323232323232
+232323232323232323232323333333333333333333333333333232323232323232323
+323232323232323232323232323232323232323232323232323232323232323232323
+Thread3 terminates.
+222222222222222222222222
+Thread2 terminates.
+]]></programlisting>
+  </para>
+
+</section>

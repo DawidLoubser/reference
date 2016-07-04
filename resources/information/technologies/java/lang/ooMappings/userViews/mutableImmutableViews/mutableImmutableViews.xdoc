@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.lang.ooMappings.userViews.mutableImmutableViews.mutableImmutableViews"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Mutable and Immutable views for an object</title>
+  <para>
+    A common scenario is that certain objects should only obtain a read-only view of an object
+    while other objects may modify the object itself. For example, a user interface through
+    which an order is created may modify the order as it is constructed, but anything processing
+    the order may no longer modify the order.         
+  </para>
+  <para>
+    To support read-only and read-write views onto objects, one can define a read only interface
+    which only exposes those services which do not alter the state of the object. One can then
+    define an extended contract which adds those services which do change the state of the object.
+    A neat way to do this is to have the default interface read-only and to define a nested
+    interface, <literal>Mutable</literal>, which extends the base interface. 
+  </para>
+  <para>
+    In exceptional cases one may even want to break encapsulation by providing certain external
+    object a direct handle to one's components. A scenario which requires this is a component based
+    user interface within a model-view-controller framework. Here the user interfaces for object
+    components require direct access to components of the domain object. This can be provided
+    through a special mutable interface which provides direct access to the component
+    This is illustrated by the following example:
+  </para>
+  <para>
+    If a component can be exposed through a read-only view, it has the positive effect of not
+    requiring the component to be cloned every time a client requests it, as the client cannot
+    (without resorting to typecasting) request services of the component to change its state.
+  </para>
+  
+  <section>
+    <title>Example: A client with an account</title>
+    <para>
+      Consider the following two interfaces, and their implementations:
+    </para>
+    <para>
+      <programlisting>
+<xi:include parse="text" href="source/Account.java"/>
+      </programlisting>
+    </para>
+    <para>
+      <programlisting>
+<xi:include parse="text" href="source/Client.java"/>
+      </programlisting>
+    </para>
+    <para>
+      <programlisting>
+        <xi:include parse="text" href="source/AccountImpl.java"/>
+      </programlisting>
+    </para>
+    <para>
+      <programlisting>
+        <xi:include parse="text" href="source/ClientImpl.java"/>
+      </programlisting>
+    </para>
+    <para>
+      These objects may now naturally be used through their interfaces:
+      <programlisting>
+        <xi:include parse="text" href="source/ClientTest.java"/>
+      </programlisting>
+    </para>
+  </section>
+  
+  
+  <section role="example">
+    <title>Example: Random one-dimensional variable</title>
+    <para>
+      Consider the following interfaces for a simple one dimensional random variable:
+      <programlisting>
+        <xi:include parse="text" href="source/RandomVariable1D.java"/>
+      </programlisting>
+      Note that the default <literal>RandomVariable1D</literal> interface provides only read access to a
+      vector, while the nested <literal>RandomVariable1D.Mutable</literal> extended interface provides also
+      write access. Furthermore, a further nested interface,
+      <literal>RandomVariable1D.Mutable.Direct</literal> provides direct access to the components.
+      Users would only in very exceptional cases obtain a handle to the object via the direct
+      interface (e.g. for MVC based GUIS).
+    </para>
+    <para>
+      The implementation class implements the full interface. Users would, however not get a direct
+      object handle, but would access the object through a suitable interface. Read-only access
+      would be provided through the <literal>RandomVariable1D</literal> interface while read-write
+      access is given through the <literal>RandomVariable1D.Mutable</literal> interface. In
+      exceptional cases users may even get a handle which provides a direct handle to the component
+      references via the <literal>RandomVariable1D.Mutable.Direct</literal> interface. The
+      implementation class implements the direct interface which extends the other two:
+      <programlisting>
+        <xi:include parse="text" href="source/RandomVariable1DImpl.java"/>
+      </programlisting>
+    </para>
+    <note><para>
+      Providing various levels of access through different interfaces enables one to remove the
+      cloning for getters as the getters return a direct immutable (read-only) handle to the
+      component.
+    </para></note>
+  </section>
+</section>
+  

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The transaction management for a persistence context</title>
+    <para>
+        The transaction tupe for a persistence context may be either <literal>RESOURCE_LOCAL</literal> or
+        <literal>JTA</literal>. In the case of <literal>RESOURCE_LOCAL</literal>  the transaction management
+        is provided by JPA which typically delegates it to the local resource (e.g. database). In the case of <literal>JTA</literal>
+        a transaction manager implementing the <emphasis>Java Transaction API</emphasis> is used. Such entity
+        managers can enlist multiple resources within a transaction. In managed environments transaction
+        boundaries are usually managed by the application server deducing the relevant transaction boundaries
+        from the more abstract transaction requirements annotations (e.g. <literal>requires</literal>,
+        <literal>requires-new</literal>, ...).
+    </para>
+    <para>        
+        <literal>RESOURCE_LOCAL</literal> is often used in non-managed applications where transaction 
+        control may be required only for resources from a single database.
+        When using <literal>RESOURCE_LOCAL</literal>, you must use the entity transaction API to 
+        begin/commit around every call to your entity manager:
+        <programlisting language="java">
+EntityTransaction transaction = entityManager.getTransaction();
+
+tansaction.begin();
+entityManager.persist(myEntity);
+transaction.commit();
+        </programlisting>
+    </para>
+    <para>
+        The entity manager for a managed environment is provided by the application server. It will usually use <literal>JTA</literal> 
+        transaction management,  allowing for multiple resources
+        (e.g. databases, message queues, external systems, ...) to be enlisted within a transaction. 
+    </para>
+</section>

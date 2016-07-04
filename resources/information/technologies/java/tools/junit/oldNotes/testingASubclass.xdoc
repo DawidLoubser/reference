@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.tecnologies.java.tools.junit.testingASubclass"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="file:/home/ernst/projects/solms/Docs/re_schema/solmsDoc.xsd"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title role="Testing a subclass">Testing a subclass</title>
+<para>
+When a class <emphasis>B</emphasis> subclass a class <emphasis>A</emphasis>, one may want to have <emphasis>TextB</emphasis>
+subclass <emphasis>TestA</emphasis>. After all a <emphasis>B</emphasis> is an <emphasis>A</emphasis> and should hence pass
+all tests of <emphasis>A</emphasis>.
+</para>
+<para><emphasis> JUnit</emphasis> will, by default, run all inherited tests. You must, however, make certain
+that the <emphasis>setUp</emphasis> method of <emphasis>TestB</emphasis> calls the <emphasis>setUp</emphasis> method of class
+<emphasis>TestA</emphasis>.</para>
+<para>
+As an example, let us look at a class, <emphasis>Parabola</emphasis> which uses a combination
+of extensions (the <emphasis>getTurningPoint</emphasis> and <emphasis>getRealRoots</emphasis> methods) and 
+restrictions (that there are no coefficients higher than second order coefficients)
+during subclassing:
+<programlisting>
+<xi:include parse="text" href="source/ParabolaR2.java"/>
+</programlisting>
+</para>
+<para>
+The unit test should test only the differences between the subclass and its superclass,
+<abbrev>i.e.</abbrev> the extensions and restrictions. We thus do not have to test the function values
+or that the supplied coefficients are equal, but we do test the turning point, roots
+and that there are no coefficients which are higher than second order:
+<programlisting>
+<xi:include parse="text" href="source/ParabolaR2Test.java"/>
+</programlisting>
+</para>
+    
+</section>

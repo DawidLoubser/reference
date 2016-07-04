@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<ns3525:section xmlns:ns3525="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.networkServices.xinetd.xinetd">
+
+	<ns3526:title xmlns:ns3526="http://docbook.org/ns/docbook">Network services wrapper configuration using xinetd</ns3526:title>
+	<ns3527:para xmlns:ns3527="http://docbook.org/ns/docbook">
+	xinetd is a service wrapper of super service which listens on a set of ports for connections. Once a connection is established, the actual service is started and the connection is passed on. This minimises the need to start a lot of services during startup, as well as the load on the system by having many idle services to manage. xinetd replaces inetd, and has been included in most modern distributions. xinet is a service in it's own right, and is controlled by the <ns3528:emphasis xmlns:ns3528="http://docbook.org/ns/docbook" role="strong">/etc/init.d/xinetd</ns3528:emphasis> scripts. It's main configuration file <ns3529:emphasis xmlns:ns3529="http://docbook.org/ns/docbook" role="strong">/etc/xinetd.conf</ns3529:emphasis> sets default parameters, as well as the <ns3530:emphasis xmlns:ns3530="http://docbook.org/ns/docbook" role="strong">includedir</ns3530:emphasis> parameter. The includedir parameter specifies the directory containing service specific configuration files. 
+	</ns3527:para>
+	<ns3531:programlisting xmlns:ns3531="http://docbook.org/ns/docbook">
+defaults
+{
+        instances               = 60
+        log_type                = SYSLOG authpriv
+        log_on_success          = HOST PID
+        log_on_failure          = HOST
+        cps                     = 25 30
+}
+
+includedir /etc/xinetd.d
+	</ns3531:programlisting>
+	<ns3532:para xmlns:ns3532="http://docbook.org/ns/docbook">
+	Each service managed by xinetd is configured in it's own configuration file, which resides traditionally in <ns3533:emphasis xmlns:ns3533="http://docbook.org/ns/docbook" role="strong">/etc/xinetd.d</ns3533:emphasis>.
+	</ns3532:para>
+	<ns3534:programlisting xmlns:ns3534="http://docbook.org/ns/docbook">
+[alex@client8 alex]$ ls /etc/xinetd.d/
+amanda       cups-lpd     eklogin  ipop3        pop3s    services  time
+amandaidx    daytime      finger   klogin       rexec    sgi_fam   time-udp
+amidxtape    daytime-udp  gssftp   krb5-telnet  rlogin   swat
+chargen      dbskkd-cdb   imap     kshell       rsh      talk
+chargen-udp  echo         imaps    ktalk        rsync    telnet
+comsat       echo-udp     ipop2    ntalk        servers  tftp
+[alex@client8 alex]$ 
+	</ns3534:programlisting>	
+	<ns3535:para xmlns:ns3535="http://docbook.org/ns/docbook">
+	The following two example scripts configure the POP3 mail service and the cvs pserver service. The service name must match one entry within the <ns3536:emphasis xmlns:ns3536="http://docbook.org/ns/docbook" role="strong">/etc/services</ns3536:emphasis> file, which is the services configuration file, and contains the mapping of service names to port numbers.  The <ns3537:emphasis xmlns:ns3537="http://docbook.org/ns/docbook" role="strong">disable</ns3537:emphasis> parameter specifies whether the services are disabled. The threading model of the service is defined by the wait parameter. Setting it's value to YES indicates that the service is single threaded, and concurrent requests are queued and have to wait. The user defines the userid under which the service is executed. The service executable is specified by the server parameter. On many distributions, the skeleton service configuration for most common services are already installed, and might only require minor adjustments.
+	</ns3535:para>
+	<ns3538:programlisting xmlns:ns3538="http://docbook.org/ns/docbook">
+# default: off
+# description: The POP3S service allows remote users to access their mail \
+#              using an POP3 client with SSL support such as fetchmail.
+service pop3s
+{
+        disable = no
+        socket_type             = stream
+        wait                    = no
+        user                    = root
+        server                  = /usr/sbin/ipop3d
+        log_on_success  += HOST DURATION
+        log_on_failure  += HOST
+}
+	</ns3538:programlisting>
+	<ns3539:programlisting xmlns:ns3539="http://docbook.org/ns/docbook">
+# CVS pserver (remote acces to your CVS repositories)
+# Please read the section on security and passwords in the CVS manual,
+# before you enable this.
+# default: off
+
+service cvspserver
+{
+        disable         = no
+        socket_type     = stream
+        protocol        = tcp
+        wait            = no
+        user            = root
+        server          = /usr/bin/cvs
+        server_args     = -f --allow-root=/home/solms/Documents/cvs pserver
+}
+	</ns3539:programlisting>
+	<ns3540:para xmlns:ns3540="http://docbook.org/ns/docbook">
+	Once the service configurations are completed, the xinetd service has to be restarted. <ns3541:emphasis xmlns:ns3541="http://docbook.org/ns/docbook" role="strong">/etc/init.d/xinetd restart</ns3541:emphasis>
+	</ns3540:para>
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="exercise.docbook"/>
+</ns3525:section>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Introduction</title>
+    <para>
+        In order to be usable as truly universal data interchange mechanism, the basic XML standard needs
+        two important capabilities:
+        <itemizedlist>
+            <listitem>
+                <para>
+                    The ability to construct document using several sets of tags, i.e. a mechanism
+                    to mix different vocabularies.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    The ability to identify, target and process tags correctly in such a mixed document,
+                    even if they have the same name.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        The <emphasis>XML Namespaces</emphasis> standard provides a very simple mechanism to address both these
+        issues, and is certainly one of the most important base technologies in XML. It enables the componentisation
+        of XML, and is also fundamental to mechanisms such as <emphasis>XML Schema</emphasis> which allows us to
+        treat XML in a object-oriented way.
+    </para>
+    
+    <section>
+        <title>How Namespaces Work</title>
+        <para>
+            Consider the following two XML documents, which describe contact details,
+            <programlisting language="xml">
+<xi:include href="src/contactDetailsNoNS.xml" parse="text"/>
+            </programlisting>
+            and a server:
+            <programlisting>
+<xi:include href="src/serverNoNS.xml" parse="text"/>
+            </programlisting>
+        </para>
+        <para>
+            One of the aims of XML is to establish vocabularies of tags (using a mechanism like XML Schema)
+            which can then be re-used throughout. So it would be reasonable to define tags for contact details,
+            and separately, define tags for server information. We could then define a vocabulary which describes
+            branches of our company, indicating both their contact details and any servers that belong to them.
+            Consider the following XML:
+            <programlisting language="xml">
+<xi:include href="src/branchNoNS.xml" parse="text"/>                
+            </programlisting>
+            The problem is that we are unable to distinguish between the <literal>name</literal> element
+            in the contact details, and in the server information. Similarly, the <literal>address</literal>
+            is ambiguous. It is thus impossible for software to reliably tell us the names of all
+            mail servers in the company, or provide us a list in XML of all the branch names, and
+            the names of their web (HTT) servers.
+        </para>
+        <para>
+            By placing the tags in name spaces, we assign them a unique <emphasis>URI</emphasis>. We could, therefore,
+            create a URI for contact details (<literal>company.com/contact</literal>), and a URI for server information 
+            (<literal>company.com/networking</literal>). We assign the URI to the tags using the
+            <literal>xmlns</literal> attribute. We can now uniquely identify the tags:
+            <programlisting language="xml">
+<xi:include href="src/branchNSLiteral.xml" parse="text"/>
+            </programlisting>
+            A namespace-aware parser will recognise the <literal>xmlns</literal> attribute, and will not treat it as
+            merely another attribute. Instead, each tag name is now qualified by the namespace it resides in, and
+            can be processed as such.
+        </para>
+        <para>
+            Literally assigning name spaces to the tags is very verbose and difficult to read - this is
+            solved by <emphasis>aliasing</emphasis> the namespaces,  for example:
+            <programlisting language="xml">
+<xi:include href="src/branchNS.xml" parse="text"/>
+            </programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Namespace as globally unique identifier</title>
+        <para>
+            A namespace should be a globally unique identifier for a domain. To this end one should view a namespace as a naming domain
+            defined by a <emphasis>Uniform Resource Identifier</emphasis> (URI).
+        </para>
+     </section>  
+</section>

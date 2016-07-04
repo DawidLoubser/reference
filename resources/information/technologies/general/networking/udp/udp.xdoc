@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author D. Loubser -->
+<section id="resources.information.technologies.general.networking.udp.udp"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>The UDP protocol</title>
+  
+  <para>
+    <abbrev>UDP</abbrev>, the <emphasis>User Datagram Protocol</emphasis>, provides a simpler (lower-level) alternative to
+    <abbrev>TCP</abbrev> networking. Whereas <abbrev>TCP</abbrev> is analogous to a telephone conversation (connection-oriented),
+    <abbrev>UDP</abbrev> is more analogous to the mail system (albeit much, much, faster).
+  </para>
+  
+  <para>
+    <abbrev>TCP</abbrev> provides reliable delivery that maintains the order of network packets, as well as
+    other services such as correctly re-assembling sequences of packets in original order. UDP, on the other hand:
+    <itemizedlist>
+      <listitem>
+        <formalpara>
+          <title>Is not connection-oriented</title>
+          <para>
+            Packets are constructed, sent and received individually, and not as managed streams.
+          </para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>Does not guarantee delivery</title>
+          <para>
+            Lost packets are not catered for, or indeed, even detected, unless the user application protocol provides this
+            as a features. The integrity of individual packets, however, when delivered, is guaranteed (i.e. they remain intact).
+          </para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>Is potentially unpredictable</title>
+          <para>
+            Packets sent before other packets may arrive after them, as they may have taken a different route across
+            the network. Furthermore, packets may even arrive in duplicate under some circumstances.
+          </para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>Is fast</title>
+          <para>
+            Because it does not contain any of the overhead of the complex and reliable TCP protocol, UDP is typically
+            significantly faster.
+          </para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>Supports Broadcasting and Multicasting</title>
+          <para>
+            Information may be sent to several devices simultaneously. Furthermore, because the exact IP address of
+            other nodes do not need to be know, this feature allows applications to contain mechanisms to "discover"
+            each other on the network, etc.
+          </para>
+        </formalpara>
+      </listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>When to use UDP</title>
+    <para>
+      If UDP is not reliable, why then use it at all? What type of applications benefit from UDP?
+    </para>
+    <para>
+      Time-critical applications, such as streaming media, typically do not care (and, in deed, can't do anything about)
+      lost packets, as their applicable time is no longer relevant. A few lost packets will typically not be noticed by the
+      user.
+    </para>
+    <para>
+      UPD is also useful when small amounts of information needs to be transported with a very high frequency. When
+      packets are lost, applications can simply request their re-transmission.
+    </para>
+    <para>
+      Broadcasting and Multicasting enable many useful applications, such as true peer-to-peer chat, efficient
+      media streaming to many clients within a network, and automatic discovery of devices and services.
+    </para>
+  </section>
+  
+  
+  <!--para><literal>TODO: Point-to-point</literal></para>
+  <para><literal>TODO: Broadcasting</literal></para>
+  <para><literal>TODO: Muticasting</literal></para-->
+  
+</section>

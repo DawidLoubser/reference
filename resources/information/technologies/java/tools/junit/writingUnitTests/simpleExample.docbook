@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>A fist JUnit example</title>
+  <para>
+    Consider a simple utility class that can invert the case of a
+    String:
+    <programlisting language="Java">
+<xi:include href="src/StringUtility.java" parse="text"/>
+    </programlisting>
+    After having written it, we do not know for certain whether it
+    functions as expected. Writing a unit test will allow us to verify
+    (and keep verifying, as the system evolves) this.
+    <programlisting language="Java">
+<xi:include href="src/StringUtilityTest.java" parse="text"/>
+    </programlisting>
+  </para>
+  
+  <section>
+    <title>Writing the unit test class</title>
+    <para>
+      A unit test is simply any JavaBean class that contains one or
+      more services that have been indicated as <emphasis>test
+        cases</emphasis>. It is typical to create one unit test for each
+      class or (more typically) interface that we wish to test, though
+      very complex components under test may have several.
+    </para>
+    <note>
+      <para>
+        In earlier (pre-4) version of JUnit, test classes had to extend
+        a particular class, <literal>junit.framework.TestCase</literal>.
+      </para>
+    </note>
+  </section>
+  
+  <section>
+    <title>Writing test cases</title>
+    <para>
+      A test case is any service in your unit test class that
+      <itemizedlist>
+        <listitem>
+          <para>is <literal>public</literal></para>
+        </listitem>
+        <listitem>
+          <para>requires no arguments</para>
+        </listitem>
+        <listitem>
+          <para>produces no return value</para>
+        </listitem>
+        <listitem>
+          <para>has been annotated with the <literal>@org.junit.Test</literal>
+          annotation</para>
+        </listitem>
+      </itemizedlist>
+      The test case will typically make use of the services of the object or class
+      under test, and record the output.
+    </para>
+    <note>
+      <para>
+        In earlier (pre-4) version of JUnit, test cases were not
+        annotated, and had to adhere to a naming convention where the
+        service name started with the word <quote>test</quote>.
+      </para>
+    </note>
+  </section>
+  
+  <section>
+    <title>Making assertions</title>
+    <para>
+       The developer makes <emphasis>assertions</emphasis> (assumptions) about the output
+      values by making use of the various <emphasis>assert*</emphasis>
+      services of the <literal>org.junit.Assert</literal>
+      class. If an assertion does not hold (i.e. the values differ from
+      what is expected) the test case will have been recorded as a failure.
+    </para>
+  </section>
+  
+  <section>
+    <title>Earlier versions of JUnit</title>
+    <note>
+      <para>
+        This example is based on JUnit version 4, which also requires Java
+        version 5 or later. Earlier versions of JUnit do not make use of
+        Java 5 language features, and are implemented using different
+        mechanisms (such as having to extend particular classes, and using
+        particular naming conventions). There are no conceptual
+        differences.
+      </para>
+    </note>
+  </section>
+  
+</section>

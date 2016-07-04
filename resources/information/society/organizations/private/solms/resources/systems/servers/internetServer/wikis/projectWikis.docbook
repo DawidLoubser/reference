@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbook.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+
+    <title> Project wikis</title>
+    
+    <para>
+        Installed a media wiki for each project by
+        <orderedlist>
+            <listitem><para>
+                extracting the archive into the Apache project directory,
+            </para></listitem>
+            <listitem><para>
+                renaming the wiki directory simply wiki (to be resolved as <literal>
+                    <![CDATA[http://projects.solms.co.za/projects/projectName/wiki]]></literal>.
+            </para></listitem>
+            <listitem><para>
+                created a MySQL database for the project via  <literal>create database
+                    projectnamewiki</literal> in the mysql command tool, mysql
+            </para></listitem>
+            <listitem><para>
+                created in the mysql database a user for the project, <literal>projectnamewiki</literal>
+                with the username also the password 
+                <programlisting><![CDATA[
+insert into user (Host, User, Password, Select_priv, Insert_priv, 
+            Update_priv, Delete_priv, Create_priv, Drop_priv, Alter_priv) 
+            values ('localhost', 'projectNamewiki', 
+            PASSWORD('projectNamewiki'), 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+            ]]></programlisting>
+            </para></listitem>
+            <listitem><para>
+                Granted access with appropriate priveledges via
+                <programlisting><![CDATA[
+            grant all privileges on projectNamewiki.* to 'xxxwiki'@'localhost' identified by 'xxxwiki';
+            ]]></programlisting>
+                followed by
+                <programlisting><![CDATA[
+            flush privileges;
+            ]]></programlisting>
+            </para></listitem>
+            <listitem><para>
+                made the config directory of the wiki installation writable, 
+            </para></listitem>
+            <listitem><para>
+                accessed the wiki via
+                <literal><![CDATA[http://projects.solms.co.za/projectName/wiki]]></literal>
+                and completed the configuration,
+            </para></listitem>
+            <listitem><para>
+                Copied the <literal>LocalSettings.php</literal> file from the config directory into the
+                base directory, and
+            </para></listitem>
+            <listitem><para>
+                copied the appropriate Logo into the <literal>skins/common/images</literal> directory and
+                set the wglogo variable into the <literal>LocalSettings.php</literal>.
+            </para></listitem>
+        </orderedlist>
+    </para>
+</article>

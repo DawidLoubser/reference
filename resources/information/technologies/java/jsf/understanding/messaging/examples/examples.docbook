@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Examples</title>
+    <para>
+        In our simple example we generate an error message if the title of the person is 
+        <emphasis>Mstr</emphasis> and the person is employed - we are staunchly against
+        child labour!!
+    </para>
+    
+    <section>
+        <title>Generating error messages</title>
+        <para>
+            If the person has title <emphasis>Mstr</emphasis> and is <emphasis>employed</emphasis>
+            we
+            <orderedlist>
+                <listitem><para>
+                    Find the component which has <literal>titleField</literal> as component identifier
+                    using our <literal>getComponentWithComponentId()</literal> service.
+                    <note><para>
+                        The <literal>getComponentWithComponentId()</literal> could be made into a 
+                        general utility function.
+                    </para></note>
+                </para></listitem>
+                <listitem><para>
+                    Ask the component for its <literal>clientId</literal> for the context.
+                </para></listitem>
+                <listitem><para>
+                    Add the message to the faces context, specifying the <literal>clientId</literal>
+                    if the component was found.
+                </para></listitem>
+                <listitem><para>
+                    Return an empty string or null so that the current page is re-rendered (with the messagess).
+                </para></listitem>
+            </orderedlist>            
+        </para>
+        <programlisting language="xml">
+<xi:include parse="text" href="../../../examples/simpleMessaging/src/main/java/za/co/solms/persons/ui/web/CreatePersonBinding.java"/>            
+    </programlisting>
+    </section>
+    
+    <section>
+        <title>Message views</title>
+        <para>
+            On our facelet page we added 
+            <itemizedlist>
+                <listitem><para>
+                    a general <literal><![CDATA[<h:messages/>]]></literal> tag
+                    which shows all messages issued for the page, and                    
+                </para></listitem>
+                <listitem><para>
+                    for each component a component specific 
+                    <literal><![CDATA[<h:message for="componentId"/>]]></literal> tag
+                    so that messages which displays any messages issued for its corresponding
+                    component.
+                </para></listitem>
+            </itemizedlist>
+       </para>     
+        <programlisting language="xml">
+<xi:include parse="text" href="../../../examples/simpleMessaging/src/main/webapp/faces/persons/editPerson.xhtml"/>            
+        </programlisting>
+        <para>
+            If there are no messages in the message queue, the message fields are not shown.
+        </para>
+        <figure>
+            <title>Message fields not visible if no messages rendered</title>
+            <mediaobject><imageobject>
+                <imagedata fileref="simpleMessagingEmpty.png"/>
+            </imageobject></mediaobject>
+        </figure>
+        <para>
+            On the other hand, should we fill in the form specifying an employed
+            <emphasis>Mstr</emphasis>, then the page is re-rendered with the component
+            specific message in a message field for that component and all messages
+            accumulated in the general messages field.
+        </para>
+        <figure>
+            <title>Accumulated and component specific messages</title>
+            <mediaobject><imageobject>
+                <imagedata fileref="simpleMessaging.png"/>
+            </imageobject></mediaobject>
+        </figure>
+        <note><para>
+            Typically one will use styling to render the messages in another font and/or colour.
+        </para></note>
+    </section>
+    
+</section>    

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Cloning objects</title>
+  
+  <para>
+    For some types of systems, a natural activity is that of duplicating
+    existing an existing object to produce a new logically equivalent
+    object. Examples include: duplicating a graphics object in a drawing
+    program, duplicating a style rule in a web page editor, etc.
+  </para>
+  <para>
+    When such support is required, the ability for an object to produce
+    a duplicate of itself is easily added by:
+    <itemizedlist>
+      <listitem>
+        <para>
+          Overriding the inherited <literal>clone</literal> service to
+          customise the cloning process. The visibility of this inherited
+          service is typically changed to <literal>public</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Implementing the <literal>java.lang.Cloneable</literal>
+          marker interface to allow instances of your class to be
+          cloned.
+        </para>
+      </listitem>
+    </itemizedlist>
+  </para>
+  
+  <figure>
+    <title>Making java objects cloneable</title>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="cloneable.png"/>
+      </imageobject>
+    </mediaobject>
+  </figure>
+  
+  <section>
+    <title>Making a class cloneable</title>
+    <para>
+      Java is responsible for performing the work of actually
+      producing a duplicate object when <literal>clone</literal>
+      is requested. It will perform a so-called <quote>shallow copy</quote>
+      of the object, which means that the object references to any
+      attributes still point to the original attribute objects (which is
+      now shared with the new, cloned object). For some of the attributes,
+      this may be what we want, but one typically wants to override the
+      behaviour and produces clones of some of the attributes ourselves.
+    </para>
+    <para>
+      The <literal>clone</literal> service is where this logic would be
+      contained. Typical implementations:
+      <itemizedlist>
+        <listitem>
+          <para>
+            Invoke the inherited cloning functionality by calling
+            <literal>super.clone()</literal>, and keeping a handle to the
+            (shallow copied) object.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            For each of the attributes that needs to be distinct in the
+            cloned object, produces a copy by calling <literal>clone()</literal>
+            on each of them respectively, and changing the object
+            reference in the cloned high-level object to now correctly
+            point to the cloned attribute.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Returns the completed (cloned) object to the caller.
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      Consider the simplistic <literal>Client</literal> and
+      <literal>Account</literal> scenario:
+    </para>
+    <figure>
+      <title>Shallow vs Deep copy when cloning objects</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="cloneBehaviour.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>
+      When we clone a client, the default behaviour leaves the cloned
+      client inadvertently sharing an account with the original client. If
+      we want the cloned client to also have it's own (cloned) account, we
+      have to implement the clone service accordingly:
+      <programlisting language="Java"><![CDATA[
+public class Client implements Cloneable
+{
+  ...
+ 
+  public Object clone()
+  {
+    // Produce a shallow copy of ourself
+    Client copy = (Client)super.clone();
+    
+    // Clone each relevant attribute
+    copy.account = (Account)account.clone();
+    
+    return copy;
+  }
+  
+  private Account acc;
+}  
+        ]]></programlisting>
+    </para>
+    <note>
+      <para>
+        The cloning behaviour for a given class can usually be derived
+        directly from the design of the class. If based on a UML design,
+        the nature of the relationships an owner has with its attributes
+        has a direct influence on cloning behaviour.
+      </para>
+    </note>
+  </section>
+  
+  <section>
+    <title>Why not copy constructors?</title>
+    <para>
+      Once a class has been made cloneable, all future subclasses are likely 
+      to have to override the <literal>clone</literal> method with their own 
+      cloning algorithm. <emphasis>The responsibility of making certain that the cloning is
+      supported correctly in the subclasses lies with the developers of
+      these subclasses.</emphasis> 
+      It is often pertinent to remind them of this fact in the documentation of your class.
+    </para>
+    <para>
+      You might wonder why not simply add a copy constructor (a constructor which takes
+      another instance of the class as argument) to your class. The problem is that
+      constructors are really class (static) methods which are not resolved polymorphically.
+      To see the problem, assume we have a <literal>Person</literal>
+      class with subclass <literal>Employee</literal>. The (minimally
+      relevant features of) classes could look like:
+      <programlisting language="Java"><![CDATA[
+public class Person
+{
+  public Person (String name) 
+  {
+    this.name = name;
+  }
+ 
+  /** Copy constructor */
+  public Person (Person anotherPerson)
+  {
+    this(anotherPerson.name);
+  }
+ 
+   private String name;
+}      ]]></programlisting>
+      <programlisting language="Java"><![CDATA[
+public class Employee extends Person
+{
+   public Employee (String name, double salary)
+   {
+     super(name);
+     this.salary = salary;
+   }
+ 
+   /** Copy constructor */
+   public Employee (Employee anotherEmployee)
+   {
+     this(anotherEmployee.name);
+   }
+ 
+   private double salary;
+}
+      ]]></programlisting>
+    </para>  
+    <para>
+      When we want to produce a copy of an object which we abstractly
+      know to be a Person (but which is, in fact, an Employee) we may
+      naïvely do the following:
+      <programlisting><![CDATA[
+Person person = new Employee("Raul Rossignoli", 9000.0);
+ 
+Person copyOfPerson = new Person(person);
+      ]]></programlisting>
+    </para>  
+    <para>
+      In the first line we create an employee and keep a <literal>Person</literal> 
+      reference to it. When we create a copy through our copy
+      constructor, we are creating an instance of a Person, which, though
+      having the same name as the original, <emphasis>is no longer
+      an employee</emphasis> (and has no salary). 
+    </para>
+    <para>
+      The <literal>clone()</literal> service, on the other hand, is an
+      instance service which is resolved polymorphically. We can thus
+      create correct clones of objects without even knowing what classes
+      they are instances of. For example:
+      <programlisting><![CDATA[
+Person person = new Employee("Raul Rossignoli", 9000.0);
+Person copyOfPerson = (Person)person.clone();
+      ]]></programlisting>
+    </para>  
+    <para>
+      In the second line we send the <literal>clone()</literal> message to the
+      object. The object knows it actually is an employee, and thus
+      executes the employee's <literal>clone()</literal> logic. The result is an 
+      Employee, even though we keep an abstract <literal>Person</literal> reference to it.
+    </para>
+  </section>
+  
+</section>

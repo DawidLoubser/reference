@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Load balancing</title>
+    
+    <para>
+        <indexterm><primary>load balancing</primary></indexterm>
+        Load balancing aims to spread load optimally across the available resources, typically in order
+        to achieve highest throughput.
+        <indexterm><primary>throughput</primary></indexterm>
+    </para>
+    <para>
+        <indexterm><primary>load balancing</primary><secondary>approaches</secondary></indexterm>
+        There are a number of load balancing approaches which can be followed. The core decision is to decide
+        who is responsible for making the decision on the service provider to be used to process a specific request.
+        This results in three types of load balancing
+        <itemizedlist>
+            <listitem><para>
+                client-driven load balancing,
+                <indexterm><primary>load balancing</primary><secondary>client-driven</secondary></indexterm>
+            </para></listitem>
+            <listitem><para>
+                controlled load balancing where the control is given to a separate load balancer, and
+                <indexterm><primary>load balancing</primary><secondary>controlled</secondary></indexterm>
+            </para></listitem>
+            <listitem><para>
+                service provider driven load balancing.
+                <indexterm><primary>load balancing</primary><secondary>service provider driven</secondary></indexterm>
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>Client-driven load balancing</title>
+        <para>
+            <indexterm><primary>load balancing</primary><secondary>client-driven</secondary></indexterm>
+            In the case of client driven load balancing, the clients themselves select a specific service provider
+            from a pool of service providers. For example, clients in a bank may themselves select a bank teller
+            from a cluster of bank tellers.
+        </para>
+        <para>
+            Client-driven load balancing works particularly well if the client can monitor either service provider
+            availability or the load/backlog which a service provider currently has. For example, clients in 
+            supermarket can themselves assess the load which each cashier has by looking at the queue and
+            the queue contents (<abbrev>e.g.</abbrev> whether there are large trollies in the queue).
+        </para>
+        <para>
+            In cases where a client cannot obtain any information on the load, the client may distribute its own
+            load evenly across the available service providers and hope that other service providers will do the
+            same.
+        </para>
+        <section>
+            <title>Advantages and disadvantages of client driven load balancing</title>
+            <para>
+                The advantage of client-driven load balancing lies mainly in its simplicity, <abbrev>i.e.</abbrev> 
+                that the infrastructure of the work product  does not have to have any omplexity around the
+                distribution of service requests across the service provider cluster. 
+            </para>
+            <para>
+                On the other hand, 
+                <itemizedlist>
+                    <listitem><para>
+                        it results in non-optimal load balancing if are not able to observe the load currently
+                        placed on the service providers,        
+                    </para></listitem>
+                    <listitem><para>
+                        may suffer from concurrency problems (another client may at the same time select the same
+                        service provider for their next request),
+                    </para></listitem>
+                    <listitem><para>
+                        duplication of the load balancing logic across clients,
+                    </para></listitem>
+                    <listitem><para>
+                        clients may need to have insider information about the service providers to make the best decision
+                        (<abbrev>e.g.</abbrev> one cashier may be new and require double the amount of time, and
+                        to process sales, or one machine in a cluster may be more powerful than other machines),
+                    </para></listitem>
+                    <listitem><para>
+                        client-driven load balancing is
+                        non-ideal under service provider failure (<abbrev>e.g.</abbrev> if the till of one cashier fails,
+                        all the clients in that cashier's queue need to distribute across the ends of the other queues
+                        resulting in non-fair performance plus re-scheduling overheads).
+                    </para></listitem>
+                </itemizedlist>
+            </para>
+        </section>    
+    </section>    
+    
+    <section>
+        <title>Controlled load balancing</title>
+        <para>
+            <indexterm><primary>load balancing</primary><secondary>controlled</secondary></indexterm>
+            In the case of controlled load balancing a separate object makes the decision on which service provider
+            should realize a particular service request. Such an object is called a load balancer.
+        </para>
+        <para>
+            The available service providers would typically have to register with the load balancer, informing the
+            load balancer of their availability. This may be through
+            <itemizedlist>
+                <listitem><para>
+                    the load balancer being able to observe
+                    service providers (<abbrev>e.g.</abbrev> through ping signals),                    
+                </para></listitem>
+                <listitem><para>
+                    through service providers actively sending messages to the service provider,
+                    informing them of their availability, or
+                </para></listitem>
+                <listitem><para>
+                    through service providers sending broadcast messages which are picked up by the
+                    load balancer.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Load balancer are often very simple in that some simple algorithm like round-robin is used to
+            distribute the work load across the service providers. 
+        </para>
+        
+        <section>
+            <title>Advantages and disadvantages of controlled load balancing</title>
+            <para>
+                The advantage of controlled load balancing is that the clients do not have to know anything about
+                the service providers available in the cluster. They have a single point of access -- the load balancer.
+            </para>
+            <para>
+                The disadvantages are mainly that
+                <itemizedlist>
+                    <listitem><para>
+                         the load balancing is often non-optimal, particularly in the context of simple load balancing
+                         algorithms where the load balancer has only minimal information about the resources, and
+                    </para></listitem>
+                    <listitem><para>
+                        that the load balancer may be a single point of failure.
+                    </para></listitem>
+                </itemizedlist>
+            </para>
+        </section>    
+    </section>    
+    
+    <section>
+        <title>Service provider driven load balancing</title>
+        <para>
+            <indexterm><primary>load balancing</primary><secondary>service provider driven</secondary></indexterm>
+            In the case of service provider driven load balancing the resources themselves retrieve work requests 
+            typically from a queue mechanism provided by the architecture.
+            <indexterm><primary>queue</primary></indexterm>
+        </para>
+        <para>
+            For example, a bank may have a single queue. As tellers reach a state where they have free processing power,
+            they request the next client from the queue in order to process that client's request(s).
+        </para>
+        
+        <section>
+            <title>Advantages and disadvantages of service provider driven load balancing</title>
+            <para>
+                In many ways this is often the simplest and most effective load balancing solution.
+                In particular,
+                <itemizedlist>
+                    <listitem><para>
+                        no infrastructure needs to be in place to inform either the clients or some load balancer
+                        about the state or load of ay particular service provider in the cluster, 
+                    </para></listitem>
+                    <listitem><para>
+                        the solution results typically in fair load balancing, even in the context of different service
+                        providers having very different processing power, and
+                    </para></listitem>
+                    <listitem><para>
+                        typically one can re-insert a client into the front of the queue when a service provider
+                        experiences failure (<abbrev>e.g.</abbrev> when a cashier finds out that there is 
+                        a problem with his or her till).
+                    </para></listitem>
+                </itemizedlist>
+            </para>
+            <para>
+                On the other hand, the queue itself may be a single point of failure, <abbrev>i.e.</abbrev>
+                if there is a problem with the queue itself, then all processing of requests suddenly stops.
+                In some cases one may want to address this issue and have redudency and replication
+                across queues.
+            </para>
+        </section>    
+    </section>    
+</section>    
+

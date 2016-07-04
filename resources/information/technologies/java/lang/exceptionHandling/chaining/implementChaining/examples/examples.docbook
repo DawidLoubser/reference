@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6312:section xmlns:ns6312="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.exceptionHandling.chaining.examples.examples">
+  <ns6313:title xmlns:ns6313="http://docbook.org/ns/docbook">Examples</ns6313:title>
+    <ns6314:para xmlns:ns6314="http://docbook.org/ns/docbook">
+        See the following example on how to create an exception chain. The throwable can contain a cause and ultimately 
+        provides a link in the exception chain. One way to encapsulate a cause would be in the Throwable constructor 
+        as demonstrated in the example.
+    <ns6315:programlisting xmlns:ns6315="http://docbook.org/ns/docbook"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="src/MyAppException.java"/></ns6315:programlisting>
+</ns6314:para>
+   <ns6316:para xmlns:ns6316="http://docbook.org/ns/docbook">Another method to associate a cause with a Throwable is to call the initCause method on an existing Throwable 
+       object's reference and to pass a reference to another Throwable object as a parameter. The latter would typically 
+       be implemented on legacy code. When using the custom exception, a specific low level message is passed to the 
+       new Exception class. To use the custom exception, catch a Throwable class instead of Exception. By catching 
+       Throwable, unchecked exceptions will also be caught. See how the custom exception is used in the example below.
+       <ns6317:programlisting xmlns:ns6317="http://docbook.org/ns/docbook"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="src/UseMyAppException.java"/></ns6317:programlisting>
+   </ns6316:para>
+    <ns6318:para xmlns:ns6318="http://docbook.org/ns/docbook">
+        On executing this example the following is displayed:
+        <ns6319:programlisting xmlns:ns6319="http://docbook.org/ns/docbook">
+za.co.solmstcd.chaining.MyAppException: Failed to read the database file: myDB.db
+at za.co.solmstcd.chaining.UseMyAppException.getDB(UseMyAppException.java:21)
+at za.co.solmstcd.chaining.UseMyAppException.main(UseMyAppException.java:42)
+Caused by: java.io.FileNotFoundException: myDB.db (No such file or directory)
+at java.io.FileInputStream.open(Native Method)
+at java.io.FileInputStream.&lt;init&gt;(FileInputStream.java:106)
+    at java.io.FileInputStream.&lt;init&gt;(FileInputStream.java:66)
+        at java.io.FileReader.&lt;init&gt;(FileReader.java:41)
+            at za.co.solmstcd.chaining.UseMyAppException.getDB(UseMyAppException.java:16)
+            ... 1 more            
+        </ns6319:programlisting>
+</ns6318:para>
+    </ns6312:section>

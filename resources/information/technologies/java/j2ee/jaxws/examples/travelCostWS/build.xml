@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="travelCostWS" default="all" basedir=".">
+    <property name="servicename" value="${ant.project.name}.jar"/>
+    <property file="./app-server.properties"/>
+    <property name="domain" value="domain1"/>
+    <property name="distdir" value="./dist"/>
+    <property name="autodeploydir" value="${javaee.home}/domains/${domain}/autodeploy"/>
+    <property name="classesdir" value="./build"/>
+
+    <path id="classpath">
+        <pathelement location="./shelf/javaee5.jar"/>
+        <pathelement location="${classesdir}"/>
+    </path>
+    
+    <target name="all" depends="run-client">
+		<antcall target="restore"/>
+	</target>
+
+
+    <target name="init">
+        <condition property="windows">
+            <os family="windows" /> 
+        </condition>
+        <condition property="unix">
+            <os family="unix" /> 
+        </condition>
+    </target>
+
+    <target name="compile-service" depends="init">
+        <echo message="compiling service ..."/>
+        <mkdir dir="${classesdir}"/>
+        <echo message="${javaee.home}"/>
+        <javac 
+            srcdir="./src" 
+            includes="**"
+            destdir="${classesdir}"
+            classpath="./shelf/javaee5.jar"
+        />
+    </target>
+    
+    <target name="jar-service" depends="compile-service">
+      <mkdir dir="${distdir}"/>  
+      <delete file="${distdir}/${servicename}"/>  	
+      <zip zipfile="${distdir}/${servicename}"> 
+        <zipfileset dir="${classesdir}" 
+          includes="**/*.class"/>
+      </zip>
+    </target>
+    
+    <target name="deploy-service" depends="jar-service">
+      <copy file="${distdir}/${servicename}" 
+        todir="${autodeploydir}" />
+    </target>    
+
+    <target name="get-artifacts" depends="deploy-service,get-artifacts-windows,get-artifacts-unix"/>
+
+    <target name="get-artifacts-windows" if="windows">
+        <exec executable="${javaee.home}/bin/wsimport.bat">
+            <arg line="-keep -d ${classesdir} http://${javaee.server.name}:${javaee.server.port}/TravelCost/TravelCostService?WSDL"/>
+        </exec>
+    </target>
+    <target name="get-artifacts-unix" if="unix">
+        <exec executable="${javaee.home}/bin/wsimport">
+            <arg line="-keep -d ${classesdir} http://${javaee.server.name}:${javaee.server.port}/TravelCost/TravelCostService?WSDL"/>
+        </exec>
+    </target>
+
+    <target name="compile-client" depends="get-artifacts">
+        <javac srcdir="./src/client" destdir="${classesdir}">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+    
+    <target name="clean">
+	<delete dir="${classesdir}"/>
+	<delete dir="${distdir}"/>
+    </target>
+
+    <target name="run-client" depends="compile-client,run-client-windows,run-client-unix"/>
+
+    <target name="run-client-windows" if="windows">
+		<exec executable="${javaee.home}/bin/appclient.bat" dir="${classesdir}">
+			<arg value="client.Client"/>    
+		</exec>    
+    </target>
+
+    <target name="run-client-unix" if="unix"> 
+		<exec executable="${javaee.home}/bin/appclient" dir="${classesdir}" failifexecutionfails="false">
+			<arg value="client.Client"/>    
+		</exec>    
+    </target>
+
+	<target name="restore">
+		<delete>
+		    <fileset dir="${autodeploydir}/endpoint" includes="TravelCost*.*"/>
+		</delete>
+	</target>
+
+
+</project>

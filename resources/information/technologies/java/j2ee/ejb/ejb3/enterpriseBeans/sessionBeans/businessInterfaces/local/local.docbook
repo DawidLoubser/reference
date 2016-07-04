@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.businessInterfaces.local.local">
+	  <title>Local interfaces</title>
+	  <para>
+		A local interface provides access to an enterprise bean from within the same
+		run-time environment in which the bean itself is deployed. This enables
+		local clients like other enterprise beans and servlets deployed within a
+		servlet container running in the run-time environment of the application
+		server to obtain efficient access to the bean instance, bypassing the
+		marshaling of the request onto an IIOP message.
+	</para>
+	
+	  <section>
+		    <title>Defining a local interface</title>
+		    <para>
+			As with remote interfaces, there are two ways of indicating that a particular
+			interface should be used in the role of local interface.
+			The first is to classify the interface itself with the
+			<literal>@Local</literal> EJB annotation. For example
+	    	<programlisting language="Java">
+import javax.ejb.*;
+
+@Local 
+public interface ShippingRequestProcessor
+{
+  public TrackingNumber ship(Order order);
+}
+				</programlisting>
+		    </para>
+		    <para>
+			The second is to leave the interface unclassified, and classify the role the 
+			interface plays to the bean within the bean itself, using the <literal>Local</literal>
+			annotation:
+	    	<programlisting language="Java">
+import javax.ejb.*;
+
+@Stateless
+@Local({ShippingRequestProcessor.class}) 
+public class ShippingBean implements ShippingRequestProcessor
+{
+  public TrackingNumber ship(Order order)
+  {
+    //...
+  }
+}
+				</programlisting>
+		    </para>
+	  </section>
+	
+	  <section>
+		    <title>Access path when using a local interface</title>
+		    <para>
+			Service requests provided via the local interface still need to be
+			intercepted by the server-generated EJBObject, in order to still apply 
+			enterprise services. However, the service request messages
+			need no longer be marshaled onto the RMI/IIOP protocol:
+			<orderedlist>
+				        <listitem>
+               <para>
+					Using JNDI, Local clients will obtain a direct reference to the EJBObject 
+					for your bean.
+				</para>
+            </listitem>
+				        <listitem>
+               <para>
+          The <literal>EJBObject</literal>	provides the interception layer which
+					<itemizedlist>
+						               <listitem>
+                        <para>
+							associates a physical bean instance with the conceptual user object,
+						</para>
+                     </listitem>
+						               <listitem>
+                        <para>
+							applies enterprise services like security and transaction (<abbrev>e.g.</abbrev>
+							checking whether the user has the security roles required to access the
+							requested service, starting a transaction and enlisting resources within
+							that transaction, ...)
+						</para>
+                     </listitem>
+						               <listitem>
+                        <para>
+							delegates the business logic responsibilities to the bean instance, and
+						</para>
+                     </listitem>
+						               <listitem>
+                        <para>
+							applies further enterprise services upon completion (<abbrev>e.g.</abbrev>
+							commit a transaction on successful completion or roll it back otherwise).
+						</para>
+                     </listitem>
+					             </itemizedlist>
+				           </para>
+            </listitem>
+				        <listitem>
+               <para>
+					The client receives the response, if any, directly from the <literal>EJBObject</literal>.
+				</para>
+            </listitem>
+			      </orderedlist>
+		    </para>
+	  	
+		    <note><para>
+			Bypassing the stub and skeleton and the message marshalling/demarshalling
+			they perform will typically result in a significant performance benefit
+			within the application server - for example accessing the beans from a
+			local web application.
+		</para></note>
+	  </section>
+	
+</section>

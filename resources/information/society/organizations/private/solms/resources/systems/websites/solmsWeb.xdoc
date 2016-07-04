@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author Dawid Loubser -->
+<!-- TODO: This document should ideally just contain business-relevant information, 
+and technical / build information should be contained within the website project itself 
+rather. The project, however, is not in 'solmsRoot' at time of writing, so it's convenient
+to place all relevant info here. -->
+
+<section xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      id="resources.information.solms.resources.systems.websites.solmsWeb">
+    
+    <title>SolmsWeb (Website)</title>
+    
+    <para>
+        The primary website of <emphasis>Solms TCD</emphasis> (<literal>http://www.solms.co.za/</literal>)
+        is a J2EE web application packaged as <literal>SolmsWeb.war</literal>. The apache web server
+        on the server is configured to forward the root context "<literal>/</literal>" to Tomcat's
+        <literal>/SolmsWeb</literal> context.
+    </para>
+    
+    <note>
+        <para>
+            If you think our website sucks, you are not alone. The complex rendering and deployment process is a
+            result of our innovative idea of automatically rendering the website from XML, but we've never got
+            around to make the process friendly. This feature is expected sometime soon.
+        </para>
+    </note>
+    
+    <section>
+        <title>Structure</title>
+        <para>
+            The web application is comprised of three logical parts:
+            <orderedlist>
+                <listitem>
+                    <formalpara>
+                        <title>Web application elements</title>
+                        <para>
+                            Java Server Pages, Classes, Images and static <quote>application</quote>
+                            pages that are hand-coded. These are present in the <literal>SolmsWebsite/SolmsWeb</literal>
+                            directory of the <literal>Development</literal> CVS module. These elements realizes the
+                            online booking, administration and downloads functionality.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Automatically rendered information pages</title>
+                        <para>
+                            The core content of the website is written in <emphasis>SolmsDoc</emphasis> XML.
+                            These are specified in the <literal>projects/solms/marketing/web/stcd</literal> directory of the <literal>solmsRoot</literal>
+                            CVS module, and reference various other knowledge components in the repository. This information is rendered
+                            to <literal>HTML</literal> pages (using their <literal>id</literal> as page name) and copied to the 
+                            <literal>content</literal> directory of the web application in development (automatically).
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Downloads</title>
+                        <para>
+                            Several files, mostly PDFs of course documentation, are downloadable on the website.
+                            These files are placed in the <literal>/opt/solms/downloads</literal> directory (specified
+                            by the <literal>DownloadDir</literal> init parameter in the web app's deployment descriptor) 
+                            on the server, and automatically displayed. Downloads are recorded for statistical purposes.
+                        </para>
+                    </formalpara>
+                </listitem>
+            </orderedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Building the website</title>
+        
+        <section>
+            <title>Prerequisites</title>
+            <para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            Unix (duh). The build process is partially dependent on shell scripting, so unless
+                            you want to run <literal>CYGWIN</literal>, please - use unix. It's the right thing
+                            to do.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>Both <literal>solmsRoot</literal> and <literal>Development</literal> CVS modules
+                        must be checked out to the same local directory</para>
+                    </listitem>
+                    <listitem>
+                        <para>Apache Ant</para>
+                    </listitem>
+                    <listitem>
+                        <para>Xalan XSLT Processor. Specifically, the class <literal>org.apache.xalan.xslt.Process</literal>
+                        must be available on the default classpath.</para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+        </section>
+        
+        <section>
+            <title>Rendering the content</title>
+            <para>
+                In the directory <literal>solmsRoot/projects/solms/marketing/web/stcd</literal>, run the
+                <literal>generateWebsite.sh</literal> script (make sure it's executable). It should generate content
+                in the <literal>content</literal> directory, as well as automatically copy the content to 
+                <literal>Development/SolmsWebsite/SolmsWeb/content</literal>.
+            </para>
+            <para>
+                <emphasis>IMPORTANT:</emphasis> Once the content is rendered, it must be manually ensured that all other content referenced by this content,
+                such as <emphasis>images</emphasis>, are manually copied to <literal>Development/SolmsWebsite/SolmsWeb/images/</literal>.
+            </para>
+        </section>
+        
+        <section>
+            <title>Building and deploying the web application</title>
+            <para>
+                In the web applications root directory (<literal>Development/SolmsWebsite/SolmsWeb</literal>) run
+                <programlisting><![CDATA[
+ant package
+                ]]></programlisting>
+                to compile and assemble the web application to <literal>../SolmsWeb.war</literal>
+            </para>
+            <para>
+                Before deploying, backup the current deployed WAR on the server. Then, deploy the generated WAR to:
+                <programlisting><![CDATA[
+/opt/jboss/server/default/deploy
+                ]]></programlisting>
+                The server will automatically detect an updated file, and deploy the web application. If this is not the case,
+                which usually happens of the file takes a long time to upload over a slow network connection, <literal>touch</literal>
+                the file to update it's date and time. This is done as follows:
+                <programlisting><![CDATA[
+touch /opt/jboss/server/default/deploy/SolmsWeb.war
+                ]]></programlisting>
+            </para>
+        </section>        
+    </section>
+    
+</section>

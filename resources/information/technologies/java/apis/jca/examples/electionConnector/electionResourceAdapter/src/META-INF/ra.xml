@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<connector xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+  http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd" version="1.5">
+  <description>A JCA 1.5 complient socket adaptor</description>
+  <display-name>
+    Election Server Adaptor
+  </display-name>
+  <vendor-name>
+    Solms Training, Consulting &amp; Development
+  </vendor-name>
+  <eis-type>
+    Proprietary Text/TCP/IP<
+    /eis-type>
+  <resourceadapter-version>
+    1.0
+  </resourceadapter-version>
+  <resourceadapter>
+    <resourceadapter-class> 
+      za.co.solms.election.connector.ElectionServerAdaptor 
+    </resourceadapter-class>
+    <outbound-resourceadapter>
+      <connection-definition>
+        <managedconnectionfactory-class>
+      za.co.solms.election.connector.ManagedElectionServerConnectionFactory 
+        </managedconnectionfactory-class>
+        <config-property>
+          <description>
+            The name of the machine hosting the election server
+          </description>
+          <config-property-name>hostName</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>localhost</config-property-value>
+        </config-property>
+        <config-property>
+          <description>
+            The through which the election server is accessed
+          </description>
+          <config-property-name>port</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>12345</config-property-value>
+        </config-property>
+        <connectionfactory-interface> 
+          za.co.solms.election.connector.ElectionServerConnectionFactory 
+        </connectionfactory-interface>
+        <connectionfactory-impl-class>
+          za.co.solms.election.connector.ElectionServerConnectionFactoryImpl 
+        </connectionfactory-impl-class>
+        <connection-interface> 
+          za.co.solms.election.connector.ElectionServerConnection 
+        </connection-interface>
+        <connection-impl-class> 
+          za.co.solms.election.connector.ElectionServerConnectionImpl
+        </connection-impl-class>
+      </connection-definition>
+      <transaction-support>NoTransaction</transaction-support>
+      <authentication-mechanism>
+        <authentication-mechanism-type>
+          BasicPassword
+        </authentication-mechanism-type>
+        <credential-interface>
+          javax.resource.spi.security.PasswordCredential
+        </credential-interface>
+      </authentication-mechanism>
+      <reauthentication-support>true</reauthentication-support>
+    </outbound-resourceadapter>
+  </resourceadapter>
+</connector>

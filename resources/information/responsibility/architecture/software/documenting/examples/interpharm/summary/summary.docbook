@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2007-07-01 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Summary of new architecture</title>
+    <para>
+        The core thrust of the new architecture is an overall simplification resulting in
+        the following architectural elements:
+        <itemizedlist>
+            <listitem><para>
+                The different software layers were deployed onto the same hardware layer, removing
+                the XML-based intra-layer communication.
+            </para></listitem>
+            <listitem><para>
+                The local databases and the synchronization process between them was replaced by
+                2 synchronized Postgres database servers accessed via a fail-over safe JCA
+                database connector provided by JBoss.
+            </para></listitem>
+            <listitem><para>
+                The request processing workflows where realized within EJB-3 session beans deployed on
+                the JBoss J2EE application server.
+            </para></listitem>
+            <listitem><para>
+                Persistent objects where realized through EJB-3 entity beans using hibernate as
+                light-weight persistence mechanism.
+            </para></listitem>
+            <listitem><para>
+                Integration to the medical aid administrators was done using JCA adapters. This allows
+                for good responsibility allocation and enables the application server to optimize
+                the connection pool.
+                <note><para>
+                    The idea behind application servers is that they should manage  all resources
+                    including CPU resources (threads), memory resources (object pools) and connection
+                    resources.
+                </para></note>
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        The overall simplification should improve maintainability and reliability. Furthermore, the
+        architecture is based on standard technologies, using standard, proven open source solutions.
+        We expect that it should be easier to get new developers up to speed within the standard J2EE based
+        architecture than what it would have been in the considerably more complex home-grown
+        architecture and tools.
+    </para>
+    
+    <note><para>
+        Even though the architecture was completely changed and even though some of the
+        realization technologies were changed (using an application server and removing internal XML based
+        communication and persistence), the design realizing the use cases was not touched. The
+        internal objects were the same, the responsibilities they addressed and the algorithms they
+        used to realize the functional requirements remained unchanged throughout the project.
+    </para></note>
+</section>

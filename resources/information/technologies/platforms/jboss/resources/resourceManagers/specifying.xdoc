@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.platforms.jboss.resources.resourceManagers.specifying"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Resource Managers</title>
+  <para>
+    Resource managers manage external resources like databases, mail servers, and other
+    resources (via the connector API, for example). A resource manager is a component of a J2EE
+    container which is responsible for connection pooling, transaction support and communication
+    with the external resource.
+  </para>
+  <para>
+    A very commonly used resource manager is  
+    <literal>javax.sql.DataSource</literal> which manages connections to SQL
+    datasources, typically relational databases.
+  </para>
+  <para/>
+  <section>
+    <title>Specifying a resource manager in jboss.xml</title>
+    <para>
+      In the <literal>jboss.xml</literal> file we specify a mapping of the
+      logical name onto the resource name assigned to the JMX MBean for the resource (as
+      specified in the <literal>jboss.jcml</literal> configuration file).
+    </para>
+    <para>
+      We also assign a JNDI name for the resource connection factory:
+    </para>
+    <para>
+      In the resource-ref tag we map the logical name onto the resource name used within
+      JBoss (the name of the JMX MBean) in the resource-manager tag we provide a JNDI name under
+      which resource connection factory is registered with the naming service used by the
+      application server.
+<programlisting><![CDATA[
+<resource-managers>
+<resource-manager
+ res-class="org.jboss.jdbc.deployment.XADataSourceLoader">
+ <res-name>MySQLtestDS</res-name>
+ <res-jndi-name>java:/MySQLtestDS</res-jndi-name>
+</resource-manager>
+</resource-managers>
+]]></programlisting> 
+     <note><para>
+      Note that the J2EE naming convention is used for the JNDI name. When accessing that
+      resource from within a bean (e.g. a session bean or an entity bean using bean-managed
+      persistence) it would be resolved via
+<programlisting><![CDATA[
+javax.sql.DataSource dataSource
+= (javax.sql.DataSource)jndiContext.lookup
+   ("java:/comp/env/jdbc/mySQLDS");
+]]></programlisting>          
+      </para></note>
+    </para>  
+  </section>
+    </section>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>Implementing the Service</title>
+    
+    <indexterm>
+        <primary>JAX-WS</primary>
+        <secondary>service implementation</secondary>
+    </indexterm>
+    
+    <para>
+        To implement the service, we simply write a JavaBean class which implements the generated 
+        Service Endpoint Interface. The steps to follow are:
+        <itemizedlist>
+            <listitem>
+                <para>Write an implementation class</para>
+            </listitem>
+            <listitem>
+                <para>Add the required JAX-WS annotations to indicate that this is a web service, and what the
+                    service endpoint interface is.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>Writing a Service Implementation</title>
+        <para>
+            The skeleton of our service implementation could look as follows:
+        </para>
+        <programlisting language="Java"><![CDATA[
+package my.service;
+
+import za.co.example.unitconverter.SupportedUnitsRequest;
+import za.co.example.unitconverter.SupportedUnitsResponse;
+import za.co.example.unitconverter.UnitConversionRequest;
+import za.co.example.unitconverter.UnitConversionResponse;
+import za.co.example.unitconverter.soap.UnitConverter;
+import za.co.example.unitconverter.soap.UnsupportedUnit;
+
+/** A simple implementation of the Unit Converter */
+public class UnitConverterImpl implements UnitConverter
+{
+	public UnitConversionResponse convert(UnitConversionRequest body)
+	throws UnsupportedUnit
+	{
+		...
+	}
+	
+	public SupportedUnitsResponse getSupportedUnits(SupportedUnitsRequest body)
+	{
+		...
+	}
+}
+
+]]></programlisting>
+        
+        <section>
+            <title>Requirements for Service Implementation classes</title>
+            <para>
+                Service implementation must be annotated with the <literal>@javax.jws.WebService</literal>
+                annotation. Via this annotation, we also typically defer any further metadata queries to the
+                Endpoint Interface, so that we do not have to re-specify all the annotations controlling
+                the service and parameters mapping to XML/SOAP.
+            </para>
+            <para>
+                Service implementations must be written in a <emphasis>stateless</emphasis> manner.
+                Web Services are by definition stateless (conversational state is not maintained across
+                service requests, i.e. each exchanged message must contain the full required information).
+                This means that we should not use instance variables to keep track of / control the work flow
+                of a particular client, as multiple clients may request the same services, even concurrently.
+            </para>
+            <para>
+                If we wish to host a stand-alone service in Java SE, the implementation must also be thread-safe,
+                i.e. service must be able to handle multiple concurrent invocations. This is not a requirement for
+                services published via an EJB container, thus another compelling reason for their use.
+            </para>
+        </section>
+        
+        <section>
+            <title>Full Implementation</title>
+            <para>
+                A simplistic but working implementation of our Unit Converter (which only supports Distances for now)
+                could look as follows:
+                <programlisting language="Java">
+<xi:include href="project/source/my/service/UnitConverterImpl.java" parse="text"/>
+                </programlisting>
+            </para>
+            <note>
+                <para>
+                    Though it is non-trivial to build a generic, multi-type unit converter as in the example above, it
+                    is clear that this implementation focuses only on the business logic, with not a line of XML processing
+                    code in sight.
+                </para>
+            </note>
+        </section>
+        
+        <section>
+            <title>Testing a JAX-WS Service</title>
+            <indexterm>
+                <primary>JAX-WS</primary>
+                <secondary>testing</secondary>
+                <tertiary>service implementation</tertiary>
+            </indexterm>
+            
+            <para>
+                Because our service implementation is just a JavaBean, we can use existing testing frameworks
+                (such as JUnit) to test our business logic. Remember, we should not be testing whether the
+                JAX-WS framework is doing its job (i.e. web services protocol mapping) - that will have its
+                own tests maintained by the JAX-WS developers.
+            </para>
+            <indexterm>
+                <primary>JUnit</primary>
+            </indexterm>
+            <para>
+                For example, an incomplete test of our unit converter could look as follows:
+                <programlisting language="Java">
+<xi:include href="project/source/my/service/tests/UnitConverterTest.java" parse="text"/>
+                </programlisting>
+            </para>
+        </section>
+        
+    </section>
+    
+    
+</section>

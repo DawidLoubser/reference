@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Distribution Information</title>
+    <para>
+        One can include distribution information in the <literal>distributionManagement</literal>
+        section of the project's object mode. This provides information
+        which is typically used for deployment or to make the resultant artifact available for other projects.
+        In addition one can specify the URL which should be used by other projects when downloading
+        the deployed artifact. This is done in the <literal>downloadURL</literal> element.
+        Maven itself adds a <emphasis>status</emphasis> element which specifies the status of the 
+        distribution.
+    </para>
+    
+    <section>
+        <title>Specifying distribution Info</title>
+        <para>
+            The distribution information contains an id, name and url of the distribution repositories for the project's
+            artifacts as well as a flag whether unique versions should be created by adding a time stamp to the file
+            names. The distibution management section allows for a main and a snapshot repository.
+        </para>
+        <para>
+        For example, 
+        <programlisting><![CDATA[
+        <project xmlns="http://maven.apache.org/POM/4.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
+          ...
+          <distributionManagement>
+            <repository>
+              <uniqueVersion>false</uniqueVersion>
+              <id>solmsMain</id>
+              <name>Solms Main Repository</name>
+              <url>scp://solms.co.za/repository/main</url>
+              <layout>default</layout>
+            </repository>
+            <snapshotRepository>
+              <uniqueVersion>true</uniqueVersion>
+              <id>solmsDev</id>
+              <name>Solms Development Repository</name>
+              <url>sftp://propellers.net/maven</url>
+              <layout>default</layout>
+            </snapshotRepository>
+            ...
+          </distributionManagement>
+          ...
+        </project>
+        ]]></programlisting>
+        specifies a main and a development repository. The development repository adds time stamp information to the artifact 
+        names in order to ensure unique versions.
+        </para>
+    </section>
+    <section>
+        <title>Specifying login credentials</title>
+        <para>
+            Obviously one should not distribute the server login credentials (username, password, path to private key, ...)
+            with the POM. These should remain on the build server and are specified in the <literal>settings.xml</literal>
+            file:
+            <programlisting><![CDATA[
+    <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+        http://maven.apache.org/xsd/settings-1.0.0.xsd">
+        ...
+        <servers>
+            <server>
+                <id>solms.co.za</id>
+                <username>myUserName</username>
+                <password>myPassword</password>
+                <privateKey>${user.home}/.ssh/id_dsa</privateKey>
+                <passphrase>myPassphrase</passphrase>
+                <filePermissions>664</filePermissions>
+                <directoryPermissions>775</directoryPermissions>
+            </server>
+        </servers>
+        ...
+    </settings>
+                ]]></programlisting>
+            The permissions are used when creating new files and directories, i.e. these are the permissions
+            to be used for any new files.
+        </para>
+     </section>   
+</section>    

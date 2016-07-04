@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">  
+    <title>Using Expressions</title>
+    <para>
+        The value of an expression in static text is computed and inserted into the current 
+        output. There are three ways to set a tag attribute value:
+        <itemizedlist>
+            <listitem>
+                <para>
+                    With a single expression construct:
+                    <programlisting><![CDATA[
+<some:tag value="${expr}"/>
+                    ]]></programlisting>
+                    The expression is evaluated and the result is coerced to the attribute’s 
+                    expected type. 
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    With one or more expressions separated or surrounded by text: 
+                    <programlisting><![CDATA[
+<some:tag value="some${expr}${expr}text${expr}"/>
+                    ]]></programlisting>
+                    The expressions are evaluated from left to right. Each expression is 
+                    coerced to a String and then concatenated with any intervening text. The 
+                    resulting String is then coerced to the attribute’s expected type.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    With text only: 
+                    <programlisting><![CDATA[
+<some:tag value="sometext"/>
+                        ]]></programlisting>
+                    In this case, the attribute’s String value is coerced to the attribute’s 
+                    expected type.
+                </para>
+            </listitem>
+        </itemizedlist>
+        
+        Expressions used to set attribute values are evaluated in the context of an 
+        expected type. If the result of the expression evaluation does not match the 
+        expected type exactly, a type conversion will be performed.
+    </para>
+    
+    
+    <section>
+        <title>Variables</title>
+        <para> 
+            The web container evaluates a variable that appears in an expression by looking 
+            up its value according to the behaviour defined by <literal>PageContext.findAttribute(String)</literal>. 
+            For example, when evaluating the expression <literal>${product}</literal>, the container 
+            will look for product in the <emphasis>page</emphasis>, <emphasis>request</emphasis>, <emphasis>session</emphasis>, 
+            and <emphasis>application</emphasis> scopes and will return its value. 
+        </para>
+        <para>
+            If product is not found, <literal>null</literal> is returned. A 
+            variable that matches one of the <emphasis>implicit objects</emphasis> 
+            will return that implicit object instead of the variable’s value. 
+            Properties of variables are accessed using the <literal>.</literal> operator and can be nested 
+            arbitrarily.
+        </para>
+        <para>
+            The JSP expression language unifies the treatment of the <literal>.</literal> and <literal>[]</literal> operators. 
+            <literal>exprA.exprB</literal> is equivalent to <literal>exprA["exprB"]</literal>; that is, the expression 
+            <literal>exprB</literal> is used to construct a literal whose value is the identifier, and then the <literal>[]</literal> operator 
+            is used with that value. 
+            To evaluate <literal>exprA[exprB]</literal>, evaluate <literal>exprA</literal> into <literal>valueA</literal> and evaluate 
+            <literal>exprB</literal> into <literal>valueB</literal>. If either <literal>valueA</literal> or <literal>valueB</literal> is <literal>null</literal>, return <literal>null</literal>.
+            <itemizedlist>
+                <listitem>
+                    <para>If <literal>valueA</literal> is a <literal>Map</literal>, return <literal>valueA.get(valueB)</literal>. 
+                        If <literal>!valueA.containsKey(valueB)</literal>, then return <emphasis>null</emphasis>. </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        If <literal>valueA</literal> is a <literal>List</literal> or <emphasis>array</emphasis>, coerce <literal>valueB</literal> 
+                        to <literal>int</literal> and return <literal>valueA.get(valueB)</literal> or <literal>Array.get(valueA, valueB)</literal>, 
+                        as appropriate. If the coercion couldn’t be performed, an error is returned. If the get call returns an <literal>IndexOutOfBoundsException</literal>, 
+                        <emphasis>null</emphasis> is returned. If the get call returns another exception, an error is returned. 
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>If <literal>valueA</literal> is a JavaBeans object, coerce <literal>valueB</literal> to <literal>String</literal>. 
+                        If <literal>valueB</literal> 
+                        is a readable property of <literal>valueA</literal>, then return the result of a <literal>get</literal> call. If the 
+                        get method throws an exception, an error is returned.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Implicit Obejcts</title>
+        <para>
+            The JSP expression language defines a set of implicit objects:
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>pageContext</title>
+                        <para>The context for the JSP page. Provides access to various 
+                            objects including: 
+                        <itemizedlist>
+                            <listitem>
+                                <formalpara>
+                                    <title>servletContext</title>
+                                    <para>The context for the JSP page’s servlet and any web 
+                                        components contained in the same application.</para>
+                                </formalpara>
+                            </listitem>
+                            <listitem>
+                                <formalpara>
+                                    <title>session</title>
+                                    <para>The session object for the client.</para>
+                                </formalpara>
+                            </listitem>
+                            <listitem>
+                                <formalpara>
+                                    <title>request</title>
+                                    <para> The request triggering the execution of the JSP page.</para>
+                                </formalpara>
+                            </listitem><listitem>
+                                <formalpara>
+                                    <title>response</title>
+                                    <para>The response returned by the JSP page.</para>
+                                </formalpara>
+                            </listitem>
+                        </itemizedlist>
+                        </para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            In addition, several implicit objects are available that allow easy access to the 
+            following objects: 
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>param</title>
+                        <para>Maps a request parameter name to a single value.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>paramValues</title>
+                        <para>Maps a request parameter name to an array of values.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>header</title>
+                        <para>Maps an HTTP request header name to a single value.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>headerValues</title>
+                        <para>Maps a request header name to an array of values.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>cookie</title>
+                        <para>Maps a cookie name to a single cookie.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>initParam</title>
+                        <para>Maps a <emphasis>context initialization parameter</emphasis> name to a single value.</para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Finally, there are objects that allow access to the various scoped variables 
+            described:
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>pageScope</title>
+                        <para>Maps page-scoped variable names to their values.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>requestScope</title>
+                        <para>Maps request-scoped variable names to their values.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>sessionScope</title>
+                        <para>Maps session-scoped variable names to their values.</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>applicationScope</title>
+                        <para>Maps application-scoped (ServletContext-scoped) variable names to their values.</para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    
+</section>

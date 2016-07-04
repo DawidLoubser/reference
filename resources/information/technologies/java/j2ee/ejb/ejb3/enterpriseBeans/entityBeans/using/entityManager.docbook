@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.entityBeans.using.entityManager">
+  <title>The entity manager</title>
+  <para>
+    The responsibilities of
+    <itemizedlist>
+         <listitem>
+            <para>creating and removing persistent entities,</para>
+         </listitem>
+         <listitem>
+            <para>to find entities on their primary key, and</para>
+         </listitem>
+         <listitem>
+            <para>to perform queries across entities</para>
+         </listitem>
+      </itemizedlist>
+    is assigned to the entity manager (<literal>javax.persistence.EntityManager</literal>).
+  </para>
+  <para>
+    Entity managers can be injected into managed components (e.g. session beans) via the
+    <literal>@javax.persistence.PersistenceContext</literal> annotation. For example, below we have an
+    excerpt from an AccountDAO stateless session bean which would be used by
+    clients to create and access account entity beans:
+    <programlisting language="Java">
+@Stateless
+public class AccountServicesBean implements AccountServices
+{
+  @PersistenceContext
+  EntityManager entityManager;
+  ...
+}      
+      </programlisting>
+  </para>
+   <para>
+     This will inject a default persistence unit. One or more persistence units may be defined in the application configuration (in <literal>META-INF/persistence.xml</literal>
+     in an EJB module). These may be configured through various properties (such as to automatically create and destroy database tables), and are assigned a logical name.
+     The persistence context annotation may be provided with the name of the persistence unit to inject, such as:
+     <programlisting language="Java">
+@Stateless
+public class AccountServicesBean implements AccountServices
+{
+  @PersistenceContext(unitName="accountingDB")
+  EntityManager entityManager;
+  ...
+}      
+      </programlisting>
+   </para>
+  <section>
+      <title>Core services of the Entity Manager</title>
+      <para>
+      The entity manager is responsible for storing and retrieving your entities, and the
+      primary services it offer are:
+      <itemizedlist>
+            <listitem>
+               <formalpara>
+                  <title>persist(Object entity)</title>
+                  <para>Makes the given entity managed and persistent</para>
+               </formalpara>
+            </listitem>
+            <listitem>
+               <formalpara>
+                  <title>find(Class entityClass, Object primaryKey) : Object</title>
+                  <para>Finds the object of the given class with the given primary key</para>
+               </formalpara>
+            </listitem>
+            <listitem>
+               <formalpara>
+                  <title>merge(T entity) : T</title>
+                  <para>Merges the state (updates) the entity, and returns the updated entity. Responsible to automatically
+            find the correct entity based on primary key.</para>
+               </formalpara>
+            </listitem>
+            <listitem>
+               <formalpara>
+                  <title>remove(Object entity) : void</title>
+                  <para>Removes the given entity from persistent storage.</para>
+               </formalpara>
+            </listitem>
+            <listitem>
+               <formalpara>
+                  <title>createQuery(String qlString) : javax.persistence.Query</title>
+                  <para>Creates an instance of a query (using the Java Persistence Query Language / EJBQL) which can later be executed.
+                  Queries an be of type SELECT, UPDATE or DELETE</para>
+               </formalpara>
+            </listitem>
+         </itemizedlist>
+      </para>
+  </section>
+   
+   <section>
+      <title>Using the entity manager</title>
+      <para>
+         The services offered by the entity manager greatly simplify the persistence of
+         information. For example, a skeletal implementation of an account manager could look as follows:
+      </para>
+      <programlisting language="Java"><![CDATA[
+import javax.ejb.*;
+import javax.persistence.*;
+
+@Stateless
+public class AccountServicesBean implements AccountServices
+{
+   /** Opens a new account, and returns the account number */
+   public int createAccount( NewAccountRequest req )
+   throws IncorrectInformationException
+   {
+      // Check preconditions
+      //...
+      
+      // Create and store an account entity
+      Account account = /* create from request information */;
+      em.persist( account );
+      
+      // The account number was automatically generated
+      return account.getAccountNumber();
+   }
+   
+   
+   /** Closes the requested account */
+   public void closeAccount( int accountNo )
+   throws NoSuchAccountException, UnsettledDebtException
+   {
+      // Check preconditions
+      //...
+      
+      // Remove the account with the given account number
+      Account account = em.find( Account.class, accountNo );
+      em.remove( account );
+   }
+   
+   
+   /** Credits the indicated account (by account number) with 
+     * the indicated amount */
+   public void credit( int accountNo, double amount )
+   throws InvalidAmountException
+   {
+      Account account = em.find( Account.class, accountNo );
+      account.credit( amount );
+      
+      // No need to request a database update: When the transaction ends,
+      // the account's state is automatically updated in the database
+   }
+   
+   
+   // etc...
+   
+
+   @PersistenceContext
+   EntityManager em;
+}
+      ]]></programlisting>
+   </section>
+   
+   <section>
+      <title>Persistence configuration file</title>
+      <para>
+         An EJB module which makes use of the persistence API needs to contain a
+         file called <literal>persistence.xml</literal> in the <literal>META-INF</literal>
+         directory, which declares and/or configures any persistence units.
+      </para>
+      <para>
+         For example, the following file identifies a persistence unit (the name is only
+         important if multiple units are to be distinguished from one another) and leaves
+         all setting to the defaults:
+         <programlisting language="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+    
+    <persistence-unit name="myUnit"/>
+  
+</persistence>
+            ]]></programlisting>
+      </para>
+      <para>
+         This file may contain settings, such as instructing the entity manager to
+         automatically create and/or drop tables as the app is deployed / undeployed.
+         Not that these properties are specific to each ORM implementation (Glassfish's
+         Toplink, in this case):
+         <programlisting language="XML"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+    
+    <persistence-unit name="myUnit">
+       <properties>
+            <property name="toplink.ddl-generation" value="drop-and-create-tables"/> 
+        </properties>
+    </persistence-unit>
+  
+</persistence>
+            ]]></programlisting>
+      </para>
+   </section>
+  
+</section>

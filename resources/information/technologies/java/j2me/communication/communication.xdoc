@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE chapter SYSTEM "file:/opt/share/xml/Oxygen/samples/docbook/xml/docbookx.dtd">
+-->
+<chapter id="resources.information.technologies.java.j2me.communication.communication"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>MIDP Communication</title>
+
+  <section><title>Introduction</title>
+    <para>
+      While J2SE and J2EE support a wide range of protocols, J2ME supports only HTTP.
+      Note, however, that the J2ME specification does not specify which transport layer
+      or network layer is used underneath the HTTP protocol.
+    </para>
+    
+    <section><title>J2ME's Generic Connection Framework (GCF)</title>
+      <para>
+        MIDP implementation do thus not have access to the standard Java networking
+        classes, since these are too heavyweight for small devices. Instead, CLDC
+        specifies a new connection framework called the <emphasis>Generic
+        Connection Framework</emphasis> (GCF). The design of the GCF is shown in
+        <!--xref linkend=""/-->
+      </para>
+      
+        <figure  id="figGenericConnectionFramework">
+          <title>The design of the Generic Connection Framework (GCF).</title>
+          <graphic align="center" format="JPEG"  
+            fileref="file:/home/solms/Documents/courses/J2ME/book/communication/GenericConnectionFramework.jpg"/>
+        </figure>
+    </section>
+  </section>
+    
+<!-- ================================================================== -->
+  
+  <section><title>Connections</title>
+    <para>
+      Note that the only class in the GCF is <classname>Connector</classname>
+      which represents a factory class for connections. It supplies only 
+      class services -- hence the services have been specified
+      in the <type>MetaClass</type>.
+    </para>
+    
+    <para>
+      All other elements of the GCF are interfaces -- the implementation classes
+      are completely hidden from J2ME developers.
+    </para>
+    
+    <section><title>Uniform Resource Identifiers</title>
+      <para>
+        To make a connection one typically identifies the resource one wants to connect
+        to via a URI, a <emphasis>Uniform Resource Identifier</emphasis>.
+        URIs represent the standard way of referring to resources
+        available on the web. The most widely used format is
+        <programlisting>
+protocol://user@host:port/resource        
+        </programlisting>
+      </para>
+      <para>
+        Some examples are
+        <programlisting>
+http://www.weirdproducts.com/index.html
+
+https://www.weirdproducts.com/index.html
+
+ssh://fritz@192.168.1.1:22
+
+datagram://www.javagroups.org:7887
+        </programlisting>
+      </para>
+    </section>
+    
+    <section><title>Opening Connections</title>
+      <para>
+        One opens a connection by requesting a connections from the connector,
+        supplying the URI of the resource one wants to connect to:
+        <programlisting>
+String uri = "http://www.SolmsTraining.co.za";          
+          
+HttpConnection connection = (HttpConnection)Connector.getConnection(uri);        
+
+//Making a secure connection
+
+String uri = "https://www.SolmsTraining.co.za";          
+          
+HttpsConnection connection = (HttpsConnection)Connector.getConnection(uri);        
+
+        </programlisting>
+      </para>
+    </section>
+    
+  </section>
+    
+<!-- ================================================================== -->
+ 
+  <section>
+    <title>HTTP Communication</title>
+    <para>
+      MIDP implementors are only required to support the HTTP protocol. Hence,
+      most of your connected MIDP applications will talk HTTP. HTTPS supports 
+			has been included in the MIDP specifications since 1.0, but was not required. 
+			In the MIDP2 specifications it has become mandatory. 
+    </para>
+    
+    <para>
+      HTTP is a text-based protocol. As such it has the advantage that one typically
+      is not exposed to firewall issues - there is typically no need to implement
+      HTTP tunneling if one uses HTTP.
+    </para>
+    <para>
+      Furthermore, one can put higher-level protocols like XML
+      or even SOAP on-top of HTTP and it can be expected that perhaps most of the
+      mobile-device integration will move to SOAP/XML/HTTP.
+    </para>
+    
+    <section><title>The HTTP Request-Response Cycle</title>
+      <para>
+        HTTP is an assymetric, clean client server scenario where the side which
+        accepts connections is the server side, while the side which opens
+        connections is the client side.
+      </para>
+    </section>
+    
+    <section><title>A typical HTTP request</title>
+    
+    <para>
+      MIDP 1.0 implements only a subset including only the following HTTP requests:
+      <itemizedlist>
+        <listitem><para>
+          <emphasis>GET:</emphasis> the default HTTP request. It is used to request 
+          information in a idempotent way, i.e. it has no lasting effect on the state
+          of the resource from which you are obtaining the information.
+        </para></listitem>
+        <listitem><para>
+          <emphasis>POST:</emphasis> This is a request for a service or for information
+          which may result in a lasting state transition on the server side. For example,
+          if you want to update a database record you wuld use post.
+        </para></listitem>
+        <listitem><para>
+          <emphasis>HEAD:</emphasis> is used for testing purposes to see if a response
+          with a header but without information is obtained.
+        </para></listitem>
+      </itemizedlist>
+    </para>  
+    
+    <para>
+      An example HTTP request is shown below:
+      <programlisting>
+GET /Training/Program/Schedule.xml HTTP/1.1
+User-Agent:Profile/MIDP-1.0 Configuration/CLDC-1.0
+Accept:text/xml
+Host:lab1.SolmsTraining.co.za
+Content-length:0
+Content-Language:en-ZA
+   ...
+   content body
+   ...
+      </programlisting>
+    </para>
+    
+    </section>
+    
+    <section><title>A typical HTTP response</title>
+      
+      <para>
+        A typical HTTP response is shown below:
+        <programlisting><![CDATA[
+HTTP/1.1 200 OK
+server:JBoss 3.0.6
+Content-Length:437
+Content-type:text/xml
+Connection:Keep-Alive
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.2 U (http://www.xmlspy.com) by Fritz Solms (Solms Training & Consulting CC) -->
+<?xml-stylesheet type="text/xsl" href="TrainingRegister.xslt"?>
+<schedule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                 xsi:noNamespaceSchemaLocation="Schedule.xsd">
+  <courseGroup>
+    <title>Day Courses</title>
+    <description>  Course fees include VAT, lecture notes in the form of a bound book, a CD with
+  all required Software, practicals, lunches and an optional exam.</description>
+    <hours>8:30-16:30</hours>
+    <course>
+      <name>Business Analysis using UML</name>
+      <dates>6/5 - 9/5/2003</dates>
+      <fee>4600</fee>
+      <url>../Courses/BusinessAnalysis/BusinessAnalysis.html</url>
+    </course>
+    <course>
+      <name>XML and Web Services with Java</name>
+      <dates>12/5 - 16/5/2003</dates>
+      <fee>5750</fee>
+      <url>../Courses/XmlWebServices/XmlWebServices.html</url>
+    </course>
+    <course>
+      <name>Object-Oriented Analysis and Design using UML</name>
+      <dates>19/5 - 23/5/2003</dates>
+      <fee>5750</fee>
+      <url>../Courses/Ooad/Ooad.html</url>
+    </course>
+    <course>
+      <name>Enterprise Java Beans</name>
+      <dates>26/5 - 30/5/2003</dates>
+      <fee>5750</fee>
+      <url>../Courses/Ejb/Ejb.html</url>
+    </course>
+  </courseGroup>
+  <courseGroup>
+     <course>
+      <name>Programming In Java</name>
+      <dates>19/5 - 30/5/2003</dates>
+      <fee>4600</fee>
+      <url>../Courses/ProgrammingInJava/Prog_Java.html</url>
+    </course>
+  </courseGroup>
+</schedule>
+        ]]></programlisting>
+      </para>
+    </section>
+    
+    
+  </section>  
+<!--    
+    
+    <section><title>Creating and Sending HTTP requests</title>
+      <para>
+      
+      </para>
+    
+    </section>
+    
+    <section><title>Processing a HTTP response</title>
+      <para>
+      
+      </para>
+    </section>
+    
+    <section><title>Managing HTTP sessions</title>
+      <para>
+      
+      </para>
+      
+      <section><title>Using Cookies</title>
+        <para>
+        
+        </para>
+      </section>
+      
+      <section><title>Using URL rewriting</title>
+        <para>
+        
+        </para>
+      </section>
+    </section>
+      
+-->      
+    
+<!-- ================================================================== -->
+<!--    
+  </section>
+  
+  <section><title>Connectionless communication via Datagrams</title>
+    <para>
+    
+    </para>
+  </section>
+-->  
+<!-- ================================================================== -->
+<!--
+  <section><title>Exercises</title>
+  
+    <orderedlist>
+      <listitem><para>
+        
+      </para></listitem>
+    </orderedlist>
+    
+  </section>
+-->  
+</chapter>

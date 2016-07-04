@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.design.patterns.concurrentSystems.doubleCheckedLocking.theProblem"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>The problem with the simple singleton pattern</title>
+  <para>
+    The simple singleton pattern is not thread-safe. If one thread enters the 
+    <literal>getInstance()</literal> service and is suspended after
+    performing the instance check, another thread can also enter the service 
+    <programlisting><![CDATA[
+public static ContinuousCompounding getInstance()
+{
+  if (theInstance == null)
+    theInstance = new ContinuousCompounding();
+
+  return theInstance;
+}
+    ]]></programlisting>
+    and
+    create an instance. The first thread would, upon resuming, create a second
+    instance>
+  </para>
+  <para>
+    We could make the singleton pattern thread-safe by simply declaring the 
+    <literal>getInstance()</literal> service <emphasis>synchronized</emphasis>:
+    This would ensure that any thread which enters this service will have to acquire the lock
+    for the class itself.
+    <note>
+      <para>
+        Recall that each instance (object) has a lock and the class itself has a separate lock. 
+        The latter is used for locking on the class in the context of class (static) services.
+      </para>
+    </note>
+  </para>
+  <para>
+    The problem with this approach is, however, that the lock of the class will have to be
+    acquired and released on ever request for an instance. This may pose a considerable 
+    performance overhead which the <emphasis>double-checked locking pattern</emphasis>
+    aims to address.
+  </para>
+  
+</section>

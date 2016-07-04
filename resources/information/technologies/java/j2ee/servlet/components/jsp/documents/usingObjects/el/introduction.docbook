@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">   
+    <title>Introduction</title>
+    <para>
+        A primary feature introduced with JSP 2.0 is its support for a simple expression 
+        language (EL). This expression language makes it possible to easily access 
+        application data stored in JavaBeans components. For example, the JSP expression 
+        language allows a page author to access a bean using simple syntax such as 
+        <literal>${foo}</literal> for a simple variable or <literal>${customer.address.city}</literal> 
+        for a nested property.
+    </para>
+    <para>
+        The EL is typically used in two ways:
+        <itemizedlist>
+            <listitem>
+                <para>In static text, to include <quote>dynamic</quote> values obtained from
+                JavaBeans objects.</para>
+            </listitem>
+            <listitem>
+                <para>As attribute values to custom or standard (JSTL) tags.</para>
+            </listitem>
+        </itemizedlist>
+        For example, to conditionally display a section within a web page based on their being items
+        in a shopping cart (in the user's session), it could be used as follows:
+        <programlisting><![CDATA[
+<c:if test="${sessionScope.cart.numberOfItems > 0}"> 
+... 
+</c:if>
+            ]]></programlisting>
+    </para>
+    <para>
+        The JSP expression evaluator is responsible for handling EL expressions, which 
+        are enclosed by the ${ } characters and can include literals. Here’s an example:
+        <programlisting><![CDATA[
+<c:if test="${bean1.a < 3}" > 
+    ... 
+</c:if> 
+        ]]></programlisting>
+    Any value that does not begin with <literal>${</literal> is treated as a <emphasis>literal</emphasis> and is 
+        automatically parsed to the expected type. For example:
+        <programlisting><![CDATA[
+<c:if test="true" > 
+    ... 
+</c:if> 
+            ]]></programlisting>
+    </para>
+    <note>
+        <para>
+            The automatic parsing process can be controlled, and extended, by defining new <literal>PropertyEditor</literal>
+            classes that control the parsing process. The built-in types are sufficient for normal use, but you may want
+            to include support for your own application types in some cases.
+        </para>
+    </note>
+</section>

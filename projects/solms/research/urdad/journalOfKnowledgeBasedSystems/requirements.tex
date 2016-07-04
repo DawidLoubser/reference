@@ -1,0 +1,97 @@
+
+\section{Requirements for the resultant PIM}
+\label{sec:pimRequirements}
+
+Braek and Melby \cite{braek:modelDrivenServiceEngineering} define a set
+of minimal requirements for the PIM. In particular, they specify that the
+PIM should be
+\begin{itemize}
+  \item platform-independent, and hence technology neutral,
+  \item comprehensible and maintainable by humans,
+  \item analytical in order to facilitate implementation verification and
+comparison, and
+  \item domain realistic in that it can realistically model the real world.
+\end{itemize}
+
+The people or systems performing the implementation mapping of the
+technology neutral business processes would obtain the PIM together
+with a specification of the enterprise architecture, i.e.\ the organizational
+and systems infrastructure within which the business processes are to be
+deployed. The PIM and architecture specification should be sufficient
+in the sense that no further important
+decisions should have to be made during the implementation mapping.
+
+In principle, the PIM should be executable within an executable environment
+similar to interpreted or platform-independent programming languages executing
+in runtime environments. Such environments could be used for model testing. 
+Testing frameworks could generate mock services providers that realise the externally
+visible pre- and post-conditions in the case of the model containing contracts without
+the corresponding business processes to realise them (such as in the case of external
+service providers).
+
+%------------------------------
+
+\subsection{PIM components}
+
+In order to contain sufficient information for an implementation mapping onto
+some externally defined architecture, 
+URDAD requires that the PIM must contain the following artifacts:
+\begin{description}
+  \item[Services contracts] For each level of granularity, the services
+ 	contracts for each responsibility domain at that level of
+	granularity. The services contracts must specify the services which
+	any service provider implementing the services contract needs to
+	provide together with the inputs, outputs, pre- and post-conditions, and
+	quality requirements for each service.
+	Examples of services contracts include services contracts for 
+	\begin{itemize}
+	  \item internal service providers for which lower level
+		business processes
+		realising these services contracts are specified at a lower
+		level of granularity,
+	  \item external services providers to whom
+		certain responsibilities are out-sourced,
+	  \item responsibility domains which are
+		realized by off-the-shelf systems or systems developed by
+		external development partners,
+	  \item user contracts, specifying what is required from the users of
+		services, and
+	  \item base processing elements performing certain basic computational
+		services which obtain some input and transform it to some
+		output.
+	\end{itemize}
+
+  \item[Business process specifications] The specification on how a business
+	process at any level of granularity is assembled from the services
+	defined within the services contracts for that level of granularity.	
+
+  \item[Request construction] The PIM must contain the specification on
+	how the information required for a service request is assembled
+	from the currently available information.
+
+  \item[Data structure specification] The model must contain the data structure
+	requirements in a technology neutral way.
+\end{description}
+
+%---------------------------
+
+\subsection{PIM boundaries}
+
+An important consideration during the modelling process is the definition of the
+boundary of the PIM, i.e.\ which service providers will be realized as part of the
+system, versus the service providers which will be treated as external to the
+system (such as services provided by business partners).
+
+The architecture specifies the organizational and systems infrastructure which
+will host the business processes. It will also need to specify the boundaries of
+the organization, i.e.\ what is within and what is outside the scope of the
+organization, as well as the responsibilities which are to be hosted within
+off-the-shelf systems and systems developed by external development partners
+and in-house developments.
+
+It is thus the architecture which will enable one to decide which
+services contracts fall within the scope of operations for the organizations and
+which will be out-sourced to external service providers or system vendors. For
+those responsibility domains which are outside the scope of the organization,
+the PIM will only specify the services contracts and not the lower level
+business processes employed to realise these services contracts.

@@ -1,0 +1,1090 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.solms.resources.systems.servers.internetServer"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="Internet Server">Internet Server</title>
+  <para>
+    The internet server sits at <emphasis>Storm</emphasis>, 
+    The Woodlands,Woodlands Drive, Woodmead.
+  </para>  
+  
+  <para>
+    The IP address is <literal>196.22.194.227</literal> and the machine hosts currently 2 core
+    domains, <literal>solms.co.za</literal>, and <literal>thinktank.org.za</literal>.
+  </para>
+  
+  <section>
+    <title>Overview</title>
+    <para>
+      The machine is a Gentoo Linux server which hosts
+      <itemizedlist>
+        <listitem><para>
+          a dns server publishing our the subdomains,
+        </para></listitem>
+        <listitem><para>
+          our public web site, www.solms.co.za
+        </para></listitem>
+        <listitem><para>
+          our admin web site, www.solms.co.za/config
+        </para></listitem>
+        <listitem><para>
+          the mail server for our domain,
+        </para></listitem>
+        <listitem><para>
+          a web e-mail client,
+        </para></listitem>
+        <listitem><para>
+          the accounting system,
+        </para></listitem>
+        <listitem><para>
+          a mailing list server for internal and broadcasting mailing lists,
+        </para></listitem>
+        <listitem><para>
+          shared calendar files,
+        </para></listitem>
+        <listitem><para>
+          a web calendar,
+        </para></listitem>
+        <listitem><para>
+          project wikis and other project related information,
+        </para></listitem>
+        <listitem><para>
+          web site statistics
+        </para></listitem>
+      </itemizedlist>
+      
+    </para>
+  </section>
+  
+  <section>
+    <title>Users and Groups</title>
+    <para>
+      The following users belong to the group <literal>solmsadm</literal> (Solms Administration) which
+      is set to for read/write access to SVN repositories, web site root, etc:
+      <itemizedlist>
+        <listitem>
+          <para>fritz</para>
+        </listitem>
+        <listitem>
+          <para>dawidl</para>
+        </listitem>
+        <listitem>
+          <para>sifiso</para>
+        </listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Kernel configuration for hardware</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>SIS-900 network card driver</para></listitem>
+        <listitem><para>Matrix Millenium II graphics card driver.</para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Name server configuration</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>
+          emerged bind
+        </para></listitem>
+        <listitem><para>
+          added named to default run level via 
+          <programlisting><![CDATA[
+rc-update add named default
+            ]]></programlisting>
+        </para></listitem>
+        <listitem><para>
+          edited /etc/named/named.conf to add zones declarations:
+          <programlisting><![CDATA[
+options {
+        directory "/var/bind";
+        // uncomment the following lines to turn on DNS forwarding,
+        // and change the forwarind ip address(es) :
+        //forward first;
+        //forwarders {
+        //      123.123.123.123
+        //      123,123.123.123;
+        //};
+        listen-on-v6 { none; };
+        //listen-on { 127.0.0.1; };
+        // to allow only specific hosts to use the DNS server:
+        //allow-query {
+        //      127.0.0.1;
+        //};
+        // if you have problems and are behind a firewall:
+        //query-source address * port 53;
+        pid-file "/var/run/named/named.pid";
+};
+zone "." IN {
+        type hint;
+        file "named.ca";
+};
+zone "localhost" IN {
+        type master;
+        file "pri/localhost.zone";
+        allow-update { none; };
+        notify no;
+};
+zone "127.in-addr.arpa" IN {
+        type master;
+        file "pri/127.zone";
+        allow-update { none; };
+        notify no;
+};
+zone "194.22.196.in-addr.arpa" IN {
+        type master;
+        file "194.22.196.in-addr.arpa";
+        allow-update { none; };
+};
+zone "solms.co.za" IN {
+        type master;
+        file "solms.co.za";
+        allow-update { none; };
+};
+zone "thinktank.org.za" IN {
+        type master;
+        file "thinktank.org.za";
+        allow-update { none; };
+};
+logging {
+category lame-servers { null; };
+            ]]></programlisting>
+        </para></listitem>
+        <listitem><para>
+          Defining own domain name server in <literal>/var/bind/pri/127.zone</literal>:
+          <programlisting><![CDATA[
+$ORIGIN 127.in-addr.arpa.
+$TTL 1W
+@                       1D IN SOA       localhost. root.localhost. (
+                                        2002081701      ; serial
+                                        3H              ; refresh
+                                        15M             ; retry
+                                        1W              ; expiry
+                                        1D )            ; minimum
+
+                        1D IN NS        localhost.
+*                       1D IN PTR       localhost.]]></programlisting>
+        </para></listitem>
+        <listitem><para>
+          For each zone, created zone file in <literal>/var/bind</literal>:
+          <programlisting><![CDATA[
+;
+; Zone file for solms.co.za ;
+;
+$TTL 3D
+@               IN              SOA     solms.co.za. fritz.solms.co.za. (
+                                                                200504131       ; serial, todays date + todays serial #
+                                                                8H              ; refresh, seconds
+                                                                2H              ; retry, seconds
+                                                                4W              ; expire, seconds
+                                                                1D )    ; minimum, seconds
+;
+                                NS      solms.co.za.    ; Inet Address of name server
+                                NS      ns2.lia.net. ; Inet Address of name server
+                                MX      10 mail.solms.co.za.    ; Primary Mail Exchanger
+;
+                                A       196.22.194.227
+mogli                           A       196.22.194.227
+localhost                       A       127.0.0.1
+www                             A       196.22.194.227
+ical                            A       196.22.194.227
+dav                             A       196.22.194.227
+mail                            A       196.22.194.227
+development                     A       196.22.194.227
+consulting                      A       196.22.194.227
+training                        A       196.22.194.227
+projects                        A       196.22.194.227
+dotproject                      A       196.22.194.227
+ledger                          A       196.22.194.227
+]]></programlisting>
+        </para></listitem>
+        <listitem><para>
+          Define zone for reverse mappings (converting names in owned domain to ip addresses by
+          adding to <literal>named.conf</literal>
+          <programlisting><![CDATA[
+zone "194.22.196.in-addr.arpa" IN {
+        type master;
+        file "194.22.196.in-addr.arpa";
+        allow-update { none; };
+};
+            ]]></programlisting>
+          and define zone file, <literal>194.22.196.in-addr.arpa</literal>
+          <programlisting><![CDATA[
+$TTL 1W
+@       IN SOA  solms.co.za. fritz.solms.co.za. (
+                                        200504131       ; serial
+                                        3H              ; refresh
+                                        15M             ; retry
+                                        1W              ; expiry
+                                        1D )            ; minimum
+        IN NS   mogli.solms.co.za.
+
+227     IN PTR  mogli.solms.co.za.            ]]></programlisting>
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Firewall</title>
+      <para>
+        Standard iptables based firewall enabling in kernel. 
+        Selective ports opened for specific protocols. In addition port forwarding from 425 to the standard SMTP port 25
+        to enable access to SMTP server when using ISPs which block port 25 (e.g. IBurst). Copy of current tables stored in
+        /etc/iptables.bak. Restored via <literal>iptables-restore /etc/iptables.bak</literal> and saved via
+        <literal>iptables-save > /etc/iptables.bak</literal>. Upon changes restart the firewall via 
+        <literal>/etc/init.d/iptables restart</literal>.
+        Using the following ip-tables:
+        <programlisting><![CDATA[
+  # Generated by iptables-save v1.3.4 on Tue Jun 19 11:50:13 2007
+  *nat
+  :PREROUTIiptables-save > /etc/iptables.bakNG ACCEPT [117:10848]
+  :POSTROUTING ACCEPT [79:6353]
+  :OUTPUT ACCEPT [79:6353]
+  -A PREROUTING -i eth0 -p tcp -m tcp --dport 425 -j DNAT --to-destination 196.22.194.227:25
+  COMMIT
+  # Completed on Tue Jun 19 11:50:13 2007
+  # Generated by iptables-save v1.3.4 on Tue Jun 19 11:50:13 2007
+  *mangle
+  :PREROUTING ACCEPT [15928:14945098]
+  :INPUT ACCEPT [15922:14944171]
+  :FORWARD ACCEPT [0:0]
+  :OUTPUT ACCEPT [20025:31296788]
+  :POSTROUTING ACCEPT [20025:31296788]
+  COMMIT
+  # Completed on Tue Jun 19 11:50:13 2007
+  # Generated by iptables-save v1.3.4 on Tue Jun 19 11:50:13 2007
+  *filter
+  :INPUT DROP [65:7410]
+  :FORWARD DROP [0:0]
+  :OUTPUT DROP [0:0]
+  -A INPUT -i lo -j ACCEPT
+  -A INPUT -i eth0 -p tcp -m tcp --dport 21 -j ACCEPT
+  -A INPUT -i eth0 -p tcp -m tcp --dport 22 -j ACCEPT
+  -A INPUT -i eth0 -p tcp -m tcp --dport 25 -j ACCEPT
+  -A INPUT -i eth0 -p tcp -m tcp --dport 425 -j ACCEPT
+  -A INPUT -i eth0 -p tcp -m tcp --dport 53 -j ACCEPT
+  -A INPUT -i eth0 -p udp -m udp --dport 53 -j ACCEPT
+  -A INPUT -i eth0 -p tcp -m tcp --dport 80 -j ACCEPT
+  -A INPUT -i eth0 -p tcp -m tcp --dport 110 -j ACCEPT
+  -A INPUT -i eth0 -p tcp -m tcp --dport 119 -j ACCEPT
+  -A INPUT -i eth0 -p tcp -m tcp --dport 443 -j ACCEPT
+  -A INPUT -i eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+  -A INPUT -i eth0 -p tcp -m tcp --dport 111 -j ACCEPT
+  -A OUTPUT -j ACCEPT
+  COMMIT
+  # Completed on Tue Jun 19 11:50:13 2007
+          ]]></programlisting>
+      </para>
+  </section>
+  
+<section>
+  <title>Software installed</title>
+  
+  <section>
+    <title>General</title>
+    <para>
+      <itemizedlist>
+        <listitem><formalpara>
+          <title>openssh</title>
+          <para>For remote access.</para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>rsync</title>
+          <para>For backups.</para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>vim</title>
+          <para>A general editor.</para>
+        </formalpara></listitem>
+        <listitem><formalpara>
+          <title>slocate</title>
+          <para>To be able to locate files rapidly.</para>
+        </formalpara></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Apache-2</title>
+    <para>
+      Emerged apache2 and mod_jk (unmasked the latter) and added -D JK to APACHE_OPTS in
+      /etc/conf.d/apache2 file - this feeds, by default, all requests for JSP pages to Tomcat
+      assumed to be running on port 8080.
+    </para>
+    <para>
+      All static pages and images deployed on apache, no longer via JBoss/Tomcat.
+    </para>
+    <section>
+      <title>Virtual hosting</title>
+      <para>
+        The Apache web server has been configured to use name based virtual hosting.
+        The virtual hosts configuration is found in 
+        <programlisting><![CDATA[
+/etc/apache2/vhosts.d          
+          ]]></programlisting>
+        and looks something like this:
+        <programlisting><![CDATA[
+NameVirtualHost *:80
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+#  ServerAlias solms.co.za *.solms.co.za
+#  DocumentRoot /var/www/solms
+  ServerName www.solms.co.za
+  jkmount /* ajp13
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+#  ServerAlias ledger.solms.co.za www.solmsledger.co.za
+  DocumentRoot /usr/local/sql-ledger
+  ServerName ledger.solms.co.za
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+  DocumentRoot /var/www/solms/dav
+  ServerName dav.solms.co.za
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+  DocumentRoot /var/www/solms/projects
+  ServerName projects.solms.co.za
+  ErrorLog logs/solms.co.za-error_log
+  CustomLog logs/solms.co.za-access_log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+  DocumentRoot /var/www/solms/dotproject
+  ServerName dotproject.solms.co.za
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+  DocumentRoot /var/www/solms/ical
+  ServerName ical.solms.co.za
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+  ServerAlias thinktank.org.za *.thinktank.org.za
+  DocumentRoot /var/www/thinktank
+  ServerName www.thinktank.org.za
+#  jkmount /* ajp13
+</VirtualHost>
+          ]]></programlisting>
+       </para> 
+      <para>
+        For the main domains, solms.co.za and thinktank.org.za there are also standard zone files in
+        the <literal><![CDATA[/var/bind]]></literal> directory.
+      </para>
+    </section>
+    <section>
+      <title>Authorization</title>
+      <para>
+        Created passwords file via
+        <programlisting><![CDATA[
+htpasswd -c /usr/local/apache/passwd/passwords fritz
+          ]]></programlisting>
+        and added users with same command, but leaving out the -c directive.
+      </para>
+      <para>
+        Created .htaccess in protected
+      </para>
+    </section>
+    
+  </section>
+  
+  <section>
+    <title>PHP</title>
+    <para>
+      Emerge mod-php and configured it for Apache2.
+    </para>
+  </section>  
+  
+  <section>
+    <title>WEB-DAV and calendars</title>
+    <para>
+      This is used for shared calendars. The Apache web-dav module is enabled and the configuration
+      file is 
+      <programlisting><![CDATA[
+ <IfDefine DAV>
+  <IfModule !mod_dav.c>
+    LoadModule dav_module    modules/mod_dav.so
+  </IfModule>
+</IfDefine>
+
+<IfDefine DAV_FS>
+  <IfModule !mod_dav_fs.c>
+    LoadModule dav_fs_module   modules/mod_dav_fs.so
+  </IfModule>
+</IfDefine>
+
+<IfModule mod_dav.c>
+
+    DavMinTimeout 600
+        <Location /calendars>
+                Options None
+                Dav On
+                <Limit GET PUT POST DELETE PROPFIND PROPPATCH MKCOL COPY MOVE LOCK UNLOCK>
+                        AuthType Basic
+                        AuthName "WebDAV Restricted"
+                        AuthUserFile /var/www/DAV/.calpasswd
+                        Require valid-user
+                </Limit>
+        </Location>
+
+</IfModule>
+
+<IfModule mod_dav_fs.c>
+
+    # Location of the WebDAV lock database.
+    DavLockDB /var/lib/dav/lockdb
+
+</IfModule>       
+        ]]></programlisting>
+    </para>
+    <para>
+      Users are managed via httppassword:
+      <programlisting><![CDATA[
+          htpasswd -c /var/www/solms/dav/.DAVlogin fritz  
+        ]]></programlisting>
+      Added to the <literal>/etc/apache2/httpd.conf</literal> file
+      <programlisting><![CDATA[
+<Directory /var/www/solms/dav>
+DAV on
+AuthType Basic
+AuthName "Restricted Files"
+AuthUserFile /usr/local/apache/passwd/passwords
+Require user fritz ellen dawidl mandy
+        <Limit GET POST PUT OPTIONS PROPFIND>
+            Order allow,deny
+            Allow from all
+       </Limit>
+</Directory>
+        ]]></programlisting>
+    </para>
+    <para>
+      The DAV root directory is set up in the apache vhosts configuration file to
+      <programlisting><![CDATA[
+/var/www/solms/dav        
+        ]]></programlisting>
+      The calendar files are hosted in
+      <programlisting><![CDATA[
+/var/www/solms/dav/calendars        
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>Web Calendar</title>
+    <para>
+      Extracted PHP-ical into <literal>/var/ww/solms/ical</literal> and edited the config.inc.php
+      file to set the location for the directory hosting the calendar files
+      (<literal>/var/www/solms/dav/calendars)</literal>.
+    </para>
+    <para>
+      Accessef via <literal><![CDATA[http://ical.solms.co.za]]></literal>.
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>PostgreSQL</title>
+    <para> 
+       Installed PostgreSql version 8.12 or higher (unmasked via ~dev-db/postgresql-8.1.2
+        ~x86).
+    </para>
+  </section>
+  
+  <section>
+    <title>Mail server</title>
+    <para>
+      The installation is a vanilla Apache James installation using pop and smtp authentication.
+    </para>
+    <para>
+      The James remote manager is accessed via telnet on port 4555 using the 45'th remains of a dead
+      body.
+      <programlisting>
+        telnet localhost 4555
+      </programlisting>
+    </para>
+    <section>
+      <title>E-mail aliases</title>
+      <para>
+        The following e-mail addresses have been aliased to fritz:
+        <itemizedlist>
+          <listitem><para>courses</para></listitem>
+          <listitem><para>info</para></listitem>
+          <listitem><para>queries</para></listitem>
+          <listitem><para>systemadmin</para></listitem>
+        </itemizedlist>
+        
+      </para>
+    </section>
+  </section>
+  
+  
+  <section>
+    <title>JBoss &amp; Tomcat</title>
+    <para>
+      Installed JBoss 4.04 RC1 with EJB-3 but without clustering. Added
+      <itemizedlist>
+        <listitem><para>
+          Postgres 8.1 JDBC driver to lib directory of deployed configuration,
+        </para></listitem>
+        <listitem><para>
+          postgres deployment descriptor into deploy directory,
+        </para></listitem>
+        <listitem><para>
+          login configuration file to conf directory of configuration.
+        </para></listitem>
+        <listitem><para>
+          added user jboss, passwd jboss to system (Linux).
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Web site deployment </title>
+    <para>
+       Note: See also JBoss/Tomcat setup.
+    </para>
+
+    <section>
+      <title>Database setup</title>
+      <para>
+        <itemizedlist>
+          <listitem><para>Install &amp; configure postgres database</para></listitem>
+          <listitem><para>
+            Created role jboss via
+            <programlisting><![CDATA[
+CREATE ROLE "jboss" LOGIN PASSWORD 'jboss';            
+            ]]></programlisting>
+          </para></listitem>
+          <listitem><para>
+            Backup database via <literal>pg_dump dbName fileName</literal> 
+          </para></listitem>
+          <listitem><para>
+            Restore via <literal><![CDATA[psql dbName <fileName]]></literal> (Have to create database
+            for owner jboss first via
+            <literal><![CDATA[createdb -O jboss dbName]]></literal>)
+          </para></listitem>
+          <listitem><para>
+            ensure owner of tables is jboss role, otherwise alter via <literal><![CDATA[ALTER TABLE
+            xxx OWNER TO jboss]]></literal>.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Static resources (Need to update Ant for this)</title>
+      <para>
+        <itemizedlist>
+          <listitem><para>
+            Copy content into /var/www/localhost/htdocs.
+          </para></listitem>
+          <listitem><para>
+            Copy images into /var/www/localhost/htdocs.
+          </para></listitem>
+          <listitem><para>
+            Copy all html files in Development/SolmsWebSite/SolmsWeb into /var/www/localhost/htdocs.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Web app</title>
+      <para>
+        Build ear via build script in SolmsWebSite and copy from dist directory to JBoss deploy
+        directory.
+      </para>
+    </section>
+  </section>
+  
+  
+  <section>
+    <title>Web Mail Client</title>
+    <para>
+      We are currently using splashmail, a very simple servlet based app deployed by simply copying
+      the war file into the deployment directory of JBoss. The following config.ini file has been
+      put into the WEB-INF directory:
+      <programlisting><![CDATA[
+[solms.co.za]
+smtpport=25
+pop3port=110
+mbox=Inbox
+smtpauth=true
+
+[users]
+fritz=solms.co.za
+ellen=solms.co.za
+dawidl=solms.co.za
+kathleen=solms.co.za
+        ]]></programlisting>
+    </para>
+    <para>
+      The webmail client is accessed via the url
+      <literal><![CDATA[http://www.solms.co.za/splashmail]]></literal>.
+    </para>
+  </section>
+  
+  <section>
+    <title></title>
+  </section>
+  
+  <section>
+    <title>URDAD wiki</title>
+    <para>
+      A Media Wiki installation serving the <emphasis>urdad.org</emphasis> domain which is persisted in a Postgres database named
+      <emphasis>urdadwiki</emphasis> accessible with user name urdadwiki and password d3s1gn. 
+    </para>
+  </section>
+  
+  <section>
+    <title>Project wikis</title>
+    <para>
+      Installed a media wiki for each project by
+      <orderedlist>
+        <listitem><para>
+          extracting the archive into the Apache project directory,
+        </para></listitem>
+        <listitem><para>
+          renaming the wiki directory simply wiki (to be resolved as <literal>
+            <![CDATA[http://projects.solms.co.za/projects/projectName/wiki]]></literal>.
+        </para></listitem>
+        <listitem><para>
+          created a MySQL database for the project via  <literal>create database
+            projectnamewiki</literal> in the mysql command tool, mysql
+        </para></listitem>
+        <listitem><para>
+          created in the mysql database a user for the project, <literal>projectnamewiki</literal>
+          with the username also the password 
+          <programlisting><![CDATA[
+insert into user (Host, User, Password, Select_priv, Insert_priv, 
+            Update_priv, Delete_priv, Create_priv, Drop_priv, Alter_priv) 
+            values ('localhost', 'projectNamewiki', 
+            PASSWORD('projectNamewiki'), 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+            ]]></programlisting>
+        </para></listitem>
+        <listitem><para>
+          Granted access with appropriate priveledges via
+          <programlisting><![CDATA[
+            grant all privileges on projectNamewiki.* to 'xxxwiki'@'localhost' identified by 'xxxwiki';
+            ]]></programlisting>
+          followed by
+          <programlisting><![CDATA[
+            flush privileges;
+            ]]></programlisting>
+        </para></listitem>
+        <listitem><para>
+          made the config directory of the wiki installation writable, 
+        </para></listitem>
+        <listitem><para>
+          accessed the wiki via
+          <literal><![CDATA[http://projects.solms.co.za/projectName/wiki]]></literal>
+          and completed the configuration,
+        </para></listitem>
+        <listitem><para>
+          Copied the <literal>LocalSettings.php</literal> file from the config directory into the
+          base directory, and
+        </para></listitem>
+        <listitem><para>
+          copied the appropriate Logo into the <literal>skins/common/images</literal> directory and
+          set the wglogo variable into the <literal>LocalSettings.php</literal>.
+        </para></listitem>
+      </orderedlist>
+    </para>
+  </section>
+
+  
+  <section>
+    <title>SQL-Ledger accounting</title>
+    <para>
+      Required software installed from portage
+      <itemizedlist>
+        <listitem><para>Perl</para></listitem>## For SQL-Ledger accounting system -- uses Perl
+        <listitem><para>DBD-Pg</para></listitem>
+        <listitem><para>DBI</para></listitem>
+        <listitem><para>Apache</para></listitem>
+        <listitem><para>tetex</para></listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      The  standard installation instructions were used and a virtual host has been set up as follows:
+      <programlisting><![CDATA[
+<VirtualHost *:80>
+        ServerName ledger.solms.co.za
+
+        DocumentRoot /var/www/solms/sql-ledger/
+
+        <Directory "/var/www/solms/sql-ledger/">
+                AllowOverride All
+                AddDefaultCharset On
+                AddHandler cgi-script .pl
+                Options ExecCGI Includes FollowSymLinks
+                Order allow,deny
+                Allow from all
+        </Directory>
+
+        <Directory "/var/www/solms/sql-ledger/users/">
+                Order Deny,Allow
+                Deny from All
+        </Directory>
+
+        #<IfModule mpm_peruser_module>
+        #        ServerEnvironment apache apache
+        #</IfModule>
+</VirtualHost>       
+        ]]></programlisting>
+      The admin console is reached at sql-ledger/admin.pl and the password has been whistled by the birds circling UNISA.
+    </para>
+      
+  </section>
+  
+  <section>
+    <title>Backups</title>
+    <para>
+      There are two sides of the backup process. 
+      <orderedlist>
+        <listitem><para>
+          On the <emphasis>server side</emphasis> a scheduled script creates a backup of dynamic
+          data.
+        </para></listitem>
+        <listitem><para>
+          On the backup machine (the intranet server) there is a scheduled rsync job which
+          <itemizedlist>
+            <listitem><para>
+              syncs the static data like system configuration files, etc, as well as
+            </para></listitem>
+            <listitem><para>
+              the dynamic data from the backup directory.
+            </para></listitem>
+          </itemizedlist>
+        </para></listitem>
+      </orderedlist>
+    </para>
+    <section>
+      <title>Server side database backup script</title>
+      <para>
+         On the server side we create the database backups for the various databases which will then
+        be synchronized (together with regular files from the file system) to a backup machine
+        running the client side backup script. 
+      </para>
+      <para>
+        The database backup script resides in the <literal><![CDATA[/opt/solms/scripts]]></literal>
+        directory and is executed nightly via a cron job:
+        <programlisting><![CDATA[
+#!/bin/bash
+
+out=/backup/databases
+
+rm -Rf $out
+mkdir $out
+
+# Backup the jboss database used for solms admin into an sql commands file
+pg_dump jboss > $out/jboss.sql
+
+# Backup the SQL-Ledger database
+pg_dump solms-ledger > $out/solms-ledger.sql
+
+# Backup wiki databases
+mysqldump -ac --add-drop-table solmswiki > $out/solmswiki.mysql
+mysqldump -ac --add-drop-table solmswiki > $out/solmswiki.mysql
+mysqldump -ac --add-drop-table xmlvendwiki > $out/xmlvendwiki.mysql
+mysqldump -ac --add-drop-table espwiki > $out/espwiki.mysql
+mysqldump -ac --add-drop-table todos > $out/todos
+
+#backup project management database
+mysqldump -ac --add-drop-table dotproject > $out/dotproject.mysql
+          ]]></programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>Facilitating automatic login for ssh client (e.g. rsync)</title>
+      <para>
+        <orderedlist>
+          <listitem><para>
+            Generated a public key identifier (pki) for root on the remote client via
+            <programlisting><![CDATA[
+              ssh-keygen -b 1024 -t rsa
+              ]]></programlisting>,
+            use an empty passphrase (since you want to avoid entring a password), 
+            and have it stored in <literal><![CDATA[/root/.ssh/id_rsa]]></literal>. This 
+            creates a private/public key pair (<literal><![CDATA[id_rsa]]></literal> and 
+            <literal><![CDATA[id_rsa.pub]]></literal>).
+          </para></listitem>
+          <listitem><para>
+            Append the public key file <literal><![CDATA[/root/.ssh/id_rsa.pub]]></literal>  
+            to <literal><![CDATA[~/.ssh/authorized_keys]]></literal> on the server you 
+            want to login (e.g. the backup machine).    
+          </para></listitem>
+          <listitem><para>
+            Prevent read access to all files on client and server
+            <programlisting><![CDATA[
+chmod go-r id_rsa.pub              
+              ]]></programlisting>
+          </para></listitem>
+          <listitem><para>
+            Do the above for any user who needs to login without authentication (e.g. root for
+            any cron jobs executed from root).
+          </para></listitem>
+        </orderedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Client side backup script</title>
+      <para>
+        This scripts does not request password for ssh login if the above keys have been distributes
+        correctly.
+        <programlisting><![CDATA[
+#!/bin/bash
+
+# Implementing 7 day roll-over backup
+
+out=serverbackup-$(date +%a)
+rm -Rf $out
+mkdir $out
+
+# Backing configuration files in /etc
+rsync -avz root@solms.co.za:/etc $out
+
+# Backing up DNS configuration files
+rsync -avz root@solms.co.za:/var/bind .
+
+# Backing up database backup files generated by cron script on server
+rsync -avz root@solms.co.za:/backup/archived/databases.zip $out
+
+# Backing up enterprise archives deployed on jboss
+rsync -avz root@solms.co.za:/opt/jboss/server/default/deploy/*.ear $out
+
+# Backing up Calendar files
+rsync -avz root@solms.co.za:/var/www/solms/dav $out
+
+# Backing up projects sites
+rsync -avz root@solms.co.za:/var/www/solms/projects $out
+          ]]></programlisting>
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>Apache statistics</title>
+    <para>
+      Webalizer is used to generate the web site usage statistics.
+      <itemizedlist>
+        <listitem><para>
+          emerged webalizer
+        </para></listitem>
+        <listitem><para>
+          Edited configuration file, <literal>/etc/webalizer.conf</literal> to set output directory
+          to <literal>/var/www/solms/stats</literal> and switched on many of the statistics options.
+        </para></listitem>
+        <listitem><para>
+          Added stats to <literal>/var/bind/solms.co.za</literal> zone file.
+        </para></listitem>
+        <listitem><para>
+          Added
+          <programlisting><![CDATA[
+<VirtualHost *:80>
+  ServerAdmin systemsAdmin@solms.co.za
+  DocumentRoot /var/www/solms/stats
+  ServerName stats.solms.co.za
+</VirtualHost>            
+            ]]></programlisting>
+        </para></listitem>
+        <listitem><para>
+          Added webalizer to cron jobs.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  
+  <section>
+    <title>Scheduled jobs</title>
+    <para>
+      The crontab file is shown below (<literal>crontab -l</literal>, edit via <literal>crontab -e</literal>)    
+      <programlisting><![CDATA[
+0       0       *       *       *       /opt/solms/scripts/backupDatabases.sh
+0       3       *       *       *       /opt/solms/scripts/createCalendar.sh
+0       3       *       *       Fri     /opt/solms/scripts/mailCourseSchedule.sh
+0       0       *       *       *       webalizer
+0       7       *       *       *       webalizer
+0       12      *       *       *       webalizer
+0       16      *       *       *       webalizer
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  <section>
+    <title>MailMan mailing list manager</title>
+    <para>
+      Currently not working because our James web server does not support IMAP.
+      james will be configured to host the mailing list. Below is th old installation
+      on GummyBear.
+    </para>
+    <para>
+      Emerged from portage. Created user mailman using Bond's Lourie.
+    </para>
+    <para>
+      
+    </para>
+    
+    <section>
+      <title role="Broadcast">Broadcast</title>
+      <table>
+        <title>Access</title>
+        <tgroup cols="2">
+          <thead>
+            <row><entry><para>URL</para></entry><entry><para>password</para></entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry><para>http://solms.co.za/mailman/admin/broadcast/</para></entry>
+              <entry><para>orange2011</para></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </section>
+  </section>
+</section>  
+  
+  <section>
+    <title>Testing use cases</title>
+    <para>
+      Below is a list of use cases which need to be tested when the server is tested:
+    </para>
+    
+    <section>
+      <title>Currently installed</title>
+      <para>
+        <itemizedlist>
+          <listitem><para>
+            ssh access
+          </para></listitem>
+          <listitem><para>
+            firewall
+          </para></listitem>
+          <listitem><para>
+            Solms web site
+          </para></listitem>
+          <listitem><para>
+            Solms Admin
+          </para></listitem>
+          <listitem><para>
+            Email server
+            <itemizedlist>
+              <listitem><para>
+                pop and smtp  authentication requirements
+              </para></listitem>
+              <listitem><para>
+                mail accounts for all members of Solms
+              </para></listitem>
+            </itemizedlist>
+          </para></listitem>
+          <listitem><para>
+            Web email client. 
+          </para></listitem>
+          <listitem><para>
+            DAV server for shared calendars (test read and write).
+          </para></listitem>
+          <listitem><para>
+            Calendar scripts
+          </para></listitem>
+          <listitem><para>
+            Web calendar client.
+          </para></listitem>
+          <listitem><para>
+            Project management software (dotProject)
+          </para></listitem>
+          <listitem><para>
+            Projects:
+            <itemizedlist>
+              <listitem><para>
+                ESP and its wiki
+              </para></listitem>
+              <listitem><para>
+                XML-Vend and its wiki
+              </para></listitem>
+              <listitem><para>
+                Solms wiki
+              </para></listitem>
+            </itemizedlist>
+          </para></listitem>
+          <listitem><para>
+            Accounting software: SQL-Ledger    
+          </para></listitem>
+          <listitem><para>
+             Site statistics (http://stat.solms.co.za)          
+          </para></listitem>
+          <listitem><para>
+            scheduled jobs
+          </para></listitem>
+          <listitem><para>
+            SVN
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+
+    <section>
+      <title>Not yet installed</title>
+      <para>
+        <itemizedlist>
+          <listitem><para>
+            Mailing list server
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>Outstanding tasks</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>
+          Create internal and broadcast mailing list and edit <literal>mailCourseSchedule</literal> script to not send
+          to individual e-mail addresses, but to the internal list instead.  
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>SVN</title>
+    <para>
+      Subversion is installed for <literal>svn+ssh</literal> access (not via HTTP). All repositories adhere to the
+      naming convention of: <literal>/var/svn/REPOSITORY/trunk</literal>.
+    </para>
+    <para>
+      Checking out is simply via
+      <programlisting><![CDATA[
+        svn co svn+ssh://solms.co.za/var/svn/solmsRoot/trunk solmsRoot
+        ]]></programlisting>
+    </para>
+  </section>
+  
+  
+</section>
+  

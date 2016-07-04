@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1255:section xmlns:ns1255="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.examples.account.account">
+
+    <ns1256:title xmlns:ns1256="http://docbook.org/ns/docbook">A simple entity bean using CMP</ns1256:title>
+    <ns1257:para xmlns:ns1257="http://docbook.org/ns/docbook">
+      In this section we shall modify our <ns1258:literal xmlns:ns1258="http://docbook.org/ns/docbook">Account</ns1258:literal> entity bean to use
+      container managed persistence instead of bean managed persistence. 
+      <ns1259:note xmlns:ns1259="http://docbook.org/ns/docbook"><ns1260:para xmlns:ns1260="http://docbook.org/ns/docbook">
+        Whether one uses BMP or CMP is an implementation detail. The client application and
+        even the home and remote interfaces are independent of the persistence method used.
+      </ns1260:para></ns1259:note>  
+    </ns1257:para>
+    
+    <ns1261:section xmlns:ns1261="http://docbook.org/ns/docbook">
+      <ns1262:title xmlns:ns1262="http://docbook.org/ns/docbook">The Entity Bean Implementation Class</ns1262:title>
+      <ns1263:para xmlns:ns1263="http://docbook.org/ns/docbook">
+<ns1264:programlisting xmlns:ns1264="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/Account/src/businessLogic/AccountBean.java"/>
+</ns1264:programlisting>
+     </ns1263:para>
+    </ns1261:section>
+    
+    <ns1265:section xmlns:ns1265="http://docbook.org/ns/docbook">
+      <ns1266:title xmlns:ns1266="http://docbook.org/ns/docbook">The ejb-jar deployment descriptor</ns1266:title>
+      <ns1267:para xmlns:ns1267="http://docbook.org/ns/docbook">
+        The ejb-jar deployment descriptor specifies, as for session beans, the remote and home
+        interfaces and the bean implementation class. In addition one specifies 
+        <ns1268:itemizedlist xmlns:ns1268="http://docbook.org/ns/docbook">
+          <ns1269:listitem xmlns:ns1269="http://docbook.org/ns/docbook">
+            <ns1270:para xmlns:ns1270="http://docbook.org/ns/docbook">that the persistence type is <ns1271:literal xmlns:ns1271="http://docbook.org/ns/docbook">Container</ns1271:literal> and that the version is
+              2.x, </ns1270:para>
+          </ns1269:listitem>
+          <ns1272:listitem xmlns:ns1272="http://docbook.org/ns/docbook">
+            <ns1273:para xmlns:ns1273="http://docbook.org/ns/docbook">the type of the primary key field, </ns1273:para>
+          </ns1272:listitem>
+          <ns1274:listitem xmlns:ns1274="http://docbook.org/ns/docbook">
+            <ns1275:para xmlns:ns1275="http://docbook.org/ns/docbook">the container managed fields and </ns1275:para>
+          </ns1274:listitem>
+          <ns1276:listitem xmlns:ns1276="http://docbook.org/ns/docbook">
+            <ns1277:para xmlns:ns1277="http://docbook.org/ns/docbook">the queries to be executed for the bean's finder methods.</ns1277:para>
+          </ns1276:listitem>
+        </ns1268:itemizedlist>
+        <ns1278:note xmlns:ns1278="http://docbook.org/ns/docbook"><ns1279:para xmlns:ns1279="http://docbook.org/ns/docbook">
+          The latter is specified in EJB-Query Language which is covered (together with bean
+          relationships) elsewhere.
+        </ns1279:para></ns1278:note>
+        For example:
+<ns1280:programlisting xmlns:ns1280="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/Account/META-INF/ejb-jar.xml"/>
+</ns1280:programlisting>
+      </ns1267:para>
+    </ns1265:section>
+    
+    <ns1281:section xmlns:ns1281="http://docbook.org/ns/docbook">
+      <ns1282:title xmlns:ns1282="http://docbook.org/ns/docbook">The jboss.xml deployment descriptor</ns1282:title>
+      <ns1283:para xmlns:ns1283="http://docbook.org/ns/docbook">
+<ns1284:programlisting xmlns:ns1284="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/Account/META-INF/jboss.xml"/>
+</ns1284:programlisting>
+       </ns1283:para> 
+    </ns1281:section>
+    
+    <ns1285:section xmlns:ns1285="http://docbook.org/ns/docbook">
+      <ns1286:title xmlns:ns1286="http://docbook.org/ns/docbook">The jbosscmp-jdbc deployment descriptor</ns1286:title>
+      <ns1287:para xmlns:ns1287="http://docbook.org/ns/docbook">
+        This deployment descriptor specifies whether the tables should be created upon
+        bean deployment and whether they should be removed on undeployment. The latter
+        should most prabably be set to false.
+<ns1288:programlisting xmlns:ns1288="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../../../source/Account/META-INF/jbosscmp-jdbc.xml"/>
+</ns1288:programlisting>
+      </ns1287:para>
+    </ns1285:section>
+    
+    <ns1289:section xmlns:ns1289="http://docbook.org/ns/docbook">
+      <ns1290:title xmlns:ns1290="http://docbook.org/ns/docbook">Build, Deploy and Run the CMP Bean</ns1290:title>
+      <ns1291:para xmlns:ns1291="http://docbook.org/ns/docbook">
+        We build, deploy and run the bean as usual.
+      </ns1291:para>
+      <ns1292:para xmlns:ns1292="http://docbook.org/ns/docbook">
+        Note that the table for the <ns1293:literal xmlns:ns1293="http://docbook.org/ns/docbook">Account</ns1293:literal> is automatically created when the
+        entity bean is deployed. Note also that records are added as you open new accounts. Use a
+        database client GUI (<ns1294:abbrev xmlns:ns1294="http://docbook.org/ns/docbook">e.g.</ns1294:abbrev> mycc) to see how the database is updated autmatically.
+      </ns1292:para>
+      <ns1295:para xmlns:ns1295="http://docbook.org/ns/docbook">
+        Note that entity beans can also be added manually by directly adding the required
+        records to the database.
+      </ns1295:para>
+    </ns1289:section>
+  </ns1255:section>

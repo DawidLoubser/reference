@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author Dawid Loubser -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.newIO.channels.scatterGather">
+    
+    <title>Scattering reads and gathering writes</title>
+    <para>
+        Consider the following piece of code, which reads a fictitious image that consists of three
+        logical areas, a 32-byte header, a 265-colour colour-map, and a image body (the pixels):
+        <programlisting language="Java"><![CDATA[
+ByteBuffer header = ByteBuffer.allocate(32);
+ByteBuffer colorMap = ByteBuffer.allocate(256 * 3)
+ByteBuffer imageBody = ByteBuffer.allocate(640 * 480);
+            
+fileChannel.read (header);
+fileChannel.read (colorMap);
+fileChannel.read (imageBody);
+        ]]></programlisting>
+    </para>
+    <para>
+        This performs three separate <literal>read()</literal> calls to load some image file, the data of which is split
+        into three different <quote>sections</quote>. This works fine, but 
+        it would be simpler if we could issue a single read request to the channel and tell it to place the first 32 bytes 
+        into the header buffer, the next 768 bytes into the colorMap buffer, and the remainder into imageBody.
+    </para>
+    <para>
+        This is called scatter/gather (also known as vectored I/O) and most NIO channels support this feature. A scattering 
+        read to the above buffers can be accomplished with this code:
+        <programlisting language="Java"><![CDATA[
+ByteBuffer [] scatterBuffers = { header, colorMap, imageBody };
+fileChannel.read (scatterBuffers);
+        ]]></programlisting>
+    </para>
+    <para>
+        Rather than pass a single buffer object to the channel, an array of buffers is passed in. The channel fills 
+        each buffer in turn until all are full or there're no more data to read. Gathering writes are done in a 
+        similar way; data are drained from each buffer in the list in turn and sent along the channel, exactly 
+        as if they had been written sequentially.
+    </para>
+    <para>
+        Scatter/gather can provide a real performance boost when reading or writing data that's partitioned 
+        into fixed-size, logically distinct segments. Passing a list of buffers means the entire transfer 
+        can be optimized (using multiple CPUs for example) and fewer overall system calls are needed.
+    </para>
+    <para>
+        Gathering writes can compose results from several buffers. For example, an HTTP response could use a 
+        read-only buffer containing static headers that are the same for every response, a dynamically-populated 
+        buffer for those headers unique to the response, and a MappedByteBuffer object associated with a file, 
+        which is to be the body of the response. A given buffer may even appear in more than one gather list, 
+        or multiple views of the same buffer can be used.
+    </para>
+</section>

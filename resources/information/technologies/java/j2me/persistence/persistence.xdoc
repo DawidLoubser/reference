@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  
+<chapter id="resources.information.technologies.java.j2me.persistence.persistence"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>MIDP Persistence via RMS</title>
+
+  <section><title>Introduction</title>
+    <para>
+      For many mobile applications we need some form of persistence. For example, 
+      our ordering application has to at least persist the product list, but may
+      even persist orders until they are sent or standard shopping baskets which
+      can be used as templates.
+    </para>
+    
+    <para>
+      Such basic persistence is provided by record stores. They persist information
+      accross MIDlet invocations and do their best to maintain information accross
+      device reboots and battery changes.
+    </para>
+    
+    <section><title>Local versus remote persistence</title>
+      <para>
+        The persistence may be either on the device or may be provided by external
+        persistence servers like a relational database. The former is from a performance
+        perspective more efficient and does not require the establishment of a connection.
+        There may be, however, a number of issues which will force one to use remote
+        persistence like
+        <itemizedlist>
+          <listitem><para>
+            memory limitations on the device,  
+          </para></listitem>
+          <listitem><para>
+            the requirement to access current data which may have been modified by
+            other information providers,
+          </para></listitem>
+        </itemizedlist>
+      </para>
+      <para>
+        In this chapter we will focus on local persistence. Remote persistence will
+        be discussed in <xref linkend="chapMidpCommunication"/>, where we cover
+        MIDP communication.
+      </para>
+    </section>
+    
+    <section><title>MIDP's Record Management System (RMS)</title>
+      <para>
+        The persistence framework provided by the MIDP specification
+        is the <emphasis>Record Management System</emphasis> (RMS).
+      </para>
+      
+      <section><title>RMS as a platform-independent persistence framework</title>
+        <para>
+          The MIDP specification provides a platform independent persistence
+          framework, the <emphasis>Record Management System</emphasis> (RMS)
+          which will map onto whatever persistence support the underlying device
+          provides. The actual persistence mechanism used behind the scenes
+          is hidden from the MIDP developer.
+        </para>
+      </section>
+
+      <section><title>Record store identification</title>
+        <para>
+          The RMS can be used to create, access and maintain several record stores.
+          Each record store is a separate data store which acts like a separate
+          database served by the same database server.
+        </para>
+        <para>
+          Record stores are <emphasis>uniquely identified by their name</emphasis>,
+          i.e. the name of a record store must be unique within a MIDlet suite.
+          MIDP restricts the name to a maximum of 32 Unicode characters. The
+          record store name is case sensitive.
+        </para>
+      </section>
+      
+      <section><title>Records</title>
+       <para>
+         Record stores contain collections of variable-length records. It is important
+         for to sacrifice the fixed-record length random access model used in many
+         traditional relational database management systems because of the typically
+         severe memory limitations imposed by mobile devices.
+       </para>
+       <para>
+         The MIDP specification does not specify a limit on the size of the individual
+         records or on the record store itself. Different underlying platforms may, 
+         however, impose their own restrictions on the record and record store sizes. 
+         For example, the Palm OS limits individual records to 64kB.
+       </para>
+      </section>
+      
+      <section><title>Record stores are thread-safe</title>
+        <para>
+          All read and write operations to a RMS record store are synchronized. Hence
+          no information corruption due to concurrent access will occur. This is even
+          true if a record store is accessed concurrently by multiple MIDlets.
+        </para>  
+        <para>  
+          Transactions are, however, not supported and hence roll-back and committing
+          of information must be implemented externally if required.
+        </para>
+      </section>
+      
+      <section><title>Sharing record stores</title>
+        <para>
+          Record stores can be accessed from multiple MIDlets in the same MIDlet suite,
+          and as discussed above, the record store is safe from corruption due to
+          concurrent access.
+        </para>
+        <para>
+          However, a record store can only be accessed from MIDlets within the same suite
+          -- recall that different MIDlet suites can even use the same record store name,
+          but that they will each have their own separate record store.
+          There is no direct mechanism for sharing data stores and records accross MIDlets
+          from different suites (or any other information for that matter). The only way
+          one could communicate information accross MIDlets from different MIDlet suites
+          is by them communicating via an external server.
+        </para>
+				<para>
+					New APIs in MIDP 2.0  allow for the explicit sharing of record stores if the MIDlet creating the RecordStore chooses to give such permission.
+				</para>
+      </section>
+      
+      <section><title>The life-span of a record store.</title>
+        <para>
+          A record store exists from when it is created until it is either
+          <itemizedlist>
+            <listitem><para>
+              physically deleted or              
+            </para></listitem>
+            <listitem><para>
+              the MIDlet suite to which the record store belongs to is removed from
+              the device.
+            </para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+    </section>
+  </section>
+  
+<!-- ============================================================================= -->  
+  
+  <section><title>Using the <classname>RecordStore</classname> class</title>
+    
+    <para>
+     Record stores provide the basic operations for 
+     <itemizedlist>
+       <listitem><para>
+         creating and removing record stores,  
+       </para></listitem>
+       <listitem><para>
+         storing and retrieving records,
+       </para></listitem>
+       <listitem><para>
+         querying the physical size of a record store,
+       </para></listitem>
+       <listitem><para>
+         querying the amount of space available for future storage,
+       </para></listitem>
+       <listitem><para>
+         querying the number of records stored in a record store,
+       </para></listitem>
+       <listitem><para>
+         querying the sizes of individual records as well as
+         the time-stamp for when last a record has been last modified, 
+       </para></listitem>
+       <listitem><para>
+         mechanisms for registering/de-registering <emphasis>record listeners</emphasis>
+         which are notified of any changes to records as well as a
+       </para></listitem>
+       <listitem><para>
+         basic version control mechanism.  
+       </para></listitem>
+     </itemizedlist>
+    </para>
+  
+    <section><title>Record stores do not store meta-data</title>
+      <para>
+        Record stores, unlike true databases, do not store any meta-data with their
+        data. For example, we can query a database for its tables and each table
+        for its columns. In this way we obtain information about the information
+        stored in the database.
+      </para>
+      <para>
+        Such information is not available from record stores. From the perspective
+        of the record store, each record is simply an array of bytes and the
+        interpretation of this information is left exclusively to the application
+        processing this information.
+      </para>
+    </section>
+    
+    <section><title>The <classname>RecordStore</classname> interface</title>
+      <para>
+        The <classname>RecordStore</classname> class provides the following
+        services:
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>int addRecord(byte[] data, int offset, int numBytes)</title>
+            <para>Adds a new record to the record store.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void addRecordListener(RecordListener listener)</title>
+            <para>Adds the specified RecordListener.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void closeRecordStore()</title>
+            <para>This method is called when the MIDlet requests to have the record store closed.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void deleteRecord(int recordId)</title>
+            <para>The record is deleted from the record store.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>static void deleteRecordStore(String recordStoreName)</title>
+            <para>Deletes the named record store.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>RecordEnumeration enumerateRecords(RecordFilter filter, RecordComparator comparator, boolean keepUpdated)</title>
+            <para>
+              Returns an enumeration for traversing a set of records in 
+              the record store in an optionally specified order.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>long getLastModified()</title>
+            <para>
+              Returns the last time the record store was modified, 
+              in the format used by System.currentTimeMillis().
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>String getName()</title>
+            <para>Returns the name of this RecordStore.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>int getNextRecordID()</title>
+            <para>Returns the recordId of the next record to be added to the record store.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>int getNumRecords()</title>
+            <para>Returns the number of records currently in the record store.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>byte[] getRecord(int recordId)</title>
+            <para>Returns a copy of the data stored in the given record.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>int getRecord(int recordId, byte[] buffer, int offset)</title>
+            <para>Returns the data stored in the given record.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>int getRecordSize(int recordId)</title>
+            <para>Returns the size (in bytes) of the MIDlet data available in the given record.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>int getSize()</title>
+            <para>Returns the amount of space, in bytes, that the record store occupies.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>int getSizeAvailable()</title>
+            <para>
+              Returns the amount of additional room (in bytes) available 
+              for this record store to grow.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>int getVersion()</title>
+            <para>
+              Each time a record store is modified (record added, modified, 
+              deleted), it's version is incremented.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>static String[] listRecordStores()</title>
+            <para>
+              Returns an array of the names of record stores owned by the MIDlet suite.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>static RecordStore openRecordStore(String recordStoreName, boolean createIfNecessary)</title>
+            <para>
+              Open (and possibly create) a record store associated with the given MIDlet suite.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void removeRecordListener(RecordListener listener)</title>
+            <para>Removes the specified RecordListener.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void setRecord(int recordId, byte[] newData, int offset, int numBytes)</title>
+            <para>Sets the data in the given record to that passed in.</para>
+          </formalpara></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section><title>Creating, Opening and deleting record stores</title>
+      <para>
+        <classname>RecordStore</classname> provides a class service 
+        <function>openRecordStore</function> for creating and opening record stores.
+        If the second argument is set to <constant>true</constant>, a record store
+        with that name is created for the MIDlet suite if it does not exist. 
+        <programlisting>
+RecordStore openRecordStore(String recordStoreName, boolean createIfNecessary) 
+        </programlisting>
+      </para>
+      <para>
+        The <methodname>deleteRecordStore</methodname> class service deletes a record store
+        with the supplied name from the storage are of the midlet (if it exists).
+      </para>
+    </section>
+    
+    <section><title>Listing the record stores which exist within the storage area
+                    of a MIDlet suite</title>
+      <para>
+        The <classname>RecordStore</classname> supplies a further class service,
+        <function>listRecordStores</function> for
+        listing all record stores which are accessible from within any of the
+        MIDlets in a MIDlet suite. It returns record store names.
+      </para>
+    </section>
+
+    <section><title>Adding records</title>
+      <para>
+        The marchalling of objects onto the byte array and the demarshalling back into
+        Java objects must be done by the developer. These mapping may get very complex
+        and it is hence common to presist object graphs in ML as a single record in
+        a record store and to interface with such information via an XML parser. CML
+        parsers will be discussed in chapter <xref linkend="chapXML"/>.
+      </para>
+      <para>
+        To create a new record you call <methodname>addRecord</methodname> supplying
+        a <type>byte</type> array containing the data as argument. In addition the 
+        offset and number-of-bytes to be extracted from the byte array are supplied.
+        This enables you to reuse a larger buffer avoiding the overheads of frequently
+        creating new byte arrays and having them continuously garbage collected.
+      </para>
+      
+      <section><title>Record Ids</title>
+        <para>
+          Record stores are very primitive. They simply enable one to create records
+          of byte arrays which are indexed by the <varname>recordId</varname>. The
+          <varname>recordId</varname> acts as primary key. The record ids are generated
+          by the RMS.
+        </para>
+        <para>
+          The <methodname>addRecord</methodname> service returns a <varname>recordId</varname>
+          which can be used to access that record at a later stage.
+        </para>
+      </section>
+    </section>
+
+    <section><title>Reading records</title>
+      <para>
+        Records are requested by their record id. Again, the de-marshalling of the
+        <type>byte</type> array is left to the developer.
+      </para>
+    </section>
+    
+    <section><title>Updating and deleting records</title>
+      <para>
+        When updating a record one has to supply the new data for the record as well
+        as the record id. Similarly, when deleting a record, the record id has to
+        be supplied.
+      </para>
+    </section>
+  </section>
+  
+<!-- ============================================================================= -->  
+  
+  <section><title>Filters, iterators, comparators and record listeners</title>
+    <para>
+      So far we have simply created record stores and stored and retrieved information
+      from them. The primary interaction mechnism was the record id which acted as 
+      primary key.      
+    </para>
+    <para>
+      In this section we look at more generic ways of accessing records from a record
+      store, as well as sorting and registering as record change event listener.
+    </para>
+    
+    <section><title>Filtering records via record filters and streams</title>
+      <para>
+        The <interface>RecordFilter</interface> is an interface which we can implement
+        in various ways to filter out records in a record store according to some search
+        criterion.
+      </para>
+      <para>
+        The <interface>RecordFilter</interface> interface requires you to implement
+        a single method, <methodname>matches</methodname>, which takes the 
+        <type>byte[]</type> representing th record data as argument and returns 
+        <constant>true</constant> if the data matches the filter and false otherwise.
+      </para>
+      <section><title>Using streams for de-marshalling</title>
+      
+        <para>
+          Because the matching is done on the raw byte data, the filters will typically
+          have to do at least some partial de-marshalling of the data. To this end one 
+          typically attaches data or text streams onto the byte array. 
+          MIDP does support the <classname>ByteArrayInputStream</classname>  and
+          <classname>ByteArrayOutputStream</classname> classes as well as
+          <classname>DataInputSteam</classname> and <classname>DataOutputStream</classname>
+          for demarshalling primitives and <interface>Reader</interface>s, 
+          <interface>Writer</interface>s and <classname>PrintStream</classname>s
+          for text I/O.
+        </para>  
+        <para>
+          For example, to demarshall the <classname>Date</classname> of a birthday
+          record can be demarshalled via
+          <programlisting>
+DataInputStream in
+  = new DataInputStream(new ByteArrayInputStream(recordData));
+Date recordDate = new Date(in.readLong());
+        </programlisting>
+        </para>
+        <para>
+          Below we show two examples of filters used in the <application>BirthdayList</application>
+          application. The first filter assumes that the first 8 bytes of the record represent
+          a long integer for the actual birth date, while the second demarshalls the full
+          birthday stored in the record:
+          <programlisting><![CDATA[
+public class BirthdayOnDateFilter implements RecordFilter
+{
+  public BirthdayOnDateFilter(Date date)
+  {
+    this.date = removeTime(date);
+  }
+
+  private Date removeTime(Date date)
+  {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    cal.set(Calendar.HOUR,0);
+    cal.set(Calendar.MINUTE,0);
+    cal.set(Calendar.SECOND,0);
+    cal.set(Calendar.MILLISECOND, 0);
+    return cal.getTime();
+  }
+
+  public boolean matches(byte[] recordData)
+  {
+    try
+    {
+      DataInputStream in
+        = new DataInputStream(new ByteArrayInputStream(recordData));
+      Date recordDate = new Date(in.readLong());
+      Calendar cal1 = Calendar.getInstance();
+      Calendar cal2 = Calendar.getInstance();
+      cal1.setTime(recordDate);
+      cal2.setTime(date);
+
+      return ((cal1.get(Calendar.DAY_OF_MONTH)
+                == cal2.get(Calendar.DAY_OF_MONTH)) &&
+                  (cal1.get(Calendar.MONTH)
+                    == cal2.get(Calendar.MONTH)));
+     }
+     catch (Exception e)
+     {
+       throw new RuntimeException();
+     }
+  }
+  private Date date;
+}
+
+public class NameFilter implements RecordFilter
+{
+  public NameFilter(String name) {this.name = name;}
+
+  public boolean matches(byte[] recordData)
+  {
+    return name.equals(new Birthday(recordData).getName());
+  }
+  private String name;
+}
+        ]]></programlisting>
+        </para>
+      </section>
+      
+    </section>
+
+    <section><title>Using <classname>RecordComparator</classname> to compare Records</title>
+      <para>
+        Another very useful feature is that while enumerating through records, the 
+        <interface>RecordEnumerator</interface> can not only use a filter to decide 
+        which records go into the result list, but can also use a 
+        <interface>RecordComparator</interface>order the records in the result 
+        list at the same time.
+      </para>
+      <para>
+        To this end one will have to implement a <interface>RecordComparator</interface>
+        which requires one to implement a <methodname>compare</methodname> method
+        which compares two <type>byte</type> arrays. The interface looks as follows:
+        <programlisting>
+package javax.microedition.rms;
+
+public interface RecordComparator
+{
+  public int compare(byte[] record1, byte[] record2);
+  
+  public final int PRECEDES=0;
+  public final int EQUIVALENT=0;
+  public final int FOLLOWS=0;
+}
+        </programlisting>
+      </para>
+      <para>
+        Once again the record comparator will have to do at least some limitied de-marshalling
+        of the <type>byte</type> array representing the record data.
+      </para>      
+    </section>
+    
+    <section><title>Monitoring records via <interface>RecordListener</interface></title>
+      <para>
+        One can attach record listeners to record stores. <interface>RecordListener</interface>s
+        are informed of
+        <itemizedlist>
+          <listitem><para>
+            new records being added to the record store,
+          </para></listitem>
+          <listitem><para>
+            records being removed to the record store and,
+          </para></listitem>
+          <listitem><para>
+            new records being updated.
+          </para></listitem>
+        </itemizedlist>
+        This is done via the
+        <programlisting>
+void addRecordListener(RecordListener listener) 
+        </programlisting>
+        and
+        <programlisting>
+void removeRecordListener(RecordListener listener) 
+        </programlisting>      
+        services of <classname>RecordStore</classname>.
+      </para>
+      <para>
+        A RecordListener must then supply the three event handlers specified in the
+        interface:
+        <programlisting>
+package javax.microedition.rms;
+
+public interface RecordListener        
+{
+  public void recordAdded(RecordStore recordStore, int recordId);
+  
+  public void recordChanged(RecordStore recordStore, int recordId);
+
+  public void recordDeleted(RecordStore recordStore, int recordId);
+}
+        </programlisting>
+      </para>
+    </section>
+    
+  </section>
+    
+  <section><title>Enumerating through records</title>
+    <para>
+      To access records directly we need the <varname>recordId</varname>. 
+      The <varname>recordId</varname> is, however, really an
+      internal technicality of RMS. In order to traverse collections more intuitively,
+      without having to keep track of the record ids, one can use a
+      <classname>RecordEnumeration</classname>. This approach has the further
+      advantages that to supports
+      <itemizedlist>
+        <listitem><para>
+          the use of <interface>RecordFilter</interface>s for selective extraction 
+          of records
+        </para></listitem>
+        <listitem><para>
+          and the use of <interface>RecordComparator</interface>s in order to obtain 
+          a sorted result list.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      A <classname>RecordEnumeration</classname> is obtained from the 
+      <classname>RecordStore</classname> by requesting one via the method
+      <programlisting>
+RecordEnumeration enumerateRecords(RecordFilter filter, 
+                                 RecordComparator comparator, 
+                                 boolean keepUpdated)        
+      </programlisting>
+      If one does not want a filter, i.e. one would like to iterate accross all records,
+      the one specifies <constant>null</constant> for the filter. Similarly, if one does
+      not require sorting, one specifies <constant>null</constant> for the comparator
+      argument.
+    </para>
+    <para>
+      Thus, if one simply wants to iterate through the entire collection records, 
+      in the same order as what they are stored in the RMS, one uses a
+      <classname>RecordEnumeration</classname> without specifying either
+      a <interface>RecordFilter</interface> or a <interface>RecordComparator</interface>.
+      The following method retrieves all birthdays in the birthday database:
+      <programlisting><![CDATA[
+public Vector getBirthdays()
+                throws RecordStoreException
+{
+  RecordEnumeration iter
+    = store.enumerateRecords(null, null, false);
+
+  return getBirthdays(iter);
+}
+      ]]></programlisting>
+    </para>
+    <para>
+      The other <methodname>getBirthday</methodname> methods retrieve
+      <itemizedlist>
+        <listitem><para>
+          all birthdays on a specified day/month,
+        </para></listitem>
+        <listitem><para>
+          all birthdays for persons with a specified name, and
+        </para></listitem>
+        <listitem><para>
+          all birthdays within a specified period (e.g. between 1 January 1972
+          and 3 June 2003):
+        </para></listitem>
+      </itemizedlist>
+      
+      <programlisting><![CDATA[
+public Vector getBirthdays(Date date)
+                throws RecordStoreException
+{
+  RecordEnumeration iter
+    = store.enumerateRecords
+        (new BirthdayOnDateFilter(date), null, false);
+
+  return getBirthdays(iter);
+}
+
+public Vector getBirthdays(Date onOrAfter, Date before)
+               throws RecordStoreException
+{
+  RecordEnumeration iter
+    = store.enumerateRecords
+        (new BirthdayBetweenDatesFilter(onOrAfter, before),
+          null, false);
+
+  return getBirthdays(iter);
+}
+
+public Vector getBirthdays(String name)
+               throws RecordStoreException
+{
+  RecordEnumeration iter
+    = store.enumerateRecords
+        (new NameFilter(name), null, false);
+
+  return getBirthdays(iter);
+}
+
+private Vector getBirthdays(RecordEnumeration iter)
+               throws RecordStoreException
+{
+  Vector birthdays = new Vector(iter.numRecords());
+  while (iter.hasNextElement())
+  {
+    int recordId = iter.nextRecordId();
+    birthdays.addElement
+     (new Birthday(store.getRecord(recordId), recordId));
+  }
+  return birthdays;
+}
+      ]]></programlisting>
+    </para>
+  </section>
+  
+<!-- ============================================================================= -->  
+    
+  <section><title>Object serialization</title>
+    <para>
+      Note that object serialization is not supported in MIDP, i.e. that the
+      mapping of objects onto streams and vice versa has to be done by developers.
+    </para>
+  </section>
+  
+<!-- ============================================================================= -->  
+  
+  <section><title>Interfacing with external persistence resources</title>
+    <para>
+      At times one wants to retrieve information from external databases
+      or even persist information onto external persistence resources.
+      This may seem, initially, a problem because the MIDP specification 
+      does not require support for JDBC.
+    </para>  
+    <para>
+      External databases can, however, still be used by marshalling service 
+      requests onto HTTP streams (MIDP supports only the HTTP protocol). The
+      most sensible approach is most probably to use an XML parser to generate
+      SOAP-based service requests to web services. These web services would then
+      make the database queries and typically would marshall the result sets back
+      onto SOAP/XML/HTTP.
+    </para>
+  </section>
+  
+<!-- ============================================================================= -->  
+
+  <section><title>An example application using RMS-based persistence</title>
+    <para>
+      As an example we shall develop a birthday list application. Upon starting
+      the application it should show todays birthdays. In addition to this it 
+      should support
+      <itemizedlist>
+        <listitem><para>
+          adding, removing and editing birthdays, as well as
+        </para></listitem>
+        <listitem><para>
+          searching for birthdays on
+          <itemizedlist>
+            <listitem><para>day/month</para></listitem>
+            <listitem><para>person name</para></listitem>
+            <listitem><para>date period</para></listitem>
+          </itemizedlist>
+        </para></listitem>
+      </itemizedlist>
+    </para>  
+        <figure  id="figBirthdayListMenu">
+          <title>The main menu shows the core use cases of the application.</title>
+          <graphic depth="12cm" align="center" format="JPEG"  
+            fileref="file:/home/solms/Documents/courses/J2ME/book/persistence/BirthdayListMenu.jpg"/>
+        </figure>
+
+    <section><title>Modeling the application dynamics</title>
+    
+      <para>
+        In order to 
+        <itemizedlist>
+          <listitem><para>
+            understand and be able to verify the requirements and
+          </para></listitem>
+          <listitem><para>
+            to check the usability of the resulting application
+          </para></listitem>
+        </itemizedlist>
+         one may want
+        to use UML activity and/or state diagrams to model the application dynamics
+        (particularly the dynamics through the potentially many screens of a
+        MIDP application). Our application dynamics is shown in figure
+        <xref linkend="figBirthdayListDynamics"/>
+      </para>
+      
+      <figure  id="figBirthdayListDynamics">
+        <title>The dynamic model for the Birthday list application should be
+               tested against requirements and usability.</title>
+        <graphic align="center" format="JPEG" 
+          fileref="file:/home/solms/Documents/courses/J2ME/book/persistence/BirthdayListDynamics.jpg"/>
+      </figure>
+    </section>  
+    
+    <section><title>Code Listing</title>
+      <para>
+        Again we make some effort in separating the
+        <itemizedlist>
+          <listitem><para>business logic layer,</para></listitem>
+          <listitem><para>presentation layer and</para></listitem>
+          <listitem><para>persistence layer</para></listitem>
+        </itemizedlist>
+      </para>  
+      <example><title>The Business Logic Layer: Birthday.java</title>
+        <programlisting>
+&Birthday.java;        
+        </programlisting>
+      </example>
+        <figure  id="figBirthdayList">
+          <title>The main window is the birthday list which shows all the birthdays
+                 fitting thelatest search criterion. This initial screen shown
+                 with today's birthdays.</title>
+          <graphic depth="12cm" align="center" format="JPEG"  
+            fileref="file:/home/solms/Documents/courses/J2ME/book/persistence/BirthdayList.jpg"/>
+        </figure>
+
+      <example><title>The Persistence Layer: BirthdayRepository.java</title>
+        <programlisting>
+&BirthdayRepository.java;        
+        </programlisting>
+      </example>
+      
+        <figure  id="figBirthdayEditor">
+          <title>The birthday editor form is used to add new birthdays and edit
+                  stored birthdays.</title>
+          <graphic depth="12cm" align="center" format="JPEG"  
+            fileref="file:/home/solms/Documents/courses/J2ME/book/persistence/BirthdayEditor.jpg"/>
+        </figure>
+      <example><title>The Presentation Layer: BirthdayList.java</title>
+        <programlisting>
+&BirthdayList.java;        
+        </programlisting>
+      </example>
+      
+    </section>
+      
+  </section>
+  
+<!-- ============================================================================= -->  
+  
+  <section><title>Exercises</title>
+    <para>
+      <orderedlist>
+        <listitem><para>
+          Write an application which captures work units for projects (e.g. from 13h00 to 
+          16h30 you worked on project X performing some task). You should capture start 
+          and end times as well as project name and a description of what has been done.
+          You should be able to list all the work done on a project within a specified
+          time period as well as the total number of hours spent on that project within
+          the period.
+        </para></listitem>
+      </orderedlist>
+    </para>
+  </section>
+
+</chapter>

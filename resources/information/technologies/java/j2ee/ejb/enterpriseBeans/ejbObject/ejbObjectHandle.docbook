@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns866:section xmlns:ns866="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.ejbObject.ejbObjectHandle">
+
+  <ns867:title xmlns:ns867="http://docbook.org/ns/docbook">Working with EJB Object Handles</ns867:title>
+  <ns868:para xmlns:ns868="http://docbook.org/ns/docbook">
+    At times clients want preserve state across client sessions. For example, a client
+    might want to add to his/her shopping cart, disconnect, and then, at some later stage,
+    reconnect to the same stateful session bean instance which should be in the same state as
+    what it was left in when the client disconnected.
+  </ns868:para>
+  <ns869:para xmlns:ns869="http://docbook.org/ns/docbook">
+    In such cases the client would not remove the stateful session bean, but would instead
+    save a persistent handle to the stateful session bean. When the client wants to continue
+    with the same session bean, he/she would read in the handle from some or other persistent
+    storage, e.g. a file, and reconnect via that handle to stateful session bean instance.
+  </ns869:para>
+  <ns870:para xmlns:ns870="http://docbook.org/ns/docbook">
+    EJB handles are serializable persistent references to enterprise beans. These handles
+    are similar to CORBA's stringified object references which are persistent references to a
+    CORBA server objects.
+  </ns870:para>
+  <ns871:para xmlns:ns871="http://docbook.org/ns/docbook">
+    Of course the handle is only a reference. Thus, if another process has removed the
+    enterprise bean, the handle cannot be used to reconstruct that bean.
+  </ns871:para>
+  
+  <ns872:section xmlns:ns872="http://docbook.org/ns/docbook">
+    <ns873:title xmlns:ns873="http://docbook.org/ns/docbook">Limitations of Persistent EJB Handles</ns873:title>
+    <ns874:para xmlns:ns874="http://docbook.org/ns/docbook">
+      Note, however, that there are limitations for using EJB handles: 
+    <ns875:orderedlist xmlns:ns875="http://docbook.org/ns/docbook">
+      <ns876:listitem xmlns:ns876="http://docbook.org/ns/docbook">
+        <ns877:para xmlns:ns877="http://docbook.org/ns/docbook">
+          The EJB handle can only be re-used from the same client environment. You can thus
+          not save the EJB handle on one machine and re-use it on another. 
+        </ns877:para>
+      </ns876:listitem>
+      <ns878:listitem xmlns:ns878="http://docbook.org/ns/docbook">
+        <ns879:para xmlns:ns879="http://docbook.org/ns/docbook">
+          EJB handles are not portable across EJB containers (and hence across different EJB
+          server machines).
+        </ns879:para>
+      </ns878:listitem>
+    </ns875:orderedlist>
+    </ns874:para>
+  </ns872:section>
+  
+  <ns880:section xmlns:ns880="http://docbook.org/ns/docbook">
+    <ns881:title xmlns:ns881="http://docbook.org/ns/docbook">Obtaining the Handle of an Enterprise Bean</ns881:title>
+    <ns882:para xmlns:ns882="http://docbook.org/ns/docbook">
+      You can obtain the handle of an enterprise bean from its remote interface interface via
+<ns883:programlisting xmlns:ns883="http://docbook.org/ns/docbook">
+remoteInterface.getHandle();
+</ns883:programlisting>    
+      which returns an instance of <ns884:literal xmlns:ns884="http://docbook.org/ns/docbook">javax.ejb.Handle</ns884:literal>.
+    </ns882:para>
+  </ns880:section>
+  
+  <ns885:section xmlns:ns885="http://docbook.org/ns/docbook">
+    <ns886:title xmlns:ns886="http://docbook.org/ns/docbook">Serializing the Handle</ns886:title>
+    <ns887:para xmlns:ns887="http://docbook.org/ns/docbook">
+      To serialize the handle you simply open an object output stream and serialize the
+      handle object onto it. For example, below we serialize the handle to a file:
+<ns888:programlisting xmlns:ns888="http://docbook.org/ns/docbook">
+javax.ejb.Handle handle = cart.getHandle();
+
+ObjectOutputStream out = new ObjectOutputStream
+(new FileOutputStream("handle.dat"));
+
+out.writeObject(handle);
+</ns888:programlisting>
+   </ns887:para>
+  </ns885:section>
+  
+  <ns889:section xmlns:ns889="http://docbook.org/ns/docbook">
+    <ns890:title xmlns:ns890="http://docbook.org/ns/docbook">Reconnecting to the Enterprise Bean</ns890:title>
+    <ns891:para xmlns:ns891="http://docbook.org/ns/docbook">
+      The exact way you reconnect depends on whether your EJB container is based on
+      RMI/IIOP or on straight RMI. In future the containers will be required to be based on RMI/IIOP.
+    </ns891:para>
+    
+    <ns892:section xmlns:ns892="http://docbook.org/ns/docbook">
+      <ns893:title xmlns:ns893="http://docbook.org/ns/docbook">RMI Based EJB Containers</ns893:title>
+      <ns894:para xmlns:ns894="http://docbook.org/ns/docbook">
+        In the case of RMI-based EJB containers, we simply read in the handle and ask the
+        handle for the associated EJB object. This reference can be cast to your remote interface:
+<ns895:programlisting xmlns:ns895="http://docbook.org/ns/docbook">
+ObjectInputStream in = new ObjectInputStream
+(new FileInputStream("handle.dat"));
+
+javax.ejb.Handle handle = in.readObject();
+
+ShoppingCart cart = (ShoppingCart)handle.getEJBObject();
+</ns895:programlisting>
+       </ns894:para>
+    </ns892:section>
+    
+    <ns896:section xmlns:ns896="http://docbook.org/ns/docbook">
+      <ns897:title xmlns:ns897="http://docbook.org/ns/docbook">RMI/IIOP Based EJB Containers</ns897:title>
+      <ns898:para xmlns:ns898="http://docbook.org/ns/docbook">
+        In the case of RMI/IIOP-based EJB containers, we read in the handle, ask the handle
+        for the associated EJB object and use the <ns899:literal xmlns:ns899="http://docbook.org/ns/docbook">narrow</ns899:literal>
+        method of <ns900:literal xmlns:ns900="http://docbook.org/ns/docbook">PortableRemoteObject</ns900:literal> to narrow the
+        reference down to a reference to the remote interface:
+<ns901:programlisting xmlns:ns901="http://docbook.org/ns/docbook">
+ObjectInputStream in = new ObjectInputStream
+(new FileInputStream("handle.dat"));
+
+javax.ejb.Handle handle = in.readObject();
+
+ShoppingCart cart
+= (ShoppingCart)javax.rmi.PortableRemoteObject.narrow
+   (handle.getEJBObject(), ShoppingCart.class);
+</ns901:programlisting>
+       </ns898:para>
+    </ns896:section>
+  </ns889:section>
+</ns866:section>

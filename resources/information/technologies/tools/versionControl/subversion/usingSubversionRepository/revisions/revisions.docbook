@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za on 2009-2-4 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Understanding revisions and the <literal>status</literal> command</title>
+    <para>
+        A revision represent a particular state of the repository. The revision numbers in subversion are simply
+        incremented with each modification (<literal>commit</literal>), i.e. after each commit which applies
+        any changes to the repository, the revision number is incremented.
+    </para>
+    <para>
+        Upon checkout, the working copy will have the revision number of the repository (or of that particular revision
+        which was checked out). Upon editing and committing different resources, the  working copy may contain
+        resources with different revision number.
+    </para>
+    <section>
+        <title>The <literal>status</literal>command</title>
+        <para>
+            The <literal>status</literal> command allows one to query the status of the resources in the working copy.
+            By default it will report the state of the local copy of each resource which has had local modifications using
+            status flags:
+            <programlisting><![CDATA[
+svn status
+?      test3.txt
+A      test2.txt
+D      test4.txt
+M      dummy/dummy.txt            
+            ]]></programlisting>
+        </para>
+        
+        <section>
+            <title>Status flags</title>
+            <para>
+                The status flags used by the <literal>status</literal> command are as follows:
+                <itemizedlist>
+                    <listitem><para>
+                        <literal>M</literal> : locally modified
+                    </para></listitem>
+                    <listitem><para>
+                        <literal>A</literal> : added, not yet sent to repository
+                    </para></listitem>
+                    <listitem><para>
+                        <literal>D</literal> : deleted - not yet from repository
+                    </para></listitem>
+                    <listitem><para>
+                        <literal>?</literal> : item not yet under revision control
+                    </para></listitem>
+                    <listitem><para>
+                        <literal>C</literal> : item is in a state of conflict with updates received from the repository
+                    </para></listitem>
+                    <listitem><para>
+                        <literal>R</literal> : item has been replaced with a copy from the repository
+                    </para></listitem>
+                    <listitem><para>
+                        <literal>T</literal> : the item is ignored because it is in the ignore list
+                    </para></listitem>
+                    <listitem><para>
+                        <literal>!</literal> : item is missing (perhaps deleted without using <literal>svn delete</literal> or an interrupted update
+                    </para></listitem>
+                    <listitem><para>
+                        <literal>!</literal> : item is missing (perhaps deleted without using <literal>svn delete</literal> or an interrupted update
+                    </para></listitem>
+                    <listitem><para>
+                        <literal>~</literal> : item is versioned as one type of object, but has been replaced by another type of object.
+                    </para></listitem>
+                </itemizedlist>
+                If no flags are shown, then there are no local modifications.
+            </para>
+        </section>
+        
+        <section>
+            <title>Verbose output</title>
+            <para>
+                the version number for each resource 
+                Adding the <literal>--verbose</literal> flag to the <literal>status</literal> command also shows you the files whose status
+                has not changed and provides you, in addition to the status flag,
+                <itemizedlist>
+                    <listitem><para>
+                        the working revision number of each resource,            
+                    </para></listitem>
+                    <listitem><para>
+                        the revision in which the resource last changed, and
+                    </para></listitem>
+                    <listitem><para>
+                        who has made the last change to the resource.
+                    </para></listitem>
+                </itemizedlist>
+            </para>
+            <para>
+                For example,
+                <programlisting><![CDATA[
+svn status --verbose
+               10       10 fritz        .
+?                                       test3.txt
+A               0       ?   ?           test2.txt
+D              13       13 fritz        test4.txt
+               10        2 fritz        dummy
+M              10        2 fritz        dummy/dummy.txt
+               10        9 fritz        test.txt
+            ]]></programlisting>
+            </para>
+        </section>
+        
+        <section>
+            <title>Showing required updates</title>
+            <para>
+                By default the <literal>status</literal> command does not contact the server, it only reports on the status of the working copy with
+                reference to the last update, using the metadata and information around the current state of the files in the working directory. 
+                You can, however, use the <literal>--showupdates</literal> command line flag to request that the <literal>status</literal>
+                command should also show you the files which have been updated on the server side since your last commit. Changes to
+                any of these files require an update before any changes can be committed. 
+            </para>
+            <para>
+                Subversion will put an asterisk next to each file which has a newer revision on the server side and show you the revision number
+                you currently have (not the revision number available on the server):
+                For example,
+                <programlisting><![CDATA[
+svn status --show-updates
+M      *       10   dummy/dummy.txt
+A               0   test2.txt
+?                   test3.txt
+D              13   test4.txt
+       *       10   test.txt
+]]></programlisting>
+            </para>
+        </section>    
+    </section>    
+</section>  

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The services layer</title>
+    <para>
+        The domain objects are not directly accessed - they are accessible only through a services layer.
+        The services layer is provided by two stateless session beans which provide services around locations and
+        weather readings respectively. Each implements an appropriate contract encoded as a Java interface.
+    </para>
+    
+    <section>
+        <title>Location services</title>
+        <para>
+            This services contract defines a set of persistence and lookup services as well as the exceptions used
+            to specify that a service cannot be provided due to some pre-condition not having been met:
+        </para>
+        <programlisting>
+<xi:include href="../weatherBuro/businessLogic/src/main/java/za/co/solms/location/LocationServices.java" parse="text"/>                
+            </programlisting>
+            <note><para>
+                Nothing in the services contract refers to EJBs or even JavaEE. The contract is architecture neutral.
+            </para></note>        
+    </section>
+    
+    <section>
+        <title>LocationServicesBean</title>
+        <para>
+            The implementation class has been annotated as <literal><![CDATA[@Stateless]]></literal>. We use the
+            <literal><![CDATA[@Local]]></literal> annotation to specify that the <literal>LocationServices</literal>
+            interface should be used as a local interface for the session bean. Our clients (including our web-based
+            presentation layer will have no direct dependencies on the bean implementation class - only on the
+            services contract.
+        </para>
+        <para>        
+            It makes liberal use of the entity manager to persist, remove, update/merge and find entities as well as 
+            to create and execute instances of the
+            pre-compiled JPQL queries which we defined with the entity classes. The entity manager is enjected into
+            our session bean via a <literal><![CDATA[@PersistenceContext]]></literal> annotation.
+        </para>
+        <programlisting>
+<xi:include href="../weatherBuro/businessLogic/src/main/java/za/co/solms/location/LocationServicesBean.java" parse="text"/>                
+            </programlisting>
+    </section>
+    
+    <section>
+        <title>WeatherServices</title>
+        <para>
+            The <literal>WeatherServices</literal> interface represents the contract publiching the weather services. This
+            includes the standard entity creation, deletion, lookup and update services. In addition to this the contract
+            also specifies a business service for calculating the average temperature over a specified period. 
+        </para>
+        <programlisting>
+<xi:include href="../weatherBuro/businessLogic/src/main/java/za/co/solms/weather/WeatherServices.java" parse="text"/>                
+        </programlisting>
+    </section> 
+
+    <section>
+        <title>WeatherServicesBean</title>
+        <para>
+            The bean implementation class is similar to that of the location services. Here, however, we have some business logic
+            for calculating the average temperature for a location over some period. This could 
+            have been done with a query, but is done here as some logic implemented in Java.
+        </para>
+        <programlisting>
+<xi:include href="../weatherBuro/businessLogic/src/main/java/za/co/solms/weather/WeatherServicesBean.java" parse="text"/>                
+        </programlisting>
+    </section>        
+        
+    
+</section>    

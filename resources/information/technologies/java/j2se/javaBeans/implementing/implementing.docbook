@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns2004:section xmlns:ns2004="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.javaBeans.implementing.implementing">
+  <ns2005:title xmlns:ns2005="http://docbook.org/ns/docbook">Implementing classes as Java Beans</ns2005:title>
+  <ns2006:para xmlns:ns2006="http://docbook.org/ns/docbook">
+    We will illustrate this via an example of a class which has association, aggregation,
+    composition and specialization relationships to other classes. The example is shown
+    in the UML diagram of <ns2007:xref xmlns:ns2007="http://docbook.org/ns/docbook" linkend="resources.information.technologies.java.j2se.javaBeans.implementing.accountsExample_fig"/>
+  </ns2006:para>
+  
+  <ns2008:figure xmlns:ns2008="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.javaBeans.implementing.accountsExample_fig">
+    <ns2009:title xmlns:ns2009="http://docbook.org/ns/docbook">Accounts hierarchy with association, aggregation and composition relationships</ns2009:title>
+    <mediaobject xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://docbook.org/ns/docbook"><imageobject><imagedata fileref="accountsExample.jpg"/></imageobject></mediaobject>
+  </ns2008:figure>
+  
+  <ns2010:section xmlns:ns2010="http://docbook.org/ns/docbook">
+    <ns2011:title xmlns:ns2011="http://docbook.org/ns/docbook">Adding a contract for observables</ns2011:title>
+    <ns2012:para xmlns:ns2012="http://docbook.org/ns/docbook">
+      Observables must support the addition and removal of
+      <ns2013:literal xmlns:ns2013="http://docbook.org/ns/docbook">PropertyChangeListeners</ns2013:literal>. This is specified in an <ns2014:literal xmlns:ns2014="http://docbook.org/ns/docbook">Observable</ns2014:literal>
+      interface. The interface has a nested (not inner) class for
+      <ns2015:literal xmlns:ns2015="http://docbook.org/ns/docbook">NoSuchPropertyException</ns2015:literal>s:
+      <ns2016:programlisting xmlns:ns2016="http://docbook.org/ns/docbook">
+        <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/za/co/solms/javaBeans/Observable.java"/>
+      </ns2016:programlisting>
+    </ns2012:para>
+  </ns2010:section>
+  
+  <ns2017:section xmlns:ns2017="http://docbook.org/ns/docbook">
+    <ns2018:title xmlns:ns2018="http://docbook.org/ns/docbook">A base class for observables</ns2018:title>
+    <ns2019:para xmlns:ns2019="http://docbook.org/ns/docbook">
+      In order to avoid code duplication, we introduce a base class for observables which provides
+      subclasses all required infrastructure for observability except for
+      <ns2020:itemizedlist xmlns:ns2020="http://docbook.org/ns/docbook">
+        <ns2021:listitem xmlns:ns2021="http://docbook.org/ns/docbook"><ns2022:para xmlns:ns2022="http://docbook.org/ns/docbook">
+          the property definitions, and
+        </ns2022:para></ns2021:listitem>
+        <ns2023:listitem xmlns:ns2023="http://docbook.org/ns/docbook"><ns2024:para xmlns:ns2024="http://docbook.org/ns/docbook">
+          the actual sending of property change events.
+        </ns2024:para></ns2023:listitem>
+      </ns2020:itemizedlist>
+      <ns2025:programlisting xmlns:ns2025="http://docbook.org/ns/docbook">
+        <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/za/co/solms/javaBeans/ObservableBase.java"/>
+      </ns2025:programlisting>
+    </ns2019:para>
+  </ns2017:section>
+  
+  
+  <ns2026:section xmlns:ns2026="http://docbook.org/ns/docbook">
+    <ns2027:title xmlns:ns2027="http://docbook.org/ns/docbook">A JavaBean which supports property change notification</ns2027:title>
+    <ns2028:para xmlns:ns2028="http://docbook.org/ns/docbook">
+      Let us have a look at a very simple bean, that of a <ns2029:literal xmlns:ns2029="http://docbook.org/ns/docbook">Tender</ns2029:literal> which
+      encapsulated an amount and a currency. Lets us first have a look at the interfaces through
+      which tenders will be accessed. Below we define an interface for observable tenders together
+      with a <ns2030:literal xmlns:ns2030="http://docbook.org/ns/docbook">Mutable</ns2030:literal> nested sub interface for mutable tenders --
+      <ns2031:abbrev xmlns:ns2031="http://docbook.org/ns/docbook">i.e.</ns2031:abbrev> the default view onto tenders is a read only view through which the
+      tender cannot be modified and then there is an extended interface which also provides write
+      access to the tender properties:
+      <ns2032:programlisting xmlns:ns2032="http://docbook.org/ns/docbook">
+        <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/za/co/solms/javaBeans/Tender.java"/>
+      </ns2032:programlisting>
+    </ns2028:para>
+    <ns2033:para xmlns:ns2033="http://docbook.org/ns/docbook">
+      The default tender implementation realizes the extended mutable interface, but could be
+      exposed via either of the interfaces. Note that the bean issues property change events when
+      any of its properties are modified:
+      <ns2034:programlisting xmlns:ns2034="http://docbook.org/ns/docbook">
+        <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/za/co/solms/javaBeans/TenderImpl.java"/>
+      </ns2034:programlisting>
+      <ns2035:note xmlns:ns2035="http://docbook.org/ns/docbook"><ns2036:para xmlns:ns2036="http://docbook.org/ns/docbook">
+        The bean publishes its attributes via an unmodifiable set of strings which is initialized in
+        a static block. The <ns2037:literal xmlns:ns2037="http://docbook.org/ns/docbook">TreeSet</ns2037:literal> is populated and then wrapped with an
+        immutability wrapper which prevents anyone from changing the properties of the class.
+      </ns2036:para></ns2035:note>
+    </ns2033:para>
+  </ns2026:section>
+  
+  <ns2038:section xmlns:ns2038="http://docbook.org/ns/docbook">
+    <ns2039:title xmlns:ns2039="http://docbook.org/ns/docbook">A JavaBean with association and composition relationships</ns2039:title>
+    <ns2040:para xmlns:ns2040="http://docbook.org/ns/docbook">
+      Let us now look at <ns2041:literal xmlns:ns2041="http://docbook.org/ns/docbook">Account</ns2041:literal>s which has the balance as an encapsulated
+      component and a client as an associated object. Consequently, the balance is part of the state of the
+      account (a change in the state of the balance implies a change of state in the account) while
+      a change of state in the client does not imply a state transition in the account.
+    </ns2040:para>
+    <ns2042:para xmlns:ns2042="http://docbook.org/ns/docbook">
+      In the case of composition relationships, there are two ways in which we can publish the state
+      change in an owner caused by a state change in a component of the owner:
+      <ns2043:orderedlist xmlns:ns2043="http://docbook.org/ns/docbook">
+        <ns2044:listitem xmlns:ns2044="http://docbook.org/ns/docbook"><ns2045:para xmlns:ns2045="http://docbook.org/ns/docbook">
+          The owner could register with the component as <ns2046:literal xmlns:ns2046="http://docbook.org/ns/docbook">PropertyChangeListener</ns2046:literal>
+          and issue property change events to its listeners upon receiving a property change event
+          from one of its components. This method is equivalent to how one would typically propagate
+          property change events in aggregation relationships.
+        </ns2045:para></ns2044:listitem>
+        <ns2047:listitem xmlns:ns2047="http://docbook.org/ns/docbook"><ns2048:para xmlns:ns2048="http://docbook.org/ns/docbook">
+          Alternatively,since composition enforces encapsulation (the component can only be directly accessed by
+          the owner), the owner could change the state of the component directly and then issue
+          state change events for itself without listening to state change events from the component
+          itself. 
+        </ns2048:para></ns2047:listitem>
+      </ns2043:orderedlist>
+    </ns2042:para>
+    <ns2049:para xmlns:ns2049="http://docbook.org/ns/docbook">
+      The interface through which accounts are accessed is shown below:
+      <ns2050:programlisting xmlns:ns2050="http://docbook.org/ns/docbook">
+        <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/za/co/solms/javaBeans/Account.java"/>
+      </ns2050:programlisting>
+    </ns2049:para>
+    <ns2051:para xmlns:ns2051="http://docbook.org/ns/docbook">
+      The account implementation uses the second approach to publish state changes on its balance,
+      <ns2052:abbrev xmlns:ns2052="http://docbook.org/ns/docbook">i.e.</ns2052:abbrev> it does no register as property change listener, but issues property
+      change events directly on updating its balance:
+      <ns2053:programlisting xmlns:ns2053="http://docbook.org/ns/docbook">
+        <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/za/co/solms/javaBeans/AccountImpl.java"/>
+      </ns2053:programlisting>
+    </ns2051:para>
+    <ns2054:note xmlns:ns2054="http://docbook.org/ns/docbook"><ns2055:para xmlns:ns2055="http://docbook.org/ns/docbook">
+      The account does not register as state change listener with its associated object, the client.
+      A state change in the client does not imply a state change in the account.
+    </ns2055:para></ns2054:note>
+  </ns2038:section>
+  
+  <ns2056:section xmlns:ns2056="http://docbook.org/ns/docbook">
+    <ns2057:title xmlns:ns2057="http://docbook.org/ns/docbook">A Java Bean with specialization and aggregation relationships</ns2057:title>
+    <ns2058:para xmlns:ns2058="http://docbook.org/ns/docbook">
+      As an example we shall use a <ns2059:literal xmlns:ns2059="http://docbook.org/ns/docbook">PrimePlusSavingsAccount</ns2059:literal> which earns interest
+      against the prime rate plus some spread. The interface through which such accounts are
+      accessed is an extension of the interface for accounts:
+      <ns2060:programlisting xmlns:ns2060="http://docbook.org/ns/docbook">
+        <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/za/co/solms/javaBeans/PrimePlusSavingsAccount.java"/>
+      </ns2060:programlisting>
+    </ns2058:para>
+    <ns2061:para xmlns:ns2061="http://docbook.org/ns/docbook"> 
+      When a JavaBean inherits from another JavaBean one will have to include the properties of the
+      superclass in the properties set of the subclass. Furthermore, if one uses the
+      <ns2062:literal xmlns:ns2062="http://docbook.org/ns/docbook">ObservableBase</ns2062:literal>, then one must make certain that the
+      <ns2063:literal xmlns:ns2063="http://docbook.org/ns/docbook">getThisHandle</ns2063:literal> method is overridden to return the correct
+      <ns2064:literal xmlns:ns2064="http://docbook.org/ns/docbook">this</ns2064:literal> reference to that base class.
+    </ns2061:para>
+    <ns2065:para xmlns:ns2065="http://docbook.org/ns/docbook">
+      Our example, the <ns2066:literal xmlns:ns2066="http://docbook.org/ns/docbook">PrimePlusSavingsAccount</ns2066:literal>, also has an aggregation
+      relationship with a prime rate. Other objects may also directly access the prime rate, but the
+      state of the savings account does change when the prime rate changes. The
+      <ns2067:literal xmlns:ns2067="http://docbook.org/ns/docbook">PrimePlusSavingsAccount</ns2067:literal> thus registers as observer with the prime rate and
+      issues itself state change events upon receiving state change events from the observed prime
+      rate:
+      <ns2068:programlisting xmlns:ns2068="http://docbook.org/ns/docbook">
+        <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="source/za/co/solms/javaBeans/PrimePlusSavingsAccountImpl.java"/>
+      </ns2068:programlisting>
+    </ns2065:para>
+  </ns2056:section>
+  
+</ns2004:section>

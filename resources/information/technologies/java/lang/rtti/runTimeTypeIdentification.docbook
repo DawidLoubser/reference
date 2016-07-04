@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns7172:section xmlns:ns7172="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.lang.rtti.runTimeTypeIdentification">
+    
+    <ns7173:title xmlns:ns7173="http://docbook.org/ns/docbook">Run-Time Type Identification</ns7173:title>
+
+<ns7174:para xmlns:ns7174="http://docbook.org/ns/docbook">Java's support for run-time type identification is simple, yet very powerful.
+It is used by other language features of Java, most notably perhaps that
+    of object serialization (see section <!--xref linkend="resources.information.technologies.java.j2se.io.serialization.serialization"/-->).</ns7174:para>
+
+<ns7175:para xmlns:ns7175="http://docbook.org/ns/docbook">In most cases one should not use run-time type identification explicitely
+in ones own classes. Extensive use of RTTI is most likely a sign of a
+non object-oriented approach to software design and development.</ns7175:para>
+
+<ns7176:para xmlns:ns7176="http://docbook.org/ns/docbook">The support of RTTI is solidly entrenched within the mother of all classes,
+<ns7177:emphasis xmlns:ns7177="http://docbook.org/ns/docbook" role="verb">Object</ns7177:emphasis>. All objects inherit a <ns7178:emphasis xmlns:ns7178="http://docbook.org/ns/docbook" role="verb">getClass()</ns7178:emphasis> method which returns
+the class or interface of the object as an instance of the class <ns7179:emphasis xmlns:ns7179="http://docbook.org/ns/docbook" role="verb">Class</ns7179:emphasis>.
+<ns7180:emphasis xmlns:ns7180="http://docbook.org/ns/docbook" role="verb">Class</ns7180:emphasis> is a class descriptor class whose instances contain information
+about a particular class or interface. For example, the second line in the
+following code snippet
+
+<ns7181:programlisting xmlns:ns7181="http://docbook.org/ns/docbook">
+Object object = new Employee("Susan Ramphele",8900.0);
+
+Class classDescriptor = object.getClass();
+</ns7181:programlisting>
+</ns7176:para>
+
+<ns7182:para xmlns:ns7182="http://docbook.org/ns/docbook">returns the class descriptor for the <ns7183:emphasis xmlns:ns7183="http://docbook.org/ns/docbook" role="verb">Employee</ns7183:emphasis> class. The class
+<ns7184:emphasis xmlns:ns7184="http://docbook.org/ns/docbook" role="verb">Class</ns7184:emphasis> supplies a huge number of services. We can ask the class
+descriptor for the class name, the package it resides in, whether it
+is a class or an interface, for its superclass, for all the interfaces
+it implements, for reflection (see: Reflection) and
+security-related information.</ns7182:para>
+
+<ns7185:para xmlns:ns7185="http://docbook.org/ns/docbook">Furthermore it has as class (static) service,
+<ns7186:emphasis xmlns:ns7186="http://docbook.org/ns/docbook" role="verb">forName(String)</ns7186:emphasis> which allows the user to create a class descriptor
+object from a literal string and an instance method <ns7187:emphasis xmlns:ns7187="http://docbook.org/ns/docbook" role="verb">newInstance()</ns7187:emphasis>
+allowing the user to create a new instance of the class. These methods
+could be used to save and load polymorphic collections of objects. Pre
+Java 1.1, (when there was no serialization support in Java) one could
+have written each objects name and then ask that object to save itself.
+Assume we have the follwoing simple polymorphic collection of objects:
+
+<ns7188:programlisting xmlns:ns7188="http://docbook.org/ns/docbook">
+Person[] persons = new Person[2];
+persons[0] = new Employee("Sasha Primakov", "791111 1012 126", 8000.0);
+persons[1] = new Person("Peter Smith", "650923 5645 089");
+</ns7188:programlisting>
+</ns7185:para>
+<ns7189:para xmlns:ns7189="http://docbook.org/ns/docbook">
+and assume both, the Person and the Employee class, have methods
+
+<ns7190:programlisting xmlns:ns7190="http://docbook.org/ns/docbook">
+public void save(PrintWriter out) {...}
+
+public void load(BufferedReader in) {...}
+</ns7190:programlisting>
+</ns7189:para>
+
+<ns7191:para xmlns:ns7191="http://docbook.org/ns/docbook">PrintWriter, BufferedReader and streams in general will be discussed in
+detail in chapter: IO. We could then save this collection with
+the following code:
+
+<ns7192:programlisting xmlns:ns7192="http://docbook.org/ns/docbook">
+PrintWriter fout = new PrintWriter(new FileOutputStream("save.out"));
+
+for (int i=0; i&lt;objects.length; ++i)
+{
+  fout.println(persons[i].getClass().getName());
+  persons[i].save(fout);
+}
+</ns7192:programlisting>
+</ns7191:para>    
+<ns7193:para xmlns:ns7193="http://docbook.org/ns/docbook"> and then, when we want to extract the polymorphic collection from
+the text stream via
+
+<ns7194:programlisting xmlns:ns7194="http://docbook.org/ns/docbook">
+BufferedReader fin = new BufferedReader(new FileInputStream("save.out"));
+
+for (int i=0; i&lt;objects.length; ++i)
+{
+  String className = fin.readLine();
+  Class class = Class.forName(className);
+  persons[i] = (Person)class.newInstance();
+  persons[i].load(fin);
+}
+}
+</ns7194:programlisting>
+Another method of the class <ns7195:literal xmlns:ns7195="http://docbook.org/ns/docbook">Class</ns7195:literal> which is commonly used (and even
+more often abused) for run-time type identification is
+
+
+  <ns7196:programlisting xmlns:ns7196="http://docbook.org/ns/docbook">
+public boolean isInstance(Object object) {...}
+}
+</ns7196:programlisting>
+
+The method returns <ns7197:literal xmlns:ns7197="http://docbook.org/ns/docbook">true</ns7197:literal> if the supplied object is an instance of the
+class described by the class descriptor. Typical constructs look like this:
+
+  <ns7198:programlisting xmlns:ns7198="http://docbook.org/ns/docbook">
+if (myClass.isInstance(object))
+  {
+    MyClass myObject = (MyObject)object;
+    myObject.doMySpecialThing();
+  }
+else
+  ...
+</ns7198:programlisting>
+</ns7193:para>
+<ns7199:para xmlns:ns7199="http://docbook.org/ns/docbook">In most good Object-Oriented designs, such constructs are hardly ever required and if you
+have a few of such constructs you should seriously revisit your design.</ns7199:para>
+    
+</ns7172:section>

@@ -1,0 +1,70 @@
+<section id="resources.information.platforms.linux.networkServices.samba.server"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Samba filesharing</title>
+	<para>
+	The Samba server's configuration resides in <emphasis role="strong">/etc/samba/smb.conf</emphasis>. This file typically contains a <emphasis role="strong">[global]</emphasis> section defining parameters specific to the entire server covering all shares and printers. The <emphasis role="strong">[home]</emphasis> sections enables users access to their home (<emphasis role="strong">/home/userid</emphasis>) directory and lastly the <emphasis role="strong">[printers]</emphasis>	section enables the sharing of all configured printers.
+	</para>
+	<programlisting>
+	<![CDATA[
+[global]
+   workgroup = earth 
+   server string = Teddy 
+   
+	 printcap name = /etc/printcap
+   load printers = yes
+   printing = lprng
+   
+	 log file = /var/log/samba/%m.log
+   max log size = 0
+	 
+   security = user
+   encrypt passwords = yes
+   smb passwd file = /etc/samba/smbpasswd
+   
+	 unix password sync = Yes
+   passwd program = /usr/bin/passwd %u
+   passwd chat = *New*password* %n\n *Retype*new*password* %n\n *passwd:*all*authentication*tokens*updated*successfully*
+   pam password change = yes
+   obey pam restrictions = yes
+   
+	 socket options = TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192
+   
+	 dns proxy = no 
+		
+[homes]
+   comment = Home Directories
+   browseable = no
+   writable = yes
+   valid users = %S
+   create mode = 0664
+   directory mode = 0775
+
+[myshare]	 
+	 comment = My Public share for all to see
+	 path	 = /opt/publicshare
+	 public = yes
+	 writable = yes
+	 printable = no
+
+[printers]
+   comment = All Printers
+   path = /var/spool/samba
+   browseable = no
+   guest ok = no
+   writable = no
+   printable = yes
+	]]>	
+	</programlisting>
+	<para>
+		Older versions of Windows 95 / 98 and NT were using plain text passwords rather then encrypted passwords. It is possible to modify a registry key to get these versions to use password encryption or alternatively configure the samba server to use unencrypted passwords. By default samba uses plain text passwords, however the parameter <emphasis role="strong">encrypted password = yes</emphasis> used in the example and most default samba installations enforces encryption. To enable clear text passwords omit this parameter. 
+	</para>
+	<para>
+	The security parameter specifies at which level the access priviledges are configures. Available options are <emphasis role="strong">share</emphasis>, <emphasis role="strong">user</emphasis> or <emphasis role="strong">server</emphasis>. Setting security to user specifies that once the user is authenticated access is given shares. Specifing share security indicates that the client is authenticates on each attempt to access a share, but then only by password rathern than by user id and password. The server security mode can be used to utilise another server, which use security=user, to authenticate the user. 
+	</para>
+	<para>
+	The guest account is enabled by providing the <emphasis role="strong">guest account = unixlogin</emphasis> directive in the global section of the configuration file. The unixloging must be created, otherwise the nobody account is used. To enable guest access to a share add the <emphasis role="strong">guest ok = yes</emphasis>, or <emphasis role="strong">only guest = yes</emphasis> directives.
+	</para>
+</section>	

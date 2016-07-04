@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns445:section xmlns:ns445="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.querySource.querySource">
+
+  <ns446:title xmlns:ns446="http://docbook.org/ns/docbook">Specifying the Source for a Query</ns446:title>
+  <ns447:para xmlns:ns447="http://docbook.org/ns/docbook">
+    The FROM clause specifies and constrains the domain of the query by
+    specifying the domain as a particular entity bean type. 
+  </ns447:para>
+  
+  <ns448:section xmlns:ns448="http://docbook.org/ns/docbook">
+    <ns449:title xmlns:ns449="http://docbook.org/ns/docbook">Selecting from multiple domains</ns449:title>
+    <ns450:para xmlns:ns450="http://docbook.org/ns/docbook">
+      The FROM clause supports selecting from multiple domains delimited by
+      commas.
+    </ns450:para>
+    <ns451:para xmlns:ns451="http://docbook.org/ns/docbook">
+      For example, should you wish to find all election results which had a
+      greater attendance than South Africa's 1994 election you could specify the
+      following query:
+      <ns452:programlisting xmlns:ns452="http://docbook.org/ns/docbook">
+SELECT DISTINCT election
+FROM Election election, Election election94
+WHERE election.turnout &gt; election94.turnout AND
+      election.country = 'South Afica' AND
+      election94.year = '1994'
+      </ns452:programlisting>
+    </ns451:para>
+  </ns448:section>
+  
+  <ns453:section xmlns:ns453="http://docbook.org/ns/docbook">
+    <ns454:title xmlns:ns454="http://docbook.org/ns/docbook">Joins</ns454:title>
+    <ns455:para xmlns:ns455="http://docbook.org/ns/docbook">
+      
+    </ns455:para>
+    
+    <ns456:section xmlns:ns456="http://docbook.org/ns/docbook"> 
+      <ns457:title xmlns:ns457="http://docbook.org/ns/docbook">Inner joins</ns457:title>
+      <ns458:para xmlns:ns458="http://docbook.org/ns/docbook">
+        Inner joins are used to select from an inclusion set obtained by a join
+        condition over different objects. They can be specified implicitly via
+        the cartesian product or explicitly.
+      </ns458:para>
+      <ns459:section xmlns:ns459="http://docbook.org/ns/docbook">
+        <ns460:title xmlns:ns460="http://docbook.org/ns/docbook">Implicit inner joins</ns460:title>
+        <ns461:para xmlns:ns461="http://docbook.org/ns/docbook">
+          For example, the following query performs an implicit inner join to determine
+          those companies which are both customers and service providers:
+          <ns462:programlisting xmlns:ns462="http://docbook.org/ns/docbook">
+SELECT DISTINCT c
+FROM Customer c, ServiceProvider sp
+WHERE c.companyRegistrationNo = sp.id
+            </ns462:programlisting>
+        </ns461:para>
+      </ns459:section>
+      
+      <ns463:section xmlns:ns463="http://docbook.org/ns/docbook">
+        <ns464:title xmlns:ns464="http://docbook.org/ns/docbook">Explicit inner join</ns464:title>
+        <ns465:para xmlns:ns465="http://docbook.org/ns/docbook">
+          The following explicit INNER JOIN returns a collection of all bond accounts
+          of clients living in Johannesburg:
+<ns466:programlisting xmlns:ns466="http://docbook.org/ns/docbook">
+SELECT bonds.account 
+FROM Client c INNER JOIN c.bonds bonds 
+WHERE c.address.city = 'Johannesburg'
+  </ns466:programlisting>
+          Here the INNER JOIN can be abreviated to JOIN (INNER is optional).
+        </ns465:para>
+        <ns467:para xmlns:ns467="http://docbook.org/ns/docbook">
+          This is equivalent to
+          <ns468:programlisting xmlns:ns468="http://docbook.org/ns/docbook">
+SELECT bonds.account 
+FROM Client c IN (c.bonds) bonds 
+WHERE c.address.city = 'Johannesburg'
+            </ns468:programlisting>
+        </ns467:para>
+      </ns463:section>
+    </ns456:section>
+    
+    <ns469:section xmlns:ns469="http://docbook.org/ns/docbook">
+      <ns470:title xmlns:ns470="http://docbook.org/ns/docbook">Left outer joins</ns470:title>
+      <ns471:para xmlns:ns471="http://docbook.org/ns/docbook">
+        While an inner join retrieves only those objects which satisfy the join
+        condition, an outer join does the same thing but with the addition of 
+        returning objects from the left collection for which there were no matching 
+        objects in the right collection.
+      </ns471:para>
+    </ns469:section>
+
+    <ns472:section xmlns:ns472="http://docbook.org/ns/docbook">
+      <ns473:title xmlns:ns473="http://docbook.org/ns/docbook">Fetch joins</ns473:title>
+      <ns474:para xmlns:ns474="http://docbook.org/ns/docbook">
+        Fetch joins are special kinds of left joins which
+        enable one to prefetch, in addition to the query result,
+        other related object collections into the buffer. This is done to
+        improve performance.    
+       </ns474:para>
+    </ns472:section>
+    
+  </ns453:section>
+  
+  
+  <ns475:section xmlns:ns475="http://docbook.org/ns/docbook">
+    <ns476:title xmlns:ns476="http://docbook.org/ns/docbook">Joins With An Empty Domain</ns476:title>
+    <ns477:para xmlns:ns477="http://docbook.org/ns/docbook">
+      If we create a join with an empty domain, the result set will be empty. For example,
+      consider a query across 2 unrelated entity beans,  
+      <ns478:literal xmlns:ns478="http://docbook.org/ns/docbook">Course</ns478:literal> and <ns479:literal xmlns:ns479="http://docbook.org/ns/docbook">Employee</ns479:literal>
+<ns480:programlisting xmlns:ns480="http://docbook.org/ns/docbook">
+SELECT Object(c) FROM Course c, Employee e
+</ns480:programlisting> 
+   </ns477:para> 
+   <ns481:para xmlns:ns481="http://docbook.org/ns/docbook">
+     This query returns all the <ns482:literal xmlns:ns482="http://docbook.org/ns/docbook">Course</ns482:literal> entity beans provided that there exist
+     <ns483:literal xmlns:ns483="http://docbook.org/ns/docbook">Employee</ns483:literal> entity beans. Notice that as soon as there
+      are any employees, no matter how many or what their information is, the query will return
+      a collection of all courses.
+    </ns481:para>
+  </ns475:section>
+  
+</ns445:section>

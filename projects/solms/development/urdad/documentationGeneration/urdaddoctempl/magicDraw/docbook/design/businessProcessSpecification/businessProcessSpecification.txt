@@ -1,0 +1,47 @@
+<!-- BUSINESS PROCESS SPECIFICATION -->
+<!-- ********************************** -->        
+
+## TODO: 
+## - Actually should get behaviour diagram assigned to service realizing use case
+## - Lots of validation and information extraction
+
+
+#getDiagramForUseCase($targetUseCase,$urdad_businessProcessDiagram)    
+#set($diagram = $result)
+
+#if ($diagram && $diagram != '')
+#set($diagramId = $diagram.qualifiedName.replaceAll('::','.').replaceAll(' ','_'))
+
+    <section>
+        <title>Process specification: $targetUseCase.name</title>
+        <para>
+            <xref linkend="$diagramId"/> shows
+            how the $targetUseCase.name service is assembled from services sourced from the service providers to whom the
+            functional requirements have been assigned.
+        </para>            
+        #set ($diagramComment = $report.getComment($diagram).body)
+        #if ($diagramComment && $diagramComment != '')
+            <para>
+                $diagramComment
+            </para>
+        #end
+        
+        <figure xml:id="$diagramId">
+            <title>The business process specification diagram for the $targetUseCase.name use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="$diagram.image"/>
+            </imageobject></mediaobject>
+        </figure>
+    </section>
+    
+ ## %%%%%%%%%%   #parse("design/businessProcessSpecification/englishMapping/englishMapping.txt")
+    
+#else
+    <section>
+        <title>ERROR: Missing process specification</title>
+        <para>
+            URDAD requires that a (business) process is specified for the use case and that the process is assigned as the behaviour for
+            the service realizing the use case.
+        </para>
+    </section>
+#end

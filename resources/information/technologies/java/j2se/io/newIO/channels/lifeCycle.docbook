@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author Dawid Loubser -->
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.j2se.io.newIO.channels.lifeCycle">
+    
+    <title>The Lifecycle of a Channel</title>
+    <para>
+         A channel is either open or closed. A channel is <emphasis>open</emphasis> upon creation, 
+        and once <emphasis>closed</emphasis> it remains closed. Once a channel is closed, any 
+        attempt to invoke an I/O operation upon it will cause a <literal>ClosedChannelException</literal>  
+        to be thrown. Whether or not a channel is open may be tested by invoking its <literal>isOpen()</literal> 
+        method.
+    </para>
+    <para>
+        Channels are typically not instantiated by the developer. They are obtained from a <emphasis>factory</emphasis>
+        class, usually one of the low-level streams in the <literal>java.io</literal> package. The following example
+        shows how to use a channel to write some data in a direct-memory buffer to a file. Because both the data
+        and the file channel are constructs in the operating system's kernel space, the physical writing of the data
+        is much faster than what is possible with java's normal streaming I/O:
+        <programlisting language="Java">
+<xi:include href="src/ChannelWriteTest.java" parse="text"/>
+        </programlisting>
+    </para>
+    <para>
+        Channels that implement <literal>ByteChannel</literal> can be used to perform both reading and writing, which is unlike
+        the streaming I/O libraries, where mutually exclusive <emphasis>input</emphasis> and <emphasis>output</emphasis>
+        streams are used.
+    </para>
+</section>

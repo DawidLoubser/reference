@@ -1,0 +1,40 @@
+
+<!-- COLLABORATION CONTEXT -->
+<!-- *************************** -->        
+
+#getDiagramForUseCase($targetUseCase,$urdad_collaborationContextDiagram)    
+#set($diagram = $result)
+#if ($diagram && $diagram != '')
+    #set($diagramId = $diagram.qualifiedName.replaceAll('::','.').replaceAll(' ','_'))
+
+    <section>
+        <title>Collaboration context: $targetUseCase.name</title>
+        
+        <para>
+            <xref linkend="$diagramId"/> shows
+            the services required for the $targetUseCase.name use case from the different service providers
+            as well as the required message paths through which the services can be requested.
+        </para>            
+        #set ($diagramComment = $report.getComment($diagram).body)
+        #if ($diagramComment && $diagramComment != '')
+        <para>
+            $diagramComment
+        </para>
+        #end
+        
+        <figure xml:id="$diagramId">
+            <title>The collaboration context diagram for the $targetUseCase.name use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="$diagram.image"/>
+            </imageobject></mediaobject>
+        </figure>
+    </section>
+#else
+    <section>
+        <title>WARNING: Missing collaboration context</title>
+        <para>
+            URDAD recommends that you show the services required from the various responsibility domains (services contracts)
+            in a collaboration context diagram (this is a class diagram).
+        </para>
+    </section>
+#end

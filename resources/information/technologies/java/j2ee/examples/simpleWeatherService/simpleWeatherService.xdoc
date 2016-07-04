@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      id="resources.information.technologies.java.j2ee.examples.simpleWeatherService.simpleWeatherService">
+    <title>A Simple Java EE Example: A Weather Forecasting Service</title>
+    <para>
+        As a simple example of a complete Java EE applicationwith separate <emphasis>business</emphasis> 
+        and <emphasis>presentation</emphasis> layers, consider a simple weather forecasting application. The single use-case specifies that
+        a user wants to retrieve all (future) available weather forecasts, for a specified place (e.g. City Name).
+    </para>
+    <para>
+        There is little information available regarding the access channels of this application: Apart
+        from having to present an XHTML-based user interface (accessible by both desktop and mobile
+        phone browsers), the application itself may play a lower-level role in a number of other
+        applications, for example a sports events planning system.
+    </para>
+    
+    <section>
+        <title>Approach</title>
+        <para>
+            Because of the very loose coupling required between the business logic and presentation layer, both
+            are developed as two completely independent software projects, with coupling provided only by a
+            set of contracts (expressed as Java interfaces) that specify the data objects and services exposed
+            by the business layer.
+        </para>
+        <para>
+            Though Java EE applications can be bundled as a single EAR (Enterprise Archive), our approach here shows
+            a typical approach that <emphasis>enforces</emphasis> very loose coupling (i.e. absolutely no business logic <quote>leaking through</quote>
+            to the presentation layer, and both can be deployed/undeployed independently).
+        </para>
+        <para>
+            Though a very simple application, the following is illustrated:
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>Tool Independence</title>
+                        <para>
+                            By using <emphasis>Apache Ant</emphasis> to automate construction tasks, we ensure that different
+                            developer have the freedom to use tools they are comfortable with. The application does not
+                            lock into an IDE such as Netbeans or Eclipse, yet is fully manageable within them.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Environment Independence</title>
+                        <para>
+                            The project is fully self-contained, yet references only the public standard frameworks
+                            and libraries (e.g. the <literal>javaee5.jar</literal> library). It is thus immediately
+                            deployable into any compliant Java EE container (such as JBoss or Glassfish).
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Contract-driven</title>
+                        <para>
+                            The only coupling between domains are the Java Interfaces, the design of which is derived
+                            directly from user/business requirements, and not at all driven by environment 
+                            technicalities.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Simplicity</title>
+                        <para>
+                            Through careful responsibility allocation (both in the presentation-layer, and the business
+                            layer) each component is extremely simplistic, yet through their interaction they provide
+                            a useful, and maintainable, service.
+                        </para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Java EE "Sensible Defaults"</title>
+                        <para>
+                            Part of the Java EE vision is to infer <quote>Sensible Defaults</quote> in cases where information
+                            is not present. To that end, this sample is little more than a set of standard Java classes
+                            and XML documents, with no deployment descriptors or customisations in the business layer.
+                        </para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>High-Level Design</title>
+        <figure>
+            <title>A Simple Weather Service: Contracts and Design</title>
+            <graphic fileref="images/packageOverview.jpg"/>
+        </figure>
+    </section>
+    
+    <xi:include href="businessLayer/businessLayer.xdoc"/>
+    <xi:include href="presentationLayer/presentationLayer.xdoc"/>
+    
+</section>

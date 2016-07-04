@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"-->
+  
+  <section id="resources.information.technologies.java.j2ee.ejb.security.programmatic.programmatic"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Programmatic Authorization</title>
+    <para>
+      Declarative security is generally nice because it clearly separates the
+      responsibilities of developing the bean with the business logic and restricting access to
+      the bean services for security reasons. The security settings can be modified without
+      digging into the code.
+    </para>
+    <para>
+      At times the straight-forward security architecture of setting permissions to methods
+      is not sophisticated enough to handle the business requirements.
+    </para>
+    <para>
+      For example, the requirements could be that bank managers may withdraw any amount from
+      bank accounts while tellers may only withdraw up to some limit (say R50 000.00). In this
+      case the simple declarative security model is not good enough and authorization must be
+      handled programmatically.
+    </para>
+    
+    <section>
+      <title>Querying Security Principals and Roles</title>
+      <para>
+        EJB defines the context of the enterprise bean. This includes information about the
+        identity of the client and of the security role the client has been placed in. This is
+        compatible with the Java 2 security model.
+      </para>
+      <para>
+        The security principal is an entity with a name. It could, for example, be a person
+        or, a company, a smart-card or a login id.
+      </para>
+      <para>
+        The EJB context can be queried for the principal as well as whether the client is in
+        a particular security role via:
+<programlisting><![CDATA[
+public interface javax.ejb.EJBContext
+{
+ ...
+ public java.security.Principal getCallerPrincipal();
+
+ public boolean isCallerInRole(String roleName);
+ ...
+}
+]]></programlisting>        
+      </para>
+    </section>
+    
+    <section>
+      <title>Controlling Access from Your Code</title>
+      <para>
+        For example, in the following code snippet the entity bean queries the security role
+        of the caller which is available from the session context and, under certain conditions
+        which depend on the security role and on other variables, a security exception is thrown:
+<programlisting><![CDATA[
+public class AccountBean implements EntityBean
+{
+ ...
+ public void withdraw(double amount)
+               throws java.lang.SecurityException
+ {
+   if (context.isCallerInRole("teller") &amp;&amp; (amount > 10000))
+     throw new SecurityException
+       ("Amount exceeds authorized withdrawal limit.");
+
+   balance -= amount;
+ }
+ ...
+}
+]]></programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>Obtaining an Enterprise Bean's EJB Context</title>
+      <para>
+        Each service request occurs within some EJB context. In the case of session beans it
+        is a<literal>SessionContext</literal> and in the case of entity beans it
+        is an <literal>EntityContext</literal>. Both,  
+        <literal>SessionContext</literal> and 
+        <literal>EntityContext</literal> are specializations of <literal>EJBContext</literal>.
+      </para>
+      <para>
+        The bean context can be made available to the enterprise bean. All you have to do is
+        to supply a<literal>setSessionContext</literal> method for session beans
+        method and a <literal>setEntityContext</literal> for entity beans. In
+        either case you will simply keep a reference to the bean context within the bean. For
+        example which enables your bean to keep a reference to the bean context:
+      </para>
+
+<programlisting><![CDATA[
+public class AccountBean implements EntityBean
+{
+ ...
+ public void setEntityContext(javax.ejb.EntityContext context)
+               throws java.lang.SecurityException
+ {
+   this.context = context;
+ }
+ ...
+ private javax.ejb.EntityContext context;
+}
+]]></programlisting>
+  <para>
+        Your <literal>setEntityContext</literal> method will be called by the
+        bean container as a new bean instance is created and when the bean context changes.
+  </para>
+    </section>
+    
+    <section>
+      <title>Bean Security Role References and Actual Security Roles</title>
+      <para>
+        The EJB 1.1 standard differentiates between enterprise bean security role references
+        used in the bean implementation and the actual security roles of the various applications
+        which make use of the enterprise bean, <abbrev>i.e.</abbrev>. the security roles which exist at run-time.
+      </para>
+      <para>
+        As bean developer you specify security roles which are referenced by your bean. These
+        security role references are your local security roles which are used within the
+        enterprise bean implementation itself.
+      </para>
+      <para>
+        The actual security roles which exist at run-time will be mapped onto the bean's
+        security roles.
+      </para>
+      
+      <section>
+        <title>Specifying the Security Roles Used by Your Enterprise Bean</title>
+        <para>
+          The bean's security roles are specified in the enterprise bean's deployment
+          descriptor. This notifies people who use your enterprise bean (e.g. deployers and
+          application assemblers) that your enterprise bean requires a specific set of security roles.
+        </para>
+        <para>
+          In our account example the security roles used are  
+          <literal>manager</literal> and <literal>teller</literal>:
+<programlisting><![CDATA[
+<ejb-jar>
+ <enterprise-bean>
+   <entity>
+     <ejb-name>Account</ejb-name>
+     <ejb-class>AccountBean</ejb-class>
+     ...
+     <security-role-ref>
+       <description>Managers have full control over accounts and may
+                    withdraw any amount from accounts.
+       <role-name>manager</role-name>
+     </security-role-ref>
+     <security-role-ref>
+       <description>Tellers may only withdraw up to some daily limit
+                    from an account.</descriptor>
+       <role-name>teller</role-name>
+     </security-role-ref>
+   </entity>
+ </enterprise-bean>
+</ejb-jar>
+]]></programlisting>
+        </para>
+      </section>
+      
+      <section>
+        <title>Mapping Security Role References onto Actual Security Roles</title>
+        <para>
+          The above is all the bean developer usually does. The deployer, on the other hand,
+          will add elements to your deployment descriptor which 
+          <itemizedlist>
+            <listitem>
+              <para>will define the actual security roles which will be present at run-time, and </para>
+            </listitem>
+            <listitem>
+              <para>will map your bean's security role references onto the actual security roles.</para>
+            </listitem>
+          </itemizedlist>
+        </para>  
+        <para>
+          The former is done as in the case of declarative authentication, <abbrev>i.e.</abbrev>. the security
+          role definitions will be added to the assembly descriptor section of the deployment descriptor.
+        </para>
+        <para>
+          The mapping of the bean's security role references onto the actual security roles
+          is done by adding role links to the security role reference declarations. After the
+          deployer has added these features, the deployment descriptor will look something like
+          the following:
+<programlisting><![CDATA[
+<ejb-jar>
+ <enterprise-bean>
+   <entity>
+     <ejb-name>Account</ejb-name>
+     <ejb-class>AccountBean</ejb-class>
+     ...
+
+     <security-role-ref>
+       <description>Managers have full control over accounts and may
+                    withdraw any amount from accounts.
+       <role-name>manager</role-name>
+       <role-link>administrator</role-link>
+     </security-role-ref>
+
+     <security-role-ref>
+       <description>Tellers may only withdraw up to some daily limit
+                    from an account.</descriptor>
+       <role-name>teller</role-name>
+       <role-link>operator</role-link>
+     </security-role-ref>
+
+   </entity>
+ </enterprise-bean>
+
+ <assembly-descriptor>
+
+   <security-role>
+     <description>Administrators have fill access to the account.</description>
+     <role-name>administrator</role-name>
+   </security-role>
+
+   <security-role>
+     <description>operators are the bank tellers which have only
+                  limited account access.</description>
+     <role-name>operator</role-name>
+   </security-role>
+
+ </assembly-descriptor>
+
+</ejb-jar>
+]]></programlisting>
+        </para>
+      </section>
+    </section>
+</section>

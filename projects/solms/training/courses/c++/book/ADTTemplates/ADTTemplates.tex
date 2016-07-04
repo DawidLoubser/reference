@@ -1,0 +1,1084 @@
+\chapter{Abstract Data Types: Rational Numbers
+             \label{chapADTTemplates}}
+
+%======================================================================
+
+In this chapter we going to use C++ classes to build a complete abstract data type
+for rational numbers. An abstract data type (a class in C++) defines not only 
+the data representation (e.g.\ that a rational number consists of two integral
+numbers, one of which is the numerator, the other the denominator), but also
+the operations which can be performed on this data type (e.g.\ how to add 
+two rational numbers, how a rational number is to be displayed on an output 
+stream or how it is incremented).
+By defining a class \verb+Rational+
+we want to be able to extend the C++ programming environment in such a way that
+rational numbers can be used seemlessly -- as if they were built in data types like
+\verb+int+ or \verb+double+. We want to be able to write programs like
+{\footnotesize \begin{verbatim}
+#include <iostream>
+#include "Rational.h"
+
+using namespace std;
+
+int main()
+{
+  Rational r1, r2;
+
+  cout << "Enter rational number (numerator denominator): r1 = ";
+  cin  >> r1;
+  cout << "r1 = ";
+  cin  >> r2;
+
+  Rational r3 = r1 + r2;
+  Rational r4 = r1 * r2;
+
+  cout << "r1 + r2 = " << r3 << endl;
+  cout << "r1 * r2 = " << r4 << endl;
+  
+  return 0;
+}
+\end{verbatim}}
+
+Adding two rational numbers is of course quite different from adding two
+integers or two floating point variables. For example, $\frac{2}{3}+\frac{1}{5}$
+should yield $\frac{13}{15}$.
+
+To achieve the above we must define a class with its data members (the
+numerator and the denominator). We must be able to create instances of the class
+\verb+Rational+ --- i.e.\ to define variables of type \verb+Rational+.
+This is achieved by the constructors of the class. Furthermore, we have
+to define the various operators like \verb&+& or \verb&*& as well as the
+output stream operator \verb+<<+ and the stream extraction operator \verb+>>+.
+We can even define what the assignment operator \verb+=+ should do and
+how type conversion between rational numbers and say floating point
+numbers should be done.
+
+%------------------------------------------------------------------------------
+
+\section{Private and public data members}
+
+A class defines both, the data members of an abstract data type and the
+operations (methods) which can be performed on the data type. Following
+the encapsulation objective of object-oriented programming, we want to
+hide the underlying data structures from the user. This has several advantages.
+Firstly, the data fields are protected from direct manipulation by restricting
+the access to the predefined methods (and operators) of the class. This can
+ensure, among other things, data integrity. For example, if a user could manipulate
+the data fields of rational numbers directly, he would be able to set the
+denominator equal to zero, creating an invalid rational number. Data
+hiding is achieved by declaring the relevant data elements as private
+members of the class:
+{\footnotesize \begin{verbatim}
+class Rational
+{
+    ...
+  private:
+    int _numer, _denom;
+}
+\end{verbatim}}
+This ensures that the variables, \verb+_numer+ and \verb+_denom+, can only
+be accessed from within the class --- from within one of the methods
+(functions) of the class (we use the convention of trailing the variable name
+with an underscore for private data members of a class).
+Note that a class is defined by the keyword \verb+class+
+followed by the name of the class and then, within curly brackets, we define
+the data elements and the functionality (class methods). In the above example
+we only defined the two data elements.
+
+The second advantage of data hiding (encapsulation) is that at any stage
+the underlying data structures can be altered without affecting the program
+which use the class. For example, we would soon realize that the above
+definition would often result in the denominator overflowing. You might
+then want to change \verb+int+ to \verb+long+ or possibly even to a 
+user-defined data type \verb+VeryLongInt+. We can make these changes
+without altering the user-interface and hence the programs which use this 
+class will not be affected (avoiding the traditional maintenance nightmare
+of searching through huge amount of code for occurrences of numerators and
+denominators and changing their data type).
+
+Public data members can be accessed directly by the user and should hardly
+ever be used. If we had declared the numerator and the denominator public
+data members
+{\footnotesize \begin{verbatim}
+class Rational
+{
+    ...
+  public:
+    int _numer, _denom;
+}
+\end{verbatim}}
+then the user could manipulate them directly. He could, for example, set the
+denominator equal to zero:
+{\footnotesize \begin{verbatim}
+void main()
+{
+  Rational<int> r(1,3);
+  ...
+  r._denom = 0;
+}
+\end{verbatim}}
+%---------------------------------------------------------------------
+
+\section{Template classes}
+
+In chapter \ref{chapBasicCPP} we used function templates (generic or 
+parametrized functions) to define a whole family of related functions 
+(one corresponding to each required template type).
+
+Analogously we can define classes on a template to create parametrized 
+or generic data types. Vectors and matrices would typically be defined 
+on a template so that we can use the same code to define a vector of 
+integers, double precision numbers or even of a user defined type like 
+a vector of rational numbers. 
+{\footnotesize \begin{verbatim}
+void main()
+{
+  Vector<double> vd1, vd2;
+  Vector<Rational> vr1, vr2, vr3;
+  ...
+  Vector<double> vd3 = vd1 - vd2;
+  ...
+  vr1 = vr2 + vr3; 
+}
+\end{verbatim}}
+
+Similarly, we define rational numbers themselves on a template so that 
+the user can create rational numbers where the numerators and 
+denominators are stored as say either \verb+long+ or as the user-defined
+data type \verb+VeryLongInt+. This is done as follows:
+{\footnotesize \begin{verbatim}
+template <class T> class Rational
+{
+    ...
+  private:
+    T _numer, _denom;
+}
+...
+void main()
+{
+  Rational<long> r1;
+  Rational<VeryLongInt> r2;
+  ...
+}
+\end{verbatim}}
+
+
+%------------------------------------------------------------------------------
+
+\section{Constructors \label{secADTTemplatesConstructors}}
+
+Constructors enable the user to create objects (instances) of a certain class. Constructors 
+are methods (functions) which carry the name of the class and have no return value.
+They can be overloaded like any other function, i.e.\  we can have several constructors
+with the same function name, but with different number and/or types of arguments.
+
+%------------------------------------------------------------------------------
+
+\subsection{Specifying Constructors}
+
+Consider the following extract of the definition of the \verb+Rational+ class:
+{\footnotesize \begin{verbatim}
+template <class T> class Rational
+{
+  public:
+    Rational ();
+    Rational (const Rational<T>& r);
+    Rational (const T& numer, const T& denom);
+    ...
+  private:
+    T _numer, _denom;
+}
+\end{verbatim}}
+Note that all three constructors are defined in the public declaration block
+of the class. This ensures that they are all accessible from outside the class.
+The three constructors would be used in the following code:
+{\footnotesize \begin{verbatim}
+void main()
+{
+  Rational<int>  r1, r2;     // using default constructor
+  Rational<int>  r3(r1);     // using copy constructor
+  Rational<long> r4(17,23);  // creating and initializing a rational number
+  ...
+}
+\end{verbatim}}
+
+The first of the three constructors has no arguments. It is called the 
+{\em default constructor}.
+Should you omit to define any constructor, your friendly C++ compiler will write
+one for you. The compiler-supplied version will have an empty function body
+(it will do nothing except reserve space for the data members of the class).
+As soon as you do define any constructor, the compiler will no longer write a
+default constructor for you. If you want one (and, as we shall see later,  you 
+will need one if you want to allow the user to define arrays of your class) 
+you will have to write it yourself. 
+
+%----------------------------------------------------------------------------
+
+\subsection{Copy Constructors}
+
+The second constructor is called the {\em copy constructor}. It takes an instance of
+the same class (in our case a rational number) as argument and creates a copy of
+it. Should you omit to define a copy constructor, the compiler will write one for you.
+The compiler version creates a byte for byte copy of all the data members of the class.
+In our case that would achieve what we want to achieve and we could simply
+use the compiler supplied version (instead of defining our own). This is, however, not 
+always the case. As soon as the class uses dynamic memory allocations we are forced
+to write our own version for the copy constructor (or face disaster). The vector and
+matrix classes will use dynamic memory allocation and will illustrate this point. 
+
+One should, however, be aware that the copy constructor is not only used in explicit
+variable declarations as above. Every time we pass a rational number by value (or when 
+a function returns a rational number) the copy constructor is called implicitly.
+Consider, for example, the following function:
+{\footnotesize \begin{verbatim}
+template<class T>
+Rational<T> Square (const Rational<T> r)
+{
+  Rational<T> result = r*r;
+  return result;
+}
+\end{verbatim}}
+Here the copy constructor is used firstly to make a local copy of the variable, \verb+r+
+and secondly, when the local variable \verb+result+ is returned by value (Note: never
+return a local variable by reference --- you are returning a handle to an object which
+no longer exists outside the function).
+
+%-----------------------------------------------------------------------------
+
+\subsection{Other Constructors}
+
+The third constructor takes two arguments, the numerator and the denominator for
+the rational number to be created. It allows us to create and initialize a rational number
+to a certain value with a single function call.
+
+In the class definition given above we have only defined the function headers
+for the constructors. This part would typically be stored in a header file (e.g. RATIONAL.H).
+The implementation details (the function bodies) would then be stored in the accompanying
+CPP-file (RATIONAL.CPP). In this file we would define what the constructors (and the
+other member functions) actually do. Below we give the implementation details of the
+default constructor:
+{\footnotesize \begin{verbatim}
+template<class T>
+Rational<T>::Rational ()
+{
+  _numer = 0;
+  _denom = 1;
+}
+\end{verbatim}}
+Here the name of the function is \verb+Rational()+ and it has no arguments and no return
+value. The first line specifies that this function is defined on a template. We still have to
+specify that the function \verb+Rational()+ belongs to the class \verb+Rational<T>+. This
+is done by preceding the function name with the class name followed by 2 colons.
+The function body is no different to any other function body. In this case it initializes
+the numerator and denominator to certain values. Note that the class variables are
+accessible by all class methods (functions).
+
+%-------------------------------------------------------------------------------
+
+\subsection{Implementing Constructors}
+
+Instead of initializing class variables via assignment statements it is usually a good idea
+to initialize them via a parameter list. This is done as follows:
+{\footnotesize \begin{verbatim}
+template<class T>
+Rational<T>::Rational(): _numer(0), _denom(1) {}
+\end{verbatim}}
+After the function header we have a semicolon followed by the class member initializations.
+In this case both, the numerator and the denominator are initialized. The function body
+(between the curly brackets) is now empty. The advantage of this method is
+that if the numerator and denominator are objects (instances of other classes) then
+the objects are created and initialized with a single function call to the copy constructor.
+If we look at the implementation of the previous paragraph (where the class variables
+were initialized via assignment statements), we see that we have two function calls,
+one to the default constructor (before the body of the function is executed) and a
+second to the assignment operator. This of course is less efficient then the parameter-list
+initialization. Furthermore, as we shall see later, class constants and reference variables
+have to be initialized in the parameter list.
+
+The copy constructor should be defined such that it creates an exact copy of an object:
+{\footnotesize \begin{verbatim}
+template<class T>
+Rational<T>::Rational (const Rational& r):
+    _numer(r._numer), _denom(r._denom) {}
+\end{verbatim}}
+Recall that should you omit to define a copy constructor, the compiler will write one for
+you which makes a byte-for-byte copy of the data members.
+In rare cases one wants to prevent the user from making a copy of instances of a 
+certain class. An example could be a task scheduler. At any moment there should only 
+exist a single task scheduler. In this case one can define a function header for the copy 
+constructor, without supplying any implementation details (function body). This will
+cause a compile-time error if the user attempts to make a copy of an object
+of that particular class (e.g.\ task scheduler). Note that it is always desirable to
+have compile-time errors rather than run-time errors.
+
+The implementation details of the third constructor are given below:
+{\footnotesize \begin{verbatim}
+template <class T>
+Rational<T>::Rational (const T& numer, const T& denom)
+                 : _numer(numer), _denom(denom)
+{
+  #if EXCEPTIONHANDLING
+    if (denom == 0)
+      throw DivideByZero("Rational(numer,denom) => denom=0");
+  #endif
+  if (_denom < 0)
+    {_numer = -_numer;  _denom = -_denom;}
+  T common = gcd(_numer, _denom);
+  if (common > 1)
+    {_numer /= common;  _denom /= common;}
+};
+\end{verbatim}}
+We first check that the user does not try to create a rational
+number with zero denominator. If that is the case we throw
+a \verb+DivideByZero+ exception. In chapter \ref{chapErrorhnd}
+we develop a unified exception-handling class hierarchy which
+is used throughout the entire C++ class library supplied with
+this book. We use a compiler directive to control conditional
+compilation. In the exception-handling library defined in the
+file \verb+ErrHandl.h+, we define a global constant
+\verb+EXCEPTIONHANDLING+ which is set by the user to either
+1 or 0 depending on whether he wants to use exception handling
+or not. Using exception-handling is of course safer, but it is
+also slower. Typically one would use exception handling during the
+development and debugging stages of software development and one
+would switch it off once the code is known to be error-free.
+We use this exception handling mechanism here and
+the reader is not expected to understand it at this stage.
+It will be covered in detail in chapter \ref{chapErrorhnd}.
+
+We make certain that the denominator is always positive and
+we check whether the numerator and denominator have a common
+divisor which is greater than 1. If this is the case, both are divided by
+this common divisor. Hence, if we create a rational number
+$\frac{2}{-6}$, then it will be immediately simplified to 
+$\frac{-1}{3}$. The common divisor is calculated by a private
+member function \verb+gcd()+ which is discussed in the
+following section.
+
+%------------------------------------------------------------------------------
+
+\section{Member functions\label{secADTTemplatesMemberfunctions}}
+
+Class methods (member functions) describe the activities which 
+can be performed by instances (objects) of that class. 
+Furthermore, usually they allow controlled access to the data fields 
+of the object. In C++ one usually distinguishes between member
+functions and class operators.
+
+One further distinguishes between constant member
+functions which leave the members of an object 
+unaltered, and non-constant member functions which alter members
+of an object. For constant member functions one appends the keyword
+\verb+const+ to the function header. This tells the compiler (and the
+user) that this particular member function leaves the state of the
+object unaltered and any attempt to change its state (change one
+of its data members) results in a compile-time error. Consider the 
+following extract of the definition for the class \verb+Rational+
+{\footnotesize \begin{verbatim}
+template <class T> class Rational
+{
+  public:
+    Rational ();
+    Rational (const Rational<T>& r);
+    Rational (const T& numer, const T& denom);
+ 
+    T numerator   () const;
+    T denominator () const;
+
+    Rational<T>   power (const long)   const;
+    double power (const double) const;
+    ...
+  private:
+    T _numer, _denom;
+}
+\end{verbatim}}
+Here we defined four constant member functions, two of which are
+query functions (they query the state of the object). The implementation
+section for the two query functions is trivial. For example
+{\footnotesize \begin{verbatim}
+template <class T>
+inline T Rational<T>::numerator () const {return _numer;};
+\end{verbatim}}
+The private data member is simply returned by value. Note that if we 
+would return a private data member by reference we would give the
+user a handle to directly manipulate it, thereby destroying encapsulation.
+The function is very
+short and it would be wasteful to incur the overheads of a function call.
+Hence we declare the function \verb+inline+. Note that the \verb+inline+
+specification trails the function header in the implementation section ---
+this implementation detail is not specified in the class interface.
+
+The implementation of the member function power taking a \verb+double+
+as an argument is given below
+{\footnotesize \begin{verbatim}
+template <class T>
+inline double Rational<T>::power (const double y) const
+{
+  double x = (double)_numer/(double)_denom;
+  return pow(x,y);
+}
+\end{verbatim}}
+Note that this function leaves the data members of the class, \verb+_numer+
+and \verb+_denom+, unaltered. It converts the rational number into a
+\verb+double+ and then uses the \verb+pow(double, double)+ function
+of the C++ math library.
+
+The implementation of the power method taking a \verb+long+ as an
+argument is a lot more involved and will be discussed in section 
+\ref{secADTTemplatesPower}.
+
+%------------------------------------------------------------------------------
+
+\subsection{Public versus private member functions}
+
+Analogous to data members, one can define member functions 
+(and for that matter class operators) as either public or private.
+Those member functions which the user should be able to use
+to manipulate an object or to prompt an object to perform a
+certain action should be declared \verb+public+. Those member
+functions which are only for internal usage should be defined
+in the private block. The member functions we have defined so
+far were all public member functions. 
+
+For internal usage we need a member function, \verb+gcd+,  which 
+calculates the greatest common divisor between two integral numbers
+of the template type \verb+T+. We declare this member function
+private:
+{\footnotesize \begin{verbatim}
+template <class T> class Rational
+{
+  public:
+    ...
+  private:
+    T _numer, _denom;
+    T gcd (T a, T b) const;
+}
+\end{verbatim}}
+The implementation details for this private class method are given below
+{\footnotesize \begin{verbatim}
+template <class T>
+T Rational<T>::gcd (T a, T b) const
+{
+  if (a < 0) a = -a;
+  if (b < 0) b = -b;
+
+  while (b > 0)
+  {
+    T m = a % b;
+    a = b;
+    b = m;
+  }
+  return a;
+}
+\end{verbatim}}
+
+%------------------------------------------------------------------------------
+
+\section{Class operators\label{secADTTemplatesOperators}}
+
+In order to mimic the behavior of the built in data types like
+\verb+int+ or \verb+double+, C++ allows one to define (overload)
+the built in operators for ones own data types. For example, if we
+have two rational numbers we would like to be able to use them
+in statements like
+{\footnotesize \begin{verbatim}
+  r3 = r2 + r1;
+\end{verbatim}}
+where \verb+r1+, \verb+r2+ and \verb+r3+ are all of type 
+\verb+Rational<T>+ where \verb+T+ could be, for example, \verb+long+.
+Of course we have to define what both, the addition operator and
+the assignment operator do.
+
+There are, however, some quite severe restrictions on operator overloading.
+Consider table \ref{basiccppCppops} which lists the C++ operators in
+order of decreasing precedence. The precedence levels remains unaltered
+for the overloaded operators. Hence \verb+*+ always has precedence above
+\verb&+&, irrespective of the data type (built-in or user-defined class).
+Table \ref{basiccppCppops} also shows the syntax of the C++ operators.
+One cannot alter the syntax for overloaded operators.
+
+%------------------------------------------------------------------------------
+
+\subsection{Arithmetic operators}
+
+The result of the addition of two rational numbers is obtained by
+\begin{eqnarray}
+  \frac{a}{b} + \frac{c}{d} = \frac{ad+cb}{bd}
+\end{eqnarray}
+followed by a division by the greatest common divisor of the numerator
+and the denominator of the result.
+
+Operators can be overloaded like any other function --- we can define
+various versions of an operator, each taking different types and/or different
+numbers of arguments. Below we define two addition operators for the
+class of rational numbers:
+{\footnotesize \begin{verbatim}
+template <class T> class Rational
+{
+  public:
+    ...
+    Rational<T>  operator+  (const Rational<T>& r) const;
+    Rational<T>  operator+  (const T& k)           const;
+    ...
+}
+\end{verbatim}}
+
+Note that the operators are really defined as functions with function
+name (\verb&operator+&), arguments and a return value. From this
+one can see that C++ translates operators to function calls, i.e.\
+\verb&r1+r2& is implemented as the function call \verb&r1.operator+(r2)&,
+i.e.\ the addition operator for object \verb+r1+ is called with
+argument \verb+r2+. An analysis like this is very important if the
+objects on the two sides of a binary operator (e.g. assignment
+operator) are not of the same type.
+Consider for example
+{\footnotesize \begin{verbatim}
+void main()
+{
+  int m=17;
+  Rational<int> r1(1,3), r2;
+
+  r2 = r1 + m;
+  r2 = m + r1;
+}
+\end{verbatim}}
+In the first of the two addition statements is interpreted as
+\verb&r1.operator+(m)& and since \verb+r1+ is an instance 
+of the class \verb+Rational+, the function
+{\footnotesize \begin{verbatim}
+Rational<int>::operator+(const T&)
+\end{verbatim}}
+\noindent
+is called. In the second addition statements the compiler
+searches for
+{\footnotesize \begin{verbatim}
+int::operator+(Rational<int>)
+\end{verbatim}}
+But \verb+int+ is a built in data type (not even really a class)
+and no such operator is defined. In order to allow the user to
+form statements of the form of the second addition statement
+we have to define a global operator which takes as first
+argument a template type (say \verb+T+) and as second argument
+a rational number \verb+Rational<T>+. We discuss globally defined
+operators in the following section.
+
+The function body of the two addition operator defined above
+is given by
+{\footnotesize \begin{verbatim}
+template <class T>
+inline Rational<T> Rational<T>::operator +
+             (const Rational<T>& r) const
+{
+  return Rational<T>(_numer*r._denom
+           + r._numer*_denom, _denom*r._denom);
+}
+
+template <class T>
+inline Rational<T> Rational<T>::operator +
+             (const T& k) const
+{
+  return Rational<T>(_numer+k*_denom,_denom);
+}
+\end{verbatim}}
+Note that we make an explicit call to the constructor
+which takes the numerator and the denominator as an
+argument, creates a new rational number accordingly.
+The constructor, which is discussed in section
+\ref{secADTTemplatesConstructors} simplifies the resultant rational
+number (by dividing numerator and denominator with
+a greatest common divisor). The rational number
+created with this constructor call is returned by value.
+
+%------------------------------------------------------------------------------
+
+\subsection{Friends of a class and globally defined operators}
+
+In order to allow the user to use constructs like
+{\footnotesize \begin{verbatim}
+r2 = 17 + r1;
+\end{verbatim}}
+\noindent
+we either have to define the addition operator
+{\footnotesize \begin{verbatim}
+Rational<int> int::operator+(Rational<int>);
+\end{verbatim}}
+(which we cannot do because \verb+int+ is a built-in
+data type) or
+we have to define a global addition operator
+which takes as first argument an integer and as second
+argument a rational number. Again we define the operator
+on a template so that the user can use either \verb+int+,
+\verb+long+, or a user-defined type like
+\verb+verylong+. C++ has built in automatic type
+conversion between \verb+int+ and \verb+long+ and the
+developer of the class \verb+verylong+ should supply
+automatic conversion between his class and the built-in
+data types, \verb+int+ and \verb+long+. We shall show
+in section \ref{secADTTemplatesTypeconv} how this is done.
+
+Consider the following code extract
+{\footnotesize \begin{verbatim}
+template <class T> class Rational
+{
+  public:
+    ...
+    friend Rational<T> operator+ (const T& k, const Rational<T>& r);
+    friend Rational<T> operator/ (const T& k, const Rational<T>& r);
+    ...
+}
+
+template <class T>
+Rational<T> operator/ (const T& k, const Rational<T>& r)
+{return Rational<T>(r._denom*k,r._numer);}
+
+inline Rational<T> operator+ (const T& k, const Rational<T>& r)
+{return r+k;}
+\end{verbatim}}
+
+Your friends know your private matters. Similarly friends of a class
+are functions or other classes which are not members of the class,
+but which have access to the private (and as we shall see later
+protected) members of the class.
+
+In the above example we define two global operators
+as a friends of the class. Note that the operators
+are not members of the class and hence they cannot be declared
+class constants. 
+
+Consider now the implementations of the two operators.
+Since they are global functions --- not members of the class ---
+we do not have the class name followed by the scope resolution
+operator \verb+::+ in front of the operator name. The division
+operator uses directly the private data members \verb+_numer+
+and \verb+_denom+ --- he can do so since he is a friend of the
+class. Again we call the constructor to create a local rational
+number which is initialized to the inverse of \verb+r+ multiplied
+with \verb+k+ and we return this locally defined rational number
+(which has no name) by value.
+
+Since addition is commutative, we simply reverse
+the statement and call the addition operator of the class which
+takes a variable of the template type as argument (see previous 
+section). Both operators functions are declared \verb+inline+ so that
+we do not incur the overheads of a function call.
+
+The addition operator does not use any of the private
+members of the class --- we need not have defined it a friend of the
+class. We do so in order to have a neat interface for the \verb+Rational+
+class, i.e.\ that the user who studies the class interface is aware of
+all operators relevant to the class.
+
+%------------------------------------------------------------------------------
+
+\subsection{Unary Operators and the {\bf this} pointer}
+
+Unary operators are usually defined as class members without arguments
+--- acting directly on the particular instance of the class. Consider for
+example the pre- and post-increment operators. Again, one should take
+care that the incrementing operators for the class \verb+Rational+ mimic
+the corresponding operators for the built-in data types. This is achieved as 
+follows:
+{\footnotesize \begin{verbatim}
+template <class T> class Rational
+{
+  public:
+    ...
+    Rational<T>& operator++ ();
+    Rational<T>  operator++ (int);
+    ...
+}
+
+template <class T>
+inline Rational<T>& Rational<T>::operator++ ()
+{*this+=1;  return *this;}
+
+template <class T>
+inline Rational<T> Rational<T>::operator++ (int)
+{Rational<T> old(*this); *this+=1;  return old;}
+\end{verbatim}}
+
+Note that we have used a new keyword,
+\verb+this+, which is a self-reference pointer --- a pointer to the 
+object itself. Note that although there is a unique copy of member
+variables for each instance of a class, all instances (objects) of
+that class share a single set of member functions. To indicate
+the specific instance whose variables should be used for a call
+to one of the member functions, the compiler adds an additional
+argument named \verb+this+ to the argument list of each member 
+function. The second alteration made by the C++ compiler is
+to a \verb+this->+ prefix to all member variables and member
+functions. where the operator \verb+->+ is the member selection
+operator. Consequently the statement
+{\footnotesize \begin{verbatim}
+_numer = r._numer;
+\end{verbatim}}
+in the code above is written as
+{\footnotesize \begin{verbatim}
+this->_numer = r._numer;
+\end{verbatim}}
+Recall further that the unary operator \verb+*+ is the dereferencing
+operator. Since \verb+this+ is a pointer to the object itself, 
+dereferencing this pointer via \verb+*this+ results in the object itself.
+
+Now consider again the body of the pre-incrementing operator and in
+particular the statement \verb&*this+=1;&. Here we add one to the
+object (the rational number) itself. Then we return the object itself
+by reference. This is perfectly legal since it is of the return type
+\verb+Rational<T>+ and it is not a local object. Note that we have
+to return the object itself in order to allow statements like
+\verb&r2 = ++r1;&.
+
+The post-increment operator makes a local copy
+of the number to be incremented, increments the number and returns the
+original rational number by value. If \verb+r1+$=\!\!\frac{1}{3}$ and we perform
+\verb&r2=++r1& then both \verb+r1+ and \verb+r2+ are equal to $\frac{4}{3}$.
+On the other hand, if \verb+r1+$=\!\!\frac{1}{3}$ and we perform
+\verb&r2=r1++& then \verb+r1+ is equal to $\frac{4}{3}$, but \verb+r2+ is
+equal to $\frac{1}{3}$.
+
+The decrementing operators are defined analogously. We have also
+defined the  unary \verb&+& and unary \verb+-+ operators. These are very
+simple and the implementation details can be found in the class listing at
+the end of this chapter.
+
+%------------------------------------------------------------------------------
+
+\subsection{Type-Conversion Operators \label{secADTTemplatesTypeconv}}
+
+We also want to be able to explicit and implicit type conversion
+between rational numbers and built-in types like \verb+double+.
+For example, we would like to allow the user to make constructs
+like
+{\footnotesize\begin{verbatim}
+void main()
+{
+  Rational<long> r(234,167);
+
+  double x = r;
+
+  y = sqrt((double)r);
+}
+\end{verbatim}}
+In the assignment statement we make an implicit type conversion
+from \verb+Rational<long>+ to \verb+double+. When calling the
+sqrt we made this type conversion explicitly. In both cases
+the following type-conversion operator was used:
+{\footnotesize \begin{verbatim}
+template <class T> class Rational
+{
+  public:
+    ...
+    operator double() const;
+}
+
+template <class T>
+inline Rational<T>::operator double () const
+{ return (double)_numer/(double)_denom; }
+\end{verbatim}}
+We can define type-conversion operators to both, built-in data types
+and to other user-defined data types.
+
+%------------------------------------------------------------------------------
+
+\subsection{Relational Operators}
+
+In order to mimic the built in data types as closely as possible we also
+have to define the relational operators. All these operators leave the
+members of the class unaltered and hence they are all declared class
+constants.
+{\footnotesize \begin{verbatim}
+template <class T> class Rational
+{
+  public:
+    ...
+    int operator== (const Rational<T>& r) const;
+    int operator<  (const Rational<T>& r) const;
+
+    int operator<  (const T& k) const;
+}
+
+template <class T>
+inline int Rational<T>::operator==
+        (const Rational<T>& r) const
+{ return ((_numer == r._numer) && (_denom == r._denom));}
+
+template <class T>
+inline int Rational<T>::operator>
+        (const Rational<T>& r) const
+{ return ((double)*this > (double)r);}
+\end{verbatim}}
+The implementation of the \verb+==+ operator is pretty standard.
+For the \verb+>+ operator we first typecast the object itself to a
+\verb+double+  using our own type-conversion operator defined in 
+the previous section and then we compare it to the argument 
+--- again type-converted to a double.
+
+%------------------------------------------------------------------------------
+
+\subsection{The Assignment Operator}
+
+As for the copy constructor, should you omit to define an assignment 
+operator, your obliging C++ compiler will write one for you which, once 
+again, makes a byte for byte copy of the data fields. This might or might 
+not be what you want for your class. Usually, if you use dynamic memory
+allocation in your class you will be forced to write your own assignment
+operator. We shall use dynamic memory allocation for our vector and
+matrix classes.
+
+Consider the following extract of the class interface where we define
+two assignment operators:
+{\footnotesize \begin{verbatim}
+template <class T> class Rational
+{
+  public:
+    ...
+    Rational<T>& operator= (const Rational<T>& r);
+    Rational<T>& operator= (const T& k);
+    ...
+}
+\end{verbatim}}
+The first of these operators takes a rational number as argument.
+It would be used in statements like
+{\footnotesize \begin{verbatim}
+r1 = r2;
+\end{verbatim}}
+\noindent
+The implementation details are given below:
+{\footnotesize \begin{verbatim}
+template <class T>
+inline Rational<T>& Rational<T>::operator =
+               (const Rational<T> r)
+{
+  _numer = r._numer; _denom = r._denom;
+  return *this;
+}
+\end{verbatim}}
+\noindent
+The function \verb+operator=+ returns
+the object itself by reference, not by value. Why would we want to
+do this. In the statement
+{\footnotesize \begin{verbatim}
+r1 = r2;
+\end{verbatim}} 
+we perform the function call \verb+r1.operator=(r2)+, but we do not
+use the return value. Recall, however, that it is legal in C++ to
+concatenate assignments like \verb+r1=r2=r3;+ and that
+the assignment operator is the only binary operator which 
+is right-associative. Hence the above statement is performed as
+\verb+r1=(r2=r3)+. Now, if our assignment operator returned \verb+void+
+(or anything else except the object itself), then we would assign
+\verb+r1=void+. Returning the object itself solves this problem.
+It is of course more efficient to return the object by reference
+instead of by value (saving the overhead of making a copy)
+and it is also perfectly legal since we are not returning a reference to
+a local object.
+
+The implementation of the second assignment operator is very similar
+and can be found in the class listing (see section 
+\ref{secADTTemplatesListrational}).
+
+%------------------------------------------------------------------------------
+
+\subsection{The Power Method \label{secADTTemplatesPower}}
+
+One of the more interesting implementations is that
+of the \verb+power+ methods::
+{\footnotesize\begin{verbatim}
+template <class T> class Rational
+{
+  public:
+    ...
+    Rational<T>   power (const long)   const;
+    double power (const double) const;
+}
+
+template <class T>
+Rational<T> Rational<T>::power (const long n) const
+{
+  if (n==0)
+    return Rational<T>(1,1);
+  else
+    {
+      Rational<T> result(*this);
+      for (int i=2; i<=labs(n); i++)
+        result *= *this;
+      if (n<0)
+      {
+        T dummy = result._denom;
+        result._denom = result._numer;
+        result._numer = dummy;
+      }
+      return result;
+    }
+}
+
+template <class T>
+inline double Rational<T>::power (const double y) const
+{return pow(*this,y);}
+\end{verbatim}}
+The first method which allows the user to evaluate an integral
+power ($n$'th power) of a rational number. For the case
+where $n\!\!=\!\!0$ we simply return the rational number
+$\frac{1}{1}$. Otherwise we use the copy constructor to
+create a local copy called \verb+result+ and multiply the
+result $|n| \!\! - \!\! 1$ times by the object itself. Finally,
+if $n$ is negative we simply invert the result.
+
+The second method calculates the real-valued power
+of a rational number. Here we use the \verb+pow+ function
+from the \verb+math+ library which takes two variables of
+type \verb+double+ as arguments. Hence, implicitly the 
+type-conversion operator (which we defined in section
+\ref{secADTTemplatesTypeconv}) is used. The result is a local dummy 
+variable which is returned by value.
+
+%------------------------------------------------------------------------------
+
+\section{Input/Output Stream Access}
+
+We want to define stream access for our abstract data type.
+This is achieved by overloading the stream-extraction and 
+stream-output operators for our class. The stream classes
+are built in classes in C++ and we have to define these
+operators as global operators. In order that these methods
+have direct access to the private data members of our class
+(avoiding
+the overheads of calling the query functions of the class)
+we declare both operators as \verb+friend+s of the class:
+{\footnotesize\begin{verbatim}
+template <class T> class Rational
+{
+  public:
+    ...
+    friend ostream& operator<< (ostream& os,
+                               const Rational<T>& r);
+    friend istream& operator>> (istream& is,
+                                     Rational<T>& r);
+}
+
+template <class T>
+ostream& operator<< (ostream& os, const Rational<T>& r)
+{
+  T non_frac = r._numer/r._denom;
+  T frac_numer = r._numer - non_frac*r._denom;
+  if (non_frac != 0) os << non_frac;
+  if (frac_numer != 0)
+    os << " " << frac_numer << "/" << r._denom;
+  return os;
+}
+
+template <class T>
+istream& operator>> (istream& is, Rational<T>& r)
+{
+  T numer, denom;
+  is >> numer >> denom;
+  r = Rational<T>(numer,denom);
+  return is;
+}
+\end{verbatim}}
+The stream extraction operator is very simple. The user
+enters a rational number by entering the numerator and
+the denominator separated by standard C white spaces
+(blank, tab, newline, formfeed and carriage return).
+A rational numer is created accordingly (using the constructor)
+and \verb+r+ is set equal to this rational number.
+Note that we return the stream by reference in order
+to allow for concatenation of stream extractions:
+{\footnotesize\begin{verbatim}
+cin >> r1 >> r2 >> r3;
+\end{verbatim}}
+
+For the stream output operator we first simplify the
+rational number by extracting the highest possible integral 
+factor (e.g.\ $\frac{9}{2} \longrightarrow 4 \frac{1}{2}$).
+
+%------------------------------------------------------------------------------
+
+\section{User's Guide to the Rational Class 
+            \label{secADTTemplatesDemonstration}}
+
+In the following section we give a listing of the header file \verb+RATIONAL.H+
+which defines the class interface. One should always consult the header file
+in order to see which operations are available to the user. You will find that
+all the standard mathematical operators (e.g. addition, multiplication, incrementing, 
+assignment, \dots) which are defined for built in data types (e.g. \verb+float+) 
+are also defined for rational numbers. In addition we support mixed-type arithmetic.
+For example, we allow
+the user to add an integer or a floating point number to a rational number,
+yielding a rational number or a floating point number respectively.
+
+Furthermore, all the relational operators like \verb+==+ or \verb+>=+ are defined
+for rational numbers. Again we mode mixed-type comparisons, i.e.\ we can check 
+whether a rational number is less than or equal to a floating point number.
+
+Finally we supply two power methods. The one allows the user to evaluate
+an integral power of a rational number, yielding a rational number. The second
+allows the user t take a floating point power of a rational number, yielding a
+floating point number.
+
+On the accompanying disk there is the following small demonstration program, 
+\verb+TRATIONL.CPP+, which illustrates the
+usage of the class \verb+Rational+:
+
+\input{ADTTemplates/Programs/TestRational.cpp}
+
+In the first two lines of the body of \verb+main+ we create, initialize and send to
+the standard output stream 2 rational numbers \verb+r1+$=\!\! \frac{1}{3}$ and 
+\verb+r2+$=\!\! \frac{13}{2}$.
+
+In the following statement we create a rational number \verb+r3+ (via the
+default constructor), use the addition operator to add two rational numbers
+and the assignment operator to assign \verb+r3+ to the result of the addition.
+We then demonstrate multiplication and division of two rational numbers, followed
+by the demonstration of the unary minus and some relational operators.
+
+The statement
+{\footnotesize\begin{verbatim}
+double x = r1;
+\end{verbatim}}
+makes implicitly use of the type conversion operator discussed in section
+\ref{secADTTemplatesTypeconv}.
+
+We continue to show when the member operator for addition and when the global
+operator is used. The difference between the post- and pre-incrementing
+operators is demonstrated in the following few statements followed by a 
+demonstration of the two \verb+power+ methods. Finally we read in a
+rational number from the keyboard.
+
+We recommend that you run this program in order to have a look at its output.
+
+%------------------------------------------------------------------------------
+
+\section{Listing of the Rational Class \label{secADTTemplatesListrational}}
+
+In this section we give a complete listing of the class \verb+Rational+.
+The header file \verb+RATIONAL.H+ defines the class interface. This is
+often the only readable file available to the user of your class.
+
+{\footnotesize \input{ADTTemplates/Programs/Rational.h}}
+
+The implementation details are defined in a separate file \verb+RATIONAL.CPP+
+which is generally not available to users of your class.
+
+{\footnotesize \input{ADTTemplates/Programs/Rational.cpp}}
+
+%------------------------------------------------------------------------------
+
+\section{Listing of the Exception Classes \label{secADTTemplatesListrational}}
+
+{\footnotesize \input{ADTTemplates/Programs/ErrHandl.h}}
+
+%=======================================================================
+
+\section{Exercises}
+
+\begin{exercises}  
+  \item Write a function \verb+mean+ which uses the class \verb+Rational+ and
+          which calculates the arithmetic mean of two rational numbers.
+
+  \item Write a complete class for complex numbers supporting the same 
+          functionality as the {\bf Rational} class discussed in this 
+          chapter.
+
+\end{exercises}
+

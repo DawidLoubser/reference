@@ -1,0 +1,297 @@
+<!-- GENERIC BUILD TARGETS FOR EJB3 PROJECTS -->
+<!-- ======================================= -->
+
+<property environment="env"/>	
+
+<!-- Archive name: -->
+<property name="jar.server.businessLogic" 
+          value="${archive.name.base}.jar"/>
+<property name="jar.client.app" 
+          value="${archive.name.base}Client.jar"/>
+<property name="jar.server.webInterface" 
+          value="${archive.name.base}.war"/>
+<property name="ear" 
+          value="${archive.name.base}.ear"/>
+
+<!-- GENERIC PROJECT DIRECTORIES STRUCTURE -->	
+<!-- ===================================== -->
+
+<!-- Shelf for project libraries -->
+<property name="lib.dir" value="shelf" />
+	
+<!-- Source directories -->
+<property name="src" value="src"/>	
+<property name="src.common" 
+          value="src/common" />
+<property name="src.server"
+          value="src/server" />
+<property name="src.server.common" 
+          value="src/server/common" />
+<property name="src.server.businessLogic" 
+          value="src/server/businessLogic" />
+<property name="src.meta-inf" 
+          value="src/META-INF" />
+<property name="src.server.webInterface" 
+          value="src/server/webInterface" />
+<property name="src.client.app" 
+          value="src/client/app" />
+	
+<!-- Output directories -->
+<property name="build.common" 
+  value="build/common" />
+<property name="build.server.common" 
+  value="build/server/common" />
+<property name="build.server.businessLogic" 
+  value="build/server/businessLogic" />
+<property name="build.server.webInterface" 
+  value="build/server/webInterface" />
+<property name="build.client.app" 
+  value="build/client/app" />
+	
+<property name="dist.dir" value="dist"/>	
+	
+<property name="jboss.home" value="${env.JBOSS_HOME}"/>
+
+<property name="jboss.server.config" value="all"/>
+
+<property name="deploy.dir" 
+   value="${jboss.home}/server/${jboss.server.config}/deploy"/>	
+
+<!-- COMPILE ENVIRONMENT -->
+<!-- =================== -->
+
+<!-- Javac Compiler flags -->
+<property name="compile.debug" value="true"/>
+<property name="compile.optimize" value="false"/>
+<property name="compile.deprecation" value="true"/>
+
+<!-- Paths -->
+
+<!-- shelf contains the libraries required at compile time -->
+<path id="shelf">
+  <fileset dir="../common/shelf">
+    <include name="**/*.jar" />
+    <include name="**/*.rar" />
+  </fileset>
+</path>  	
+	
+<!-- JBOSS libraries for executing client -->
+<path id="libs.jboss">
+  <fileset dir="../common/lib">
+    <include name="jbossall-client.jar"/>
+ </fileset>
+</path>
+<!--path id="libs.jboss">
+  <fileset dir="${jboss.home}/lib">
+    <include name="**/*.jar"/>
+  </fileset>
+  <fileset dir="${jboss.home}/server/${jboss.server.config}/lib">
+    <include name="**/*.jar"/>
+  </fileset>
+  <fileset dir="${jboss.home}/server/${jboss.server.config}/deploy/ejb3.deployer">
+    <include name="*.jar"/>
+  </fileset>
+  <fileset dir="${jboss.home}/server/${jboss.server.config}/deploy/jboss-aop-jdk50.deployer">
+    <include name="*.jar"/>
+  </fileset>
+</path-->
+
+<path id="build.path">
+  <path refid="shelf"/>
+  <pathelement path="${build.common}"/>
+  <pathelement path="${build.server.common}"/>
+  <pathelement path="${build.server.businessLogic}"/>
+  <pathelement path="${build.server.webInterface}"/>
+  <pathelement path="${build.client.app}"/>
+</path>
+
+<!-- TARGETS -->
+<!-- ======= -->
+
+<!-- Removes all generated artifacts -->
+<target name="clean">
+  <delete dir="${build.common}"/>
+  <delete dir="${build.server.common}"/>
+  <delete dir="${build.server.businessLogic}"/>
+  <delete dir="${build.server.webInterface}"/>
+  <delete dir="${build.client.app}"/>
+  <delete dir="${dist.dir}"/>
+  <delete file="${deploy.dir}/jar.server.businessLogic"/>
+  <delete file="${deploy.dir}/jar.server.webInterface"/>
+</target> 	
+
+<!-- Prepares the required directories for the build -->
+<target name="prepare">
+  <mkdir dir="${build.common}"/>
+  <mkdir dir="${build.server.common}"/>
+  <mkdir dir="${build.server.businessLogic}"/>
+  <mkdir dir="${build.server.webInterface}"/>
+  <mkdir dir="${build.client.app}"/>
+  <mkdir dir="${dist.dir}"/>
+</target>
+
+<!-- Compiles the files common to both, client and server side -->
+<target name="compile.common" depends="prepare">
+  <javac srcdir="${src.common}" destdir="${build.common}"
+    deprecation="${compile.deprecation}"
+    optimize="${compile.optimize}"
+    debug="${compile.debug}">
+    <classpath>
+      <path refid="build.path"/>
+    </classpath>
+  </javac>           
+</target>
+	
+<!-- Compiles those files common to both, server side business logic
+	   and server side presentation layers. -->
+<target name="compile.server.common" depends="compile.common">
+  <javac srcdir="${src.server.common}" 
+    destdir="${build.server.common}"
+    deprecation="${compile.deprecation}"
+    optimize="${compile.optimize}"
+    debug="${compile.debug}">
+    <classpath>
+      <path refid="build.path"/>
+    </classpath>
+  </javac>           
+</target>
+	
+<!-- Compiles the server side business logic layer -->	
+<target name="compile.server.businessLogic" 
+  depends="compile.server.common">
+  <javac srcdir="${src.server.businessLogic}" 
+    destdir="${build.server.businessLogic}"
+    deprecation="${compile.deprecation}"
+    optimize="${compile.optimize}"
+    debug="${compile.debug}">
+    <classpath>
+      <path refid="build.path"/>
+    </classpath>
+  </javac>           
+</target>
+
+<!-- Compiles the client application -->
+<target name="compile.client.app" depends="compile.common">
+  <javac srcdir="${src.client.app}" destdir="${build.client.app}"
+         deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}"
+         debug="${compile.debug}">
+		<classpath>
+      <path refid="build.path"/>
+    </classpath>
+  </javac>           
+</target>
+
+<!-- Compiles the server side presentation layer -->
+<target name="compile.server.webInterface" 
+  depends="compile.server.common">
+  <javac srcdir="${src.server.webInterface}" 
+    destdir="${build.server.webInterface}">
+    <classpath>
+      <path refid="build.path"/>
+    </classpath>
+  </javac>           
+</target>
+
+<!-- Generates the Java archive for the server side business logic layer -->
+<target name="jar.server.businessLogic" 
+        depends="compile.server.businessLogic">
+  <delete file="${dist.dir}/${jar.server.businessLogic}"/>  	
+  <zip zipfile="${dist.dir}/${jar.server.businessLogic}"> 
+    <zipfileset dir="${build.common}" 
+      includes="**/*.class"/>
+    <zipfileset dir="${build.server.common}" 
+      includes="**/*.class"/>
+    <zipfileset dir="${build.server.businessLogic}" 
+      includes="**/*.class"/>
+    <zipfileset dir="${src.meta-inf}" 
+      prefix="META-INF"
+      includes="*.xml"/> 
+    <zipfileset  dir="${src.server.businessLogic}" 
+      includes="*.properties"/>
+  </zip>
+</target>
+
+<!-- Generates the Web archive containing the server side presentation layer -->
+<target name="jar.server.webInterface" 
+        depends="compile.server.webInterface">
+  <delete file="${dist.dir}/${jar.server.webInterface}"/>  	
+  <zip zipfile="${dist.dir}/${jar.server.webInterface}">
+    <zipfileset dir="${build.common}" 
+      prefix="WEB-INF/classes">
+      <include name="**/*.class"/>
+    </zipfileset>
+    <zipfileset dir="${build.server.common}" 
+      prefix="WEB-INF/classes">
+      <include name="**/*.class"/>
+    </zipfileset>
+    <zipfileset dir="${build.server.webInterface}" 
+      prefix="WEB-INF/classes">
+      <include name="**/*.class"/>
+    </zipfileset>
+    <zipfileset dir="${src.server.webInterface}/java">
+      <include name="*.jsp"/>
+      <include name="*.jspx"/>
+    </zipfileset>
+    <zipfileset dir="${src.server.webInterface}" 
+      prefix="WEB-INF">
+      <include name="*.xml"/>
+    </zipfileset>
+  </zip>
+</target>
+
+<!-- Creates the enterprise archive containing both,
+     server-side presentation and business logic layers -->
+<target name="ear"
+  depends="jar.server.businessLogic,jar.server.webInterface">
+  <delete file="${dist.dir}/${ear}"/>  	
+  <jar jarfile="${dist.dir}/${ear}"> 
+    <fileset dir="${dist.dir}"
+      includes="${jar.server.businessLogic},${jar.server.webInterface}"/>
+    <fileset dir="${src.server}" 
+      includes="META-INF/application.xml"/>
+  </jar>
+</target>
+
+<!-- Archives the client application -->
+<target name="jar.client.app" depends="compile.client.app">
+  <delete file="${dist.dir}/${jar.client.app}"/>  	
+  <jar jarfile="${dist.dir}/${jar.client.app}"> 
+    <fileset dir="${build.common}" includes="**/*.class"/>
+    <fileset dir="${build.client.app}" includes="**/*.class"/>
+    <fileset  dir="${src.client.app}" includes="*.properties"/>
+  </jar>
+</target>
+
+<target name="deploy.server.businessLogic" 
+  depends="jar.server.businessLogic">
+  <copy file="${dist.dir}/${jar.server.businessLogic}" 
+    todir="${deploy.dir}" />
+</target>
+
+<target name="deploy.server.webInterface" 
+  depends="jar.server.webInterface">
+  <copy file="${dist.dir}/${jar.server.webInterface}" 
+    todir="${deploy.dir}" />
+</target>
+
+<target name="deploy.ear" depends="ear">
+  <copy file="${dist.dir}/${ear}" 
+    todir="${deploy.dir}" />
+</target>
+
+<target name="undeploy.server">
+  <delete file="${deploy.dir}/${jar.server.businessLogic}" />
+  <delete file="${deploy.dir}/${jar.server.webInterface}" />
+  <delete file="${deploy.dir}/${ear}" />
+</target>
+
+<target name="run.client.app">
+  <echo message="Running the ${client.app} application:" />
+  <java fork="on" classname="${client.app}" >
+    <classpath>
+      <pathelement location="${dist.dir}/${jar.client.app}"/>
+      <path refid="libs.jboss"/>
+    </classpath>
+  </java>
+</target>

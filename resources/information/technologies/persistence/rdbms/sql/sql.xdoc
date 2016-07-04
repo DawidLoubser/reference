@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="resources.information.technologies.persistence.rdbms.sql.sql"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>SQL</title>
+    
+    <section>
+        <title>Introduction to SQL</title>
+            <para>The Structured Query Language, SQL (often pronounced <emphasis>sequel</emphasis>) was
+                developed as part of a research program at IBM, and is now established as the standard
+                language for accessing and managing relational database systems. SQL is not only a language 
+                for querying a database system, but it also allows users to update and delete records. 
+                Furthermore, SQL can be used to administration tasks like defining new tables and setting access rights for users.
+            </para>
+    </section>
+
+    <section>
+        <title>SQL Statements and Clauses</title>
+        <para>SQL statements are terminated by commas. End-of-line
+            characters are interpreted as spaces. For example:
+            
+            <programlisting><![CDATA[
+SELECT name, telNo, faxNo FROM accounts;
+            ]]></programlisting>
+        </para>
+        <para>is a single statement. Clauses are separated by reserved words. Hence the above SQL
+            statement contains two clauses,
+            <literal>SELECT name, telNo, faxNo</literal> and
+            <literal>FROM accounts</literal>.
+        </para>
+        <para>Some clauses can contain several arguments separated by commas. For example, the first
+            clause in the statement above contains three arguments. Note also that SQL is not case
+            sensitive. It is, however, conventional to use capital letters for reserved words.</para>
+            
+        
+        <xi:include href="cartesianProducts.xdoc"/>
+        
+    </section>
+    <section>
+        <title>SQL DataTypes</title>
+        <para>Table <xref linkend="tableSQLTypes"/> lists the SQL data types.</para>
+        <table id="tableSQLTypes">
+            <title>SQL data types and the corresponding Java datatypes</title>
+            <tgroup cols="2">
+                <thead>
+                    <row>
+                        <entry><para>SQL type</para></entry>
+                        <entry><para>Description</para></entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry><para>BIT</para></entry>
+                        <entry><para>0 or 1</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>TINYINT</para></entry>
+                        <entry><para>8-bit unsigned</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>SMALLINT</para></entry>
+                        <entry><para>16-bit signed integer</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>INT</para></entry>
+                        <entry><para>32 bit signed integer</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>BIGINT</para></entry>
+                        <entry><para>64 bit signed integer</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>FLOAT(n)</para></entry>
+                        <entry><para>floating point no with <literal>n</literal> binary digits precision</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>REAL</para></entry>
+                        <entry><para>32-bit floating point number</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>DOUBLE</para></entry>
+                        <entry><para>64-bit floating point number</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>DECIMAL(m,n)</para></entry>
+                        <entry><para>Decimal no with <literal>m</literal> total digits and <literal>n</literal> digits after the decimal point</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>CHAR(n)</para></entry>
+                        <entry><para>Fixed length string of <literal>n</literal> characters</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>VARCHAR(n)</para></entry>
+                        <entry><para>Variable length string of up to <literal>n</literal> characters</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>LONGVARCHAR</para></entry>
+                        <entry><para>Variable length string, can grow to huge sizes</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>BINARY</para></entry>
+                        <entry><para>Small, fixed-length binary value</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>VARBINARY(n)</para></entry>
+                        <entry><para>Variable length binary data of up to <literal>n</literal> bytes</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>LONGVARBINARY</para></entry>
+                        <entry><para>Variable length binary data</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>DATE</para></entry>
+                        <entry><para>Calendar date</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>TIME</para></entry>
+                        <entry><para>Time of day (hours, mins, secs)</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>TIMESTAMP</para></entry>
+                        <entry><para>Date/Time up to nanosecond resolution.</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>CLOB</para></entry>
+                        <entry><para>Character Large Object</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>BLOB</para></entry>
+                        <entry><para>Binary Large Object</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>ARRAY</para></entry>
+                        <entry><para>SQL Array</para></entry>
+                    </row>
+                    <row>
+                        <entry><para>JAVA_OBJECT</para></entry>
+                        <entry><para>for Java objects (only supported by some database systems)</para></entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </table>
+    </section>
+    <section>
+        <title>SQL Naming Rules</title>
+        <para> Database objects like tables, columns, indexes and user variables have names. A name
+            for a SQL object may not be a reserved word and must begin with a letter and it may only
+            contain letters, numbers, <literal>$</literal> (dollar), <literal>#</literal> (hash)
+            and <literal>_</literal> (underscore) characters. The reader is ecouraged to consult a
+            standard SQL text for a list of all the reserved words in SQL. 
+        </para>
+    </section>
+    <section>
+        <title> SQL Comments</title>
+        <para>SQL uses the same blocked comment as Java, namely
+            <programlisting>
+                /* ...
+                */
+            </programlisting>.
+            For single line comments one can use the SQL keywords <literal>REM</literal> and <literal>REMARK</literal>.</para>
+    </section>
+    <section>
+        <title>Creating a New Table</title>
+        <para>The SQL command, <literal>CREATE</literal>, is used to create database objects with
+            certain properties. <literal>CREATE TABLE</literal> is used to create a new table for
+            a database. The properties specified for the new table are the names, data types and
+            attributes of its columns. The general syntax is:</para>
+        <para>
+            <programlisting><![CDATA[ 
+CREATE TABLE table_name ( column_name column_type column_modifier, ... );
+            ]]></programlisting>
+        </para>
+        <para>For example:</para>
+        <para>
+            <programlisting><![CDATA[ 
+CREATE TABLE clients ( id INT PRIMARY KEY, name CHAR(40) NOT NULL, 
+  telNo CHAR(12) NOT NULL, faxNo CHAR(12), emailNo CHAR(30));
+            ]]></programlisting>
+        </para>
+        <para>creates a table with 5 columns. The first column holds the record identifier. We have
+            chosen its data type to be <literal>INT</literal> and its attribute specifies that
+            this field will be the primary id field of the table, i.e. the field whose values will
+            uniquely identify the rows. The remaining fields hold character strings of differing
+            lengths. The field names are <literal>name</literal>, <literal>telNo</literal>,
+            <emphasis>faxNo</emphasis> and <emphasis>emailNo</emphasis>. To the first two of these
+            fields we assigned the <literal>NOT NULL</literal> attribute which specifies that
+            these fields may not be empty.
+        </para>
+        <para>In order to create an accounts table which is linked to the clients table, the
+            accounts table must have a field whose values will hold the record identifier of the
+            clients table. This field is called a <emphasis>foreign key</emphasis> and must have the same data type as
+            the primary key field of the clients table:
+        </para>
+        <para>
+            <programlisting><![CDATA[ 
+CREATE TABLE accounts ( id INT PRIMARY KEY, balance DECIMAL(8,2) NOT NULL, 
+  clientId INT NOT NULL);
+            ]]></programlisting>
+        </para>
+        <para>Records of an account belonging to a certain client will hold the client's <literal>id</literal>
+            in the <literal>id</literal> field. Keys are typically integers and the key values 
+            can thus be of type <literal>INT</literal>.</para>
+    </section>
+    <section>
+        <title>Altering Tables</title>
+        <para> The SQL command, <literal>ALTER</literal>, can be used to alter the table
+            structure, adding or removing columns.</para>
+    </section>
+    <section>
+        <title>Dropping Tables</title>
+        <para>The SQL command, <literal>DROP</literal>, is used to remove database objects from the database.
+                <literal>DROP TABLE</literal> is used to remove a table.
+        </para>
+        <para>
+            <programlisting><![CDATA[
+DROP TABLE table_name;
+            ]]></programlisting>
+        </para>
+    </section>
+    <section>
+        <title>Obtaining Column Information of Tables</title>
+        <para>In order to obtain the column names and types, as well as any qualifiers applicable to
+            the columns (e.g. <literal>NOT NULL</literal>), one can issue either</para>
+        <para>
+            <programlisting><![CDATA[
+SHOW COLUMNS FROM table_name;
+            ]]></programlisting>
+        </para>
+        <para>or alternatively the </para>
+        <para>
+            <programlisting><![CDATA[
+DESCRIBE table_name; 
+            ]]></programlisting>
+        </para>
+        <para>command.</para>
+    </section>
+    <section>
+        <title>Discovering Tables</title>
+        <para> The SQL command, <literal>SHOW TABLES</literal>, is used to obtain information of the 
+            tables hosted by a database: </para>
+    </section>
+    <section>
+        <title>SELECT Statements</title>
+        <para>The select statement allows the user to query information in the database. In its
+            simplest forms it reports the values of selected columns of a table. The general syntax is</para>
+        <para>
+            <programlisting><![CDATA[ 
+SELECT col_name, ..., col_name FROM table_name WHERE col_name = value;
+            ]]></programlisting>
+        </para>
+        <para>For example:</para>
+        <para>
+            <programlisting><![CDATA[ 
+SELECT name, emailNo FROM clients;
+            ]]></programlisting>
+        </para>
+        <para> reports the names and e-mail numbers of all clients in the table. If we want to query
+            all columns we can use an asterisk in place of the column names:</para>
+        <para>
+            <programlisting><![CDATA[
+SELECT * FROM clients;
+            ]]></programlisting>
+        </para>
+        <para> Usually we would like to query only certain columns of those rows which fulfil some
+            or other condition. For example:</para>
+        <para>
+            <programlisting><![CDATA[
+SELECT emailNo FROM clients WHERE company = 'SUN';
+            ]]></programlisting>
+        </para>
+        <para>or</para>
+        <para>
+            <programlisting><![CDATA[
+Select accountNo FROM accounts where balance > 10000;
+            ]]></programlisting>
+        </para>
+        <para>We can also query fields from different (usually linked) tables:</para>
+        <para>
+            <programlisting><![CDATA[ 
+SELECT clients.name, accounts.balance FROM clients, accounts 
+  WHERE accounts.clientId = clients.id;
+            ]]></programlisting>
+        </para>
+        <para>reports for each account the balance and the name of the owner of the account.</para>
+        <section>
+            <title>Using Logical Operators</title>
+            <para>We can combine logical expressions in the <literal>WHERE</literal> clause using
+                the relational and logical operators listed in table <xref linkend="tableSQLlogicalOperators"/>.
+                For example,</para>
+            <para>
+                <programlisting><![CDATA[ 
+SELECT clients.name FROM clients, accounts 
+  WHERE (accounts.clientId = clients.id) AND (accounts.balance > 10000);
+                ]]></programlisting>
+            </para>
+            <para>reports the names of those clients which have accounts with balances exceeding R10 000.00.</para>
+            <table id="tableSQLlogicalOperators">
+                <title>SQL logical and relational operators.</title>
+                <tgroup cols="2">
+                    <thead>
+                        <row>
+                            <entry><para>Operator</para></entry>
+                            <entry><para>Description</para></entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para><literal>AND</literal></para>
+                            </entry>
+                            <entry><para>logical AND</para></entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para><literal>OR</literal></para>
+                            </entry>
+                            <entry><para>logical OR</para></entry>
+                        </row>
+                        <row>
+                            <entry> 
+                                <para><literal>NOT</literal></para>
+                            </entry>
+                            <entry><para>logical NOT</para></entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para><literal>=</literal></para>
+                            </entry>
+                            <entry><para>tests for equality</para></entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para><literal>!= , ^=</literal> or <literal>&lt;&gt;</literal></para>
+                            </entry>
+                            <entry><para>tests for inequality</para></entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para><literal>&gt; , &lt;</literal></para>
+                            </entry>
+                            <entry><para>greater/less than</para></entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para><literal>&gt;= , &lt;=</literal></para>
+                            </entry>
+                            <entry><para>greater than or equal to/less than or equal to</para></entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </table>
+        </section>
+    </section>
+    <section>
+        <title>Inserting Records</title>
+        <para>To insert records in SQL, one uses the <literal>INSERT</literal> statement:</para>
+        <para>
+            <programlisting><![CDATA[
+INSERT INTO table_name (column_name, ..., column_name) VALUES (value, ..., value);
+            ]]></programlisting>
+        </para>
+        <para>If you fail to specify a column which has the attribute <literal>NOT NULL</literal>,
+            an exception will be thrown and the insertion will not be done.</para>
+        <para>
+            <programlisting><![CDATA[
+INSERT INTO students (name, examMark) VALUES ('Peter', 70);
+            ]]></programlisting>
+        </para>
+    </section>
+    <section>
+        <title>Deleting Records</title>
+        <para> The general syntax for deleting records is:</para>
+        <para>
+            <programlisting><![CDATA[
+DELETE FROM table_name WHERE column_name = value;
+            ]]></programlisting>
+        </para>
+        <para> For example, the following SQL statement deletes all clients from the company
+            "FlyByNight" from our <literal>clients</literal> table:</para>
+        <para>
+            <programlisting><![CDATA[
+DELETE FROM clients WHERE company = 'FlyByNight';
+            ]]></programlisting>
+        </para>
+    </section>
+    <section>
+        <title>Updating Records</title>
+        <para>The <literal>UPDATE</literal> statement allows you to modify existing records. The
+            general syntax is:</para>
+        <para>
+            <programlisting><![CDATA[
+UPDATE table_name SET column_name = value, ..., column_name = value 
+  WHERE column_name = value;
+            ]]></programlisting>
+        </para>
+        <para>For example, if the company in the previous example changes its name we could update
+            all client records via:</para>
+        <para>
+            <programlisting><![CDATA[
+UPDATE clients SET company = 'FlyByDay' WHERE company = 'FlyByNight';
+            ]]></programlisting>
+        </para>
+        <para> Another example would be to reduce the subscription fees for persons older than 65 years:</para>
+        <para>
+            <programlisting><![CDATA[
+UPDATE clients SET subscriptionFee = 25.40 WHERE age >= 65;
+            ]]></programlisting>
+        </para>
+    </section>
+</chapter>

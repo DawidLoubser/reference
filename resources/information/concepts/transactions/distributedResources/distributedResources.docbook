@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns25:section xmlns:ns25="http://docbook.org/ns/docbook" xml:id="resources.information.concepts.transactions.distributedResources.distributedResources">
+
+  <ns26:title xmlns:ns26="http://docbook.org/ns/docbook">Transactions across distributed resources</ns26:title>
+  <ns27:para xmlns:ns27="http://docbook.org/ns/docbook">
+    One of the ACID properties of transactions is durability, i.e. that data which has been
+    committed to a database are permanent -- at most they may be effectively reversed via a
+    compensating transaction.
+  </ns27:para>
+  <ns28:para xmlns:ns28="http://docbook.org/ns/docbook">
+    Durability is non-trivial for distributed transactions, i.e. if multiple datasources
+    are involved in the same transaction. In that case you cannot complete a successful workflow
+    by simply committing the modifications to the various datasources sequentially. Otherwise
+    one may commit the modifications to one datasource and thereafter another datasource may
+    fail to commit (perhaps due to a database crash or a network problem).
+  </ns28:para>
+  <ns29:para xmlns:ns29="http://docbook.org/ns/docbook">
+    The problem of committing transactions which span multiple datasources is tackled via a
+    two-phase commit.
+  </ns29:para>
+
+  <ns30:section xmlns:ns30="http://docbook.org/ns/docbook">
+    <ns31:title xmlns:ns31="http://docbook.org/ns/docbook">Two-Phase Commit</ns31:title>
+    <ns32:para xmlns:ns32="http://docbook.org/ns/docbook">
+      The first phase is a preparation phase where every element of the transaction (e.g.
+      each database statement) is ready to commit. The transaction to be committed is written
+      into a database log before the database acknowldges its readyness to commit. If all the
+      resources are ready to commit the second phase of actually committing the transaction
+      elements is launched.
+    </ns32:para>
+    <ns33:para xmlns:ns33="http://docbook.org/ns/docbook">
+      Should one of the databases crash within this process, the committing of the data is
+      performed upon restart -- the information of outstanding commits is obtained from the
+      database log.
+    </ns33:para>
+  </ns30:section>
+  
+</ns25:section>

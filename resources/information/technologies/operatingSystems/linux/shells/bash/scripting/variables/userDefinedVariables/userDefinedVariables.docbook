@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+    <title>User-defined variables</title>
+    <para>
+        When writing your own shell script, you are often going to define variables and use
+        them in different places within the shell script.
+    </para>
+    
+    <section>
+        <title>Valid variable names</title>
+        <para>
+            Variable names must begin with a letter and may be followed by further letters, numerical
+            characters or underscore characters.
+        </para>
+    </section>
+    
+    <section>
+        <title>Assigning a variable</title>
+        <para>
+            Variables are typically assigned in bash scripts via an assignment statement:
+            <programlisting>
+myVariable=23      
+      </programlisting>
+            <note>
+                <para>
+                    There may be no spaces before or after the assignment.
+                </para>
+            </note>
+        </para>
+        <para>
+            We can also assign a variable via a <command>let</command> statement:
+            <programlisting>
+let x=2*9      
+      </programlisting>
+            The <command>let</command> command attempts to evaluate a result before
+            assigning it to the value of the variable.
+        </para>
+        
+        <section>
+            <title>Bash variables are untyped</title>
+            <para>
+                Bash variables are untyped. Strictly speaking, bash variables are actually always
+                character strings. However, if the value of a variable contains only digits,
+                bash may interprete the string value of the variable as a numeric integer and allow
+                integer operations on the variable.
+                <note>
+                    <para>
+                        The lack of typed variables may, at times, be the cause of an error. It is the
+                        developer's responsibility to keep track of the variable types in shell scripts.
+                    </para>
+                </note>
+            </para>
+        </section>
+        
+        <section>
+            <title>Setting multiple variables on the same line</title>
+            <para>
+                You can set multiple variables at the same time. For example,
+                <programlisting>
+let x=y=2*$z+12
+        </programlisting>
+                sets the value of both, <varname>x</varname> and <varname>y</varname> to
+                the result of multiplying the value of the variable <varname>z</varname> with
+                <constant>2</constant> and adding <constant>12</constant> to it.
+            </para>
+        </section>
+        
+        <section>
+            <title>Assigning a variable to the result of a command</title>
+            <para>
+                You can use a single quote to assign the value of a variable to the result of
+                a command. For example.
+                <programlisting>
+javaFiles=`find /home/fritz/work *.java`        
+        </programlisting>
+                assigns the value of the variable <varname>javaFiles</varname> to output of the 
+                <command>find</command> command.
+            </para>
+        </section>
+        
+        <section>
+            <title>Reading in variables</title>
+            <para>
+                We can read in variable values via the <command>read</command> command:
+                <cmdsynopsis><command><![CDATA[
+echo "Enter the value of a:"          
+read a         
+echo "a=$a"
+        ]]></command></cmdsynopsis>
+            </para>
+        </section>
+        
+        <section>
+            <title>Unsetting variables</title>
+            <para>
+                It is good practice to <command>unset</command> a variable when it is no longer
+                used. This is particularly true because shell scripts do not support scoping of variables
+                except within the context of functions.
+                To <command>unset</command> a variable, simply use 
+                <cmdsynopsis><command>
+                    unset variableName          
+                </command></cmdsynopsis>
+            </para>
+        </section>
+        
+    </section>
+    
+    <section>
+        <title>Using variables</title>
+        <para>
+            We have already seen that we can dereference a variable, <abbrev>i.e.</abbrev> 
+            extract its value, via the <command><![CDATA[$]]></command> dereferencing 
+            operator.
+        </para>
+        
+        <section>
+            <title>Strings with variables (partial quoting)</title>
+            <para>
+                At times, one wants to specify a string whose value is affected through the
+                expansion of variables contained in the string. To this end one uses
+                <emphasis>partial quoting</emphasis>.
+            </para>
+            <para>
+                A <emphasis>partial quote</emphasis> is a string put within double-quotes
+                which may have variable references which are expanded in-line. For example
+                <programlisting><![CDATA[
+a=2        
+        
+echo "a = $a"        
+        ]]></programlisting>
+                will expand the value of the variable <varname>a</varname>, within the string
+                and print
+                <programlisting><![CDATA[
+a = 2        
+        ]]></programlisting>
+            </para>
+        </section>
+        
+    </section>
+    
+    
+    <section>
+        <title>Full quoting</title>
+        <para>
+            If a string contains <varname><![CDATA[$]]></varname> characters which 
+            do not refer to variables and should remain in the string, then one can use
+            full quoting. This is done by putting the string within single quotes. Thus
+            <programlisting><![CDATA[
+a=2        
+        
+echo 'a = $a'        
+        ]]></programlisting>
+            will print
+            <programlisting><![CDATA[
+a = $a
+        ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>Escape characters</title>
+        <para>
+            With certain programs like <command>echo</command> and <command>sed</command>,
+            you can use the escape characters listed in the following table:
+        </para>
+        <table>
+            <title>Escape characters for <command>echo</command> and <command>sed</command></title>
+            <tgroup cols="2">
+                <thead>
+                    <row><entry>Escape character</entry><entry>Description</entry></row>
+                </thead>
+                <tbody>
+                    <row><entry><![CDATA[\n]]></entry><entry>new line</entry></row>
+                    <row><entry><![CDATA[\r]]></entry><entry>return</entry></row>
+                    <row><entry><![CDATA[\t]]></entry><entry>horizontal tab</entry></row>
+                    <row><entry><![CDATA[\v]]></entry><entry>vertical tab</entry></row>
+                    <row><entry><![CDATA[\b]]></entry><entry>backspace</entry></row>
+                    <row><entry><![CDATA[\a]]></entry><entry>alert (typically a beep)</entry></row>
+                    <row><entry><![CDATA[\0xx]]></entry><entry>maps onto the octal ASCII character number</entry></row>
+                    <row><entry><![CDATA[\"]]></entry><entry>double quotes</entry></row>
+                    <row><entry><![CDATA[\$]]></entry><entry>the dollar sign</entry></row>
+                    <row><entry><![CDATA[\\]]></entry><entry>a backslash</entry></row>
+                </tbody>
+            </tgroup>
+        </table>
+    </section>
+    
+    <section>
+        <title>An example shell script</title>
+        <para>
+            Consider the following example shell script, <filename>testVariables.sh</filename>:
+            <programlisting>            
+<xi:include parse="text" href="../source/testVariables.sh" />      
+            </programlisting>
+            Running the script via
+            <programlisting>
+./testVariables.sh 
+      </programlisting>
+            yields an output similar to 
+            <programlisting>
+b=36, c=36
+b=, c=36
+Processing the following Java files:
+./docs/components/technologies/uml/classDiagrams/specialization/java/ChequeAccount.java
+./docs/components/technologies/uml/classDiagrams/specialization/java/Account.java
+./docs/components/technologies/uml/classDiagrams/specialization/java/InsufficientFundsException.java
+./docs/components/technologies/java/j2se/security/SSLClientAuthentication/SSLIX.java
+./docs/components/cvs/za/co/stcd/finance/calculators/presentation/swing/LoanCalculatorClient.java
+./docs/components/cvs/za/co/stcd/finance/calculators/presentation/swing/LoanCalculatorPanel.java
+./docs/components/cvs/za/co/stcd/finance/calculators/businessLogic/LoanCalculator.java
+How old are you?
+28
+You are 10227 days old
+      </programlisting>
+        </para>
+    </section>
+</section>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns719:section xmlns:ns719="http://docbook.org/ns/docbook"
+               xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.transactions.attributes.attributes"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
+
+    <ns720:title xmlns:ns720="http://docbook.org/ns/docbook">Declarative Transaction Demarcation</ns720:title>
+    <ns721:para xmlns:ns721="http://docbook.org/ns/docbook">
+        In the case of declarative transaction demarcation, the bean developer is not
+        confronted with any transaction logic whatsoever. Once again, the bean contains only
+        business logic. The application assembler who assembles applications from lower level beans
+        understands the higher level workflows and the transaction support required for them.
+    </ns721:para>
+    <ns722:para xmlns:ns722="http://docbook.org/ns/docbook">
+        He then specifies the required transaction support in the EJB deployment descriptors.
+    </ns722:para>
+
+
+    <ns723:section xmlns:ns723="http://docbook.org/ns/docbook">
+        <ns724:title xmlns:ns724="http://docbook.org/ns/docbook">Transaction Attributes</ns724:title>
+        <ns725:para xmlns:ns725="http://docbook.org/ns/docbook">
+            Services offered by enterprise beans must have a transaction attribute which
+            specifies the type of transaction support required by the service (or all services of the
+            enterprise bean). The transactions attributes supported by the EJB specification are:
+            <ns726:itemizedlist xmlns:ns726="http://docbook.org/ns/docbook">
+                <ns727:listitem xmlns:ns727="http://docbook.org/ns/docbook">
+                    <ns728:para xmlns:ns728="http://docbook.org/ns/docbook">BeanManaged,</ns728:para>
+                </ns727:listitem>
+                <ns729:listitem xmlns:ns729="http://docbook.org/ns/docbook">
+                    <ns730:para xmlns:ns730="http://docbook.org/ns/docbook">NotSupported,</ns730:para>
+                </ns729:listitem>
+                <ns731:listitem xmlns:ns731="http://docbook.org/ns/docbook">
+                    <ns732:para xmlns:ns732="http://docbook.org/ns/docbook">Required,</ns732:para>
+                </ns731:listitem>
+                <ns733:listitem xmlns:ns733="http://docbook.org/ns/docbook">
+                    <ns734:para xmlns:ns734="http://docbook.org/ns/docbook">Supports,</ns734:para>
+                </ns733:listitem>
+                <ns735:listitem xmlns:ns735="http://docbook.org/ns/docbook">
+                    <ns736:para xmlns:ns736="http://docbook.org/ns/docbook">Mandatory,</ns736:para>
+                </ns735:listitem>
+                <ns737:listitem xmlns:ns737="http://docbook.org/ns/docbook">
+                    <ns738:para xmlns:ns738="http://docbook.org/ns/docbook">RequiresNew and</ns738:para>
+                </ns737:listitem>
+                <ns739:listitem xmlns:ns739="http://docbook.org/ns/docbook">
+                    <ns740:para xmlns:ns740="http://docbook.org/ns/docbook">Never</ns740:para>
+                </ns739:listitem>
+            </ns726:itemizedlist>
+        </ns725:para>
+        <ns741:para xmlns:ns741="http://docbook.org/ns/docbook">
+            The transaction attribute is specified in the
+            <ns742:literal xmlns:ns742="http://docbook.org/ns/docbook">ejb-jar.xml</ns742:literal>
+            deployment descriptor either
+            <ns743:itemizedlist xmlns:ns743="http://docbook.org/ns/docbook">
+                <ns744:listitem xmlns:ns744="http://docbook.org/ns/docbook">
+                    <ns745:para xmlns:ns745="http://docbook.org/ns/docbook">for all methods of an enterprise bean, or
+                    </ns745:para>
+                </ns744:listitem>
+                <ns746:listitem xmlns:ns746="http://docbook.org/ns/docbook">
+                    <ns747:para xmlns:ns747="http://docbook.org/ns/docbook">for individual methods of that bean.
+                    </ns747:para>
+                </ns746:listitem>
+            </ns743:itemizedlist>
+            <ns748:note xmlns:ns748="http://docbook.org/ns/docbook">
+                <ns749:para xmlns:ns749="http://docbook.org/ns/docbook">The latter overrides the former.</ns749:para>
+            </ns748:note>
+        </ns741:para>
+
+        <ns750:section xmlns:ns750="http://docbook.org/ns/docbook">
+            <ns751:title xmlns:ns751="http://docbook.org/ns/docbook">BeanManaged</ns751:title>
+            <ns752:para xmlns:ns752="http://docbook.org/ns/docbook">
+                From EJB onwards only session beans are allowed to manage their own transactions.
+                In this case the bean developer controls transactions via
+                <ns753:literal xmlns:ns753="http://docbook.org/ns/docbook">begin()</ns753:literal>,<ns754:literal
+                    xmlns:ns754="http://docbook.org/ns/docbook">abort()</ns754:literal>,
+                <ns755:literal xmlns:ns755="http://docbook.org/ns/docbook">commit()</ns755:literal>
+                and
+                <ns756:literal xmlns:ns756="http://docbook.org/ns/docbook">rollback()</ns756:literal>
+                messages sent to the Java Transaction API (JTA).
+            </ns752:para>
+        </ns750:section>
+        <ns757:section xmlns:ns757="http://docbook.org/ns/docbook">
+            <ns758:title xmlns:ns758="http://docbook.org/ns/docbook">NotSupported</ns758:title>
+            <ns759:para xmlns:ns759="http://docbook.org/ns/docbook">
+                A bean defined with the NotSupported transactional attribute is not allowed to
+                partake in any transaction. Invoking a method on a bean with this attribute has the
+                consequence that the EJB container suspends any transaction until the method has
+                been completed.
+            </ns759:para>
+        </ns757:section>
+
+        <ns760:section xmlns:ns760="http://docbook.org/ns/docbook">
+            <ns761:title xmlns:ns761="http://docbook.org/ns/docbook">Required</ns761:title>
+            <ns762:para xmlns:ns762="http://docbook.org/ns/docbook">
+                This attribute guarantees that all bean services are performed always within a
+                transaction context. If the calling client or bean is within the scope of a transaction
+                the requested service will be included within that transaction scope. Otherwise a new
+                transaction is created for the service request.
+            </ns762:para>
+            <ns763:para xmlns:ns763="http://docbook.org/ns/docbook">
+                In the case where a new transaction is created for a service request the
+                transaction will be committed upon successful completion and will be rolled back if an
+                exception is thrown and not handled within the context of the service.
+            </ns763:para>
+        </ns760:section>
+
+        <ns764:section xmlns:ns764="http://docbook.org/ns/docbook">
+            <ns765:title xmlns:ns765="http://docbook.org/ns/docbook">Supports</ns765:title>
+            <ns766:para xmlns:ns766="http://docbook.org/ns/docbook">
+                This attribute specifies that the bean will be included in the transaction scope if
+                it is called from a transaction scope, but it will not create a new transaction scope if
+                it is not called from a transaction scope.
+            </ns766:para>
+        </ns764:section>
+
+        <ns767:section xmlns:ns767="http://docbook.org/ns/docbook">
+            <ns768:title xmlns:ns768="http://docbook.org/ns/docbook">Manadatory</ns768:title>
+            <ns769:para xmlns:ns769="http://docbook.org/ns/docbook">
+                This attributes specifies that the bean services must always be called from within
+                a transaction scope. A
+                <ns770:programlisting xmlns:ns770="http://docbook.org/ns/docbook">
+                    javax.transaction.TransactionRequiredException
+                </ns770:programlisting>
+                will be thrown if it is called from a client who is not operating within the
+                context of a transaction.
+            </ns769:para>
+        </ns767:section>
+
+        <ns771:section xmlns:ns771="http://docbook.org/ns/docbook">
+            <ns772:title xmlns:ns772="http://docbook.org/ns/docbook">RequiresNew</ns772:title>
+            <ns773:para xmlns:ns773="http://docbook.org/ns/docbook">
+                This attribute specifies that if a bean service is called from within a transaction
+                scope, that a new transaction is created. The current transaction is suspended until the
+                new transaction has been committed.
+            </ns773:para>
+            <ns774:para xmlns:ns774="http://docbook.org/ns/docbook">
+                If a bean service is called outside any transaction scope it simply creates a new
+                transaction scope for that service request.
+            </ns774:para>
+        </ns771:section>
+
+        <ns775:section xmlns:ns775="http://docbook.org/ns/docbook">
+            <ns776:title xmlns:ns776="http://docbook.org/ns/docbook">Never</ns776:title>
+            <ns777:para xmlns:ns777="http://docbook.org/ns/docbook">
+                This attribute specifies that the bean services may not be called from any client
+                operating within the scope of a transaction. A
+                <ns778:programlisting xmlns:ns778="http://docbook.org/ns/docbook">
+                    java.rmi.RemoteException
+                </ns778:programlisting>
+                is thrown if a bean service is called from a transaction scope.
+            </ns777:para>
+        </ns775:section>
+    </ns723:section>
+
+    <ns779:section xmlns:ns779="http://docbook.org/ns/docbook">
+        <ns780:title xmlns:ns780="http://docbook.org/ns/docbook">Selecting a Transaction Attribute</ns780:title>
+        <ns781:para xmlns:ns781="http://docbook.org/ns/docbook">
+            If your method modifies information is a database you should consider using the
+            <ns782:literal xmlns:ns782="http://docbook.org/ns/docbook">Required</ns782:literal>
+            transaction attribute which includes your
+            service in the transaction scope of your client or, if the client does not operate within
+            the scope of a transaction, a new transaction scope is created for that transaction.
+        </ns781:para>
+        <ns783:para xmlns:ns783="http://docbook.org/ns/docbook">
+            If your business methods retrieve independent data elements from data stores you
+            could operate within or outside transaction scope, i.e. if your client requires it you
+            support it, but you do not require the creation of a new transaction scope. You would most
+            probably select the
+            <ns784:literal xmlns:ns784="http://docbook.org/ns/docbook">Supports</ns784:literal>
+            transaction attribute for
+            your bean.
+        </ns783:para>
+        <ns785:para xmlns:ns785="http://docbook.org/ns/docbook">
+            Finally, if you are using resources which do not support transaction management by an
+            external transaction manager, then you have no choice but selected the
+            <ns786:literal xmlns:ns786="http://docbook.org/ns/docbook">NotSupported</ns786:literal>
+            attribute for your bean methods.
+        </ns785:para>
+    </ns779:section>
+
+    <ns787:section xmlns:ns787="http://docbook.org/ns/docbook">
+        <ns788:title xmlns:ns788="http://docbook.org/ns/docbook">Annotating transaction attributes</ns788:title>
+        <ns789:para xmlns:ns789="http://docbook.org/ns/docbook">
+            Transaction attributess are specified by annotating bean methods using the
+            <ns790:literal xmlns:ns790="http://docbook.org/ns/docbook">TransactionAttribute</ns790:literal>
+            annotation:
+            <ns791:programlisting xmlns:ns791="http://docbook.org/ns/docbook" language="Java">
+@Stateless
+public class ShoppingBean implements Shopping
+{
+    ...
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Invoice process(Order order)
+    {
+        ...
+    }
+}
+            </ns791:programlisting>
+        </ns789:para>
+    </ns787:section>
+
+    <ns792:section xmlns:ns792="http://docbook.org/ns/docbook">
+        <ns793:title xmlns:ns793="http://docbook.org/ns/docbook">Transaction boundaries on method boundaries
+        </ns793:title>
+        <ns794:para xmlns:ns794="http://docbook.org/ns/docbook">
+            Using container-managed transactions requires that transaction boundaries
+            fall on method boundaries. This is usually not a problem. If method-level
+            transaction attributes are too course-grained for your needs, it usually means that responsibilities are not sufficiently
+            localized and that the design could benefit from refactoring. If one still
+            requires finer-grained transaction boundaries, one needs to programmatically
+            interact with the transaction manager.
+        </ns794:para>
+    </ns792:section>
+
+</ns719:section>

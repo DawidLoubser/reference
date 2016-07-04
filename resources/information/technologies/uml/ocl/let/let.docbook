@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!--Authored by mailto:fritz@solms.co.za -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>
+        Let sub-expressions
+        <indexterm><primary>Object Constraint Language</primary><secondary>let sub-expression</secondary></indexterm>
+    </title>
+    <para>
+        The <literal>let</literal> sub-expression enables one to assign a value to a variable which can be repetitatively used within
+        the expression. 
+        For example, if we wanted to use use the power output of an engine of a car repetitatively within an <literal>if-then-else</literal>
+        expression, we could assign the result of the appropriate query to a variable
+        <programlisting><![CDATA[
+    let 
+        power : Real = self.engine.powerOutput 
+    in     
+        if self.engine.energySource = EnergySource::battery then
+          power < 200
+        else  
+          power > 30 and power < 1000
+        endif  
+        
+        ]]></programlisting>
+        
+        <note><para>
+            Variables declared via <literal>let</literal> sub-expressions can only be used within the outer expression. If
+            one would like to define variables which can be used across expressions, one needs to use definition, <abbrev>i.e.</abbrev> 
+            <literal>def</literal> expressions.
+        </para></note>
+    </para>  
+</section>    

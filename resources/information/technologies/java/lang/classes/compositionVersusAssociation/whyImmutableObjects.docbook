@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6111:section xmlns:ns6111="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.lang.ooLanguage.compositionVersusAssociation.whyImmutableObjects">
+    
+    <ns6112:title xmlns:ns6112="http://docbook.org/ns/docbook">Why Immutable Objects?</ns6112:title>
+
+<ns6113:para xmlns:ns6113="http://docbook.org/ns/docbook">Because the differentiation between composition and association is so subtle
+and because giving away handles to component objects which can then be modified
+by external objects is so dangerous, it is very common in Java to make objects
+immutable, <ns6114:abbrev xmlns:ns6114="http://docbook.org/ns/docbook">i.e.</ns6114:abbrev> objects whose states cannot change.</ns6113:para>
+
+<ns6115:para xmlns:ns6115="http://docbook.org/ns/docbook">One example of an immutable object from the standard Java class is the
+<ns6116:emphasis xmlns:ns6116="http://docbook.org/ns/docbook" role="verb">String</ns6116:emphasis> class. You can create Strings, but you can never modify them.
+There are no methods which change the string, only methods which return a new
+string. For example, string concatenation is achieved via the addition operator
+(recall that this is an unfortunate Java quirk of having internally overloaded
+the addition and assignment operators, even though Java does not support
+operator overloading).</ns6115:para>
+
+<ns6117:para xmlns:ns6117="http://docbook.org/ns/docbook">Similarly, we can define the <ns6118:emphasis xmlns:ns6118="http://docbook.org/ns/docbook" role="verb">CashFlow</ns6118:emphasis> class to be immutable. Recall that
+a cash flow was a payment on a specific date.
+
+<ns6119:programlisting xmlns:ns6119="http://docbook.org/ns/docbook">
+public class CashFlow
+{
+  public CashFlow(Payment payment, Date date)
+  {
+    this.payment = payment;
+    this.date    = date.clone();
+  }
+
+  public Payment value(Date date)
+    {/* calculate value of cash flow on another date*/}
+
+  public Payment getPayment() {return payment;}
+
+  public Date getDate() {return date.clone();}
+
+  private Payment payment;
+  private Date date;
+}
+</ns6119:programlisting></ns6117:para>
+
+<ns6120:para xmlns:ns6120="http://docbook.org/ns/docbook">Note that we have query-methods for the date and the payment, but that we do
+not have corresponding set-methods. The date and the payment are thus instance
+attributes of the class to which users have only read access. Furthermore,
+since Java's <ns6121:emphasis xmlns:ns6121="http://docbook.org/ns/docbook" role="verb">Date</ns6121:emphasis> class is mutable (via <ns6122:emphasis xmlns:ns6122="http://docbook.org/ns/docbook" role="verb">setTime()</ns6122:emphasis>), we should not
+return a reference to the date itself in <ns6123:emphasis xmlns:ns6123="http://docbook.org/ns/docbook" role="verb">getDate()</ns6123:emphasis>, but a copy. This is
+done via the <ns6124:emphasis xmlns:ns6124="http://docbook.org/ns/docbook" role="verb">clone()</ns6124:emphasis> method (we shall discuss cloning in more detail in
+section \ref{secCloning}). For the same reason our class keeps a copy of the
+date passed as argument to the constructor.</ns6120:para>
+
+<ns6125:para xmlns:ns6125="http://docbook.org/ns/docbook">On the other hand, we have not cloned the payment returned by <ns6126:emphasis xmlns:ns6126="http://docbook.org/ns/docbook" role="verb">getPayment()</ns6126:emphasis>
+or the one received in the constructor. The reason for this is that the
+<ns6127:emphasis xmlns:ns6127="http://docbook.org/ns/docbook" role="verb">Payment</ns6127:emphasis> class is immutable (similar to <ns6128:emphasis xmlns:ns6128="http://docbook.org/ns/docbook" role="verb">CashFlow</ns6128:emphasis>) and we can thus
+safely return a reference to the actual class attribute. It cannot be modified
+anyway. If somebody wants to change the <ns6129:emphasis xmlns:ns6129="http://docbook.org/ns/docbook" role="verb">Payment</ns6129:emphasis> they have to create a new
+<ns6130:emphasis xmlns:ns6130="http://docbook.org/ns/docbook" role="verb">Payment</ns6130:emphasis>, leaving the <ns6131:emphasis xmlns:ns6131="http://docbook.org/ns/docbook" role="verb">payment</ns6131:emphasis> object of our <ns6132:emphasis xmlns:ns6132="http://docbook.org/ns/docbook" role="verb">cashFlow</ns6132:emphasis> intact.</ns6125:para>
+
+<ns6133:para xmlns:ns6133="http://docbook.org/ns/docbook">The <ns6134:emphasis xmlns:ns6134="http://docbook.org/ns/docbook" role="verb">date</ns6134:emphasis> is certainly a true component of a <ns6135:emphasis xmlns:ns6135="http://docbook.org/ns/docbook" role="verb">CashFlow</ns6135:emphasis> instance. It
+has the same life span as the object itself and it can only be modified by the
+object. The <ns6136:emphasis xmlns:ns6136="http://docbook.org/ns/docbook" role="verb">payment</ns6136:emphasis> can be also viewed as a component. It cannot be
+modified at all and for reasons of efficiency we might as well share the object
+with other objects.</ns6133:para>
+    
+</ns6111:section>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<section
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Constructing Responses</title>
+    
+    <para>
+        A response represents the channel from the server back to the client. All responses 
+        implement the <literal>ServletResponse</literal> interface. This interface defines methods that 
+        allow you to: 
+        <itemizedlist>
+            <listitem>
+                <para>
+                    Retrieve an output stream to use to send data to the client. To send character data, 
+                    use the <literal>PrintWriter</literal> returned by the response’s <literal>getWriter()</literal> 
+                    method. To send binary data in a <literal>MIME</literal> body response, use the <literal>ServletOutputStream</literal> 
+                    returned by <literal>getOutputStream()</literal>. 
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Indicate the content type (for example, <literal>application/xhtml+xml</literal>) being returned by the 
+                    response with the <literal>setContentType(String)</literal> method. This method must 
+                    be called before the response is committed. A registry of content type 
+                    names is kept by the Internet Assigned Numbers Authority (IANA) at: 
+                    <literal>http://www.iana.org/assignments/media-types/</literal> 
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Indicate whether to buffer output with the <literal>setBufferSize(int)</literal> method. 
+                    By default, any content written to the output stream is immediately sent to 
+                    the client. Buffering allows content to be written, and be cached in memory before anything is physically 
+                    sent back to the client. Thus providing the servlet with more time to set 
+                    appropriate status codes and headers, or forward to another web resource. 
+                    The method must be called before any content is written, or before the 
+                    response is committed.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Set localization information such as locale and character encoding.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    <para>
+        HTTP response objects, <literal>HttpServletResponse</literal>, have fields representing HTTP 
+        headers such as the following: 
+        <itemizedlist>
+            <listitem>
+                <para>
+                    Status codes, which are used to indicate, for example, that a request is invalid
+                    or that the client should re-request another resource (redirection). 
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Cookies, which are used to store application-specific information at the client. 
+                    Sometimes cookies are used to maintain an identifier for tracking a user’s session.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    <note>
+        <para>
+            Servlets do not typically generate their own responses - to render a text-based response based
+            on one or more Java objects, JSP is typically used. To generate binary response data (for example,
+            an image) other java classes will typically be used.
+        </para>
+    </note>
+    
+</section>

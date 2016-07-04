@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.j2se.exceptionHandling.chaining.examples.examples"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Examples</title>
+    <para>
+        See the following example on how to create an exception chain. The throwable can contain a cause and ultimately 
+        provides a link in the exception chain. One way to encapsulate a cause would be in the Throwable constructor 
+        as demonstrated in the example.
+    <programlisting><xi:include parse="text" href="src/MyAppException.java"/></programlisting>
+</para>
+   <para>Another method to associate a cause with a Throwable is to call the initCause method on an existing Throwable 
+       object's reference and to pass a reference to another Throwable object as a parameter. The latter would typically 
+       be implemented on legacy code. When using the custom exception, a specific low level message is passed to the 
+       new Exception class. To use the custom exception, catch a Throwable class instead of Exception. By catching 
+       Throwable, unchecked exceptions will also be caught. See how the custom exception is used in the example below.
+       <programlisting><xi:include parse="text" href="src/UseMyAppException.java"/></programlisting>
+   </para>
+    <para>
+        On executing this example the following is displayed:
+        <programlisting><![CDATA[
+za.co.solmstcd.chaining.MyAppException: Failed to read the database file: myDB.db
+at za.co.solmstcd.chaining.UseMyAppException.getDB(UseMyAppException.java:21)
+at za.co.solmstcd.chaining.UseMyAppException.main(UseMyAppException.java:42)
+Caused by: java.io.FileNotFoundException: myDB.db (No such file or directory)
+at java.io.FileInputStream.open(Native Method)
+at java.io.FileInputStream.<init>(FileInputStream.java:106)
+    at java.io.FileInputStream.<init>(FileInputStream.java:66)
+        at java.io.FileReader.<init>(FileReader.java:41)
+            at za.co.solmstcd.chaining.UseMyAppException.getDB(UseMyAppException.java:16)
+            ... 1 more            
+        ]]></programlisting>
+</para>
+    </section>

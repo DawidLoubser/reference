@@ -1,0 +1,163 @@
+<article xmlns="http://docbook.org/ns/docbook" 
+    version="5.0"
+    xml:id="projects.solms.training.courses.java.exams.electricityCrisis.electricityCrisis">
+
+    <info>
+        <title>Examination: Java EE Presentation Layer</title>
+        <subtitle>Library</subtitle>
+
+
+        <author>
+            <personname>
+                <firstname>Dawid</firstname>
+                <surname>Loubser</surname>
+            </personname>
+            <email>dawidl@solms.co.za</email>
+        </author>
+        <date>2009-06-25</date>
+    </info>
+
+
+    <section>
+        <info>
+            <title>General Theory</title>
+        </info>
+
+        <para>
+            <orderedlist>
+                <listitem>
+                    <para>
+                        Explain your understanding of the differences, and wy one would use,
+                        a <quote>client-side redirect</quote> (returning an HTTP 302 FOUND message) and
+                        a server-side redirect (e.g. a Servlet using a <literal>requstDispatcher</literal>
+                        to dispatch the request to another servlet or JSP)</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Explain roughly how you would go about using a Servlet Filter to, in real-time,
+                        monitor which search engines (Google, MSN, etc) provide the most traffic to your
+                        web site.
+                    </para>
+                </listitem>
+            </orderedlist>
+        </para>
+    </section>
+
+    <section>
+        <info>
+            <title>Practical</title>
+        </info>
+
+        <section>
+            <info>
+                <title>Scenario</title>
+            </info>
+            <para> 
+                Consider the existing, very simplistic EJB-based business layer (provided to you by the examiner)
+                which offers simple services around managing books (adding new books, assigning them to categories, etc).
+            </para>
+            <para>
+                The following is provided in the business layer:
+                <itemizedlist>
+                    <listitem>
+                        <formalpara>
+                            <title>library-api.jar</title>
+                            <para>The JAR containing the <quote>contract</quote> of the library service, which you will
+                            need to package with any web application which uses it. The core interface is called
+                            <literal>Library</literal></para>
+                        </formalpara>
+                    </listitem>
+                    <listitem>
+                        <formalpara>
+                            <title>javaDocs/</title>
+                            <para>JavaDocs explaining the different services offered by the <literal>Library</literal>
+                            interface</para>
+                        </formalpara>
+                    </listitem>
+                    <listitem>
+                        <formalpara>
+                            <title>library.jar</title>
+                            <para>En EJB3 implementation of the Library, which uses the Java Persistence API to store
+                            books and categories in the database.</para>
+                        </formalpara>
+                    </listitem>
+                </itemizedlist>
+            </para>
+        </section>
+        
+        
+        <section>
+            <title>Setup</title>
+            <para>
+                You need to install an application server (Glassfish is recommended) and deploy the <literal>library.jar</literal>
+                EJB module to it. Every time it is deployed, it should create new empty database structures automatically.
+            </para>
+        </section>
+        
+        <section>
+            <title>Practical</title>
+            
+            <section>
+                <title>Ant-based project</title>
+                <para>
+                    Create a project for a web application which will use the Library business layer.
+                    It must use Apache Ant to build a .war file, containing all necessary elements to deploy
+                    to your app server.
+                </para>
+                <para>
+                    You are most welcome to use an existing project template of this nature, such as those provided ot you during the
+                    course. It is important, however, that this project is build-able purely via the command-line and ant, although
+                    you may use any editors (Eclipse, Oxygen XML, etc) to create your Java classes and JSP pages.
+                </para>
+            </section>
+            
+            <section>
+                <title>Requirements</title>
+                <para>
+                    Use a combination of JSP and Servlet components, to create a web application which has the following capabilities:
+                    <orderedlist>
+                        <listitem>
+                            <para>One must be able to add a new book to the library via form-based input</para>
+                        </listitem>
+                        <listitem>
+                            <para>One must be able to add categories to the library via form-based input</para>
+                        </listitem>
+                        <listitem>
+                            <para>One must be able to see a listing of all books in a given category, by clicking on the category name</para>
+                        </listitem>
+                        <listitem>
+                            <para>Every page should (via <literal>jsp:include</literal>) display a menu allowing the user to perform these actions</para>
+                        </listitem>
+                    </orderedlist>
+                </para>
+                <para>
+                    Use <emphasis>dependency injection</emphasis> to get a handle to the EJB implementing the <literal>Library</literal>
+                    interface in your Servlets etc. This way, you do not have to know the JNDI name or location of the EJB business object.
+                    <programlisting language="Java"><![CDATA[
+public class MyServlet extends HttpServlet
+{
+    ...
+    
+    @EJB
+    private Library library;
+}
+                    ]]></programlisting>
+                </para>
+                <note>
+                    <para>
+                        Visual styling is not important to this project, so there is no need to make it pretty via CSS (Cascading Style Sheets)
+                    </para>
+                </note>
+            </section>
+            
+            <section>
+                <title>Handing in your examination</title>
+                <para>
+                    You need to provide the examiner with a ZIP file, which contains your theory questions, as well as your Ant-based project, 
+                    and instructions how to build / deploy it.
+                </para>
+            </section>
+        </section>
+    
+    </section>
+</article>

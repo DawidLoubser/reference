@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Facelets for adding a new location</title>
+    <para>
+        We use a simple buttons-based main menu which will be inserted for every page into the navigation panel 
+        of that page. Notice that for JSF based event processing the elements are preceeded with the
+        appropriate namespace prefix (e.g. <literal>h:</literal>):
+    </para>
+    
+    <section>
+        <title>The AddLocation facelet page</title>
+        <para>
+            This page simply defines the header and sets the <literal>addLocationPanel</literal> as the content.
+            There is no binding object for the page facelet.
+        </para>
+        <programlisting>
+<xi:include href="../../weatherBuro/web/src/main/webapp/faces/locations/addLocation.xhtml" parse="text"/>        
+    </programlisting>
+    </section>
+    
+    <section>
+        <title>The AddLocationPanel</title>
+        <para>
+            The <literal>AddLocationPanel.xhtml</literal> facelet assembles a facelets based form from lower
+            level facelet components which here is simply the data capture facelet and a panel of buttons executing the
+            use cases (add and cancel) for the captured location. Note the biding to the binding bean's
+            <literal>addLocation</literal> service. It also defines a tag for rendering any messages sent from the JSF
+            binding component.
+        </para>
+        <programlisting>
+<xi:include href="../../weatherBuro/web/src/main/webapp/faces/locations/addLocation.xhtml" parse="text"/>        
+        </programlisting>
+        <section>
+            <title>Navigation</title>
+            <para>
+                Navigation in the view can be done using relative or absolute links to other view components (the .xhtml postfix will
+                automatically be appended).
+            </para>
+         </section>   
+    </section>
+    
+    <section>
+        <title>AddLocation binding object</title>
+        <para>
+            In JSF a managed bean is used to store the state of the view component and to perform the integration with our services
+            layer. It is 
+            <itemizedlist>
+                <listitem><para>
+                    annotated as a <literal>@ManagedBean</literal>,                    
+                </para></listitem>
+                <listitem><para>
+                    specify a scope (request, session, view, application or none),
+                </para></listitem>
+                <listitem><para>
+                    must serializable and have a default constructor, 
+                </para></listitem>
+                <listitem><para>
+                    must have getters and setter for any data objects used to store the view's state, and
+                </para></listitem>
+                <listitem><para>
+                    implement the services requested which may integrate with a session bean based services
+                    layer by having those session beans injected.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+        <para>        
+            In addition it will have to get access to the binding components for the facelet components to get hold of
+            the state they manage. This is done by annotating those binding components as <literal><![CDATA[@ManagedProperty]]></literal>.
+        </para>
+        <para>
+            Note that the binding component sends any relevant messages which should be shown in the view to the faces context,
+            e.g. the message that the name for a location is already in use.
+        </para>
+        <programlisting>
+<xi:include href="../../weatherBuro/web/src/main/java/za/co/solms/locations/AddLocationBinding.java" parse="text"/>        
+        </programlisting>
+        <section>
+            <title>Navigation</title>
+            <para>
+                The binding object navigates to subsequent views simply by returning a string for the relative of absolute path to the
+                view. The .xhtml postfix is, once again, automatically appended. For example, from the add location view we navigate
+                back to the locations view after a location has been added.
+            </para>    
+        </section>
+    </section>
+
+
+    <section>
+        <title>The LocationPanel</title>
+        <para>
+            The <literal>LocationPanel.xhtml</literal> has the labels and fields capturing the name and address of
+            the location and includes a lower level presentation layer component for capturing the geographic coordinates:
+        </para>
+        <para>
+            The binding to the properties managing the state for the view is done using EL expressions referring to
+            properties of its binding bean.
+        </para>
+        <programlisting>
+<xi:include href="../../weatherBuro/web/src/main/webapp/faces/locations/locationPanel.xhtml" parse="text"/>        
+    </programlisting>
+    </section>
+    
+    <section>
+        <title>Location binding object</title>
+        <para>
+            The <literal>LocationBinding</literal> component simply has the fields and getters and setters for the
+            state of the location view (the name and address). Note that it in turn obtains the binding component
+            for the lower level view component as a <literal>@ManagedProperty</literal>.
+        </para>
+        <programlisting>
+<xi:include href="../../weatherBuro/web/src/main/java/za/co/solms/locations/LocationBinding.java" parse="text"/>        
+        </programlisting>
+    </section>
+    
+    <section>
+        <title>The GeographicCoordinatesPanel</title>
+        <para>
+            The <literal>GeographicCoordinatesPanel.xhtml</literal> simply has the fields for the longitude and latitude coordinates
+            and binds them to the properties of the binding bean:
+        </para>
+        <programlisting>
+<xi:include href="../../weatherBuro/web/src/main/webapp/faces/locations/geographicCoordinatesPanel.xhtml" parse="text"/>        
+    </programlisting>
+    </section>
+    
+    <section>
+        <title>GeographicCoordinatesBinding object</title>
+        <para>
+            The <literal>GeographicCoordinatesBinding</literal> simply manages the state for its corresponding view
+        </para>
+        <programlisting>
+<xi:include href="../../weatherBuro/web/src/main/java/za/co/solms/locations/GeographicCoordinatesBinding.java" parse="text"/>        
+        </programlisting>
+    </section>
+</section>  

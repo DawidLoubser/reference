@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.lang.generics.defining.boundedTypeParameters">
+    <title>Bounded type parameters</title>
+    <para>
+        At times the substitution type should be constrained to within a class hierarchy or to any
+        class implementing a particular interface. n such cases one can use bounded types. 
+    </para>
+    <para>
+        For example, one may want to define vectors and matrices as generic types so that one does
+        not have to define separate classes for the different scalar types (<abbrev>e.g.</abbrev>
+        for single and double precision floating point numbers, rational numbers, complex numbers or
+        infinite precision numbers). However, a vector of invoices would not make sense because one
+        would not be able to perform sensible vector addition, dot products, ... using
+        <literal>Invoice</literal> as the element type. The element types of the <literal>Vector</literal>
+        and <literal>Matrix</literal> generic types thus need to be restricted. In Java one could do
+        this using bounded types.
+    </para>
+    <para>
+       Another example would be a <literal>NaturallySortedMap</literal> which keeps the key-value
+       entries sorted according to the natural sorting order of the keys (the maps in the Java
+       Collection Framework support both sorting by natural order and sorting according to provided
+       comparator). For our naturally sorted maps the keys may not be any type,but only any
+       <literal>Comparable</literal> type, while the keys can be any type. We thus use a comparable
+        bounded type for the keys:
+       <programlisting language="Java"><![CDATA[
+public interface NaturallySortedMap<K extends Comparable, V>           
+{
+  public void put(K key, V value);
+            
+  public V get(K key);
+            
+  public Set<K> keySet();
+            
+  // Rest omitted ...
+}            
+            ]]></programlisting>
+    </para>
+</section>    

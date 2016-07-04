@@ -1,0 +1,88 @@
+<section id="resources.information.platforms.linux.networkServices.ssh.client"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Using SSH / SCP from a client</title>
+	<para>
+	The SSH and SCP clients are used to login as well as transfer files to remote server over a secure pipe. During the first handshake with a server the server public key is send to the client. The client stores this public key in the users home directory and uses it to authenticate the server during subsequent requests. The client is authenticated either via a username password combination or via it's public key.
+	</para>
+	
+	<screen>
+		<userinput>
+			<command>ssh</command> <replaceable>flag</replaceable> <replaceable>server</replaceable> 
+		</userinput>
+	</screen>
+	<table frame="all">
+		<title>ssh Flags</title>
+		<tgroup cols="2">
+			<thead>
+				<row><entry>Flag</entry><entry>Description</entry></row>
+			</thead>	
+			<tbody>
+				<row><entry>-C</entry><entry>the gzip algorithm is used for compression</entry></row>
+				<row><entry>-X</entry><entry>X11 is forwarded from the server to the client allowing the remote execution of gui applications</entry></row>
+				<row><entry>-x</entry><entry>X11 forwarding is disabled</entry></row>
+				<row><entry>-p</entry><entry>The port number used to make the connection. The default port is 22.</entry></row>
+				<row><entry>-g</entry><entry>Allows remote hosts to connect to local forwarded ports (used in port forwarding)</entry></row>
+				<row><entry>-L clientport:serverhost:serverport</entry><entry>The local clientport is forwarded to the serverhost:serverport on the server side. Only the root user can forward priviledged ports.</entry></row>
+				<row><entry>-R remoteport:clienthost:clientport</entry><entry>The remoteport on the serverside is forwarded to the clienthost:clientport on the lcient side. Only root can forward priviledged ports.</entry></row>
+				<row><entry>-1</entry><entry>Forces the use of SSH Version 1 (RSA1)</entry></row>
+				<row><entry>-2</entry><entry>Forces the use of SSH Version 2 (RSA &amp; DSA)</entry></row>
+			</tbody>
+		</tgroup>
+	</table>	
+	<screen>
+		<userinput>
+			<command>scp</command> <replaceable>flag</replaceable> <replaceable>[user@]source[:]</replaceable>  <replaceable>[user@]destination[:]</replaceable> 
+		</userinput>
+	</screen>
+	<table frame="all">
+		<title>scp Flags</title>
+		<tgroup cols="2">
+			<thead>
+				<row><entry>Flag</entry><entry>Description</entry></row>
+			</thead>	
+			<tbody>
+				<row><entry>-C</entry><entry>the gzip algorithm is used for compression</entry></row>
+				<row><entry>-P</entry><entry>The port number used to make the connection. The default port is 22.</entry></row>
+			</tbody>
+		</tgroup>
+	</table>	
+	<programlisting>
+	<![CDATA[
+...
+[butterfly:~] alex% ssh -l root -X -C chameleon
+root@chameleon's password: 
+Last login: Fri Sep  5 15:03:54 2003 from butterfly
+Have a lot of fun...
+chameleon:~ # 
+...
+[butterfly:~] alex% scp hosting.txt alex@chameleon:
+hosting.txt          100% |*****************************|   782       00:00    
+[butterfly:~] alex% 
+...
+	]]>
+	</programlisting>
+	<section>
+		<title>Client Authentication via keys</title>
+		<para>
+		The default authentication mechanism is public and private keys. Should this authentication fail the client is prompted to provide a valid userid and password combination to authenticate itself. To generate keys the <emphasis role="strong">ssh-keygen utility is used.</emphasis> It is recomended to generate a keypair for a SSH2 protocol such as RSA or DSA.
+		</para>
+	
+		<programlisting>
+ssh-keygen -t dsa		
+		</programlisting>
+		<para>
+			This generates two keys stores in seperate files. <emphasis role="strong">~/.ssh/id_dsa.pub</emphasis> is the public key and <emphasis role="strong">~/.ssh/id_dsa</emphasis> containing the private key. Each server maintains a list of authorised clients in the file <emphasis role="strong">~./ssh/authorized_keys2</emphasis> which is used by SSH v 2. The client's public key is appended to this file. 
+		</para>
+		<programlisting>
+		<![CDATA[
+cat ~/.ssh/id_dsa.pub | ssh user@server 'sh -c "cat - >> ~/.ssh/authorized_keys2"'		
+		]]>
+		</programlisting>
+		<para>
+		This will prompt for user's password. Any subsequent connections will not require password authentication and will use the key. Problems experience in getting key authentication working might originate from incorrect permissions on the .ssh directory in the users home on both the client and server side. The perssions should be set to 700, giving only the user / owner full controll over his keys. Should someone compromise your key it is possible to gain access to the server under your account. 
+		</para>
+	</section>
+</section>	

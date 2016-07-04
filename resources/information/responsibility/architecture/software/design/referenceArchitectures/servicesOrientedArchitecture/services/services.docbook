@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <title>Services</title>
+    
+    <indexterm>
+        <primary>services</primary>
+        <seealso>
+            <indexterm>
+                <primary>SOA</primary>
+            </indexterm>
+        </seealso>
+    </indexterm>
+    
+    <section>
+        <title>Services offer value to clients</title>
+        <para>
+            A service exists to fulfil a contract. The contract exists to express the requirements
+            (use-case) of a particular stakeholder in a system. To this end, services are best implemented
+            as a direct mapping from a technology-neutral model which was constructed using a process
+            such as URDAD, which results in each contract - at each level of granularity in the system - being
+            designed in exactly the same (client-centric) manner.
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Services are contract-driven</title>
+        <indexterm>
+            <primary>services</primary>
+            <secondary>contracts</secondary>
+        </indexterm>
+        <para>
+            The behaviour of a service should always satisfy the constraints
+            of the <emphasis>contract</emphasis> (service description)
+            it realises. The contract specifies the operations (use cases), the pre- and
+            post-conditions of each operation, as well as any quality requirements
+            around these (security, reliability, performance, etc).
+        </para>
+        <para>
+            By forcing a service's implementation details ot be hidden behind a well-defined contract,
+            SOA fosters test-ability, as well as plug-ability of different service providers realising
+            the same contract.
+        </para>
+        <para>
+            In SOA a single, standard, contract language is enforced across services, even though each service
+            may be <emphasis>realised</emphasis> in a different implementation technology.
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Services are autonomous</title>
+        <indexterm>
+            <primary>services</primary>
+            <secondary>autonomy</secondary>
+        </indexterm>
+        <para>
+            The principle of service autonomy (which is more of a mindset than an enforceable technicality) simply means that
+            each service was designed and implemented without a technical concern for other (perhaps existing) services, 
+            and that services should not hold influence over one another. In the organisation, different role players (departments)
+            may expose different services to a common services infrastructure, and the implementation of these services
+            do not need to (and should not) be concerned with adhering to common contracts, storing information in a
+            common database, or using a common programming language.
+        </para>
+        <para>
+            Such decisions are not driven by SOA principles, but purely by the practicalities of the organisation,
+            i.e. the available skills for development and administration.
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Services are stateless</title>
+        <indexterm>
+            <primary>services</primary>
+            <secondary>stateless</secondary>
+        </indexterm>
+        <para>
+            Services should not (and cannot) maintain <emphasis>conversational state</emphasis>
+            with clients. This forces the messages that are exchanged to
+            contain all required information in order for the service provider to sensibly
+            deduce the business context within which it is made. This is, in anyway, a good
+            practise to adhere to, even in stateful object-oriented technologies.
+        </para>
+        <para>
+            For example, the following exchange (in english) maintains conversational 
+            state:
+            <programlisting>
+CLIENT:        Please repair my car. It's the Blue Porsche (registration
+               number ABC123GP) parked in front of the workshop.
+                
+REPAIR CENTRE: We've assessed the damage and estimated cost, have a look at 
+               this quote (ref no 8872) and let us know if you accept
+               it (in order for us to proceed).
+                
+CLIENT:        Looks good to me, go ahead.
+                
+REPAIR CENTRE: Excellent. We'll let you know when your car is done, sir.
+            </programlisting>
+        </para>
+        <para>
+            The problem with this exchange is that, because conversational state
+            is maintained, the idea of <emphasis>object identity</emphasis> is
+            important: If the first message exchange occurred physically at the
+            workshop, and the second exchange occurred a day later via telephone,
+            the telephone operator will (in all likelihood) not be able to
+            understand the message from the client:
+            <programlisting>
+CLIENT:        Please repair my car. It's the Blue Porsche (registration
+               number ABC123GP) parked in front of the workshop.
+
+REPAIR CENTRE: We've assessed the damage and estimated cost, have a look at 
+               this quote (ref no 8872) and let us know if you accept
+               it (in order for us to proceed).
+
+(one day later, the telephone rings)
+
+REPAIR CENTRE: Good afternoon, how may I help you?
+
+CLIENT:        Looks good to me, go ahead.
+
+REPAIR CENTRE: Huh?
+            </programlisting>
+            The following version of the
+            conversation has been rewritten in a <emphasis>stateless</emphasis>
+            manner, which means that it does
+            not depend on the object identity of the service provider, nor on
+            conversational state:
+            <programlisting>
+CLIENT:        Please repair my car. It's the Blue Porsche (registration
+               number ABC123GP) parked in front of the workshop.
+                
+REPAIR CENTRE: We've assessed the damage and estimated cost, have a look at 
+               this quote (ref no 8872) and let us know if you accept
+               it (in order for us to proceed).
+                
+CLIENT:        I would like to confirm quote no 8872, please proceed
+               with the repairs.
+                
+REPAIR CENTRE: Excellent. We'll let you know when your car is done, sir.
+            </programlisting> 
+        </para>
+        <para>
+            Stateless services are an important enabler of
+            <itemizedlist>
+                <listitem>
+                    <para>freedom from communication channel (interactions
+                        pertaining to the same business process may happen
+                        through different channels)</para>
+                </listitem>
+                <listitem>
+                    <para>freedom from environmentally-imposed timing constraints,
+                        such as network time-outs or the duration of telephone calls</para>
+                </listitem>
+                <listitem>
+                    <para>increased scalability, by allowing the service provider
+                        to pool or re-use service provider objects internally
+                        in a simple way</para>
+                </listitem>
+                <listitem>
+                    <para>simpler implementation of service providers, which do not
+                        themselves ave to maintain the conversational state they have with
+                        all of their clients</para>
+                </listitem>
+                <listitem>
+                    <para>
+                        easy re-usability and test-ability: the pre- and post-conditions of services
+                        can be clearly defined, as they do not refer to past or future conversations
+                        (something which is difficult to define and test formally)
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Services are composable</title>
+        <indexterm>
+            <primary>services</primary>
+            <secondary>composition</secondary>
+        </indexterm>
+        <para>
+            Services do not specify, or limit, the <emphasis>context</emphasis> within which they are used.
+            This, together with a standard language for specifying service contracts, means that services
+            can easily be re-used in the context of higher-level, composite services.
+        </para>
+        <para>
+            SOA prescribes a business process execution engine, where potentially long-lived business processes
+            are assembled from individual services. This, again, is exposed as a service - ensuring that it itself
+            could be re-used in the context of other, even higher-level services.
+        </para>
+    </section>
+    
+    
+    <section>
+        <title>Services are discoverable</title>
+        <indexterm>
+            <primary>services</primary>
+            <secondary>discovery</secondary>
+        </indexterm>
+        <para>
+            Information about a service (the service contract, access channels, endpoint locations) must be
+            published through a mechanism which allows potential clients to discover the service. The actual mechanism
+            used ma vary, and most component technologies (EJB, .NET) do have some form of a naming service through
+            which the available services and their contracts can be discovered.
+        </para>
+    </section>
+    
+
+
+</section>

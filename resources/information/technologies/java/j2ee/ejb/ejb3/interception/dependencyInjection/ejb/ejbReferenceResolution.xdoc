@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section
+  id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.dependencyInjection.ejb.ejbReferenceResolution"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Linking logical EJB names to physical JNDI names</title>
+  <para>
+    If an EJB is given a name (called the <literal><![CDATA[ejb-name]]></literal>, this name is used as the basis of the bean's JNDI name. 
+    The mapping is done either in the <literal><![CDATA[<enterprise-beans>]]></literal>
+    section of the <literal>ejb-jar.xml</literal> deployment descriptor, or as part of the annotation
+    to indicate that a bean is a stateless or stateful session bean:
+  <programlisting><![CDATA[
+...
+<enterprise-beans>
+  <session>
+    ...
+    <ejb-name>EmployeeService</ejb-name>
+    <ejb-class>com.wombat.empl.EmployeeServiceBean</ejb-class>
+    ...
+    
+    <ejb-ref>
+      <description>
+        This is a reference to an EJB 2.1 entity bean that
+        encapsulates access to employee records.
+      </description>
+      <ejb-ref-name>ejb/EmplRecord</ejb-ref-name>
+      <ejb-ref-type>Entity</ejb-ref-type>
+      <home>com.wombat.empl.EmployeeRecordHome</home>
+      <remote>com.wombat.empl.EmployeeRecord</remote>
+    </ejb-ref>
+    <ejb-local-ref>
+      <description>
+        This is a reference to the local business interface
+        of an EJB 3.0 session bean that provides a payroll
+        service.
+      </description>
+      <ejb-ref-name>ejb/Payroll</ejb-ref-name>
+      <local>com.aardvark.payroll.Payroll</local>
+    </ejb-local-ref>
+    <ejb-local-ref>
+      <description>
+        This is a reference to the local business interface
+        of an EJB 3.0 session bean that provides a pension
+        plan service.
+      </description>
+      <ejb-ref-name>ejb/PensionPlan</ejb-ref-name>
+      <local>com.wombat.empl.PensionPlan</local>
+    </ejb-local-ref>
+    ...
+  </session>
+  ...
+</enterprise-beans>
+]]></programlisting>
+    or, using the name attribute of the annotation:
+    <programlisting><![CDATA[
+import javax.ejb.*;
+
+@Stateless(name="SAHomeLoanCalculator")
+@Local({HomeLoanCalculator.class})
+@Remote({HomeLoanCalculator.class})
+public class HomeLoanCalculatorBean implements HomeLoanCalculator
+{
+  ...
+}
+      ]]></programlisting>
+  </para>
+</section>  

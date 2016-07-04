@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.sessionBeans.dependencyInjection.setterInjected">
+  <title>Setter injection</title>
+  <para>
+    EJB supports setter injection, where the container will automatically
+    call one or more <quote>setter</quote> methods on your component, automatically
+    supplying the desired input argument. The setter methods for which 
+    injections are defined will be called prior to any business service 
+    being called. If a dependency injection fails, the deployment itself will fail
+    (i.e. the container will not ignore the event of not being able to satisfy
+    a dependency).
+  </para>
+  <para>
+    For container-managed infrastructure objects, the <emphasis>@javax.ejb.Resource</emphasis>
+    annotation is used.
+  </para>
+  <para>
+    For example
+<programlisting language="Java">
+@Resource(mappedName="clientDB" type="javax.sql.DataSource")
+protected void setClientDB(DataSource db)
+{
+  this.clientDB = db;
+}  
+</programlisting>
+    will specify that the <literal>setClientDB</literal> is to be called using
+    as parameter the resource published in the JNDI naming service as <literal>clientDB</literal>.
+  </para>
+  <para>
+    If the type of the argument can be inferred, the type parameter can be omitted.
+    For example 
+    <programlisting language="Java">
+@Resource(mappedName="clientDB")
+protected void setClientDB(DataSource db)
+{
+  this.clientDB = db;
+}  
+  </programlisting>
+    would suffice for the above example.
+  </para>
+  <para>
+    If one does not care about a <emphasis>particular</emphasis> instance (with a particular
+    name) being provided, one may also omit the JNDI name, leaving the decision of which resource
+    to inject entirely up to the container:
+    <programlisting language="Java">
+@Resource
+protected void setClientDB(DataSource clientDB)
+{
+  this.clientDB = clientDB;
+}  
+</programlisting>
+  </para>
+  <para>
+    To inject enterprise beans, the <literal>@javax.ejb.EJB</literal> annotation is used. It is common 
+    practise to omit the JNDI name, since we typically only care about the available functionality (i.e. the interface
+    which it implements), and would want the container to provide any available implementation.
+    <itemizedlist>
+         <listitem>
+            <para>
+        only the parameter type
+              <programlisting language="Java">
+@EJB 
+protected void setTaxCalculator( VatCalculatorRSALocal taxCalculator )
+{
+  this.taxCalculator = taxCalculator;
+}  
+  </programlisting>
+            </para>
+         </listitem>
+         <listitem>
+            <para>
+        Alternatively, one may request that a particular bean be injected, based on it's
+        <emphasis>bean name</emphasis>:
+              <programlisting language="Java">
+@EJB (name="VatCalculatorRSA")
+protected void setTaxCalculator( VatCalculatorRSALocal taxCalcultor )
+{
+  this.taxCalculator = taxCalculator;
+}
+              </programlisting>
+              or, more commonly, based on its JNDI <emphasis>mapped name</emphasis>:
+              <programlisting language="Java">
+                @EJB (mappedName="ejb/VATCalculator")
+                public void setTaxCalculator( VatCalculatorRSALocal taxCalcultor )
+                {
+                this.taxCalculator = taxCalculator;
+                }
+              </programlisting>
+              in both cases, as per the bean's deployment configuration (i.e. annotations or
+              deployment descriptor file).
+            </para>
+         </listitem>
+      </itemizedlist>    
+  </para>
+  
+  <section>
+    <title>Method access level modifier</title>
+    <para>
+      The setter methods do not have to be <literal>public</literal>. Even though it would be safe to make them public
+      (since a client will not be able to invoke them, as clients are never exposed to the <emphasis>class</emphasis>
+      of an enterprise bean, only the remote or local interface) the container also supports <literal>protected</literal>
+      and even <literal>private</literal> setters.
+    </para>
+  </section>
+  
+</section>

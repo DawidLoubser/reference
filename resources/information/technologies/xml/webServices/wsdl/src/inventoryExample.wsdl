@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ws="http://www.example.com/webservice"
+    targetNamespace="http://www.example.com/webservice">
+    
+    
+    <!-- Define Types -->
+    <wsdl:types>
+        <xs:schema 
+            targetNamespace="http://www.example.com/webservice"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+            
+            <!-- Search Request -->
+            <xs:complexType name="InventorySearchRequest">
+                <xs:sequence>
+                    <xs:element name="keyWords" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="inventorySearchRequest" 
+                type="ws:InventorySearchRequest"/>
+            
+            <!-- Search Results -->
+            <xs:complexType name="InventorySearchResponse">
+                <xs:sequence>
+                    <xs:element name="item" type="ws:InventoryItem"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="inventorySearchResponse" 
+                type="ws:InventorySearchResponse"/>
+            
+            <!-- A single (abstract) inventory item -->
+            <xs:complexType name="InventoryItem">
+                <xs:sequence>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="price" type="xs:decimal"/>
+                    <xs:element name="noInStock" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            
+            <!-- Fault to indicate inventory server failure -->
+            <xs:complexType name="ServerFailure">
+                <xs:sequence>
+                    <xs:element name="reason" type="xs:string" 
+                        minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="serverFailure" 
+                type="ws:ServerFailure"/>
+            
+        </xs:schema>
+    </wsdl:types>
+    
+    
+    <!-- Abstract Messages Definition (and mapping 
+        to type system, e.g. XML Schema) -->
+    <wsdl:message name="InventorySearchRequest">
+        <wsdl:part name="message" 
+            element="ws:inventorySearchRequest"/>
+    </wsdl:message>
+    <wsdl:message name="InventorySearchResponse">
+        <wsdl:part name="message" 
+            element="ws:inventorySearchResponse"/>
+    </wsdl:message>
+    <wsdl:message name="SearchFault">
+        <wsdl:part name="message" 
+            element="ws:serverFailure"/>
+    </wsdl:message>
+    
+    
+    <!-- Abstract Service Interface Definition -->
+    <wsdl:portType name="InventoryServicePort">
+        
+        <!-- Specify the use cases, and the messages used -->
+        <wsdl:operation name="searchInventory">
+            <wsdl:input message="ws:InventorySearchRequest"/>
+            <wsdl:output message="ws:InventorySearchResponse"/>
+            <wsdl:fault name="fault" message="ws:SearchFault"/>
+        </wsdl:operation>
+        
+    </wsdl:portType>
+    
+    
+    <!-- Specify how our abstract service should be bound to
+        the HTTP transport layer -->
+    <wsdl:binding name="InventoryServiceHTTPBinding" 
+        type="ws:InventoryServicePort">
+        
+        <!-- Specify document-style messaging -->
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" 
+            style="document" />
+        
+        <!-- Specify messaging style for each use case -->
+        <wsdl:operation name="searchInventory">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal" />
+            </wsdl:fault>
+        </wsdl:operation>
+        
+    </wsdl:binding>
+    
+    
+    <!-- Specify where the bound service can be physically found -->
+    <wsdl:service name="ExampleInventoryService">
+        <wsdl:port name="InventoryServicePort" 
+            binding="ws:InventoryServiceHTTPBinding">
+			<soap:address 
+			    location="http://localhost/inventory/service" />
+		</wsdl:port>
+    </wsdl:service>
+    
+</wsdl:definitions>

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2006-12-16 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Introduction</title>
+
+    <para> Class diagrams are used to model the static structure. This may include the static
+        structure of <itemizedlist>
+            <listitem>
+                <para> an organization or a component of an organization, </para>
+            </listitem>
+            <listitem>
+                <para> a system or a system component, or </para>
+            </listitem>
+            <listitem>
+                <para> some domain object (like an account or an invoice). </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+
+    <para> In particular, class diagrams can be used to specify <itemizedlist>
+            <listitem>
+                <para> the services offered by the instances of a particular class, </para>
+            </listitem>
+            <listitem>
+                <para> the attributes which each instance of a particular class will have, and
+                </para>
+            </listitem>
+            <listitem>
+                <para> the relationships between one instance of a class and instances of other
+                    classes. </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+
+    <para> These class diagrams are used during both, the analysis phase where the requirements
+        around business or system services are established, as well as during the design phase where
+        a solution for the requirements is designed. </para>
+
+
+    <para> The class diagrams do not contain any information about the dynamics of an object.
+        However, one can later assign activity, state and interaction diagrams to the services in
+        order to specify the system or business process which should be followed when realizing the
+        service. </para>
+    
+    <section>
+        <title>Objects and Classes</title>
+        <para> Objects and classes are the central concepts in object oriented modeling. They represent
+            concrete entities and their abstractions. </para>
+        
+        <section>
+            <title>Objects</title>
+            <para>
+                <indexterm>
+                    <primary>object</primary>
+                </indexterm> The objects are specific discrete conceptual or physical entities from our
+                modeling domain. Each object has a well defined boundary and may have a state which
+                could change over time. Furthermore, an object may have behaviour and could offer
+                services to other objects. </para>
+            
+            <section>
+                <title>Common examples of objects</title>
+                <para>
+                    <itemizedlist>
+                        <listitem>
+                            <para> The <emphasis>organization</emphasis> as a whole is an object with a
+                                well defined boundary and identity which encapsulates state and
+                                behaviour. </para>
+                        </listitem>
+                        <listitem>
+                            <para> A particular business unit like the <emphasis>Finance
+                                department</emphasis> is an object. </para>
+                        </listitem>
+                        <listitem>
+                            <para> An <emphasis>external service provider</emphasis> to whom the
+                                organization out-sources some functionality is an object. </para>
+                        </listitem>
+                        <listitem>
+                            <para> A <emphasis>vehicle</emphasis> is an object which has both, state and
+                                behaviour. </para>
+                        </listitem>
+                        <listitem>
+                            <para> An <emphasis>invoice</emphasis> and a <emphasis>home loan
+                                application</emphasis> are both objects which have state, but no
+                                behaviour. </para>
+                        </listitem>
+                        <listitem>
+                            <para> A system component which is busy processing some request is an
+                                object. </para>
+                        </listitem>
+                    </itemizedlist>
+                </para>
+            </section>
+            
+            <section xml:id="technology.uml.classDiagrams.introduction.objectsAndClases.identifyingObjects">
+                <title>Identifying objects</title>
+                <para> A very simple, but effective way to identify objects for your modeling domain is
+                    to go through a natural language description of the domain and identify the nouns.
+                    You will have used a noun because for those concepts which represent objects (or
+                    classes). Often you would want to map the objects from your conceptual understanding
+                    of a domain onto objects used in your model of that domain. </para>
+                <para> Consider, for example, the following description of some domain: <blockquote>
+                    <para>
+                        <emphasis> Sam and Jill are two of our clients who have accounts with us.
+                            Sam has an account in Australian dollars while Jill has an account in
+                            South-African Rand. Both accounts record transactions with their
+                            corresponding transaction date in a statement. Clients can request
+                            statements over any period defined by a start date and an end date.
+                        </emphasis>
+                    </para>
+                </blockquote>
+                </para>
+                <para> These nouns can be directly mapped onto the objects, yielding the following
+                    collection of objects: </para>
+                
+                <table>
+                    <title>Objects can be identified from nouns.</title>
+                    <tgroup cols="6">
+                        <tbody>
+                            <row>
+                                <entry>
+                                    <para>Sam</para>
+                                </entry>
+                                <entry>
+                                    <para>Jill</para>
+                                </entry>
+                                <entry>
+                                    <para>client</para>
+                                </entry>
+                                <entry>
+                                    <para>account</para>
+                                </entry>
+                                <entry>
+                                    <para>ausDollar</para>
+                                </entry>
+                                <entry>
+                                    <para>zaRand</para>
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <para>transaction</para>
+                                </entry>
+                                <entry>
+                                    <para>transactionDate</para>
+                                </entry>
+                                <entry>
+                                    <para>statement</para>
+                                </entry>
+                                <entry>
+                                    <para>period</para>
+                                </entry>
+                                <entry>
+                                    <para>startDate</para>
+                                </entry>
+                                <entry>
+                                    <para>endDate</para>
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+            </section>
+        </section>
+        
+        <section>
+            <title>Classes</title>
+            <para>
+                <indexterm>
+                    <primary>class</primary>
+                </indexterm> In most cases one prefers to model at a more abstract level where the model
+                elements are not specific objects, but abstractions of specific. </para>
+            <para> The first level of abstraction is called a class. It encapsulates the commonalities
+                across a class of objects, <abbrev>i.e.</abbrev> across all instances of the same class.
+                The commonalities may include common <itemizedlist>
+                    <listitem>
+                        <para>state aspects (variables),</para>
+                    </listitem>
+                    <listitem>
+                        <para>services, and</para>
+                    </listitem>
+                    <listitem>
+                        <para>common relationships to instances of other classes.</para>
+                    </listitem>
+                </itemizedlist> In addition, one can use behaviour and interaction diagrams to specify
+                how instances of a class need to realize a service, <abbrev>i.e.</abbrev> to define the
+                business or system process which needs to be executed when a service is requested. </para>
+            
+            <para> Classes thus represent concepts or types and class diagrams are used to define the
+                static aspects of these concepts. </para>
+            
+            
+            <section>
+                <title>Identifying classes</title>
+                <para> Even in natural language we often communicate using classes instead of objects.
+                    For example, you may say <blockquote>
+                        <para>
+                            <emphasis> We issue invoices for purchases. </emphasis>
+                        </para>
+                    </blockquote> or <blockquote>
+                        <para>
+                            <emphasis> We will use a caterer to provide the refreshments for this
+                                conference. </emphasis>
+                        </para>
+                    </blockquote> In either case you are not referring to a specific invoice or caterer
+                    with a specific identity but to a more abstract concept for which there are multiple
+                    concrete instances. We are talking about classes, not objects. <note>
+                        <para> Some of the nouns identified in <xref
+                            linkend="technology.uml.classDiagrams.introduction.objectsAndClases.identifyingObjects"
+                        /> like client and account were actually referring to classes. Their
+                            instances would be objects. </para>
+                    </note>
+                </para>
+                <para> In cases where the natural concepts are not classes, you can look for objects
+                    which have the same state and behaviour. Such objects may be instances of classes
+                    themselves. </para>
+                
+                <para> Let us revisit the example discussed in <xref
+                    linkend="technology.uml.classDiagrams.introduction.objectsAndClases.identifyingObjects"
+                />. We could abstract the objects identified to the classes shown below: </para>
+                
+                <table>
+                    <title>Classes as abstraction of specific objects.</title>
+                    <tgroup cols="7">
+                        <tbody>
+                            <row>
+                                <entry>
+                                    <para>Client</para>
+                                </entry>
+                                <entry>
+                                    <para>Account</para>
+                                </entry>
+                                <entry>
+                                    <para>Currency</para>
+                                </entry>
+                                <entry>
+                                    <para>Transaction</para>
+                                </entry>
+                                <entry>
+                                    <para>Date</para>
+                                </entry>
+                                <entry>
+                                    <para>Period</para>
+                                </entry>
+                                <entry>
+                                    <para>Statement</para>
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+                
+            </section>
+            
+        </section>
+        
+    </section>
+    
+</section>

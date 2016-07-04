@@ -1,0 +1,27 @@
+#!/bin/bash
+
+docName="urdadPaper"
+pdfPath="$docName.pdf"
+
+# Render with latex
+latex $docName.tex
+bibtex $docName
+latex $docName.tex
+dvipdf $docName.dvi
+
+# Try to open the file
+# Mac OS X
+if [[ -x `which open` ]]
+then
+open $pdfPath
+# Acrobat Reader
+elif [[ -x `which acroread` ]]
+then
+acroread $pdfPath
+# Desperate last attempt with kcrapview
+elif [[ -x `which kghostview` ]]
+then
+kghostview $pdfPath
+else
+echo "$msgError No viewer found, please open $pdfPath yourself."
+fi

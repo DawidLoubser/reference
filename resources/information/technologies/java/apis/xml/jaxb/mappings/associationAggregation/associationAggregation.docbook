@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Mapping association relationships</title>
+    <para>
+        XML schema unfortunately does not truly support traditional association relationships between classes. Instead
+        XML schema supports the old <literal>ID  -  IDREF(S)</literal> as well as <literal>key  -  keyref</literal>
+        constructs.
+    </para>
+    
+    <section>
+        <title>Using ID/IDREF for associations</title>
+        <para>
+            This is the prefererred approach for association as JAXB will map the association onto an object reference. Unfortunately
+            the ID/IDREF mechanism is not bound to a class, i.e. an <literal>IDREF</literal> can refer to any <literal>ID</literal>
+            and <literal>ID</literal>s. The consequences are
+            <itemizedlist>
+                <listitem><para>
+                    IDs must be unique across the entire document (two objects cannot have the same ID),
+                </para></listitem>
+                <listitem><para>
+                    JAXB will map the ID/IDREF pair onto a reference of type <literal>Object</literal> and the
+                    casting must be done in the application code,
+                </para></listitem>
+                <listitem><para>
+                    the validation during parsing and mapping cannot enforce that an object reference (the association) 
+                    refers to an object of the correct class, just that it refers to some object which has the appropriate ID.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <section>
+        <title>Using key/keyRefs for associations</title>
+        <para>
+            From an XML perspective the key/keyRef mapping is often preferable to the ID/IDREF because it
+            <itemizedlist>
+                <listitem><para>
+                    enforces that the correct type of object is referenced,                    
+                </para></listitem>
+                <listitem><para>
+                    allows for general keys including composite keys, and
+                </para></listitem>
+                <listitem><para>
+                    key values do not have to comply to XML naming conventions.
+                </para></listitem>
+            </itemizedlist>
+            However, they are formulated as constraints and JAXB does not, by default, feed any of the constraints into
+            the binding classes. One can thus only use key/keyrefs for customized bindings.
+        </para>
+    </section>
+</section>    

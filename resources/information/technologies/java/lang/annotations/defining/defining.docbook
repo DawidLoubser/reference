@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude" 
+  xml:id="resources.information.technologies.java.lang.annotations.examples.defining.defining">
+    
+    <title role="Defining annotations">Defining annotations</title>
+  
+  <indexterm>
+    <primary>Annotations</primary>
+    <secondary>defining</secondary>
+  </indexterm>
+  
+    <para>
+        Annotations are defined via special interfaces denoted via <literal>@interface</literal>.
+        The simplest form of a (hypothetical) annotation would be
+        <programlisting language="Java"><![CDATA[
+public @interface Obfuscate {}            
+            ]]></programlisting>
+        which could be used to indicate to code obfuscators that a particular class, interface, method or
+        field should be obfuscated. The annotation could be used as follows:
+        <programlisting language="Java"><![CDATA[
+public class SomeClass
+{
+     @Obfuscate
+      public void someMethodWithSensitiveBusinessProcessInformation()
+      {
+         ...     
+      }
+            
+      public void someNonCriticalMethod()
+      {
+         ...
+      }
+            
+      @Obfuscate
+      class SomeCriticalInnerClass
+      {
+        ...    
+      }
+ }
+          ]]></programlisting>
+    </para>    
+    
+    <section>
+        <title>Specifying annotation parameters</title>
+        <para>
+            One can specify annotation parameters via query methods included in the interface. For
+            example, assume you wanted to add annotations that would be used by a code obfuscator (a
+            piece of software that makes compiled code difficult to reverse-engineer) by specifying the required obfuscation level, as well as a reason
+            for the obfuscation. Such an annotation could be defined as:
+            <programlisting language="Java"><![CDATA[
+/** An annotation to indicate that the annotated element should
+  * be obfuscated, with parameters to specify the level of, and
+  * reason for obfuscation
+  */
+public @interface Obfuscate
+{         
+  /** The degree of obfuscation required */
+  public ObfuscationLevel obfuscationLevel() 
+    default ObfuscationLevel.LAYOUT;
+    // if no default is specified, then the parameter is mandatory
+                
+  /** The reason why the annotated element must be obfuscated */
+  public String reason() default ""; 
+  
+  /** An enumeration (set of constant values) to specify the
+    * level of code obfuscation
+    */              
+  public enum ObfuscationLevel 
+  {
+      LAYOUT, // Obfuscate names, comments, ...
+      DATA, // Alter data values, result unchanged
+      CONTROL, // Alter control logic 
+      PREVENT_DECOMPILATION // Prevents decompilation
+  };
+}
+                ]]></programlisting>
+        </para>
+        <para>
+            This would enable developers to specify parameters on the obfuscation annotation:
+            <programlisting language="Java"><![CDATA[
+public class SomeClass
+{
+     @Obfuscate(obfuscationLevel=Obfuscate.ObfuscationLevel.CONTROL,
+                       reason="our secret recipe") 
+      public void someMethodWithSensitiveBusinessProcessInformation()
+      {
+         ...     
+      }
+            
+      public void someNonCriticalMethod()
+      {
+         ...
+      }
+            
+     @Obfuscate(obfuscationLevel=Obfuscate.ObfuscationLevel.LAYOUT,
+                       reason="Contains the names of the secret spices.") 
+      class SomeCriticalInnerClass
+      {
+        ...    
+      }
+ }
+                
+                ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+      <title>Annotating annotations</title>
+        <para>
+          One may want to provide meta-data for annotations in order to specify how it should be
+          applied. Java defines the following meta-annotations:
+          <itemizedlist>
+              <listitem><formalpara>
+                  <title>Target</title>
+                  <para>Specifies the targets to which the annotation may be applied.</para>
+              </formalpara></listitem>
+              <listitem><formalpara>
+                  <title>Retention</title>
+                  <para>Specifies the life span of the annotation.</para>
+              </formalpara></listitem>
+              <listitem><formalpara>
+                  <title>Inherited</title>
+                  <para>Specify whether the annotation should be inherited by subclasses of the
+                      annotated class.</para>
+              </formalpara></listitem>
+              <listitem><formalpara>
+                  <title>Documented</title>
+                  <para>
+                      Specifies whether the annotation should be published via JavaDoc.
+                  </para>
+              </formalpara></listitem>
+          </itemizedlist>
+        </para>
+        
+        <section>
+          <title>Restricting annotation targets</title>
+          <para>
+              By default an annotation can be applied to
+              <itemizedlist>
+                  <listitem><para>classes</para></listitem>
+                  <listitem><para>interfaces</para></listitem>
+                  <listitem><para>methods</para></listitem>
+                  <listitem><para>constructors</para></listitem>
+                  <listitem><para>parameters,</para></listitem>
+                  <listitem><para>fields,</para></listitem>
+                  <listitem><para>packages,</para></listitem>
+                  <listitem><para>local variables, and</para></listitem>
+                  <listitem><para>annotations.</para></listitem>
+              </itemizedlist>
+              Often an annotation is meant to be applied to only a subset of the above. In such
+              cases one should restrict the annotation target via a <literal>Target</literal>
+              meta-annotation. For example,
+              
+          </para>
+          <para>
+              For example, if one wants to define an <literal>@NoOptimization</literal> annotation
+              and wants to restrict it to be applicable only to methods and constructors, one can
+              define and annotate it as follows:
+              <programlisting language="Java"><![CDATA[
+@Target({Element.METHOD, Element.CONSTRUCTOR})
+@interface NoOptimization {}                  
+                  ]]></programlisting>
+          </para>  
+            <section>
+                <title>Legal restriction targets</title>
+                <para>
+                    The following element types can be used when specifying annotation targets:
+                    <itemizedlist>
+                        <listitem><formalpara>
+                            <title>PACKAGE</title>
+                            <para></para>
+                        </formalpara></listitem>
+                        <listitem><formalpara>
+                            <title>TYPE</title>
+                            <para>Classes, interfaces or enums, excluding annotations.</para>
+                        </formalpara></listitem>
+                        <listitem><formalpara>
+                            <title>CONTRUCTOR</title>
+                            <para></para>
+                        </formalpara></listitem>
+                        <listitem><formalpara>
+                            <title>METHOD</title>
+                            <para>Methods excluding constructors.</para>
+                        </formalpara></listitem>
+                        <listitem><formalpara>
+                            <title>PARAMETER</title>
+                            <para>Methods and constructor parameters.</para>
+                        </formalpara></listitem>
+                        <listitem><formalpara>
+                            <title>FIELD</title>
+                            <para>Fields including enumerated values.</para>
+                        </formalpara></listitem>
+                        <listitem><formalpara>
+                            <title>LOCAL_VARIABLE</title>
+                            <para>local variables and catch clauses.</para>
+                        </formalpara></listitem>
+                        <listitem><formalpara>
+                            <title>ANNOTATION_TYPE</title>
+                            <para>Annotation types (meta-annotations).</para>
+                        </formalpara></listitem>
+                    </itemizedlist>
+                </para>
+            </section>
+            
+        </section>
+    
+      <section>
+          <title>Specifying the life span of an annotation</title>
+          <para>
+              By default annotations are compiled into the <literal>class</literal> files, but
+              class loaders are not required to read them in order to make them available at
+              run-time. To specify a life span for the annotation which is different from the
+              default life span, one annotates it using the <literal>@Retention
+              meta-annotation</literal>.
+          </para>
+          <para>
+              For example, we may want the <literal>@NoOptimization</literal> annotation to survive
+              into the Java Virtual Machine so that the latter is also prevented from applying
+              optimization algorithms when mapping the platform-independent binary code onto
+              platform-specific code. We would then annotate the <literal>@NoOptimization</literal>
+              annotation as follows:
+              <programlisting language="Java"><![CDATA[
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
+@interface NoOptimization {}                  
+                  ]]></programlisting>
+          </para>
+          <para>
+              The permissable annotation life spans are
+              <itemizedlist>
+                  <listitem><formalpara>
+                      <title>SOURCE</title>
+                      <para>The annotation is discarded by the compiler.</para>
+                  </formalpara></listitem>
+                  <listitem><formalpara>
+                      <title>CLASS</title>
+                      <para>The annotation is stored in the class file, but discarded by the class loader/VM.</para>
+                  </formalpara></listitem>
+                  <listitem><formalpara>
+                      <title>RUNTIME</title>
+                      <para>The annotation is loaded by the VM and available at run-time.</para>
+                  </formalpara></listitem>
+              </itemizedlist>
+          </para>
+      </section>
+        
+        <section>
+            <title>Specifying that the annotation should be inherited</title>
+            <para>
+                Some annotations should not only apply to the annotated class, but also to its
+                sub-classes. 
+            </para>
+            <para>
+                For example, if we annotate a method or class as
+                <literal>@Deprecated</literal>,
+                then that annotation should apply to sub-classes to. Otherwise you may be
+                sub-classing a sub-class of a deprecated class without realizing that you are
+                effectively sub-classing a deprecated class.
+            </para>
+            <para>
+                Similarly, you would most probably want to have the <literal>@Obfuscate</literal>
+                annotation apply not only to the annotated elements, but also to any overriding
+                elements, <abbrev>i.e.</abbrev> if a method has sensitive business logic any method
+                overriding that method is bound to contain sensitive business knowledge too.
+            </para>
+            <para>
+                This would lead us to annotate the <literal>Obfuscate</literal> annotation with the
+                <literal>@Inherited</literal> meta-annotation:
+                <programlisting language="Java"><![CDATA[
+@Inherited
+@Retention(RetentionPolicy.SOURCE)
+@Target({ElementType.TYPE,
+              ElementType.METHOD, 
+              ElementType.CONSTRUCTOR,
+              ElementType.FIELD,
+              ElementType.LOCAL_VARIABLE})
+public @interface Obfuscate
+{
+
+  // Rest omitted ...
+  
+}
+                    ]]></programlisting>
+            </para>
+        </section>
+        
+        <section>
+            <title>Publishing annotations in generated documentation</title>
+            <para>
+                Some annotations are useful to include in the API documentation. A prime example is
+                the <literal>@Deprecated</literal> annotation which should be included in the API
+                documentation so that developers know to avoid using deprecated features.
+            </para>
+            <para>
+                Consider, for example, a simple <literal>ToDo</literal> annotation containing a
+                <literal>description</literal>. It would most probably be a good idea to request
+                documentation for such an annotation.
+                <programlisting><![CDATA[
+/** An annotation to describe some required outstanding
+  * work (such as missing features) on the annotated element.
+  */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ToDo
+{
+  String description();
+}                    
+                    ]]></programlisting>
+            </para>
+        </section>
+        
+    </section>
+
+    <section>
+        <title>Common supertype for all annotations</title>
+        <para>
+            All annotations automatically extend the <literal>java.lang.annotation.Annotation</literal>
+            interface.
+        </para>
+    </section>
+
+</section>    
+  

@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.concepts.architecture.documenting.examples.interpharm.architecture.strategies.strategies"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title role="Architectural strategies">Architectural strategies</title>
+  <para>
+    This section discusses the architectural strategies employed to realize the non-functional
+    requirements for the claims switching system.  
+  </para>
+  
+  <section>
+    <title>Strategies used to realize reliability and availability</title>
+    <para>
+      Ultimately this is perhaps the most critical of all quality requirements. It is intended to be
+      realized through a number of strategies.
+    </para>
+    
+    <section>
+      <title>Clustering</title>
+      <para>
+        The core processing layer is deployed within a cluster where 
+        <itemizedlist>
+          <listitem><para>
+            the cluster members publish their availability through asynchronous messaging (including
+            heartbeats),
+          </para></listitem>
+          <listitem><para>
+            the client proxies used in the HTTP request processing layer are smart proxies which
+            <itemizedlist>
+              <listitem><para>
+                are continuously informed about the machines available in the business
+                logic cluster,
+              </para></listitem>
+              <listitem><para>
+                provide support for pluggable load balancing algorithms.
+              </para></listitem>
+            </itemizedlist>
+          </para></listitem>
+          <listitem><para>
+            support for farming where business logic components which are deployed on any cluster
+            node are automatically deployed across all nodes in the cluster.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Passive redundancy for the request originators</title>
+      <para>
+        The socket connection layer is a potential single point of failure. Clients connect to a
+        single IP address. If the machine falls over a stand-by machine which monitors the
+        availability of the first machine automatically brings its networking interface up with the
+        IP address used by clients. These machines perform an absolute minimum of processing,
+        performing essentially only the following tasks:
+        <orderedlist>
+          <listitem><para>
+            forwarding received messages on top of the HTTP transport protocol,  
+          </para></listitem>
+          <listitem><para>
+            simple load balancing across the HTTP request processors,
+          </para></listitem>
+          <listitem><para>
+            processing of HTTP responses and passing the message body back to the pharmacy via the
+            socket connection.
+          </para></listitem>
+        </orderedlist>
+      </para>
+    </section>
+    
+    <section>
+      <title>Standard tested components</title>
+      <para>
+          Reliability is meant to be improved by reducing complexity and reducing the amount of
+          in-house maintained components by replacing them by standard tested components which are
+          maintained  and QA'd within the open source community.
+      </para>
+    </section>
+    
+    
+    <section>
+      <title>Hot deployment</title>
+      <para>
+        The architecture needs to support hot deployment of updated components in order to allow for system maintenance without down-time.
+      </para>
+    </section>
+    
+    <section>
+      <title>Passive redundancy on the persistence layer</title>
+      <para>
+        Data written to one database is synchronized over to a backup  database server which is used when
+        the main database server fails.
+      </para>
+    </section>
+    
+    <section>
+      <title>Transaction management</title>
+      <para>
+        Transaction boundaries are set from the receipt of the original HTTP message up to the HTTP
+        response. This allows for reasonable transactional control without requiring the deployment
+        of a new pharmacy client or transaction management up to the socket connection layer. 
+      </para>
+    </section>
+    
+    <section>
+      <title>Resource pooling</title>
+      <para>
+        In order to improve scaleability and performance, resources should be pooled as far as
+        possible. This should include the pooling of 
+        <itemizedlist>
+          <listitem><para>database connections,</para></listitem>
+          <listitem><para>connections to medical aid administrators,</para></listitem>
+          <listitem><para>connections to messaging services,</para></listitem>
+          <listitem><para>thread pooling, and</para></listitem>
+          <listitem><para>object pooling.</para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+  </section>
+  
+  <section>
+    <title>Strategies used to realize scaleability</title>
+    <para>
+       Scaleability is achieved through
+      <itemizedlist>
+        <listitem><para>clustering,</para></listitem>
+        <listitem><para>resource pooling,</para></listitem>
+        <listitem><para>reducing the amount of database synchronization required,</para></listitem>
+        <listitem><para>
+          deploying several software layers onto the same hardware layer with
+          efficient Java object based integration between these layers.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Strategies used to realize maintainability</title>
+    <para>
+        Maintainability is realized through
+      <itemizedlist>
+        <listitem><para>
+          The hardware architecture is simplified by 
+          <itemizedlist>
+            <listitem><para>
+              reducing the number of machines used,
+            </para></listitem>
+            <listitem><para>
+              reducing the number of hardware layers, and
+            </para></listitem>
+            <listitem><para>
+              reducing the database synchronization requirements,
+            </para></listitem>
+          </itemizedlist>
+        </para></listitem>
+        
+        <listitem><para>
+          The software architecture is simplified by
+          <itemizedlist>
+            <listitem><para>
+              significantly reducing the code bulk,
+            </para></listitem>
+            <listitem><para>
+              removing a lot of the complex thread pooling logic and replacing it by standard
+              components, 
+            </para></listitem>
+            <listitem><para>
+              not tying the system to any particular database synchronization method.
+            </para></listitem>
+          </itemizedlist>
+        </para></listitem>
+        
+        <listitem><para>
+          The architecture is based on a standard enterprise reference architecture which is well
+          understood by many developers, designers and architects. This will enable client to
+          realize cost effective maintainability, even in the context of critical staff
+          replacements.
+        </para></listitem>
+        <listitem><para>
+          The new architecture is a component based architecture supporting simple addition to the
+          business logic components, replacing of defective or inferior components with new
+          components using hot component deployment for maintenance on the life system. 
+        </para></listitem>
+        <listitem><para>
+          The architecture supports pluggable, contract based, connectors with support for resource pooling
+          as well as potentially future support for transactions. This facilitates rapid and cost
+          effective support for new medical aid administrators. 
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Strategies used to realize performance</title>
+    <para>
+        Improved performance is realized through
+      <itemizedlist>
+        <listitem><para>
+          removing the internal usage of XML and using XML purely for when communicating with
+          external parties, 
+        </para></listitem>
+        <listitem><para>
+          reducing the communication requirements by deploying multiple software
+          layers onto a single hardware layer,
+        </para></listitem>
+        <listitem><para>
+          using a light-weight persistence framework based on hibernate instead of an XML based
+          persistence mechanism, and
+        </para></listitem>
+        <listitem><para>
+          general support for reusable resources in the context of connection, object and thread
+          pooling.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Strategies used to realize auditability</title>
+    <para>
+        All messages received or sent by the system are logged in their raw form.
+    </para>
+  </section>
+  
+  <section>
+    <title>Strategies used to realize integrability</title>
+    <para>
+      The integrability requirements can be expected to increase over time. The architecture
+      supports pluggable entry and integration layers.      
+    </para>
+    
+    <section>
+      <title>Adaptors </title>
+      <para>
+        Pluggable adaptors are used to interface with medical administrators. They are responsible for 
+        <itemizedlist>
+          <listitem><para>
+            establishing and maintaining connections,
+          </para></listitem>
+          <listitem><para>
+            marshaling outgoing messages onto the protocol used by the administrator, and
+          </para></listitem>
+          <listitem><para>
+            demarshaling of incoming responses onto the internal object model.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    
+    <section>
+      <title>Standard protocols</title>
+      <para>
+        Whereever possible standard protocols are to used. This includes both, to the
+        administrator systems (currently already largely in XML) and through to the pharmacy
+        (currently in a text based protocol called superformat).
+      </para>
+    </section>
+    
+    <section>
+      <title>Separation of application services/business logic layer</title>
+      <para>
+        The presentation and integration layers are devoid of any business logic. The business logic
+        layer can be accessed from various presentation layers, offering the same services across
+        the different presentation layers. Similarly, the integration layer is decoupled from the
+        application services/business logic layer enabling easy integration with further
+        administrators.
+      </para>
+    </section>
+    
+    <section>
+      <title>Web services interface</title>
+      <para>
+        It is envisaged that in future both communication channels (that to the pharmacies and that
+        to the medical aid administrators) will be encouraged to move to web services based
+        integration. This will facilitate
+        <itemizedlist>
+          <listitem><para>standard, contract-based, technology neutral integration,</para></listitem>
+          <listitem><para>reduced code bulk and system complexity, and</para></listitem>
+          <listitem><para>publishing of services through XML based registries.</para></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+  </section>
+</section>  
+  
+  

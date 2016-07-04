@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+     targetNamespace="http://www.solms.co.za/clients"
+      xmlns="http://www.solms.co.za/clients" 
+      elementFormDefault="qualified" attributeFormDefault="unqualified">
+  
+  <xs:complexType name="Client">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="account" type="Account" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Account">
+    <xs:sequence>
+      <xs:element name="balance" type="xs:decimal"/>
+      <xs:element name="accountNo" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="CreditCardAccount">
+    <xs:complexContent>
+      <xs:extension base="Account">
+        <xs:sequence>
+          <xs:element name="expiryDate" type="xs:date"/>
+          <xs:element name="issuer" type="xs:string"/>
+        </xs:sequence>          
+        <xs:attribute name="type" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- Usages: This schema can be used to validate either a 'client'
+    document, or a 'creditCardAccount' document -->
+  <xs:element name="client" type="Client"/>
+  <xs:element name="creditCardAccount" type="CreditCardAccount"/>
+  
+</xs:schema>

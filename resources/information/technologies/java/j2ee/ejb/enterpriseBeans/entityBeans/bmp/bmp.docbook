@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns902:section xmlns:ns902="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.bmp.bmp">
+
+  <ns903:title xmlns:ns903="http://docbook.org/ns/docbook">A Simple Entity Bean Using Bean-Managed Persistance</ns903:title>
+  <ns904:para xmlns:ns904="http://docbook.org/ns/docbook"> 
+    As an example we use a account entity bean which will, of course, be persisted to a
+    database. The account exists from when it is opened until it is deleted. 
+  </ns904:para>
+  <ns905:para xmlns:ns905="http://docbook.org/ns/docbook"> 
+    In the case of container managed persistence, the container will take over all persistence
+    responsibilities. The mapping between the object representation provided by our bean and table
+    columns of relational databases can be done completely automatically. Even the table itself may
+    be automatically created when the entity bean is deployed with the container. 
+  </ns905:para>
+  <ns906:para xmlns:ns906="http://docbook.org/ns/docbook"> 
+    In the case of bean-managed persistence, the bean developer supplies the JDBC code to
+    persist the bean information to a database. The container still assumes the responsibility of
+    calling <ns907:literal xmlns:ns907="http://docbook.org/ns/docbook">ejbLoad()</ns907:literal> and <ns908:literal xmlns:ns908="http://docbook.org/ns/docbook">ejbStore()</ns908:literal> when necessary. 
+  </ns906:para>
+  <ns909:para xmlns:ns909="http://docbook.org/ns/docbook"> 
+    The remote and home interfaces as well as the client application are not affected by the
+    implementation detail of whether the bean implemented chooses container-managed persistence or
+    bean-managed persistence. Let us first look at these two interfaces.
+  </ns909:para>
+  
+  <ns910:section xmlns:ns910="http://docbook.org/ns/docbook">
+    <ns911:title xmlns:ns911="http://docbook.org/ns/docbook">The Remote Interface</ns911:title>
+    <ns912:para xmlns:ns912="http://docbook.org/ns/docbook">
+      The remote interface has the business services. Often the business services simply provide
+      mechanisms for querying and modifying state information. For example, a product's price can be
+      queried and modified. Similarly, an account can be credited and debited and one can query the
+      balance of the account.
+<ns913:programlisting xmlns:ns913="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../source/AccountBMP/src/common/Account.java"/>
+</ns913:programlisting>      
+    </ns912:para>
+  </ns910:section>
+  
+  <ns914:section xmlns:ns914="http://docbook.org/ns/docbook">
+    <ns915:title xmlns:ns915="http://docbook.org/ns/docbook">The Home Interface</ns915:title>
+    <ns916:para xmlns:ns916="http://docbook.org/ns/docbook">The home interface now supplies one or more create services which contain the information
+      with used to initialize the entity bean's state. In addition one supplies finder methods which
+      are mapped by the application server onto SQL query methods. These finder methods are used by
+      clients to connect to existing entity beans:
+<ns917:programlisting xmlns:ns917="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../source/AccountBMP/src/common/AccountHome.java"/>
+</ns917:programlisting>      
+     </ns916:para>
+  </ns914:section>
+  
+  <ns918:section xmlns:ns918="http://docbook.org/ns/docbook">
+    <ns919:title xmlns:ns919="http://docbook.org/ns/docbook">Obtaining a Connection to a DataSource</ns919:title>
+    <ns920:para xmlns:ns920="http://docbook.org/ns/docbook">
+      Developers should not connect to a datasource directly. That would bypass the connection
+      pooling and transaction support of the container and would also increase the binding between
+      the business logic layer and the persistence layer. Instead they should lookup a DataSource
+      through JNDI and request a connection from it:
+<ns921:programlisting xmlns:ns921="http://docbook.org/ns/docbook">
+ InitialContext jndiContext = new InitialContext();
+ 
+ javax.sql.DataSource dataSource
+   = (javax.sql.DataSource)jndiContext.lookup("java:comp/env/jdbc/EJBcourse");
+ 
+ java.sql.Connection dbConnection = dataSource.getConnection();
+ 
+ ...
+</ns921:programlisting>    
+    </ns920:para>
+  </ns918:section>
+  
+  <ns922:section xmlns:ns922="http://docbook.org/ns/docbook">
+    <ns923:title xmlns:ns923="http://docbook.org/ns/docbook">An Entity Bean Managing its own Persistence</ns923:title>
+    <ns924:para xmlns:ns924="http://docbook.org/ns/docbook">
+      The bean implementation class provides implementations not only for the business services
+      (e.g. <ns925:literal xmlns:ns925="http://docbook.org/ns/docbook">credit</ns925:literal>, <ns926:literal xmlns:ns926="http://docbook.org/ns/docbook">debit</ns926:literal> and <ns927:literal xmlns:ns927="http://docbook.org/ns/docbook">getBalance</ns927:literal>),
+      but also for the <ns928:literal xmlns:ns928="http://docbook.org/ns/docbook">ejbCreate</ns928:literal>,
+      <ns929:literal xmlns:ns929="http://docbook.org/ns/docbook">ejbRemove</ns929:literal>,<ns930:literal xmlns:ns930="http://docbook.org/ns/docbook">ejbLoad</ns930:literal>, <ns931:literal xmlns:ns931="http://docbook.org/ns/docbook">ejbStore</ns931:literal> as well
+      as for the finder methods specified in the home interface. It is in these methods that the
+      bean developer inserts the SQL query, insert and update statements (via JDBC):
+<ns932:programlisting xmlns:ns932="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../source/AccountBMP/src/businessLogic/AccountBean.java"/>
+</ns932:programlisting>  
+    </ns924:para>
+  </ns922:section>
+  
+  <ns933:section xmlns:ns933="http://docbook.org/ns/docbook">
+    <ns934:title xmlns:ns934="http://docbook.org/ns/docbook">A Session Bean Providing Access to the Entity Bean</ns934:title>
+    <ns935:para xmlns:ns935="http://docbook.org/ns/docbook">
+      Though references to entity beans can be obtained directly through its home interface,
+      they are more commonly accessed through session beans. Below we define
+      an<ns936:literal xmlns:ns936="http://docbook.org/ns/docbook">AccountsManager</ns936:literal> session bean which provides access to the account 
+      entity bean.
+    </ns935:para>
+
+    <ns937:section xmlns:ns937="http://docbook.org/ns/docbook">
+      <ns938:title xmlns:ns938="http://docbook.org/ns/docbook">The Remote Interface</ns938:title>
+      <ns939:para xmlns:ns939="http://docbook.org/ns/docbook">
+        The account manager povides services for 
+      <ns940:itemizedlist xmlns:ns940="http://docbook.org/ns/docbook">
+        <ns941:listitem xmlns:ns941="http://docbook.org/ns/docbook">
+          <ns942:para xmlns:ns942="http://docbook.org/ns/docbook">opening and closing accounts, </ns942:para>
+        </ns941:listitem>
+        <ns943:listitem xmlns:ns943="http://docbook.org/ns/docbook">
+          <ns944:para xmlns:ns944="http://docbook.org/ns/docbook">obtaining handles to existing accounts by account number or name, </ns944:para>
+        </ns943:listitem>
+        <ns945:listitem xmlns:ns945="http://docbook.org/ns/docbook">
+          <ns946:para xmlns:ns946="http://docbook.org/ns/docbook">and for finding or deleting all accounts.</ns946:para>
+        </ns945:listitem>
+      </ns940:itemizedlist>
+<ns947:programlisting xmlns:ns947="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../source/AccountBMP/src/common/AccountsManager.java"/>
+</ns947:programlisting>  
+      </ns939:para>
+    </ns937:section>
+    
+    <ns948:section xmlns:ns948="http://docbook.org/ns/docbook">
+      <ns949:title xmlns:ns949="http://docbook.org/ns/docbook">The Home Interface</ns949:title>
+      <ns950:para xmlns:ns950="http://docbook.org/ns/docbook">
+        The home interface specifies the standard default <ns951:literal xmlns:ns951="http://docbook.org/ns/docbook">create()</ns951:literal> service:
+<ns952:programlisting xmlns:ns952="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../source/AccountBMP/src/common/AccountsManagerHome.java"/>
+</ns952:programlisting>  
+      </ns950:para>
+    </ns948:section>
+    
+    <ns953:section xmlns:ns953="http://docbook.org/ns/docbook">
+      <ns954:title xmlns:ns954="http://docbook.org/ns/docbook">The Bean Implementation</ns954:title>
+      <ns955:para xmlns:ns955="http://docbook.org/ns/docbook">The account manager bean provides the implemntations for the methods specified in the
+        remote interface:
+<ns956:programlisting xmlns:ns956="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../source/AccountBMP/src/businessLogic/AccountsManagerBean.java"/>
+</ns956:programlisting>  
+      </ns955:para>
+    </ns953:section>
+  </ns933:section>
+  
+  <ns957:section xmlns:ns957="http://docbook.org/ns/docbook">
+    <ns958:title xmlns:ns958="http://docbook.org/ns/docbook">A Client Application</ns958:title>
+    <ns959:para xmlns:ns959="http://docbook.org/ns/docbook">
+      Client applications can be developed without knowing whether the bean implementation takes
+      over the persistence responsibility or whether it has been delegated to the container.
+    </ns959:para>
+    
+    <ns960:section xmlns:ns960="http://docbook.org/ns/docbook">
+      <ns961:title xmlns:ns961="http://docbook.org/ns/docbook">The AccountManager Client Panel</ns961:title>
+      <ns962:para xmlns:ns962="http://docbook.org/ns/docbook">
+        The client application has 
+      <ns963:itemizedlist xmlns:ns963="http://docbook.org/ns/docbook">
+        <ns964:listitem xmlns:ns964="http://docbook.org/ns/docbook">
+          <ns965:para xmlns:ns965="http://docbook.org/ns/docbook">one panel interfacing with the account manager and </ns965:para>
+        </ns964:listitem>
+        <ns966:listitem xmlns:ns966="http://docbook.org/ns/docbook">
+          <ns967:para xmlns:ns967="http://docbook.org/ns/docbook">one panel interfacing directly with the account entity bean whose handle is obtained
+            from the account manager.</ns967:para>
+        </ns966:listitem>
+      </ns963:itemizedlist>
+          It puts these two panels into a tabbed pane and connects to the
+        <ns968:literal xmlns:ns968="http://docbook.org/ns/docbook">AccountManager</ns968:literal> session bean:
+<ns969:programlisting xmlns:ns969="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../source/AccountBMP/src/client/common/AccountClientPanel.java"/>
+</ns969:programlisting>  
+      </ns962:para>
+    </ns960:section>
+    
+    <ns970:section xmlns:ns970="http://docbook.org/ns/docbook">
+      <ns971:title xmlns:ns971="http://docbook.org/ns/docbook">The AccountManager Panel</ns971:title>
+      <ns972:para xmlns:ns972="http://docbook.org/ns/docbook">
+        The <ns973:literal xmlns:ns973="http://docbook.org/ns/docbook">AccountManagerPanel</ns973:literal> receives a handle to the account manager as
+        well as to the account panel. It requests account handles from the
+        <ns974:literal xmlns:ns974="http://docbook.org/ns/docbook">AccountManager</ns974:literal> session bean and provides that handle to the
+        <ns975:literal xmlns:ns975="http://docbook.org/ns/docbook">AccountPanel</ns975:literal> which is responsible for requesting services from the
+        <ns976:literal xmlns:ns976="http://docbook.org/ns/docbook">Account</ns976:literal> entity bean itself:
+<ns977:programlisting xmlns:ns977="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../source/AccountBMP/src/client/common/AccountsManagerPanel.java"/>
+</ns977:programlisting>  
+      </ns972:para>
+    </ns970:section>
+    </ns957:section>
+    
+  <ns978:section xmlns:ns978="http://docbook.org/ns/docbook">
+    <ns979:title xmlns:ns979="http://docbook.org/ns/docbook">The Deployment Descriptors</ns979:title>
+    <ns980:para xmlns:ns980="http://docbook.org/ns/docbook">
+      The deployment descritors are much simpler now because they contain no information about
+      the persistence details. They do, however, contain the information about the resource references.
+    </ns980:para>
+
+    <ns981:section xmlns:ns981="http://docbook.org/ns/docbook">
+      <ns982:title xmlns:ns982="http://docbook.org/ns/docbook">ejb-jar.xml</ns982:title>
+      <ns983:para xmlns:ns983="http://docbook.org/ns/docbook">
+        The generic deployment descriptor simply declares that the persistence is bean-managed.
+        It also specifies a resource reference for the entity bean:
+<ns984:programlisting xmlns:ns984="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../source/AccountBMP/META-INF/ejb-jar.xml"/>
+</ns984:programlisting>  
+      </ns983:para>
+    </ns981:section>
+    
+    <ns985:section xmlns:ns985="http://docbook.org/ns/docbook">
+      <ns986:title xmlns:ns986="http://docbook.org/ns/docbook">jboss.xml</ns986:title>
+      <ns987:para xmlns:ns987="http://docbook.org/ns/docbook">
+        In the <ns988:literal xmlns:ns988="http://docbook.org/ns/docbook">jboss.xml</ns988:literal> deployment descriptor we specify resource references
+        and resource managers:
+<ns989:programlisting xmlns:ns989="http://docbook.org/ns/docbook">
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parse="text" href="../../../source/AccountBMP/META-INF/ejb-jar.xml"/>
+</ns989:programlisting>  
+      </ns987:para>
+    </ns985:section>
+  </ns978:section>
+  
+  <ns990:section xmlns:ns990="http://docbook.org/ns/docbook">
+    <ns991:title xmlns:ns991="http://docbook.org/ns/docbook">Running the Bean-Managed Persistence Example</ns991:title>
+    <ns992:para xmlns:ns992="http://docbook.org/ns/docbook">
+      We can use our standard <ns993:literal xmlns:ns993="http://docbook.org/ns/docbook">targets.xml</ns993:literal> file to build and deploy the entity and session bean
+      as well as to run our client.
+    </ns992:para>
+  </ns990:section>
+</ns902:section>

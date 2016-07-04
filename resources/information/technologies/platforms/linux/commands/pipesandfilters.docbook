@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"--><ns1238:section xmlns:ns1238="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.commands.pipesandfilters">
+
+	<ns1239:title xmlns:ns1239="http://docbook.org/ns/docbook">Pipes and Filters</ns1239:title>
+	<ns1240:para xmlns:ns1240="http://docbook.org/ns/docbook">
+	Unix, and by inheritance, Linux provides a sophisticated pipe and filter mechanism facilitating the communication between processes. This feature, together with the philosophy of having many utilities, each focusing on a single feature, empowers the user to create complex utilities by chaining commands together. Pipes can be used to redirect <ns1241:emphasis xmlns:ns1241="http://docbook.org/ns/docbook" role="strong">input</ns1241:emphasis> and <ns1242:emphasis xmlns:ns1242="http://docbook.org/ns/docbook" role="strong">output</ns1242:emphasis> between commands. Filters filter, according to a specified pattern (usually a regular expression), the information passed between commands.
+	</ns1240:para>
+	<ns1243:para xmlns:ns1243="http://docbook.org/ns/docbook">
+	Each process has access to two streams, an input stream (stdin) and an output stream (stdout [1]). Sometimes a process also makes use of the error stream (stderr [2]).
+	</ns1243:para>
+
+	<ns1244:section xmlns:ns1244="http://docbook.org/ns/docbook">
+		<ns1245:title xmlns:ns1245="http://docbook.org/ns/docbook">|</ns1245:title>
+		<ns1246:para xmlns:ns1246="http://docbook.org/ns/docbook">
+		The <ns1247:emphasis xmlns:ns1247="http://docbook.org/ns/docbook" role="strong">PIPE</ns1247:emphasis> redirects the output (stdout) from one process to the input (stdin) from another process.
+		<ns1248:programlisting xmlns:ns1248="http://docbook.org/ns/docbook">
+alex@bumblebee alex $ ls -1 |sort
+Documents
+EDON
+GNUstep
+Movies
+Music
+Resources
+Video
+Vim
+bin
+alex@bumblebee alex $ 			
+		</ns1248:programlisting>
+		<ns1249:note xmlns:ns1249="http://docbook.org/ns/docbook">
+			<ns1250:para xmlns:ns1250="http://docbook.org/ns/docbook">
+			The output redirected to the input stream of a process must be read by that process, otherwise the stream will block and will not provide the desired result. Example : 
+			<ns1251:screen xmlns:ns1251="http://docbook.org/ns/docbook">
+				<ns1252:userinput xmlns:ns1252="http://docbook.org/ns/docbook">
+					<ns1253:command xmlns:ns1253="http://docbook.org/ns/docbook">cat file1 file2 | ls * |sort</ns1253:command> 
+				</ns1252:userinput>
+			</ns1251:screen>
+			</ns1250:para>
+		</ns1249:note>
+        </ns1246:para>
+	</ns1244:section>
+	
+	<ns1254:section xmlns:ns1254="http://docbook.org/ns/docbook">
+		<ns1255:title xmlns:ns1255="http://docbook.org/ns/docbook">&gt;</ns1255:title>
+		<ns1256:para xmlns:ns1256="http://docbook.org/ns/docbook">
+		<ns1257:emphasis xmlns:ns1257="http://docbook.org/ns/docbook" role="strong">stdout</ns1257:emphasis> is redirected to a new file. If the file already exists, it is overwritten.
+			<ns1258:screen xmlns:ns1258="http://docbook.org/ns/docbook">
+				<ns1259:userinput xmlns:ns1259="http://docbook.org/ns/docbook">
+					<ns1260:command xmlns:ns1260="http://docbook.org/ns/docbook">ls / &gt;rootfiles</ns1260:command> 
+				</ns1259:userinput>
+			</ns1258:screen>
+		</ns1256:para>
+	</ns1254:section>
+
+	<ns1261:section xmlns:ns1261="http://docbook.org/ns/docbook">
+		<ns1262:title xmlns:ns1262="http://docbook.org/ns/docbook">&gt;&gt;</ns1262:title>
+		<ns1263:para xmlns:ns1263="http://docbook.org/ns/docbook">
+		<ns1264:emphasis xmlns:ns1264="http://docbook.org/ns/docbook" role="strong">stdout</ns1264:emphasis> is redirected and appended to a file.
+			<ns1265:screen xmlns:ns1265="http://docbook.org/ns/docbook">
+				<ns1266:userinput xmlns:ns1266="http://docbook.org/ns/docbook">
+					<ns1267:command xmlns:ns1267="http://docbook.org/ns/docbook">ls /usr &gt;&gt;rootfiles</ns1267:command> 
+				</ns1266:userinput>
+			</ns1265:screen>
+		</ns1263:para>
+	</ns1261:section>
+
+	<ns1268:section xmlns:ns1268="http://docbook.org/ns/docbook">
+		<ns1269:title xmlns:ns1269="http://docbook.org/ns/docbook">&lt;</ns1269:title>
+		<ns1270:para xmlns:ns1270="http://docbook.org/ns/docbook">
+		Accepts input from a file. It can also be replaced with "cat file |".
+		</ns1270:para>
+		<ns1271:programlisting xmlns:ns1271="http://docbook.org/ns/docbook">
+[root@teddy root]# grep alex &lt;/etc/passwd
+alex:x:500:500::/home/alex:/bin/bash
+[root@teddy root]# cat /etc/passwd |grep alex
+alex:x:500:500::/home/alex:/bin/bash
+[root@teddy root]# 
+		</ns1271:programlisting>
+	</ns1268:section>
+
+	<ns1272:section xmlns:ns1272="http://docbook.org/ns/docbook">
+		<ns1273:title xmlns:ns1273="http://docbook.org/ns/docbook">&lt;&lt;</ns1273:title>
+		<ns1274:para xmlns:ns1274="http://docbook.org/ns/docbook">
+		(see <ns1275:xref xmlns:ns1275="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.commands.pipesandfilters.heredocument"/>)
+		</ns1274:para>
+	</ns1272:section>	
+	
+	<ns1276:section xmlns:ns1276="http://docbook.org/ns/docbook">
+		<ns1277:title xmlns:ns1277="http://docbook.org/ns/docbook">Joining stdout and stderr into one stream</ns1277:title>
+		<ns1278:para xmlns:ns1278="http://docbook.org/ns/docbook">
+		Redirection (&gt;) by default used stdout, but in many scenarios output on stderr is also required to be included. To solve this problem stderr is redirected to stdout, which in turn is redirected elsewhere. stderr is given an index of 2 and stdout the index of 1. The target stream is prefixed with a &amp; character.  
+		</ns1278:para>
+		<ns1279:screen xmlns:ns1279="http://docbook.org/ns/docbook">
+			<ns1280:userinput xmlns:ns1280="http://docbook.org/ns/docbook">
+				<ns1281:command xmlns:ns1281="http://docbook.org/ns/docbook">command 2&gt;&amp;1 1&gt;file.log</ns1281:command> 
+			</ns1280:userinput>
+		</ns1279:screen>
+	</ns1276:section>	
+	
+	<ns1282:section xmlns:ns1282="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.commands.pipesandfilters.heredocument">
+		<ns1283:title xmlns:ns1283="http://docbook.org/ns/docbook">Here Document</ns1283:title>
+		<ns1284:para xmlns:ns1284="http://docbook.org/ns/docbook">
+		This feature allows the processing of data contained within a script file. The location specified should be unique within the file. 
+		</ns1284:para>
+		<ns1285:programlisting xmlns:ns1285="http://docbook.org/ns/docbook">
+#!/bin/bash
+
+cat &lt;&lt;endoffile
+---------------------------------
+This is line 1
+This is line 2
+---------------------------------
+endoffile
+wall &lt;&lt;endofmessage
+-------------------------
+This is my message
+-------------------------
+endofmessage
+#Lets first wait for the message to appear
+sleep 2
+echo But not this as this is done via echo
+		</ns1285:programlisting>
+		<ns1286:programlisting xmlns:ns1286="http://docbook.org/ns/docbook">
+But not lex $ ./test.sh           
+---------------------------------
+This is line 1
+This is line 2
+---------------------------------
+
+Broadcast message from alex (Wed Sep  3 16:29:41 2003):
+
+-------------------------
+This is my message
+-------------------------
+But not this as this is done via echo
+alex@bumblebee alex $ 			
+		</ns1286:programlisting>
+	</ns1282:section>	
+	
+	<ns1287:section xmlns:ns1287="http://docbook.org/ns/docbook">
+		<ns1288:title xmlns:ns1288="http://docbook.org/ns/docbook">T as in tee</ns1288:title>
+		<ns1289:para xmlns:ns1289="http://docbook.org/ns/docbook">
+		To redirect stdin to stdout, as well as write it to a file or many files, the tee command is used. The example below pipes stdout from the ls command into a <ns1290:emphasis xmlns:ns1290="http://docbook.org/ns/docbook" role="strong">T</ns1290:emphasis> which writes it to the files, cat, mouse and rat, as well as forwarding it to the next redirect into donkey. The result is 4 files (cat, mouse, rat and donkey) containing the directory listing of the current directory.
+		</ns1289:para>
+		<ns1291:screen xmlns:ns1291="http://docbook.org/ns/docbook">
+			<ns1292:userinput xmlns:ns1292="http://docbook.org/ns/docbook">
+				<ns1293:command xmlns:ns1293="http://docbook.org/ns/docbook">ls |tee cat mouse rat &gt; donkey</ns1293:command> 
+			</ns1292:userinput>
+		</ns1291:screen>
+	</ns1287:section>	
+	
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" href="grep.docbook"/>
+	
+	<ns1294:section xmlns:ns1294="http://docbook.org/ns/docbook">
+		<ns1295:title xmlns:ns1295="http://docbook.org/ns/docbook">Exercise</ns1295:title>
+		<ns1296:para xmlns:ns1296="http://docbook.org/ns/docbook">
+
+		</ns1296:para>
+	</ns1294:section>	
+</ns1238:section>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.integrating.remoteInterface.ejbReference"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="EJB references">EJB references </title>
+  <para>
+    The JNDI name of an enterprise bean is bound at deployment time - in the case of JBoss
+    this is done within the <literal>jboss.xml</literal> file. Component developers must, however,
+    be able to refer to enterprise beans independently of the name chosen at compile time.
+    Different ejb developers may even refer to the same enterprise bean (deployed under the same
+    JNDI name) under different logical names. This decoupling of logical names from JNDI names is
+    achieved via EJB references.
+  </para>
+  <para>
+    The container does, however, provide a special mechanism enabling one bean to access the
+    home interfaces of other beans through logical names which need not correspond to the JNDI
+    names asssigned during deployment. Within the deployment descriptor the logical name is then
+    bound to a particular bean registered under a particular JNDI name. This is done via EJB references.
+  </para>
+  <para>
+    The advantage of this is that developers of the bean which uses another bean need not know
+    the JNDI name under which the server bean is ultimately deployed.
+  </para>
+
+  <section>
+    <title>The ejb-jar file</title>
+    <para>
+      To achieve this decoupling, the EJB specification defines an additional tag in the EJB
+      deployment descriptor. The tag looks as follows:
+<programlisting><![CDATA[
+<!DOCTYPE ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN"
+"http://java.sun.com/j2ee/dtds/ejb-jar_2_0.dtd">
+<ejb-jar>
+<enterprise-beans>
+ <session>
+   <ejb-name>LoanCalculator</ejb-name>
+   <home>za.co.SolmsTraining.finance.calculators.LoanCalculatorHome</home>
+   <remote>za.co.SolmsTraining.finance.calculators.LoanCalculator</remote>
+   <ejb-class>za.co.SolmsTraining.finance.calculators.LoanCalculatorBean</ejb-class>
+   <session-type>Stateless</session-type>
+   <transaction-type>Container</transaction-type>
+ </session>
+ <session>
+   <ejb-name>HomeLoanApplication</ejb-name>
+   <home>za.co.SolmsTraining.finance.loans.HomeLoanApplicationHome</home>
+   <remote>za.co.SolmsTraining.finance.loans.HomeLoanApplication</remote>
+   <ejb-class>za.co.SolmsTraining.finance.loans.HomeLoanApplicationBean</ejb-class>
+   <session-type>Stateless</session-type>
+   <transaction-type>Container</transaction-type>
+   <ejb-ref>
+     <ejb-ref-name>ejb/finance/LoanCalculator</ejb-ref-name>
+     <ejb-ref-type>Session</ejb-ref-type>
+     <home>za.co.SolmsTraining.finance.calculators.LoanCalculatorHome</home>
+     <remote>za.co.SolmsTraining.finance.calculators.LoanCalculator</remote>
+     <ejb-link>LoanCalculator</ejb-link>
+   </ejb-ref>
+ </session>
+</enterprise-beans>
+<assembly-descriptor>
+ <container-transaction>
+   <method>
+     <ejb-name>LoanCalculator</ejb-name>
+     <method-name>*</method-name>
+   </method>
+   <trans-attribute>Required</trans-attribute>
+ </container-transaction>
+</assembly-descriptor>
+</ejb-jar>
+]]></programlisting>
+    </para>
+    <para>
+      We have added an <literal><![CDATA[<ejb-ref>]]></literal> element which has the following
+      child elements: ejb-ref-name The name under which the client application refers to the bean.
+      ejb-ref-type The type of bean this reference refers to (session or entity). home The
+      expected Java type of the home interface which is resolved through the reference. remote The
+      expected Java type of the remote interface of the bean which is resolved through the
+      reference, <literal>ejb-link</literal>. 
+      The enterprise bean name as specified in the ejb-jar file which defines
+      the enterprise bean. In our example above the referenced enterprise bean is defined in the
+      same <literal>ejb-jar</literal> file but one can give a full path to the ejb-jar hosting the
+      referenced enterprise bean. For example
+<programlisting><![CDATA[
+  <ejb-link>../utils/LoanCalculator.jar#LoanCalculator</ejb-link>
+]]></programlisting>
+    </para>
+    <para>
+      defines a link to a <literal>LoanCalculator</literal> enterprise bean defined in the ejb-jar file
+      packaged in <literal>LoanCalculator.jar</literal> located in the utils directory which is a
+      subdirectory of the parent directory in which the current jar file is hosted.
+    </para>
+  </section>
+
+  <section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.integrating.logicalNameslogicalNames">
+    <title>Referring to a bean via its logical name</title>
+    <para>
+      The J2EE specification recommends (though it does not require) that beans access other
+      beans through their logical names and that these names should start with ejb.
+    </para>
+    <para>
+      Note that the <literal>LoanCalculator</literal> bean has been published with the JNDI
+      under the name <literal>STC/LoanCalculator</literal> but that the bean is referenced from
+      the <literal>HomeLoanApplication</literal> bean with the logical name
+      <literal>ejb/finance/LoanCalculator</literal>. We have to now specify within
+      the<literal>HomeLoanApplication</literal> bean that the lookup should be done via the
+      logical name and not via the JNDI name.</para>
+    <para>To look up a bean via the logical name, one looks it up in the
+      <literal>java:/comp/env</literal> context. The steps required for an enterprise bean to
+      connect to another enterprise bean via the remote interface are
+      <orderedlist>
+        <listitem>
+          <para>Obtain the default JNDI initial context via the default constructor of the
+            <literal>InitialContext</literal> class. 
+<programlisting><![CDATA[
+  InitialContext jndiContext = new InitialContext();
+]]></programlisting>
+          </para>
+        </listitem>
+        <listitem>
+          <para>Look up the home interface from logical name as published in the
+            <literal>java:comp/env:</literal> context. For example 
+<programlisting><![CDATA[
+    Object beanHomeRef
+      = jndiContext.lookup("ejb/finance/LoanCalculator");
+    LoanCalculatorHome home =
+      (LoanCalculatorHome)PortableRemoteObject.narrow
+        (beanHomeRef, LoanCalculatorHome.class);
+    
+    loanCalculator = home.create();
+]]></programlisting>
+          </para>
+        </listitem>
+        <listitem>
+          <para>Create and connect to the remote interface of a loan calculator session bean via one
+            of the <literal>create()</literal> services provided by the home interface. 
+<programlisting><![CDATA[
+    loanCalculator = home.create();
+]]></programlisting>
+          </para>
+        </listitem>
+        <listitem>
+          <para>Request services from the bean via its remote interface.</para>
+        </listitem>
+      </orderedlist>
+    </para>
+  </section>
+</section>  
+  

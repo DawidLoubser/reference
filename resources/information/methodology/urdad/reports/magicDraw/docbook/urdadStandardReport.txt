@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+#*
+This is the Open Document Standard template for the default docbook based URDAD report.
+
+Notes:
+-----
+  - the $targetUseCaseQualifiedName must be provided as a user-defined variable
+
+TODOs:
+------
+  - actors of use case diagrams 
+*#
+
+##------------------------------------------------
+## URDAD stereotypes
+##------------------------------------------------
+#set($urdad_functionalRequirementsDiagram = "functionalRequirementsDiagram")
+#set($urdad_userWorkflowDiagram = "userWorkflowDiagram")
+#set($urdad_serviceContractDiagram = "serviceContractDiagram")
+#set($urdad_responsibilityAllocationDiagram = "responsibilityAllocationDiagram")
+#set($urdad_businessProcessDiagram = "businessProcessDiagram")
+#set($urdad_collaborationContextDiagram = "collaborationContextDiagram")
+#set($urdad_requires = "requires")
+#set($urdad_valueObject = "valueObject")
+#set($urdad_raiseException = "raiseException")
+##------------------------------------------------
+
+##------------------------------------------------
+## UML concepts
+##------------------------------------------------
+##STRUCTURE
+#set ($umlInterfaceClass = "com.nomagic.uml2.impl.magicdraw.classes.mdinterfaces.InterfaceImpl")
+#set($umlOperation = "com.nomagic.uml2.impl.magicdraw.classes.mdkernel.OperationImpl")
+##RELATIONSHIPS
+#set($umlAssociationRelationship = "com.nomagic.uml2.impl.magicdraw.classes.mdkernel.AssociationImpl")
+#set($umlUsageRelationship = "com.nomagic.uml2.impl.magicdraw.classes.mddependencies.UsageImpl")
+#set($umlDependencyRelationship = "com.nomagic.uml2.impl.magicdraw.classes.mddependencies.DependencyImpl")
+#set($umlRealizationRelationship = "com.nomagic.uml2.impl.magicdraw.classes.mddependencies.RealizationImpl")
+#set($umlGeneralizationRelationship = "com.nomagic.uml2.impl.magicdraw.classes.mddependencies.GeneralizationImpl")
+##ACTIVITY DIAGRAMS
+#set($umlActivityParameterNode = "com.nomagic.uml2.impl.magicdraw.activities.mdbasicactivities.ActivityParameterNodeImpl")
+#set($umlCallOperation = "com.nomagic.uml2.impl.magicdraw.actions.mdbasicactions.CallOperationActionImpl")
+#set($umlForkNode = "com.nomagic.uml2.impl.magicdraw.activities.mdintermediateactivities.ForkNodeImpl")
+#set($umlDecisionNode = "com.nomagic.uml2.impl.magicdraw.activities.mdintermediateactivities.DecisionNodeImpl")
+#set($umlAcivityFinalNode = "com.nomagic.uml2.impl.magicdraw.activities.mdbasicactivities.ActivityFinalNodeImpl")
+#set($umlFlowFinalNode = "com.nomagic.uml2.impl.magicdraw.activities.mdintermediateactivities.FlowFinalNodeImpl")
+#set($umlAcceptEventAction = "com.nomagic.uml2.impl.magicdraw.actions.mdcompleteactions.AcceptEventActionImpl")
+#set($umlSendSignalAction = "com.nomagic.uml2.impl.magicdraw.actions.mdbasicactions.SendSignalActionImpl")
+##------------------------------------------------
+## MACRO definitions
+##------------------------------------------------
+##
+#macro (getUseCase $qualifiedUseCaseName)
+#set($result = '')
+#foreach ($useCase in $UseCase)
+#if ($useCase.qualifiedName == $qualifiedUseCaseName)
+#set ($result = $useCase) 
+#end
+#end
+#end
+##------------------------------------------------
+##
+#macro ( getDiagramForUseCase $useCase  $stereotypeName)
+#set($result = '')
+#foreach  ($diagram in $Diagram)
+#if (($diagram.owner == $useCase) || ($diagram.owner.owner == $useCase))
+##   for sequence and activity diagrams owned by an interaction which is owned by the use case
+#if ($report.containsStereotype($diagram,$stereotypeName))
+#set ($result = $diagram)
+#end
+#end
+#end
+#end
+##------------------------------------------------
+##
+#macro ( getMandatoryFunctionalRequirements $useCase)
+#set ($result = $array.createHashSet())
+#foreach($includeRelationship in $useCase.include)
+#set ($dummy = $result.add($report.getSupplierElement($includeRelationship)))
+#end
+#end
+##------------------------------------------------
+##
+#macro ( getConditionalFunctionalRequirements $useCase)
+#set ($result = $array.createHashSet())
+#foreach ($uc in $UseCase)
+#foreach($extendRelationship in $uc.extend)
+#if ($report.getSupplierElement($extendRelationship) == $useCase)
+#set ($dummy = $result.add($report.getClientElement($extendRelationship)))
+#end
+#end
+#end
+#end
+##------------------------------------------------
+##
+#macro ( getFunctionalRequirements $useCase)
+#set ($functionalRequirements = $array.createHashSet())
+#getMandatoryFunctionalRequirements($targetUseCase)
+#set ($dummy = $functionalRequirements.addAll($result))
+#getConditionalFunctionalRequirements($targetUseCase)
+#set ($dummy = $functionalRequirements.addAll($result))
+#set ($result = $functionalRequirements)
+#end
+##------------------------------------------------
+##
+#macro ( getStakeHolders $functionalRequirement)
+#set ($result = $array.createHashSet())
+#foreach ($relationship in $functionalRequirement.get_relationshipOfRelatedElement())
+#if ($report.containsStereotype($relationship,$urdad_requires))
+#set($dummy = $result.add($report.getClientElement($relationship)))
+#end
+#end
+#end
+##------------------------------------------------
+##
+#macro( getStakeholdersForUseCase $useCase)
+#getMandatoryFunctionalRequirements($useCase)
+#set($mandatoryFunctionalRequirements = $result)
+#getConditionalFunctionalRequirements($useCase)
+#set($conditionalFunctionalRequirements = $result)
+#set ($result = $array.createHashSet())
+#foreach ($functionalRequirement in $mandatoryFunctionalRequirements)
+#foreach ($relationship in $functionalRequirement.get_relationshipOfRelatedElement())
+#if ($report.containsStereotype($relationship,$urdad_requires))
+#set($dummy = $result.add($report.getClientElement($relationship)))
+#end
+#end
+#end     
+#foreach ($functionalRequirement in $conditionalFunctionalRequirements)
+#foreach ($relationship in $functionalRequirement.get_relationshipOfRelatedElement())
+#if ($report.containsStereotype($relationship,$urdad_requires))
+#set($dummy = $result.add($report.getClientElement($relationship)))
+#end
+#end
+#end     
+#end
+##-------------------------------------------------
+##
+#macro ( getRequestedServices $interaction)
+#set ($result = $array.createHashSet())
+#set ($exchMsgs = $interaction.message)
+#foreach ($msg in $exchMsgs)
+#set($op = $msg.getReceiveEvent().getEvent().getOperation())
+#if ($op)
+#set($dummy = $result.add($op))
+#end
+#end
+#end
+##-------------------------------------------------
+##
+#macro (getInputParameters $serviceRequest)
+#set ($result = $array.createHashSet())
+#foreach ($par in $serviceRequest.getOwnedParameter())
+#if ($par.getDirection() == 'in')
+#set($dummy = $result.add($par))
+#end
+#end
+#end
+##-------------------------------------------------
+##
+#macro (getDataStructureDiagram $class)
+#set($result = '')
+#foreach  ($diagram in $Diagram)
+#if($diagram.getQualifiedName() == $class.getQualifiedName())
+#set ($result = $diagram)
+#end
+#end
+#end
+##-------------------------------------------------
+##
+#macro (getRelatedElements $element, $relationshipClass)
+#set ($result = $array.createHashSet())
+#foreach ($relationship in $element.get_relationshipOfRelatedElement())
+#if($relationship.getClass().getName() == $relationshipClass)
+#set($dummy = $result.add($report.getClientElement($relationship)))
+#end
+#end
+#end
+##-------------------------------------------------
+##
+#macro (getRelationshipsFor $element, $relationshipClass)
+#set ($result = $array.createHashSet())
+#foreach ($relationship in $element.get_relationshipOfRelatedElement())
+#if($relationship.getClass().getName() == $relationshipClass)
+#set($dummy = $result.add($relationship))
+#end
+#end
+#end
+##-------------------------------------------------
+##
+#macro (getRelationshipsFor $element, $relationshipClass)  
+#set ($result = $array.createHashSet())
+#foreach ($relationship in $element.get_relationshipOfRelatedElement())
+#if($relationship.getClass().getName() == $relationshipClass)
+#set($dummy = $result.add($relationship))
+#end
+#end
+#end
+##-------------------------------------------------
+##
+#macro (getRealizingServices, $useCase)
+#set ($result = $array.createHashSet())
+#getRelationshipsFor($targetUseCase, $umlRealizationRelationship)
+#set($umlRealizationRelationships = $result)
+#foreach($umlRealizationRelationship in $umlRealizationRelationships)
+#set ($realizingElement  = $report.getClientElement($umlRealizationRelationship))
+#if ($realizingElement.getClass().getName() != $umlOperation)
+#set ($dummy = $result.add($realizingElement))
+#end  
+#end
+#end
+##-------------------------------------------------
+##
+#macro (getNodes, $activity, $nodeType)
+#set ($nodes = $activity.getNode())
+#set($result = $array.createHashSet())
+#foreach ($node in $nodes)
+#if($node.getClass().getName() == $nodeType)
+#set ($dummy = $result.add($node)) 
+#end
+#end  
+#end
+##-------------------------------------------------
+##
+#macro (getInputParameterNodes, $activity)
+#getNodes ($activity, $umlActivityParameterNode)
+#set($parameterNodes = $result)
+#set($result = $array.createHashSet())
+#foreach ($parameterNode in $parameterNodes)
+#if ($parameterNode.getParameter().getDirection() == "in")
+#set($dummy = $result.add($node))
+#end  
+#end
+#end
+
+
+##parse("urdadMacros.txt") 
+
+#getUseCase($targetUseCaseQualifiedName)
+#set($targetUseCase = $result)
+
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>$clientName : $targetUseCase.name</title>
+    <subtitle>URDAD Analysis and Design, $date.get('MMMMM dd, yyyy')</subtitle>
+    
+#parse("introduction/introduction.txt")
+
+#parse("analysis/analysis.txt")
+
+#parse("design/design.txt")
+    
+</article>

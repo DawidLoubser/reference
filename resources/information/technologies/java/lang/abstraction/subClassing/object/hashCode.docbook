@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>hashCode()</title>
+  
+  <para>
+    All objects provide a service in which they report a <emphasis>hash
+    code</emphasis> to clients. A hash code is an integer which is
+    representative of the <emphasis>state</emphasis> of the
+    object, and it is intrinsically coupled to the <literal>equals</literal>
+    service. It is often called by certain data structures to,
+    efficiently, test whether two objects <emphasis>might be logically
+      equal</emphasis>, versus them definitely not being equal.
+    <programlisting language="Java"><![CDATA[
+public class Object
+{
+  public int hashCode()
+  {
+    ...
+  }
+}
+    ]]></programlisting>
+  </para>
+  
+  <para>
+    Hash codes were originally introduced to the benefit of structures
+    (such as <literal>java.util.HashTable</literal>) to efficiently
+    store large numbers of distinct (unique) objects. In practice, they
+    could be considered a <emphasis>high-performance pre-check</emphasis>
+    to <literal>equals()</literal>. The hash code service conforms to the
+    following rules:
+    <itemizedlist>
+      <listitem>
+        <para>
+          If you have implemented <literal>equals</literal> for a class,
+          you <emphasis>must</emphasis> also implement <literal>hashCode</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          If two objects are equal (via the <literal>equals</literal>
+          service), they <emphasis>must</emphasis> return the same
+          hash code.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          If two objects are not equal, they should preferably return
+          two different hash codes. This is not a requirement, however,
+          as it would be impossible (there are more potential objects than
+          what there are <literal>int</literal>s, and implementation would
+          not be trivial.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          If the state of a given object does not change, then its
+          hash code should also not change for the duration of the
+          runtime.
+        </para>
+      </listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>How to implement hashCode()</title>
+    <para>
+      Since an object's hash code is tied to the logical equality test,
+      the simplest (yet correct) implementation is to simply request or derive
+      a hash code integer from <emphasis>one of the attributes evaluated
+      in the <literal>equals</literal> service.</emphasis>
+    </para>
+    <para>
+      For example, consider the following class:
+      <programlisting language="Java"><![CDATA[
+public class Vehicle
+{
+  ...
+  
+  public boolean equals( Object o)
+  {
+    try
+    {
+      Vehicle other = (Vehicle)o;
+      return 
+        getClass().equals( other.getClass() ) &&
+        (makeModel == other.makeModel || makeModel.equals(other.makeModel)) &&
+        (yearOfManufacture == other.yearOfManufacture);
+    }
+    catch (RuntimeException e)
+    {
+      return false;
+    }
+  }
+  
+  public int hashCode()
+  {
+    return yearOfManufacture;
+  }
+
+  private String makeModel;
+  private int yearOfManufacture;
+}
+      ]]></programlisting>
+      By simply returning the <literal>yearOfManufacture</literal>, we
+      satisfy the criteria, as it does form part of the equality test.
+    </para>
+    <para>
+      However, this would not be a very <quote>good</quote> hash code
+      implementation, as quite a number of different objects will have the
+      same hash code (many distinct vehicles will have the same year of
+      manufacture), negating many of the benefits of calling
+      <literal>hashCode</literal> as a high-performance pre-check, before
+      having to call <literal>equals</literal> to confirm whether two
+      objects are indeed equal. One should rather pick an attribute which
+      will produce a greater distribution:
+      <programlisting language="Java"><![CDATA[
+public class Vehicle
+{
+  ...
+  
+  public int hashCode()
+  {
+    // Derive a hash code from String, which has a good implementation
+    return makeModel.hashCode();
+  }
+
+  private String makeModel;
+  private int yearOfManufacture;
+}
+      ]]></programlisting>
+      Or even combine attributes to increase the distribution:
+      <programlisting language="Java"><![CDATA[
+public class Vehicle
+{
+  ...
+  
+  public int hashCode()
+  {
+    return yearOfManufacture + makeModel.hashCode();
+  }
+
+  private String makeModel;
+  private int yearOfManufacture;
+}
+      ]]></programlisting>
+    </para>
+    <note>
+      <para>
+        The study of producing hash code implementations that yield good
+        distributions is a complex and wide-ranging one (the
+        implementation above might, inadvertently, actually reduce the
+        distribution), but, thankfully, largely irrelevant for normal
+        java objects. Following the simple <quote>recipe</quote> above
+        should nearly always be sufficient.
+      </para>
+    </note>
+  </section>
+</section>

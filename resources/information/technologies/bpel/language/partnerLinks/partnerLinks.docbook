@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Partner links</title>
+  <indexterm>
+    <primary>WS-BPEL</primary>
+    <secondary>partner links</secondary>
+  </indexterm>
+  <para>
+    Partner links are concrete references to services that the business process interacts with. 
+    The partner link can specify a service which
+    <itemizedlist>
+      <listitem><para>
+        requests the use case realized by the business process,
+      </para></listitem>
+      <listitem><para>
+        a service which receives the response from the business process,
+      </para></listitem>
+      <listitem><para>
+        a lower level service used by the business process as one of the business process steps
+      </para></listitem>
+    </itemizedlist>
+  </para>
+  
+  <section>
+    <title>Partner link type specification in the WSDL file</title>
+    <para>
+      The WSDL defines the <emphasis>partner link types</emphasis> which, in turn, defines
+      <itemizedlist>
+        <listitem><para>
+          the roles for the partner links together with  
+        </para></listitem>
+        <listitem><para>
+          the port types used by these roles   
+        </para></listitem>
+      </itemizedlist>
+        without binding the role to any particular role player in the business process.
+    </para>
+    <figure>
+      <title>The structure of a partner link type</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="partnerLinkType.jpg"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>
+      For example, a WSDL is written which imports each of the services contracts of the
+      service providers, and which then establishes the <emphasis>context of collaboration</emphasis>
+      by, for each association between any two providers, declaring a partner link:
+      <programlisting language="XML"><![CDATA[
+<?xml version="1.0"?>
+<definitions
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="..."
+    xmlns:ass="http://big-insurance-company.com/assessment/service/"
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+
+	  <import location="assessor.wsdl" namespace="http://big-insurance-company.com/assessment/service/"/>
+
+
+  <!-- Describes the relationship between a client (which 
+       implements AssementResponseCallBack) and an Assessor -->
+  <plink:partnerLinkType name="AssessorLinkType">
+    <plink:role name="assessorService">
+          <plink:portType name="ass:Assessor"/>
+    </plink:role>
+     <plink:role name="assessmentRequester">
+          <plink:portType name="ass:AssementResponseCallBack"/>
+     </plink:role>     
+  </plink:partnerLinkType>    
+    
+
+</definitions>
+        ]]></programlisting>
+    </para>
+    <para>
+      Each <literal>partnerLinkType</literal> is analogous to a UML association relationship between
+      two service providers. It may contain either <emphasis>one</emphasis> or <emphasis>two</emphasis> roles. Two roles mean that the partner
+      link implies a bi-directional relationship, where both services may at any time call one another.
+    </para>
+    <para>
+      Most simple services, however, involve unidirectional association, where a client simply calls
+      a service provider, which has no way of calling back the client after a service has completed. This
+      is modelled by including only one role in the partner link.
+    </para>
+  </section>
+  
+  <section>
+    <title>Partnerlink specification in the BPEL file</title>
+    <para>
+      In the business process specification we bind the roles to actual services. This is done at
+      the beginning of the BPEL within a <literal><![CDATA[<partnerLinks>]]></literal> block which
+      defines the various partner links used in the business process.
+    </para>
+    <figure>
+      <title>The structure of a partner link type</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="partnerLink.jpg"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>
+      Each partner link 
+      <itemizedlist>
+        <listitem><para>
+          refers to a partnerlink type declarationm and specifies 
+        </para></listitem>
+        <listitem><para>
+          the role played by the business process, and  
+        </para></listitem>
+        <listitem><para>
+          the role played by the partner in the context of this partner link.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      For example, the roles around the claim assessment defined in the WSDL could now be assigned
+      to specific services via
+      <programlisting><![CDATA[
+<partnerLinks>
+
+  <!-- The business process indicates which roles it play(s)
+       in the various partner links within it participates -->
+  <partnerLink 
+      name="assessment"
+      partnerLinkType="wsdl:AssessorLinkType"
+      myRole="assessmentRequester"
+      partnerRole="assessorService"/>
+        
+  <partnerLink .../>
+        
+</partnerLinks>        
+        ]]></programlisting>
+    </para>
+  </section>
+</section>
+  

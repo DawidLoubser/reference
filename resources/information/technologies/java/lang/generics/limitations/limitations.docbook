@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:id="resources.information.technologies.java.lang.generics.defining.limitations">
+    <title>Limitations on the use of type parameters</title>
+  <indexterm>
+    <primary>Generic types</primary>
+    <secondary>limitations</secondary>
+  </indexterm>
+    <para>
+        Erasure results in some significant limitations on the use of parameterised types. But even
+        beyond the problem of erasure, Java does impose further limitations on the use of
+        parameterised types. Here we list some of behaviour which you may expect from parameterised
+        types, but which is not supported in Java (mostly for reasons of backwards-compatability
+        with earlier versions of Java):
+    </para>
+    <section
+        xml:id="resources.information.technologies.java.lang.generics.defining.limitations.constructors">
+        <title>Cannot use constructors to instantiate parameterised types</title>
+        <para>
+            The following is thus illegal:
+            <programlisting language="Java"><![CDATA[
+class<T> SomeClass
+{
+  public T someMethod()
+  {
+     T result = new T();  // ERROR: cannot instantiate T
+     ...
+     return result;
+  }              
+}
+                ]]></programlisting>
+        </para>
+        <note><para>
+            Even though one cannot call constructors for type parameters, one can instantiate the
+            template type via <emphasis>cloning</emphasis>, assuming one already has at least one instance.
+        </para></note>
+    </section>
+    
+    <section>
+        <title>Cannot instantiate an array of parameterised type elements</title>
+        <para>
+            As with the inability to instantiate generic instances through
+            the type parameter, so the following is also illegal:
+            <programlisting language="Java"><![CDATA[
+class Vector<T extends Scalar>
+{
+   public Vector(int length)
+   {
+     elements = new T[length];  
+            // ERROR: instantiating array of parametrized type.
+   }             
+ 
+   private T[] elements;
+}                
+                ]]></programlisting>
+        </para>
+    </section>
+    
+    <section>
+        <title>No generic throwables</title>
+        <para>
+            A generic class cannot extend <literal>java.lang.Throwable</literal>. Hence one cannot
+            define or  use parametrized exceptions.
+        </para>
+    </section>
+    
+  <section>
+      <title>Static members of a class may not use type parameters</title>
+      <para>
+          Neither static fields nor static functions may use type parameters <emphasis>of the enclosing class</emphasis>.
+          This is because a concrete type is assigned to the type parameter only when an instance of the
+          class is declared and created. Thus, the following is illegal:
+          <programlisting language="Java"><![CDATA[
+class SomeClass<T>
+{
+  public static T someFunction()  
+    // ERROR: static function may not use type parameters of class
+  {
+    return t;
+  }
+              
+  public static <Y> void someOtherFunction(Y y)  
+    // LEGAL
+  {
+    ...
+  }
+              
+  private static T t;  
+    // ERROR: static field may not use type parameters of class
+}
+              
+              ]]></programlisting>
+      </para>
+      <note><para>
+          One may, however, define static generic functions, <abbrev>i.e.</abbrev> parameterised
+          class functions. 
+      </para></note>
+  </section>
+    
+</section>    

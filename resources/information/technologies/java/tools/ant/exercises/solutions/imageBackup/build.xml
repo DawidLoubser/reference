@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A small ant script to back up all the images
+    in the base directory (recursively), with the
+    capability to remove the backups later ('clean') 
+
+    To backup images from a different directory
+    (default = current dir), move the ant file there, 
+    or specify a different project basedir attribute.
+    
+    @author D.Loubser (Solms TCD)
+    @version 18 July 2006
+-->
+<project name="Ant Image Backup" basedir="." default="backupImages">
+    
+    <!-- Name of the backup file (change at will) -->
+    <property name="backupFileName" value="images"/>
+    
+    
+    <target name="backupImages" depends="moveOldBackup"
+    description="Backs up all images in base directory to user's home dir">
+        <echo>Backing up all images in ${basedir}</echo>
+        <zip zipfile="${backupFile}">
+            <fileset dir="${basedir}">
+                <include name="**/*.jpg"/>
+                <include name="**/*.png"/>
+                <include name="**/*.gif"/>
+                <include name="**/*.svg"/>
+                <include name="**/*.tif"/>
+            </fileset>
+        </zip>
+    </target>
+    
+    
+    <target name="clean"
+        description="Removes the backup file(s)">
+        <delete file="${backupFile}"/>
+        <delete file="${secondaryBackupFile}"/>
+    </target>
+    
+    
+    <target name="moveOldBackup" 
+        description="Moves the backup file out of the way, if it exists"
+        depends="checkBackupExists"
+        if="backupExists">
+        
+        <echo>Backup file exists, moving to ${secondaryBackupFile}</echo>
+        <move file="${backupFile}" tofile="${secondaryBackupFile}"/>
+    </target>
+    
+    
+    <target name="checkBackupExists" 
+        description="Checks if the backup file already exists">
+        <available file="${backupFile}" property="backupExists"/>
+    </target>
+    
+    
+    <!-- The derived backup file name(s) -->
+    <property name="backupFile" value="${user.home}/${backupFileName}.zip"/>
+    <property name="secondaryBackupFile" value="${backupFile}.bak"/>
+    
+</project>

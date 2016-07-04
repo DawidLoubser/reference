@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.knowledge.technologies.java.j2ee.ejb.clustering.configuration.httpSessionReplication"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+ <title>HTTP session replication</title>
+  <para>
+    <emphasis>JBoss 3</emphasis>
+      supports HTTP session replication with both, <emphasis>Jetty</emphasis>
+      and <emphasis>Tomcat</emphasis> web containers. In this section we discuss
+      <itemizedlist>
+        <listitem><para>
+           aspects of load balancing on the presentation layer,
+        </para></listitem>
+        <listitem><para>
+           what is and why use HTTP session replication, and
+        </para></listitem>
+        <listitem><para>
+          how to setup {\em JBoss} with {\em Tomcat/Jetty} to support HTTP
+          session replication.
+        </para></listitem>
+      </itemizedlist>
+  </para>
+  
+  <section>
+    <title>Load balancing in the presentation layer</title>
+    <para>
+      While session state replication is handled by {\em JBoss},
+      load-balancing of incoming HTTP requests itself is
+      outside the domain of {\em JBoss}. For this one typically uses
+      either
+      <itemizedlist>
+        <listitem><para>
+          specialized hardware switches and routers (<abbrev>e.g.</abbrev>
+          <emphasis>Cisco load balancer</emphasis>) or
+        </para></listitem>
+        <listitem><para>
+          dedicated load-balancing software like <emphasis>Apache
+          mod_jk</emphasis>.
+        </para></listitem>
+      </itemizedlist>
+    </para>  
+  </section>
+  
+  <section>
+    <title>Hardware load balancers</title>
+    <para>
+      A load-balancing switch/router looks to the network like a
+      single IP address, but routes HTTP traffic to any HTTP server
+      plugged into it.
+    </para>
+    
+    <section>
+      <title>Sticky sessions</title>
+      <para>
+        One problem with implementing load balancing naively is that
+        consecutive TTP requests may be routed to different servers
+        and hence there session information would not persist accross
+        HTTP requests.
+      </para>
+      <para>
+        To this end, both, load-balancing routers/switches and software
+        solutions for HTTP request load balancing support the concept
+        of <emphasis>sticky sessions</emphasis>.
+      </para>
+      <para>
+        In this case the load balancer (either software or hardware)
+        will route all requests from a specific session to the same
+        node.
+      </para>
+      <para>
+        This results in load-balancing with session information being
+        maintained accross HTTP requests and, in many cases, this
+        solution may be sufficient.
+      </para>
+      <para>
+        Of course, if the node hosting the client session fails, the
+        session information is lost and the client will have to start
+        from the beginning again. While this may be acceptable in many
+        realistic environments, there are some business environments
+        which require <emphasis>fail-over safety</emphasis> at the presentation layer,
+        <abbrev>i.e.</abbrev> that another node can take over that session with all its
+        session information and the client continues without even
+        knowing that he/she is now being served by another node.
+      </para>
+    </section>
+  </section>  
+  <section>
+    <title>Fail-Over safety via HTTP session replication?</title>
+    <para>
+      So, while load-balancing with sticky session provide load
+      balancing with the session state maintained accross service
+      requests, they do not provide fail-over safety. If the node
+      to which the sticky session is bound, the client has to
+      reconnect and looses any session information which he had.
+    </para>
+    <para>
+      To support fail-over safety one requires session replication.
+      While load-balancing of the incoming HTTP requests is not
+      handled by <emphasis>JBoss</emphasis>, session replication is. It is supported for
+      both, the default web container, <emphasis>Jetty</emphasis>, and 
+      <emphasis>Tomcat</emphasis>.
+    </para>
+  </section>
+  
+  <section>
+    <title>What is session replication?</title>
+    <para>
+      Session replication implies that the session state of the node
+      currently hosting the session is replicated accross other nodes
+      in the cluster.
+    </para>
+    <para>
+      When one node fails the client is redirected to another node in
+      the cluster which has a copy of the session and hence no
+      information is lost.
+    </para>
+  </section>  
+
+  <section>
+    <title>Session replication algorithms</title>
+    <para>
+      The session replication algorithm may differ significantly from
+      application server to application server.
+    </para>
+    
+    <section>
+      <title>Single node replication</title>
+      <para>
+        In some application servers (<abbrev>e.g.</abbrev> BEA WebLogic) the node to
+        which the client is currently connected hosts a primary session.
+        This session is replicated on to one other node which hosts
+        the seconday session.
+      </para>
+      <para>
+          If the node hosting the primary session fails, the client is
+          redirected to the node hosting the secondary session. That session
+          becomes the primary session and another secondary session is
+          spawned on another node.
+      </para>
+    </section>
+    
+    <section>
+      <title>Cluster/partition-wide session replication</title>
+     <para>
+        In the case of <emphasis>JBoss</emphasis> the cluster is not configured manually.
+        It is automatically configured by different nodes publishing
+        their existence and partition allocation to other nodes in
+        the cluster.
+     </para>
+     <para>
+      In this scenario a session is replicated accross all nodes
+      in the partition, or, if sub-partition (if sub-partitioning
+      is used). This may incur significant communication
+      overheads and hence one it advised not to make individual
+      partitions/sub-partitions too large.
+     </para>
+   </section>  
+  </section>
+  
+  <section>
+    <title>Configuring web containers for session replication</title>
+    <para>
+      When using <emphasis>JBoss</emphasis> for session replication, the servlet container
+      does not use any of its own replication code and relies solely
+      on the session replication service deployed in <emphasis>JBoss</emphasis>.
+    </para>
+    
+    <section>
+      <title>Deploying the HTTP session replication service</title>
+      <para>
+        <emphasis>JBoss</emphasis>'s HTTP session replication service is contained in the jar file,
+        <literal>jbossha-hhtpsession.sar</literal>. To deploy it one simply copies it into
+        the appropriate deploy directory. This is independent of whether one
+        uses <emphasis>Tomcat</emphasis> or <emphasis>Jetty</emphasis>.
+      </para>
+    </section>
+    
+    <section>
+      <title>Declaring your servlet distributable</title>
+      <para>
+        You will have to declare your servlet <emphasis>distributable</emphasis> in your
+        <literal>WEB-INF/web.xml</literal> deployment descriptor for your web application.
+        <emphasis>Distributable</emphasis> is a subelement of the 
+        <emphasis>web-app</emphasis> element following the 
+        <emphasis>description</emphasis> element of the <emphasis>web-app</emphasis>.
+      </para>
+      <programlisting>
+<![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+  <distributable>true</distributable>
+  <!-- Servlets -->
+  <servlet>
+    <servlet-name>LoanCalculatorServlet</servlet-name>
+    <servlet-class>za.co.SolmsTraining.finance.calculators.LoanCalculatorServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LoanCalculatorServlet</servlet-name>
+    <url-pattern>/LoanCalculatorServlet</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  <!-- EJB References (java:comp/env/ejb) -->
+  <ejb-ref>
+    <ejb-ref-name>ejb/LoanCalculator</ejb-ref-name>
+    <ejb-ref-type>Session</ejb-ref-type>
+    <home>za.co.SolmsTraining.finance.calculators.LoanCalculatorHome</home>
+    <remote>za.co.SolmsTraining.finance.calculators.LoanCalculator</remote>
+  </ejb-ref>
+</web-app>
+]]>      
+      </programlisting>
+      <para>
+          In addition to this one may want to set some configuration parameters
+          for the web container you are using. These configuration parameters
+          are different for Jetty and Tomcat.
+      </para>
+    </section>
+    
+    <section>
+      <title>Selecting replication events for Tomcat</title>
+      <para>
+        A replication is like taking a snap-shot. By default, <emphasis>Tomcat</emphasis>
+        is configured to use <emphasis>instant</emphasis> snap-shotting. You may want to
+        change this to improve the performance of the replication
+        algorithm. The snap-shot modes available in <emphasis>Tomcat</emphasis> are:
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>instant</title>
+            <para>
+              The session is replicated after each HTTP request.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>[interval:</title>
+            <para>
+              The session changes are collected and replicated
+              in one block in the chosen interval period.
+            </para>
+          </formalpara></listitem>
+        </itemizedlist>
+      </para>
+      <para>
+        For each of these modes you can specify another attribute, <literal>economy</literal>
+        which sets that only calls to <literal>HTTPSession.setAttribute</literal> are
+        interpreted as session changes.
+      </para>  
+      <para>
+        So, in the <literal>tomcat4-service.xml</literal> found in the 
+        <emphasis>deploy</emphasis>
+        directory you can add/modify the snap-shot attributes. For example,
+        <programlisting>
+<![CDATA[
+        <mbean code="org.jboss.web.catalina.EmbeddedCatalinaServiceSX"
+          name="jboss.web:service=EmbeddedCatalinaSX">
+          <attribute name="CatalinaHome">&catalina.home</attribute>
+          <attribute name="SnapShotMode">interval</attribute>
+          <attribute name="SnapShotInterval">3000</attribute>
+          <attribute name="EconomicSnapshotting">true</attribute>
+          ...
+        </mbean>
+]]>        
+        </programlisting>
+      </para>
+    </section>
+    
+    <section>
+      <title>Jetty-specific configuration</title>
+      <para>
+        In addition to the web-container neutral configuration discussed
+        in section <xref linkend="secConfigSessionReplication"/>, you may want to
+        modify the default session replication strategy for Jetty. To this
+        end you may want to update the file
+        <literal>deploy/jbossweb.sar/META-INF/jboss-service.xml</literal>. The relavant
+        section is shown below
+        <programlisting>
+<![CDATA[
+      <Set name="DistributableSessionManagerPrototype">
+       <New class="org.mortbay.j2ee.session.Manager">
+        <Set name="scavengerPeriod">600</Set>
+        <!-- NYI
+        <Set name="workerName">node1</Set>
+        -->
+        <Set name="interceptorStack">
+         <Array type="org.mortbay.j2ee.session.StateInterceptor">
+<!--
+          <Item><New class="org.mortbay.j2ee.session.DebugInterceptor"/></Item>
+-->
+          <Item><New class="org.mortbay.j2ee.session.ValidatingInterceptor"/></Item>
+          <Item><New class="org.mortbay.j2ee.session.TypeCheckingInterceptor"/></Item>
+          <Item><New class="org.mortbay.j2ee.session.BindingInterceptor"/></Item>
+          <Item><New class="org.mortbay.j2ee.session.PublishingInterceptor"/></Item>
+          <Item><New class="org.mortbay.j2ee.session.SubscribingInterceptor"/></Item>
+          <Item><New class="org.mortbay.j2ee.session.SynchronizingInterceptor"/></Item>
+         </Array>
+        </Set>
+        <!-- Put this back in for distributable support under 'all' configuration
+        <Set name="store">
+         <New class="org.mortbay.j2ee.session.JGStore">
+          <Set name="actualMaxInactiveInterval">604800</Set>
+          <Set name="scavengerPeriod">3600</Set>
+          <Set name="scavengerExtraTime">900</Set>
+          <Set name="protocolStack">UDP(mcast_addr=228.8.8.8;mcast_port=45566;ip_ttl=32;ucast_recv_buf_size=16000;ucast_send_buf_size=16000;mcast_send_buf_size=32000;mcast_recv_buf_size=64000;loopback=true):PING(timeout=2000;num_initial_members=3):MERGE2(min_interval=5000;max_interval=10000):FD_SOCK:VERIFY_SUSPECT(timeout=1500):pbcast.STABLE(desired_avg_gossip=20000):pbcast.NAKACK(gc_lag=50;retransmit_timeout=300,600,1200,2400,4800;max_xmit_size=8192):UNICAST(timeout=2000):FRAG(frag_size=8192;down_thread=false;up_thread=false):pbcast.GMS(join_timeout=5000;join_retry_timeout=2000;shun=false;print_local_addr=true):pbcast.STATE_TRANSFER</Set>
+          <Set name="subClusterName">DefaultSubCluster</Set>
+          <Set name="retrievalTimeOut">20000</Set>
+          <Set name="distributionTimeOut">5000</Set>
+          <Set name="distributionMode">GET_ALL</Set>
+         </New>
+        </Set>
+        -->
+       </New>
+      </Set>
+
+      <!-- For testing the Distributable SessionManager with e.g. Watchdog -->
+      <!--
+      <Set name="forceDistributable">true</Set>
+      -->
+
+      </Configure>
+     </attribute>
+]]>        
+        </programlisting>
+      </para>
+    </section>
+    </section>
+    
+    <section>
+      <title>Some architectural solutions</title>
+      <para>
+        In this section we discuss a number of possible architectural
+        solutions trying to address load-balancing and fail-over safety
+        in an efficient way.
+      </para>
+      
+      <section>
+        <title>Load-balancing accross clusters</title>
+        <para>
+          One solution which is scales well while providing fail-over safety
+          is to have
+          <itemizedlist>
+            <listitem><para>
+              <emphasis>multiple clusters</emphasis>, each cluster having not to many nodes
+              (say less than 6),
+            </para></listitem>
+            <listitem><para>
+              assign a hardware or software load balancer to each cluster and
+            </para></listitem>
+            <listitem><para>
+              have an additional load balancer which sprays HTTP requests
+              accross the load balancers for the individual clusters.
+            </para></listitem>
+          </itemizedlist>
+        </para>
+        <para>
+          This ensures that
+          <itemizedlist>
+            <listitem><para>
+              state replication is limited to replicate over only relatively
+              few nodes, and
+            </para></listitem>
+            <listitem><para>
+              that the system can scale efficiently to a very large number
+              of machines.
+            </para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+    </section>
+</section>

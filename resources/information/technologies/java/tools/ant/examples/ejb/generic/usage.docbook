@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns7391:section xmlns:ns7391="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.tools.ant.examples.ejb.generic.usage">
+
+  <ns7392:title xmlns:ns7392="http://docbook.org/ns/docbook">Using the generic Ant build script</ns7392:title>
+  <ns7393:para xmlns:ns7393="http://docbook.org/ns/docbook">
+    We have now the tools together to build, deploy and run our web application. We simply
+    run the Ant build tool for different targets.
+  </ns7393:para>
+  
+  <ns7394:section xmlns:ns7394="http://docbook.org/ns/docbook">
+    <ns7395:title xmlns:ns7395="http://docbook.org/ns/docbook">Building the Enterprise Bean Archive</ns7395:title>
+    <ns7396:para xmlns:ns7396="http://docbook.org/ns/docbook">
+      To build the enterprise bean archive we specify the  
+      <ns7397:literal xmlns:ns7397="http://docbook.org/ns/docbook">ejbJar</ns7397:literal> target:
+<ns7398:programlisting xmlns:ns7398="http://docbook.org/ns/docbook">
+ant ejbJar
+</ns7398:programlisting>      
+    </ns7396:para>
+    <ns7399:para xmlns:ns7399="http://docbook.org/ns/docbook">
+      This creates the server side Java archive file for the
+      enterprise bean. It contains the classes and interfaces required for the enterprise bean
+      in a directory structure mirroring the package structure and a  
+      <ns7400:literal xmlns:ns7400="http://docbook.org/ns/docbook">META-INF</ns7400:literal> directory with the generic  
+      <ns7401:literal xmlns:ns7401="http://docbook.org/ns/docbook">ejb-jar.xml</ns7401:literal> and the JBoss-specific 
+      <ns7402:literal xmlns:ns7402="http://docbook.org/ns/docbook">jboss.xml</ns7402:literal> deployment descriptors.
+    </ns7399:para>
+  </ns7394:section>
+  
+    <ns7403:section xmlns:ns7403="http://docbook.org/ns/docbook">
+      <ns7404:title xmlns:ns7404="http://docbook.org/ns/docbook">Deploying the Enterprise Bean Archive</ns7404:title>
+      <ns7405:para xmlns:ns7405="http://docbook.org/ns/docbook">
+        To deploy the server side archive,  
+        <ns7406:literal xmlns:ns7406="http://docbook.org/ns/docbook">LoanCalculator.jar</ns7406:literal>, we simply copy it into JBoss's deploy directory
+<ns7407:programlisting xmlns:ns7407="http://docbook.org/ns/docbook">
+JBOSS-HOME/server/configurationDir/deploy
+</ns7407:programlisting>
+        where the <ns7408:literal xmlns:ns7408="http://docbook.org/ns/docbook">configurationDir</ns7408:literal> is the directory for the JBoss
+        configuration one is running which, by default, is the  
+        <ns7409:literal xmlns:ns7409="http://docbook.org/ns/docbook">default</ns7409:literal> directory.
+      </ns7405:para>
+      <ns7410:para xmlns:ns7410="http://docbook.org/ns/docbook">
+        JBoss will automatically detect the new enterprise bean, generate the EJB object
+        which network enables the bean, demarshalls the service request and applies the enterprise
+        beans at this inception level and makes the bean available to EJB clients. This all
+        happens without having to bring down the application server.
+      </ns7410:para>
+      <ns7411:para xmlns:ns7411="http://docbook.org/ns/docbook">
+        For convenience sake the build file contains a target for deploying the enterprise
+        bean. It is run via
+<ns7412:programlisting xmlns:ns7412="http://docbook.org/ns/docbook">
+ant deployEjbJar
+</ns7412:programlisting>
+      </ns7411:para>
+    </ns7403:section>
+    
+  <ns7413:section xmlns:ns7413="http://docbook.org/ns/docbook">
+      <ns7414:title xmlns:ns7414="http://docbook.org/ns/docbook">Running the Client Application</ns7414:title>
+      <ns7415:para xmlns:ns7415="http://docbook.org/ns/docbook">
+        The client application files are archived into a Java archive via the  
+        <ns7416:literal xmlns:ns7416="http://docbook.org/ns/docbook">jarClientApp</ns7416:literal> Ant target. Note that the JBoss client
+      </ns7415:para>
+      <ns7417:para xmlns:ns7417="http://docbook.org/ns/docbook">
+        Finally we simply start our client (potentially on another machine on the network)
+        supplying the client-side jar files located in the client directory of JBoss to the classpath.
+      </ns7417:para>
+  </ns7413:section>
+  
+    <ns7418:section xmlns:ns7418="http://docbook.org/ns/docbook">
+      <ns7419:title xmlns:ns7419="http://docbook.org/ns/docbook">Running the Client</ns7419:title>
+      <ns7420:para xmlns:ns7420="http://docbook.org/ns/docbook">
+        To run the client from a local or a remote machine one simply runs the application
+        from the client-side jar file, <ns7421:literal xmlns:ns7421="http://docbook.org/ns/docbook">LoanCalculatorClient.jar</ns7421:literal> with the client-side J2EE
+        files in the class path. These jar files could be packaged within the client jar. However,
+        clients do not have to use the JBoss client-side jar files but could use client J2EE jar
+        files supplied by another EJB application server provider.
+      </ns7420:para>
+      <ns7422:para xmlns:ns7422="http://docbook.org/ns/docbook">
+        Note that the <ns7423:literal xmlns:ns7423="http://docbook.org/ns/docbook">jndi.properties</ns7423:literal> file is included in
+        the client jar. For remote deployment the <ns7424:literal xmlns:ns7424="http://docbook.org/ns/docbook">localhost</ns7424:literal>
+        must be changed to the host name or IP address of the host of the naming service with
+        which the enterprise bean has been registered.
+      </ns7422:para>
+    </ns7418:section>
+  </ns7391:section>

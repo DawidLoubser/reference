@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.concepts.architecture.qualityAttributes.modifiability.pluggability"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Pluggability</title>
+  
+  <para>
+    Pluggability facilitates a component based approach where components can be readily replaced
+    and new components may be deployed. 
+  </para>  
+    
+  <section>
+    <title>Tactics used to realize pluggability</title>
+    <para>
+      The following tactics can be employed to assist in
+      realizing pluggability.
+    </para>
+    
+   
+    <section>
+      <title>Decoupling</title>
+      <para>
+        Decoupling is largely achieved via contracts, enabling one to plug in any service provider
+        able to realize the specified contract.
+      </para>
+      
+      <section>
+        <title>Decoupling through interfaces/standard APIs</title>
+        <para>
+          A common way to specify aspects of a contract is through a standard API where
+          the interfaces specify the services which contract implementors must realize.
+          The pre-conditions under which these services become available are usually
+          included in the contract as the list of exceptions which service providers may
+          potentially raise.
+          <note><para>
+            Exceptions provide a communication mechanism enabling service providers to
+            notify clients that the service they requested is not going to be provided as one
+            or more of the pre-conditions for that service are not met.
+          </para></note>
+        </para>
+        <para>
+          There are a range of classical design patterns which assist in achieving API-based
+          decoupling including
+          <itemizedlist>
+            <listitem><formalpara>
+              <title>Abstract factory</title>
+              <para>
+                The abstract factory pattern enables one to replace one framework realizing
+                a contract defined in a set of interfaces with another. It is commonly used
+                to decouple from 
+                <itemizedlist>
+                  <listitem><para>persistence layer realizations,</para></listitem>
+                  <listitem><para>presentation layer realizations,</para></listitem>
+                  <listitem><para>communication layer realizations,</para></listitem>
+                </itemizedlist>
+                and so forth. The abstract factory thus facilitates framework pluggability.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Bridge</title>
+              <para>
+                 The bridge pattern decouples one from a lower level services layer like, for example,
+                 <itemizedlist>
+                   <listitem><para>
+                     the underlying operating system,                   
+                   </para></listitem>
+                   <listitem><para>
+                     the underlying file system,
+                   </para></listitem>
+                 </itemizedlist>
+                 and so forth. The bridge pattern enables one to plug in different lower level services
+                 layers.
+               </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Observer</title>
+              <para>
+                The observer pattern decouples information sources from information processors,
+                facilitating the pluggability of further information processors.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Adapter</title>
+              <para>
+                The adapter pattern enables one to adapt a non-complying service provider
+                to the contractual interface, making a service provider which is initially not
+                suitable, pluggable.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Strategy</title>
+              <para>
+                The strategy pattern decouples the service provider from the algorithms used to
+                realize the service requests. It thus facilitates pluggable algorithms.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>State</title>
+              <para>
+                The state pattern decouples a context from its states, enabling states to provide
+                their own realizations of services offered by the context.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Template Method</title>
+              <para>
+                The template method pattern enables one to decouple a higher work flow
+                algorithm from the realization of the individual work flow steps, facilitating
+                pluggability of the work flow step realizations.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Builder</title>
+              <para>
+                The builder pattern enables one to decouple the object which understands the
+                source information used to construct products from the builders which
+                do the construction of the products. The builder pattern makes builders
+                pluggable enabling one to re-use the director which understands the source
+                domain across different builders constructing different realization
+                of product lines.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Chain of Responsibility</title>
+              <para>
+                The chain of responsibility pattern decouples clients from service providers by
+                transferring the decision on which service provider will realize a service request
+                to the service providers themselves. Service providers can be added to or
+                removed from the chain without requiring changes within the client.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Facade</title>
+              <para>
+                The facade pattern decouples the client/user view onto a system from the
+                technical realization of the system.
+              </para>
+            </formalpara></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+      
+      <section>
+        <title>Decoupling through a standard message protocol</title>
+        <para>
+          If one communicates via a standard protocol, the concrete realization of a service
+          provider may be modified without affecting the client.
+        </para>
+        <section>
+          <title>Messaging services</title>
+          <para>
+             Messaging services provide a mechanism to further decouple clients from service 
+             providers. Here a service provider selects which messages it will process. The 
+             service provider  realization may be altered and different service providers may
+             choose to process a service request.
+          </para>
+        </section>  
+      </section>
+      
+    </section>
+    
+    <xi:include href="lateBinding.xdoc"/>
+    
+  </section>  
+</section>

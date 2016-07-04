@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<section id="resources.information.technologies.tools.versionControl._cvs.commands.branching"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Branching and Merging</title>
+  <para>
+    Consider the situation where you have released a version of a system and
+    are two-thirds through the development of the next version. Assume a
+    critical bug is reported which needs to be fixed before the next release
+    is ready. You cannot fix the bug in your development version because
+    this version is not in a state that it can be deployed into a production
+    environment.
+  </para>
+  <para>
+    Instead you want to fix the bug for the previous production release. To
+    cater for this type of scenario CVS supports the concept of branches.
+    You can spawn a development branch which roots at a particular release
+    so that you have concurrent development branches. Developers can work
+    off either of the branches and commit changes into these branches.
+  </para>
+  <para>
+     At some later stage you will typically want to merge the branch back into
+     the main development trunk, incorporating the changes made to the bug-fix
+     branch into the core of the project. Once again, CVS will assist you with
+     this task.
+  </para>
+  
+  <section>
+    <title>Spawning a branch</title>
+    <para>
+      To spawn a new branch one uses the <command>tag</command> command with
+      the <option>-b</option> option.
+    </para>
+    
+    <section>
+      <title>Spawning a branch off the current revisions in the working copy</title>
+      <para>
+        To spawn a branch off the revision currently booked out in a work
+        directory you can run the command
+        <synopsis><![CDATA[
+cvs tag -b -r <branchName>
+        ]]></synopsis>
+        For example
+        <synopsis><![CDATA[
+cvs tag -b -r release_1-0_patches
+        ]]></synopsis>
+        
+        <warning>
+          <para>
+            Branches are created in the repository only. The working copy is
+            NOT automatically switched to that branch.
+          </para>
+        </warning>
+      </para>
+    </section>
+    
+    <section>
+      <title>Creating a branch for a tagged release</title>
+      <para>
+        When creating a branch for a tagged release one uses the
+        <command>rtag</command> command and specifies
+        the release via the <option>-r</option> option:
+        <synopsis><![CDATA[
+cvs rtag -b -r release_1-0 release_1-0_patches LoanCalculator
+        ]]></synopsis>
+      </para>
+    </section>
+      
+  </section>
+  
+  <section>
+    <title>Checking out a branch</title>
+    <para>
+      To check out a particular branch in CVS one uses the release option,
+      <option>-r</option>, together with the branch name:
+      <synopsis><![CDATA[
+cvs checkout -r release_1-0_patches LoanCalculator      
+      ]]></synopsis>
+    </para>
+  </section>
+  
+  <section>
+    <title>Switching a working copy to a branch</title>
+    <para>
+      To switch a working copy to a branch one uses the <command>update</command>
+      command with the <option>-r</option> option referring to the branch name.
+      <synopsis><![CDATA[
+update -r release_1-0_patches     
+      ]]></synopsis>
+      This will switch you from any other branch or from the main trunk onto
+      the specified branch.
+    </para>
+  </section>
+  
+  <section>
+    <title>What version am I actually working on</title>
+    <para>
+      If you want to find out which version you are currently busy working on you
+      can the <command>status</command> command:
+      <synopsis><![CDATA[
+cvs status      
+      ]]></synopsis>
+      It will report you the working revision for each file, its repository
+      revision and the branch your are on via the <emphasis>Sticky Tag</emphasis>
+      field:
+      <synopsis><![CDATA[
+===================================================================
+File: LoanCalculatorClient.java Status: Up-to-date
+
+   Working revision:    1.3     Mon Jun 16 22:37:25 2003
+   Repository revision: 1.3     /usr/local/cvs/testRepository/LoanCalculator/za/co/...
+     stcd/finance/calculators/presentation/swing/LoanCalculatorClient.java,v
+   Sticky Tag:          release_1-0_patches (branch: 1.3.2)
+   Sticky Date:         (none)
+   Sticky Options:      (none)
+
+===================================================================
+File: LoanCalculatorPanel.java  Status: Up-to-date
+
+   Working revision:    1.4     Tue Jun 17 05:51:55 2003
+   Repository revision: 1.4     /usr/local/cvs/testRepository/LoanCalculator/za/co/...
+     stcd/finance/calculators/presentation/swing/LoanCalculatorPanel.java,v
+   Sticky Tag:          release_1-0_patches (branch: 1.4.2)
+   Sticky Date:         (none)
+   Sticky Options:      (none)
+      ]]></synopsis>
+      
+    </para>
+    <para>
+      Adding the <option>-v</option> option also reports any further concurrent
+      versions which exist of the file:
+      <synopsis><![CDATA[
+File: LoanCalculator.java       Status: Up-to-date
+
+   Working revision:    1.3.2.1 Wed Jun 18 09:17:27 2003
+   Repository revision: 1.3.2.1 /usr/local/cvs/testRepository/LoanCalculator/za/co/...
+     stcd/finance/calculators/businessLogic/LoanCalculator.java,v
+   Sticky Tag:          release_1-0_patches (branch: 1.3.2)
+   Sticky Date:         (none)
+   Sticky Options:      (none)
+
+   Existing Tags:
+        release_1-1_patches             (branch: 1.3.4)
+        release_1-0_patches             (branch: 1.3.2)
+        release_1-0                     (revision: 1.3)
+        stable_1-0                      (revision: 1.2)
+        release_0-9                     (revision: 1.1.1.1)
+        start                           (revision: 1.1.1.1)
+        STCD                            (branch: 1.1.1)
+      ]]></synopsis>
+    </para>
+  </section>
+  
+  <section>
+    <title>How does CVS assign revision numbers to branches?</title>
+    <para>
+      This is best illustrated diagrammatically 
+      (see <xref linkend="resources.information.technologies.tools.versionControl._cvs.commands.images.revisionNumbersOnBranches"/>)
+    </para>
+    <figure id="resources.information.technologies.tools.versionControl._cvs.commands.images.revisionNumbersOnBranches">
+      <title>CVS assigned revision numbers on branches</title>
+        <graphic fileref="images/revisionNumbersOnBranches.jpg"/>
+    </figure>
+    
+  </section>
+  
+  <section>
+    <title>Merging a branch into the trunk</title>
+    <para>
+      At some stage you will most probably want to merge the bug-fixes made
+      on a branch back into the main trunk. To this end
+      <orderedlist>
+        <listitem><para>
+          Check out the latest revision (along the main trunk) via
+          <synopsis><![CDATA[
+cvs checkout LoanCalculator          
+          ]]></synopsis>
+        </para></listitem>
+        <listitem><para>
+          Merge all changes from the <literal>release_1-0_paches</literal> branch
+          into the working copy via the <option>-j</option> option:
+          <synopsis><![CDATA[
+cvs -q update -j release_1-0_patches          
+          ]]></synopsis>
+          You can do the latter on a per-file basis:
+          <synopsis><![CDATA[
+cvs update -j release_1-0_patches LoanCalculatorClient.java
+          ]]></synopsis>
+        </para></listitem>
+        <listitem><para>
+          Resolve any conflicts which may have been introduced by the merger
+          as we have done in 
+          <xref linkend="resources.information.technologies.tools.versionControl._cvs.commands.resolvingConflicts"/>.
+        </para></listitem>
+        <listitem><para>
+          Commit the merger via
+          <synopsis><![CDATA[
+cvs commit -m "Merged realease_1-0_patches" into trunk          
+          ]]></synopsis>
+        </para></listitem>
+      </orderedlist>
+    </para>
+  </section>
+  
+  <section>
+    <title>Repeated merging from branches</title>
+    <para>
+      It is not uncommon that you want to merge bug-fixes incrementally into the
+      main trunk. After the first merger has been done one has to be careful to
+      any merge changes made from the last merger onwards. Otherwise you will
+      get conflicts due to the repeated merging of the same information.
+    </para>
+    <para>
+      If you do not want to merge the differences on a file-for-file basis (and I
+      doubt you would), then you can either
+      <itemizedlist>
+        <listitem><para>
+          keep track of the merge dates-times or 
+        </para></listitem>
+        <listitem><para>
+          tag the branch itself after every merge. 
+        </para></listitem>
+      </itemizedlist>
+    </para>
+    
+    <section>
+      <title>Repeated merging using merge dates</title>
+      <para>
+        It is not generally recommended to do repeated mergers on merge date/times.      
+        This is because this approach requires you to keep independently accurate
+        track of the merge date/times. Furthermore,this approach is error prone because 
+        you need to capture the exact date-time of the last merger and keep in mind
+        that you are referring to the repository date/time which is UCT or GMT time
+        and not your local machine date/time.
+      </para>
+      <para>
+        However, if you forgot to tag a branch after a merger, this method may come
+        as a rescue. The syntax is
+        <synopsis><![CDATA[
+cvs update -j "release_1-0_patches: 26 June 2003 23:59:59" -j "release_1-0_patches"
+        ]]></synopsis>
+      </para>
+    </section>
+    
+    <section>
+      <title>Multiple mergers using branch tags</title>
+      <para>
+        So, preferably, you are going to tag the branch after the each merge via
+        <synopsis><![CDATA[
+cvs tag -r release_1-0_patches release_1-0_patches_merge1
+        ]]></synopsis>
+        You can then apply the second merger via
+        <synopsis><![CDATA[
+cvs update -j release_1-0_patches_merge1 -j "release_1-0_patches"
+        ]]></synopsis>
+      </para>
+    </section>
+    
+  </section>
+  
+</section>

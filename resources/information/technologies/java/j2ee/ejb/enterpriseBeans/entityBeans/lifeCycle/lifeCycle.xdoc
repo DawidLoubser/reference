@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.lifeCycle.lifeCycle"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>The Life Cycle of an Entity Bean</title>
+  <para>
+    In <xref linkend="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.lifeCycle.lifeCycle"/>
+     we show the life cycle of an entity bean. 
+  </para>
+  
+  <figure id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.lifeCycle.lifeCycle_fig">
+    <title>Life cycle of an entity bean</title>
+    <graphic fileref="lifeCycle.jpg"/>
+  </figure>
+  
+  <section>
+    <title>Instantiating Entity Beans</title>
+    <para>
+      The Entity Bean's implementation class is instantiated when the container wants to
+      increase the number of available entity bean instances (perhaps because the bean pool is
+      depleted). Thus, entity beans are not necessarily instantiated upon client service requests.
+    </para>
+    <para>
+      Like session beans, entity beans are instantiated via the  
+      <literal>newInstance()</literal> method of their class descriptor which in turn
+      calls the default constructor of the bean implementation class.
+    </para>
+    <para>
+      After the bean has been instantiated, it receives a call-back,  
+      <literal>setEntityContext</literal> from the container which associates an entity
+      context to it. The entity context contains environmental information like the
+      transactional state of the entity bean and the client's security role and identity.
+    </para>
+  </section>
+  
+  <section>
+    <title>Entity Beans in the Pool</title>
+    <para>
+      While entity beans reside in the bean pool, they are not assigned to database
+      information and do not have any open connections to any database.
+    </para>
+  </section>
+  
+  <section>
+    <title>Creating New Entity Beans</title>
+    <para>
+      The home interface can also be used to create new entity beans resulting in new
+      information entities which will be inserted into the corresponding database.</para>
+    <para>When the home object receives a <literal>create</literal> message it
+      asks the container for an instance from the bean pool and initializes the instance via a
+        <literal>ejbCreate</literal> message. Upon  
+      <literal>ejbCreate</literal> the entity bean fields are initialized and the
+      information is inserted into the appropriate database.
+    </para>
+  </section>
+  
+  <section>
+    <title>The Bean's Ready State</title>
+    <para>
+      While the entity bean is in the ready state it offers the business services defined
+      in the remote interface. If any of these service requests modify the state of the bean,
+      this modification is fed through via <literal>ejbStore</literal>.
+    </para>
+    <para>
+      The container synchronizes all views onto an entity bean. Every time an entity bean
+      is updated through one of the bean instances assigned to some or other client, the other
+      views (typically held by other clients) are automatically updated via <literal>ejbStore</literal>.
+    </para>
+  </section>
+  
+  <section>
+    <title>Activation and Passivation</title>
+    <para>
+      To protect the memory resources of the application server, the container passifies
+      entity beans as they time out or as resources need to be freed. Before sending the
+        corresponding<literal>ejbPassivate()</literal> message, the container
+      first calls <literal>ejbStore()</literal> so that the bean feeds its
+      state through to persistent storage. A passivated entity bean is inserted back into the
+      bean pool and the resources it may have held (e.g. database connections) are released.
+    </para>
+    <para>
+      After reactivation (via <literal>activate()</literal>) the container
+      send an <literal>ejbLoad()</literal> message to your bean so that it is
+      once again synchronized with the database.
+    </para>
+  </section>
+  
+  <section>
+    <title>Removing Entity Beans</title>
+    <para>
+      If entity beans are removed, the data they represent will be deleted from the
+      peristent storage (<abbrev>i.e.</abbrev> database).
+    </para>
+  </section>
+  
+</section>

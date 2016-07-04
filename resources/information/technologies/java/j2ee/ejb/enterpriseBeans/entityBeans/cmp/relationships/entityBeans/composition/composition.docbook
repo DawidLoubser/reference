@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1297:section xmlns:ns1297="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.relationships.entityBeans.composition.composition">
+
+  <ns1298:title xmlns:ns1298="http://docbook.org/ns/docbook">Specifying Composition Relationships with Cascading Delete</ns1298:title>
+  <ns1299:para xmlns:ns1299="http://docbook.org/ns/docbook">
+    So far we have not differentiated between composition, aggregation and association
+    relationships. The differentiation between association and aggregation is very fine. It
+    really revolvs about interpreting an object's state, i.e. is the associated object part of
+    the client object's state or not. The implementation would thus largely center on different
+    state change notification algorithms.
+  </ns1299:para>
+  <ns1300:para xmlns:ns1300="http://docbook.org/ns/docbook">
+    The differentiation between composition and aggregation is, however, a lot stronger.
+    Composition requires full ownership, <ns1301:abbrev xmlns:ns1301="http://docbook.org/ns/docbook">i.e.</ns1301:abbrev> that 
+    <ns1302:itemizedlist xmlns:ns1302="http://docbook.org/ns/docbook">
+      <ns1303:listitem xmlns:ns1303="http://docbook.org/ns/docbook">
+        <ns1304:para xmlns:ns1304="http://docbook.org/ns/docbook">the components cannot be modified except through the owner itself and </ns1304:para>
+      </ns1303:listitem>
+      <ns1305:listitem xmlns:ns1305="http://docbook.org/ns/docbook">
+        <ns1306:para xmlns:ns1306="http://docbook.org/ns/docbook">that the components are deleted once the owner is deleted.</ns1306:para>
+      </ns1305:listitem>
+    </ns1302:itemizedlist>
+  </ns1300:para>  
+  <ns1307:para xmlns:ns1307="http://docbook.org/ns/docbook">
+    The former is achieved the through restricting the public interface and by providing a
+    value object as a return value of the query methods. The latter can be achieved by
+    specifying a <ns1308:literal xmlns:ns1308="http://docbook.org/ns/docbook">&lt;cascading-delete/&gt;</ns1308:literal> element for the 
+    component role of the relationship:
+<ns1309:programlisting xmlns:ns1309="http://docbook.org/ns/docbook">
+&lt;ejb-relation&gt;
+&lt;ejb-relation-name&gt;Task-TimeStretch&lt;/ejb-relation-name&gt;
+&lt;ejb-relationship-role&gt;
+ &lt;ejb-relationship-role-name&gt;
+   task-has-timeStretches
+ &lt;/ejb-relationship-role-name&gt;
+ &lt;multiplicity&gt;One&lt;/multiplicity&gt;
+ &lt;relationship-role-source&gt;
+   &lt;ejb-name&gt;Task&lt;/ejb-name&gt;
+ &lt;/relationship-role-source&gt;
+ &lt;cmr-field&gt;
+   &lt;cmr-field-name&gt;timeStretches&lt;/cmr-field-name&gt;
+   &lt;cmr-field-type&gt;java.util.Set&lt;/cmr-field-type&gt;
+ &lt;/cmr-field&gt;
+&lt;/ejb-relationship-role&gt;
+&lt;ejb-relationship-role&gt;
+ &lt;ejb-relationship-role-name&gt;
+   timeStretch-for-task
+ &lt;/ejb-relationship-role-name&gt;
+ &lt;multiplicity&gt;Many&lt;/multiplicity&gt;
+ 
+ &lt;cascading-delete/&gt;
+ 
+ &lt;relationship-role-source&gt;
+   &lt;ejb-name&gt;TimeStretch&lt;/ejb-name&gt;
+ &lt;/relationship-role-source&gt;
+ &lt;cmr-field&gt;
+   &lt;cmr-field-name&gt;task&lt;/cmr-field-name&gt;
+ &lt;/cmr-field&gt;
+&lt;/ejb-relationship-role&gt;
+&lt;/ejb-relation&gt;
+</ns1309:programlisting>  
+  </ns1307:para>
+  <ns1310:para xmlns:ns1310="http://docbook.org/ns/docbook">
+    Thus, if we delete a task, the related time stretches will be deleted too.
+  </ns1310:para>
+</ns1297:section>

@@ -1,0 +1,1539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="resources.information.technologies.java.j2me.highLevelGui.highLevelGui"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>High-Level GUI Development</title>
+
+<section><title>Introduction</title>
+    <para>
+      MIDP defines an entirely new user-interface class library. <emphasis>Swing</emphasis>
+      is too resource intensive and the <emphasis>AWT</emphasis> relies on too much support 
+      from the underlying platform. Furthermore, both, <emphasis>Swing</emphasis> and the
+      <emphasis>AWT</emphasis> are essentially designed for pointer devices like a mouse,
+      whilst many MIDP-supporting devices (e.g. mobile phones) do not support pointer devices.
+      Furthermore, even if they do, it is, from a usability perspective, often not the
+      interface of choice.
+    </para>
+    
+    <section><title>Navigation through Displayables</title>
+      <para>
+        Since a multi-layered desktop is not really viable for small devices,
+        the expert group which specified the Mobile Information Device Profile
+        (MIDP) opted instead for a sequence of simple single-layered 
+        <interface>Displayable</interface>s. The application path then
+        takes one through a sequence of displayables. In its simplest one
+        could view the sequence of <interface>Displayable</interface>s
+        as a pack of cards where the next card is shown after a card is lifted.
+      </para>
+      
+      <para>
+        More realistically, though, there may be many paths through the
+        <interface>Displayable</interface>s and these paths are best documented
+        diagrammatically with, for example, UML activity diagrams.
+      </para>
+    </section>
+    
+    <section><title>Common command support in Displayable</title>
+      
+      <para>
+        For each displayable there may be a set of commands. Some of these may 
+        perform operations while others may navigate you through to another
+        <interface>Displayable</interface>. The interface <interface>Displayable</interface>
+        requires that every <interface>Displayable</interface> provides basic support
+        for command management (see <xref linkend="figDisplayable"/>).
+      </para>
+      
+      <figure  id="figDisplayable">
+        <title>Displayable is an interface implemented by both, high- and low-level
+               user-interfaces.</title>
+        <graphic align="center" format="JPEG" 
+          fileref="file:/home/solms/Documents/courses/J2ME/book/highLevelGui/Displayable.jpg"/>
+      </figure>
+    
+    </section>
+    
+    <section><title>High- versus low-level user interfaces</title>
+      <para>
+        The two implementations of <interface>Displayable</interface> are
+        <classname>Canvas</classname> and <classname>Screen</classname>. These
+        form the basis for low- and high-level user interfaces respectively.
+      </para>
+      
+      <section><title>Canvas as the basis of low-level user-interfaces</title>
+        <para>
+          A <classname>Canvas</classname> is the MIDP equivalent of a 
+          <classname>GraphicsContext</classname> in the AWT. One can
+          directly draw and write onto the canvas. Low-level user-interface
+          development is covered in chapter <xref linkend="chapLowLevelGui"/>.
+        </para>
+      </section>
+      
+      <section><title>Screen as the basis of high-level user-interfaces</title>
+        <para>
+          A <classname>Screen</classname> is the base class of the high-level user-interface
+          components and forms the basis of component-based user-interface development.
+        </para>
+      </section>
+    </section>
+    
+    <section><title>Abstraction from the actual presentation</title>
+      <para>
+        One of the issues which MIDP tries to address is that the physical
+        screen dimensions and the interaction mechnisms (buttons, pointers,
+        ...) differ significantly from device to device. For example, PDA's
+        typically have a relatively large screen and support pointing devices, 
+        but often have only very few buttons.
+      </para>
+      <para>
+        Mobile phones, on the other hand, support a range of buttons, while
+        having a much more restricted display and often do not support pointer
+        devices.
+      </para>
+      <para>
+        In order to support platform independent software development accross
+        a whole range of micro devices, MIDP's high-level user-interface support 
+        is defined at an abstract level where the rendering may differ significantly 
+        accross devices.
+      </para>
+      <para>
+        On the other hand, through the low-level user interface, one may be use 
+        device-specific in order to write more specialized applications.
+      </para>
+    </section>
+    
+  </section>
+
+  <section><title>Working with commands</title>
+    <para>
+      A command is a request for a service and hence triggers an activity.
+      Commands in MIDP are usually triggered by buttons.
+    </para>
+    <para>
+      The fact that the command support is built into the interface
+      <interface>Displayable</interface> implies that command support
+      is available for both, low- and high-level user interfaces. In either
+      case one will have to
+      <itemizedlist>
+        <listitem><para>
+          define the command,          
+        </para></listitem>
+        <listitem><para>
+          register the command with the <interface>Displayable</interface> and
+        </para></listitem>
+        <listitem><para>
+          write an event listener for the command.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  
+    <section><title>Defining commands</title>
+      <para>
+        To define a <command>command</command> one instantiates the 
+        <classname>javax.microedition.lcdui.Command</classname> class.
+        The class is instantiated with three parameters:
+        <orderedlist>
+          <listitem><para>
+            a command <parameter>label</parameter>,
+          </para></listitem>
+          <listitem><para>
+            a command <parameter>label</parameter> and  
+          </para></listitem>
+          <listitem><para>
+            the <parameter>priority</parameter> of the command.
+          </para></listitem>
+        </orderedlist>
+        For example,
+        <programlisting>
+Command nextCommand = new Command("Next", Command.OK, 1);
+        </programlisting>
+      </para>
+      
+      <section><title>The command label</title>
+        <para>
+          The command label is a textual description of the command. Often
+          one will select a short verb for the label.
+        </para>
+      </section>
+      
+      <section><title>The command type</title>
+        <para>
+          MIDP defines eight command types and you may select only one of these.
+          They are
+          <itemizedlist>
+            <listitem><para>
+              <command>BACK</command> 
+              used to request navigation back to the previous screen without
+              cancelling the current screen.
+            </para></listitem>
+            <listitem><para>
+              <command>CANCEL</command>  
+              used to cancel the current screen and move back to the previous
+              screen.
+            </para></listitem>
+            <listitem><para>
+              <command>EXIT</command>  
+              used to request exiting the application.
+            </para></listitem>
+            <listitem><para>
+              <command>HELP</command>  
+              used to request on-line help.
+            </para></listitem>
+            <listitem><para>
+              <command>ITEM</command>  
+              to apply the action to the currently selected item.
+            </para></listitem>
+            <listitem><para>
+              <command>OK</command>  
+              used to confirm the current screen and to request navigation to
+              the next screen.
+            </para></listitem>
+            <listitem><para>
+              <command>SCREEN</command>  
+              to apply the action to the entire screen.
+            </para></listitem>
+            <listitem><para>
+              <command>STOP</command>  
+              used to request that the current operation should terminate.
+            </para></listitem>
+          </itemizedlist>
+          
+        </para>
+
+				<para>
+				In the MIDP2 specifications the option to attach commands to items has been added. Via the <emphasis>setItemCommandListener()</emphasis> a <emphasis>ItemCommandListener</emphasis> can be attached to an item and receive events. The command would have to been added previously to the item. A default command has also been added to each item. The default command is set / overridden via the <emphasis>setDefaultCommand</emphasis> method.
+				</para>
+      </section>
+      
+      <section><title>Command priorities</title>
+        <para>
+          Recall that the positioning of the GUI elements and the commands is not
+          directly specified in MIDP due to the large variations in the device
+          features. Instead one defines positioning in a more abstract way. This
+          is done via command priorities.
+        </para>
+        <para>
+          The command priority must be an integer equal to or larger than 1.
+          1 has the highest priority. Multiple commands may have the same
+          priority. The command priority is used to determine where a
+          command is placed on the screen and/or how easily the command can
+          be accessed.
+        </para>
+        <figure  id="figCommandPrioritiesTest">
+          <title>Additional commands may, on some devices, be automatically inserted into menus.
+                 The command priorities determine the ordering on the user interface.</title>
+          <graphic depth="12cm" align="center" format="JPEG"  
+            fileref="file:/home/solms/Documents/courses/J2ME/book/highLevelGui/commandPrioritiesTest.jpg"/>
+        </figure>
+        <para>
+          For example, on many devices only two buttons are used to submit commands.
+          If we place more commands on a screen, MIDP will typically use one of the 
+          buttons for one of the commands with the highest priority and the other button
+          for a menu through which the remainder of the commands are accessed. The ordering
+          of the commands on the menu is too determined by the priority. Commands with
+          equal priority are placed in the order that they have been added to the screen.
+        </para>
+        <para>
+          Below we show a listing of the example application,
+          <application>CommandPrioritiesTest</application> which defines five commands
+          with different priorities and adds them to the <classname>Form</classname> which
+          is a specialization of <classname>Screen</classname>. Notice how some of the
+          commands are grouped within a menu (see <xref linkend="figCommandPrioritiesTest"/>).
+        </para>
+        <example><title>CommandPrioritiesTest.java</title>
+          <para>
+            <programlisting>
+              &commandPrioritiesTest;
+            </programlisting>
+          </para>
+        </example>
+    
+      </section>
+      
+    </section>
+    
+  
+    <section><title>Registering commands</title>
+      <para>
+        Commands are registered with the <interface>Displayable</interface> (the
+        <classname>Form</classname> in our case) via the
+        <programlisting>
+displayable.addCommand(theCommand);        
+        </programlisting>
+        method,
+      </para>
+    </section>
+
+    <section><title>Writing command listeners</title>
+      <para>
+        Command listeners are very similar to normal event listeners. There is, however,
+        a single command listener for each displayable (screen) which will have to
+        identify the command and request the appropriate action.
+      </para>
+      <para>
+        Command identification can be done either on the label or on the command
+        reference itself. The former is a presentation preference which may be
+        different from area to area and which may be read from a properties file.
+        It is usually a better idea to identify cmmands on their references.
+      </para>
+    </section>
+
+  </section>
+
+  <section><title>High-Level GUI classes</title>
+    <para>
+      In this chapter we are focusing on high-level GUI development. The class hierarchy
+      for the high-level GUI classes are shown in <xref linkend="figHighLevelGuiClasses"/>.
+    </para>
+
+    <figure id="figHighLevelGuiClasses">
+      <title>Class Hierarchy showing MIDP GUI classes</title>
+      <graphic format="JPEG" align="center" 
+        fileref="file:/home/solms/Documents/courses/J2ME/book/highLevelGui/HighLevelGuiClasses.jpg"/>
+    </figure>
+  
+    <section><title>Screens, Titles and Tickers</title>
+    
+      <para>
+        <classname>Screen</classname> is the abstract base class for any high-level 
+        displayable. This displayable may be a single component filling the screen 
+        (like a text box) or a <classname>Form</classname> which is a container for 
+        items (text fields, image items, drop-down list boxes, ...).
+      </para>
+      <para>
+        <classname>Screen</classname>s provides facilities for a title and a ticker tape. 
+        and all high-level screens may thus contain either of these.
+      </para>
+      
+      <section><title>Screen titles</title>
+        <para>
+          The title is a short text title which is typically displayed at the top of the
+          screen. The rendering (exact location and font) is, however, left to the device.
+        </para>
+        <para>
+          Screens should typically have titles. Take into account that on small devices
+          users will typically have to navigate through a relatively large number of
+          screens and titles can assist them with the navigation.
+        </para>
+      </section>
+      
+      <section><title>Tickers</title>
+      
+        <para>
+          A ticker is a limited area which continuously scrolls circularly through a line
+          of text. The realization of the ticker (placement, font, scroll speed and scroll
+          direction) are left to the individual devices. You can only specify the text
+          displayed by the ticker. This may be changes at any stage, though. 
+        </para>
+        <para>
+          Below we show the interface of the <classname>Ticker</classname> class provided
+          by MIDP:
+          <programlisting>
+public class Ticker extends java.lang.Object
+{
+  public Ticker(String line) {...}
+  
+  public String getString() {...}
+  
+  public void setString(String newLine) {...}
+  
+  ...
+}  
+          </programlisting>
+        </para>
+      </section>  
+    
+    </section>
+    
+    <section><title>Alerts</title>
+      <para>
+        Alerts are like message dialogs. They are often used to inform the user of some
+        event. Also warnings and error messages are typically communicated through 
+        <classname>Alert</classname>s. This may be done through a text message and/or
+        an image.  
+      </para>
+      <para>
+        One feature of an <classname>Alert</classname> is that it typically shows data 
+        to the user and waits for a certain period of time before proceeding to the 
+        next screen.
+      </para>
+      <para>
+        An alert has potentially 
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>A title</title>
+            <para>specifying a title for the alert screen</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>A message</title>
+            <para>This is a string of text shown in the alert.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>An image</title>
+            <para>
+              This may be an image icon which is displayed with the text or an image
+              which conveys the message itself.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>A timeout period in milliseconds</title>
+            <para>
+              After the timeout period has elapsed the next screen is shown automatically. 
+              The timeout period may be set to infinite by setting it to
+              <constant>Alert.FOREVER</constant>.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>An alert type</title>
+            <para>
+              The alert type can be one of
+              <itemizedlist>
+                <listitem><para>
+                  <emphasis>INFO</emphasis> for informational messages, 
+                </para></listitem>
+                <listitem><para>
+                  <emphasis>WARNING</emphasis> for conveying information which may
+                    prevent users from causing something which may have detrimental
+                    consequences to the user,
+                </para></listitem>
+                <listitem><para>
+                  <emphasis>ERROR</emphasis> for errors, 
+                </para></listitem>
+                <listitem><para>
+                  <emphasis>ALARM</emphasis> informs the user about an event which the 
+                  user has previously requested to be notified about and  
+                </para></listitem>
+                <listitem><para>
+                  <emphasis>COMFIRMATION</emphasis> confirmation messages. 
+                </para></listitem>
+              </itemizedlist>
+            </para>
+          </formalpara></listitem>
+        </itemizedlist>
+        In <xref linkend="figAlert"/> we show an example of an <classname>Alert</classname>.
+      </para>
+
+      <figure  id="figAlert">
+        <title>An Alert can be used as a splash screen.</title>
+        <graphic depth="12cm" align="center" format="JPEG" 
+          fileref="file:/home/solms/Documents/courses/J2ME/book/highLevelGui/Alert.jpg"/>
+      </figure>
+      
+      
+      <para>
+        Another useful aspect of <classname>Alert</classname>s is that any changes to 
+        their properties are applied immediately, i.e. an application need not refresh
+        the <classname>Alert</classname> since it is refreshed automatically.
+      </para>
+    </section>
+    
+    <section id="secTextBoxes"><title>Text boxes</title>
+      <para>
+        Text boxes enable users to enter multi-line text. One specifies a 
+        <emphasis>maximum size</emphasis> 
+        (the maximum number of characters) for the text. This maximum size has, however
+        nothing to do with the amount of text displayed. The font, the line lengths and 
+        the number of lines displayed on the device are determined by the device itself.
+        The text box will <emphasis>automatically scroll</emphasis> to show text which
+        does not fit onto the device screen.
+      </para>
+      <para>
+        In addition to accepting user input one can do the following programmatically
+        <itemizedlist>
+          <listitem><para>
+            query and modify the enetered text and 
+          </para></listitem>
+          <listitem><para>
+            query and modify the caret position.  
+          </para></listitem>
+        </itemizedlist>
+        The complete interface of the <classname>TextBox</classname> class is
+        shown below:
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>TextBox(String title, String text, int maxSize, int constraints)</title>
+            <para>
+              Creates a new TextBox object with the given title string, initial contents, 
+              maximum size in characters, and constraints.     
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void delete(int offset, int length)</title>
+            <para>Deletes characters from the TextBox.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>int getCaretPosition()</title>
+            <para>Gets the current input position.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>int getChars(char[] data)</title>
+            <para>
+              Copies the contents of the TextBox into a character array starting at index zero.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>int getConstraints()</title>
+            <para>
+              Get the current input constraints of the TextBox. The constraints are specified
+              by supplying one of
+              <itemizedlist>
+                <listitem><para>TextField.ANY</para></listitem>
+                <listitem><para>TextField.URL</para></listitem>
+                <listitem><para>TextField.EMAILADDR</para></listitem>
+                <listitem><para>TextField.NUMERIC</para></listitem>
+                <listitem><para>TextField.PASSWORD</para></listitem>
+                <listitem><para>TextField.PHONENUMBER</para></listitem>
+              </itemizedlist>
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>int getMaxSize()</title>
+            <para>
+              Returns the maximum size (number of characters) that can be stored in this TextBox.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>String getString()</title>
+            <para>Gets the contents of the TextBox as a string value.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void insert(char[] data, int offset, int length, int position)</title>
+            <para>
+             Inserts a subrange of an array of characters into the contents of the TextBox. 
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void insert(String src, int position)</title>
+            <para>Inserts a string into the contents of the TextBox.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void setChars(char[] data, int offset, int length)</title>
+            <para>
+              Sets the contents of the TextBox from a character array, replacing the previous contents.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void setConstraints(int constraints)</title>
+            <para>Sets the input constraints of the TextBox.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title> int setMaxSize(int maxSize)</title>
+            <para>
+              Sets the maximum size (number of characters) that can be contained in this TextBox.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void setString(String text)</title>
+            <para>
+              Sets the contents of the TextBox as a string value, replacing the previous contents.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>int size()</title>
+            <para>Gets the number of characters that are currently stored in this TextBox.</para>
+          </formalpara></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section><title>Lists</title>
+      <para>
+        A list enables users to select one or more elements from a list of elements.
+        Unlike choice groups discussed later in the chapter, lists are screens and
+        hence no other elements can be located on the list screen.
+      </para>
+      <para>
+        Inlike the equivalent GUI components of Swing and the AWT, MIDP components
+        like lists do not originate application visible events for traversal and
+        scolling.
+      </para>
+      
+      <section><title>Select modes supported by lists</title>
+        <para>
+          Lists support the following select modes:
+          <itemizedlist>
+            <listitem><para>
+              <emphasis>IMPLICIT</emphasis> which makes te list behave like a button
+              where the command listener for the list is notified and can perform an
+              action directly in response to a lit element selection.
+            </para></listitem>
+            <listitem><para>
+              <emphasis>EXCLUSIVE</emphasis> forces a list into single-selection mode.
+            </para></listitem>
+            <listitem><para>
+              <emphasis>MULTIPLE</emphasis> which allows the user to toggle the selection
+              of each item individually.
+            </para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+      
+      <section><title>List content</title>
+        <para>
+          One can add any object to a Swing or AWT list. The object will be rendered as
+          a GUI component if that is possible. Otherwise the <methodname>toString()</methodname>
+          method will be called to render the object as text. This is very useful because
+          we do not have to map between a proxy (the item number or object name) and the
+          selected object.
+        </para>
+        <para>
+          This convenience is not available if you develop for MIDP. Here you will have to
+          insert string and/or image arrays into the list and the application must hence
+          take care of the mapping between these and the actual objects they represent.
+        </para>
+      </section>
+      
+      <section><title>The list interface</title>
+        <para>
+          The <classname>List</classname> interface is quite simple. In addition to the
+          screen title and the ticker tape as well as the command support inherited from
+          <classname>Screen</classname>, <classname>List</classname>s have the following
+          services:
+
+          
+
+          
+           <itemizedlist>
+            <listitem><formalpara>
+              <title>List(String title, int listType)</title>
+              <para>Creates a new, empty List, specifying its title and the type of the list.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>List(String title, int listType, String[] stringElements, Image[] imageElements)</title>
+              <para>
+                Creates a new List, specifying its title, the type of the List, and an array of Strings 
+                and Images to be used as its initial contents.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int append(String stringPart, Image imagePart)</title>
+              <para>Appends an element to the Choice.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void delete(int elementNum)</title>
+              <para>Deletes the element referenced by elementNum.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Image getImage(int elementNum)</title>
+              <para>Gets the Image part of the element referenced by elementNum.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int getSelectedFlags(boolean[] selectedArray_return)</title>
+              <para>
+                Queries the state of a Choice and returns the state of all elements 
+                in the boolean array selectedArray_return.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int getSelectedIndex()</title>
+              <para>Returns the index number of an element in the Choice that is selected.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>String getString(int elementNum)</title>
+              <para>Gets the String part of the element referenced by elementNum.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void insert(int elementNum, String stringPart, Image imagePart)</title>
+              <para>Inserts an element into the Choice just prior to the element specified.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>boolean isSelected(int elementNum)</title>
+              <para>Gets a boolean value indicating whether this element is selected.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void set(int elementNum, String stringPart, Image imagePart)</title>
+              <para>
+                Sets the element referenced by elementNum to the specified element, 
+                replacing the previous contents of the element.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setSelectedFlags(boolean[] selectedArray)</title>
+              <para>Attempts to set the selected state of every element in the Choice.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setSelectedIndex(int elementNum, boolean selected)</title>
+              <para>For MULTIPLE, this simply sets an individual element's selected state.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int size()</title>
+              <para>Gets the number of elements present.</para>
+            </formalpara></listitem>
+          </itemizedlist>
+        </para>
+        <para>
+          Lists are very useful on small devices and we shall use them in the ordering
+          application developed in <xref linkend="secMobileOrder"/>.
+        </para>
+      </section>
+    </section>
+    
+    <section><title>Forms</title>
+      <para>
+        A form is the last of the screens. The remaining user interface components are
+        items which may be placed within forms.
+        A <classname>Form</classname> is the only <classname>Screen</classname> which
+        can hold multiple GUI items including
+        <itemizedlist>
+          <listitem><para>StringItems,</para></listitem>
+          <listitem><para>TextFields,</para></listitem>
+          <listitem><para>DateFields,</para></listitem>
+          <listitem><para>ChoiceBoxes,</para></listitem>
+          <listitem><para>ImageItems and</para></listitem>
+          <listitem><para>Gauges.</para></listitem>
+          <listitem><para>Custom Items (MIDP2 only).</para></listitem>
+        </itemizedlist>
+      </para>
+      
+      <section><title>Placement of items in forms</title>
+        <para>
+          This is left largely to the device. The device screen sizes and resolutions
+          can very be as much as an order of magnitude and, since our development should
+          be as device-neutral as possible, the physical placement is best left to the 
+          device itself.
+        </para>
+        <para>
+          We simply specify the order in which the items should appear. On a cell phone 
+          even the label and the accompanying field for an item may be split accross
+          multiple lines.
+        </para>
+				<para>
+					With MIDP2 a LAYOUT was added allowing each item to be layed out along specified constraints. The following layout constraints are available. 
+				</para>
+				<itemizedlist>
+
+					<listitem><formalpara><title>LAYOUT_DEFAULT </title><para>A layout directive indicating that this Item should follow the default layout policy of its container.</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_LEFT </title><para>A layout directive indicating that this Item should have a  left-aligned layout.</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_RIGHT </title><para>A layout directive indicating that this Item should have a  right-aligned layout.</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_CENTER </title><para>A layout directive indicating that this Item should have a  horizontally centered layout.</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_TOP </title><para>A layout directive indicating that this Item should have a  top-aligned layout.</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_BOTTOM </title><para>A layout directive indicating that this Item should have a  bottom-aligned layout.</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_VCENTER </title><para>A layout directive indicating that this Item should have a  vertically centered layout</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_NEWLINE_BEFORE </title><para>A layout directive indicating that this Item should be placed at the beginning of a new line or row.</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_NEWLINE_AFTER </title><para>A layout directive indicating that this Item  should the last on its line or row, and that the next  Item (if any) in the container  should be placed on a new line or row.</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_SHRINK </title><para>A layout directive indicating that this Item's  width may be reduced to its minimum width.</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_VSHRINK </title><para>��A layout directive indicating that this Item's  height may be reduced to its minimum height.</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_EXPAND </title><para>A layout directive indicating that this Item's width may be increased to fill available space.</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_VEXPAND </title><para>A layout directive indicating that this Item's height may be increased to fill available space.</para></formalpara></listitem>
+					<listitem><formalpara><title>LAYOUT_2 </title><para>A layout directive indicating that new MIDP 2.0 layout  rules are in effect for this Item.</para></formalpara></listitem>
+
+				</itemizedlist>
+
+				<para>
+				A minimum and preferred size have also been added with the MIDP2 specification.
+				</para>
+      </section>
+      
+      <section><title>The services offered by forms</title>
+        <para>
+          Most of the services relate to a form being a container of items:
+          <itemizedlist>
+            <listitem><formalpara>
+              <title>Form(String title)</title>
+              <para>Creates a new, empty Form.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Form(String title, Item[] items)</title>
+              <para>Creates a new Form with the specified contents.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int append(Image img)</title>
+              <para>Adds an item consisting of one Image to the form.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int append(Item item)</title>
+              <para>Adds an Item into the Form.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int append(String str)</title>
+              <para>Adds an item consisting of one String to the form.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void delete(int itemNum)</title>
+              <para>Deletes the Item referenced by itemNum.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Item get(int itemNum)</title>
+              <para>Gets the item at given position.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void insert(int itemNum, Item item)</title>
+              <para>Inserts an item into the Form just prior to the item specified.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void set(int itemNum, Item item)</title>
+              <para>
+                Sets the item referenced by itemNum to the specified item, replacing the 
+                previous item.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setItemStateListener(ItemStateListener iListener)</title>
+              <para>
+                Sets the ItemStateListener for the Form, replacing any previous 
+                ItemStateListener.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int size()</title>
+              <para>Gets the number of items in the Form.</para>
+            </formalpara></listitem>
+          </itemizedlist>
+        </para>  
+      </section>
+    </section>
+    
+    <section><title>Items</title>
+      <para>
+        Items are user-interface components which can be inserted into forms.
+        They all have a label and this is the only feature inherited by the
+        subclasses of <classname>Item</classname>. The interface looks as 
+        follows:
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>String getLabel()</title>
+            <para>Gets the label of this Item object.</para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void setLabel(String label)</title>
+            <para>Sets the label of the Item.</para>
+          </formalpara></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section><title>StringItems</title>
+      <para>
+        A <classname>StringItem</classname> represents some static text which can
+        be modified from within the code, but not by the user. 
+        <classname>StringItem</classname>s still have a label and a text area
+        and the two may be rendered differently. Besides the label access methods
+        inherited from <classname>Item</classname>, <classname>StringItem</classname>
+        defines the following services:
+        <itemizedlist>
+          <listitem><formalpara>
+            <title>StringItem(String label, String text)</title>
+            <para>
+              Creates a new StringItem object with the given label and textual content.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>String getText()</title>
+            <para>
+              Gets the text contents of the StringItem, or null if the StringItem is empty.
+            </para>
+          </formalpara></listitem>
+          <listitem><formalpara>
+            <title>void setText(String text)</title>
+            <para>Sets the text contents of the StringItem.</para>
+          </formalpara></listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    
+    <section><title>TextFields</title>
+      <para>
+        <classname>TextField</classname>s are user-editable. Furthermore, we can assign
+        constraints on the input restricting user input to text which satisfies a
+        particular pattern. The class also provides rich semantics for setting and
+        querying particular aspects of the text as well as for manipulating the caret.
+      </para>
+      
+      <section><title>TextField constraints</title>
+        <para>
+          MIDP supports the same set of constraints for text fields as for text boxes
+          (see <xref linkend="secTextBoxes"/>). They are
+          <itemizedlist>
+            <listitem><para>NUMERIC,</para></listitem>
+            <listitem><para>ANY,</para></listitem>
+            <listitem><para>EMAILADDR,</para></listitem>
+            <listitem><para>URL,</para></listitem>
+            <listitem><para>PHONENUMBER,</para></listitem>
+            <listitem><para>PASSWORD and</para></listitem>
+            <listitem><para>ANY.</para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+      
+      <section><title>Interface for TextFields</title>
+        <para>
+          Below we show all the services offered by <classname>TextField</classname>s
+          which are in addition to the label-related services inherited from
+          <classname>Item</classname>:
+          <itemizedlist>
+            <listitem><formalpara>
+              <title>TextField(String label, String text, int maxSize, int constraints)</title>
+              <para>
+                Creates a new TextField object with the given label, initial contents, maximum 
+                size in characters, and constraints.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void delete(int offset, int length)</title>
+              <para>Deletes characters from the TextField.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int getCaretPosition()</title>
+              <para>Gets the current input position.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int getChars(char[] data)</title>
+              <para>
+                Copies the contents of the TextField into a character array starting at index zero.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int getConstraints()</title>
+              <para>Get the current input constraints of the TextField.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int getMaxSize()</title>
+              <para>Returns the maximum size (number of characters) that can be stored in this TextField.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>String getString()</title>
+              <para>Gets the contents of the TextField as a string value.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void insert(char[] data, int offset, int length, int position)</title>
+              <para>Inserts a subrange of an array of characters into the contents of the TextField.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void insert(String src, int position)</title>
+              <para>Inserts a string into the contents of the TextField.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setChars(char[] data, int offset, int length)</title>
+              <para>
+                Sets the contents of the TextField from a character array, 
+                replacing the previous contents.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setConstraints(int constraints)</title>
+              <para>Sets the input constraints of the TextField.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int setMaxSize(int maxSize)</title>
+              <para>
+                Sets the maximum size (number of characters) that can be contained in this TextField.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setString(String text)</title>
+              <para>
+                Sets the contents of the TextField as a string value, replacing the previous contents.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int size()</title>
+              <para>Gets the number of characters that are currently stored in this TextField.</para>
+            </formalpara></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+    </section>
+    
+    <section><title>DateFields</title>
+      <para>
+        Date fields are really useful. They enable users to conveniently select/enter
+        date times. The rendering differs, once again, from device to device. 
+      </para>
+
+      <figure  id="figDateField">
+        <title>A DateField enables user to select a date via a calendar.</title>
+        <graphic depth="12cm" align="center" format="JPEG" 
+          fileref="file:/home/solms/Documents/courses/J2ME/book/highLevelGui/DateField.jpg"/>
+      </figure>
+      
+      <section><title>Input modes</title>
+        <para>
+          The <classname>DateField</classname> of MIDP offers the following input modes:
+          <itemizedlist>
+            <listitem><para>
+              <emphasis>DATE</emphasis> for selecting a date from a calendar,
+            </para></listitem>
+            <listitem><para>
+              <emphasis>TIME</emphasis> for selecting the time from a clock and
+            </para></listitem>
+            <listitem><para>
+              <emphasis>DATE_TIME</emphasis> for selecting both, the date and the time.
+            </para></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+      
+      <section><title>The DateField interface</title>
+        <para>
+          <classname>DateField</classname>s offers,in addition to the label manipulation
+          services inherited from <classname>Item</classname>, the following services:
+          <itemizedlist>
+            <listitem><formalpara>
+              <title>DateField(String label, int mode)</title>
+              <para>Creates a DateField object with the specified label and mode.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>DateField(String label, int mode, TimeZone timeZone)</title>
+              <para>
+                Creates a date field in which calendar calculations are based on specific 
+                TimeZone object and the default calendaring system for the current locale.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Date getDate()</title>
+              <para>Returns date value of this field.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int getInputMode()</title>
+              <para>Gets input mode for this date field.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setDate(Date date)</title>
+              <para>Sets a new value for this field.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setInputMode(int mode)</title>
+              <para>Set input mode for this date field.</para>
+            </formalpara></listitem>
+          </itemizedlist>
+        </para>
+      </section>
+    </section>
+    
+    <section><title>ImageItems</title>
+      <para>
+        An <classname>ImageItem</classname> encapsulates an image. One may request
+        the placement of the image to be one of
+        <itemizedlist>
+          <listitem><para>
+            <emphasis>LAYOUT_CENTER</emphasis> for horizantal centering of the image,
+          </para></listitem>
+          <listitem><para>
+            <emphasis>LAYOUT_LEFT</emphasis> for the image to be placed at the left edge 
+            of the container,
+          </para></listitem>
+          <listitem><para>
+            <emphasis>LAYOUT_RIGHT</emphasis> to request that the image should be drawn
+            at the right edge of the container,
+          </para></listitem>
+          <listitem><para>
+            <emphasis>LAYOUT_NEWLINE_AFTER</emphasis> to request that a new line should
+            be started after the image,
+          </para></listitem>
+          <listitem><para>
+            <emphasis>LAYOUT_NEWLINE_BEFORE</emphasis> to request that a new line should 
+            be started before the image, and
+          </para></listitem>
+          <listitem><para>
+            <emphasis>LAYOUT_DEFAULT</emphasis> to request that the image should be 
+            rendered using the default formatting of the container.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+      <section><title>Services offered by ImageItem</title>
+        <para>
+          Most services provide provide support for rendering issues:
+          <itemizedlist>
+            <listitem><formalpara>
+              <title>ImageItem(String label, Image img, int layout, String altText)</title>
+              <para>
+                Creates a new ImageItem with the given label, image, layout directive, and 
+                alternate text string.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>String getAltText()</title>
+              <para>
+                Gets the text string to be used if the image exceeds the device's capacity 
+                to display it.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>Image getImage()</title>
+              <para>
+                Gets the image contained within the ImageItem, or null if there 
+                is no contained image.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int getLayout()</title>
+              <para>Gets the layout directives used for placing the image.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setAltText(String text)</title>
+              <para>
+                Sets the alternate text of the ImageItem, or null if no alternate 
+                text is provided.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setImage(Image img)</title>
+              <para>Sets the image object contained within the ImageItem.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setLayout(int layout)</title>
+              <para>Sets the layout directives.</para>
+            </formalpara></listitem>
+          </itemizedlist>
+        </para>
+				<para>
+				The MIDP2 specifications allows the modification of graphics via RGB images. Each pixel is represented by an integer value. This is discussed in more detail in the <xref linkend="chapLowLevelGui"/>.
+				</para>
+      </section>
+    </section>
+    
+    <section><title>ChoiceGroups</title>
+      <para>
+        A <classname>ChoiceGroup</classname> is in many ways very similar to a 
+        <classname>List</classname>, except that
+        <itemizedlist>
+          <listitem><para>
+            can be inserted, together with other items, into a form and that
+          </para></listitem>
+          <listitem><para>
+            it does not support the <emphasis>IMPLICIT</emphasis> mode, though it does
+            support the modes 
+            <itemizedlist>
+              <listitem><para>
+                <emphasis>INCLUSING</emphasis> for multiple-element selection and  
+              </para></listitem>
+              <listitem><para>
+                <emphasis>EXCLUSIVE</emphasis> for single-element selection. 
+              </para></listitem>
+              <listitem><para>
+                <emphasis>POPUP</emphasis> for combo-box selection. Only the single selected item is displayed with the option to access additional options via a <emphasis>popup</emphasis>. 
+              </para></listitem>
+            </itemizedlist>
+          </para></listitem>
+        </itemizedlist>
+      </para>
+      <para>
+        It's services are otherwise identical to those of <classname>List</classname>.
+        This is not coincedental. Both, <classname>List</classname> and
+        <classname>ChoiceGroup</classname> implement the <interface>Choice</interface>.
+      </para>
+    </section>
+    
+    <section><title>Gauges</title>
+      <para>
+        A gauge is a bar chart used to display the state of an object (e.g. the signal
+        strength or the remaining battery power). Gauges can, however, also be used
+        as an input element, enabling users to set th value of the gauge (e.g. to set
+        the volume or screen contrast).
+      </para>
+      
+      <section><title>Services offered by Gauge</title>
+        <para>
+          <classname>Gauge</classname> offers services to query and set the
+          value of a gauge as wel as to query and set its maximum value:
+          <itemizedlist>
+            <listitem><formalpara>
+              <title>Gauge(String label, boolean interactive, int maxValue, int initialValue)</title>
+              <para>
+                Creates a new Gauge object with the given label, in interactive or non-interactive 
+                mode, with the given maximum and initial values.
+              </para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int getMaxValue()</title>
+              <para>Gets the maximum value of this Gauge object.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>int getValue()</title>
+              <para>Gets the current value of this Gauge object.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>boolean isInteractive()</title>
+              <para>Tells whether the user is allowed to change the value of the Gauge.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setMaxValue(int maxValue)</title>
+              <para>Sets the maximum value of this Gauge object.</para>
+            </formalpara></listitem>
+            <listitem><formalpara>
+              <title>void setValue(int value)</title>
+              <para>Sets the current value of this Gauge object.</para>
+            </formalpara></listitem>
+          </itemizedlist>
+        </para>  
+      </section>
+    </section>
+		
+		<section>
+			<title>Custom Item</title>
+			<para>
+			The custom item, added with the MIDP2 specifications, provices a <emphasis>Canvas</emphasis> 
+			like item, allowing the creation of custom widgets. To create a custom widget the custom 
+			item is subclassed, and it's abstract methods are implemented.
+			</para>
+			<para>
+				<programlisting>
+					&CustomWidget.java; 
+				</programlisting>
+			</para>
+		</section>	
+  </section>
+  
+  <section><title>Floating point arithmetic</title>
+    <para>
+      Most current MIDP implementations do not support floating point arithmetic. 
+      This is largely due to the
+      fact that many MIDp devices don't support it. Furthermore, providing full
+      floating point arithmetic support in software can become quite complex and 
+      the MIDP expert group has thus decided to ommit it totally.
+    </para>
+    <para>
+      This often poses a problem and the new DC/CDLC specification which is not yet
+      supported by most devices does require support for floating point arithmetic. 
+    </para>
+    <para>
+      In this section we shall look at providing floating point arithmetic support
+      for implementations which do not provide floating point arithmetic.
+      For simple floating point addition e.g. summing
+      up prices, one can simply multiply the floating point number by a factor
+      sufficiently large to drop any significant digits (i.e. work in cents instead
+      of in Rand). One will have to be careful with long-overflow though.
+    </para>
+    <para>
+     Multiplication and division are a lot more tricky to support. Here an overflow
+     can occur very easily. Also, division will easily result in gross loss of
+     resolution. The simple approach scetched above will thus often be insufficient. 
+     For example, in the next section we will be developing a home loan calculator
+     where the expression for calculating the monthly installment is given by
+     <programlisting>
+i = (L*r/12)/(1-(1+r/12)^-N)
+     </programlisting>
+     with
+     <programlisting>
+i -> monthly installment     
+L -> loan amount
+r -> annual interest rate
+N -> loan period in months
+     </programlisting>
+     Here we have large negative powers (<constant>N</constant> is 240 for 20 year loans),
+     multiplication and division.
+    </para>
+    
+    <section><title>Providing support for floating point arithmetic</title>
+      <para>
+        In order to be able to write efficiently applications like loan calculators, we will
+        provide floating point arithmetic support via a <classname>Decimal</classname> class.
+        This class will encapsulate all the complexities of mapping floating point arithmetic
+        onto integer arithmetic.
+      </para>
+      <para>
+        A decimal has two variables of type <type>long</type>. The <varname>mantissa</varname>
+        for storing the digits and the <varname>exponent</varname>. The mantissa will always
+        be interpreted as <literal>x.xxxxxxx</literal>, i.e. that there is one digit infront
+        of the decimal point. Thus, 
+        <programlisting>
+  Decimal x = new Decimal(-123456789, 3);      
+        </programlisting>
+        creates a floating point variable with value <constant>-1234.56789</constant>.
+      </para>
+      <para>
+        We support floating point addition, subtraction, multiplication and division as
+        well as taking a positive or negative integer power of a floating point number.
+        Other functions (e.g. sqrt, trigonometric functions, ...) can then be calculated
+        via their Taylor expansions.
+      </para>
+      <para>
+        The basic floating point perations are provided by instance services. The interface
+        of the class is shown below:
+        <programlisting>
+public class Decimal
+{
+  public Decimal(long mantissa, long exponent);  /* core constructor */
+  public Decimal(String s);  /* constructor parsing a string as a decimal */
+  
+  public Decimal add(Decimal x);
+  public Decimal subtract(Decimal x);
+  public Decimal multiply(Decimal x);
+  public Decimal divide(Decimal x);
+  public Decimal pow(int n);
+}  
+        </programlisting>
+        The complete listing of the class is shown below:
+      </para>
+      <example><title>Decimal.java</title>
+        <programlisting>
+  &Decimal.java;      
+        </programlisting>
+      </example>
+    </section>
+    
+    <section><title>Using floating point arithmetic</title>
+      <para>
+        Let us now look at a simple application which makes use of our 
+        <classname>Decimal</classname> class. For now we shall compile
+        and run the class from the <application>J2SE</application>. In the
+        next section where we develop a MIDP-based loan calculator we shall
+        use the class with <application>J2ME</application>.
+      </para>
+      <example><title>DecimalTest.java</title>
+        <para>
+          Below we show a simple test application which illustrates the use of 
+          our <classname>Decimal</classname> class:
+          <programlisting>
+&DecimalTest.java;            
+          </programlisting>
+        </para>  
+        <para>
+          Compiling and running the application yields the following output:
+          <programlisting>
+java -classpath bin za.co.solmstraining.j2me.utils.test.DecimalTest            
+
+x = 1.87652176576549e12
+y = 6.8226279843435e7
+x + y = 1.87658999204533e12
+x - y = 1.87645353948566e12
+x * y = 1.28028101752904e20
+x / y = 2.7504383e4
+x = 1.0
+y = 3.0
+x / y = 3.3333333333333e-1
+y^-2 = 1.11111111111110e-1
+y^4 = 8.1e1
+Created decimal from string '-1234.5678e-12': -1.2345678e-9
+          </programlisting>
+        </para>
+      </example>
+    </section>
+  </section>
+  
+  <section><title>Example: MIDP loan calculator</title>
+    <para>
+      Our MIDP loan calculator will have a presentation layer and a business logic 
+      layer. 
+    </para>
+    
+    <section>
+      <title>The business logic layer</title>
+      <para>
+        All the business logic is located in the <classname>LoanCalculator</classname>
+        class which makes use of our floating-point arithmetic class, 
+        <classname>Decimal</classname>.
+      </para>  
+      <example><title>LoanCalculator.java</title>
+        <programlisting>
+&LoanCalculator.java;          
+        </programlisting>
+      </example>
+    </section>
+
+    <section><title>The presentation layer</title>
+      <para>
+        For the presentation layer we create a form which has
+        <itemizedlist>
+          <listitem><para>
+            a title informing users that they are busy with the loan calculator,            
+          </para></listitem>
+          <listitem><para>
+            a ticker tape displaying the current interest rate offered,
+          </para></listitem>
+          <listitem><para>
+            text fields for the
+              <itemizedlist>
+                <listitem><para>
+                  loan amount,                  
+                </para></listitem>
+                <listitem><para>
+                  loan period and
+                </para></listitem>
+                <listitem><para>
+                  the monthly installment
+                </para></listitem>
+              </itemizedlist>
+          </para></listitem>
+          <listitem><para>
+            a calculate and an exit command.
+          </para></listitem>
+        </itemizedlist>
+      </para>
+      <para>
+        If the installment field is left zero, the application will calculate
+        the mnthly installment on a loan taken out for the specified loan amount
+        over the specified period at the current interest rate.
+      </para>
+      <para>
+        Alternatively, if the loan amount field is left blank, the maximum loan 
+        amount is calculated using the supplied onthly installments and loan
+        periods as well as the current interest rate.
+      </para>
+
+      <figure  id="figLoanCalculatorMIDlet">
+        <title>The loan calculator MIDlet uses a single form with a title, a ticker, 
+               text fields and commands.</title>
+        <graphic depth="12cm" align="center" format="JPEG" 
+          fileref="file:/home/solms/Documents/courses/J2ME/book/highLevelGui/LoanCalculator.jpg"/>
+      </figure>
+      
+      <example><title>LoanCalculatorMIDlet.java</title>
+        <para>
+          An example of our loan calculator MIDlet is shown in 
+          <xref linkend="figLoanCalculatorMIDlet"/>.
+          <programlisting>
+&LoanCalculatorMIDlet.java;          
+          </programlisting>
+        </para>
+        <para>
+          We build the application with our Ant build script. This generates the 
+          <filename>jar</filename> and <filename>jad</filename> files. Note that,
+          even with the addition of floating point arithmetic, the total deployment
+          size is still under 10kB.
+        </para>
+        <para>
+          We can use our Ant script to run the application from our emulator. 
+          Alternatively we copy the <filename>jar</filename> and <filename>jad</filename>
+          files onto the device and in order to run the application there.
+        </para>
+      </example>
+    </section>
+  </section>
+  
+  <section id="secMobileOrder"><title>GUI for an ordering application</title>
+    <para>
+      The previous application used a single form. In this section we shall create
+      the user interface for a simple ordering application, 
+      <application>MobileOrder</application>, which takes users along a network of 
+      paths through a range of screens.
+    </para>
+    <para>
+      The screens include
+      <itemizedlist>
+        <listitem><para>An application splash screen (alert).</para></listitem>
+        <listitem><para>A login form.</para></listitem>
+        <listitem><para>A list showing the shopping basket content.</para></listitem>
+        <listitem><para>Forms for filling in line item details and checkout details.</para></listitem>
+        <listitem><para>Various other alerts.</para></listitem>
+      </itemizedlist>
+    </para>
+    
+    <section><title>Modeling the screen flow.</title>
+
+      <figure  id="figMobileOrderScreenFlow">
+        <title>An activity diagram depicting the dynamics through the various screens.</title>
+        <graphic align="center" format="JPEG" 
+          fileref="file:/home/solms/Documents/courses/J2ME/book/highLevelGui/MobileOrderScreenFlow.jpg"/>
+      </figure>
+      
+      <para>
+        To obtain an overview (or just to maintain sanity) it may help to have a graphical
+        view onto the screen flow. A UML activity diagram is useful for this. Figure
+        <xref linkend="figMobileOrderScreenFlow"/> shows the dynamics of the 
+        <application>MobileOrder</application> application.
+      </para>
+    </section>
+
+    <section><title>The MobileOrder Implementation</title>
+      <para>
+        Again we keep the business logic separate from the presentation. 
+      </para>
+
+      <section><title>The business logic layer</title>
+        <para>
+          The business
+          logic classes are the <classname>ProductList</classname>, the actual
+          <classname>ShoppingBasket</classname> and the <classname>LineItem</classname>.
+        </para>
+      
+        <para>
+          These are standard Java classes shown in the following example listings.
+        </para>
+        <example><title>ProductList.java</title>
+          <programlisting>
+  &ProductList.java;        
+          </programlisting>
+        </example>
+        
+        <example><title>ShoppingBasket.java</title>
+          <programlisting>
+  &ShoppingBasket.java;        
+          </programlisting>
+        </example>
+        
+        <example><title>LineItem.java</title>
+          <programlisting>
+  &LineItem.java;        
+          </programlisting>
+        </example>
+      </section>
+      
+      <section><title>The presentation layer and the controller</title>
+        <para>
+          The presentation layer is realized by the set of screens while the
+          controller is realized by the command listeners. The code is largely 
+          self-explanatory and the activity diagram shown in 
+          <xref linkend="figMobileOrderScreenFlow"/> should help understanding
+          the dynamics through the screen.
+        </para>
+        
+        <figure  id="figShoppingBasket">
+          <title>We used a List to display the items in the shopping basket.</title>
+          <graphic depth="12cm" align="center" format="JPEG" 
+            fileref="file:/home/solms/Documents/courses/J2ME/book/highLevelGui/ShoppingBasket.jpg"/>
+        </figure>
+        
+        <para>
+          The application's core screen is the shopping basket. It is shown in
+          <xref linkend="figShoppingBasket"/>. Most navigation start from
+          here including
+          <itemizedlist>
+            <listitem><para>adding new items to the basket,</para></listitem>
+            <listitem><para>editing and removing items in the basket,</para></listitem>
+            <listitem><para>purchasing a basket and even</para></listitem>
+            <listitem><para>exiting the application.</para></listitem>
+          </itemizedlist>
+        </para>
+        
+        <para>
+          There are thus many commands which apply to the shopping basket screen. Many
+          devices do not support that many command buttons. MIDP will automatically
+          make the commands accessible through a command menu. Note that the ordering of
+          the commands is firstly determined by the relative priority of the commands,
+          with the higher priority commands made more accessible, and secondly by
+          the order in which they were added to the screen. This is illustrated in
+          <xref linkend="figCommandMenu"/>
+        </para>
+
+        <figure  id="figCommandMenu">
+          <title>If a device has insufficient buttons to display all the menu items it lets users
+                 select the command from a menu.</title>
+          <graphic depth="12cm" align="center" format="JPEG" 
+            fileref="file:/home/solms/Documents/courses/J2ME/book/highLevelGui/CommandMenu.jpg"/>
+        </figure>
+        
+        <example><title>MobileOrder.java</title>
+          <para>
+            Here is now the listing of the presentation layer and controller of our
+            <application>MobileOrder</application> application.
+            <programlisting>
+&MobileOrder.java;            
+            </programlisting>
+          </para>
+        </example>
+        
+      </section>  
+  
+    </section>  
+    
+  </section>
+  
+  <section><title>Exercises</title>
+  
+    <orderedlist>
+      <listitem><para>
+        Write a simple calculator which can add, subtract, multiply and divide.         
+      </para></listitem>
+      
+      <listitem><para>
+        Write an application for purchasing theatre tickets from a single private
+        theatre. 
+      </para></listitem>
+    </orderedlist>
+    
+  
+  </section>
+  
+  
+</chapter>

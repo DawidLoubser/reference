@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <title>Building Requirements-Driven Adaptors to incompatible services</title>
+    
+    <indexterm>
+        <primary>adaptor</primary>
+        <secondary>requirements-driven</secondary>
+        <tertiary>building with JBI</tertiary>
+    </indexterm>
+    
+    <para>
+        A fundamental premise of contract-driven software development is that
+        the contract <emphasis>is specified from the perspective of the client</emphasis>. That is to say, the contract
+        <emphasis>formally represents the client's requirements for a service</emphasis>.
+    </para>
+    <para>
+        It is, after all, the client who wishes to ensure that he is never locked into using a particular service provider (the
+        service provider would typically be very happy to have lifetime-guaranteed clients regardless of the quality of
+        service it offers!). To this end, when we design the client, we first generate contract(s) for all the services
+        required by the client's business processes. At this stage, we do not even know whether implementations that satisfy these contracts exist - we
+        may indeed have to build implementations ourselves. When we do look for external services, we may find services
+        that represent a close match - a particular provider may offer either a superset of the required functionality, or
+        the service interface / exchanged data objects may be similar, but identical.
+    </para>
+    <para>
+        It is very important to, in such cases, <emphasis>not directly couple the client to a particular service provider's
+            contract.</emphasis> If he did (and even if the match was extremely close or exact), the client would have to acknowledge
+        <itemizedlist>
+            <listitem>
+                <para>that the provider's contract <emphasis>exactly matches</emphasis> the client's requirements,</para>
+            </listitem>
+            <listitem>
+                <para>that the provider happens to change their contract (typically because the <emphasis>provider</emphasis>
+                    had undergone certain requirements changes) the client is happy to absorb those changes as being part of 
+                his/her requirements - immediately, unconditionally, and regardless of what those changes may entail. This
+                will typically imply changes to the core business process of the client. And lastly,</para>
+            </listitem>
+            <listitem>
+                <para>that if the provider ceases to exist, or happens to incorporate such radical changes that a change of
+                provider is unavoidable, the client is happy to incur the cost of making core changes to his business processes
+                to accommodate the new service provider.</para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        Of course, this cycle could repeat itself very often. It is clear that most clients should not be built in such a manner.
+        JBI offers us an environment in which any differences between what a client wants, and what a provider offers, can be absorbed
+        in an adaptor. This localises any changes that are required to, for example, accommodate a new / different service provider.
+        It also means that we can re-use our tests for any given service provider, because such tests have been written against the
+        client's requirements, and not a particular provider's offerings. The following process could be followed:
+        <itemizedlist>
+            <listitem>
+                <para>A client (either a service running in a service engine, or a consumer endpoint to accommodate
+                clients external to the ESB) expresses a need to <emphasis>consume</emphasis> a certain service, based on
+                a contract the client itself supplies.</para>
+            </listitem>
+            <listitem>
+                <para>
+                    If there is currently no service that <emphasis>provides</emphasis> such a contract, we may look around and find,
+                    for example, an external service that offers a very similar kind of service. From a logical perspective, it may
+                    be exactly the service that we require, but the details of the service contract (or <quote>API</quote>) may be quite
+                    different. We may, for example, deploy a proxy to a binding component, indicating to the environment that it
+                    <emphasis>provides</emphasis> this service according to its contract.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    We may now go ahead an build an adaptor service unit which implements (<emphasis>provides</emphasis>) the
+                    client's contract, and which <emphasis>consumes</emphasis> the service actually provided by the
+                    service provider.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <figure>
+        <title>Building Requirements-Driven Adaptors to incompatible services</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="requirementsDrivenAdaptor.png"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+    
+    <section>
+        <title>Choosing an implementation technology</title>
+        <para>
+            The adaptor may be built in any of a wide range of technologies, based on the required kind of adaptation.
+            In its simplest form, an XSLT may specify mapping rules to adapt request and response messages (in a fully self-contained
+            manner) between the two contracts. In its most complex form, an adaptor may require several other services, and/or
+            support technologies such as database persistence - in which case it may be built in an orchestration language
+            such as WS-BPEL, or even Java.
+        </para>
+    </section>
+    
+    <section>
+        <title>The Cost/Benefits ratio</title>
+        <para>
+            It may seem like a large amount of unnecessary work and complexity up-front to, for every client,
+            introduce its own contract(s) that encapsulate its requirements, and then build adaptors to adapt
+            the client's needs to an actual service. This approach, however, is the only reasonable one to, in the long
+            term, accommodate large numbers of client needs for <quote>the same</quote> service (without forcing the same, complex API upon
+            all clients), to ensure cost-effective maintainability of the clients' business processes, and manage risk
+            around locking to particular services / vendors. In short, it is well worth the effort to keep things clean up-front.
+        </para>
+    </section>
+    
+</section>

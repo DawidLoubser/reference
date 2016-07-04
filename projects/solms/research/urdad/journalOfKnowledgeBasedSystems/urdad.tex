@@ -1,0 +1,181 @@
+\documentclass[reviewcopy]{elsart}
+\usepackage{ifpdf}
+\usepackage{graphicx,natbib,amssymb,lineno}
+\usepackage{epsfig}
+\ifpdf
+\usepackage[%
+  pdftitle={Instructions for use of the document class
+    elsart},%
+  pdfauthor={Simon Pepping},%
+  pdfsubject={The preprint document class elsart},%
+  pdfkeywords={instructions for use, elsart, document class},%
+  pdfstartview=FitH,%
+  bookmarks=true,%
+  bookmarksopen=true,%
+  breaklinks=true,%
+  colorlinks=true,%
+  linkcolor=blue,anchorcolor=blue,%
+  citecolor=blue,filecolor=blue,%
+  menucolor=blue,pagecolor=blue,%
+  urlcolor=blue]{hyperref}
+\else
+\usepackage[%
+  breaklinks=true,%
+  colorlinks=true,%
+  linkcolor=blue,anchorcolor=blue,%
+  citecolor=blue,filecolor=blue,%
+  menucolor=blue,pagecolor=blue,%
+  urlcolor=blue]{hyperref}
+\fi
+
+\renewcommand\floatpagefraction{.2}
+\makeatletter
+\def\elsartstyle{%
+    \def\normalsize{\@setfontsize\normalsize\@xiipt{14.5}}
+    \def\small{\@setfontsize\small\@xipt{13.6}}
+    \let\footnotesize=\small
+    \def\large{\@setfontsize\large\@xivpt{18}}
+    \def\Large{\@setfontsize\Large\@xviipt{22}}
+    \skip\@mpfootins = 18\p@ \@plus 2\p@
+    \normalsize
+}
+\@ifundefined{square}{}{\let\Box\square}
+\makeatother
+
+\def\file#1{\texttt{#1}}
+
+\pagestyle{plain}
+\begin{document}
+
+\begin{frontmatter}
+\title{Generating MDA's Platform Independent Model using URDAD}
+
+\author{Fritz Solms and Dawid Loubser}
+\address{Solms Training and Consulting CC, PostNet Suite 237, Private Bag X9,
+Melville, 2109, Johannesburg, South Africa.}
+
+\ead{fritz@solms.co.za}
+\ead[url]{http://www.solms.co.za/}
+
+\begin{abstract}
+  This paper formulates a set of minimal requirements for the
+  Platform Independent Model (PIM) of the Model Driven Architecture
+  (MDA). It then defines the Use Case, Responsibility Driven Analysis and
+  Design methodology (URDAD) which provides a simple, algorithmic
+  design methodology generating a PIM satisfying the specified PIM
+  requirements.
+\end{abstract}
+
+\begin{keyword}
+URDAD, design methodology, model driven development, MDA, business
+process design
+\end{keyword}
+\end{frontmatter}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%                             Refereee concerns
+%%
+%%  Referee 1:
+%%  ==========
+%%    - support with real-life experiences
+%%        => addressed in a new subsection entitled "Real-life experiences with URDAD"
+%%    - differences betw URDAD & stepwise refinement
+%%        => added "Analysis and design methodologies" subsection of introduction to address this
+%%    - how to fix levels of granularity in practice
+%%       => The second and third paragraph of the section titled "The analysis phase of URDAD"
+%%          has been rewritten to address this. The concepts are further enforced at the start
+%%          of the analysis section of the example
+%%    - major: review related MDA work, refinement processes, design & developments processes
+%%        => partially addressed by additions to the "MDA-based development methodologies"
+%%           subsection of introduction
+%%    - include transformation viewpoint: process may configure & control set of transformation tasks
+%%        => partially alluded to in "Analysis and design methodologies" subsection of introduction
+%%        => discussed in a new model transformations section
+%%    - what about intermediate PIMs (human comprehensible, ...)
+%%        => We don't envisage intermediate PIMs. Humans should preferably have to deal with
+%%           only a single set of artifacts. We would, however, see the benefit of multiple levels
+%%           of PSMs at times. The fact that mappings typically involve a series of intermediate PSMs
+%%				 is alluded to in the added section on model transformations
+%%    - larger figures
+%%    - last section before chapter 5 is unclear
+%%        => has been rewritten
+%%    - footnote on p17 too stand-alone
+%%        => The footnote has been replaced by an in-text paragraph and the content has been
+%%				reformulated in a more understandable way
+%%
+%%  Referee 2:
+%%  ==========
+%%    - case studies
+%%        => referred to in the new subsection entitled "Real-life experiences with URDAD"
+%%    - illustration figures used at SOMET'07 omitted - why?
+%%        => have added the figure for a typical model-driven development process and for the collaboration context.
+%%    - integrate issues mentioned in SOMET'07 to complete paper
+%%        => have done so
+%%    - show integration betw business process design, IT, project performance, business performance
+%%      with reference to vendor-independent, business management knowledge base.
+%%			=> this concern has not been dealt with in depth - it is partially alluded to in the added section
+%%				"MDA-based development methodologies".
+%%    - what is good process design from different points of view (PM, management, user, implementor, ...)
+%%			=> this issue has been addressed by additions to the last paragraph of the section titles "Design quality drivers"
+%%    - compare more to existing approaches
+%%			=> addressed by additions to the "Analysis and design methodologies" subsection of introduction
+%%    - transition across levels of granularity discussed in too abstract terms
+%%       => this entire section has been rewritten in less abstract terms.
+%%    - how to ensure compatibility betw outputs of technology neutral BP design & implementation?
+%%         => partially discussed in the URDAD meta-model as mentioned in model transformations section
+%%    - business processes need to be employed in environment ensuring certain qualities.
+%%      How addressed?
+%%			  => Discussed in a new section titled "Quality of service"
+%%         => Needs/requirements for this mentioned in inputs for implementation mappings
+%%    - How is minimal structure achieved?
+%%         => Explained in the last paragraph added to the section titled "The design phase of URDAD".
+%%    - Need repository to trace across levels of granularity?
+%%         => Added a subsection to the Methodologies section titled "Navigating the PIM".
+%%    - How to discover appropriate domains of responsibility? How to ensure no overlaps?
+%%         => Rewrote first paragraph of "The design phase of URDAD" to explain this better.
+%%    - Justify usage of diagrams (why minimal, complete set and why in that order?) Why not other
+%%      like component/composite structure diagrams for system structure, ...
+%%         => Added a subsection entitled "Choice of UML diagrams" to the modeling languages section.
+%%    - Not all figures referred to in paper (e.g. figure 8)
+%%          => fixed
+%%    - Include how to evaluate URDAD based design
+%%			=> addressed in new section "Evaluating URDAD based design"
+%%
+%%  Referee 3:
+%%  ==========
+%%    - how to guarantee technology mapping automation?
+%%        => partially addressed by the new model transformations section.
+%%    - clearer statement of original contribution of this work
+%%        => added "Analysis and design methodologies" subsection of introduction to address this
+%%    - add : to eol before start of bulleted lists
+%%    - shorten figure captions
+%%        => done
+%%    - check typo/language comments (many)
+%%        => done
+%%
+%%
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\include{introduction}
+
+\include{mdd}
+
+\include{requirements}
+
+\include{methodology}
+
+\include{urdadAndModelingLanguages}
+
+\include{example}
+
+\include{evaluatingUrdad}
+
+\include{implementationMappings}
+
+\include{conclusions}
+
+\bibliographystyle{abbrv}
+\bibliography{urdad}  
+\end{document}

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>What can go wrong?</title>
+    
+    <para>
+        The following problems are potentially experienced when work flows realizing client services
+        are not under transactional control:
+        <itemizedlist>
+            <listitem><para>
+                If a problem is experienced during the execution of the work flow such that the work flow
+                is only partially completed, the resources maintained
+                by the service provider may be left in an invalid state.
+            </para></listitem>
+            <listitem><para>
+                If resources are accessed concurrently by different processes, then those resources may 
+                end up in an invalid state.
+            </para></listitem>
+        </itemizedlist> 
+    </para>
+    
+    <section>
+        <title>Examples of problem caused by partially completed work flows</title>
+        <para>
+            The following examples illustrate typical problems resulting from work flows being
+            only partially completed.
+        </para>
+        
+        <section>
+            <title>Equipment repair</title>
+            <para>
+                Assume you handed a loudspeaker in for repair in order to replace a low frequency
+                driver. If the work flow of replacing the driver is only partially completed then
+                the service provider
+                <itemizedlist>
+                    <listitem><para>
+                        did not fulfill its contractual obligations around the service requested and
+                    </para></listitem>
+                    <listitem><para>
+                        left the resource in an invalid state.
+                    </para></listitem>
+                </itemizedlist>    			 
+            </para>
+            <para>
+                This may occur due to a problem experienced by the service provider. For example,
+                the repair person may have inserted the new driver into the speaker, but may have found
+                that the with the soldering iron they have he/she could not solder the cables to the
+                new driver.
+            </para>
+            <para>
+                You, as client, would want that the service is either completed in its entirety, or that the
+                process is rolled back so that you get your speakers back in their original state. 
+            </para>
+        </section>
+        
+        <section>
+            <title>Account transfer</title>
+            <para>
+                The classical example always used to explain transactions is that of an account transfer.
+                Assume you gave your bank the instruction to transfer a certain amount of funds from one
+                of your accounts to another. The bank should either complete the work flow in its entirety
+                or not at all, leaving both accounts in their original state. 
+            </para>
+            <para>
+                If transactions were not used and the bank systems encounter a failure after having processed the debit, 
+                but before having	made the credit to the destination account, then you would be an unhappy client and
+                the set of accounts would be in an invalid state (the sum total of the balances across all accounts
+                would no longer be equal to the sum total of all credits across all accounts minus the sum total of all debits).
+            </para>	
+            <para>
+                Furthermore the debit on the source account should not yet be visible
+            </para>
+        </section>	
+    </section>
+    
+    <section>
+        <title>Examples of problems caused by concurrent access to resources</title>
+        <para>
+            The above examples of problems occur without any concurrencies. The problems get worse once service requests
+            are processed concurrently. In such a case the resources managed by the service provider may come into an
+            invalid state even if all transactions complete their work flow normally.
+        </para>
+        
+        <section>
+            <title>Account transfers</title>
+            <para>
+                Assume a client has one current account and two investment accounts. If there are sufficient funds, then 
+                the client would like to transfer at the end of each month amount x into the investment account X and amount y into 
+                the investment account Y. The client would, however, like to ensure that the current account will not be overdrawn 
+                (end up with a negative balance). Should, either of the two debit orders result in the account being overdrawn,
+                then the corresponding transfer should not be executed.
+            </para>
+            <para>
+                Assume the bank has agreed to follow these instructions. It specifies one business process for each conditional
+                debit (or transfer) order and registers these with the work flow manager. If no transactions are used and if
+                the work flows are potentially executed concurrently, then it may happen that the bank violates its contractual
+                obligations. In particular, it may happen that one of the debit order transactions will result in a negative balance.
+            </para>
+            <figure >
+                <title>Inconsistency due to concurrent access of resources</title>
+                <mediaobject><imageobject>
+                    <imagedata fileref="concurrentTransfers.jpg"/>
+                </imageobject></mediaobject>
+            </figure>	
+        </section>
+    </section>        
+    
+    <section>
+        <title>Services realized across multiple service providers</title>
+        <para>
+            Often services are not realized by a single service provider, but across systems and potentially even across
+            organizations. Such scenarios further complicate the ability to guarantee consistency when realizing services,
+            <abbrev>i.e.</abbrev> to guarantee that one realizes the services such that
+            <itemizedlist>
+                <listitem><para>one fulfills one's contractual obligations, and</para></listitem>
+                <listitem><para>
+                    that all resources are left in a state consitent with the work flow (business process)
+                    specifications and the integrity (business) rules for any entities or resources
+                    managed by the various service providers.
+                </para></listitem>
+            </itemizedlist>
+        </para>
+        <para>	
+            In the case where multiple service providers partake in the same transaction we have, what is called, distributed transactions. 
+            The following additional complexity may be encountered when making the effects of a transaction durable by 
+            comitting the transaction across the various service providers or partners partaking
+            in the transaction. After the work flow steps for the transaction have been successfully completed the service providers
+            partaking in the transaction are requested to make the effects of the transaaction durable by sending a commit request to them.
+            One service provider may have commited (made the effects of the transaction on
+            the resources or entities managed by that service provider) after which another service provider partaking 
+            in the same transaction may experience a
+            problem preventing this second service provider from committing the transaction effects on the resources they manage.
+            At this stage atomicity and perhaps even consistence can no longer be guaranteed as the effects commited by the first 
+            service provider cannot be undone.
+            <note><para>
+                This problem is usually addressed by multi-phase commit protocols.
+            </para></note>
+        </para>
+    </section>
+    
+    
+</section>    

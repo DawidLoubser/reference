@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.technologies.java.j2se.jndi.usage.propertiesFile"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title role="Properties file">Specifying JNDI properties in a property file</title>
+  <para>
+    The default JNDI naming service which should be used as well as the usage
+    properties can be specified in a <literal>jndi.properties</literal>
+    file which has to reside in the class path.
+  </para>
+  <para>
+    Minimally the file should contain an entry for the URL for the 
+    naming and directory service
+<programlisting><![CDATA[
+java.naming.provider.url=protocol://machine:port
+]]></programlisting>
+    and an entry for the <literal>InitialContext</literal> factory providing
+    a realization of a suitable client for that naming context 
+    (<abbrev>i.e.</abbrev> can commnicate in the correct protocol)
+<programlisting><![CDATA[
+java.naming.factory.initial=fullyQualifiedClassName
+]]></programlisting>
+    <note><para>
+      Naturally this class needs to be in the classpath.
+    </para></note>
+  </para>
+  <para>
+    Using
+<programlisting><![CDATA[
+javax.naming.Context context = new javax.naming.InitialContext();
+]]></programlisting>
+    will resolve the default naming service set in <literal>jndi.properties</literal>
+    file.
+  </para>  
+</section>

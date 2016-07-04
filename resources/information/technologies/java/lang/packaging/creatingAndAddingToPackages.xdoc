@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.packaging.creatingAndAddingToPackages"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!-- TODO: MAKE THIS SECTION MORE INTUITIVE -->
+  
+  <title>Creating and Adding to Packages</title>
+  <para>
+    Java assumes a one-to-one mapping between the package structure, and the directory or
+    repository (file system, JAR file, etc) structure of your classes. Thus, the class <literal>MyClass</literal> in 
+    the <literal>solms.finance</literal> package, is located in a compilation unit
+      <literal>MyClass.java</literal> in a directory <literal>solms/finance</literal> below
+    your source directory. e.g.
+    <programlisting><![CDATA[
+<myProject>
+  <src>
+    /solms
+      /finance
+        MyClass.java
+      ]]></programlisting>
+    Similarly, I may want to compile output to a different directory (e.g. <literal>bin</literal>),
+    in which case, the compiler will automatically create the required structure for me after
+    indicating to it that I want to compile to a different directory. After compilation, my
+    structure may look like:
+    <programlisting><![CDATA[
+<myProject>
+  <src>
+    /solms
+      /finance
+        MyClass.java
+  <bin>
+    /solms
+      /finance
+        MyClass.class
+      ]]></programlisting>
+  </para>
+  <para>
+    Java uses a <emphasis>class loader</emphasis> to locate and load classes, which is why, when we
+    run a java class, we do not tell it the location of the class, but rather the <emphasis>fully-qualified</emphasis>
+    class name. Hence, we do not run:
+<programlisting>
+java solms/finance/MyClass.class
+</programlisting>
+    but rather
+    <programlisting>
+java solms.finance.MyClass
+    </programlisting>
+  </para>
+  <para>
+    But how does it find the class? Every time a Java Runtime Environment is launched, it is done so with
+    a <emphasis>class path</emphasis> - a set of search locations (directory names, JAR files, etc) for classes. It will then,
+    for each of these locations, traverse the structure according to the package name of the class it's
+    looking for. The class path can either be specified every time a Java runtime environment is launched
+    (through the <literal>-cp</literal> argument to the <literal>java</literal> executable) or system-wide
+    by specifying an environment variable called <literal>CLASSPATH</literal>.
+  </para>
+  <para>
+    The default value of <literal>CLASSPATH</literal> is <quote>current directory</quote>, signified
+    with a dot ( <literal>.</literal> ). This is why, in the above example, if we want to invoke
+    the <literal>solms.finance.MyClass</literal> class, our current directory should be 
+    <literal><![CDATA[<bin>]]></literal>.
+  </para>
+</section>

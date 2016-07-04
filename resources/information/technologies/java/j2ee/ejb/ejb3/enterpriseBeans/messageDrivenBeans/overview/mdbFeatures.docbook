@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+         version="5.0"
+         xml:id="resources.information.technologies.java.j2ee.ejb.ejb3.enterpriseBeans.messageDrivenBeans.overview.mdbFeatures">
+  <title>Features of Message-Driven Beans</title>
+  <para> Message-driven beans differ quite significantly from session and entity
+    beans. They are never accessed directly. They only process messages received
+    asynchronously from a messaging service. </para>
+  <para> Features which differentiate message-driven beans from session and
+    entity beans include: <itemizedlist>
+         <listitem>
+            <formalpara>
+               <title>Clients do not interface directly with MDBs</title>
+               <para> One does not define any of the standard interface used by
+            clients including <itemizedlist>
+                     <listitem>
+                        <para>The remote and local interfaces normally used to publish
+                  business services offered by an enterprise bean. </para>
+                     </listitem>
+                     <listitem>
+                        <para>The home and local home interfaces providing clients to
+                  life-cycle services like creation and finding of enterprise
+                  beans.</para>
+                     </listitem>
+                  </itemizedlist>
+               </para>
+            </formalpara>
+         </listitem>
+         <listitem>
+            <formalpara>
+               <title>MDBs have a single generic business service</title>
+               <para> This is the same service our queue receivers and topic
+            subscribers needed to provide, namely the method
+              <literal>onMessage(Message msg)</literal> which receives as
+            argument a message which may be a byte, stream, text, map or object
+            message. The MDB has to identify the message type (it could select
+            only certain message types) and extract the information from the
+            message and process it in some bean-specific way. </para>
+            </formalpara>
+         </listitem>
+         <listitem>
+            <formalpara>
+               <title>MDBs do not have return values and may not raise any exceptions</title>
+               <para> This is a direct implication of asynchronous messaging. <note>
+                     <para> Of course the <quote>return</quote> message could resemble an exception in
+                the form of, for example, a SOAP fault message. </para>
+                  </note>
+               </para>
+            </formalpara>
+         </listitem>
+         <listitem>
+            <formalpara>
+               <title>MDBs are stateless</title>
+               <para> Analogous to stateless session beans, message-driven beans do
+            not maintain conversational state across service requests (i.e.
+            across message receipts). </para>
+            </formalpara>
+         </listitem>
+         <listitem>
+            <formalpara>
+               <title>MDBs may be durable topic subscribers</title>
+               <para>
+            They may receive messages published on a topic even when they were not online
+            to process them.
+          </para>
+            </formalpara>
+         </listitem>
+      </itemizedlist>
+  </para>
+</section>

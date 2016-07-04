@@ -1,0 +1,63 @@
+        
+<!--  FUNCTIONAL REQUIREMENTS SPECIFICATION -->
+<!-- ********************************************* -->        
+        
+<section>
+    <title>Functional requirements: $targetUseCase.name</title>
+    #getDiagramForUseCase($targetUseCase,$urdad_functionalRequirementsDiagram)    
+    #set($diagram = $result)
+    #if ($diagram && $diagram != '')
+        #set($diagramId = $diagram.qualifiedName.replaceAll('::','.').replaceAll(' ','_'))
+        <para>
+                The functional requirements diagram shown below
+##                in <xref linkend="$diagramId"/>
+                shows the $targetUseCase.name use case, the stake holders who have an interest in that
+                use case and their functional requirements.
+        </para>
+        #set ($diagramComment = $report.getComment($diagram).body)
+        #if ($diagramComment && $diagramComment != '')
+                <para>
+                    $diagramComment
+                </para>
+        #end
+            
+        <figure xml:id="$diagramId">
+            <title>The stakeholder requirements diagram for the $targetUseCase.name use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="$diagram.image"/>
+            </imageobject></mediaobject>
+        </figure>
+    
+        #parse("analysis/functionalRequirements/user.txt")
+        #parse("analysis/functionalRequirements/stakeholders.txt")
+    
+       #getMandatoryFunctionalRequirements($targetUseCase)
+       #set($mandatoryFunctionalRequirements = $result)
+       #getConditionalFunctionalRequirements($targetUseCase)
+       #set($conditionalFunctionalRequirements = $result)
+       #if (($mandatoryFunctionalRequirements.size() == 0) && ($conditionalFunctionalRequirements.size() == 0))
+         <note>
+             <title>ERROR: No functional requirements specified for use case</title>
+             <para>
+                 URDAD requires that there must be at least one functional requirement for each use case. No functional requirements
+                 have been specified for the $targetUseCase.name use case.
+             </para>
+         </note>
+       #else
+           #if ($mandatoryFunctionalRequirements.size() > 0)
+               #parse("analysis/functionalRequirements/mandatoryFunctionalRequirements.txt")
+            #end
+            
+            #if ($conditionalFunctionalRequirements.size() > 0)        
+               #parse("analysis/functionalRequirements/conditionalFunctionalRequirements.txt")
+            #end  
+        #end    
+    #else
+        <note>
+            <title>ERROR: Missing functional requirements diagram</title>
+            <para>
+                The URDAD process requires that the stake holders and their functional requirements are specified
+            </para>
+        </note>
+    #end
+</section>

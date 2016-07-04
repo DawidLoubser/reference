@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section  xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>The Linux Loader (LILO)</title>
+    <para>
+        LILO is the original boot loader for Linux which, though still supported, is largely replaced
+        by GRUB. This is due to several significant disadvantages against GRUB including the following:
+        <itemizedlist>
+            <listitem><para>
+                LILO supports a maximum of 16 boot selections (GRUB unlimited).
+            </para></listitem>
+            <listitem><para>
+                LILO cannot boot from a network.
+            </para></listitem>
+            <listitem><para>
+                The MBR entry must be overwritten every time you change the LILO configuration (this also adds risk), while
+                GRUB loads the configuration file in a second boot loading stage from any drive,
+            </para></listitem>
+            <listitem><para>
+                LILO does not have a command processing environment and hence, when the LILO configuration is corrupt 
+                you will need to boot from a separate drive to fix the problem.                    
+            </para></listitem>
+            <listitem><para>
+                LILO does not understand file systems and has to load the kernel from a physical position on the disk.
+            </para></listitem>
+        </itemizedlist>
+    </para>
+    <note>
+        <para>
+            LILO stores information regarding the location of the operating systems it can to load physically on the MBR. 
+            If you change your LILO config file, you have to rewrite the LILO stage one boot loader to the MBR. Compared with GRUB, 
+            this is a much more risky option since a misconfigured MBR could leave the system unbootable. With GRUB, if the 
+            configuration file is configured incorrectly, it will simply default to the GRUB command-line interface.
+        </para>
+    </note>
+</section>

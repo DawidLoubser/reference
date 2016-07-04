@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE chapter SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd">
+-->
+<chapter id="resources.information.technologies.c.objectsClasses.objectsClasses"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+<title>Objects and Classes in ANSI-<emphasis>C</emphasis></title>
+  
+  <section><title>Introduction</title>
+    <para>
+      The last 20-odd years have seen the transition of software development to
+      object-oriented software development using object-oriented programming
+      languages like <emphasis>Smalltalk</emphasis>, <emphasis>C++</emphasis>, 
+      <emphasis>Java</emphasis>, <emphasis>Delphi</emphasis> and
+      <emphasis>C#</emphasis>. In this context it may be surprising that after
+      20 years of object-orientation, a procedural language like <emphasis>C</emphasis>
+      has still a relatively strong following with even new projects sometimes still
+      being developed in ANSI-<emphasis>C</emphasis>. 
+    </para>
+    <para>
+      Some of these are relatively low-level operating-system related projects. Others
+      are in the telecommunication field leveraging off large libraries available
+      and the speed benefits which can be obtained from <emphasis>C</emphasis> code.
+      Other areas may be forced to use <emphasis>C</emphasis> for security reasons
+      (<abbrev>e.g.</abbrev> many defense projects), having the benefit of being able to say at any
+      stage what information sits where in memory - often defense projects are
+      contractually barred from using object-oriented programming languages.
+    </para>
+    <para>
+      Nevertheless, developing in <emphasis>C</emphasis> does not prevent one from
+      following object-oriented principles and, as we shall see, it is possible to
+      do full object-orientated programming in ANSI-<emphasis>C</emphasis>
+      supporting
+      <itemizedlist>
+        <listitem><para>
+          objects,  
+        </para></listitem>
+        <listitem><para>
+          classes,          
+        </para></listitem>
+        <listitem><para>
+          encapsulation,
+        </para></listitem>
+        <listitem><para>
+          inheritance,
+        </para></listitem>
+        <listitem><para>
+          polymorphism,          
+        </para></listitem>
+        <listitem><para>
+          interfaces, and even
+        </para></listitem>
+        <listitem><para>
+          exception handling.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section><title>Benefits of object-orientation</title>
+    <para>
+      The benefits of object orientation can be summarized as
+      <itemizedlist>
+        <listitem><para>
+          Better responsibility localization.          
+        </para></listitem>
+        <listitem><para>
+          Well designed systems absorb changes to the requirements
+          readily and cost-effectively.
+        </para></listitem>
+        <listitem><para>
+          Localized maintenance.
+        </para></listitem>
+        <listitem><para>
+          The ability to work at various levels of abstraction.
+        </para></listitem>
+        <listitem><para>
+          Higher level of re-use.
+        </para></listitem>
+        <listitem><para>
+          Object-oriented  systems are usually simpler to test.
+        </para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+  
+  <section><title>What is an object?</title>
+    <para>
+      An object is a <emphasis>identifiable</emphasis> conceptual of physical unit
+      which
+      <itemizedlist>
+        <listitem><para>
+          may have attributes,          
+        </para></listitem>
+        <listitem><para>
+          may offer services,
+        </para></listitem>
+        <listitem><para>
+          and may have message paths to lower-level  service providers.
+        </para></listitem>
+      </itemizedlist>
+      On a conceptual level objects can be identified by identifying all the
+      nouns of a description of the system.
+    </para>
+  </section>
+  
+  <section><title>What is a class?</title>
+    <para>
+      A class is a template from which objects are created. It encapsulates the
+      commonalities across those objects which are instances of the class.
+    </para>
+  </section>
+  
+  <section><title>Implementing objects and classes</title>
+    <para>
+      In order to implement objects and classes we have to encapsulate all 
+      implementation details such that
+      <itemizedlist>
+        <listitem><para>
+          the object attributes can only be accessed through the object and
+        </para></listitem>
+        <listitem><para>
+          that the object services (methods or functions) can only be accessed
+          through the object interface.
+        </para></listitem>
+      </itemizedlist>
+      The core <emphasis>C</emphasis> language features which will enable us to
+      achieve this are
+      <orderedlist>
+        <listitem><para>
+          structures and pointers to structures.
+        </para></listitem>
+        <listitem><para>
+          function pointers,  
+        </para></listitem>
+        <listitem><para>
+          static functions and          
+        </para></listitem>
+        <listitem><para>
+          external variables.
+        </para></listitem>
+      </orderedlist>
+    </para>
+    <section><title>The class interface as published in a header file</title>
+      <para>
+        We use a structure to define the interface for our class. The structure 
+        contains only function pointers for the class and instance methods. 
+      </para>
+      <para>
+        The pointers in the structure are as yet not populated. This will be done
+        in the implementation file which encapsulates all the hidden information.
+        The populated structure is published as a constant pointer to a constant
+        instance of the structure (neither the pointer value nor the structure
+        it points to may be changed). This constant pointer to a constant structure 
+        will be set in the implementation file, <abbrev>i.e.</abbrev> the variable is an 
+        <command>extern</command>al variable. 
+      </para>
+       <example id="resources.information.technologies.c.objectsClasses.Account_h">
+         <title>Simple Account: Account.h</title>
+           <programlisting role="C" linenumbering="numbered">
+              <xi:include href="Account.h" parse="text" />
+           </programlisting>
+       </example>      
+       <section><title>Class versus instance methods</title>
+         <para>
+          In object-orientation one distinguishes between services offered by a
+          class and those offered by instances of a class. In languages like
+          <emphasis>C++</emphasis> and <emphasis>Java</emphasis>, the former are
+          <command>static</command> methods while the latter are normal methods
+          (with the exception of constructors which should really be declared
+          <command>static</command> to be consistent).
+         </para>
+         <para>
+           For example, you are not going to credit or debit or even request the
+           balance for the class of accounts. Instead you are going to send the
+           <command>getBalance</command>, <command>credit</command> and 
+           <command>debit</command> messages to particular accounts (<abbrev>i.e.</abbrev> specific
+           instances of the <command>Account</command> class).
+         </para>
+         <para>
+           On the other hand, you may want to assign the responsibility of keeping
+           track of the number of instances of a class to the class itself. After 
+           all, the class is the template from which instances are created. 
+         </para>
+       </section>
+       <section><title>Instance services in object-oriented ANSI-<emphasis>C</emphasis></title>
+         <para>
+           To request  an instance service through the interface we have to provide
+           as argument the instance for which the service is requested. We have
+           given that instance the customary variable name, <command>this</command>.
+         </para>
+       </section>
+       <section><title>Class services in object-oriented ANSI-<emphasis>C</emphasis></title>
+         <para>
+           A class service is offered by the interface as a method which does not
+           get a reference to an instance on which it operates - after all  we are
+           not requesting the service from an instance, only from the class itself.
+         </para>
+       </section>
+    </section>
+    <section><title>The class implementation</title>
+      <para>
+        In the class implementation we have to
+        <orderedlist>
+          <listitem><para>
+            define a data structure of the object's state,
+          </para></listitem>
+          <listitem><para>
+            define the functions which resemble the class and instance methods
+            and restrict their access to within the implementation file,
+          </para></listitem>
+          <listitem><para>
+            populate an instance of the structure resembling the class interface
+            with the function pointers pointing to the functions realizing
+            the class and instance methods and
+          </para></listitem>
+          <listitem><para>
+            publish the populated class interface as a constant pointer to a 
+            constant structure.
+          </para></listitem>
+        </orderedlist>
+      </para>
+       <example id="resources.information.technologies.c.objectsClasses.Account_c">
+         <title>Simple Account: Account.c</title>
+           <programlisting role="C" linenumbering="numbered">
+              <xi:include href="Account.c" parse="text"/></programlisting>
+       </example>   
+       <note><title>Destructors</title>
+         <para>
+           Note that the destructor gets a pointer to the <varname>this</varname>-pointer,
+           enabling it to make the pointer safe (<abbrev>i.e.</abbrev> set it to null) after deleting
+           the object it pointed to.
+         </para>
+       </note>
+    </section>
+    <section><title>Example using objects and classes</title>
+      <para>
+        Below we show an example of an object-oriented ANSI-<emphasis>C</emphasis>
+        application:
+      </para>
+       <example id="resources.information.technologies.c.objectsClasses.AccountTest_c">
+         <title>Simple Account: AccountTest.c</title>
+           <programlisting role="C" linenumbering="numbered">
+             <xi:include href="AccountTest.c" parse="text"/>
+           </programlisting>
+       </example>      
+       <para>
+         We first create an account, <varname>account1</varname>, supplying the
+         account number. Then we request, through the <varname>Account</varname> interface
+         the <function>getBalance</function> and <function>getAccountNo</function>
+         services.
+       </para>
+       <para>
+         Next we credit <varname>account1</varname> though the interface with R500.00.
+         This is followed by a request for a <function>debit</function> where we check
+         whether the  service requested was indeed supplied or not.
+       </para>
+       <para>
+         Next we query the balance and print it out. Finally we delete 
+         <function>account1</function>. This will ensure that all memory grabbed 
+         for that object is released again.
+       </para>
+       <para>
+         We can compile the client application via
+         <programlisting>
+cc -ansi -Wall -c AccountTest.c         
+         </programlisting>
+       </para>
+       <para>
+         When compiling the client application we are completely decoupled from the
+         class implementation (it need not even exist at this stage). The latter
+         can be compiled independently via
+         <programlisting>
+cc -ansi -Wall -c Account.c         
+         </programlisting>
+       </para>
+       <para>
+         We can link the components together, creating an executable, via
+         <programlisting>
+cc -o AccountTest AccountTest.o Account.o         
+         </programlisting>
+       </para>
+       <para>
+         Finally we can run the generated executable to yield the following output:
+         <programlisting>
+Created account with object reference 134519160
+Balance of account # 6542376 is 0.000000
+After crediting with 500 and debiting with 200 the balance of account # 6542376 is 300.000000
+After deleting the account our object reference is 0
+         </programlisting>
+       </para> 
+    </section>
+    
+  </section>
+  
+  <section><title>Exercises</title>
+    <para>
+      <orderedlist>
+        <listitem><para>
+          Write a counter class. Counters can be created with or without specifying
+          an initial count. In the  former case the initial count is assumed to be 0.
+          Users should be able to
+          <itemizedlist>
+            <listitem><para>
+               increment and decrement counters,
+            </para></listitem>
+            <listitem><para>
+               add an integr count to a counter,
+            </para></listitem>
+            <listitem><para>
+              reset a counter to zero,
+            </para></listitem>
+            <listitem><para>
+              query the current counter value of a counter and
+            </para></listitem>
+            <listitem><para>
+              delete counters.
+            </para></listitem>
+          </itemizedlist>
+          Write a little test application which makes use of 2 counters.
+        </para></listitem>
+      </orderedlist>
+    </para>
+  </section>
+  
+</chapter>

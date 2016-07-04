@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns0:section xmlns:ns0="http://docbook.org/ns/docbook" xml:id="components.technologies.java.j2ee.common.work.workManager">
+  <ns1:title xmlns:ns1="http://docbook.org/ns/docbook">Work and work managers</ns1:title>
+  <ns2:para xmlns:ns2="http://docbook.org/ns/docbook">
+    In a managed environment such as an EJB- or Web container, the deployed components are 
+    not allowed to start new threads as part of the application logic, as that would interfere with 
+    the container's capability to effectively manage them. Instead, one can submit work requests
+    for execution within the managed environment.
+  </ns2:para>
+  
+  <ns3:section xmlns:ns3="http://docbook.org/ns/docbook">
+    <ns4:title xmlns:ns4="http://docbook.org/ns/docbook">Work</ns4:title>
+    <ns5:para xmlns:ns5="http://docbook.org/ns/docbook">
+      A work request is a sequence of tasks which will be executed within the context of a thread.
+      Every unit of work is <ns6:emphasis xmlns:ns6="http://docbook.org/ns/docbook">runnable</ns6:emphasis> and will be executed within a thread
+      managed by the application server.
+      <ns7:programlisting xmlns:ns7="http://docbook.org/ns/docbook">
+package commonj.work;
+        
+public interface Work extends Runnable
+{
+  public boolean isDaemon();
+        
+  public void release();
+}
+        </ns7:programlisting>
+    </ns5:para>
+    <ns8:para xmlns:ns8="http://docbook.org/ns/docbook">
+      In addition, a work unit can be released by the application server, requesting the thread to
+      terminate. This usually sets a flag which is periodically checked within the
+      <ns9:literal xmlns:ns9="http://docbook.org/ns/docbook">run()</ns9:literal> method and, if set, the thread should terminate (exit the
+      <ns10:literal xmlns:ns10="http://docbook.org/ns/docbook">run()</ns10:literal> method).
+    </ns8:para>
+  </ns3:section>
+  
+  <ns11:section xmlns:ns11="http://docbook.org/ns/docbook">
+    <ns12:title xmlns:ns12="http://docbook.org/ns/docbook">Work managers</ns12:title>
+    <ns13:para xmlns:ns13="http://docbook.org/ns/docbook">
+      Work managers are used to submit work requests to the managed environment. They support
+      <ns14:itemizedlist xmlns:ns14="http://docbook.org/ns/docbook">
+        <ns15:listitem xmlns:ns15="http://docbook.org/ns/docbook"><ns16:para xmlns:ns16="http://docbook.org/ns/docbook">
+          scheduling work units with or without work listeners which are informed about the status
+          of a submitted task (submitted, accepted, rejected or completed),
+        </ns16:para></ns15:listitem>
+        <ns17:listitem xmlns:ns17="http://docbook.org/ns/docbook"><ns18:para xmlns:ns18="http://docbook.org/ns/docbook">
+          synchronization points which will block the completion of the work unit until certain work
+          items have been completed.
+        </ns18:para></ns17:listitem>
+      </ns14:itemizedlist>
+      The Work manager contract looks as follows
+      <ns19:programlisting xmlns:ns19="http://docbook.org/ns/docbook">
+package commonj.work;
+        
+public interface WorkManager
+{
+    WorkItem schedule(Work work);
+        
+    WorkItem schedule(Work work, WorkListener wl);
+        
+    boolean waitForAll
+          (java.util.Collection workItems, long timeout_ms);
+        
+    java.util.Collection waitForAny
+          (java.util.Collection workItems, long timeout_ms);
+}        
+    </ns19:programlisting>
+    with work items being pollable result objects hose status can be queried
+      <ns20:programlisting xmlns:ns20="http://docbook.org/ns/docbook">
+package commonj.work;
+        
+public interface WorkItem
+{
+    public int getStatus();
+
+    public  Work getResult();
+}        
+    </ns20:programlisting>
+where the result is the completed work request.
+    </ns13:para>
+    
+  </ns11:section>
+</ns0:section>

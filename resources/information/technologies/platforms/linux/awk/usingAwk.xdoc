@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<section id="resources.information.platforms.linux.awk.usingAwk"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <title>Using <command>awk</command></title>
+  <para>
+    The general syntax for using <command>awk</command> is
+    <cmdsynopsis><command>
+awk awkProgram inputStreams      
+    </command></cmdsynopsis>
+    Often the <command>awk</command> program is not provided in-line, but
+    is stored in a file instead. In that case one uses
+    <cmdsynopsis><command>
+awk -f awkProgramFile inputStreams      
+    </command></cmdsynopsis>
+  </para>
+  
+  <section>
+    <title>The structure of an <command>awk</command> program</title>
+    <para>
+      <command>Awk</command>  matches records on <emphasis>patterns</emphasis>
+      and performs the requested <emphasis>actions</emphasis> on these patterns.
+    </para>
+    <para>
+      The structure of a general <command>awk</command> program is thus
+      <programlisting><![CDATA[
+pattern1   { action1 }
+pattern2   { action2 }
+...
+      ]]></programlisting>
+    </para>
+  </section> 
+  
+  <section>
+    <title>A simple example</title>
+    <para>
+      Consider you perform a directory listing. With
+      <cmdsynopsis><command>
+ls -l        
+      </command></cmdsynopsis>
+      you will receive something like
+      <programlisting><![CDATA[
+total 469415
+drwx------    3 fritz    users         104 2003-09-03 21:16 Desktop
+drwxrwxrwx    7 fritz    users         248 2003-08-25 12:40 Documents
+-rw-r--r--    1 fritz    users         954 2003-08-21 10:15 EnrollmentConfirmation.txt
+drwxr-xr-x    5 fritz    users         120 2003-09-01 15:00 GNUstep
+drwx------   10 fritz    users         592 2003-08-11 16:06 Mail
+-rw-r-----    1 fritz    users       10642 2003-08-11 16:10 Map.gif
+drwxr-xr-x    3 fritz    users         320 2003-06-26 07:21 OpenOffice.org
+-rw-r-----    1 fritz    users         450 2003-08-04 14:31 Signature.txt
+-rw-r--r--    1 root     root         2061 2003-08-26 18:36 cdrecord.out
+drwx------    8 fritz    users         504 2003-09-05 18:54 evolution
+-rw-------    1 fritz    users      226436 2003-09-03 09:06 mbox
+drwxrwxrwx    2 fritz    solms         136 2003-09-04 09:16 temp
+drwxr-xr-x    2 fritz    users         368 2003-07-20 19:15 tst
+-rw-r--r--    1 root     root     479954944 2003-09-05 16:21 unixbookshelf.iso
+drwxrwxrwx    6 fritz    users         200 2003-09-04 00:35 work
+      ]]></programlisting>
+    </para>
+    <para>
+      But, say you only want to see the files which were modified today together with their file
+      sizes. We thus only want the filename (field 8) and the filesize (field 5) of those records
+      which contain today's date. 
+    </para>
+    <para>
+      We can achieve this by feeding the output of the <command>ls</command> command
+      into an <command>awk</command> program which selects all records containing
+      todays date and extracts fields 8 and 5 from them:
+      <cmdsynopsis><command><![CDATA[
+ls -l | awk '/2003-09-05/ { print $8,$5 }'    
+      ]]></command></cmdsynopsis>
+      <note>
+        <para>
+          We enclose the <emphasis>awk program</emphasis> within quotes so that it is
+          protected from the shell.
+        </para>
+      </note>  
+      The output would be
+      <programlisting><![CDATA[
+evolution 504
+unixbookshelf.iso 479954944
+      ]]></programlisting>
+    </para>
+  </section>
+  
+</section>

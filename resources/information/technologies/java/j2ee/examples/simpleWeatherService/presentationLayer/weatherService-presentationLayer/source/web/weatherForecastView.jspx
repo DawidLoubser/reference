@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:fmt="http://java.sun.com/jsp/jstl/fmt">
+    
+    <c:set var="pageTitle">Weather Forecast</c:set>
+    
+    <head>
+        <title>${pageTitle} for ${locality.name}</title>
+        <link rel="stylesheet" href="css/style.css"/>
+    </head>
+    <body>
+        <h1>${pageTitle}</h1>
+        <h2>${locality.name}</h2>
+        
+        <!-- Iterate over all forecasts -->
+        <c:forEach items="${forecasts}" var="forecast">
+            <div class="forecast ${forecast.conditions}">
+                On <fmt:formatDate 
+                        value="${forecast.forecastDate.time}"/>, 
+                the weather will be 
+                <em>${forecast.conditions}</em>.
+                
+                Temperatures will peak at
+                <fmt:formatNumber value="${forecast.maxTemp}"
+                    maxFractionDigits="0"/>º, 
+                starting off at
+                <fmt:formatNumber value="${forecast.minTemp}"
+                    maxFractionDigits="0"/>º.
+            </div>
+        </c:forEach>
+        
+        <p class="links">
+            <a href="./">Request another</a>
+        </p>
+        
+    </body>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Executing a program from Maven</title>
+    <para>
+        One can use the <literal>java</literal> goal of the <emphasis>exec</emphasis> plugin to
+        execute a Java application, specifying the main class in the <literal>exec.mainClass</literal>
+        parameter:
+        <programlisting><![CDATA[
+mvn exec:java -Dexec.mainClass=za.co.solms.training.maven.App            
+            ]]></programlisting>
+    </para>
+    <para>
+        In a similar way one can execute a binary executable via
+        <programlisting><![CDATA[
+mvn exec:exec -Dexec.executable="binaryExecutable" -Dexec.workingdir="~/temp" -Dexec.args="-arg1 -arg2"
+            ]]></programlisting>
+    </para>
+    <para>
+        For example, the following asks Maven to provide a directory listing using long info and showing the hidden files:
+        <programlisting><![CDATA[
+fritz@fritzLaptop ~/temp/maven/helloWorld $ mvn exec:exec -Dexec.executable="ls" -Dexec.args="-l -a"
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'exec'.
+[INFO] ------------------------------------------------------------------------
+[INFO] Building helloWorld
+[INFO]    task-segment: [exec:exec]
+[INFO] ------------------------------------------------------------------------
+[INFO] [exec:exec]
+[INFO] total 8
+[INFO] drwxr-xr-x 5 fritz fritz 176 Dec 13 22:19 .
+[INFO] drwxr-xr-x 3 fritz fritz  80 Dec 13 06:28 ..
+[INFO] -rw-r--r-- 1 fritz fritz 936 Dec 13 21:51 pom.xml
+[INFO] -rw-r--r-- 1 fritz fritz 470 Dec 13 22:07 settings.xml
+[INFO] drwxr-xr-x 4 fritz fritz  96 Dec 13 14:24 src
+[INFO] drwxr-xr-x 6 fritz fritz 216 Dec 13 06:39 target
+[INFO] drwxr-xr-x 3 fritz fritz  72 Dec 13 22:19 ~
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1 second
+[INFO] Finished at: Sun Dec 13 22:20:45 SAST 2009
+[INFO] Final Memory: 5M/82M
+[INFO] ------------------------------------------------------------------------            
+            ]]></programlisting>
+    </para>
+</section>    

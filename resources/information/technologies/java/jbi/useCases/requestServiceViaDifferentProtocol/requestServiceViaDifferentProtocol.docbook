@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <title>Requesting services via different protocols</title>
+    
+    <indexterm>
+        <primary>protocols</primary>
+        <secondary>incompatible</secondary>
+        <tertiary>bridging with JBI</tertiary>
+    </indexterm>
+    
+    <para>
+        Most services service their clients via a single protocol, such as SOAP/HTTP. 
+        We may wish to, however, enable such a service (which may be an external service, beyond our control)
+        to be used by clients of various types, via different protocols.
+    </para>
+    <para>
+        Because a large number of JBI Binding components (each targeting a specific protocol) are available, and because
+        they each convert messages to the NMR's common normalised format, it is quite simple to expose a service
+        via different protocols by
+    </para>
+    <para>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    Deploying a service unit that <emphasis>provides</emphasis> a certain service to the environment. This could
+                    either be an external service (by deploying a proxy to the service into the appropriate binding component,
+                    e.g. SOAP/HTTP) or a component that actually provides the service, such as a Java class to a Java container
+                    (recall that both cases are treated identically by the JBI environment)
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Deploying any number of message consumer endpoints in the binding components of your choice (E-Mail, JMS, CORBA,
+                    File/FTP, etc). Each of these service units <emphasis>consume</emphasis> the original service, and will
+                    automatically convert incoming messages to the normalised message format before dispatching them to the service.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </para>
+    <figure>
+        <title>Requesting services via different protocols</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="requestServiceViaDifferentProtocol.png"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+    <para>
+        Each binding component will specify its own allowable configuration to customise the nature of the
+        exposed endpoint. For example, specifying the mailbox to monitor, the text-to-XML transformation rules,
+        or the frequency with which a directory must be polled for new files.
+    </para>
+    
+</section>

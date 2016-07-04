@@ -1,0 +1,66 @@
+#getRelationshipsFor($targetUseCase, $umlAssociationRelationship)
+#set($umlAssociationRelationships = $result)
+
+<section>
+    <title>The user role</title>
+    <para>
+        The user role is the role played by those objects which make use of the use case. It is represented by an interface/contract
+        which accumulates the contractual obligations of the user itself.
+    </para>
+    <para>
+      #if ($umlAssociationRelationships.size() == 0)
+        <note>
+          <title>ERROR: No user role specified for $targetUseCase.name use case</title>
+          <para>
+            URDAD requires that a single user role is assigned to each use case. The user role needs to be represented by
+            an interface and there should be an association relationship between the use case and interface/contract
+            representing the user role.
+          </para>
+        </note>
+      #else
+          <itemizedlist>
+          #if ($umlAssociationRelationships.size() > 1)
+            <note>
+              <title>WARNING: Multiple user roles specified for $targetUseCase.name use case</title>
+              <para>
+                URDAD requires that a single user role is assigned to each use case. The user role needs to be represented by
+                an interface and there should be an association relationship between the use case and interface/contract
+                representing the user role.
+              </para>
+            </note>
+          #end  
+          #set ($userRole = '')
+          #foreach ($umlAssociationRelationship in $umlAssociationRelationships)
+              #if ($report.getClientElement($umlAssociationRelationship).getClass().getName().equals($umlInterfaceClass))
+                  #set ($userRole =$report.getClientElement($umlAssociationRelationship))
+              #else
+                  #if ($report.getSupplierElement($umlAssociationRelationship).getClass().getName().equals($umlInterfaceClass))
+                      #set ($userRole =$report.getSupplierElement($umlAssociationRelationship))
+                  #else
+                    <note>
+                        <title>ERROR: user not represented by an interface</title>
+                        <para>
+                            URDAD requires that the user role is represented by an interface which will accumulate the user responsibilities
+                            for the use case.
+                        </para>
+                    </note>
+                  #end
+              #end
+              
+              #if ($userRole != '')
+                <listitem><formalpara>
+                  <title>$userRole.name</title>
+                  <para>
+                      Objects who play the role of a $userRole.name make use of the $targetUseCase.name use case.
+                      #set ($userRoleComment = $report.getComment($userRole).body)
+                      #if ($userRoleComment && $userRoleComment != '')
+                          $userRoleComment
+                      #end
+                  </para>
+                </formalpara></listitem>
+              #end  
+          #end
+        </itemizedlist>
+      #end  
+    </para>
+</section>

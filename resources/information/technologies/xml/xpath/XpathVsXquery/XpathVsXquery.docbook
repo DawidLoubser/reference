@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- Author: Fritz Solms -->
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>XPath versus XQuery</title>
+    <para>
+        On first sight it may look as if XPath itself is a query language. It however, only allows one to address specific elements
+        within an XML document.
+    </para>    
+    <para>
+        XQuery is a powerful quering language for XML documents similar to SQL for relational databases and JPQL for JPA-based 
+        object-relational mapping frameworks. It makes extensive use of XPath to address specific elements of an XML document
+        and adds support for SQL/JPQL-like FLWOR (<literal>FOR</literal>, <literal>LET</literal>,
+        <literal>WHERE</literal>, <literal>ORDER BY</literal>, <literal>RETURN</literal>) expressions. 
+    </para>
+    <para>    
+        For example
+        <programlisting><![CDATA[
+for $book in doc("library.xml")/books/book where $book/price>500 order by $book/title return $book/title        
+      ]]></programlisting>
+        returns a sorted list of the book titles in a library of all those books which had a price exceeding R500.
+    </para>
+    <para>    
+        The language syntax supports the construction of new documents (e.g. XML documents). It can be used in a way similar to
+        scripting languages like Apache Velocity and JSF-2 Facelets to generate output documents. For example
+        <programlisting><![CDATA[
+<html><head/><body>
+    {
+      for $book in doc("library.xml")//book
+        let $authors := distinct-values($book/author)
+        return
+        <div>
+          <h1>{ string($book/title) }</h1>
+          <ul>
+          {
+            for $author in $authors
+             return <li>{ $author }</li>
+          }
+          </ul>
+      </div>
+   }
+</body></html>]]>
+      </programlisting>
+    </para>
+</section>
+

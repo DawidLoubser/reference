@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.solms.co.za/training/java/apis/jaxb/helloWorld"
+    xmlns:hw="http://www.solms.co.za/training/java/apis/jaxb/helloWorld"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+    
+    <xs:annotation>
+        <xs:documentation>
+            A simple helloWorld schema which defines as root elements either a single or a sequence of messages. 
+            Each message has a message text, optionally sender information including the first and surname of the
+            person as well as a mandatory language attribute.
+        </xs:documentation>
+    </xs:annotation>
+    
+    <xs:complexType name="Person">
+        <xs:sequence> 
+            <xs:element name="firstname" type="xs:string"/>
+            <xs:element name="surname" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Message">
+        <xs:sequence>
+            <xs:element name="messageText" type="xs:string"/>
+            <xs:element name="sender" type="hw:Person" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="language" type="xs:language" use="required"/>
+    </xs:complexType>
+    
+    <xs:complexType name="Messages">
+        <xs:sequence>
+            <xs:element name="message" type="hw:Message" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="message" type="hw:Message"/>
+    
+    <xs:element name="messages" type="hw:Messages"/>
+    
+</xs:schema>

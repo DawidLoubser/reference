@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="resources.information.technologies.java.lang.classes.basic.usingClasses.objectLifeSpan"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title role="The Life-Span of an Object ">The Life-Span of an Object </title>
+  <para>
+    An object is created via the <literal>new</literal> keyword. A
+    <literal>new</literal>-statement thus signifies the birth of a new Java
+    object. But when does it die?
+  </para>
+  <para>
+    A Java object "lives" until it is no longer referenced. Java's garbage collector
+    deletes all objects which are no longer referenced from memory. When and how that happens
+    will be discussed in the Advanced Java course. From the point of view of the user this is
+    largely irrelevant. The object effectively does not exist anymore for the user as soon as
+    there is no reference to it anymore, because at this stage the user cant use it anymore,
+    even if the garbage collector has not yet deleted it.
+  </para>
+  
+  <section>
+    <title role="When is an object no longer referenced?">When is an object no longer referenced?</title>
+    <para>
+      Consider first the following code snippet:
+      <programlisting><![CDATA[
+Account acc = new Account("A1", 2000);
+
+acc.credit(100);
+
+System.out.println("The balance of " + acc.getAccountNo() 
+      + " = " + acc.getBalance());
+
+acc = new Account("A2");
+      ]]></programlisting>
+      Here the reference, <literal>acc</literal> first refers to the account,
+      A1. We use this reference to send various messages to this account before we assign the
+      reference to refer to another account, A2. Since we have not assigned any other
+      reference to refer to A1, the latter becomes unreferenced after the last statement in
+      the listing. It is at this stage that the object is from the user's point of view non-existent.
+    </para>
+  </section>
+  
+  <section>
+    <title role="Finalization">Finalization</title>
+    <para>
+      Before an object gets garbage-collected (removed from memory), the garbage collector attempts to call the 
+      object's<literal>finalize()</literal> method, giving it the opportunity to perform any
+      last-minute clean-up activity (such as closing files or network sockets). 
+      <programlisting><![CDATA[
+public class Account
+{
+   ...
+  public void finalize()
+  {
+    // Any cleanup code goes here
+    // ...
+  }
+   ...
+}
+      ]]></programlisting>
+      In the constructor we keep a handle to the owner of the account. Note that we use the
+      <literal>this</literal> keyword to differentiate between the instance
+      attribute, <literal>owner</literal> and the method argument, <literal>owner</literal>, which is 
+      a variable local to the constructor body.
+    </para>
+    <para>
+      In the <literal>finalize()</literal> method we drop the handle to
+      <literal>owner</literal>, making it possibly allegible for garbage
+      collection. Before <literal>owner</literal> is garbage collected, it
+      will also receive a <literal>finalize()</literal> message from the
+      garbage collector.
+    </para>
+  </section>
+  
+  <section>
+    <title role="Life-span of local variables including references">Life-span of local variables including references</title>
+    <para>
+      Local variables exist from the point where they are declared to the end of the
+      block in which they are declared. Consider, for example, the following code snippet:
+      <programlisting><![CDATA[
+public void f()
+{
+  double sum = 0;
+
+  for (int i=0; i<5; i++)
+  {
+    double x = i*i;
+    sum += x;
+  }
+
+  System.out.println("sum = " + sum);  // no problem
+
+  System.out.println("x = " + x); // ERROR: x does not exist anymore
+}
+      ]]></programlisting>
+   </para>     
+   <para>
+      Here <literal>sum</literal> exists throughout the entire method body
+      while <literal>x</literal> exists only until the end of the <literal>for</literal>-loop block.
+   </para>
+    <para>
+      The same holds true for references (in fact a reference itself should be viewed as
+      a primitive data type just like <literal>double</literal> or <literal>char</literal>).
+      <programlisting><![CDATA[
+public Account createAccount(boolean business)
+{
+  Account account;
+
+  if (business)
+  {
+    Account businessAccount = new Account("BusinessAccount");
+    account = businessAccount;
+  }
+  else
+  {
+    Account personalAccount = new Account("PersonalAccount");
+    account = personalAccount;
+  }
+  return account;
+}
+      ]]></programlisting>
+      The references <literal>businessAccount</literal> and <literal>personalAccount</literal> exist 
+      only within the block where they are
+      declared. The actual account they refer to is, however, not garbage collected when the
+      reference no longer exists because it will still be referenced by <literal>account</literal>.
+    </para>
+  </section>
+  
+</section>

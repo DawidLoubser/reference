@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<!-- author: fritz@solms.co.za -->
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+    <title>Generating Java binding classes from Maven</title>
+    <para>
+        The <emphasis>jaxws-maven-plugin</emphasis> has a <literal>wsimport</literal>
+        goal which is used as follows:
+        <programlisting language="java"><![CDATA[
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>jaxws-maven-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>generate-stubs</id>
+            <phase>process-classes</phase>
+            <goals>
+                <goal>wsimport</goal>
+            </goals>
+            <configuration>
+                <wsdlDirectory>target/jaxws/wsgen/wsdl</wsdlDirectory>
+                <wsdlFiles>                   
+                    <wsdlFile><!-- class name goes here -->Service.wsdl</wsdlFile>
+                </wsdlFiles>
+                <!-- *** you need the next line to set the wsdlLocation in the generated stubs *** -->
+                <wsdlLocation>http://localhost:8080/test</wsdlLocation> 
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+        ]]></programlisting>
+    </para>
+</section>    

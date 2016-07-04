@@ -1,0 +1,588 @@
+%\documentclass[11pt,a4paper]{book}
+%\usepackage{emlines}
+%\usepackage{epsf}
+%\begin{document}
+
+\chapter{Error Handling Techniques\label{chapErrorhnd}}
+
+\index{error handling} \index{error handling!exceptions}
+
+\section{Introduction}
+
+It is a good idea to separate a program into distinct subsystems that
+either complete successfully or fail. Thus, a limited form of local error 
+checking should be implemented throughout the system in such a way
+that the overheads in development time, execution time, memory 
+requirements and overall complexity do not become too high. A
+fault-tolerant system should be designed hierarchically, with each
+\index{error handling!hierarchical}
+level coping with as many errors as it can (without making the system
+too contorted) and leaving the remaining errors to be handled by
+higher levels of the system. 
+
+One generally has however the problem that the error cannot be handled
+locally. Note that the user of your class library knows what to do when an
+error occurs, but he does not know how to detect an error in your classes.
+The author of the class library knows how to detect errors, but he does not
+know how the error should be handled. We thus need a global error
+communication system. Typically this would be one of the following:
+\begin{itemize}
+   \item Error state $=$ return value of functions and object services.
+   \item Classes with error state variables.
+   \item Exception handling.
+\end{itemize}
+
+
+%=========================================================
+
+\section{Error Communication via Return Values}
+
+In the past it was commmon to communicate that the requested service could 
+not be supplied by a return value returned by the service. Typically this 
+was an integer which may have been zero if the service was supplied as 
+requested and some other value otherwise. The value would supply some
+information about the source of the problem.
+
+This scenario may be ok if your direct client (i.e.\ the object from which
+the service was requested) is the one who always takes over the 
+responsibility of handling the situation. Often this is, however,
+not the case. In many cases the error information has to be propagated 
+up several layers in the calling hierarchy. 
+
+In such situations the return-value mechanism becomes very difficult
+to manage. Any of these services may generate its own code and to keep
+track of where the error originated from becomes virtually impossible
+when error codes are returned. 
+
+This can be partially addressed by returning errfor reporting objects 
+instead of simple error codes. These objects could contain the 
+information about the source of the problem and any other relevant
+information. 
+
+But even this can become a little burdensome. The error reporting
+objects have to be passed manually up the calling hierarchy and 
+error checking must be done manually after each service request.
+
+%=========================================================
+
+\section{Error Communication via Error States}
+
+Sometimes the information about the problem is stored within the
+service provider object itself. This is typically done via
+instance members which can be 
+queried by the client after the return from the service. 
+If an error occurs the error state variable set to a value indicating error type.
+
+For example, the standard IOstream library of C++ has integer state variable {\bf state}.
+The different bits of this state variable indicate different error states.
+The error state is queried via the class methods {\bf bad()}, {\bf eof()}, {\bf fail()}.
+The user can query the error state and implement his own error handling mechanism.
+
+This mechanism does not scale well at all. Firstly, the same object may
+provide services to a wide range of clients and typically it would only
+keep track of the last error state. Personally I prefer even the return
+value mechanism to the error state mechanism.
+
+%=========================================================
+
+\section{Error Communication via Exceptions}
+
+\index{exception handling}
+
+A more sophisticated method facilitating the split in responsibilities between error
+detection and error handling is provided by C++'s support for exception handling.
+Exceptions handling mechanisms are non-local. They provide a means of
+communicating the reason for not supplying a service oor the fact that a problem
+has been encountered while providing the service to the client who requested
+the service.
+
+%-----------------------------------------------
+
+\subsection{What is an Exceptional Situation?}
+
+A server encouters an exceptional situation when it does not know when it cannot
+supply the requested service. For example, if you want to withdraw funds from an
+account and your account cannot provide the service because there are
+insufficient funds in the account or because it has been frozen due to some
+legal dispute, then the account object would throw an exception, notifying
+you as client that it cannot supply the service.
+
+%-----------------------------------------------
+
+\subsection{What does a client do with an Exception?}
+
+Assume you requested a withdrawel from your account and that the account
+did not oblige, but threw an exception instead.
+
+If you ignore the exception, the person who asked you for the cash (you client)
+will be notified. In other words exceptions are passed up the client-server
+hierarchy (or the call-hierarchy). 
+
+On the other hand you could decide to catch the exeption. When you catch an 
+exception you have to provide the exception handling code. Here you could 
+specify that if your withdrawel from account A failed that you will try and 
+withdraw from account B or that it is time to visit your father in law or 
+whatever.
+
+%------------------------------------------------------------------------------
+
+\subsection{Throwing and Catching Exceptions}
+
+We shall first look at the problem detection which occors at the server side
+and then we shall focus on the exception handling on the client side.
+
+%------------------------------------------------------------------------------
+
+\subsection{Creating Exception Classes}
+
+In {\em C++} you can throw an instance of any class when an exceptional 
+situation arises. Typically you would define a simple class exception class
+which may, at times, carry no information beyond the information conveyed 
+through its identity. Such a class would simply be defined as an empty class
+(of course the compiler will provide default and copy constructors as well as 
+an assignment operator and a \verb+this+ pointer).
+
+For example, we could define an \verb+InsufficientFunds+ exception 
+simply as follows:
+
+\noindent{\small \begin{verbatim}
+class InsufficientFunds {};
+\end{verbatim}}
+
+%------------------------------------------
+
+\subsubsection{Exceptions which carry additional information}
+
+Often one would like to add further information to an exception class.
+Since any class can be used for exceptions, one can add any attributes
+as well as any services. One should however refrain from adding any
+attributes  or services which are unrelated to the core purpose of 
+exceptions, that of conveying information about the reasons why the
+requested service could not be supplied.
+
+For example, we could define an insufficient funds exception which
+carries information about the account which raised the exception as
+well as the funds available in that account:
+
+\noindent{\small\begin{verbatim}
+  class InsufficientFunds
+  {
+    public:
+      InsufficientFunds(Account* const source,
+                        const double availableFunds)
+         : _source(source), _availableFunds(availableFunds) {}
+
+      Account* const getSource() const {return _source;}
+
+      double availableFunds() {return _availableFunds;}
+
+    private:
+      Account* const _source;
+      const double _availableFunds;
+  };
+\end{verbatim}}
+
+%----------------------------------
+
+\subsection{The Server Side: Throwing Exceptions}
+
+The server detects a situation where it cannot complete the requested service
+and throws an exception. For example, in the \verb+debit()+ method of our
+\verb+Account+ class we check for sufficient funds.
+
+\noindent{\small\begin{verbatim}
+class Account
+{
+  public:
+	  ...
+	  void debit(double amount) 
+	  {
+	    if (amount > balance)
+	      throw InsufficientFunds(this, _balance);
+	    else
+	      balance -= amount;
+	  }
+  ...
+}      
+\end{verbatim}}
+
+When the problem is detected we instantiate the relevant Exception class and
+throw the exception via java's \verb+throw+ keyword. Note that the function
+announces that it may throw an \verb+IllegalArgumentException+. This is done
+with a \verb+throws+ clause in the method header.
+
+This is all the server does. What could he do more anyway? The control is
+transferred at the \verb+throw+ clause from the server to the client -- the
+remainder of the method body is skipped.      
+
+Note that when the exception is thrown the server code is exited, i.e.\ the 
+remaining statements are skipped.
+
+%----------------------------------
+
+\subsubsection{Exception Notification}
+
+C++ also has support for exception notification. For example, if you want to
+notify the clients of the \verb+Account+ class that the debit service is 
+not provided unconditionally, i.e.\ that under certain circumstances it 
+throws an \verb+InsufficientFunds+ exception, then you add a \verb+throw+
+clause to the method header:
+
+\noindent{\small\begin{verbatim}
+class Account
+{
+  public:
+  	...
+    void debit(double amount) throw (InsufficientFunds);
+  ...
+}      
+\end{verbatim}}
+
+In the above listing we declare that the \verb+Account+ class may raise
+an \verb+InsufficientFunds+ exception. In other words, that the \verb+debit+
+service is not supplied unconditionally. We are also saying that this
+service will NOT raise any other exception.
+
+If a service raises multiple exceptions, these are simply inserted into
+the brackets. For example, if we constrain the amount which may be 
+withdrawn on a single day from an account, we may specify the \verb+throw+
+clause of the \verb+debit+ service as follows:
+
+\noindent{\small\begin{verbatim}
+class Account
+{
+  public:
+  	...
+    void debit(double amount) throw (InsufficientFunds, DailyLimitExceeded);
+  ...
+}      
+\end{verbatim}}
+
+We may also want to explicitly promise that a particular service is provided
+unconditionally. In this case the \verb+throw+ clause is followed by an
+empty bracket:
+
+\noindent{\small\begin{verbatim}
+class Account
+{
+  public:
+  	...
+    void credit(double amount) throw ();
+  ...
+}      
+\end{verbatim}}
+
+%---------------------------------
+
+\subsubsection{Exception Notification Violations}
+
+Assume a method or function promises in a \verb+throw+ clause not to throw
+any exceptions or only to throw certain exceptions. What happens if it
+in practice does throw another exception. This will only be known at
+run-time. The function \verb+unexpected()+ defined in the C++ standard
+library which, by default, will terminate the application.
+
+%----------------------------------
+
+\subsection{The Client Side: Catching Exceptions}
+
+The client makes use of the services offered by the server by sending messages
+to it. The service may complete successfully or the server may throw an
+exception.
+
+The client may or may not be able to handle the exception. If the client is not
+able to handle the exception it will be passed up the client server hierarchy
+(calling hierarchy) until, hopefully, there is a point where there is enough 
+information to handle the problem. 
+
+If a client is willing to catch an exception, it puts the service request message
+within a \verb+try+ block:
+
+\noindent{\small\begin{verbatim}
+class TheClientClass
+{
+  public;
+    ...
+    void aClientMethod()
+	  {
+	    ...
+	    try
+	    {
+	      account.debit(amount);  // this service may throw an exception
+	      ...
+	    }
+	    catch (InsufficientFunds e)
+	    {
+	      /* Exception handling code comes here.  
+	         Sorry, this is still your baby. */
+	    }
+	    ...
+	  }
+};    
+\end{verbatim}}
+
+If an exception is thrown control is transferred from the service-request
+statement to the corresponding catch clause and, depending on the content
+of the catch clause, execution continuous with the statements following 
+the catch clause.
+
+Note that if the client makes use of services which may through an exception,
+and if the client does not catch the exception, the client's method must
+notify users that it may thow that exception, even though it does not do so 
+explicitly:
+
+\noindent{\small\begin{verbatim}
+class TheClientClass
+{
+  public:
+    ...
+    void aClientMethod() throw (InsufficientFunds)
+	  {
+	    ...
+	    account.debit(amount);  // this service may throw the exception
+	    ...
+	  }
+}    
+\end{verbatim}}
+
+%------------------------------------------------------------------------------
+
+\subsection{A Complete Example}
+
+Let us now look at the complete code for the \verb+Account+ example:
+
+%----------------------------
+
+\subsubsection{Account.h}
+
+\noindent{\small \input{ErrorHandling/Programs/Account.h}}
+
+%----------------------------
+
+\subsubsection{Account.cpp}
+
+\noindent{\small \input{ErrorHandling/Programs/Account.cpp}}
+
+%----------------------------
+
+\subsubsection{TestException1.cpp}
+
+\noindent{\small \input{ErrorHandling/Programs/TestException1.cpp}}
+
+Running the application yields the following ouput:
+
+\noindent{\small \begin{verbatim}
+Debited my account. Balance: 1700
+Debited my account. Balance: 1350
+Debited my account. Balance: 1000
+Debited my account. Balance: 650
+Debited my account. Balance: 300
+my Account only has R300 left. Debited uncle instead.
+my Account only has R300 left. Debited uncle instead.
+my Account only has R300 left. Debited uncle instead.
+my Account only has R300 left. Debited uncle instead.
+my Account only has R300 left. Debited uncle instead.
+my Account only has R300 left. Debited uncle instead.
+my Account only has R300 left. Debited uncle instead.
+my Account only has R300 left. Debited uncle instead.
+my Account only has R300 left. Debited uncle instead.
+Out of luck. Uncle broke too.
+\end{verbatim}}
+
+%------------------------------------------------------------------------------
+
+\subsection{Catching Exceptions at various levels of Abstraction}
+
+In order to be able to handle exceptions at different levels of abstraction
+we have to introduce a class hierarchy for exceptions. For example, we may
+feel want to introduce the concept of an exception through a base class
+\verb+Exception+. We could then define a specialized \verb+TransactionFailed+
+exception with further specializetions like \verb+InsufficientFunds+
+and \verb+DailyLimitExceeded+ exceptions:
+
+\noindent{\small \begin{verbatim}
+class Exception {};
+
+namespace finance
+{
+  class TransactionFailed: public Exception {};
+  
+  class InsufficientFunds: public TransactionFailed {};
+  
+  class DailyLimitExceeded: public TransactionFailed {};
+  
+  class AuthorizationFailed: public TransactionFailed {};
+}  
+\end{verbatim}}
+
+Once we have done this we can handle exceptions at different levels of 
+abstraction. Consider, for example, the following code:
+
+\noindent{\small \begin{verbatim}
+try
+{
+  account.debit(amount);
+}
+catch (InsufficientFunds)
+{
+  /* handle this problem one way */
+}
+catch (TransactionFailed)
+{
+  /* Handle all other TransactionFailed exceptions this way */
+}
+catch (Exception)
+{
+  /* Handle all other exceptions yet another way. */      
+}
+\end{verbatim}}
+
+%----------------------------
+
+\subsubsection{Catching all Exceptions}
+
+C++ also supports a \verb+catch+ clause which catches all exceptions
+irrespective of whether they are part of the same class hierarchy or
+not. To achieve this one inserts 3 dots into the arguments brackets
+of the catch clause:
+
+\noindent {\small \begin{verbatim}
+try
+{
+  account.debit(amount);
+}
+catch (InsufficientFunds)
+{
+  /* Handle this problem one way. */
+}
+catch (...)
+{
+  /* Catch anything else which is thrown in this way. */
+}
+\end{verbatim}}    
+
+%------------------------------------------------------------------------------
+
+\subsection{Partial Handling of an Exception}
+
+Assume that we want to perform some action upon an exception being thrown by 
+a service we requested, but that we cannot handle it completey (i.e.\ cannot
+decide how to resolve the problem completely). In such a situation we can
+catch the exception, perform some action in the \verb+catch+ block and either
+rethrow the same exception or throw another exception from within the catch
+block. In this way we notify the users of our method that we still have not
+resolved the problem completely.
+
+C++ has a special syntax for rethrowing the same exception:
+
+\noindent {\small \begin{verbatim}
+try
+{
+  /* do some IO */
+}
+catch (EndOfFile)
+{
+  /* Process data. */
+}
+catch (...)
+{
+  /* Close files and rethrow. */
+  
+  ifsteam.close();
+  
+  throw;
+}
+\end{verbatim}}
+
+%================================================================
+
+\section{Throwing Type Declarations}
+
+C++ also allows you to throw primitives like enumerated integers:
+
+\noindent {\small \begin{verbatim}
+class Account
+{
+  private:
+    enum State {success, noFunds, authorizationFailed, limitExceeded};
+    State state = success;
+    
+  public:
+    void debit(amount)
+    {  
+      ...
+      if (amount > _balance)
+        state = noFunds;
+      ...    
+      if (state != success)
+        throw state;
+      ...
+   }
+};
+\end{verbatim}}
+
+%-------------------------------------------------------------------
+
+\subsection{Defining Exception Classes as Nested Classes}
+
+It is often a good idea to package the exception class together
+with the class which may raise the exception.
+
+For example for a {\bf Rational} class developed may raise
+a {\bf DivideByZero} exception if the denominator of a
+{\bf Rational} object becomes zero and a \verb+OutOfRange+
+exception if the numerator or denominator falls outside
+the range of the \verb+long+ data type:
+
+\noindent {\small \begin{verbatim}
+class Rational
+{
+  public:
+    Rational (const long int Numer, const long int Denom) ;
+    ...
+    long int numerator();
+    long int denominator();
+    ...
+    Rational operator + (const Rational& r)
+    ...
+    class DivideByZero {};     // exception class for /0 error
+    class OutOfRange   {};     // exception class for range error
+  private:
+    long int numer, denom;
+}
+\end{verbatim}}
+
+The calling program could catch these exceptions in the following way
+
+\noindent {\small \begin{verbatim}
+void main()
+{
+  ...
+  try
+  {
+    long int a, b, c, d;
+    ...
+    calc1(a,b);
+    calc2(c,d);
+    ...
+    Rational r1(a,b), r2(c,d);
+    Rational r3 = r1+r2;
+  }
+  catch (Rational::DevideByZero)
+  {
+     ...       // error handler for /0 errors
+  }
+  catch (Rational::OutOfRange)
+  {
+     ...       // error handler for range errors
+  }
+  ...
+}
+\end{verbatim}}
+
+%-----------------------------------------------
+
+%\section{Exercises}
+%\begin{enumerate}
+%  \item 
+%\end{enumerate}

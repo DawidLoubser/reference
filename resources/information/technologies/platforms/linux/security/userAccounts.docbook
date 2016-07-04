@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<!--DOCTYPE section SYSTEM "file:/opt/share/xml/Oxygen/docbook/dtd/docbookx.dtd"--><ns4691:section xmlns:ns4691="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.security.userAccounts">
+
+  <ns4692:title xmlns:ns4692="http://docbook.org/ns/docbook">User Accounts</ns4692:title>
+  <ns4693:para xmlns:ns4693="http://docbook.org/ns/docbook">
+    User accounts verify that users who try to access the system are allowed to access
+    the system, and provides work space for users.
+  </ns4693:para>
+  
+  <ns4694:section xmlns:ns4694="http://docbook.org/ns/docbook">
+    <ns4695:title xmlns:ns4695="http://docbook.org/ns/docbook">When should you create a user?</ns4695:title>
+    <ns4696:para xmlns:ns4696="http://docbook.org/ns/docbook">
+      For each user of the system who is allowed to maintain some information on the system,
+      there should be a user account with a unique username. Users which are not allowed to
+      maintain information on the system can log on with a generic username like 
+      <ns4697:emphasis xmlns:ns4697="http://docbook.org/ns/docbook">guest</ns4697:emphasis>
+    </ns4696:para>
+  </ns4694:section>
+  
+  <ns4698:section xmlns:ns4698="http://docbook.org/ns/docbook">
+    <ns4699:title xmlns:ns4699="http://docbook.org/ns/docbook">Adding users</ns4699:title>
+    <ns4700:para xmlns:ns4700="http://docbook.org/ns/docbook">
+      You can add a user via the <ns4701:command xmlns:ns4701="http://docbook.org/ns/docbook">useradd</ns4701:command> command. In its
+      simplest form you use
+      <ns4702:cmdsynopsis xmlns:ns4702="http://docbook.org/ns/docbook">
+<ns4703:command xmlns:ns4703="http://docbook.org/ns/docbook">useradd &lt;username</ns4703:command>
+      </ns4702:cmdsynopsis>
+      This creates a user with the specified username, no password, no expiry date, and
+      with <ns4704:filename xmlns:ns4704="http://docbook.org/ns/docbook">/home/&lt;username&gt;</ns4704:filename> as home directory.
+    </ns4700:para>
+    <ns4705:para xmlns:ns4705="http://docbook.org/ns/docbook">
+      The <ns4706:command xmlns:ns4706="http://docbook.org/ns/docbook">useradd</ns4706:command> command can take a number of arguments
+      including
+      <ns4707:itemizedlist xmlns:ns4707="http://docbook.org/ns/docbook">
+        <ns4708:listitem xmlns:ns4708="http://docbook.org/ns/docbook"><ns4709:formalpara xmlns:ns4709="http://docbook.org/ns/docbook">
+          <ns4710:title xmlns:ns4710="http://docbook.org/ns/docbook">-d &lt;homeDirectory&gt;</ns4710:title>
+          <ns4711:para xmlns:ns4711="http://docbook.org/ns/docbook">
+            Use this parameter to specify a home directory other than the default,
+            <ns4712:filename xmlns:ns4712="http://docbook.org/ns/docbook">/home/&lt;username&gt;</ns4712:filename>. This option
+            is used in conjunction with the <ns4713:command xmlns:ns4713="http://docbook.org/ns/docbook">-m</ns4713:command> parameter
+            discussed below.
+          </ns4711:para>
+        </ns4709:formalpara></ns4708:listitem>
+        <ns4714:listitem xmlns:ns4714="http://docbook.org/ns/docbook"><ns4715:formalpara xmlns:ns4715="http://docbook.org/ns/docbook">
+          <ns4716:title xmlns:ns4716="http://docbook.org/ns/docbook">-e &lt;expiryDate&gt;</ns4716:title>
+          <ns4717:para xmlns:ns4717="http://docbook.org/ns/docbook">
+            Use this command-line option to specify an expiry date for the account 
+            in <ns4718:literal xmlns:ns4718="http://docbook.org/ns/docbook">MM/DD/YYYY</ns4718:literal> format.
+          </ns4717:para>
+        </ns4715:formalpara></ns4714:listitem>
+        <ns4719:listitem xmlns:ns4719="http://docbook.org/ns/docbook"><ns4720:formalpara xmlns:ns4720="http://docbook.org/ns/docbook">
+          <ns4721:title xmlns:ns4721="http://docbook.org/ns/docbook">-f &lt;numDays&gt;</ns4721:title>
+          <ns4722:para xmlns:ns4722="http://docbook.org/ns/docbook">
+            If this parameter is specified, the account expires <ns4723:literal xmlns:ns4723="http://docbook.org/ns/docbook">numDays</ns4723:literal>
+            after the password for the account has expired. A value of 0 permanently removes the
+            user account as soon as the password expires. A value of -1 does not expire the
+            account, even if the password has expired a long time ago.
+          </ns4722:para>
+        </ns4720:formalpara></ns4719:listitem>
+        <ns4724:listitem xmlns:ns4724="http://docbook.org/ns/docbook"><ns4725:formalpara xmlns:ns4725="http://docbook.org/ns/docbook">
+          <ns4726:title xmlns:ns4726="http://docbook.org/ns/docbook">-g &lt;primaryGroup&gt;</ns4726:title>
+          <ns4727:para xmlns:ns4727="http://docbook.org/ns/docbook">
+            This option specifies the primary group for the user (groups are discussed in 
+            <ns4728:xref xmlns:ns4728="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.security.groups"/>). Otherwise the default group
+            for users (as specified in <ns4729:filename xmlns:ns4729="http://docbook.org/ns/docbook">/etc/default/useradd</ns4729:filename> -- see
+            <ns4730:xref xmlns:ns4730="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.security.userAccounts.defaultAttributes"/>) is used.            
+          </ns4727:para>
+        </ns4725:formalpara></ns4724:listitem>
+        <ns4731:listitem xmlns:ns4731="http://docbook.org/ns/docbook"><ns4732:formalpara xmlns:ns4732="http://docbook.org/ns/docbook">
+          <ns4733:title xmlns:ns4733="http://docbook.org/ns/docbook">-G groupsList</ns4733:title>
+          <ns4734:para xmlns:ns4734="http://docbook.org/ns/docbook">
+            Use this option to specify the list of groups the user should belong to. The group names
+            should be separated by a comma only (no spaces after the comma). Groups are
+            discussed in more detail in <ns4735:xref xmlns:ns4735="http://docbook.org/ns/docbook" linkend="resources.information.platforms.linux.security.groups"/>.
+          </ns4734:para>
+        </ns4732:formalpara></ns4731:listitem>
+        <ns4736:listitem xmlns:ns4736="http://docbook.org/ns/docbook"><ns4737:formalpara xmlns:ns4737="http://docbook.org/ns/docbook">
+          <ns4738:title xmlns:ns4738="http://docbook.org/ns/docbook">-m</ns4738:title>
+          <ns4739:para xmlns:ns4739="http://docbook.org/ns/docbook">
+            Automatically creates a home directory for the new user, and copies the files from
+            the skeleton directory, <ns4740:filename xmlns:ns4740="http://docbook.org/ns/docbook">/etc/skel</ns4740:filename>, to the user directory.
+          </ns4739:para>
+        </ns4737:formalpara></ns4736:listitem>
+        <ns4741:listitem xmlns:ns4741="http://docbook.org/ns/docbook"><ns4742:formalpara xmlns:ns4742="http://docbook.org/ns/docbook">
+          <ns4743:title xmlns:ns4743="http://docbook.org/ns/docbook">-k &lt;skeletonDirectory&gt;</ns4743:title>
+          <ns4744:para xmlns:ns4744="http://docbook.org/ns/docbook">
+            This parameter is used in conjunction with <ns4745:command xmlns:ns4745="http://docbook.org/ns/docbook">-m</ns4745:command> to
+            specify a skeleton directory to be used when creating the user's home directory --
+            the content of the skeleton directory will be copied into the user's home
+            directory.
+          </ns4744:para>
+        </ns4742:formalpara></ns4741:listitem>
+        <ns4746:listitem xmlns:ns4746="http://docbook.org/ns/docbook"><ns4747:formalpara xmlns:ns4747="http://docbook.org/ns/docbook">
+          <ns4748:title xmlns:ns4748="http://docbook.org/ns/docbook">-M</ns4748:title>
+          <ns4749:para xmlns:ns4749="http://docbook.org/ns/docbook">
+            Use this parameter if <ns4750:command xmlns:ns4750="http://docbook.org/ns/docbook">useradd</ns4750:command> should <ns4751:emphasis xmlns:ns4751="http://docbook.org/ns/docbook">not</ns4751:emphasis>
+            create a home directory for the user.
+          </ns4749:para>
+        </ns4747:formalpara></ns4746:listitem>
+        <ns4752:listitem xmlns:ns4752="http://docbook.org/ns/docbook"><ns4753:formalpara xmlns:ns4753="http://docbook.org/ns/docbook">
+          <ns4754:title xmlns:ns4754="http://docbook.org/ns/docbook">-s &lt;shallName&gt;</ns4754:title>
+          <ns4755:para xmlns:ns4755="http://docbook.org/ns/docbook">
+            This option enables you to specify the default command shell for the user.
+          </ns4755:para>
+        </ns4753:formalpara></ns4752:listitem>        
+        <ns4756:listitem xmlns:ns4756="http://docbook.org/ns/docbook"><ns4757:formalpara xmlns:ns4757="http://docbook.org/ns/docbook">
+          <ns4758:title xmlns:ns4758="http://docbook.org/ns/docbook">-u &lt;userId&gt;</ns4758:title>
+          <ns4759:para xmlns:ns4759="http://docbook.org/ns/docbook">
+            This enables you to specify the user id for the user. If this option is not used,
+            <ns4760:command xmlns:ns4760="http://docbook.org/ns/docbook">useradd</ns4760:command> will pick the next available user id.
+          </ns4759:para>
+        </ns4757:formalpara></ns4756:listitem>
+        <ns4761:listitem xmlns:ns4761="http://docbook.org/ns/docbook"><ns4762:formalpara xmlns:ns4762="http://docbook.org/ns/docbook">
+          <ns4763:title xmlns:ns4763="http://docbook.org/ns/docbook">-c &lt;userDescription&gt;</ns4763:title>
+          <ns4764:para xmlns:ns4764="http://docbook.org/ns/docbook">
+            This parameter enables you to specify a user description which is typically
+            the full name of the user.
+          </ns4764:para>
+        </ns4762:formalpara></ns4761:listitem>
+      </ns4707:itemizedlist>
+    </ns4705:para>
+  </ns4698:section>
+  
+  <ns4765:section xmlns:ns4765="http://docbook.org/ns/docbook" xml:id="resources.information.platforms.linux.security.userAccounts.defaultAttributes">
+    <ns4766:title xmlns:ns4766="http://docbook.org/ns/docbook">Specifying default user attributes in <ns4767:filename xmlns:ns4767="http://docbook.org/ns/docbook">/etc/default/useradd</ns4767:filename></ns4766:title>
+    <ns4768:para xmlns:ns4768="http://docbook.org/ns/docbook">
+      The values for the command-line parameters of <ns4769:command xmlns:ns4769="http://docbook.org/ns/docbook">useradd</ns4769:command> are 
+      specified in a file <ns4770:filename xmlns:ns4770="http://docbook.org/ns/docbook">/etc/default/useradd</ns4770:filename>:
+      <ns4771:programlisting xmlns:ns4771="http://docbook.org/ns/docbook">
+GROUP=100
+HOME=/home
+INACTIVE=-1
+EXPIRE=
+SHELL=/bin/bash
+SKEL=/etc/skel      
+      </ns4771:programlisting>
+    </ns4768:para>
+    <ns4772:para xmlns:ns4772="http://docbook.org/ns/docbook">
+      These can be edited directly, or via <ns4773:command xmlns:ns4773="http://docbook.org/ns/docbook">useradd</ns4773:command> itself, using the
+      one command-line argument not yet discussed, <ns4774:command xmlns:ns4774="http://docbook.org/ns/docbook">-D</ns4774:command>. This
+      parameter is used in conjunction with the <ns4775:command xmlns:ns4775="http://docbook.org/ns/docbook">-g</ns4775:command>,
+      <ns4776:command xmlns:ns4776="http://docbook.org/ns/docbook">-b</ns4776:command> to specify the default home directory, as well as with the
+      standard <ns4777:command xmlns:ns4777="http://docbook.org/ns/docbook">-f</ns4777:command>, <ns4778:command xmlns:ns4778="http://docbook.org/ns/docbook">-e</ns4778:command>
+      and <ns4779:command xmlns:ns4779="http://docbook.org/ns/docbook">-s</ns4779:command> command line parameters
+      to change these default values.
+    </ns4772:para>
+  </ns4765:section>
+  
+  <ns4780:section xmlns:ns4780="http://docbook.org/ns/docbook">
+    <ns4781:title xmlns:ns4781="http://docbook.org/ns/docbook">Specifying further user defaults in <ns4782:filename xmlns:ns4782="http://docbook.org/ns/docbook">/etc/login.defs</ns4782:filename></ns4781:title>
+    <ns4783:para xmlns:ns4783="http://docbook.org/ns/docbook">
+      Additional defaults for users can be specified in the <ns4784:filename xmlns:ns4784="http://docbook.org/ns/docbook">/etc/login.defs</ns4784:filename>
+      file. Below we list the default <ns4785:filename xmlns:ns4785="http://docbook.org/ns/docbook">login.defs</ns4785:filename> file shipped with the
+      <ns4786:emphasis xmlns:ns4786="http://docbook.org/ns/docbook">SUSE 8.2</ns4786:emphasis> distribution. The comments provide an excellent
+      explanation of the file content.
+      <ns4787:programlisting xmlns:ns4787="http://docbook.org/ns/docbook">
+#
+# /etc/login.defs - Configuration control definitions for the login package.
+#
+# Comment lines (lines beginning with "#") and blank lines are ignored.
+#
+# Please read the manual page for more information (login.defs.5).
+#
+
+#
+# Delay in seconds before being allowed another attempt after a login failure
+#
+FAIL_DELAY		3
+
+#
+# Enable logging and display of /var/log/faillog login failure info.
+#
+FAILLOG_ENAB		yes
+
+#
+# Enable display of unknown usernames when login failures are recorded.
+#
+LOG_UNKFAIL_ENAB	no
+
+#
+# Enable logging and display of /var/log/lastlog login time info.
+#
+LASTLOG_ENAB		yes
+
+#
+# Enable additional checks upon password changes.
+#
+OBSCURE_CHECKS_ENAB	yes
+
+#
+# If defined, ":" delimited list of "message of the day" files to
+# be displayed upon login.
+#
+MOTD_FILE	/etc/motd
+#MOTD_FILE	/etc/motd:/usr/lib/news/news-motd
+
+#
+# If defined, file which maps tty line to TERM environment parameter.
+# Each line of the file is in a format something like "vt100  tty01".
+#
+TTYTYPE_FILE	/etc/ttytype
+
+#
+# If defined and the file exist, login failures will be logged here
+# in a utmp format.
+# last, when invoked as lastb, will read /var/log/btmp, so...
+#
+FTMP_FILE	/var/log/btmp
+
+#
+# If defined, file which inhibits all the usual chatter during the login
+# sequence.  If a full pathname, then hushed mode will be enabled if the
+# user's name or shell are found in the file.  If not a full pathname, then
+# hushed mode will be enabled if the file exists in the user's home directory.
+#
+#HUSHLOGIN_FILE	.hushlogin
+HUSHLOGIN_FILE	/etc/hushlogins
+
+#
+# The default PATH settings.
+#
+ENV_PATH                /usr/local/bin:/usr/bin:/bin
+
+#
+# The default PATH settings for root:
+#
+ENV_ROOTPATH            /sbin:/bin:/usr/sbin:/usr/bin
+
+#
+# Terminal permissions
+#
+#	TTYGROUP	Login tty will be assigned this group ownership.
+#	TTYPERM		Login tty will be set to this permission.
+#
+# If you have a "write" program which is "setgid" to a special group
+# which owns the terminals, define TTYGROUP to the group number and
+# TTYPERM to 0620.  Otherwise leave TTYGROUP commented out and assign
+# TTYPERM to either 622 or 600.
+#
+TTYGROUP	tty
+TTYPERM		0620
+
+#
+# Permissions of new created home directories
+#
+#      UMASK           Default "umask" value.
+#
+# This is the umask which is used by useradd and newusers for creating
+# new home directories.
+#
+UMASK          022
+
+#
+# Password aging controls:
+#
+#	PASS_MAX_DAYS	Maximum number of days a password may be used.
+#	PASS_MIN_DAYS	Minimum number of days allowed between password changes.
+#	PASS_MIN_LEN	Minimum acceptable password length.
+#	PASS_WARN_AGE	Number of days warning given before a password expires.
+#
+PASS_MAX_DAYS	99999
+PASS_MIN_DAYS	0
+PASS_MIN_LEN	5
+PASS_WARN_AGE	7
+
+#
+# If compiled with cracklib support, where are the dictionaries
+#
+CRACKLIB_DICTPATH	/usr/lib/cracklib_dict
+
+#
+# Min/max values for automatic uid selection in useradd
+#
+UID_MIN			  500
+UID_MAX			60000
+
+#
+# Min/max values for automatic gid selection in groupadd
+#
+GID_MIN			  500
+GID_MAX			60000
+
+#
+# Max number of login retries if password is bad
+#
+LOGIN_RETRIES		3
+
+#
+# Max time in seconds for login
+#
+LOGIN_TIMEOUT		60
+
+#
+# Maximum number of attempts to change password if rejected (too easy)
+#
+PASS_CHANGE_TRIES	3
+
+#
+# Warn about weak passwords (but still allow them) if you are root.
+#
+PASS_ALWAYS_WARN	yes
+
+#
+# Number of significant characters in the password for crypt().
+# Default is 8, don't change unless your crypt() is better.
+# Ignored if the "md5" or "blowfish" option is given to the
+# pam_pwcheck module.
+#
+PASS_MAX_LEN		8
+
+#
+# Require password before chfn/chsh can make any changes.
+#
+CHFN_AUTH		yes
+
+#
+# Which fields may be changed by regular users using chfn - use
+# any combination of letters "frwh" (full name, room number, work
+# phone, home phone).  If not defined, no changes are allowed.
+# For backward compatibility, "yes" = "rwh" and "no" = "frwh".
+#
+CHFN_RESTRICT		rwh
+
+#
+# Should login be allowed if we can't cd to the home directory?
+# Default is yes.
+#
+DEFAULT_HOME		yes
+
+#
+# If defined, this command is run when removing a user.
+# It should remove any at/cron/print jobs etc. owned by
+# the user to be removed (passed as the first argument).
+#
+#USERDEL_CMD	/usr/sbin/userdel_local
+
+#
+# This enables userdel to remove user groups if no members exist.
+#
+USERGROUPS_ENAB		no
+      </ns4787:programlisting>
+    </ns4783:para>
+  </ns4780:section>
+  
+  <ns4788:section xmlns:ns4788="http://docbook.org/ns/docbook">
+    <ns4789:title xmlns:ns4789="http://docbook.org/ns/docbook">Creating a skeleton configuration for users in <ns4790:filename xmlns:ns4790="http://docbook.org/ns/docbook">/etc/skel</ns4790:filename></ns4789:title>
+    <ns4791:para xmlns:ns4791="http://docbook.org/ns/docbook">
+     The user's home directory (if it is created) is populated with a number of files including a
+     number of initialization scripts. Put any files which should be copied into a user's home directory
+     when creating a user with <ns4792:command xmlns:ns4792="http://docbook.org/ns/docbook">useradd -m</ns4792:command> in this directory.
+     <ns4793:note xmlns:ns4793="http://docbook.org/ns/docbook"><ns4794:para xmlns:ns4794="http://docbook.org/ns/docbook">
+       You can also put a default desktop in the <ns4795:filename xmlns:ns4795="http://docbook.org/ns/docbook">/etc/skel/Desktop</ns4795:filename>  
+       directory.
+     </ns4794:para></ns4793:note>
+    </ns4791:para>
+  </ns4788:section>
+  
+  <ns4796:section xmlns:ns4796="http://docbook.org/ns/docbook">
+    <ns4797:title xmlns:ns4797="http://docbook.org/ns/docbook">Initializing a user's bash shell via the <ns4798:filename xmlns:ns4798="http://docbook.org/ns/docbook">.bashrc</ns4798:filename> file</ns4797:title>
+    <ns4799:para xmlns:ns4799="http://docbook.org/ns/docbook">
+      The <ns4800:filename xmlns:ns4800="http://docbook.org/ns/docbook">./bashrc</ns4800:filename> file in the user's home directory contains an
+      initialization script which is run when a user opens a bash shell. It may contain
+      additions to the path via
+      <ns4801:cmdsynopsis xmlns:ns4801="http://docbook.org/ns/docbook"><ns4802:command xmlns:ns4802="http://docbook.org/ns/docbook">
+export PATH=$PATH:/usr/bin:/usr/local/bin        
+      </ns4802:command></ns4801:cmdsynopsis>
+      and initialization of other environment variables, for example the default editor to be used:
+      <ns4803:cmdsynopsis xmlns:ns4803="http://docbook.org/ns/docbook"><ns4804:command xmlns:ns4804="http://docbook.org/ns/docbook">
+export EDITOR=/usr/bin/vim
+      </ns4804:command></ns4803:cmdsynopsis>
+      Redhat distributions also typically specify aliases for the remove, copy and move commands
+      forcing users into the interactive modes for these commands (for example to confirm
+      the deletion of a file):
+      <ns4805:cmdsynopsis xmlns:ns4805="http://docbook.org/ns/docbook"><ns4806:command xmlns:ns4806="http://docbook.org/ns/docbook">
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'        
+      </ns4806:command></ns4805:cmdsynopsis>
+    </ns4799:para>
+  </ns4796:section>
+  
+  <ns4807:section xmlns:ns4807="http://docbook.org/ns/docbook">
+    <ns4808:title xmlns:ns4808="http://docbook.org/ns/docbook">Setting and changing user passwords via <ns4809:command xmlns:ns4809="http://docbook.org/ns/docbook">passwd</ns4809:command></ns4808:title>
+    <ns4810:para xmlns:ns4810="http://docbook.org/ns/docbook">
+      Once a user has been created, you should set the password for the user via the
+      <ns4811:command xmlns:ns4811="http://docbook.org/ns/docbook">passwd &lt;username&gt;</ns4811:command> command.
+    </ns4810:para>
+  </ns4807:section>
+  
+  <ns4812:section xmlns:ns4812="http://docbook.org/ns/docbook">
+    <ns4813:title xmlns:ns4813="http://docbook.org/ns/docbook">Removing users via <ns4814:command xmlns:ns4814="http://docbook.org/ns/docbook">userdel</ns4814:command></ns4813:title>
+    <ns4815:para xmlns:ns4815="http://docbook.org/ns/docbook">
+      To remove a user, you can use the command <ns4816:command xmlns:ns4816="http://docbook.org/ns/docbook">userdel</ns4816:command>. The
+      <ns4817:command xmlns:ns4817="http://docbook.org/ns/docbook">-r</ns4817:command> option also removes the home directory. Thus
+      <ns4818:cmdsynopsis xmlns:ns4818="http://docbook.org/ns/docbook">
+<ns4819:command xmlns:ns4819="http://docbook.org/ns/docbook">userdel -r &lt;username&gt;</ns4819:command>
+      </ns4818:cmdsynopsis>
+      removes a user and removes the home directory of the user too.
+    </ns4815:para>
+  </ns4812:section>
+  
+  <ns4820:section xmlns:ns4820="http://docbook.org/ns/docbook">
+    <ns4821:title xmlns:ns4821="http://docbook.org/ns/docbook">Changing the user</ns4821:title>
+    <ns4822:para xmlns:ns4822="http://docbook.org/ns/docbook">
+      At times you want to temporarily change to another user. Very often you would want
+      to issue a few commands from the root user and then go back to your normal user.
+    </ns4822:para>
+    <ns4823:section xmlns:ns4823="http://docbook.org/ns/docbook">
+      <ns4824:title xmlns:ns4824="http://docbook.org/ns/docbook">Changing a shell to <ns4825:emphasis xmlns:ns4825="http://docbook.org/ns/docbook">root</ns4825:emphasis>user</ns4824:title>
+      <ns4826:para xmlns:ns4826="http://docbook.org/ns/docbook">
+        To change to the root user, use the
+        <ns4827:cmdsynopsis xmlns:ns4827="http://docbook.org/ns/docbook">
+<ns4828:command xmlns:ns4828="http://docbook.org/ns/docbook">su</ns4828:command>      
+        </ns4827:cmdsynopsis>
+        command which will prompt you for the root password. After entering it, you are
+        operating from within your command shell as the <ns4829:emphasis xmlns:ns4829="http://docbook.org/ns/docbook">root</ns4829:emphasis>
+        user. To exit the root user, simply type <ns4830:command xmlns:ns4830="http://docbook.org/ns/docbook">exit</ns4830:command>.
+      </ns4826:para>
+    </ns4823:section>
+    
+    <ns4831:section xmlns:ns4831="http://docbook.org/ns/docbook">
+      <ns4832:title xmlns:ns4832="http://docbook.org/ns/docbook">Changing to another user</ns4832:title>
+      <ns4833:para xmlns:ns4833="http://docbook.org/ns/docbook">
+        Via
+        <ns4834:cmdsynopsis xmlns:ns4834="http://docbook.org/ns/docbook">
+<ns4835:command xmlns:ns4835="http://docbook.org/ns/docbook">su &lt;username&gt;</ns4835:command>        
+        </ns4834:cmdsynopsis>
+        you can change your shell to execute from the specified user. You will once again be prompted
+        for the password for that user.
+      </ns4833:para>
+    </ns4831:section>
+    
+    
+  </ns4820:section>
+  
+</ns4691:section>

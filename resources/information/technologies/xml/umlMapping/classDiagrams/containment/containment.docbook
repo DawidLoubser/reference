@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?><!--Authored by mailto:fritz@solms.co.za on 2007-03-12 -->
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Mapping UML containment relationships onto XML</title>
+    <para> An inner class in UML can be mapped onto an anonymous inner class in XML. For example a
+        line item is specific to an order and one may want to prevent any re-use of the
+            <literal>LineItem</literal> class outside an instance of an <literal>Order</literal>.
+        This may prompt one to define the <literal>LineItem</literal> as an inner class of the
+            <literal>Order</literal> class. </para>
+
+    <figure>
+        <title>Line item as an inner class of order</title>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="400" fileref="./lineItem.jpg"/>
+            </imageobject>
+        </mediaobject>
+    </figure>
+
+    <para> This inner class would be mapped onto an anonymous inner class in XML schema:
+        <programlisting><![CDATA[
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+  <xs:complexType name="Order">
+    <xs:sequence>
+      <xs:element name="orderNo" type="xs:string"/>
+
+      <xs:element name="lineItem" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="productId" type="xs:string"/>
+            <xs:element name="quantity" type="xs:positiveInteger"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    				
+    </xs:sequence>
+  </xs:complexType>
+	
+</xs:schema>			
+			]]></programlisting>
+    </para>
+    <para> Here we define, within a <literal>lineItem</literal> element, a complex type (class)
+        which does not have a name. This is a class specifically defined to specify the
+            <literal>lineItem</literal> element and cannot be reused. <note>
+            <para> Anonymous inner classes are used in XML if one explicitly wants to prevent reuse.
+            </para>
+        </note>
+    </para>
+</section>

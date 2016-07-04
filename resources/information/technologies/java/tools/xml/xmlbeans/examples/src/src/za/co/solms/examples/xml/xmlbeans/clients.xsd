@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:my="http://my/namespace"
+    targetNamespace="http://my/namespace"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xs:annotation>
+        <xs:documentation>
+            This simple XML schema illustrates polymorphism /
+            substitutability, using the simple example of
+            a client, with zero or more accounts.
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType name="Client">
+        <xs:annotation>
+            <xs:documentation>
+                A simple client, which can have many accounts.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="account" type="my:Account" 
+                minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Account" abstract="true">
+        <xs:annotation>
+            <xs:documentation>
+                A simple, abstract account (cannot be used
+                directly)
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="balance" type="xs:double"/>
+        </xs:sequence>
+        <xs:attribute name="accountNumber" type="xs:positiveInteger"/>
+    </xs:complexType>
+    
+    <xs:complexType name="ChequeAccount">
+        <xs:annotation>
+            <xs:documentation>
+                Specialised account, adds a cheque fee
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="my:Account">
+                <xs:sequence>
+                    <xs:element name="chequeFee" type="xs:double"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="CreditAccount">
+        <xs:annotation>
+            <xs:documentation>
+                Credit card account
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="my:Account">
+                <xs:sequence>
+                    <xs:element name="minBalance" type="xs:double"/>
+                </xs:sequence>
+                <xs:attribute name="cardType" type="my:CreditCardType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:simpleType name="CreditCardType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="VISA"/>
+            <xs:enumeration value="MASTERCARD"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:element name="client" type="my:Client">
+        <xs:annotation>
+            <xs:documentation>
+                An instance document containing a single
+                client (and inherently, his accounts).
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+</xs:schema>

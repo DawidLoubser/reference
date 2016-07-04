@@ -1,0 +1,61 @@
+    
+#getDiagramForUseCase($targetUseCase,$urdad_serviceContractDiagram)    
+#set($diagram = $result)
+#if($diagram && $diagram != '')
+#set($diagramId = $diagram.qualifiedName.replaceAll('::','.').replaceAll(' ','_'))
+
+    <section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+        <title>Service contract: $targetUseCase.name</title>
+        <para>
+            The service contract specification diagram shown below
+##            in <xref linkend="$diagramId"/>
+            specifies the contract (interface) name, the service with the request and response objects, the pre- and post-conditions
+            and the quality requirements for the service.
+        </para>
+        <para>
+            The pre-conditions are those conditions under which the service may be refused without being in breach of services contract.
+            The post-conditions are those conditions which must hold true once the service has been rendered.
+            The quality requirements are the non-functional requirements.
+        </para>
+    
+        #set($diagramComment = $report.getComment($diagram).body)
+        #if ($diagramComment && ($diagramComment != ''))            
+            <para>
+                $diagramComment
+            </para>
+        #end            
+    
+        <figure xml:id="$diagramId">
+            <title>The service contract for the $targetUseCase.name use case.</title>
+            <mediaobject><imageobject>
+                <imagedata contentwidth="150mm" scalefit="1" fileref="$diagram.image"/>
+            </imageobject></mediaobject>
+        </figure>
+     
+#getRealizingServices($targetUseCase)
+#set($services = $result)
+#foreach($service in $services)
+    <para>
+        The service realizing the services contract is $service.getName().
+        #set($serviceComment = $report.getComment($service).body)
+        #if ($serviceComment && $serviceComment != '')
+        $serviceComment
+        #end                
+    </para>
+   
+#parse("analysis/userWorkflow/services/service/parameters/parameters.txt")
+    
+#parse("analysis/userWorkflow/services/service/returnValue/returnValue.txt")
+
+#end         
+        
+    </section>
+#else
+  <section>
+      <title>ERROR: Missing service contract specification</title>
+      <para>
+          URDAD requires the specification of a services contract showing the contract (interface) with the services, their inputs
+          and outputs and their quality requirements.
+      </para>
+  </section>
+#end

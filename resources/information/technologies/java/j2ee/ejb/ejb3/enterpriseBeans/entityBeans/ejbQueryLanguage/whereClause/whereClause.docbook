@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns528:section xmlns:ns528="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2ee.ejb.enterpriseBeans.entityBeans.cmp.ejbQuery.whereClause.whereClause">
+
+<ns529:title xmlns:ns529="http://docbook.org/ns/docbook">Restricting the result collection via the WHERE clause</ns529:title>
+<ns530:para xmlns:ns530="http://docbook.org/ns/docbook">
+  Analogous to SQL, EJB-QL uses a <ns531:literal xmlns:ns531="http://docbook.org/ns/docbook">WHERE</ns531:literal> clause to
+  restrict the elements returned in the result collection.
+</ns530:para>
+<ns532:para xmlns:ns532="http://docbook.org/ns/docbook">
+  For example, we can select only those courses to which one or more presenters have been
+  allocated via
+<ns533:programlisting xmlns:ns533="http://docbook.org/ns/docbook">
+SELECT Object(c)
+   FROM Course c
+      WHERE c.presenters NOT EMPTY
+</ns533:programlisting>
+</ns532:para>
+
+  <ns534:section xmlns:ns534="http://docbook.org/ns/docbook">
+    <ns535:title xmlns:ns535="http://docbook.org/ns/docbook">Using Collection Variables in WHERE Clauses</ns535:title>
+    <ns536:para xmlns:ns536="http://docbook.org/ns/docbook">
+      We often have to define collection variables for multi-valued path constraints in
+      <ns537:literal xmlns:ns537="http://docbook.org/ns/docbook">WHERE</ns537:literal> clauses. For example
+<ns538:programlisting xmlns:ns538="http://docbook.org/ns/docbook">
+SELECT Object(c)
+   FROM Course c
+      WHERE c.prerequisites.name = 'Programming in Java'
+</ns538:programlisting>
+        is invalid because of the match against a multi-valued path, while
+<ns539:programlisting xmlns:ns539="http://docbook.org/ns/docbook">
+SELECT Object(c)
+   FROM Course c, IN(c.prerequisites) p
+      WHERE p.name = 'Programming in Java'
+</ns539:programlisting>
+       is valid.
+    </ns536:para>
+  </ns534:section>
+</ns528:section>

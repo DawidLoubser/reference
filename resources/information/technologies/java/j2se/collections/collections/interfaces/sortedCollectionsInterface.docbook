@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns1081:section xmlns:ns1081="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.j2se.collections.collections.collections.interfaces.sortedCollectionsInterface">      
+        <ns1082:title xmlns:ns1082="http://docbook.org/ns/docbook">Interfaces for Sorted Collections</ns1082:title>
+        <ns1083:para xmlns:ns1083="http://docbook.org/ns/docbook">Java 2 defines two interfaces for sorted collections, <ns1084:literal xmlns:ns1084="http://docbook.org/ns/docbook">SortedSet</ns1084:literal> and<ns1085:literal xmlns:ns1085="http://docbook.org/ns/docbook">SortedMap</ns1085:literal>.</ns1083:para>
+        <ns1086:para xmlns:ns1086="http://docbook.org/ns/docbook"/>
+        <ns1087:section xmlns:ns1087="http://docbook.org/ns/docbook">
+          <ns1088:title xmlns:ns1088="http://docbook.org/ns/docbook">The SortedSet Interface</ns1088:title>
+          <ns1089:para xmlns:ns1089="http://docbook.org/ns/docbook">A <ns1090:literal xmlns:ns1090="http://docbook.org/ns/docbook">SortedSet</ns1090:literal> is a <ns1091:literal xmlns:ns1091="http://docbook.org/ns/docbook">Set</ns1091:literal> which maintains its elements in ascending order. The
+            criterion for sorting is either the natural ordering of the objects (in this case the
+            corresponding class must implement the <ns1092:literal xmlns:ns1092="http://docbook.org/ns/docbook">Comparable</ns1092:literal>
+            interface) or the ordering can be determined by a separate <ns1093:literal xmlns:ns1093="http://docbook.org/ns/docbook">Comparator</ns1093:literal>.</ns1089:para>
+          <ns1094:para xmlns:ns1094="http://docbook.org/ns/docbook">The <ns1095:literal xmlns:ns1095="http://docbook.org/ns/docbook">SortedSet</ns1095:literal> interface extends the <ns1096:literal xmlns:ns1096="http://docbook.org/ns/docbook">Set</ns1096:literal> interface. Additional to the set services, the <ns1097:literal xmlns:ns1097="http://docbook.org/ns/docbook">SortedSet</ns1097:literal> interface specifies services for range-views,
+            head- and tail-element access. Furthermore, the <ns1098:literal xmlns:ns1098="http://docbook.org/ns/docbook">Iterator</ns1098:literal> returned by the <ns1099:literal xmlns:ns1099="http://docbook.org/ns/docbook">iterator()</ns1099:literal> method specified in the mother of all
+            collections, <ns1100:literal xmlns:ns1100="http://docbook.org/ns/docbook">Collection</ns1100:literal> traverses the sorted set in
+            sorting order.</ns1094:para>
+
+          <ns1101:para xmlns:ns1101="http://docbook.org/ns/docbook"/>
+          <ns1102:para xmlns:ns1102="http://docbook.org/ns/docbook">
+              <ns1103:programlisting xmlns:ns1103="http://docbook.org/ns/docbook">              
+ public interface SortedSet extends Set
+ {
+   // Range-view access
+   SortedSet subSet  (Object fromElement, Object toElement);
+   SortedSet headSet (Object toElement);
+   SortedSet tailSet (Object fromElement);
+ 
+   // Endpoint access
+   Object first ();
+   Object last  ();
+ 
+   Comparator comparator();
+ }
+              </ns1103:programlisting>
+          </ns1102:para>  
+<ns1104:para xmlns:ns1104="http://docbook.org/ns/docbook">
+            We shall explain the range-view services by considering a typical sorted set, a
+            dictionary. Assume you want to have a look at all the words between "sat" and "set". You
+            could do this via</ns1104:para>
+          <ns1105:para xmlns:ns1105="http://docbook.org/ns/docbook"/>
+          <ns1106:para xmlns:ns1106="http://docbook.org/ns/docbook">
+              <ns1107:programlisting xmlns:ns1107="http://docbook.org/ns/docbook">              
+ SortedSet subSet = dictionary.subSet("sat", "set");
+              </ns1107:programlisting>
+          </ns1106:para>  
+            
+<ns1108:para xmlns:ns1108="http://docbook.org/ns/docbook">You can of
+            course combine the sorted-set services with the standard set and collection services.
+            For example, if you would like to know how many words are between "sat" and "set" you
+            could do this via</ns1108:para>
+          <ns1109:para xmlns:ns1109="http://docbook.org/ns/docbook"/>
+          <ns1110:para xmlns:ns1110="http://docbook.org/ns/docbook">
+              <ns1111:programlisting xmlns:ns1111="http://docbook.org/ns/docbook">              
+ int numberOfWords = dictionary.subSet("sat", "set").size();
+              </ns1111:programlisting>
+          </ns1110:para>  
+<ns1112:para xmlns:ns1112="http://docbook.org/ns/docbook">If
+            you want to erase all words starting with an "s", you could do so via</ns1112:para>
+          <ns1113:para xmlns:ns1113="http://docbook.org/ns/docbook"/>
+          <ns1114:para xmlns:ns1114="http://docbook.org/ns/docbook">
+              <ns1115:programlisting xmlns:ns1115="http://docbook.org/ns/docbook">                          
+ dictionary.subSet("s", "t").clear();
+              </ns1115:programlisting>
+          </ns1114:para>  
+<ns1116:para xmlns:ns1116="http://docbook.org/ns/docbook">In a similar manner we
+            can obtain the view to the head or the tail of a sorted set.</ns1116:para>
+          <ns1117:para xmlns:ns1117="http://docbook.org/ns/docbook"/>
+        </ns1087:section>
+        <ns1118:section xmlns:ns1118="http://docbook.org/ns/docbook">
+          <ns1119:title xmlns:ns1119="http://docbook.org/ns/docbook">The SortedMap Interface</ns1119:title>
+          <ns1120:para xmlns:ns1120="http://docbook.org/ns/docbook">A sorted map is a map that maintains its keys in sorted order. This may be the
+            natural order of the key object or another ordering defined by a <ns1121:literal xmlns:ns1121="http://docbook.org/ns/docbook">Comparator</ns1121:literal>. The interface specifies the same functionality
+            that the <ns1122:literal xmlns:ns1122="http://docbook.org/ns/docbook">SortedSet</ns1122:literal> interface specifies, namely
+            range-view and end-point access as well as a query method for the comparator used for
+            the ordering.</ns1120:para>
+          <ns1123:para xmlns:ns1123="http://docbook.org/ns/docbook"/>
+        <ns1124:para xmlns:ns1124="http://docbook.org/ns/docbook">
+            <ns1125:programlisting xmlns:ns1125="http://docbook.org/ns/docbook">
+ public interface SortedMap extends Map
+ {
+   // Range-view access
+   SortedMap subMap  (Object fromKey, Object toKey);
+   SortedMap headMap (Object toKey);
+   SortedMap tailMap (Object fromKey);
+ 
+   // Endpoint access
+   Object first();
+   Object last();
+ 
+   Comparator comparator();
+ }            
+            </ns1125:programlisting>
+        </ns1124:para>
+<ns1126:para xmlns:ns1126="http://docbook.org/ns/docbook"/>
+        </ns1118:section>
+      </ns1081:section>

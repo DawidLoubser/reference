@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.solms.co.za/retail/stockReport"
+    xmlns:sr="http://www.solms.co.za/retail/stockReport"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+  
+  <xs:element name="stockReport" type="sr:StockReport">
+
+      <xs:keyref refer="sr:ProductKey" name="ProductRef">
+          <xs:selector 
+          	xpath="./sr:retailOutlets/sr:retailOutlet/sr:stockItems/sr:stockItem"/>
+          <xs:field xpath="sr:product"/>
+      </xs:keyref>
+            
+      <xs:key name="ProductKey">
+          <xs:selector xpath="./sr:products/sr:product"/>
+          <xs:field xpath="@code"/>
+      </xs:key>    
+
+  </xs:element>
+  
+    <xs:complexType name="StockReport">
+        <xs:sequence>
+            <xs:element name="retailOutlets" type="sr:RetailOutlets"/>
+            <xs:element name="products" type="sr:Products"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="RetailOutlets">
+        <xs:sequence>
+            <xs:element name="retailOutlet" type="sr:RetailOutlet" 
+            	maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="RetailOutlet">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="address" type="xs:string"/>
+            <xs:element name="stockItems" type="sr:StockItems"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+    
+    <xs:complexType name="StockItems">
+        <xs:sequence>
+            <xs:element name="stockItem" type="sr:StockItem" 
+            	maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="StockItem">
+        <xs:sequence>
+            <xs:element name="product" type="xs:string"/>
+            <xs:element name="quantity" type="xs:nonNegativeInteger"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Products">
+        <xs:sequence>
+            <xs:element name="product" type="sr:Product" 
+            	maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Product">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="price" type="xs:decimal"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+    </xs:complexType>
+  
+</xs:schema>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Implementing interfaces</title>
+  
+  <para>
+     The various concrete interest rate source classes would all implement the
+    <literal>InterestRateSource</literal> interface which would force them to supply
+     method bodies for the to method signatures specified in the interface.</para>
+    <para>We thus enforce a uniform way of interacting with all types of interest rate sources:
+     those currently envisaged, and those which may be developed in the future. The keyword
+     <literal>implements</literal> is used to specify that a class
+      implements (realises) a particular interface:
+     <programlisting language="Java"><![CDATA[
+public ReutersRateSource implements InterestRateSource
+{
+  public ReutersRateSource( /* ... */ )
+  {
+    // Setup configuration
+    //...
+  }
+
+  public InterestRate getInterestRate(Date start, Date end)
+  {
+    // Connect to reuters server and derive the applicable
+    // interest rates, etc.
+    // ...
+  }
+
+  public double getDiscountFactors(Date start, Date end)
+  {
+    // Connect to reuters server and derive the applicable
+    // discount rates, etc.
+    // ...
+  }
+}
+     ]]></programlisting>
+    </para>
+  <note><para>
+      The various classes implementing the <literal>InterestRateSource</literal> 
+      interface need not be otherwise related (<abbrev>e.g.</abbrev> via subclassing).
+  </para></note>
+</section>

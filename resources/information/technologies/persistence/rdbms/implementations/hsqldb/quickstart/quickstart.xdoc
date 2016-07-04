@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- @depend jdbc, sql -->
+
+<section xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      id="resources.information.technologies.persistence.rdbms.implementations.hsqldb.quickstart.quickstart">
+    
+    <title>Quick Start</title>
+    <para>
+        For all of the tasks listed below, make sure you know where your <literal>hsqldb.jar</literal> file is.
+        It ships in the <literal>lib</literal> directory of the HSQLDB ZIP distribution. This JAR file is the only
+        file you need - the rest of the provided files are examples, documentation, etc.
+    </para>
+    
+    <section>
+        <title>Running a Database Server</title>
+        <para>
+            This section illustrates how to create and run a simple, stand-alone database server,
+            which can be accessed either locally or across the network.
+        </para>
+        <para>
+            To start a server with a single database called <quote>mydb</quote>, accessible from
+            JDBC using the same name, run the command:
+            <programlisting>
+java -cp hsqldb.jar org.hsqldb.Server -database.0 mydb -dbname.0 mydb
+            </programlisting>
+        </para>
+        <para>
+            We are executing the class <literal>org.hsqldb.Server</literal>, and it is found because we place
+            the <literal>mysqldb.jar</literal> file on the classpath. The additional arguments we provide
+            indicate that we want to start one server called <quote>mydb</quote>. Once running, you will
+            notice several <literal>mydb.*</literal> files created in the current directory. These contain
+            the actual data. To stop the database abruptly, simply kill the running process (CTRL+C if it's
+            active in the console window). To shut down normally, connect, and execute the SQL command
+            <literal>SHUTDOWN</literal>.
+        </para>
+        <note>
+            <para>
+                If the database called <quote>mydb</quote> does not exist, it is automatically created.
+                The default administrative user is <literal>sa</literal> and the password is an empty string.
+            </para>
+        </note>
+    </section>
+    
+    <section>
+        <title>Using the Provided Client</title>
+        <para>
+            HSQLDB ships with a simple graphical client called <emphasis>DatabaseManager</emphasis>
+            the allows you to interact with your database. To start up the client, execute:
+            <programlisting>
+java -cp hsqldb.jar org.hsqldb.util.DatabaseManager
+            </programlisting>
+        </para>
+        <figure>
+            <title>The HSQLDB Database Manager</title>
+            <graphic fileref="databaseManager.jpg"/>
+        </figure>
+        
+        <para>
+            To connect to a locally running server with default settings called <quote>mydb</quote> 
+            (as defined above), enter the following connection information:
+            <itemizedlist>
+                <listitem>
+                    <formalpara>
+                        <title>Type:</title>
+                        <para>HSQL Database Engine Server</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Driver:</title>
+                        <para>org.hsqldb.jdbcDriver</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>URL:</title>
+                        <para>jdbc:hsqldb:hsql://localhost/mydb</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>User:</title>
+                        <para>sa</para>
+                    </formalpara>
+                </listitem>
+                <listitem>
+                    <formalpara>
+                        <title>Password:</title>
+                        <para>(none)</para>
+                    </formalpara>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+</section>

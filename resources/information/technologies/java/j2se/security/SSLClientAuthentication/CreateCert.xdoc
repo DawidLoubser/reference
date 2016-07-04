@@ -1,0 +1,87 @@
+<section id="resources.information.technologies.java.j2se.security.SSLClientAuthentication.CreateCert"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://www.solms.co.za/schemas/doc/solmsDoc/solmsDoc.xsd" 
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<title>Creating a Certificate</title>
+	<para>
+		To create a certificate with openssl the following command can be used
+	</para>
+	<programlisting>
+alex% perl CA.pl -newreq
+Using configuration from /System/Library/OpenSSL/openssl.cnf
+Generating a 1024 bit RSA private key
+..++++++
+.......................++++++
+writing new private key to 'newreq.pem'
+Enter PEM pass phrase: password
+Verifying password - Enter PEM pass phrase: password
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:ZA
+State or Province Name (full name) [Some-State]:Gauteng
+Locality Name (eg, city) []:Johannesburg
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:myOtherOrg
+Organizational Unit Name (eg, section) []:SpecialBranch
+Common Name (eg, YOUR name) []:specialbranch.myOtherOrg.co.za
+Email Address []:admin@specialbranch.myOtherOrg.co.za
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+Request (and private key) is in newreq.pem
+alex% 
+	</programlisting>
+	<para>
+		This command will generate a file <emphasis role="strong">newreq.pem</emphasis> containing a certificate and a private key. To sign the generated certificate signing request <emphasis role="strong">CSR</emphasis> the following command is used : 
+	</para>
+	<programlisting>
+alex% perl CA.pl -sign
+Using configuration from /System/Library/OpenSSL/openssl.cnf
+Enter PEM pass phrase:
+Check that the request matches the signature
+Signature ok
+The Subjects Distinguished Name is as follows
+countryName           :PRINTABLE:'ZA'
+stateOrProvinceName   :PRINTABLE:'Gauteng'
+localityName          :PRINTABLE:'Johannesburg'
+organizationName      :PRINTABLE:'myOtherOrg'
+organizationalUnitName:PRINTABLE:'SpecialBranch'
+commonName            :PRINTABLE:'specialbranch.myOtherOrg.co.za'
+emailAddress          :IA5STRING:'admin@specialbranch.myOtherOrg.co.za'
+Certificate is to be certified until Aug  2 20:34:21 2004 GMT (365 days)
+Sign the certificate? [y/n]:y
+
+
+1 out of 1 certificate requests certified, commit? [y/n]y
+Write out database with 1 new entries
+Data Base Updated
+Signed certificate is in newcert.pem
+alex% 
+	</programlisting>
+	<para>
+		This will create <emphasis role="strong">newcert.pem</emphasis> which contains a signed certificate, signed by your own certificae authoritiy. To extract the private key from the request use the following.
+ 	</para>	
+	<programlisting>
+alex% openssl rsa &lt; newreq.pem &gt; servler_key.pem
+read RSA key
+Enter PEM pass phrase:
+writing RSA key
+alex% 
+	</programlisting>
+	<para>
+		Often is is helpful to change the create file names.
+	</para>
+	<programlisting>
+newcert.pem -&gt;	server_cert.pem   [signed certificate]
+newreq.pem  -&gt; server_req.pe     [CSR]
+                  server_key.pem    [private key]
+	</programlisting>
+</section>

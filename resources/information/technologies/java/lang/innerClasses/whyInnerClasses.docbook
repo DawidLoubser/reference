@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<ns6730:section xmlns:ns6730="http://docbook.org/ns/docbook" xml:id="resources.information.technologies.java.lang.innerClasses.whyInnerClasses">
+  <ns6731:title xmlns:ns6731="http://docbook.org/ns/docbook">Why use inner classes?</ns6731:title>
+  <ns6732:para xmlns:ns6732="http://docbook.org/ns/docbook">
+    There may be a number of reasons why one would like to declare a class an inner class of
+    another. Most of these are related to <ns6733:emphasis xmlns:ns6733="http://docbook.org/ns/docbook">improved encasulation</ns6733:emphasis> and better
+    <ns6734:emphasis xmlns:ns6734="http://docbook.org/ns/docbook">scoping</ns6734:emphasis>. Also, inner classes reduce the class clutter by hiding classes
+    which you cannot use.
+  </ns6732:para>
+  
+  <ns6735:section xmlns:ns6735="http://docbook.org/ns/docbook">
+    <ns6736:title xmlns:ns6736="http://docbook.org/ns/docbook">Implementation hiding</ns6736:title>
+    <ns6737:para xmlns:ns6737="http://docbook.org/ns/docbook">
+      At times one would like to prevent external code from building any dependencies on any
+      particular implementation class, enforcing decoupling via an interface. Thsu, external code
+      may still maitain references to instances of such a class and request services from that
+      instance, but the reference type would be that of the interface and not of the class itself.
+      This can be neatly achieved via a private inner class which implements a public interface.
+    </ns6737:para>
+    <ns6738:para xmlns:ns6738="http://docbook.org/ns/docbook">
+      For example, any Java developer has used iterators over collections, without being aware or
+      caring what implementation of an iterator they have been using. You just request an iterator
+      from a collection obtaining an instance of some or other implementation of the
+      <ns6739:literal xmlns:ns6739="http://docbook.org/ns/docbook">Iterator</ns6739:literal> interface. The collection will return you an appropriate iterator
+      for that object (this particular instance of a collection). This approach has a number of
+      benefits including the following:
+      <ns6740:itemizedlist xmlns:ns6740="http://docbook.org/ns/docbook">
+        <ns6741:listitem xmlns:ns6741="http://docbook.org/ns/docbook"><ns6742:para xmlns:ns6742="http://docbook.org/ns/docbook">
+          Maintainers of the collection class can change the iterator class returned without
+          affecting any of the code using the collection or the iterator usage.
+        </ns6742:para></ns6741:listitem>
+        <ns6743:listitem xmlns:ns6743="http://docbook.org/ns/docbook"><ns6744:para xmlns:ns6744="http://docbook.org/ns/docbook">
+          Instances of the iterator class have direct access to the outer class instance members
+          (like the head node of a list). 
+        </ns6744:para></ns6743:listitem>
+        <ns6745:listitem xmlns:ns6745="http://docbook.org/ns/docbook"><ns6746:para xmlns:ns6746="http://docbook.org/ns/docbook">
+          Every instance of an iterator exists only in the context of an instance of the outer class
+          -- it does no make sense to have an iterator without a collection.
+        </ns6746:para></ns6745:listitem>
+      </ns6740:itemizedlist>
+    </ns6738:para>
+    
+    <ns6747:section xmlns:ns6747="http://docbook.org/ns/docbook">
+      <ns6748:title xmlns:ns6748="http://docbook.org/ns/docbook">Implementation hiding and factory methods</ns6748:title>
+      <ns6749:para xmlns:ns6749="http://docbook.org/ns/docbook">
+        Of course, if we want to completely decouple users from an implementation class, we
+        cannot ask users to create objects via constructors. Instead we will use one or other form
+        of a factory. 
+      </ns6749:para>
+      <ns6750:para xmlns:ns6750="http://docbook.org/ns/docbook">
+        In the case of exposing an service provider which is intrinsically coupled to
+        a context, one usually will use a factory method. For example, the collection classes
+        provide the <ns6751:literal xmlns:ns6751="http://docbook.org/ns/docbook">iterator()</ns6751:literal> method as a factory method for providing a
+        suitable iterator implementation to users.
+      </ns6750:para>
+    </ns6747:section>
+  </ns6735:section>
+  
+  <ns6752:section xmlns:ns6752="http://docbook.org/ns/docbook">
+    <ns6753:title xmlns:ns6753="http://docbook.org/ns/docbook">Complete encapsulation</ns6753:title>
+    <ns6754:para xmlns:ns6754="http://docbook.org/ns/docbook">
+      At times, a class becomes excessively complex and we would like to <ns6755:emphasis xmlns:ns6755="http://docbook.org/ns/docbook">delegate 
+      lower level realization responsibilities to a lower level class</ns6755:emphasis>. 
+      Such classes are part of the inner workings of the
+      outer class and should be completely hidden from any code outside that class. This would be a
+      private inner class without any method providing any handle to any instance of such a class.
+    </ns6754:para>
+    <ns6756:para xmlns:ns6756="http://docbook.org/ns/docbook">
+      For example, <ns6757:emphasis xmlns:ns6757="http://docbook.org/ns/docbook">linked lists use the concept of nodes</ns6757:emphasis>. Each node has a
+      content and a pointer or reference to the next node of the linked list (usually linked lists are 
+      implemented as bidirectional circular linked lists where each node has one reference to the
+      next and one to the previous node of the linked list).
+    </ns6756:para>
+  </ns6752:section>
+  
+  <ns6758:section xmlns:ns6758="http://docbook.org/ns/docbook">
+    <ns6759:title xmlns:ns6759="http://docbook.org/ns/docbook">Narrowly collaborating classes without breaking encapsulation</ns6759:title>
+    <ns6760:para xmlns:ns6760="http://docbook.org/ns/docbook">
+      At times certain classes are meant to narrowly collaborate in order to realize some
+      functionality. Such examples are candidates for inner classes.
+    </ns6760:para>
+    
+    <ns6761:section xmlns:ns6761="http://docbook.org/ns/docbook">
+      <ns6762:title xmlns:ns6762="http://docbook.org/ns/docbook">Friendship</ns6762:title>
+      <ns6763:para xmlns:ns6763="http://docbook.org/ns/docbook">
+        Languages like C++ support the concept of friendship. Here one class provides direct access to
+        its private members to another class which it has declared a friend class. This is, at times,
+        used for narrowly collaborating classes like a linked list and its iterator. The linked list
+        class would declare the iterator class a friend, therby providing iterators access to the
+        private instance members of linked lists.
+      </ns6763:para>
+    </ns6761:section>
+    
+    <ns6764:section xmlns:ns6764="http://docbook.org/ns/docbook">
+      <ns6765:title xmlns:ns6765="http://docbook.org/ns/docbook">The inner class alternative</ns6765:title>
+      <ns6766:para xmlns:ns6766="http://docbook.org/ns/docbook">
+        The use of friendship is generally discouraged because it directly breaks encapsulation --
+        the external friend class instances obtain direct access to the private members of another
+        class.
+      </ns6766:para>
+      <ns6767:para xmlns:ns6767="http://docbook.org/ns/docbook">
+        If, on the other hand, the iterator class is declared an inner class of the linked list
+        class, its instances can directly access the outer class instance members without breaking
+        encapsulation. This is so because the inner class is part of the encapsulated content of the
+        outer class.
+      </ns6767:para>
+    </ns6764:section>
+    
+  </ns6758:section>
+  
+  <ns6768:section xmlns:ns6768="http://docbook.org/ns/docbook">
+    <ns6769:title xmlns:ns6769="http://docbook.org/ns/docbook">Callback handlers</ns6769:title>
+    <ns6770:para xmlns:ns6770="http://docbook.org/ns/docbook">
+      A common application of inner classes is that of callback handlers. This is an approach
+      commonly used for event handlers
+    </ns6770:para>
+  </ns6768:section>
+  
+  
+</ns6730:section>

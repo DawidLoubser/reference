@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Accessing implicit objects</title>
+  
+  <section>
+    <title>Scoped attributes</title>
+    <para>
+      To access attributes placed in any of the scopes (page, request, session, servletContext) the
+      following variables are available (as <literal>java.util.Map</literal> instances):
+    </para>
+    <itemizedlist>
+      <listitem>
+        <formalpara>
+          <title>pageScope</title>
+          <para>Maps page-scoped variable names to their values</para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>requestScope</title>
+          <para>Maps request-scoped variable names to their values</para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>sessionScope</title>
+          <para>Maps session-scoped variable names to their values</para>
+        </formalpara>
+      </listitem>
+      <listitem>
+        <formalpara>
+          <title>applicationScope</title>
+          <para>Maps application-scoped variable names to their values (i.e
+          the ServletContext)</para>
+        </formalpara>
+      </listitem>
+    </itemizedlist>
+    <para>For example:
+      <programlisting><![CDATA[
+<!-- Gets the object called "orderConfirmation" from the request -->
+${requestScope.orderConfirmation}
+
+<!-- Gets the user's shopping cart from the http session -->
+${sessionScope.shoppingCart}
+        ]]></programlisting>
+    </para>
+    <note>
+      <para>
+        Often, the page developer may indeed not care in which scope
+        an object is which needs to be referenced. In this case, the scope may simply
+        by omitted, e.g. <literal>${shoppingCart}</literal>. The scopes are searched
+        from the most local scope to the most global, starting with the <literal>pageScope</literal>
+        and ending with the <literal>applicationScope</literal>
+      </para>
+    </note>
+  </section>
+  
+  <section>
+    <title>Implicit Objects</title>
+      <para>
+        All of the <emphasis>implicit</emphasis> objects available to JSP documents are accessible. 
+        These are:
+      </para>
+      <itemizedlist>
+        <listitem>
+          <formalpara>
+            <title>param</title>
+            <para>Maps a request parameter name to a single value, e.g. <literal>${param.searchTerm}</literal></para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>paramValues</title>
+            <para>Maps a request parameter name to an array of values, used when multiple instances
+            of the same request parameter name was submitted.</para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>header</title>
+            <para>Maps a request header name to a single value, e.g. <literal>${header["User-agent"]}</literal></para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>headerValues</title>
+            <para>Maps a request header name to an array of values, used when the same HTTP request header
+            appears more than once</para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>cookie</title>
+            <para>Maps a cookie name to a single cookie, e.g. <literal>${cookie["autoLogin"]}</literal></para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>initParam</title>
+            <para>Maps a context initialization parameter (specified in <literal>web.xml</literal>)
+              name to a single value</para>
+          </formalpara>
+        </listitem>
+        <listitem>
+          <formalpara>
+            <title>pageContext</title>
+            <para>The context for the JSP page. Provides access to various 
+              objects including:
+              <itemizedlist>
+                <listitem>
+                  <formalpara>
+                    <title>request</title>
+                    <para>The request triggering the execution of the JSP page. For example,
+                    <literal>${pageContext.request.method}</literal> would indicate the
+                    HTTP method used, such as GET or POST</para>
+                  </formalpara>
+                </listitem>
+                <listitem>
+                  <formalpara>
+                    <title>response</title>
+                    <para>The response returned by the JSP page.</para>
+                  </formalpara>
+                </listitem>
+                <listitem>
+                  <formalpara>
+                    <title>servletContext</title>
+                    <para>The context for the JSP page’s servlet and any web 
+                      components contained in the same application.</para>
+                  </formalpara>
+                </listitem>
+                <listitem>
+                  <formalpara>
+                    <title>session</title>
+                    <para>The HTTP session object for the client making the
+                      request. For example, <literal>${pageContext.session.maxInactiveInterval}</literal>
+                    would return the session time-out for the current user's session.</para>
+                  </formalpara>
+                </listitem>
+              </itemizedlist>
+            </para>
+          </formalpara>
+        </listitem>
+      </itemizedlist>
+    </section>
+  
+  
+</section>

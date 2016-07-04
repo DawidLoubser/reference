@@ -1,0 +1,82 @@
+\section{Semi-formal elements of URDAD}
+\label{sec:semiFormalElements}
+
+Formal methods \cite{Monin:understandingFormalMethods, hinchey:softwareEngineeringAndFormalMethods}
+are precise, mathematically
+rigorous methods which remove ambiguity and result in verifiable implementations.
+The three core approaches are based on denotational, operational
+and axiomatic semantics.
+
+In both denotional and operational semantics, one defines the meaning of what the
+program represents/does. These approaches provide the ability to formally prove
+an algorithm. For complex problems the approach may, however, be very costly.
+Furthermore, there could be multiple algorithms which could suitably realize the stakeholder's
+requirements - yet one will lock into a particular algorithm which
+can potentially be proven correct, but which may not be the best with respect to certain
+quality requirements like simplicity, performance, resource-efficiency (e.g. memory
+efficiency, ...) and so on. Furthermore, replacing one algorithm with another is a complex task
+which typically requires a complete redefinition of the algorithm and its proofs, and
+may have a wide ranging impact across the system.
+
+In axiomatic semantics (also known as contract-based approaches) one does not provide the formal specification of a program, but instead the formal specification of the effect the program needs to have on its environment. This can be done in the form of a contracts specified via pre- and post-conditions using constraint languages like OCL
+\cite{Briand:investigationOfFormalityInUmlBaedDevelopment}. In this approach, algorithms are
+proven against the contract they realize, either by formally proving that a particular algorithm realizes the contract, or by generating algorithm-independent tests from the contracts
+\cite{meyer:programsThatTestThemselves}. In the former approach this is usually done recursively,
+by assuming at any particular level of granularity, that the lower level services used within
+the algorithm do realize their respective services contracts. In the case of generating
+algorithm-independent tests from the contracts, one also needs to generate a complete set of
+test data which covers the entire application domain. This may be impractical or even
+impossible. URDAD can be seen as an analysis and design methodology which enforces a contracts-based
+approach across levels of granularity, encouraging the formal contract specification
+in the form of OCL constraints.
+
+An axiomatic/contracts based approach is more natural to model-driven development, since the
+model should preferably be developed in the problem/requirements domain and not in the
+technical/solution domain. Contracts are independent of particular service providers, or the algorithms they use.
+
+However, the requirements specification in the form of formal contracts is often non-trivial. A complete contract for a high-level service may be very complex. Domain
+experts (e.g. business analysts) who develop the model require a framework within which they can incrementally
+refine the requirements, and the technology neutral solution (business processes). They typically do not have sufficient technical skills to formally define the services
+contracts in OCL. URDAD encourages them to define the
+services contracts informally (using natural language to specify constraints, for example), with OCL experts subsequently mapping such statements to OCL. 
+
+In addition to the service contracts across levels of granularity, URDAD enforces a number
+of other elements which formalize the outputs of the methodology including
+\begin{itemize}
+  \item an OCL validation suite which validate that the UML model complies to the
+			constraints of an URDAD meta-model, and
+  \item OCL validation suites for model completeness and consistency.
+\end{itemize}
+
+These validation suites enforce
+\begin{itemize}
+  \item the linking of pre- and post-conditions to functional/service
+			requirements (use cases) through which these pre- and post-condition is
+			addressed,
+	\item the linking of functional requirements (use cases) to services
+			in services contracts which formalize the service requirements,
+	\item the linking of service process specifications to the service contracts they realize,
+	\item the construction of request objects for each service
+			from the information available to the (business) process at the
+			stage of service request,
+	\item the construction of result objects from the information available
+			at the end of the process realizing the service,
+	\item the specification of contracts for all role players
+			including users and service providers across levels of granularity,
+	\item that for each pre-condition a corresponding exception is raised,
+			informing the user that the service requested is not going to be provided.
+			All other scenarios satisfying the pre-conditions for the service
+			lead to the provision of the result object.
+\end{itemize}
+The first three provide bi-directional requirements traceability. Black-box
+tests can be auto-generated from the services contracts.
+
+Note that if the levels of granularity are not carefully managed,
+the specification of some of the above constraints can become very complex. The
+methodology, however, aims to provide a repeatable algorithm through which the levels
+of granularity are fixed in a way which minimizes complexity at any particular level
+of granularity, and which maximizes re-use of services.
+
+The validation suites enforces a complete, consistent model which has sufficient
+information to perform a complete implementation mapping, provided the semantics
+for the implementation architecture and technologies are provided.
